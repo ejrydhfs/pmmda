@@ -7,6 +7,8 @@ package ch.bbv.mda;
 
 import java.io.Serializable;
 
+import ch.bbv.mda.generators.Cartridge;
+
 /**
  * The tagged value type defines the type of a tagged value. The type specifies
  * the name of the tag, the default value and the type of the value.
@@ -23,6 +25,11 @@ public class TaggedValueType extends AdornmentType implements Serializable{
    * Type of the values for this type.
    */
   private transient Class type;
+  
+  /**
+   * Back link to the cartridge having defined this tagged value type
+   */
+  private Cartridge cartridge;
 
   /**
    * Constructor of the class.
@@ -30,10 +37,11 @@ public class TaggedValueType extends AdornmentType implements Serializable{
    * @param defaultValue default value for the tagged values of this type.
    * @param type type of the values for the tagged values of this type.
    */
-  public TaggedValueType(String tag, String defaultValue, Class type) {
+  public TaggedValueType(String tag, String defaultValue, Class type, Cartridge cartridge) {
     setName(tag);
     this.defaultValue = defaultValue;
     this.type = type;
+    this.cartridge = cartridge;
   }
 
   /**
@@ -66,5 +74,13 @@ public class TaggedValueType extends AdornmentType implements Serializable{
    */
   public String getTypename() {
     return (type != null) ? type.getName() : null;
+  }
+ 
+  /**
+   * Returns the cartridge having defined this tagged value type
+   * @return Cartridge cartridge having defined this tagged value type
+   */
+  public Cartridge getCartridge(){
+    return cartridge;
   }
 }
