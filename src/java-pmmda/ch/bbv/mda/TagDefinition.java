@@ -1,5 +1,5 @@
 /* copyright 2000-2004 Marcel Baumann 
- * Licensed under the Apache License, Version 2.0 (the "Licence); 
+ * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$
  */
@@ -10,12 +10,26 @@ import java.io.Serializable;
 import ch.bbv.mda.generators.Cartridge;
 
 /**
- * The tagged value type defines the type of a tagged value. The type specifies
- * the name of the tag, the default value and the type of the value.
+ * The tag definition specifies the tagged values that can be attached to a kind
+ * of model element. Among other things, tag definitions can be sued to define
+ * the virtual meta attributes of the stereotype to which they are attached. The
+ * tag definition has the following attributes.
+ * <dl>
+ * <dt>multiplicty</dt>
+ * <dd>Specifies the number of data values that tagged values based on this tag
+ * must have, or the number of model elements that can be associated to the
+ * related tagged values.</dd>
+ * <dt>tag type</dt>
+ * <dd>In the general case, where the tag type is a data type, this specifies
+ * the range of values of the tagged values associated with the tag definition.
+ * In the special case, where the tag type refers to a metaclass that is not a
+ * datatype, the tag value references model elements that are instances of the
+ * metaclass.</dd>
+ * </dl>
  * @author marcelbaumann
  * @version $Revision$
  */
-public class TaggedValueType extends AdornmentType implements Serializable{
+public class TagDefinition extends AdornmentType implements Serializable {
   /**
    * Default value of the tag.
    */
@@ -25,7 +39,7 @@ public class TaggedValueType extends AdornmentType implements Serializable{
    * Type of the values for this type.
    */
   private transient Class type;
-  
+
   /**
    * Back link to the cartridge having defined this tagged value type
    */
@@ -37,7 +51,8 @@ public class TaggedValueType extends AdornmentType implements Serializable{
    * @param defaultValue default value for the tagged values of this type.
    * @param type type of the values for the tagged values of this type.
    */
-  public TaggedValueType(String tag, String defaultValue, Class type, Cartridge cartridge) {
+  public TagDefinition(String tag, String defaultValue, Class type,
+      Cartridge cartridge) {
     setName(tag);
     this.defaultValue = defaultValue;
     this.type = type;
@@ -75,12 +90,12 @@ public class TaggedValueType extends AdornmentType implements Serializable{
   public String getTypename() {
     return (type != null) ? type.getName() : null;
   }
- 
+
   /**
    * Returns the cartridge having defined this tagged value type
    * @return Cartridge cartridge having defined this tagged value type
    */
-  public Cartridge getCartridge(){
+  public Cartridge getCartridge() {
     return cartridge;
   }
 }

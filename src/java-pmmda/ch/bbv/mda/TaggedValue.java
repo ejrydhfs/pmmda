@@ -40,7 +40,7 @@ public class TaggedValue extends DataObjectImpl implements Comparable {
   /**
    * Type of the values of the tagged value.
    */
-  private TaggedValueType type;
+  private TagDefinition type;
 
   /**
    * Default constructor of the class.
@@ -54,7 +54,7 @@ public class TaggedValue extends DataObjectImpl implements Comparable {
    * @param value value of the tagged value.
    * @param type type of the tagged value.
    */
-  public TaggedValue(String value, TaggedValueType type) {
+  public TaggedValue(String value, TagDefinition type) {
     this.tag = type.getTag();
     this.type = type;
     this.value = value;
@@ -74,7 +74,7 @@ public class TaggedValue extends DataObjectImpl implements Comparable {
    * Creates a new tagged value of the given tagged value type.
    * @param type type of the tagged value to create.
    */
-  public TaggedValue(TaggedValueType type) {
+  public TaggedValue(TagDefinition type) {
     this(type.getDefaultValue(), type);
   }
 
@@ -119,7 +119,7 @@ public class TaggedValue extends DataObjectImpl implements Comparable {
    * @return the type of the tagged value.
    * @see #setType
    */
-  public TaggedValueType getType() {
+  public TagDefinition getType() {
     return type;
   }
 
@@ -128,7 +128,7 @@ public class TaggedValue extends DataObjectImpl implements Comparable {
    * @param type new type of the tagged value.
    * @see #getType
    */
-  public void setType(TaggedValueType type) {
+  public void setType(TagDefinition type) {
     this.type = type;
   }
 

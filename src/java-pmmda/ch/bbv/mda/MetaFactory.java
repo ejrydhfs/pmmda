@@ -1,5 +1,5 @@
 /* copyright 2000-2004 Marcel Baumann
- * Licensed under the Apache License, Version 2.0 (the "Licence);
+ * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
  */
@@ -113,14 +113,14 @@ public class MetaFactory {
    * @return the requested tagged value type if found otherwise null.
    * @pre name != null && name.length() > 0
    */
-  public TaggedValueType findType(String name) {
+  public TagDefinition findType(String name) {
     assert ((name != null) && (name.length() > 0));
 
-    TaggedValueType type = null;
+    TagDefinition type = null;
     for (Iterator i = taggedValueTypes.values().iterator(); i.hasNext();) {
       List list = (List) i.next();
       for (Iterator j = list.iterator(); j.hasNext();) {
-        type = (TaggedValueType) j.next();
+        type = (TagDefinition) j.next();
         if (!type.getTag().equals(name)) {
           type = null;
         } else {
@@ -199,7 +199,7 @@ public class MetaFactory {
     List types = (List) taggedValueTypes.get(clazz);
     if (types != null) {
       for (int i = 0; i < types.size(); i++) {
-        TaggedValueType type = (TaggedValueType) types.get(i);
+        TagDefinition type = (TagDefinition) types.get(i);
         TaggedValue value = element.getTaggedValue(type.getTag());
         if (value == null) {
           value = type.getCartridge().getTaggedValueWithElementDependentDefault(type, element);
@@ -212,7 +212,7 @@ public class MetaFactory {
     types = (List) obsoleteTaggedValueTypes.get(clazz);
     if (types != null) {
       for (int i = 0; i < types.size(); i++) {
-        TaggedValueType type = (TaggedValueType) types.get(i);
+        TagDefinition type = (TagDefinition) types.get(i);
         element.removeTaggedValue(type.getTag());
       }
     }

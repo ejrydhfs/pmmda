@@ -1,5 +1,5 @@
 /* copyright 2000-2004 Marcel Baumann
- * Licensed under the Apache License, Version 2.0 (the "Licence);
+ * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
  */
@@ -109,8 +109,8 @@ public class TaggedValueFilter {
     return false;
   }
 
-  private boolean equalsTaggedValueType(TaggedValueType tvt1,
-      TaggedValueType tvt2) {
+  private boolean equalsTaggedValueType(TagDefinition tvt1,
+      TagDefinition tvt2) {
     if (tvt1 == null && tvt2 == null)
       return true;
     if (tvt1 != null && tvt2 != null) {
