@@ -1,6 +1,6 @@
 <body>
-  Business object models are validated against a set of business rules. 
-  The rules are defined as validation rules. 
+  Business object models are validated against a set of business rules. The
+  rules are defined as validation rules. 
   <h2>Introduction</h2>
   <p>Business object models are validated against a set of business rules. 
     The rules are defined as validation rules. The business object types 
@@ -34,6 +34,9 @@
     of a class or in the property descriptor of a property. The list of valid
     rules is added as a named attribute to the bean information object. The
     list order defines the order of evaluation.</p>
+  <p>Validators are found through the locator services. Multiple validators
+    can be defined. Each must have a different name. The names are used to
+    identify the set of rules it should compute.</p>
     
   <h2>Conventions</h2>
   <p>The values are identified through names. Conventions must be defined to

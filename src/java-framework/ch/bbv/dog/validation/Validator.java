@@ -51,7 +51,7 @@ public class Validator extends ComponentImpl {
    */
   public Validator(String name) {
     super(name);
-    key = "Validator-" + name;
+    key = "Validator-Rules-" + name;
   }
 
   /**
@@ -65,7 +65,7 @@ public class Validator extends ComponentImpl {
     for (int i = 0; i < descriptors.length; i++) {
       List rules = (List) descriptors[i].getValue(key);
       if (rules != null) {
-        for (int j = 0, size = rules.size(); j < size;) {
+        for (int j = 0, size = rules.size(); j < size; j++) {
           ((ValidationRule) rules.get(j)).execute(object, descriptors[i]
               .getName(), results);
         }
@@ -82,10 +82,22 @@ public class Validator extends ComponentImpl {
    */
   public void validate(DataObject root, AbstractVisitorFunctor visitor,
       List results) {
+    if (log.isTraceEnabled()) {
+      StringBuffer buffer = new StringBuffer();
+      buffer.append("Start validation for ").append(root.getClass())
+          .append(" ").append(root.getId());
+      log.trace(buffer.toString());
+    }
     ValidateFunctor functor = new ValidateFunctor(this);
     visitor.setFunctor(functor);
     DataObjectType.invokeVisitor(root, visitor);
     results.addAll(functor.getResults());
+    if (log.isTraceEnabled()) {
+      StringBuffer buffer = new StringBuffer();
+      buffer.append("End validation for ").append(root.getClass())
+          .append(" ").append(root.getId());
+      log.trace(buffer.toString());
+    }
   }
 
   /**
