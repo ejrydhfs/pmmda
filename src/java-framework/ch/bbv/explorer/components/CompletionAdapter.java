@@ -166,7 +166,7 @@ public class CompletionAdapter extends PlainDocument {
      * @param event event to process.
      */
     public void keyPressed(java.awt.event.KeyEvent event) {
-      if (event.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+      if (event.getKeyCode() == event.VK_BACK_SPACE) {
         hitBackspace = true;
         hitBackspaceOnSelection = editor.getSelectionStart() != editor
             .getSelectionEnd();
