@@ -38,7 +38,7 @@ public class TypeFactory extends AbstractTypeFactory {
     UiNodeTypeImpl nodeType = new UiNodeTypeImpl(type, "name",
         MetaModelView.class);
     addRelation(nodeType, "packages", ch.bbv.mda.MetaPackage.class, true, true);
-    addRelation(nodeType, "classes", MetaClass.class, true, true);
+    addRelation(nodeType, "Classes", MetaClass.class, true, true);
 
     List params = new ArrayList();
     addField(params, "name", String.class, true);
@@ -57,7 +57,7 @@ public class TypeFactory extends AbstractTypeFactory {
         VisitorFunctor.class, null);
     UiNodeTypeImpl nodeType = new UiNodeTypeImpl(type, "name",
         MetaPackageView.class);
-    addRelation(nodeType, "classes", MetaClass.class, true, true);
+    addRelation(nodeType, "Classes", MetaClass.class, true, true);
 
     List params = new ArrayList();
     addField(params, "name", String.class, true);
@@ -80,6 +80,7 @@ public class TypeFactory extends AbstractTypeFactory {
         ch.bbv.mda.MetaProperty.class, true, true));
     nodeType.addRelation(new UiRelation("Indexed Property",
         ch.bbv.mda.MetaIndexedProperty.class, true, true));
+    addRelation(nodeType, "Classes", MetaClass.class, true, true);
 
     List params = new ArrayList();
     addField(params, "name", String.class, true);
