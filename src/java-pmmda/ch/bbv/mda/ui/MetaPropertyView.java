@@ -144,6 +144,10 @@ public class MetaPropertyView extends NodePropertiesView {
     if (text != null) {
       model.setDescription(text.trim());
     }
+    text = typeText.getText();
+    if (text != null) {
+      model.setTypeName(text.trim());
+    }
     model.setVisibility((VisibilityCode) visibility.getSelectedCode());
     model.setVolatile(volatiles.isSelected());
     model.setTransient(transients.isSelected());
