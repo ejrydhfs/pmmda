@@ -5,13 +5,15 @@
  */
 package ch.bbv.mda;
 
+import java.io.Serializable;
+
 /**
  * The tagged value type defines the type of a tagged value. The type specifies
  * the name of the tag, the default value and the type of the value.
  * @author marcelbaumann
  * @version $Revision$
  */
-public class TaggedValueType extends AdornmentType {
+public class TaggedValueType extends AdornmentType implements Serializable{
   /**
    * Default value of the tag.
    */
