@@ -9,6 +9,7 @@ import java.io.*;
 import java.util.Arrays;
 
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -55,7 +56,12 @@ public class SaveAsAction extends ExplorerSaveAsAction {
    * File extensions for models serialized to XML using the open source library
    * from CodeHaus.
    */
-  private static final String[] XML_EXT = { "ser", "xml" };
+  private static final String[] XML_EXT = { "xml" };
+
+  /**
+   * File extensions for models serialized with the Java serialization features.
+   */
+  private static final String[] SERIALIZE_EXT = { "ser" };
 
   /**
    * Resource containing the ArgoUML project template.
@@ -69,7 +75,9 @@ public class SaveAsAction extends ExplorerSaveAsAction {
     fileChooser.addChoosableFileFilter(new SimpleFileFilter(POSEIDON_EXT,
         "Poseidon 2.x (*.zuml)"));
     fileChooser.addChoosableFileFilter(new SimpleFileFilter(XML_EXT,
-        "XML models (*.xml, *.ser)"));
+        "XML models (*.xml)"));
+    fileChooser.addChoosableFileFilter(new SimpleFileFilter(SERIALIZE_EXT,
+        "XML models (*.ser)"));
   }
 
   public void execute() {
@@ -83,6 +91,8 @@ public class SaveAsAction extends ExplorerSaveAsAction {
       writePoseidonFile(model, file);
     } else if (Arrays.binarySearch(XML_EXT, extension) >= 0) {
       writeXmlFile(model, file);
+    } else if (Arrays.binarySearch(SERIALIZE_EXT, extension) >= 0) {
+      writeSerializedFile(model, file);
     }
     getExplorer().getMenuBar().documentSaved();
   }
@@ -118,6 +128,24 @@ public class SaveAsAction extends ExplorerSaveAsAction {
    * @param file file in which the model is written.
    */
   private void writePoseidonFile(MetaModel model, File file) {
+    JOptionPane.showMessageDialog(null, "Poseidon Save Option Not Supported",
+        "Not Yet Implemented", JOptionPane.ERROR_MESSAGE);
+  }
+
+  /**
+   * Writes the model to a new XML file. The file is copied from a template
+   * before writing the model into it.
+   * @param model model to write to the persistence file.
+   * @param file file in which the model is written.
+   */
+  private void writeXmlFile(MetaModel model, File file) {
+    try {
+      PersistencyHandlerFactory factory = new PersistencyHandlerFactory();
+      PersistencyHandler handler = factory.getHandler(getSelectedFile());
+      handler.writeModel(model, getSelectedFile());
+    } catch (PersistencyException e) {
+      log.error(e);
+    }
   }
 
   /**
@@ -126,7 +154,7 @@ public class SaveAsAction extends ExplorerSaveAsAction {
    * @param model model to write to the persistence file.
    * @param file file in which the model is written.
    */
-  private void writeXmlFile(MetaModel model, File file) {
+  private void writeSerializedFile(MetaModel model, File file) {
     try {
       PersistencyHandlerFactory factory = new PersistencyHandlerFactory();
       PersistencyHandler handler = factory.getHandler(getSelectedFile());
