@@ -15,6 +15,11 @@ package ch.bbv.mda;
 public class MetaIndexedProperty extends MetaProperty {
   public static final String DEFAULT_META_INDEX_TYPE = "ARRAY_LIST";
 
+  public MetaIndexedProperty(){
+    super();
+    multiplicity = Multiplicity.MULTIPLICITY_0_N;
+  }
+  
   public boolean isOrdered() {
     return booleanValueOfTag("bo-is-ordered");
   }
