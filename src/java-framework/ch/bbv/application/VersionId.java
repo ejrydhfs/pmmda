@@ -218,16 +218,17 @@ public class VersionId implements Comparable {
   }
 
   /**
-   * Returns the version of the database as string.
-   * @return The version of the database as major.minor.patch value.
+   * Returns the version identifier as string.
+   * @return The version identifier as major.minor.patch[-postfix] value.
    */
   public String toString() {
     StringBuffer buffer = new StringBuffer();
-    buffer.append(majorVersionId);
-    buffer.append(".");
-    buffer.append(minorVersionId);
-    buffer.append(".");
-    buffer.append(patchVersionId);
+    buffer.append(majorVersionId).append(".").append(minorVersionId)
+        .append(".").append(patchVersionId);
+    if (postfix != null) {
+      buffer.append("-").append(postfix);
+    }
+
     return buffer.toString();
   }
 
