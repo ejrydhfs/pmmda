@@ -251,8 +251,8 @@ public class NsUmlTransformer {
       metaClass.setInterface(true);
     }
 
-    for (Iterator i = new FilterIterator(mClass.getOwnedElements(), MAttribute.class); i
-        .hasNext();) {
+    for (Iterator i = new FilterIterator(mClass.getOwnedElements(),
+        MAttribute.class); i.hasNext();) {
       extractProperty((MAttribute) i.next(), metaClass);
     }
   }
@@ -296,6 +296,9 @@ public class NsUmlTransformer {
     MClassifier mClassifier = attribute.getType();
     if (mClassifier != null) {
       property.setTypeName(getQualifiedName(attribute.getType()));
+    } else {
+      log.error("class. property '" + name + "." + metaClass.qualifiedName() + "'"
+          + "has no type");
     }
 
     Multiplicity multiplicity = convert(attribute.getMultiplicity());
@@ -461,11 +464,14 @@ public class NsUmlTransformer {
     VisibilityCode visibility = VisibilityCode
         .getCode(VisibilityCode.PUBLIC_VISIBILITY_CODE);
     if (MVisibilityKind.PUBLIC.equals(visibilityKind)) {
-      visibility = VisibilityCode.getCode(VisibilityCode.PUBLIC_VISIBILITY_CODE);
+      visibility = VisibilityCode
+          .getCode(VisibilityCode.PUBLIC_VISIBILITY_CODE);
     } else if (MVisibilityKind.PROTECTED.equals(visibilityKind)) {
-      visibility = VisibilityCode.getCode(VisibilityCode.PROTECTED_VISIBILITY_CODE);
+      visibility = VisibilityCode
+          .getCode(VisibilityCode.PROTECTED_VISIBILITY_CODE);
     } else if (MVisibilityKind.PRIVATE.equals(visibilityKind)) {
-      visibility = VisibilityCode.getCode(VisibilityCode.PRIVATE_VISIBILITY_CODE);
+      visibility = VisibilityCode
+          .getCode(VisibilityCode.PRIVATE_VISIBILITY_CODE);
     }
     return visibility;
   }
