@@ -9,9 +9,10 @@
 #isPersistentDataObject($type $isPersistentDataObject)
 #if($isPersistentDataObject)
 #set($columnName=${property.valueOfTag("ojb-column-name")})
-ALTER TABLE ${schema}${table} ADD CONSTRAINT ${columnName}_IR 
-  FOREIGN KEY (${table}_${columnName}_FK)
-  REFERENCES ${schema}${type.getAttribute("ojb-table-name")}(ID)
+#set($foreignTableName=${type.getAttribute("ojb-table-name")})
+ALTER TABLE ${schema}${table} ADD CONSTRAINT ${foreignTableName}_${columnName}_IR 
+  FOREIGN KEY (${columnName}_FK)
+  REFERENCES ${schema}${foreignTableName}(ID)
   ON DELETE RESTRICT;
   
 #end
@@ -25,9 +26,10 @@ ALTER TABLE ${schema}${table} ADD CONSTRAINT ${columnName}_IR
 #isPersistentDataObject($type $isPersistentDataObject)
 #if($isPersistentDataObject)
 #set($columnName=${aggregation.valueOfTag("ojb-column-name")})
-ALTER TABLE ${schema}${table} ADD CONSTRAINT ${columnName}_IR 
-  FOREIGN KEY (${table}_${columnName}_FK)
-  REFERENCES ${schema}${type.getAttribute("ojb-table-name")}(ID)
+#set($foreignTableName=${type.getAttribute("ojb-table-name")})
+ALTER TABLE ${schema}${table} ADD CONSTRAINT ${foreignTableName}_${columnName}_IR 
+  FOREIGN KEY (${foreignTableName}_${columnName}_FK)
+  REFERENCES ${schema}${foreignTableName}(ID)
   ON DELETE RESTRICT;
 
 #end
@@ -43,9 +45,10 @@ ALTER TABLE ${schema}${table} ADD CONSTRAINT ${columnName}_IR
 #getType($model $relation $type)
 #if((${type} == ${class}) && ${type.booleanValueOfTag("persistence")})
 #set($columnName=${relation.valueOfTag("ojb-column-name")})	
-ALTER TABLE ${schema}${table} ADD CONSTRAINT ${reference.valueOfTag("ojb-table-name")}_${relation.valueOfTag("ojb-column-name")}_IR 
-  FOREIGN KEY (${table}_${relation.valueOfTag("ojb-column-name")}_FK)
-  REFERENCES ${schema}${reference.getAttribute("ojb-table-name")}(ID)
+#set($foreignTableName=${reference.getAttribute("ojb-table-name")})
+ALTER TABLE ${schema}${table} ADD CONSTRAINT ${foreignTableName}_${columnName}_IR 
+  FOREIGN KEY (${foreignTableName}_${columnName}_FK)
+  REFERENCES ${schema}${foreignTableName}(ID)
   ON DELETE RESTRICT;
 
 #end

@@ -7,11 +7,13 @@ ${sign}define _${className}_LW_CTO_
 
 ${sign}include "NullableTypes.idl"
 ## generate the includes for all used data objects
+#set($properties=${class.getProperties()})
+#set($aggregations=${class.getIndexedProperties()})
 #foreach ($property in $properties)
 #if(!${property.isTransient()} && ${property.booleanValueOfTag("bo-lightweight")})
 #getType($model $property $type)
 #isDataObject($type $isLightweightDataObject)	
-#if($isLightweightDataObject)
+#if($isLightweightDataObject && ($type != $class))
 ${sign}include "${type.getAttribute("cto-lw-class")}.idl"
 #end
 #end
@@ -20,7 +22,7 @@ ${sign}include "${type.getAttribute("cto-lw-class")}.idl"
 #if(!${aggregation.isTransient()} && ${aggregation.booleanValueOfTag("bo-lightweight")})
 #getType($model $aggregation $type)
 #isDataObject($type $isLightweightDataObject)	
-#if($isLightweightDataObject)
+#if($isLightweightDataObject && ($type != $class))
 ${sign}include "${type.getAttribute("cto-lw-class")}.idl"
 #end
 #end
@@ -55,10 +57,10 @@ module ch {
 #foreach($aggregation in $aggregations)
 #if(${aggregation.booleanValueOfTag("bo-lightweight")})
 #getType($model $aggregation $type)	
-#isDataObject($type $isDataObject)
 #if(${type})
-#if($isDataObject) 
+#isDataObject($type $isDataObject)
 #isReferenceCode($type $isReferenceCode)
+#if($isDataObject) 
 #if(${type.getAttribute("bo-lightweight")})
         sequence<${type.getAttribute("cto-lw-class")}> ${aggregation.getName()};
 #end
@@ -77,4 +79,3 @@ module ch {
   };
 };
 
-#endif

@@ -107,9 +107,11 @@ CREATE INDEX ${table}_${name}_IDX ON
 #end
 #end
 #end
+## references to the class having indexed properties with cardinality 1-N to the
+## class are generated as reverse foreign keys in the class.
 #set($references=$model.getClassReferences($class))
 #foreach($reference in $references)
-#isPersistentDataObject($type $isPersistentDataObject)
+#isPersistentDataObject($reference $isPersistentDataObject)
 #if($isPersistentDataObject)
 #set($relations=${reference.getIndexedProperties()})
 #foreach($relation in $relations)
