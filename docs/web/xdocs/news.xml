@@ -39,6 +39,9 @@
         generate the business model of their applications. The major 
         innovations are.</p>
       <ul>
+        <li>The major goal of the latest version of the series is to remove 
+          identify errors and have a stable code base. Refactoring was applied
+          to clean major public interfaces.</li>
         <li>An initial version of a complete example is provided with a 
           tutorial. The provided ant files compile and run the tutorial in all 
           supported modes: as 2-tiers application, as CORBA client/server and 

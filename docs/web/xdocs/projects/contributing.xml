@@ -38,6 +38,22 @@
         <li>Take the time to clearly explain your issue and write a concise email
           message. Less confusion facilitates fast and complete resolution.</li>
       </ul>
+      <p>To build an effective project group, it is essential to develop a culture
+        that is supportive to software development. The following are some of key
+        precepts we learned from others or discovered during our journey.</p>
+      <ul>
+        <li>Work hard, be proud of the results, have fun</li>
+        <li>Be creative, be curious, be extreme (<em>eXtreme Programming</em>)</li>
+        <li>Learn new skills, teach your skills to others</li>
+        <li>Value the contributions of team members</li>
+        <li>Read papers, write papers, give presentations</li>
+        <li>Act now, rather than later</li>
+        <li>Accept responsibility, delegate responsibility</li>
+        <li>Be an evangelist for open source and freedom of speech</li>
+        <li>Do sports, drink coffee, beer, wine</li>
+        <li>Fix your own bugs, fix other bugs</li>
+        <li>Make at least one joke each day</li>
+      </ul>
     </section>
     <section>
       <title>Install Project</title>
@@ -60,13 +76,19 @@
           out the project as a Java project.</li>
         <li>Retrieve the development library package available under the 
           download files of the project. Create a directory <em>lib</em> in the 
-          project, unzip the downloaded file and copy all the librairies files 
-          to the <em>lib</em> directory.</li>
+          project, unzip the downloaded file and copy all the libraries files 
+          to the <em>lib</em> directory. A subset of these libraries is used
+          to execute the provided tests. The list of required libraries stored
+          in the <em>test-lib</em> directory is available in CVS.</li> 
         <li>You should now be able to compile the project. Some errors can 
           still remain in the test folders. Start the <em>pmMDA</em> 
           application with the provided model and configuration file, generate 
           the artifacts with all the loaded cartridges. Rebuild the project.
           Now no errors should remain.</li>
+        <li>If you want to generate the project metrics you must download the
+          metrics library package containing the libraries of the used quality
+          tools. Unzip this file and copy all the libraries in the directory
+          <em>scripts/lib</em>.</li>
       </ol>
       <p>From now you can work and commit your enhancements in CVS. Do not
         forget to register yourself as developer in the project to receive 

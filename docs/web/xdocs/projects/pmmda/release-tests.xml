@@ -21,6 +21,15 @@
         <li>ant build-corba-tests</li>
         <li>ant build-jboss-tests</li>
       </ul>
+      <note>
+        The build scripts assumes that JDK 1.4.2 and 1.5.0 are installed on the
+        build machine.
+      </note>
+      <note>
+        The EJB ant task is an extension and needs additional librairies. The 
+        BCEL jar file must be installed. Please consult the Ant manual for 
+        detailed instructions.
+      </note>
       <p>To run sucessfully the tests the used software packages for the database,
         CORBA ORB, or J2EE container must be installed. Please refer to the 
         installation notes of the used packages. The application sets are 
