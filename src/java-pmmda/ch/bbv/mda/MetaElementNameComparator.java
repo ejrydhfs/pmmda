@@ -19,19 +19,20 @@ public class MetaElementNameComparator implements Comparator {
 		return (leftName.compareTo(rightName));
 	}
 
-	/** Returns the name of the meta element or the string if the object is a 
-	 * string. An illegal cast exception is thrown if the object is not a element 
-	 * or a string.
-	 * @param object object to transform.
-	 * @return the requested string value.
-	 */
-	private String getString(Object object) {
-		String text;
-		if (object instanceof String) {
-			text = (String)object; 
-		} else {
-			text = ((MetaElement)object).getName();
-		}
-		return text;
-	}
+  /**
+   * Returns the name of the meta element or the string if the object is a
+   * string. An illegal cast exception is thrown if the object is not a element
+   * or a string.
+   * @param object object to transform.
+   * @return the requested string value.
+   */
+  private String getString(Object object) {
+    String text;
+    if (object instanceof String) {
+      text = (String) object;
+    } else {
+      text = ((MetaElement) object).getName();
+    }
+    return text;
+  }
 }

@@ -12,32 +12,33 @@ package ch.bbv.mda;
  * @version $Revision$
  */
 public abstract class VisitorFunctor implements Visitor {
-	public void visit(MetaModel item) {
+  public void visit(MetaModel item) {
     execute(item);
-	}
+  }
 
-	public void visit(MetaPackage item) {
-		execute(item);
-	}
+  public void visit(MetaPackage item) {
+    execute(item);
+  }
 
-	public void visit(MetaClass item) {
-		execute(item);
-	}
+  public void visit(MetaClass item) {
+    execute(item);
+  }
 
-	public void visit(MetaProperty item) {
-		execute(item);
-	}
+  public void visit(MetaProperty item) {
+    execute(item);
+  }
 
-	public void visit(MetaIndexedProperty item) {
-		execute(item);
-	}
+  public void visit(MetaIndexedProperty item) {
+    execute(item);
+  }
 
-	public void visit(TaggedValue item) {
-		execute(item);
-	}
+  public void visit(TaggedValue item) {
+    execute(item);
+  }
 
-	/** Executes the functor method on the item.
-	 * @param item item to process.
-	 */	
-	protected abstract void execute(Object item);
+  /**
+   * Executes the functor method on the item.
+   * @param item item to process.
+   */
+  protected abstract void execute(Object item);
 }

@@ -17,114 +17,129 @@ import java.io.Serializable;
 public class TaggedValue implements Serializable {
   // %% BEGIN USER DECLARATION
   // %% END USER DECLARATION
-  
-  /** Name of the tag describing the tagged value.
+
+  /**
+   * Name of the tag describing the tagged value.
    */
   private String tag;
 
-  /** Value of the tagged value.
+  /**
+   * Value of the tagged value.
    */
   private String value;
 
-  /** Type of the values of the tagged value.
+  /**
+   * Type of the values of the tagged value.
    */
   private TaggedValueType type;
 
-	/** Default constructor of the class.
-	 */
+  /**
+   * Default constructor of the class.
+   */
   public TaggedValue() {
     // default constructor
   }
 
-	/** Constructor of the class.
-	 * @param value value of the tagged value.
-	 * @param type type of the tagged value.
-	 */
+  /**
+   * Constructor of the class.
+   * @param value value of the tagged value.
+   * @param type type of the tagged value.
+   */
   public TaggedValue(String value, TaggedValueType type) {
     this.tag = type.getTag();
-		this.type = type;
+    this.type = type;
     this.value = value;
   }
 
-  /** Constructor of the class.
+  /**
+   * Constructor of the class.
    * @param tag tag name of the tagged value.
    * @param value value of the tagged value.
    */
-	public TaggedValue(String tag, String value) {
-		this.tag = tag;
-		this.value = value;
-	}
+  public TaggedValue(String tag, String value) {
+    this.tag = tag;
+    this.value = value;
+  }
 
-	/** Creates a new tagged value of the given tagged value type.
-	 * @param type type of the tagged value to create.
-	 */
-	public TaggedValue(TaggedValueType type) {
-		this(type.getDefaultValue(), type);
-	}
+  /**
+   * Creates a new tagged value of the given tagged value type.
+   * @param type type of the tagged value to create.
+   */
+  public TaggedValue(TaggedValueType type) {
+    this(type.getDefaultValue(), type);
+  }
 
-	/** Copy constructor.
-	 * @param taggedValue tagged value used as prototype.
-	 */
+  /**
+   * Copy constructor.
+   * @param taggedValue tagged value used as prototype.
+   */
   public TaggedValue(TaggedValue taggedValue) {
     this.tag = taggedValue.tag;
     this.value = taggedValue.value;
     this.type = taggedValue.type;
   }
 
-	/** Returns the tag of the tagged value.
-	 * @return the tag name of the tagged value.
-	 */
+  /**
+   * Returns the tag of the tagged value.
+   * @return the tag name of the tagged value.
+   */
   public String getTag() {
     return tag;
   }
 
-	/** Returns the value of the tagged value.
-	 * @return the value of the tagged value.
-	 * @see #setValue
-	 */
+  /**
+   * Returns the value of the tagged value.
+   * @return the value of the tagged value.
+   * @see #setValue
+   */
   public String getValue() {
     return value;
   }
 
-	/** Sets the value of the tagged value.
-	 * @param value new value of the tagged value.
-	 * @see #getValue
-	 */
+  /**
+   * Sets the value of the tagged value.
+   * @param value new value of the tagged value.
+   * @see #getValue
+   */
   public void setValue(String value) {
     this.value = value;
   }
 
-	/** Returns the type of the tagged value.
-	 * @return the type of the tagged value.
-	 * @see #setType
-	 */
+  /**
+   * Returns the type of the tagged value.
+   * @return the type of the tagged value.
+   * @see #setType
+   */
   public TaggedValueType getType() {
     return type;
   }
 
-	/** Sets the type of the tagged value.
-	 * @param type new type of the tagged value.
-	 * @see #getType
-	 */
+  /**
+   * Sets the type of the tagged value.
+   * @param type new type of the tagged value.
+   * @see #getType
+   */
   public void setType(TaggedValueType type) {
     this.type = type;
   }
 
-  // %% BEGIN USER CODE 
-  
-  /** Returns the boolean value of the tagged value if the type is boolean and
+  // %% BEGIN USER CODE
+
+  /**
+   * Returns the boolean value of the tagged value if the type is boolean and
    * the value defined.
    * @return the boolean value of the tag if defined otherwise false.
    */
   public boolean booleanValue() {
-    return ((value != null) && value.equals("true")); 
+    return ((value != null) && value.equals("true"));
   }
 
-	/** Sets a boolean value to the tagged value.
-	 * @param value new boolean value of the tag.
-	 */
+  /**
+   * Sets a boolean value to the tagged value.
+   * @param value new boolean value of the tag.
+   */
   public void booleanValue(boolean value) {
     this.value = Boolean.toString(value);
   }
-  // %% END USER CODE 
+  // %% END USER CODE
 }
