@@ -1,7 +1,7 @@
-/* copyright 2000-2004 Marcel Baumann
- * Licensed under the Apache License, Version 2.0 (the "Licence);
- * you may not use this file except in compliance with the License.
- * $Id$
+/*
+ * copyright 2000-2004 Marcel Baumann Licensed under the Apache License, Version
+ * 2.0 (the "Licence); you may not use this file except in compliance with the
+ * License. $Id$
  */
 package ch.bbv.mda.generators;
 
@@ -44,6 +44,7 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
    * The prefix of the cartridge.
    */
   public static final String PREFIX = "ojb";
+
   /**
    * Key part for a property of the cartridge used to retrieve user values.
    */
@@ -265,15 +266,19 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
     } else if (clazz.equals(MetaPackage.class)) {
       types.add(new TaggedValueType(SCHEMA_TAG, "", String.class, this));
     } else if (clazz.equals(MetaClass.class)) {
-      types.add(new TaggedValueType(IS_PERSISTENT_TAG, "false", Boolean.TYPE, this));
+      types.add(new TaggedValueType(IS_PERSISTENT_TAG, "false", Boolean.TYPE,
+          this));
       types.add(new TaggedValueType(TABLE_NAME_TAG, null, String.class, this));
     } else if (clazz.equals(MetaProperty.class)) {
       types.add(new TaggedValueType(COLUMN_NAME_TAG, null, String.class, this));
       types.add(new TaggedValueType(COLUMN_TYPE_TAG, "String",
           JdbcTypeCode.class, this));
-      types.add(new TaggedValueType(COLUMN_SIZE_TAG, "255", Integer.TYPE, this));
-      types.add(new TaggedValueType(CAN_BE_NULL_TAG, "false", Boolean.TYPE, this));
-      types.add(new TaggedValueType(IS_PRIMARY_TAG, "false", Boolean.TYPE, this));
+      types
+          .add(new TaggedValueType(COLUMN_SIZE_TAG, "255", Integer.TYPE, this));
+      types.add(new TaggedValueType(CAN_BE_NULL_TAG, "false", Boolean.TYPE,
+          this));
+      types
+          .add(new TaggedValueType(IS_PRIMARY_TAG, "false", Boolean.TYPE, this));
       types.add(new TaggedValueType(OPTIMISTIC_LOCKING_TAG, "false",
           Boolean.TYPE, this));
     } else if (clazz.equals(MetaIndexedProperty.class)) {
@@ -285,39 +290,52 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
     return types;
   }
 
-  public TaggedValue getTaggedValueWithElementDependentDefault(TaggedValueType taggedValueType, MetaElement element){
+  public TaggedValue getTaggedValueWithElementDependentDefault(
+      TaggedValueType taggedValueType, MetaElement element) {
     TaggedValue value = new TaggedValue(taggedValueType);
     updateTaggedValueWithElementDependentDefault(value, element);
     return value;
   }
-  
-  public void updateTaggedValueWithElementDependentDefault(TaggedValue taggedValue, MetaElement element){
-    if(taggedValue.getType().getTag().equals(TABLE_NAME_TAG)){
-      taggedValue.setValue(element.getName()+"Table");
-    } else if(taggedValue.getType().getTag().equals(SCHEMA_TAG)){
-      taggedValue.setValue(element.getName()+"Schema");
-    } else if(taggedValue.getType().getTag().equals(COLUMN_NAME_TAG)){
-      taggedValue.setValue(element.getName()+"Column");
-    } else if(element instanceof MetaProperty && taggedValue.getType().getTag().equals(COLUMN_TYPE_TAG)){
-      MetaProperty property = (MetaProperty)element;
+
+  public void updateTaggedValueWithElementDependentDefault(
+      TaggedValue taggedValue, MetaElement element) {
+    String name = element.getName();
+    if (taggedValue.getType().getTag().equals(TABLE_NAME_TAG)) {
+      if (name != null) {
+        taggedValue.setValue(name + "Table");
+      }
+    } else if (taggedValue.getType().getTag().equals(SCHEMA_TAG)) {
+      if (name != null) {
+        taggedValue.setValue(name + "Schema");
+      }
+    } else if (taggedValue.getType().getTag().equals(COLUMN_NAME_TAG)) {
+      if (name != null) {
+        taggedValue.setValue(name + "Column");
+      }
+    } else if (element instanceof MetaProperty
+        && taggedValue.getType().getTag().equals(COLUMN_TYPE_TAG)) {
+      MetaProperty property = (MetaProperty) element;
       // remove package name
       String type = property.getTypeName();
-      int idx = type.lastIndexOf(".");
-      if(idx != -1){
-        type = type.substring(idx+1);
-      }
-      // convert textual string representation into jdbc code
-      List codes = JdbcTypeCode.getCodes();
-      for(Iterator i=codes.iterator(); i.hasNext();){
-        JdbcTypeCode jdbcCode = (JdbcTypeCode)i.next();
-        if(jdbcCode.getShortDescription().toLowerCase().equals(type.toLowerCase())){
-          taggedValue.setValue(jdbcCode.getShortDescription());
-          break;
+      if (type != null) {
+        int idx = type.lastIndexOf(".");
+        if (idx != -1) {
+          type = type.substring(idx + 1);
+        }
+        // convert textual string representation into jdbc code
+        List codes = JdbcTypeCode.getCodes();
+        for (Iterator i = codes.iterator(); i.hasNext();) {
+          JdbcTypeCode jdbcCode = (JdbcTypeCode) i.next();
+          if (jdbcCode.getShortDescription().toLowerCase().equals(
+              type.toLowerCase())) {
+            taggedValue.setValue(jdbcCode.getShortDescription());
+            break;
+          }
         }
       }
     }
   }
-  
+
   public void processPackage(MetaPackage metaPackage) {
     this.metaPackage = metaPackage;
     if (!metaPackage.booleanValueOfTag(BogCartridge.GENERATE_TAG)) {

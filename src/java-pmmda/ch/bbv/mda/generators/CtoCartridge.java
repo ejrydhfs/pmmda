@@ -1,7 +1,7 @@
-/* copyright 2000-2004 Marcel Baumann
- * Licensed under the Apache License, Version 2.0 (the "Licence);
- * you may not use this file except in compliance with the License.
- * $Id$
+/*
+ * copyright 2000-2004 Marcel Baumann Licensed under the Apache License, Version
+ * 2.0 (the "Licence); you may not use this file except in compliance with the
+ * License. $Id$
  */
 package ch.bbv.mda.generators;
 
@@ -208,23 +208,29 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
   public List getTaggedValueTypes(Class clazz) {
     List types = new ArrayList();
     if (clazz.equals(MetaPackage.class)) {
-      types.add(new TaggedValueType(CTO_PACKAGE_IDL_TAG, "", String.class, this));
+      types
+          .add(new TaggedValueType(CTO_PACKAGE_IDL_TAG, "", String.class, this));
     }
     return types;
   }
 
-  public TaggedValue getTaggedValueWithElementDependentDefault(TaggedValueType taggedValueType, MetaElement element){
+  public TaggedValue getTaggedValueWithElementDependentDefault(
+      TaggedValueType taggedValueType, MetaElement element) {
     TaggedValue value = new TaggedValue(taggedValueType);
     updateTaggedValueWithElementDependentDefault(value, element);
     return value;
   }
-  
-  public void updateTaggedValueWithElementDependentDefault(TaggedValue taggedValue, MetaElement element){
-    if(taggedValue.getType().getTag().equals(CTO_PACKAGE_IDL_TAG)){
-      taggedValue.setValue(element.getName()+"PackageIdl");
+
+  public void updateTaggedValueWithElementDependentDefault(
+      TaggedValue taggedValue, MetaElement element) {
+    if (taggedValue.getType().getTag().equals(CTO_PACKAGE_IDL_TAG)) {
+      String name = element.getName();
+      if (name != null) {
+        taggedValue.setValue(name + "PackageIdl");
+      }
     }
   }
-  
+
   public void preProcessPackage(MetaPackage metaPackage) {
     assert (metaPackage != null);
 

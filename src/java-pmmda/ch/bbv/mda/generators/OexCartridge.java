@@ -1,7 +1,7 @@
-/* copyright 2000-2004 Marcel Baumann
- * Licensed under the Apache License, Version 2.0 (the "Licence);
- * you may not use this file except in compliance with the License.
- * $Id$
+/*
+ * copyright 2000-2004 Marcel Baumann Licensed under the Apache License, Version
+ * 2.0 (the "Licence); you may not use this file except in compliance with the
+ * License. $Id$
  */
 package ch.bbv.mda.generators;
 
@@ -135,25 +135,32 @@ public class OexCartridge extends CartridgeImpl {
     if (clazz.equals(MetaClass.class)) {
       types.add(new TaggedValueType(VIEW_CLASS_TAG, "", String.class, this));
     } else if (clazz.equals(MetaProperty.class)) {
-      types.add(new TaggedValueType(IS_VISIBLE_TAG, "false", Boolean.TYPE, this));
+      types
+          .add(new TaggedValueType(IS_VISIBLE_TAG, "false", Boolean.TYPE, this));
     } else if (clazz.equals(MetaIndexedProperty.class)) {
-      types.add(new TaggedValueType(IS_VISIBLE_TAG, "false", Boolean.TYPE, this));
+      types
+          .add(new TaggedValueType(IS_VISIBLE_TAG, "false", Boolean.TYPE, this));
     }
     return types;
   }
 
-  public TaggedValue getTaggedValueWithElementDependentDefault(TaggedValueType taggedValueType, MetaElement element){
+  public TaggedValue getTaggedValueWithElementDependentDefault(
+      TaggedValueType taggedValueType, MetaElement element) {
     TaggedValue value = new TaggedValue(taggedValueType);
     updateTaggedValueWithElementDependentDefault(value, element);
     return value;
   }
-  
-  public void updateTaggedValueWithElementDependentDefault(TaggedValue taggedValue, MetaElement element){
-    if(taggedValue.getType().getTag().equals(VIEW_CLASS_TAG)){
-      taggedValue.setValue(element.getName()+"View");
+
+  public void updateTaggedValueWithElementDependentDefault(
+      TaggedValue taggedValue, MetaElement element) {
+    if (taggedValue.getType().getTag().equals(VIEW_CLASS_TAG)) {
+      String name = element.getName();
+      if (name != null) {
+        taggedValue.setValue(name + "View");
+      }
     }
   }
-  
+
   public void preProcessPackage(MetaPackage metaPackage) {
     Properties context = getContext();
     StringBuffer buffer = new StringBuffer();
