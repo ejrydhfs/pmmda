@@ -1,18 +1,22 @@
 1. Prepare distribution
    --------------------
-- run "sourceforge" target to generate distribution
-- run "build-all-tests" target to generate the test examples
-- run each test appliction with the provided shell scripts.
-- execute the sanity test cases.
+- Verify that the version of all used components is the one of the
+  component stored in the lib directory.
+- Run "sourceforge" target to generate distribution. Verify that the 
+  completness of the web site with its references to metrics and JavaDoc.
+- Run "build-all-tests" target to generate the test examples.
+- Run each test appliction with the provided shell scripts.
+- Execute the sanity test cases - once 2-tiers, CORBA, and J2EE -.
 
 2. Binary and source distribution
    ------------------------------
 The binary and source distribution of all subprojects are published with a 
 version number in sourceforge.
+
 The following steps must be done before the release.
 - Update the build properties with the new release versions. Release candidates
   are marked with a RC postfix follow with a revision number.
-- Update the release notes of all components.
+- Update the release notes of all components and projects.
 - Generate the distributions (using the ant jobs defined in 
   build-sourceforge.xml).
 - Generate the zip file containing all librairies necessary for development.
@@ -27,6 +31,7 @@ The following steps must be done before the release.
   sourceforge "pmmda-developers@lists.sourceforge.net".
 
 The following steps must be done after the release
+- Verify that the uploaded distributions can be downloaded and installed.
 - Update the build properties with the next version number and the postfix 
   "-dev". Normally only the patch number should be incremented.
 - Update the version number in the pmmda application.
