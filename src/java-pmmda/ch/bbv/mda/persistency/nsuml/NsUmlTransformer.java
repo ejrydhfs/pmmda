@@ -297,7 +297,7 @@ public class NsUmlTransformer {
     if (mClassifier != null) {
       property.setTypeName(getQualifiedName(attribute.getType()));
     } else {
-      log.error("class. property '" + name + "." + metaClass.qualifiedName() + "'"
+      log.error("class. property '" + metaClass.qualifiedName() + "." + name + "'"
           + "has no type");
     }
 
