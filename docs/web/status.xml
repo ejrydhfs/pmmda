@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<status>
+  <developers>
+    <person name="Marcel Baumann" email="marcelbaumann@sourceforge.net" 
+      id="MB"/>
+    <person name="Alexandra Junghans" email="" id="AJ"/>
+  </developers>
+  <todo>
+    <actions priority="high">
+      <action context="docs" type="add" dev="MB" due-to="pmMDA Group"> Create 
+        an initial version of the Forrest site and upload it to the source 
+        forge site. The <em>pmMDA group</em> should review the site and provide 
+        feedback. </action>
+      <action context="source" type="add" dev="MB" due-to="pmMDA Group"> Create 
+        an initial binary and source distribution of pmMDA application, data 
+        object framework and examples. </action>
+    </actions>
+    <actions priority="medium">
+      <action context="infrastructure" type="update" dev="MB" 
+        due-to="pmMDA Group"> Migrate the project to Eclipse 3.0. Find 
+        compatible versions of the used plugins for the new version. Test the 
+        compile, debug, test, and release cycle with the new environment. 
+        </action>
+      <action context="infrastructure" type="update" dev="MB" 
+        due-to="pmMDA Group"> Update all external components used in the 
+        projects to the latest released version. In particular all Apache and 
+        Jakarta should be synchronized. </action>
+      <action context="docs" type="update" dev="MB" due-to="pmMDA Group"> 
+        Extend the tutorials describing how to generate a compilable and 
+        executable application with <em>pmMDA</em>. </action>
+    </actions>
+    <actions priority="low">
+      <action context="extension" type="update" dev="MB" due-to="pmMDA Group"> 
+        Add support for the Hibernate O/R mapping tool in the DOG framework. 
+        Addapt accordingly the code generator of pmMDA. </action>
+      <action context="docs" type="fix" dev="MB" due-to="pmMDA Group"> Define 
+        nicer icons for the <em>pmMDA</em> project and its group. </action>
+    </actions>
+  </todo>
+</status>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.2//EN" 
+                          "http://apache.org/forrest/dtd/document-v12.dtd">
+<document> 
+  <header> 
+    <title>BOG Tutorials</title> 
+  </header> 
+  <body> 
+    <section>
+      <title>Users and Roles Managment Tutorial</title> 
+      <p>The "Users and Roles Management" tutorial defines a complete application 
+        to manage clients and their associated rights for a web application. The 
+        defined data model is compatible with the database realm of Tomcat. The
+        domain model is specified as an <em>ArgoUML</em> model. The 
+        <em>pmMDA</em> generates the source code artifacts using the <em>DOG</em>
+        framework. The project can be compiled and executed. All required files
+        and libraries are packaged with the tutorial. A copy of the DOG jar file
+        and of all the dependent libraries are available in the library 
+        directory.</p>
+      <p>The "Hypersonic SQL" database is used in the tutorial. The user does not 
+        need to install any database package. The <em>HSQL</em> is configured as
+        a standalone persistent engine. The access mode is.</p>
+      <dl>
+        <dt>JDBC Driver</dt><dd>org.hsqldb.jdbcDriver</dd>
+        <dt>URL</dt><dd>jdbc:hsqldb:./db/users</dd>
+        <dt>User and Password</dt><dd>"sa", ""</dd>
+      </dl>
+      <p>To initialize a new database the following statements must be executed.
+        In the tutorial an empty database is already provided with some data.
+        This database can be used for the first experiments with <em>pmMDA</em>
+        and the provided frameworks.</p>
+      <source>
+        java -cp hsqldb.jar org.hsqldb.util.ScriptTool -database ./db/users 
+             -script ojbcore-schema-hsql.sql
+        java -cp hsqldb.jar org.hsqldb.util.ScriptTool -database ./db/users 
+             -script createTablesHSQL.sql
+      </source>        
+    </section>
+    <section>
+      <title>Instructions</title>
+      <p>The following steps must be performed to generate, compile and run the
+        roles management tutorial. The instructions assumes that you have 
+        downloaded and installed the <em>pmMDA</em> binary distribution and the 
+        source distribution. The <em>DOG</em> framework is optional and needs
+        only to be downloaded if you want to extensively modify the example.</p>
+        
+      <p>The first example run the <em>User Roles Management</em> example as a
+        two tiers application</p>
+      <dl>
+        <dt>Compilation</dt><dd>The application is compiled with ant.
+          <code>ant -f build-examples.xml build-rich-client-tests</code></dd>
+        <dt>Execution</dt><dd>The application is started with ant.
+          <code>ant -f build-examples.xml run-rich-client-tests</code></dd>
+      </dl>
+    </section>
+  </body>
+</document>

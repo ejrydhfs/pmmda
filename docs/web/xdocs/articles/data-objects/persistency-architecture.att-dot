@@ -1,0 +1,52 @@
+digraph persistency {
+	subgraph clustercf {
+		node [shape=record, style=filled, color=lightgrey]
+		label="client application\r";
+		client [label="<f0>client \nfunctions|<f1>graph copies\n(BO, LW)|<f2>client\nfunctions", 
+			style=filled, color=white];
+		cframework [label="<f0> BO|<f1>Framework|<f2> LW"];
+		proxies	[label="services\nproxies", style=filled, color=slategray];
+		client_caches [label="<f0> BO cache|<f1> LW Cache", style=filled, color=yellowgreen];
+		clientproxies [label="client proxies\ndomain specific", style=filled, color=white];
+
+		cframework:f1 -> client_caches:f0 [label="get from\ncache"];
+		cframework:f1 -> client_caches:f1 [label="get from\ncache"];
+		client:f0 -> cframework [label="get/set\ndata"];
+		client:f1 -> cframework [label="get/set\ndata"];
+		client:f2 -> clientproxies [label="remote call"];
+		cframework -> proxies [label="retrieve\nstore"];
+	}
+
+	subgraph clustersf {
+		node [shape=record, style=filled, color=lightgrey];
+		label="server application\r";
+		server [label="<f0>server \nfunctions|<f1>graph copies\n(BO, LW)|<f2>server\nfunctions", 
+			style=filled, color=white];
+		sframework [label="<f0> BO|Framework|<f1> LW"];
+		ojb_caches [label="<f0> BO cache\ndelegated to OJB|<f1> LW Cache\ndelegated to OJB", 
+			style=filled, color=yellowgreen];
+		db [label="<f0>|<f1>ODMG/JDO Framework\n(multiple data sources)|<f2>", style=filled, color=yellowgreen];
+		db_names [label="<f0> DB2|<f1> Oracle|<f2> MySQL", style=filled, color=yellowgreen];
+
+		services [label="transport\nservices", style=filled, color=slategray];
+		serverproxies [label="server proxies\ndomain specific", style=filled, color=white];
+
+		db:f1 -> db_names:f0 [label="JDBC"];
+		db:f1 -> db_names:f1 [label="JDBC"];
+		db:f1 -> db_names:f2 [label="JDBC"];
+		db:f2 -> ojb_caches:f0 [label="get from\ncache"];
+		db:f2 -> ojb_caches:f1 [label="get from\ncache"];
+		sframework:f0 -> db [label="retrieve\nstore"];
+		sframework:f1 -> db [label="retrieve\nstore"];
+		serverproxies -> server:f2 [label="call"];
+		server -> sframework [label="get/set\ndata"];
+		services -> sframework [label="get/set\ndata"];
+	}
+
+	proxies -> services [ltail=clustercf, lhead=clustersf, style=dotted, 
+		label="IIOP/RMI \nNetwork Communication"];
+
+	clientproxies -> serverproxies [ltail=clustercf, lhead=clustersf, style=dotted, 
+		label="IIOP/RMI \nNetwork Communication"];
+
+}

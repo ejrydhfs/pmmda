@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.2//EN" 
+  "http://forrest.apache.org/forrest/dtd/document-v12.dtd">
+<document>
+  <header>
+    <title>Support</title>
+  </header>
+  <body>
+    <section>
+      <title>Community Support</title>
+      <p><link href="http://www.sourceforge.net/projects/pmmda"><em>pmMDA 
+        group</em></link> provides community support, advices and development.
+        All community activities are released under the Apache license and are
+        available to all. 
+        </p>
+        <p>The error tracking system is the standard one provided in Sourceforge.
+          The forums are available for questions and extension requests. The
+          developers try to respond quickly to all pending demands.</p>
+    </section>
+    <section>
+      <title>Commercial Support</title>
+      <p>Commercial support is available for companies wishing extensive support,
+        training and coaching activities. Commercial partners provide services in 
+        Europe.</p>
+      <p>Please send an email to the <em>pmMDA group</em> at 
+        <em>marcel.baumann@sourceforge.net</em></p>
+    </section>
+    <section>
+      <title>Sponsors</title>
+      <p>Companies are supporting the development of the <em>pmMDA</em> frameworks
+        and the related projects.</p>
+      <table>
+        <tr>
+          <th>Logo</th>
+          <th>Company</th>
+        </tr>
+        <tr>
+          <td><img src="images/sponsor-bbv.gif" alt="bbv logo"/></td>
+          <td>
+            <link href="http://www.bbv.ch">bbv Software Services AG</link>
+          </td>
+        </tr>
+</table>
+    </section>
+  </body>
+</document>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.2//EN" 
+                          "http://apache.org/forrest/dtd/document-v12.dtd">
+<document> 
+  <header> 
+    <title>Examples Design</title> 
+  </header> 
+  <body> 
+    <section>
+      <title>Purpose</title>
+      <p>The examples provided with the projects are used in four different 
+        situations.</p>
+      <ul>
+        <li>The developers use the applications to debug and test their 
+          frameworks. The example must be integrated in the development 
+          environemnt and support fast develop, compile, debug cycles.</li>
+        <li>Sanity checks and nightly build checks use the applications to test 
+          the latest release. The nightly checks should be run unattended.</li>
+        <li>The integration team use the applications to test the release 
+          package before publishing it.</li>
+        <li>The users use the applications to verify the downloaded package and 
+          to see how features of the framework can be integrated in their 
+          projects. The example must be simple to install and run without
+          additional configuration steps.</li>
+      </ul>
+      <p>A major goal of the design is that all usage modes use the same source 
+        code, build and run scripts. Exactly one source code tree is managed by 
+        the development team.</p>
+    </section>
+    <section>
+      <title>Rules</title>
+      <p>The following rules simplify the creation and deployment of complete
+        examples.</p>
+      <ul>
+        <li>The source code of the example is defined as source directories in 
+          the eclipse environment. The example is compiled with the environment
+          builder and debugged with the integrated debugger.</li>
+        <li>The sanity checks compile the same source files as in the ones used
+          in eclipse. The example is build and run using Ant. The compilation
+          results are stored in a seperate directory. All needed libraries are 
+          stored in a seperate directory to minimize dependencies to other 
+          projects in the eclipse workspace.</li>
+      </ul>
+    </section>
+  </body>
+</document>

@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<!DOCTYPE skinconfig PUBLIC "-//APACHE//DTD Skin Configuration V0.6//EN" "skinconfig-v06.dtd">
+
+<skinconfig>
+  <disable-lucene>true</disable-lucene>
+  <disable-search>false</disable-search>
+  <disable-print-link>true</disable-print-link>  
+  <disable-pdf-link>false</disable-pdf-link>
+  <disable-xml-link>true</disable-xml-link>
+  <disable-external-link-image>false</disable-external-link-image>
+  <disable-compliance-links>false</disable-compliance-links>
+  <obfuscate-mail-links>true</obfuscate-mail-links>
+
+  <searchsite-domain>pmmda.sourceforge.net</searchsite-domain>  
+  <searchsite-name>pmMDA</searchsite-name>  
+
+  <project-name>pmMDA</project-name>
+  <project-description>pmMDA (poor man Model Driven Architecture MDA)</project-description>
+  <project-url>http://pmmda.sourceforge.net</project-url>
+  <project-logo>images/project-logo.gif</project-logo>
+  
+  <group-name>pmMDA</group-name>
+  <group-description>pmMDA Group Description</group-description>
+  <group-url>http://www.sourceforge.net/projects/pmmda</group-url>
+  <group-logo>images/group-logo.gif</group-logo>
+
+  <host-url>www.sourceforge.net</host-url>
+  <host-logo></host-logo>
+  
+  <favicon-url></favicon-url>
+
+  <year>2001-2004</year>
+  <vendor>pmMDA Group (Apache License 2.0)</vendor>
+
+  <trail>
+    <link1 name="pmMDA Group" href="http://www.sourceforge.net/projects/pmmda"/>
+    <link2 name="pmMDA" href="http://pmmda.sourceforge.net"/>
+    <link3 name="" href=""/>
+  </trail>
+
+  <toc max-depth="2" min-sections="1" location="page"/>
+  <headings type="boxed"/>
+  
+  <credits>
+    <credit>
+      <name>Built with Apache Forrest</name>
+      <url>http://xml.apache.org/forrest</url>
+      <image>skin/images/built-with-forrest-button.png</image>
+      <width>88</width>
+      <height>31</height>
+    </credit>
+    <credit>
+      <name>Hosted on Sourceforge</name>
+      <url>http://www.sourceforge.net</url>
+      <image>images/sourceforge.png</image>
+    </credit>
+  </credits>
+</skinconfig>

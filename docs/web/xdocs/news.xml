@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.2//EN" 
+  "http://apache.org/forrest/dtd/document-v12.dtd">
+<document>
+  <header>
+    <title>News</title>
+  </header>
+  <body>
+    <section>
+      <title>Latest News</title>
+      <p>Latest news of the <em>pmMDA</em> for the community.</p>
+      <ul>
+        <li><em>pmMDA</em> is now available on Sourceforge under <link 
+          href="http://pmmda.sourceforge.net"><em>pmMDA</em></link>. The 
+          published version should run without configuration on any workstation 
+          where Java JDK 1.4 or higher and Ant 1.6 or higher are available.</li>
+      </ul>
+    </section>
+    <section>
+      <title><em>pmMDA</em> 0.3.x</title>
+      <p>Current development trunk and not released.</p>
+      <ul>
+        <li>Effort was put in the serie to use only actual versions of external 
+          components and document all dependencies. The web site was updated to
+          better support forrest capabilities.</li>
+        <li>The application can be run with JDK 1.5 - beta 2 -. The source code
+          will be ported to use the new features of the language.</li>
+      </ul>
+    </section>
+    <section>
+      <title><em>pmMDA</em> 0.2.x</title>
+      <p>This releases serie is the first step from a working prototype used in 
+        a handful projects to an application which can be used by developers to 
+        generate the business model of their applications. The major 
+        innovations are.</p>
+      <ul>
+        <li>An initial version of a complete example is provided with a 
+          tutorial. The provided ant files compile and run the tutorial in all 
+          supported modes: as 2-tiers application, as CORBA client/server and 
+          as J2EE client/server. The J2EE mode requires a JBoss installation. 
+          The database is the lightweight solution HSQL and does not require 
+          additional installation. To compile the tutorial JDK 1.4 or higher 
+          and Ant 1.5 or higher are required.</li>
+        <li><em>pmMDA</em> can be run as a seperate application delivered as a 
+          set of jar files and a startup scripts. A <em>pmMDA</em> properties 
+          file is provided. The user can modify it to reflect its project 
+          structure. The property file support variable declarations as in Ant 
+          build files.</li>
+        <li>The velocity templates are delivered in a seperate directory. 
+          Architects can tailored them to their application needs and coding 
+          guidelines.</li>
+        <li>A set of cartridges are provided. The cartridges provide support 
+          for 2-tiers applications, CORBA based client/server, and J2EE based 
+          client/server applications. Support for the OJB persistence mechanism 
+          is provided.</li>
+        <li>Cartridges are pluggable in the application. Power users can write 
+          their own cartridges to implement business model code generation 
+          specific to their own frameworks.</li>
+        <li>A complete example is provided to ease the learning how to use 
+          <em>pmMDA</em> tool.</li>
+        <li>The iterator pattern described in Bloch's book is now used in the 
+          source code and code genertor templates. The JavaDoc documentation 
+          is now available for almost all items.</li>
+      </ul>
+    </section>
+    <section>
+      <title><em>pmMDA</em> 0.1.x</title>
+      <p>This releases serie ported the old code generation tool to the Java 
+        environment. These releases are not more supported.</p>
+      <ul>
+        <li>Support for CORBA based client/server application and OJB is 
+          provided.</li>
+      </ul>
+    </section>
+  </body>
+</document>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.2//EN" 
+                          "http://apache.org/forrest/dtd/document-v12.dtd">
+<document> 
+  <header> 
+    <title>pmMDA Status</title> 
+  </header> 
+  <body> 
+    <section>
+      <title>Future Developments</title>
+      <p>The <em>pmMDA</em> has an incomplete implementation of some functions.</p>
+      <ul>
+        <li>The mechanism of protected area in the generated source code.</li>
+        <li>The load and save mechanisms for models works only for ArgoUML - 
+          using NSUML - and XML representation - using XStream from Codehause-.
+          The MDR functionality is on hold until ArgoUML supports it.</li>
+      </ul>
+    </section>
+    <section>
+      <title>Future Developments</title>
+      <p>Some <em>pmMDA</em> future directions are identified. Volonteers are
+        welcome to realize these developments or define new extensions.</p>
+      <dl>
+        <dt>C++/C Language Support</dt><dd>The generators templates can be
+          extented to support C++ as a target platform. Some of the used 
+          components such as logging are available in C++. The major effort
+          would be to port the BOG framework to C++.</dd>
+        <dt>.NET Platform Support</dt><dd>Interested developers are welcome. 
+          The core team of <em>pmMDA</em> do not have .NET expertise.</dd>
+        <dt>Additional UML Tools Integration</dt><dd>To be written.</dd>
+        <dt>Integration with open source MDA Tools</dt><dd>The open source UML
+          tool ArgoUML is supported. The next step would be to support the 
+          product Poseidon also available as a free community edition.</dd>
+      </dl>
+    </section>
+    <section>
+      <title>Technical University Projects</title>
+      <p><em>pmMDA</em> initiative was used to develop an Eclipse plugin 
+        prototype. The prototype is the result of a semester work of two
+        students of the technical university of Raperswil, Switzerland. All
+        feedbacks concerning the MDA model, the configuration properties and
+        the code generator were integrated in the current release series. The
+        <em>pmMDA</em> is still distributed as a standalone application to
+        simplify its use for users not working with the Eclipse environment.</p>
+      <p>The next step is to convince technical university to use the releases
+        published on sourceforge as a basis for bachelor and master works or as
+        a teaching instrument when discussing UML and MDA approaches.</p>
+    </section>
+    <section>
+      <title>Industrial Projects</title>
+      <p><em>pmMDA</em> was started as a pragmatic solution to solve problems
+        of industrial and commercial projects in which the pmMDA group members
+        were working. One major goal of the initiative is and will always be
+        to provide pragmatic ways to use MDA paradigms on mission critical 
+        projects.</p>
+      <p>A collaboration with a major player in the reinsurance business 
+        demonstrates the adequacy of <em>pmMDA</em> to develop deal and 
+        contract management applications for insurance business. The application
+        is a mission critical suite deployed worldwide and has more than seven
+        hundred users.</p>
+      <p>A collaboraiton with a major software contracting company in 
+        Switzerland showed the efficiency of the <em>pmMDA</em> approach to
+        develop and maintain complex device management applications. The
+        mission critical application remotely manages industrial plants and
+        devices in Europe.</p>
+      <p>Based on these experiences, the contracting company wrote their
+        requirements to extend the usage of <em>pmMDA</em> to more projects.
+        The table below shows the requirements of the company.</p>
+      <table>
+        <tr><th>Requirements</th><th>Decision</th><th>Comments</th></tr>
+      </table>
+    </section>
+    <section>
+      <title>History</title>
+      <p>The source distribution of the project contains a release note document.
+        The major changes and error corrections for each release are documented
+        there.</p>
+    </section>
+  </body>
+</document>

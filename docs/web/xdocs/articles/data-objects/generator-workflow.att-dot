@@ -1,0 +1,52 @@
+digraph "workflow" {
+	graph [
+		rankdir = "LR" ranksep = .5
+		fontsize = "16"
+		fontname = "Times-Roman"
+	]
+	node [shape=box, color=black] { rank=same;
+	  	"XMI/XML";
+	}
+
+	node [shape=ellipse, color=black] { rank=same;
+		"MDA generator";
+	}
+
+	node [shape=box, color=black] { rank=same;
+		"business objects"; "lightweight objects"; "visitor pattern"; "reference codes"; 
+		"validate (XML)"; "OJB (XML)"; "DDL (SQL)"; 
+	}
+
+	node [shape=ellipse, color=black] { rank = same;
+		"java files"; "val-lib"; "ojb-lib"; "DB";
+	}
+	node [shape=circle, style=filled, fillcolor=lightgray] { rank = same;
+		"client"; "server";
+	}
+
+
+	"XMI/XML" -> "MDA generator";
+
+	"MDA generator" -> "business objects";
+	"MDA generator" -> "lightweight objects";
+	"MDA generator" -> "visitor pattern" [style=dotted, label="optional"];
+	"MDA generator" -> "reference codes" [style=dotted, label="optional"];
+	"MDA generator" -> "validate (XML)";
+	"MDA generator" -> "OJB (XML)";
+	"MDA generator" -> "DDL (SQL)";
+
+	"business objects"-> "java files";
+	"lightweight objects" -> "java files";
+	"visitor pattern" -> "java files" [style=dotted];
+	"reference codes" -> "java files" [style=dotted];
+	"validate (XML)" -> "val-lib";
+	"OJB (XML)" -> "ojb-lib";
+	"DDL (SQL)"-> "DB";
+
+	"java files" -> "client" [label="source"];
+	"java files" -> "server" [label="source"];
+	"val-lib" -> "client" [label="config"];
+	"val-lib" -> "server" [label="config"];
+	"ojb-lib" -> "server" [label="config"];
+	"DB" -> "server"; 
+}

@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.2//EN" 
+                          "http://apache.org/forrest/dtd/document-v12.dtd">
+<document> 
+  <header> 
+    <title>Contributing to pmMDA</title> 
+  </header> 
+  <body> 
+    <section>
+      <title>Introduction</title>
+      <p>The <em>pmMDA</em> project is an Open Source volunteer project released 
+        under a very open license. This means there are many ways to contribute
+        to the project - either with direct participation (coding, documenting,
+        answering questions, reporting bugs, etc.) or by resource donations 
+        (money, time, publicity, hardware, conference presentations, speeches,
+        etc.).</p>
+      <p>To begin with, we suggest you to subscribe to the news and forums of 
+        the project (follow the link for information on how to subscribe and to 
+        access the forums).</p>
+    </section>
+    <section>
+      <title>Contributing Tips</title>
+      <p>This is a collection of tips for contributing to the project in a manner 
+        that is productive for all parties.</p>
+      <ul>
+        <li>Every contribution is worthwhile. Even if the ensuing discussion 
+          proves it to be off-beam, then it may jog ideas for other 
+          people.</li>
+        <li>Use sensible and concise email subject headings. Search engines, 
+          and humans trying to browse a voluminous list, will respond favourably 
+          to a descriptive title.</li>
+        <li>Start new threads with new subject for new topics, rather than 
+          reusing the previous subject line.</li>
+        <li>Research your topic thoroughly before beginning to discuss a new 
+          development issue. Search and browse trhough the archives - your issue 
+          may have been discussed before. Do not just perceive a problem and then 
+          rush out with a question - instead delve.</li>
+        <li>Take the time to clearly explain your issue and write a concise email
+          message. Less confusion facilitates fast and complete resolution.</li>
+      </ul>
+    </section>
+    <section>
+      <title>Install Project</title>
+      <p>Developers interested to participate to the project must have an 
+        account in Sourceforge and install Eclipse 3.0 on their development 
+        machine. The next steps install the <em>pmMDA</em> project.</p>
+      <ol>
+        <li>Define a JDK installation named <em>jdk1.4</em> and another named 
+          <em>jdk1.5</em> in Eclipse (Windows/Preferences/Java/Installed JRE) 
+          and mapped them to your local installation of JDK 1.4.2 and JDK 
+          1.5.</li>
+        <li>Define a classpath variable named <em>JDK_TOOLS</em> and mapped it 
+          to the location of the <em>tools.jar</em> file located in the 
+          <em>lib</em> directory of your JDK installation in Eclipse 
+          (Windows/Preferences/Java/Build Path/Classpath Variables).</li>
+        <li>Check-out the <em>pmMDA</em> project from Sourceforge using the 
+          SSH2 method. Directives how to set up such a CVS repository can be 
+          found in the Eclipse help. Directives how to create a key and publish 
+          it can be found in the Sourceforge documentation. You should check 
+          out the project as a Java project.</li>
+        <li>Retrieve the development library package available under the 
+          download files of the project. Create a directory <em>lib</em> in the 
+          project, unzip the downloaded file and copy all the librairies files 
+          to the <em>lib</em> directory.</li>
+        <li>You should now be able to compile the project. Some errors can 
+          still remain in the test folders. Start the <em>pmMDA</em> 
+          application with the provided model and configuration file, generate 
+          the artifacts with all the loaded cartridges. Rebuild the project.
+          Now no errors should remain.</li>
+      </ol>
+      <p>From now you can work and commit your enhancements in CVS. Do not
+        forget to register yourself as developer in the project to receive 
+        write access to CVS repository.</p>
+    </section>
+    <section>
+      <title>Project Structure</title>
+      <p>The project structure was derived from examples we found on the Internet,
+        in particular on the Apache site. The structure could evolve when the 
+        project team becomes more sophisticated and the project grows.</p>
+      <p>The following rules exist for the project.</p>
+      <ul>
+        <li>All source artifacts are stored under the <em>src</em> directory. Each
+          project has a seperate tree. The coding style follows the Sun Java 
+          coding guidelines. The documentation of the source code uses JavaDoc.
+          Developers are requested to follow these guidelines.</li>
+        <li>All generated artifacts are stored under the <em>gendir</em> 
+          directory. They are not part of the version management.</li>
+        <li>All documentation artifacts are stored under the <em>docs</em> 
+          directory. All documents are either XML based on written using the 
+            <em>Open Office Tools</em>. The final documentation is generated 
+            with Forrest.</li>
+        <li>The analysis and design are stored under the <em>model</em> 
+          directory.</li>
+        <li>The compiled classes of the projects are written to <em>classes</em>.
+          The compiled classes of the examples and tests are written to 
+            <em>test-classes</em>. They ar not part of the version management.</li>
+        <li>All libraries of the projects are stored under <em>lib</em>. They 
+          are not part of the version management.</li>
+      </ul>
+      <p>All build activities are realized with Ant. The documentation is 
+        generated with Forrest and JavaDoc. The <em>pmMDA Group</em> is a strong 
+        believer of programming by contract. The project provides JavaDoc taglets
+        to document preconditions, postconditions and invariants.</p>
+      <p>Examples of applications are provided to fulfill two major goals. First 
+        potential users of <em>pmMDA</em> and the provided frameworks should have
+        examples demonstrating how to use of the provided solutions. Second these
+        programs are used to perform functional tests on the delivered versions.
+        The goal is to provide a stable, easy to use and well documented tools
+        and frameworks.</p>
+    </section>
+    <section>
+      <title>Goals of <em>pmMDA</em> Distribution</title>
+      <p>The success of an open source is certainly dependant of the quality of its 
+        distribution. The following criteria are defined for the project.</p>
+      <dl>
+        <dt>pmMDA binairies</dt><dd>The pmMDA binary distribution is available as
+          a binary compressed file. The user can download it and unpack it. A script
+          file is available to start the application. The user does not need to 
+          compile, configure or install the software. The execution of the script
+          file starts a running instance.</dd>
+        <dt>Documentation</dt><dd>The project provides extensive documentation 
+          available online as a sourceforge project web site. The JavaDoc of the
+          project is available and checked with the DockCheck doclet.</dd>
+        <dt>Examples</dt><dd>The available examples can be downloaded and installed.
+          A tutorial explains step by step the configuration operations to perform.
+          An Ant script is available to build all the examples. Script files are
+          provided to start the examples upon build. The tutorial also explain these
+          steps.</dd>
+        <dt>White Papers</dt><dd>White papers describing the implemented concepts 
+          are available as PDF files.</dd>
+      </dl>
+      <p>The distribution creation is defined in an ant file. The ant file 
+        contains all distribution artifacts of all subprojects. The creation 
+        action is defined in the main ant file of the project.</p>
+    </section>
+  </body>
+</document>

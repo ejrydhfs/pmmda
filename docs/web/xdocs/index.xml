@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.2//EN" 
+  "http://forrest.apache.org/forrest/dtd/document-v12.dtd">
+<document>
+  <header>
+    <title>Welcome to <em>pmMDA</em> - poor man's Model Driven Architecture 
+      -</title>
+  </header>
+  <body>
+    <section>
+      <title>Introduction</title>
+      <p>The <em>pmMDA – poor man MDA -</em> tool is a pragmatic approach to 
+        use MDA approach in commercial and industrial projects. Tedious source 
+        artifacts are generated from a model instead of being hand coded. 
+        Talented developers should concentrate on application design and not on 
+        writing repetitive code. Currently <em>pmMDA</em> provides extensive 
+        support for Java client/server applications using JDBC – meaning 2 
+        tiers programs -, CORBA and J2EE middleware are supported. Work is 
+        under way to support C++ based applications.</p>
+      <p><em>pmMDA</em> reads UML models, e.g. from ArgoUML tool, extends them 
+        with tagged values and generates the source code and configuration 
+        artifacts for the target applications. The tagged values are described 
+        in the user manual and are legal extensions to the UML method. 
+        Therefore the models can still be edited with UML tools. The 
+        <em>pmMDA</em> provides a user interface simplifying the edition and 
+        validation of tagged values.</p>
+      <p>The MDA approach becomes powerful when available frameworks provides 
+        powerful abstraction to progam against. The <em>pmMDA</em> project 
+        provides a set of complete frameworks streamlining client server 
+        program development.</p>
+    </section>
+    <section>
+      <title>Resources</title>
+      <p>The <em>pmMDA</em> provides the following sets of resources.</p>
+      <p><em>pmMDA</em> engine defining the metamodel to describe your 
+        application and the execution engine executing the cartridges. The 
+        model can be defined in a UML such ArgoUML and imported in 
+        <em>pmMDA</em>.</p>
+      <p>A set of cartridges generating the source code and configuration 
+        artifacts to run the application. The cartridges are written in Java. 
+        The generation template uses the Jakarta Velocity project.</p>
+      <p>Frameworks simplifying the development of complex mission-critical 
+        applications. One of the provided framework implements a data object 
+        graph manipulation framework and persistence. We are looking at JSR-235 
+        to standardize this approach. The persistence is realized using the 
+        Apache OJB project. A second framework provides a explorer framework to 
+        visualize and manipulate graphs of objects using the tree list 
+        paradigm.</p>
+    </section>
+    <section>
+      <title>Documentation</title>
+      <p>Each subproject has its own set of documentation and tutorials. The 
+        public interfaces and methods are described in the API documentation 
+        generated with JavaDoc.</p>
+      <p>A seperate section of the site provides articles and presentations 
+        about design and implementation aspects of the subprojects.</p>
+    </section>
+    <section>
+      <title>Quality and Metrics</title>
+      <p>Quality metrics are provided for all hosted projects. The <em>pmMDA 
+        Group</em> adheres to the agile process philosophy. Release often, do 
+        not wait until it is perfect. But in the long term the quality of the 
+        source code and documentation should pass all defined quality criteria. 
+        The group provides metrics for all source code and documentation 
+        artifacts of the project.</p>
+      <table>
+        <tr>
+          <th>Quality Metric Values</th>
+          <th>Description</th>
+        </tr>
+        <tr>
+          <td>
+            <link href="ext:metrics/doccheck">JavaDoc DocCheck</link>
+          </td>
+          <td>Completeness and correctness metrics of JavaDoc documentation</td>
+        </tr>
+        <tr>
+          <td>
+            <link href="ext:metrics/javancss">Java NCSS</link>
+          </td>
+          <td>Quality metrics - non commented source code, etc.</td>
+        </tr>
+        <tr>
+          <td>
+            <link href="ext:metrics/pmd">PMD Report</link>
+          </td>
+          <td>Results of PMD quality rules</td>
+        </tr>
+        <tr>
+          <td>
+            <link href="ext:metrics/jdepend">JDepend Report</link>
+          </td>
+          <td>Results of JDepend quality rules</td>
+        </tr>
+      </table>
+      <p>
+        <link href="http://www.sourceforge.net">
+          <img 
+            src="http://www.sourceforge.net/sflogo.php?group_id=110372&amp;type=5" 
+            alt="SourceForge.net Logo" width="210" height="62"/>
+        </link>
+        <link href="http://pmmda.sourceforge.net">
+          <img src="images/project-logo.gif" alt="pmMDA logo" width="210" 
+            height="62"/>
+        </link>
+        <link href="http://www.sourceforge.net/projects/pmmda">
+          <img src="images/group-logo.gif" alt="pmMDA group logo" width="210" 
+            height="62"/>
+        </link>
+      </p>
+    </section>
+  </body>
+  <footer>
+    <legal>copyright pmMDA Group (Apache License 2.0)</legal>
+  </footer>
+</document>

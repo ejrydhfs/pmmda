@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.2//EN" 
+                          "http://apache.org/forrest/dtd/document-v12.dtd">
+<document> 
+  <header> 
+    <title>pmMDA Release Tests</title> 
+  </header> 
+  <body>
+    <section>
+      <title>Sanity Tests</title>
+      <p>A set of sanity tests is defined to verify the adequacy and 
+        completness of the application. The following cases are defined.</p>
+      <p>The set of scenarios checks the user interface of the application.</p>
+      <ol>
+        <li>Verify that the menu bar is populated with the expected menu items 
+          and that a model can be displayed in the explorer window.</li>
+        <li>Verify the information in the about dialog. The list of librairies, 
+          the license, the contributors and the system properties should be 
+          visible and up to date.</li>
+        <li>Verify the information in the preferences dialog. The list of 
+          configured cartridges and their configuration should be visible and 
+          up to date.</li>
+      </ol>
+      <p>This set of scenarios checks that the reading and writing of models in 
+        all supported formats are working.</p>
+      <ol>
+        <li>Load the provided model in the application. Checks that packages, 
+          classes, properties and indexed properties are displayed.</li>
+        <li>Save the model as another ArgoUML model. Load the saved model and 
+          verify that packages, classes, properties and indexed properties are 
+          displayed.</li>
+        <li>Save the model as a XML model. Load the saved model and verify that 
+          packages, classes, properties and indexed properties are 
+          displayed.</li>
+        <li>Save the model as a serialized model. Load the saved model and 
+          verify that packages, classes, properties and indexed properties are 
+          displayed.</li>
+      </ol>
+      <p>This set of scenarios verifies that the provided code generators are 
+        working.</p>
+      <ol>
+        <li>Load the provided model in the application. Generates all artifacts 
+          for all loaded cartridges.</li>
+      </ol>
+      <p>The generated source code artifacts must now be verified. Build the 
+        test applications with the help of the provided ant scritps.</p>
+      <ol>
+        <li>Execute the rich client test application. Test it by adding some 
+          data objects. Modify the saved objects, and delete some of them.</li>
+        <li>Execute the CORBA client server test application. Test it by adding 
+          some data objects. Modify the saved objects, and delete some of 
+          them.</li>
+        <li>Execute the J2EE JBoss client server test application. Test it by 
+          adding some data objects. Modify the saved objects, and delete some 
+          of them.</li>
+      </ol>
+    </section>
+    <section>
+      <title>Integration Tests</title>
+      <p>To be written</p>
+    </section>
+    <section>
+      <title>Unit Tests</title>
+      <p>To be written</p>
+    </section>
+    <section>
+      <title>Quality Assurance</title>
+      <p>The quality of the source code artifacts and associated documentation 
+        is measured using various open source metrics and check tools. The home 
+        page of the project contains links to all used projects.</p>
+      <p>A release is published only if the sanity tests were sucessful.</p>
+      <p>An informal rule is that major releases of the applications have no 
+        compilation errors or warnings in the Eclipse environment. A second one 
+        is that the Java documentation check found no documentation errors on 
+        package and class level. The public methods should be documented.</p>
+    </section>
+  </body>
+</document>

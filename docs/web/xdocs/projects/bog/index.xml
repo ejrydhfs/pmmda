@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.2//EN" 
+                          "http://apache.org/forrest/dtd/document-v12.dtd">
+<document> 
+  <header> 
+    <title>Business Object Graph and Explorer Framework Project</title> 
+  </header> 
+  <body> 
+    <section>
+      <title>Dependencies</title>
+      <p>The project uses external open source projects. The list of required 
+        libraries <em>jar files</em> are documented in a dependencies 
+        document distributed with the source code. Below a overview of the
+        used components is provided.</p>
+      <table>
+        <tr><th>Project</th><th>Link</th></tr>
+        <tr><td>Jakarta</td><td>jakarta.apache.org</td></tr>
+        <tr><td>JUnit</td><td>www.junit.org</td></tr>
+        <tr><td>JForms</td><td>to be defined</td></tr>
+        <tr><td>OJB Object Java Bridge</td><td>db.apache.org/ojb</td></tr>
+        <tr><td>MySQL Database</td><td>www.mysql.com</td></tr>
+      </table>
+    </section>
+    <section>
+      <title>Jars List</title>
+      <p>The table below documents all the jar files and their versions used in 
+        the project.</p>
+      <table>
+        <tr><th>Jar File</th><th>Version</th><th>Comment</th></tr>
+        <tr><td>antlr</td><td>2.7.2</td><td>antlr parser</td></tr>
+        <tr><td>commons-beanutils</td><td>1.6.1</td><td>jakarta commons</td></tr>
+        <tr><td>commons-collections</td><td>3.1</td><td>jakarta commons</td></tr>
+        <tr><td>commons-dbcp</td><td>1.2.1</td><td>jakarta commons</td></tr>
+        <tr><td>commons-lang</td><td>2.0</td><td>jakarta commons</td></tr>
+        <tr><td>commons-logging</td><td>1.0.4</td><td>jakarta commons</td></tr>
+        <tr><td>commons-logging-api</td><td>1.0.4</td><td>jakarta commons</td></tr>
+        <tr><td>commons-pool</td><td>1.1</td><td>jakarta commons</td></tr>
+        <tr><td>db-ojb</td><td>1.0</td><td>apache database</td></tr>
+      </table>
+    </section>
+  </body>
+</document>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.2//EN" 
+                          "http://apache.org/forrest/dtd/document-v12.dtd">
+<document> 
+  <header> 
+    <title>DOG Status</title> 
+  </header> 
+  <body> 
+    <section>
+      <title>Middleware Integration</title>
+      <p>The actual added value of the DOG framework is it integration in all
+        major middleware standards. The framework works transparently with
+        CORBA, RMI, and J2EE. The persistency layer OJB provides integration 
+        with all major database systems.</p>
+    </section>
+    <section>
+      <title>DOG Origins</title>
+      <p>The ancestor of the DOG framework is a C++ framework which development
+        started 1995. The name of the framework was "Impendance Mismatch". The
+        framework was used in several industrial projects developed in C++/C 
+        for telecommunications and industrial controls companies. At the
+        same time tha application framework was designed to initialize complex
+        embedded telecommunication devices.</p>
+      <p>The framework ideas were used to develop a new framework in Java. New
+        features such as reflection were used and solutions were found to 
+        replace templates and function pointers. This framework was developed
+        at the end of last millenium. It was named SOODBM - Simple Object-Oriented
+        DataBase Management -. A first version of the explorer framework was
+        written to visualize the data stored in the SOODBM. This visualization
+        framework evolved to the actual application and explorer packages.</p>
+      <p>All these frameworks were released under open source licenses and freely
+        distributed to interested parties. The customers paid us to integrate the
+        framework and help them define the architectur of their products and not
+        for the frameworks.</p>
+    </section>
+    <section>
+      <title>History</title>
+      <p>The source distribution of the project contains a release note document.
+        The major changes and error corrections for each release are documented
+        there.</p>
+    </section>
+  </body>
+</document>
