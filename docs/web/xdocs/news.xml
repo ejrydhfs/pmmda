@@ -49,6 +49,9 @@
           The database is the lightweight solution HSQL and does not require 
           additional installation. To compile the tutorial JDK 1.4 or higher 
           and Ant 1.5 or higher are required.</li>
+        <li>The documentation and project web site is generated with forrest 
+          version 0.6. A script loads the new web site on sourceforge if 
+          desired.</li>
         <li><em>pmMDA</em> is now available on Sourceforge under <link 
           href="http://pmmda.sourceforge.net"><em>pmMDA</em></link>. The 
           published version should run without configuration on any workstation 

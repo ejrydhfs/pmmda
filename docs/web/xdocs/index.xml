@@ -10,7 +10,7 @@
     <section>
       <title>Introduction</title>
       <p>The <em>pmMDA – poor man MDA -</em> tool is a pragmatic approach to 
-        use MDA approach in commercial and industrial projects. Tedious source 
+        apply MDA approach in commercial and industrial projects. Tedious source 
         artifacts are generated from a model instead of being hand-coded. 
         Talented developers should concentrate on application design and not on 
         writing repetitive code. Currently <em>pmMDA</em> provides extensive 
@@ -18,6 +18,10 @@
         tiers programs -. CORBA and J2EE middleware - meaning 3 tiers programs 
         - are also supported. Work is under way to support C++ based 
         applications.</p>
+      <p>The goal is to provide a tool empowering designers to specify a MDA
+        model, validate it and generate the source code to execute it. Commercial
+        applications are the major scope of the project. In a second phase 
+        industrial products are supported.</p>
       <p><em>pmMDA</em> reads UML models, e.g. from ArgoUML tool, extends them 
         with tagged values and generates the source code and configuration 
         artifacts for the target applications. The tagged values are described 
