@@ -116,6 +116,11 @@ public class MetaClassView extends NodePropertiesView {
     if (text != null) {
       model.setDescription(text.trim());
     }
+    text = stereotypeText.getText();
+    if (text != null) {
+      model.setStereotype(text.trim());
+    }
+
     model.setVisibility((VisibilityCode) visibility.getSelectedCode());
     model.setAbstract(abstracts.isSelected());
     model.setFinal(finals.isSelected());
