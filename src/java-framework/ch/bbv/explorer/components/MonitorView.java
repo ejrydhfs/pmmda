@@ -7,6 +7,8 @@ import javax.swing.JPanel;
 
 class MonitorView extends JPanel {
 
+  private static final int BORDER = 10;
+  private static final int SPACE = 32;
   private double[] data;
 
   private String unit;
@@ -37,23 +39,21 @@ class MonitorView extends JPanel {
       min = Math.min(data[i], min);
       max = Math.max(data[i], max);
     }
-    if (Math.abs(max - min) == 0)
+    if (Math.abs(max - min) == 0) {
       max += 1;
-
-    int border = 10;
-    int space = 32;
+    }
 
     FontMetrics metrics = g.getFontMetrics();
-    int fontBaseLine = border + metrics.getAscent() - metrics.getDescent();
-    drawHeader(g, space, border, fontBaseLine);
-    drawFooter(g, space, border, getSize().height - border
+    int fontBaseLine = BORDER + metrics.getAscent() - metrics.getDescent();
+    drawHeader(g, SPACE, BORDER, fontBaseLine);
+    drawFooter(g, SPACE, BORDER, getSize().height - BORDER
         - metrics.getDescent());
-    Rectangle rect = new Rectangle(border, border + metrics.getHeight(),
-        getSize().width - 2 * border, getSize().height - 3 * border
+    Rectangle rect = new Rectangle(BORDER, BORDER + metrics.getHeight(),
+        getSize().width - 2 * BORDER, getSize().height - 3 * BORDER
             - metrics.getHeight() - metrics.getHeight());
-    drawValues(g, new Rectangle(rect.x + space, rect.y, rect.width - space,
+    drawValues(g, new Rectangle(rect.x + SPACE, rect.y, rect.width - SPACE,
         rect.height), min, max);
-    drawScale(g, new Rectangle(rect.x, rect.y, space - 4, rect.height), min,
+    drawScale(g, new Rectangle(rect.x, rect.y, SPACE - 4, rect.height), min,
         max);
   }
 
@@ -83,9 +83,7 @@ class MonitorView extends JPanel {
     double[] transformParams = getTransformParams(data, rect);
     double a = transformParams[0];
     double b = transformParams[1];
-
     Point[] points = transform(data, a, b, rect.x, rect.x + rect.width);
-
     g.setColor(Color.GRAY);
     for (int i = 0; i < points.length; i++) {
       g.drawLine(points[i].x, rect.y, points[i].x, rect.y + rect.height);
@@ -94,22 +92,17 @@ class MonitorView extends JPanel {
     if (gridcell < 3)
       gridcell = 3;
     int hlines = rect.height / gridcell + 1;
-    if (hlines > 1)
+    if (hlines > 1) {
       for (int i = 0; i < hlines; i++) {
         int y = rect.y + rect.height * i / (hlines - 1);
         g.drawLine(rect.x, y, rect.x + rect.width, y);
       }
-
+    }
     g.drawRect(rect.x, rect.y, rect.width, rect.height);
-
     // draw zero line
-
-    int yzero = (int) b;
     g2d.setStroke(new BasicStroke(2));
-    g.drawLine(rect.x, yzero, rect.x + rect.width, yzero);
-
-    g.setColor(Color.RED);
-
+    g.drawLine(rect.x, (int) b, rect.x + rect.width, (int) b);
+    g.setColor(Color.GREEN);
     if (upperThreshold != null && upperThreshold.doubleValue() >= min
         && upperThreshold.doubleValue() <= max) {
       int y = (int) (a * upperThreshold.doubleValue() + b);

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.2//EN" 
-                          "http://apache.org/forrest/dtd/document-v12.dtd">
-<document> 
-  <header> 
-    <title>Business Object Graph and Explorer Framework Documentation</title> 
-  </header> 
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" 
+  "http://forrest.apache.org/dtd/document-v13.dtd">
+<document>
+  <header>
+    <title>Business Object Graph and Explorer Framework Documentation</title>
+  </header>
   <body>
     <section>
       <title>Whitepapers and Articles</title>
@@ -14,8 +14,9 @@
     </section>
     <section>
       <title>Links</title>
-      <p>The data object graph framework and the associated explorer visualization
-        framework are influenced by the works of talented persons.</p>
+      <p>The data object graph framework and the associated explorer 
+        visualization framework are influenced by the works of talented 
+        persons.</p>
       <ul>
         <li>The agile approach of <em>Scott Myers</em> reflect the approach the 
           development group has. Valuable information can be found under 

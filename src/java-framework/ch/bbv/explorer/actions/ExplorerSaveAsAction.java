@@ -7,6 +7,7 @@ package ch.bbv.explorer.actions;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.io.IOException;
 
 import javax.swing.JFileChooser;
 
@@ -59,6 +60,12 @@ public abstract class ExplorerSaveAsAction extends ExplorerGlobalActionImpl {
       if (selectedFile != null) {
         log.trace("File Selected " + selectedFile);
         execute();
+        try {
+          getExplorer().getStatusBar().setInfo(
+              "Saved As " + selectedFile.getCanonicalPath());
+        } catch (IOException e) {
+          log.error(e);
+        }
       }
       break;
     }

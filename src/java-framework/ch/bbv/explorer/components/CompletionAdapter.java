@@ -131,7 +131,15 @@ public class CompletionAdapter extends PlainDocument {
     }
     return null;
   }
+  
+  JComboBox getComboBox() {
+    return comboBox;
+  }
 
+  JTextComponent getEditor() {
+    return editor;
+  }
+  
   private void setText(String text) throws BadLocationException {
     // remove all text and insert the new text
     super.remove(0, getLength());
@@ -155,7 +163,7 @@ public class CompletionAdapter extends PlainDocument {
   private class CompletionFocusAdapter extends FocusAdapter {
     public void focusLost(FocusEvent e) {
       highlightCompletedText(0);
-      comboBox.setPopupVisible(false);
+      getComboBox().setPopupVisible(false);
     }
   }
 
@@ -168,7 +176,7 @@ public class CompletionAdapter extends PlainDocument {
     public void keyPressed(java.awt.event.KeyEvent event) {
       if (event.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
         hitBackspace = true;
-        hitBackspaceOnSelection = editor.getSelectionStart() != editor
+        hitBackspaceOnSelection = getEditor().getSelectionStart() != getEditor()
             .getSelectionEnd();
       } else {
         hitBackspace = false;

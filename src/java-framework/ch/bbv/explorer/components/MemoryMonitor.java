@@ -48,6 +48,17 @@ public class MemoryMonitor extends JFrame {
         hiddenMemoryMonitorKeyStroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
   }
 
+  /**
+   * Returns the singleton instance of the memory monitor.
+   * @return the singleton instance of the memory monitor.
+   */
+  static MemoryMonitor getInstance() {
+    return monitor;
+  }
+
+  /**
+   * Default constructor of the class.
+   */
   public MemoryMonitor() {
     setTitle("Memory Monitor");
     data = new ArrayList();
@@ -59,35 +70,12 @@ public class MemoryMonitor extends JFrame {
     pack();
     setLocation(40, Toolkit.getDefaultToolkit().getScreenSize().height
         - getSize().height - 60);
-
-    addMouseListener(new MouseAdapter() {
-      public void mousePressed(MouseEvent evt) {
-        if (SwingUtilities.isRightMouseButton(evt))
-          showPopup(evt.getX(), evt.getY());
-      }
-    });
+    addMouseListener(new MemoryMouseAdapter());
+    monitor = this;
     show();
   }
 
-  private void showPopup(int x, int y) {
-    if (popup == null) {
-      popup = new JPopupMenu();
-
-      popup.add(new GarbageCollectAction());
-      popup.add(new RunFinalizationAction());
-      popup.addSeparator();
-
-      JMenu speed = new JMenu("Update Speed");
-      popup.add(speed);
-      speed.add(new SampleSpeedAction(1));
-      speed.add(new SampleSpeedAction(5));
-      speed.add(new SampleSpeedAction(10));
-      speed.add(new SampleSpeedAction(20));
-    }
-    popup.show(this, x, y);
-  }
-
-  private class GarbageCollectAction extends AbstractAction {
+  private static class GarbageCollectAction extends AbstractAction {
     public GarbageCollectAction() {
       super("Garbage Collect");
     }
@@ -97,7 +85,7 @@ public class MemoryMonitor extends JFrame {
     }
   }
 
-  private class RunFinalizationAction extends AbstractAction {
+  private static class RunFinalizationAction extends AbstractAction {
     public RunFinalizationAction() {
       super("Run Finalization");
     }
@@ -149,26 +137,27 @@ public class MemoryMonitor extends JFrame {
   public void updateMonitor() {
     long memoryUsed = Runtime.getRuntime().totalMemory()
         - Runtime.getRuntime().freeMemory();
-
     if (data.size() == VALUES) {
       data.remove(0);
     }
     double sample = (double) memoryUsed / (1024 * 1024);
-
     min = Math.min(min, sample);
     max = Math.max(max, sample);
-
     data.add(new Double(sample));
-
     view.setData(dataAsArray());
     String timeFrame = new SimpleDateFormat("mm:ss").format(new Date(data
         .size()
         * periodMs));
     double hz = 1000d / periodMs;
-    String statistics = "min=" + numFormat.format(min) + ", max="
-        + numFormat.format(max) + ", average=" + numFormat.format(average);
-    view.setInfo("Timeframe= " + timeFrame + ", Frequency: " + hz + " Hz, "
-        + data.size() + " Samples (" + statistics + ")");
+    StringBuffer statistics = new StringBuffer();
+    statistics.append("min=").append(numFormat.format(min)).append(", max=")
+        .append(numFormat.format(max)).append(", average=").append(
+            numFormat.format(average));
+    StringBuffer info = new StringBuffer();
+    info.append("Timeframe= ").append(timeFrame).append(", Frequency: ")
+        .append(hz).append(" Hz, ").append(data.size()).append(" Samples (")
+        .append(statistics.toString()).append(")");
+    view.setInfo(info.toString());
 
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
@@ -191,17 +180,43 @@ public class MemoryMonitor extends JFrame {
 
   private static class MemoryManagerWindowAdapter extends WindowAdapter {
     public void windowClosing(WindowEvent evt) {
-      monitor.setVisible(false);
+      getInstance().setVisible(false);
     }
   }
 
   private static class MemoryManagerActionListener implements ActionListener {
     public void actionPerformed(ActionEvent evt) {
-      if (monitor == null) {
-        monitor = new MemoryMonitor();
+      if (getInstance() == null) {
+        new MemoryMonitor();
       }
-      monitor.setVisible(true);
+      getInstance().setVisible(true);
     }
   }
 
+  private class MemoryMouseAdapter extends MouseAdapter {
+    private JPopupMenu popup;
+
+    public void mousePressed(MouseEvent evt) {
+      if (SwingUtilities.isRightMouseButton(evt))
+        showPopup(evt.getX(), evt.getY());
+    }
+
+    private void showPopup(int x, int y) {
+      if (popup == null) {
+        popup = new JPopupMenu();
+
+        popup.add(new GarbageCollectAction());
+        popup.add(new RunFinalizationAction());
+        popup.addSeparator();
+
+        JMenu speed = new JMenu("Update Speed");
+        popup.add(speed);
+        speed.add(new SampleSpeedAction(1));
+        speed.add(new SampleSpeedAction(5));
+        speed.add(new SampleSpeedAction(10));
+        speed.add(new SampleSpeedAction(20));
+      }
+      popup.show(getInstance(), x, y);
+    }
+  }
 }

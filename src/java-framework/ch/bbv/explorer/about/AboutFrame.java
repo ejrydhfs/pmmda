@@ -26,21 +26,17 @@ public class AboutFrame extends JDialog {
   /**
    * The name of the columns of the contributors table list.
    */
-  public static final String[] CONTRIBUTORS_COLUMN_NAMES = { "name", "email",
+  private static final String[] CONTRIBUTORS_COLUMN_NAMES = { "name", "email",
       "role" };
 
-  /**
-   * The name of the columns of the librairies table list.
-   */
-  public static final String[] LIBRARIES_COLUMN_NAMES = { "name", "version",
-      "licence", "info" };
-
   /** The preferred size for the frame. */
-  public static final Dimension PREFERRED_SIZE = new Dimension(600, 400);
+  private static final Dimension PREFERRED_SIZE = new Dimension(600, 400);
 
-  /** The default border for the panels in the tabbed pane. */
-  public static final Border STANDARD_BORDER = BorderFactory.createEmptyBorder(
-      5, 5, 5, 5);
+  /**
+   * The default border for the panels in the tabbed pane.
+   */
+  private static final Border STANDARD_BORDER = BorderFactory
+      .createEmptyBorder(5, 5, 5, 5);
 
   /**
    * The description of the project.

@@ -18,7 +18,7 @@ public class ExplorerAboutAction extends ExplorerGlobalActionImpl {
   /**
    * The project description displayed in the about frame.
    */
-  private ProjectInfo projectInfo;
+  private transient ProjectInfo projectInfo;
 
   /**
    * Buffer containing the about frame once lazy created.

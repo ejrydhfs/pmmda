@@ -11,12 +11,13 @@
       <title>Introduction</title>
       <p>The <em>pmMDA – poor man MDA -</em> tool is a pragmatic approach to 
         use MDA approach in commercial and industrial projects. Tedious source 
-        artifacts are generated from a model instead of being hand coded. 
+        artifacts are generated from a model instead of being hand-coded. 
         Talented developers should concentrate on application design and not on 
         writing repetitive code. Currently <em>pmMDA</em> provides extensive 
         support for Java client/server applications using JDBC – meaning 2 
-        tiers programs -, CORBA and J2EE middleware are supported. Work is 
-        under way to support C++ based applications.</p>
+        tiers programs -. CORBA and J2EE middleware - meaning 3 tiers programs 
+        - are also supported. Work is under way to support C++ based 
+        applications.</p>
       <p><em>pmMDA</em> reads UML models, e.g. from ArgoUML tool, extends them 
         with tagged values and generates the source code and configuration 
         artifacts for the target applications. The tagged values are described 
@@ -30,6 +31,19 @@
         program development.</p>
     </section>
     <section>
+      <title>How to use it?</title>
+      <p> <em>pmMDA</em> use is intuitive. </p>
+      <ul>
+        <li> Describe your domain model with ArgoUML. The full power of UML
+          is available.</li>
+        <li>Start <em>pmMDA</em> and read your model. Edit the tagged values in 
+          the user interface, run the validation to verify that your model is 
+          complete.</li>
+        <li>Generate your application, compile and run it.</li>
+        <li>Iterate to add new features in your model.</li>
+      </ul>
+    </section>
+    <section>
       <title>Resources</title>
       <p>The <em>pmMDA</em> provides the following sets of resources.</p>
       <p><em>pmMDA</em> engine defining the metamodel to describe your 
@@ -39,6 +53,8 @@
       <p>A set of cartridges generating the source code and configuration 
         artifacts to run the application. The cartridges are written in Java. 
         The generation template uses the Jakarta Velocity project.</p>
+      <note>The cartridges generate rich client application as two tiers, CORBA 
+        servers or J2EE servers.</note>
       <p>Frameworks simplifying the development of complex mission-critical 
         applications. One of the provided framework implements a data object 
         graph manipulation framework and persistence. We are looking at JSR-235 
@@ -46,6 +62,8 @@
         Apache OJB project. A second framework provides a explorer framework to 
         visualize and manipulate graphs of objects using the tree list 
         paradigm.</p>
+      <note>Powerful explorer based interface, complete persistence layer and 
+        application framework are available.</note>
     </section>
     <section>
       <title>Documentation</title>

@@ -5,6 +5,7 @@
  */
 package ch.bbv.utilities;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -13,7 +14,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * A set of convenience methods when using reflection mechanisms.
+ * A set of convenience methods when using reflection mechanisms. Methods to
+ * create new instances with constructors and factory creation methods are
+ * provided.
  * @author MarcelBaumann
  * @version $Revision$
  */
@@ -94,7 +97,7 @@ public final class ReflectUtilities {
    * @return the created instance if sucessful otherwise null.
    * @pre clazz != null
    */
-  public static Object createInstance(Class clazz) {
+  public static Object newInstance(Class clazz) {
     assert (clazz != null);
     Object object = null;
     try {
@@ -108,6 +111,37 @@ public final class ReflectUtilities {
   }
 
   /**
+   * Creates a new instance of the class using the constructor with the provided
+   * signature.
+   * @param clazz class of the instance to create.
+   * @param types types of the parameters of the static method to call.
+   * @param objects parameters of the static method to call.
+   * @return the created instance if sucessfull otherwise null.
+   * @pre clazz != null
+   */
+  public static Object newInstance(Class clazz, Class[] types, Object[] objects) {
+    assert (clazz != null);
+    Object instance = null;
+    try {
+      Constructor constructor = clazz.getConstructor(types);
+      instance = constructor.newInstance(objects);
+    } catch (SecurityException e) {
+      log.fatal(e);
+    } catch (NoSuchMethodException e) {
+      log.fatal(e);
+    } catch (IllegalArgumentException e) {
+      log.fatal(e);
+    } catch (IllegalAccessException e) {
+      log.fatal(e);
+    } catch (InvocationTargetException e) {
+      log.fatal(e);
+    } catch (InstantiationException e) {
+      log.fatal(e);
+    }
+    return instance;
+  }
+
+  /**
    * Creates a new instance through the create method of a factory class.
    * @param qualifiedName qualified name of the class to instantiate.
    * @return the created instance if sucessfull otherwise null.
@@ -115,6 +149,16 @@ public final class ReflectUtilities {
    */
   public static Object createInstance(String qualifiedName) {
     return createInstance(qualifiedName, null, null);
+  }
+
+  /**
+   * Creates a new instance through the create method of a factory class.
+   * @param clazz class to instantiate.
+   * @return the created instance if sucessfull otherwise null.
+   * @pre qualifiedName != null
+   */
+  public static Object createInstance(Class clazz) {
+    return createInstance(clazz, null, null);
   }
 
   /**
@@ -168,7 +212,6 @@ public final class ReflectUtilities {
       log.fatal(e);
     }
     return instance;
-
   }
 
   /**
@@ -217,11 +260,11 @@ public final class ReflectUtilities {
     }
   }
 
-  /** 
-   * Returns the path to the location from where the class was loaded. The 
+  /**
+   * Returns the path to the location from where the class was loaded. The
    * result is only valid for classes not loaded from the system class loader.
    * @param clazz class which load location should be infered.
-   * @return the load location path of the class. 
+   * @return the load location path of the class.
    */
   public String getLoadpath(Class clazz) {
     return clazz.getProtectionDomain().getCodeSource().getLocation().getPath();

@@ -6,12 +6,12 @@
 
 package ch.bbv.explorer.nodeactions;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ch.bbv.dog.AbstractVisitorFunctor;
 import ch.bbv.dog.DataObject;
 import ch.bbv.dog.DataObjectType;
-import ch.bbv.dog.validation.ValidateFunctor;
 import ch.bbv.dog.validation.Validator;
 import ch.bbv.explorer.ExplorerNode;
 import ch.bbv.explorer.UiNodeType;
@@ -27,7 +27,7 @@ public class ValidateNodeAction extends AbstractNodeAction {
   /**
    * The validator used to validate the data object graphs.
    */
-  private Validator validator;
+  private transient Validator validator;
 
   /**
    * Constructor of the class.
@@ -46,12 +46,12 @@ public class ValidateNodeAction extends AbstractNodeAction {
     if (object != null) {
       DataObjectType type = node.getNodeType().getDataObjectType();
       AbstractVisitorFunctor visitor = type.createVisitorInstance();
-      ValidateFunctor functor = new ValidateFunctor(validator);
-      visitor.setFunctor(functor);
-      DataObjectType.invokeVisitor(object.getClass(), object, visitor);
-      List results = functor.getResults();
+      List results = new ArrayList();
+      validator.validate(object, visitor, results);
       if (results != null && results.size() > 0) {
         // TODO display results
+      } else {
+        node.getExplorer().getStatusBar().setInfo("Validation Completed");
       }
     }
   }

@@ -1,5 +1,5 @@
 /* copyright 2000-2004 Marcel Baumann
- * Licensed under the Apache License, Version 2.0 (the "Licence);
+ * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
  */
@@ -17,7 +17,7 @@ import ch.bbv.explorer.components.TablePanel;
  */
 public class LibraryPanel extends TablePanel {
   /**
-   * The name of the columns of the librairies table.
+   * The name of the columns of the librairies table list.
    */
   public static final String[] COLUMN_NAMES = { "name", "version", "licence",
       "info" };

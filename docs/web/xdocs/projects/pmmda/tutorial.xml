@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.2//EN" 
-                          "http://apache.org/forrest/dtd/document-v12.dtd">
-<document> 
-  <header> 
-    <title>pmMDA Tutorials</title> 
-  </header> 
-  <body> 
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" 
+  "http://forrest.apache.org/dtd/document-v13.dtd">
+<document>
+  <header>
+    <title>pmMDA Tutorials</title>
+  </header>
+  <body>
     <section>
       <title>Install pmMDA</title>
       <p>The binary distribution of <em>pmMDA</em> is delivered as a compressed 
-        file. Unzip the file at your preferred location. ZIP files can be opened 
-        using various open source tools. All required libraries are contained in
-        the archive file.</p>
+        file. Unzip the file at your preferred location. ZIP files can be 
+        opened using various open source tools. All required libraries are 
+        contained in the archive file.</p>
       <p>The installation does not need any additional steps. No environment 
         variables or registry modifications are required.</p>
-      <p>If you want to uninstall <em>pmMDA</em> distribution simply delete the
+      <p>If you want to uninstall <em>pmMDA</em> distribution simply delete the 
         directory containing the files.</p>
     </section>
     <section>
       <title>Run pmMDA</title>
-      <p>The script file <em>pmMDA.bat</em> starts the application. The user
+      <p>The script file <em>pmMDA.bat</em> starts the application. The user 
         interface allows the user to open an existing model and edit it.</p>
     </section>
     <section>
       <title>Customise Generator Templates</title>
-      <p>All generator templates are written in <em>Velocity</em>. All features
+      <p>All generator templates are written in <em>Velocity</em>. All features 
         of Velocity can be used. The items available in the context are 
         documented in the generators documentation. Each cartridge roles, 
-        supported tagged values, attributes and properties are documented. 
-        This description is also available on the project web site.</p>
+        supported tagged values, attributes and properties are documented. This 
+        description is also available on the project web site.</p>
     </section>
     <section>
       <title>Develop Own Cartridge</title>

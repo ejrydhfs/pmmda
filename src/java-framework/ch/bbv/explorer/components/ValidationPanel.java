@@ -9,17 +9,21 @@ package ch.bbv.explorer.components;
 import java.util.List;
 
 /**
+ * The validation panel displays a list of validation messages.
  * @author MarcelBaumann
  * @version $Revision$
  */
 public class ValidationPanel extends TablePanel {
+  private List results;
+
   /**
    * Name of the columns of the validation panel.
    */
   public static final String[] COLUMN_NAMES = { "level", "text" };
 
-  private List results;
-
+  /**
+   * Default constructor of the class.
+   */
   public ValidationPanel() {
     super(null, new TableCell(COLUMN_NAMES));
   }
@@ -29,6 +33,10 @@ public class ValidationPanel extends TablePanel {
     setModel(results);
   }
 
+  /**
+   * Returns true if the panel contains validation messages.
+   * @return true if messages are available otherwise false.
+   */
   public boolean hasResults() {
     return ((results != null) && (results.size() > 0));
   }
