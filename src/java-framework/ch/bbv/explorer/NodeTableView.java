@@ -53,7 +53,7 @@ public class NodeTableView extends TablePanel implements NodeView {
   }
 
   public void nodeChanged(ExplorerNode node) {
-    System.out.println("nodeChanged");
+    System.out.println("nodeChanged"); // TODO refresh table view because child has been added or modified
   }
 
 }
