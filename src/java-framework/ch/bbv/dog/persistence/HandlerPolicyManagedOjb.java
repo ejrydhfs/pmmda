@@ -8,7 +8,8 @@ package ch.bbv.dog.persistence;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.ojb.odmg.TransactionImpl;
+import org.apache.ojb.odmg.NarrowTransaction;
+import org.apache.ojb.odmg.TransactionExt;
 import org.odmg.*;
 
 /**
@@ -34,15 +35,15 @@ class HandlerPolicyManagedOjb extends HandlerPolicyOjb {
     for (Iterator i = deletedObjects.iterator(); i.hasNext();) {
       database.deletePersistent(i.next());
     }
-    for (Iterator i = deletedObjects.iterator(); i.hasNext();) {
+    for (Iterator i = insertedObjects.iterator(); i.hasNext();) {
       database.makePersistent(i.next());
     }
-    for (Iterator i = deletedObjects.iterator(); i.hasNext();) {
-      tx.lock(i.next(), Transaction.WRITE);
+    for (Iterator i = updatedObjects.iterator(); i.hasNext();) {
+      ((TransactionExt) tx).markDirty(i.next());
     }
     cache(tx, copies);
     // Insures that identifier and optimistic locking are synchronized
-    ((TransactionImpl) tx).flush();
+    ((NarrowTransaction) tx).flush();
   }
 
   /**
