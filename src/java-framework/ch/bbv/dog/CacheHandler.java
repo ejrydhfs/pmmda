@@ -23,7 +23,7 @@ import ch.bbv.application.Locator;
  * @author MarcelBaumann
  * @version $Revision$
  */
-public class CacheHandler implements DataObjectHandler {
+public class CacheHandler implements DataObjectHandler, CachesHandler {
   /**
    * The delegate handler performing all operations when objects are not in the
    * cache.
@@ -110,33 +110,6 @@ public class CacheHandler implements DataObjectHandler {
       isInOriginalsCache = originalsCache.containsKey(objectId);
     }
     return isInOriginalsCache;
-  }
-
-  /**
-   * Removes the object from the copies cache.
-   * @param clazz class of the inquired data object.
-   * @param root root of the data object graph to remove.
-   * @pre (clazz != null) && (root != null)
-   */
-  public void removeFromCopiesCache(Class clazz, DataObject root) {
-    assert ((clazz != null) && (root != null));
-    if (copiedEnabled) {
-      removeFromCache(root.getClass(), root.getId(), copiesCache);
-    }
-  }
-
-  /**
-   * Removes the object from the originals and copied caches.
-   * @param clazz class of the inquired data object.
-   * @param root root of the data object graph to remove.
-   * @pre (clazz != null) && (root != null)
-   */
-  public void removeFromOriginalsCache(Class clazz, DataObject root) {
-    assert ((clazz != null) && (root != null));
-    if (cachedEnabled) {
-      removeFromCopiesCache(clazz, root);
-      removeFromCache(root.getClass(), root.getId(), originalsCache);
-    }
   }
 
   /**
@@ -231,20 +204,37 @@ public class CacheHandler implements DataObjectHandler {
     handler.remove(datasource, clazz, id);
   }
 
-  /**
-   * Returns true if the data object graph copies cache is enabled.
-   * @return true if the cache is enabled otherwise false.
-   */
   public boolean isCopiedEnabled() {
     return copiedEnabled;
   }
 
-  /**
-   * Returns true if the data object graph cache is enabled.
-   * @return true if the cache is enabled otherwise false.
-   */
   public boolean isCachedEnabled() {
     return cachedEnabled;
+  }
+
+  public void removeFromCopiesCache(DataObject root) {
+    assert (root != null);
+    if (copiedEnabled) {
+      removeFromCache(root.getClass(), root.getId(), copiesCache);
+    }
+  }
+
+  public void removeFromOriginalsCache(DataObject root) {
+    assert (root != null);
+    if (cachedEnabled) {
+      removeFromCopiesCache(root);
+      removeFromCache(root.getClass(), root.getId(), originalsCache);
+    }
+  }
+
+  public DataObject revert(String datasource, DataObject root) {
+    removeFromCopiesCache(root);
+    return retrieve(datasource, root.getClass(), root.getId());
+  }
+
+  public DataObject reload(String datasource, DataObject root) {
+    removeFromOriginalsCache(root);
+    return retrieve(datasource, root.getClass(), root.getId());
   }
 
   /**
@@ -290,8 +280,14 @@ public class CacheHandler implements DataObjectHandler {
     DataObjectId objectId = new DataObjectId(clazz, id);
     if (copiedEnabled) {
       root = (DataObject) copiesCache.get(objectId);
-    } else if (cachedEnabled) {
+    }
+    if (cachedEnabled && (root == null)) {
       root = (DataObject) originalsCache.get(objectId);
+      if (copiedEnabled && (root != null)) {
+        // handles the case where the copies cache was flushed.
+        root = root.copy();
+        addToCache(root, copiesCache);
+      }
     }
     return root;
   }

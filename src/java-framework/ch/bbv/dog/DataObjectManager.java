@@ -15,7 +15,11 @@ import ch.bbv.application.ComponentImpl;
 /**
  * The data object manager defines a coherant set of handlers responsible to
  * provide all services to manipulate data objects and their lightweigth
- * representations, and to communicate with the underlying layers.
+ * representations, and to communicate with the underlying layers. The manager
+ * provides capabilities for local cache of data object graphs and application
+ * wide cache for copies of graphs.These capabilities are useful when the
+ * cost of requesting the objects from the underlying layers - for example
+ * due to network latency or bandwith - is high.
  * @author MarcelBaumann
  * @version $Revision$
  */
@@ -28,7 +32,7 @@ public class DataObjectManager extends ComponentImpl implements Component {
   /**
    * data object handler used to manipulate data objects.
    */
-  private DataObjectHandler boHandler;
+  private DataObjectHandler dataObjectHandler;
 
   /**
    * Lightweight data object handler used to manipulate lightweight objects.
@@ -48,14 +52,14 @@ public class DataObjectManager extends ComponentImpl implements Component {
 
   /**
    * Constructor of the class.
-   * @param boHandler data object handler.
+   * @param dataObjectHandler data object handler.
    * @param lwHandler lightweight object handler.
-   * @param lockHandler lcok handler.
+   * @param lockHandler lock handler.
    */
-  public DataObjectManager(DataObjectHandler boHandler,
+  public DataObjectManager(DataObjectHandler dataObjectHandler,
       LightweightObjectHandler lwHandler, GraphLockHandler lockHandler) {
     super(NAME);
-    this.boHandler = boHandler;
+    this.dataObjectHandler = dataObjectHandler;
     this.lwHandler = lwHandler;
     this.lockHandler = lockHandler;
     types = new HashMap();
@@ -65,8 +69,8 @@ public class DataObjectManager extends ComponentImpl implements Component {
    * Returns the data object handler.
    * @return the requested handler.
    */
-  public DataObjectHandler getBoHandler() {
-    return boHandler;
+  public DataObjectHandler getDataObjectHandler() {
+    return dataObjectHandler;
   }
 
   /**
@@ -148,4 +152,4 @@ public class DataObjectManager extends ComponentImpl implements Component {
     DataObjectType.invokeVisitor(root.getClass(), root, visitor);
     return functor.getRoots();
   }
-}
+ }

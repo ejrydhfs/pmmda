@@ -304,6 +304,7 @@ public class DataObjectType {
       }
 
       Method method = clazz.getDeclaredMethod(ACCEPT_METHOD_NAME, types);
+      assert(method != null);
       Object[] params = { visitor };
       method.invoke(object, params);
     } catch (SecurityException e) {
