@@ -74,3 +74,5 @@ module ch {
     };
   };
 };
+
+${sign}endif
