@@ -171,12 +171,19 @@ public class ${className} extends ComponentImpl implements DataObjectHandler {
 #end
 	return objects;
   }
+#set($isEmpty=true)
+#foreach($class in $classes)
+#if(${class.booleanValueOfTag("bo-is-root")} && ${class.booleanValueOfAttribute("bo-lightweight")})
+#set($isEmpty=false)
+#end
+#end
 #if(${package.booleanValueOfAttribute("bo-lightweight")})  
 
   public LightweightObject retrieveLw(String datasource, Class clazz, Integer id) {
     List objects;
     LightweightObject object = null;
-    
+
+#if(!$isEmpty)
     try {
 #set($firstCase=true)
 #foreach($class in $classes)
@@ -203,12 +210,14 @@ public class ${className} extends ComponentImpl implements DataObjectHandler {
     } catch(RemoteException e) {
       log.error(e);
     }
+#end
     return object;
   }
 
   public List retrieveLw(String datasource, Class clazz, String constraints) {
     List objects = null;
     
+#if(!$isEmpty)
     try {
 #set($firstCase=true)
 #foreach($class in $classes)
@@ -232,6 +241,7 @@ public class ${className} extends ComponentImpl implements DataObjectHandler {
     } catch(RemoteException e) {
       log.error(e);
     }
+#end
     return objects;
   }
 #end  
@@ -239,6 +249,7 @@ public class ${className} extends ComponentImpl implements DataObjectHandler {
   public List store(String datasource, Class clazz, DataObject root) {
     List infos = null;
     
+#if(${classes.size()} > 0)
     try {
 #set($firstCase=true)
 #foreach($class in $classes)
@@ -263,9 +274,11 @@ public class ${className} extends ComponentImpl implements DataObjectHandler {
       log.error(e);
     }
     return infos;
+#end
   }
   
   public void remove(String datasource, Class clazz, DataObject root) {
+#if(${classes.size()} > 0)
     try {
 #set($firstCase=true)
 #foreach($class in $classes)
@@ -289,9 +302,11 @@ public class ${className} extends ComponentImpl implements DataObjectHandler {
     } catch(RemoteException e) {
       log.error(e);
     }
+#end
   }
   
   public void remove(String datasource, Class clazz, Integer id) {
+#if(${classes.size()} > 0)
     try {
 #set($firstCase=true)
 #foreach($class in $classes)
@@ -315,6 +330,7 @@ public class ${className} extends ComponentImpl implements DataObjectHandler {
     } catch(RemoteException e) {
       log.error(e);
     }
+#end
   }
   
   public DataObject deepCopy(Class clazz, DataObject object) {
