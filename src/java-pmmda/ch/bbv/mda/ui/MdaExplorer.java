@@ -57,6 +57,8 @@ public class MdaExplorer extends Explorer {
    */
   private static DataObjectManager manager;
 
+  private String[] arguments;
+
   private ExplorerGlobalAction newAction;
 
   private ExplorerGlobalAction saveAction;
@@ -70,28 +72,29 @@ public class MdaExplorer extends Explorer {
   private ExplorerGlobalAction generateAllAction;
 
   /**
-   * Constructor of the class.
+   * Creates a new MDA explorer.
+   * @param args command line arguments.
+   * @return the newly created MDA explorer.
    */
-  public MdaExplorer() {
-    super(factory, manager, null);
-    if (log.isInfoEnabled()) {
-      log.info("Start initializing MDA explorer");
-    }
-    initialize();
-    display();
+  public static MdaExplorer create(String[] args) {
+    Class[] types = { String[].class };
+    Object[] arguments = { args };
+    MdaExplorer explorer = (MdaExplorer) Explorer.createAndShow(
+        MdaExplorer.class, types, arguments);
+    return explorer;
   }
 
   /**
-   * Creates a new MDA explorer.
+   * Constructor of the class.
    * @param args arguments of the command line.
-   * @return the newly created MDA explorer.
    */
-  public static MdaExplorer createExplorer(String[] args) {
-    MdaExplorer explorer = new MdaExplorer();
-    explorer.setTitle("pmMDA Explorer");
-    log.info("pmMDA explorer created");
-    explorer.parseArguments(args);
-    return explorer;
+  public MdaExplorer(String[] args) {
+    super(factory, manager, null);
+    arguments = args;
+    if (log.isInfoEnabled()) {
+      log.info("Start initializing MDA explorer");
+    }
+    setTitle("pmMDA Explorer");
   }
 
   /**
@@ -103,23 +106,6 @@ public class MdaExplorer extends Explorer {
 
     TypeFactory typeFactory = new TypeFactory(factory, manager);
     typeFactory.registerAllTypes();
-  }
-
-  /**
-   * Parses the command line arguments.
-   * @param args command line arguments.
-   */
-  public void parseArguments(String[] args) {
-    try {
-      if (args.length >= 2) {
-        // TODO clean up assume -m filename
-        File file = new File(args[1]);
-        openAction.openModel(file);
-      }
-    } catch (PersistencyException pe) {
-      log.error("parse arguments exception", pe);
-      pe.printStackTrace();
-    }
   }
 
   /**
@@ -140,7 +126,6 @@ public class MdaExplorer extends Explorer {
     projectInfo.setVersion(new VersionId(0, 2, 9, "RC1"));
 
     projectInfo.setContributors(getContributors());
-
     projectInfo.setLibraries(getLibrairies());
 
     JMenu menu = menuBar.getMenu(ExplorerMenuBar.HELP_MENU);
@@ -168,9 +153,8 @@ public class MdaExplorer extends Explorer {
 
     createGenerateMenu();
     createToolsMenu();
-
     menuBar.setExplorer(this);
-    createNewDocument();
+    processCommandLine();
   }
 
   public void createNewDocument() {
@@ -185,6 +169,24 @@ public class MdaExplorer extends Explorer {
   protected void getUserPreferences() {
     Preferences preferences = Preferences.userNodeForPackage(this.getClass());
     String project = preferences.get(PREFERENCES_OPENED_PROJECT + ".1", null);
+  }
+
+  /**
+   * Processes the command line and executes the defined actions.
+   */
+  private void processCommandLine() {
+    try {
+      if (arguments.length >= 2) {
+        // TODO clean up assume -m filename
+        File file = new File(arguments[1]);
+        openAction.openModel(file);
+      } else {
+        createNewDocument();
+      }
+    } catch (PersistencyException pe) {
+      log.error("parse arguments exception", pe);
+      createNewDocument();
+    }
   }
 
   private void createGenerateMenu() {

@@ -5,8 +5,9 @@
  */
 package ch.bbv.mda;
 
-import java.io.Serializable;
 import java.util.Comparator;
+
+import ch.bbv.dog.DataObjectImpl;
 
 /**
  * The tagged value implements the UML concept of a tag. A tag is an extension
@@ -15,7 +16,7 @@ import java.util.Comparator;
  * @author Marcel Baumann
  * @version $Revision$
  */
-public class TaggedValue implements Serializable, Comparable {
+public class TaggedValue extends DataObjectImpl implements Comparable {
   // %% BEGIN USER DECLARATION
   public static class TaggedValueComparator implements Comparator {
 

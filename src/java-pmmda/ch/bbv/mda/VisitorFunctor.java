@@ -1,9 +1,12 @@
 /* copyright 2000-2004 Marcel Baumann 
- * Licensed under the Apache License, Version 2.0 (the "Licence); 
+ * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$ 
  */
 package ch.bbv.mda;
+
+import ch.bbv.dog.AbstractVisitorFunctor;
+import ch.bbv.dog.DoFunctor;
 
 /**
  * The visitor functor is the standard functor implementation for the MDA
@@ -11,34 +14,54 @@ package ch.bbv.mda;
  * @author marcelbaumann
  * @version $Revision$
  */
-public abstract class VisitorFunctor implements Visitor {
+public class VisitorFunctor implements AbstractVisitorFunctor, Visitor {
+  /** 
+   * Functor of the visitor.
+   */
+  private DoFunctor functor; 
+
+  /** 
+   * The current depth of the visitor when traversing a graph.
+   */
+  private int depth;
+
+  public int getDepth() {
+    return depth;
+  }
+  
+  public void setDepth(int depth) {
+    this.depth = depth;
+  }
+    
+  public Object getFunctor() {
+    return functor;
+  }
+  
+  public void setFunctor(Object functor) {
+    this.functor = (DoFunctor)functor;
+  }
+
   public void visit(MetaModel item) {
-    execute(item);
+    functor.execute(item);
   }
 
   public void visit(MetaPackage item) {
-    execute(item);
+    functor.execute(item);
   }
 
   public void visit(MetaClass item) {
-    execute(item);
+    functor.execute(item);
   }
 
   public void visit(MetaProperty item) {
-    execute(item);
+    functor.execute(item);
   }
 
   public void visit(MetaIndexedProperty item) {
-    execute(item);
+    functor.execute(item);
   }
 
   public void visit(TaggedValue item) {
-    execute(item);
+    functor.execute(item);
   }
-
-  /**
-   * Executes the functor method on the item.
-   * @param item item to process.
-   */
-  protected abstract void execute(Object item);
 }

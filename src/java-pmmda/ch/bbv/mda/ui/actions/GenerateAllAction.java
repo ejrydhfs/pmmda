@@ -5,8 +5,10 @@
  */
 package ch.bbv.mda.ui.actions;
 
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.List;
 
+import ch.bbv.explorer.StatusBar;
 import ch.bbv.explorer.actions.ExplorerGlobalActionImpl;
 import ch.bbv.mda.MetaModel;
 import ch.bbv.mda.generators.Cartridge;
@@ -34,9 +36,17 @@ public class GenerateAllAction extends ExplorerGlobalActionImpl {
     MetaModel model = (MetaModel) getExplorer().getRoot().getDataObject();
     CartridgeFactory factory = CartridgeFactory.getInstance();
     if (model != null) {
-      for (Iterator i = factory.getCartridges().iterator(); i.hasNext();) {
-        factory.execute((Cartridge) i.next(), model);
+      List cartridges = new ArrayList(factory.getCartridges());
+      StatusBar statusBar = getExplorer().getStatusBar();
+      for (int i =0; i < cartridges.size(); i++) {
+        Cartridge cartridge = (Cartridge)cartridges.get(i);
+        statusBar.setInfo("Generate" + cartridge.getPrefix());
+        statusBar.setProgress(i / cartridges.size() * 100);
+        factory.execute(cartridge, model);
       }
+      statusBar.setProgress(100);
+      statusBar.setInfo("Generate All done");
+      statusBar.setProgress(0);
     }
   }
 }

@@ -98,7 +98,7 @@ public class MdaApplication extends Locator {
 
   public void startup() throws ComponentException {
     super.startup();
-    MdaExplorer explorer = MdaExplorer.createExplorer(args);
+    MdaExplorer explorer = MdaExplorer.create(args);
     MemoryMonitor.create(explorer.getFrame());
   }
 

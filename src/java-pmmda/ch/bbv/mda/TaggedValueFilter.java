@@ -14,7 +14,7 @@ import java.util.Iterator;
  *         entirely (same type, tag, and value). The non empty rule is used to
  *         select tagged values of same type, tag and a non empty value. This
  *         filter can be used to construct tree views with portions of the model
- * @see FilterTreeConstructors
+ * @see FilterTreeConstructor
  */
 public class TaggedValueFilter {
 

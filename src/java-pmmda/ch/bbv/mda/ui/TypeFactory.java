@@ -1,5 +1,5 @@
 /* copyright 2000-2004 Marcel Baumann
- * Licensed under the Apache License, Version 2.0 (the "Licence);
+ * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
  */
@@ -57,10 +57,8 @@ public class TypeFactory extends AbstractTypeFactory {
     addField(params, "description", String.class, true);
     nodeType.registerView(new UiNodeViewType("default", nodeType,
         NodeTableView.class, params, true));
-    iconFactory.registerIconSelector(nodeType, new ChildrenIconSelector(
-        iconFactory, "package"));
-    manager.register(type);
-    factory.register(nodeType);
+    register(type, nodeType, new PopupSelectorDefault(nodeType),
+        new ChildrenIconSelector(getIconFactory(), "package"));
   }
 
   /**
@@ -79,10 +77,8 @@ public class TypeFactory extends AbstractTypeFactory {
     addField(params, "description", String.class, true);
     nodeType.registerView(new UiNodeViewType("default", nodeType,
         NodeTableView.class, params, true));
-    iconFactory.registerIconSelector(nodeType, new ChildrenIconSelector(
-        iconFactory, "package"));
-    manager.register(type);
-    factory.register(nodeType);
+    register(type, nodeType, new PopupSelectorDefault(nodeType),
+        new ChildrenIconSelector(getIconFactory(), "package"));
   }
 
   /**
@@ -103,10 +99,8 @@ public class TypeFactory extends AbstractTypeFactory {
     addField(params, "description", String.class, true);
     nodeType.registerView(new UiNodeViewType("default", nodeType,
         NodeTableView.class, params, true));
-    iconFactory.registerIconSelector(nodeType, new SimpleIconSelector(
-        "class-regular"));
-    manager.register(type);
-    factory.register(nodeType);
+    register(type, nodeType, new PopupSelectorDefault(nodeType),
+        new SimpleIconSelector("class-regular"));
   }
 
   /**
@@ -120,10 +114,8 @@ public class TypeFactory extends AbstractTypeFactory {
         MetaPropertyView.class);
     nodeType.registerView(new UiNodeViewType("default", nodeType,
         NodeTableView.class, null, true));
-    iconFactory.registerIconSelector(nodeType, new FieldVisibilityIconSelector(
-        iconFactory, "field"));
-    manager.register(type);
-    factory.register(nodeType);
+    register(type, nodeType, new PopupSelectorDefault(nodeType),
+        new FieldVisibilityIconSelector(getIconFactory(), "field"));
   }
 
   /**
@@ -137,9 +129,7 @@ public class TypeFactory extends AbstractTypeFactory {
         MetaPropertyView.class);
     nodeType.registerView(new UiNodeViewType("default", nodeType,
         NodeTableView.class, null, true));
-    iconFactory.registerIconSelector(nodeType, new FieldVisibilityIconSelector(
-        iconFactory, "indexed-field"));
-    manager.register(type);
-    factory.register(nodeType);
+    register(type, nodeType, new PopupSelectorDefault(nodeType),
+        new FieldVisibilityIconSelector(getIconFactory(), "indexed-field"));
   }
 }
