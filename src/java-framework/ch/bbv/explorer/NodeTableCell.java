@@ -93,6 +93,9 @@ public class NodeTableCell implements WritableTableFormat {
    */
   public Object getColumnValue(Object bean, int column) {
     assert ((0 <= column) && (column <= fields.size()));
+    if(!(bean instanceof ExplorerNode)){
+      return getField(column).getProperty(bean);
+    }
     ExplorerNode node = (ExplorerNode) bean;
     return getField(column).getProperty(node.getLightweightObject());
   }
@@ -108,7 +111,12 @@ public class NodeTableCell implements WritableTableFormat {
    */
   public Object setColumnValue(Object bean, Object value, int column) {
     assert ((0 <= column) && (column <= fields.size()));
+    if(!(bean instanceof ExplorerNode)){
+      getField(column).setProperty(bean, value);
+      return bean;
+    }
     ExplorerNode node = (ExplorerNode) bean;
+    node.getExplorer().nodeChanged(node);
     Object object = node.getDataObject();
     getField(column).setProperty(object, value);
     return object;
