@@ -93,6 +93,22 @@ public class ExplorerNode implements MutableTreeNode {
   }
 
   /**
+   * Returns all dataObjects of all children of this node
+   * @return List with dataObjects
+   */
+  public List getDataObjects() {
+    List children = getChildren();
+    ArrayList dataObjects = new ArrayList();
+    for(Iterator i=children.iterator(); i.hasNext();){
+      Object child = i.next();
+      if(child instanceof ExplorerNode){
+        dataObjects.add(((ExplorerNode)child).getDataObject());
+      }
+    }
+    return dataObjects;
+  }
+  
+  /**
    * Sets the data object of the explorer node.
    * @param boObject data object of the explorer node.
    * @see #getDataObject()
