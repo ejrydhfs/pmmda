@@ -1,5 +1,5 @@
 /* copyright 2000-2004 Marcel Baumann
- * Licensed under the Apache License, Version 2.0 (the "Licence);
+ * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
  */
@@ -49,17 +49,5 @@ public class EmptyHandler implements DataObjectHandler {
 
   public void remove(String datasource, Class clazz, Integer id) {
     throw new UnsupportedOperationException();
-  }
-
-  public DataObject deepCopy(Class clazz, DataObject object) {
-    return null;
-  }
-
-  public void register(DataObjectType type) {
-    // empty method
-  }
-
-  public DataObjectType getType(DataObject object) {
-    return null;
   }
 }

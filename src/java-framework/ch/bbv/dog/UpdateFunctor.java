@@ -54,6 +54,8 @@ public class UpdateFunctor implements DoFunctor {
         // TODO write code for properties update
       }
       object.setModified(false);
+      assert ((object.getId() != null) && (object.getTimestamp() != null) && !object
+          .isModified());
     }
   }
 }

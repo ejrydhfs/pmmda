@@ -1,5 +1,5 @@
 /* copyright 2000-2004 Marcel Baumann 
- * Licensed under the Apache License, Version 2.0 (the "Licence); 
+ * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$
  */
@@ -61,7 +61,7 @@ public interface DataObjectHandler {
    * @param clazz class of the root object to retrieve.
    * @param id identifier of the root object to retrieve.
    * @return the requested object if found otherwise null.
-   * @pre (datasource != null) && (id != null)
+   * @pre (datasource != null) && (clazz != null) && (id != null)
    */
   LightweightObject retrieveLw(String datasource, Class clazz, Integer id);
 
@@ -108,30 +108,4 @@ public interface DataObjectHandler {
    * @pre (datasource != null) && (clazz != null) && (id != null)
    */
   void remove(String datasource, Class clazz, Integer id);
-
-  /**
-   * Returns a deep copy of the given data object.
-   * @param clazz class of the object to remove. Used to store subclasses as
-   *        instances of a super class.
-   * @param object object to copy.
-   * @return a deep copy of the data object tree.
-   * @pre (clazz != null) && (object != null)
-   */
-  DataObject deepCopy(Class clazz, DataObject object);
-
-  /**
-   * Registers the data object type defined for the given data object type.
-   * @param type data object type declaration.
-   * @pre type != null
-   */
-  void register(DataObjectType type);
-
-  /**
-   * Returns the data object type associated with the type of the given data
-   * object.
-   * @param object data object which type is requested.
-   * @return the requested type if found otherwise null.
-   * @pre object != null
-   */
-  DataObjectType getType(DataObject object);
 }

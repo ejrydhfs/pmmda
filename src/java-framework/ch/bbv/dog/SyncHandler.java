@@ -1,5 +1,5 @@
 /* copyright 2000-2004 Marcel Baumann
- * Licensed under the Apache License, Version 2.0 (the "Licence);
+ * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
  */
@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class SyncHandler implements DataObjectHandler {
   /**
-   * The buisness object handler executing all the delegated operations.
+   * The business object handler executing all the delegated operations.
    */
   private DataObjectHandler delegate;
 
@@ -89,17 +89,5 @@ public class SyncHandler implements DataObjectHandler {
     List ids = lockHandler.lockGraph(oldRoot);
     delegate.remove(datasource, clazz, id);
     lockHandler.unlockGraphs(ids);
-  }
-
-  public DataObject deepCopy(Class clazz, DataObject object) {
-    return delegate.deepCopy(clazz, object);
-  }
-
-  public void register(DataObjectType type) {
-    delegate.register(type);
-  }
-
-  public DataObjectType getType(DataObject object) {
-    return delegate.getType(object);
   }
 }
