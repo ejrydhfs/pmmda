@@ -45,6 +45,10 @@ public class PersistencyHandlerFactory {
       persistencyHandler = getXmlHandler();
     } else if (filename.endsWith(".xmi") || filename.endsWith(".zargo")) {
       persistencyHandler = getNsUmlHandler();
+    } else if (filename.endsWith(".mdl")) {
+      persistencyHandler = getRoseHandler();
+    } else if (filename.endsWith(".ecore")) {
+      persistencyHandler = getEcoreHandler();
     }
     return persistencyHandler;
   }
@@ -107,10 +111,15 @@ public class PersistencyHandlerFactory {
   }
 
   public PersistencyHandler getEcoreHandler() {
-    return new XmlPersistencyHandler();
+    //return new EcorePersistencyHandler();
   }
 
   public PersistencyHandler getJavaDocHandler() {
     return new XmlPersistencyHandler();
   }
+
+  public PersistencyHandler getRoseHandler() {
+    //return new RosePersistencyHandler();
+  }
+
 }
