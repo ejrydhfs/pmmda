@@ -150,8 +150,8 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
     java2idl.put("java.lang.Short", "NullShort");
     java2idl.put("Integer", "NullInteger");
     java2idl.put("java.lang.Integer", "NullInteger");
-    java2idl.put("Double", "NullableDouble");
-    java2idl.put("java.lang.Double", "NullableDouble");
+    java2idl.put("Double", "NullDouble");
+    java2idl.put("java.lang.Double", "NullDouble");
     java2idl.put("Float", "NullFloat");
     java2idl.put("java.lang.Float", "NullFloat");
     java2idl.put("Long", "NullLong");

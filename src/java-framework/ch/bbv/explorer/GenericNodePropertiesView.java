@@ -425,15 +425,15 @@ public class GenericNodePropertiesView extends NodePropertiesView {
       } else if (Date.class.equals(type)) {
         value = dateChooser.getDate();
       } else if (Short.TYPE.equals(type) || Short.class.equals(type)) {
-        value = Short.decode(text.getText());
+        value = Short.decode(formattedText.getText());
       } else if (Integer.TYPE.equals(type) || Integer.class.equals(type)) {
-        value = Integer.decode(text.getText());
+        value = Integer.decode(formattedText.getText());
       } else if (Long.TYPE.equals(type) || Long.class.equals(type)) {
-        value = Long.decode(text.getText());
+        value = Long.decode(formattedText.getText());
       } else if (Float.TYPE.equals(type) || Float.class.equals(type)) {
-        value = Float.valueOf(text.getText());
+        value = Float.valueOf(formattedText.getText());
       } else if (Double.TYPE.equals(type) || Double.class.equals(type)) {
-        value = Double.valueOf(text.getText());
+        value = Double.valueOf(formattedText.getText());
       }
       return value;
     }
