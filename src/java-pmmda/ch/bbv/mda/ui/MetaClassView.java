@@ -5,20 +5,11 @@
  */
 package ch.bbv.mda.ui;
 
-import javax.swing.JCheckBox;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
+import javax.swing.*;
 
 import ch.bbv.dog.ui.ReferenceCodeComboBox;
-import ch.bbv.explorer.ExplorerNode;
 import ch.bbv.explorer.NodePropertiesView;
-import ch.bbv.mda.MetaClass;
-import ch.bbv.mda.MetaElement;
-import ch.bbv.mda.MetaFactory;
-import ch.bbv.mda.MetaPackage;
-import ch.bbv.mda.VisibilityCode;
+import ch.bbv.mda.*;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -110,17 +101,6 @@ public class MetaClassView extends NodePropertiesView {
   }
 
   public void commitChanges() {
-    if (isNewObject()) {
-      ExplorerNode parentNode = (ExplorerNode) getModel().getParent();
-      Object object = parentNode.getDataObject();
-      if(object instanceof MetaPackage){
-        MetaPackage context = (MetaPackage) object;
-        context.addClass((MetaClass) getDataObject());
-      } else {
-        MetaClass context = (MetaClass) object;
-        context.addClass((MetaClass) getDataObject());
-      }
-    }
     MetaClass model = (MetaClass) getDataObject();
     String text = nameText.getText();
     if (text != null) {

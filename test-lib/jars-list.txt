@@ -1,0 +1,17 @@
+antlr-2.7.3.jar
+commons-beanutils-1.6.1.jar
+commons-collections-2.1.1.jar
+commons-dbcp-1.1.jar
+commons-lang-2.0.jar
+commons-logging-1.0.4.jar
+commons-logging-api-1.0.4.jar
+commons-pool-1.1.jar
+db-ojb-1.0.jar
+dog.jar
+forms-1.0.4.jar
+glazedlists-0.9.1.jars
+hsgldb.jar
+jbossall.client.jar
+jcalendar-1.2.1.jar
+junit-3.8.1.jar
+mysql-connector-3.0.9.jar

@@ -14,13 +14,13 @@ import ch.bbv.explorer.*;
 import ch.bbv.mda.*;
 
 /**
- * The type factory provides services to create the node types used in the
- * MDA user interface.
+ * The type factory provides services to create the node types used in the MDA
+ * user interface.
  * @author marcelbaumann
  * @version $Revision$
  */
 public class TypeFactory extends AbstractTypeFactory {
-  /** 
+  /**
    * Constructor of the class.
    * @param factory the user interface node type factory to use.
    * @param manager the data object manager to use.
@@ -29,70 +29,78 @@ public class TypeFactory extends AbstractTypeFactory {
     super(factory, manager);
   }
 
+  /**
+   * Creates the node type for a bean type with fields and relations.
+   */
   public void createNodeTypeForMetaProject() {
-    DataObjectType type = new DataObjectType(MetaModel.class,
-        MetaModel.class, MetaModel.class, VisitorFunctor.class,
-        VisitorFunctor.class, null);
+    DataObjectType type = new DataObjectType(MetaModel.class, MetaModel.class,
+        MetaModel.class, VisitorFunctor.class, VisitorFunctor.class, null);
     type.setRoot(true);
 
     UiNodeTypeImpl nodeType = new UiNodeTypeImpl(type, "name",
         MetaModelView.class);
-    addRelation(nodeType, "packages", ch.bbv.mda.MetaPackage.class, true, true);
-    addRelation(nodeType, "Classes", MetaClass.class, true, true);
+    addRelation(nodeType, "packages", MetaPackage.class, true, true);
 
     List params = new ArrayList();
     addField(params, "name", String.class, true);
     addField(params, "description", String.class, true);
     nodeType.registerView(new UiNodeViewType("default", nodeType,
         NodeTableView.class, params, true));
-    iconFactory.registerIconSelector(nodeType,
-      new ChildrenIconSelector(iconFactory, "package"));
+    iconFactory.registerIconSelector(nodeType, new ChildrenIconSelector(
+        iconFactory, "package"));
     manager.register(type);
     factory.register(nodeType);
   }
 
+  /**
+   * Creates the node type for a bean type with fields and relations.
+   */
   public void createNodeTypeForMetaPackage() {
     DataObjectType type = new DataObjectType(MetaPackage.class,
         MetaPackage.class, MetaPackage.class, VisitorFunctor.class,
         VisitorFunctor.class, null);
     UiNodeTypeImpl nodeType = new UiNodeTypeImpl(type, "name",
         MetaPackageView.class);
-    addRelation(nodeType, "Classes", MetaClass.class, true, true);
+    addRelation(nodeType, "classes", MetaClass.class, true, true);
 
     List params = new ArrayList();
     addField(params, "name", String.class, true);
     addField(params, "description", String.class, true);
     nodeType.registerView(new UiNodeViewType("default", nodeType,
         NodeTableView.class, params, true));
-    iconFactory.registerIconSelector(nodeType,
-      new ChildrenIconSelector(iconFactory, "package"));
+    iconFactory.registerIconSelector(nodeType, new ChildrenIconSelector(
+        iconFactory, "package"));
     manager.register(type);
     factory.register(nodeType);
   }
 
+  /**
+   * Creates the node type for a bean type with fields and relations.
+   */
   public void createNodeTypeForMetaClass() {
-    DataObjectType type = new DataObjectType(MetaClass.class,
-        MetaClass.class, MetaClass.class, VisitorFunctor.class,
-        VisitorFunctor.class, null);
+    DataObjectType type = new DataObjectType(MetaClass.class, MetaClass.class,
+        MetaClass.class, VisitorFunctor.class, VisitorFunctor.class, null);
     UiNodeTypeImpl nodeType = new UiNodeTypeImpl(type, "name",
         MetaClassView.class);
-    nodeType.addRelation(new UiRelation("Property",
-        ch.bbv.mda.MetaProperty.class, true, true));
-    nodeType.addRelation(new UiRelation("Indexed Property",
-        ch.bbv.mda.MetaIndexedProperty.class, true, true));
-    addRelation(nodeType, "Classes", MetaClass.class, true, true);
+    addRelation(nodeType, "properties", MetaProperty.class, true, true);
+    addRelation(nodeType, "indexedProperties", MetaIndexedProperty.class, true,
+        true);
+    addRelation(nodeType, "classes", MetaClass.class, true, true);
 
     List params = new ArrayList();
     addField(params, "name", String.class, true);
     addField(params, "description", String.class, true);
     nodeType.registerView(new UiNodeViewType("default", nodeType,
         NodeTableView.class, params, true));
-    iconFactory.registerIconSelector(nodeType,
-      new SimpleIconSelector("class-regular"));
+    iconFactory.registerIconSelector(nodeType, new SimpleIconSelector(
+        "class-regular"));
     manager.register(type);
     factory.register(nodeType);
   }
 
+  /**
+   * Creates the node type for a bean type with fields and relations.
+   */
   public void createNodeTypeForMetaProperty() {
     DataObjectType type = new DataObjectType(MetaProperty.class,
         MetaProperty.class, MetaProperty.class, VisitorFunctor.class,
@@ -101,12 +109,15 @@ public class TypeFactory extends AbstractTypeFactory {
         MetaPropertyView.class);
     nodeType.registerView(new UiNodeViewType("default", nodeType,
         NodeTableView.class, null, true));
-    iconFactory.registerIconSelector(nodeType,
-      new FieldVisibilityIconSelector(iconFactory, "field"));
+    iconFactory.registerIconSelector(nodeType, new FieldVisibilityIconSelector(
+        iconFactory, "field"));
     manager.register(type);
     factory.register(nodeType);
   }
 
+  /**
+   * Creates the node type for a bean type with fields and relations.
+   */
   public void createNodeTypeForMetaIndexedProperty() {
     DataObjectType type = new DataObjectType(MetaIndexedProperty.class,
         MetaIndexedProperty.class, MetaIndexedProperty.class,
@@ -115,8 +126,8 @@ public class TypeFactory extends AbstractTypeFactory {
         MetaPropertyView.class);
     nodeType.registerView(new UiNodeViewType("default", nodeType,
         NodeTableView.class, null, true));
-    iconFactory.registerIconSelector(nodeType,
-      new FieldVisibilityIconSelector(iconFactory, "indexed-field"));
+    iconFactory.registerIconSelector(nodeType, new FieldVisibilityIconSelector(
+        iconFactory, "indexed-field"));
     manager.register(type);
     factory.register(nodeType);
   }

@@ -8,7 +8,6 @@ package ch.bbv.mda.ui;
 import javax.swing.*;
 
 import ch.bbv.dog.ui.ReferenceCodeComboBox;
-import ch.bbv.explorer.ExplorerNode;
 import ch.bbv.explorer.NodePropertiesView;
 import ch.bbv.mda.*;
 
@@ -124,15 +123,6 @@ public class MetaPropertyView extends NodePropertiesView {
   }
 
   public void commitChanges() {
-    if (isNewObject()) {
-      ExplorerNode parentNode = (ExplorerNode) getModel().getParent();
-      if (parentNode != null) {
-        Object dataObject = parentNode.getDataObject();
-        MetaClass context = (MetaClass) dataObject;
-        context.addProperty((MetaProperty) getDataObject());
-      }
-    }
-
     MetaProperty model = (MetaProperty) getDataObject();
     String text = nameText.getText();
     if (text != null) {

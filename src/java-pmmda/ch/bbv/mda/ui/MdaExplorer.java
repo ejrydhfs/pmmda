@@ -29,9 +29,6 @@ import ch.bbv.explorer.UiNodeTypeFactory;
 import ch.bbv.explorer.about.Contributor;
 import ch.bbv.explorer.about.Licences;
 import ch.bbv.explorer.actions.*;
-import ch.bbv.explorer.actions.ExplorerAboutAction;
-import ch.bbv.explorer.actions.ExplorerExitAction;
-import ch.bbv.explorer.actions.ExplorerGlobalAction;
 import ch.bbv.mda.MetaFactory;
 import ch.bbv.mda.generators.Cartridge;
 import ch.bbv.mda.generators.CartridgeFactory;
@@ -82,7 +79,7 @@ public class MdaExplorer extends Explorer {
 
   private ExplorerGlobalAction generateAllAction;
 
-  /** 
+  /**
    * Properties of the application.
    */
   private Properties properties;
@@ -191,7 +188,7 @@ public class MdaExplorer extends Explorer {
   }
 
   protected void initialize() {
-  	new ResourceUtility("ch.bbv.mda.ui.messages", Locale.US);
+    new ResourceUtility("ch.bbv.mda.ui.messages", Locale.US);
     ExplorerMenuBar menuBar = new ExplorerMenuBar();
     setMenuBar(menuBar);
 
@@ -239,7 +236,7 @@ public class MdaExplorer extends Explorer {
     //menu.setName("Test");
     //menu.add(new JMenuItem(new TestAction()));
     //menuBar.add(menu, menuBar.getMenuCount() - 1);
-    
+
     menuBar.setExplorer(this);
     createNewDocument();
     MetaFactory.getInstance();
@@ -254,7 +251,6 @@ public class MdaExplorer extends Explorer {
 
   /**
    * Returns the user preferences for the MDA explorer application.
-   *
    */
   protected void getUserPreferences() {
     Preferences preferences = Preferences.userNodeForPackage(this.getClass());
@@ -326,8 +322,8 @@ public class MdaExplorer extends Explorer {
         "www.jgoodies.com"));
     librairies.add(new Library("glazedlists", new VersionId(0, 9, 1),
         "Open Source", "www.publicobject.com/glazedlists"));
-    librairies.add(new Library("jcalendar", new VersionId(1, 2, 1),
-        "LGPL", "www.toedter.com/jcalendar"));
+    librairies.add(new Library("jcalendar", new VersionId(1, 2, 1), "LGPL",
+        "www.toedter.com/jcalendar"));
     return librairies;
   }
 }
