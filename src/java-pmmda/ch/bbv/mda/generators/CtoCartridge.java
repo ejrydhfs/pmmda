@@ -323,9 +323,8 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
           writer.close();
         }
       }
-    } catch (IOException ioe) {
-      log.equals(ioe);
-      ioe.printStackTrace();
+    } catch (IOException e) {
+      log.error(e);
     }
   }
 

@@ -661,9 +661,8 @@ public class DogCartridge extends CartridgeImpl implements Cartridge {
         generateJavaFile(metaPackage.getAttribute(BO_PACKAGE), clazz
             .getAttribute(BO_CLASS), referenceCodeTemplate, context);
       }
-    } catch (IOException ioe) {
-      log.equals(ioe);
-      ioe.printStackTrace();
+    } catch (IOException e) {
+      log.error(e);
     }
   }
 
@@ -692,9 +691,8 @@ public class DogCartridge extends CartridgeImpl implements Cartridge {
           generateJavaFile(metaPackage.getAttribute(LW_PACKAGE),
               "LwTransformer", transformerLwTemplate, context);
         }
-      } catch (IOException ioe) {
-        log.equals(ioe);
-        ioe.printStackTrace();
+      } catch (IOException e) {
+        log.error(e);
       }
     }
   }

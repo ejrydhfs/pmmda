@@ -200,7 +200,7 @@ public class OexCartridge extends CartridgeImpl {
         writer.print(processTemplate(javaRichClientTypeTemplate, context));
         writer.close();
       } catch (IOException e) {
-        log.equals(e);
+        log.error(e);
       }
     }
   }
