@@ -5,14 +5,22 @@
  */
 package ch.bbv.mda.persistency;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+
+import javax.swing.JOptionPane;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ch.bbv.mda.MetaModel;
+import ch.bbv.utilities.ResourceUtility;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.converters.ConversionException;
 
 /**
  * The XML persistency handler uses the Xstream library to create a legible XML
@@ -38,6 +46,11 @@ public class XmlPersistencyHandler implements PersistencyHandler {
       log.error(e);
     } catch (IOException e) {
       log.error(e);
+    }	catch(ConversionException e){
+      log.error(e);
+      JOptionPane.showMessageDialog(null, ResourceUtility
+          .getString("mda.ui.sorryMsg.OLD_FORMAT"), ResourceUtility
+          .getString("mda.ui.sorryMsg.SORRY"), JOptionPane.ERROR_MESSAGE);
     }
     return model;
   }
