@@ -1,23 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="properties"/>
+	<classpathentry kind="src" path="gendir/rich-client"/>
 	<classpathentry kind="src" path="test-java/unit-tests"/>
-	<classpathentry kind="src" path="gendir/j2ee-client"/>
-	<classpathentry kind="src" path="gendir/j2ee-common"/>
-	<classpathentry kind="src" path="gendir/j2ee-server"/>
 	<classpathentry kind="src" path="src/java-documentor"/>
 	<classpathentry kind="src" path="src/java-framework"/>
 	<classpathentry kind="src" path="src/java-pmmda"/>
 	<classpathentry kind="src" path="test-java/client"/>
 	<classpathentry kind="src" path="test-java/common"/>
 	<classpathentry kind="src" path="test-java/server"/>
-	<classpathentry kind="src" path="gendir/rich-client"/>
-	<classpathentry kind="src" path="gendir/ojb-server"/>
 	<classpathentry kind="lib" path="lib/jdom.jar"/>
 	<classpathentry kind="lib" path="lib/commons-digester.jar"/>
 	<classpathentry kind="lib" path="lib/jakarta-oro.jar"/>
 	<classpathentry kind="lib" path="lib/jcs.jar"/>
-	<classpathentry kind="lib" path="lib/junit.jar"/>
 	<classpathentry kind="lib" path="lib/nsuml.jar"/>
 	<classpathentry kind="lib" path="lib/dnsns.jar"/>
 	<classpathentry kind="lib" path="lib/jmi.jar"/>
@@ -50,5 +45,6 @@
 	<classpathentry kind="lib" path="lib/jbossall-client.jar"/>
 	<classpathentry kind="var" path="JDK_TOOLS"/>
 	<classpathentry sourcepath="C:/bin/jcalendar/src" kind="lib" path="lib/jcalendar-1.2.1.jar"/>
+	<classpathentry kind="lib" path="lib/junit-3.8.1.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>

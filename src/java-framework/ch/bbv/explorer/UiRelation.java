@@ -15,9 +15,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 
 /**
- * The class defines the user interface characteristics of a displayed
- * relation. A relation is a visible link in the tree view displayed in the left
- * navigator pane. The following conventions are used.
+ * The class defines the user interface characteristics of a displayed relation.
+ * A relation is a visible link in the tree view displayed in the left navigator
+ * pane. The following conventions are used.
  * <ul>
  * <li>The name of the displayed node is inferred from the name property of the
  * node type describing the data objec type displayed.</li>
@@ -29,10 +29,19 @@ import java.util.Collection;
  * @version $Revision$
  */
 public class UiRelation {
+  /**
+   * Prefix of the method used to add a new item to the relation.
+   */
   public static final String ADD_PREFIX = "add";
 
+  /**
+   * Prefix of the method used to remove the given item from the relation.
+   */
   public static final String REMOVE_PREFIX = "remove";
 
+  /**
+   * Prefix of the method used to get all items from the relation.
+   */
   public static final String GET_ALL_PREFIX = "get";
 
   /**
@@ -40,10 +49,19 @@ public class UiRelation {
    */
   private String property;
 
+  /**
+   * Name of the method inserting a new item at the end of the collection.
+   */
   private String addMethodName;
 
+  /**
+   * Name of the method removing the given item from the collection.
+   */
   private String removeMethodName;
 
+  /**
+   * Name of the method returning all items in the collection.
+   */
   private String getAllMethodName;
 
   /**
@@ -71,15 +89,18 @@ public class UiRelation {
 
     addMethodName = ADD_PREFIX
         + TextUtilities.identifierSingular(TextUtilities
-            .identifierFirstUpper(TextUtilities.removeSpecialCharacters(property)));
+            .identifierFirstUpper(TextUtilities
+                .removeSpecialCharacters(property)));
 
     removeMethodName = REMOVE_PREFIX
         + TextUtilities.identifierSingular(TextUtilities
-            .identifierFirstUpper(TextUtilities.removeSpecialCharacters(property)));
+            .identifierFirstUpper(TextUtilities
+                .removeSpecialCharacters(property)));
 
     getAllMethodName = GET_ALL_PREFIX
         + TextUtilities.identifierPlural(TextUtilities
-            .identifierFirstUpper(TextUtilities.removeSpecialCharacters(property)));
+            .identifierFirstUpper(TextUtilities
+                .removeSpecialCharacters(property)));
   }
 
   public String getProperty() {
@@ -144,6 +165,12 @@ public class UiRelation {
     }
   }
 
+  /**
+   * Adds the item to the indexed property.
+   * @param bean bean owning the indexed property.
+   * @param value new value to the indexed property.
+   * @see #removeProperty(Object, Object)
+   */
   public void addProperty(Object bean, Object value) {
     assert ((bean != null) && isMultiple && (value != null));
 
@@ -152,6 +179,12 @@ public class UiRelation {
     ReflectUtilities.execute(bean, addMethodName, types, params);
   }
 
+  /**
+   * Removes the item from the indexed property.
+   * @param bean bean owning the indexed property.
+   * @param value value to remove from the indexed property.
+   * @see #removeProperty(Object, Object)
+   */
   public void removeProperty(Object bean, Object value) {
     assert ((bean != null) && (value != null));
 
@@ -160,6 +193,11 @@ public class UiRelation {
     ReflectUtilities.execute(bean, removeMethodName, types, params);
   }
 
+  /**
+   * Returns all the items of the indexed property.
+   * @param bean bean owning the indexed property.
+   * @return collection of all indexed values.
+   */
   public Collection getValues(Object bean) {
     assert ((bean != null) && isMultiple);
     return (Collection) ReflectUtilities.execute(bean, getAllMethodName, null,
