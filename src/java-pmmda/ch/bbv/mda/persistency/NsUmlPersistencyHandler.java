@@ -17,10 +17,13 @@ import org.apache.commons.logging.LogFactory;
 import org.xml.sax.SAXException;
 
 import ru.novosoft.uml.model_management.MModel;
+import ru.novosoft.uml.MFactory;
 import ru.novosoft.uml.xmi.IncompleteXMIException;
+import ch.bbv.mda.MetaFactory;
 import ch.bbv.mda.MetaModel;
 import ch.bbv.mda.persistency.nsuml.MdaTransformer;
 import ch.bbv.mda.persistency.nsuml.NsUmlTransformer;
+import ch.bbv.mda.persistency.nsuml.ArgoWriter;
 
 /**
  * The NSUML handler manipulates XMI 1.0 / UML 1.3 based models. These models
@@ -43,6 +46,8 @@ public class NsUmlPersistencyHandler implements PersistencyHandler {
 
   public MetaModel readModel(File file) throws PersistencyException {
     MetaModel metaModel = new MetaModel();
+    MetaFactory.getInstance().initialize(metaModel);
+    
     try {
       MModel mModel = nsUmlTransformer.loadArgoModel(file);
       nsUmlTransformer.synchronize(mModel, metaModel);
@@ -60,7 +65,31 @@ public class NsUmlPersistencyHandler implements PersistencyHandler {
       throws PersistencyException {
     if (file.exists()) {
       updateModel(model, file);
+    } else if(file.getName().endsWith(".xmi") || file.getName().endsWith(".zargo")) {
+    	try{
+	        MModel mModel = MFactory.getDefaultFactory().createModel();
+	        mModel.setName(model.getName());
+	        mdaTransformer.synchronize(model, mModel);
+	        File temporaryFile = File.createTempFile("pmMDA",  "xmi");
+	        nsUmlTransformer.writeArgoModel(mModel, temporaryFile);
+	        if(file.getName().endsWith(".xmi")){
+		        temporaryFile.renameTo(file);
+	        } else{
+		        temporaryFile.deleteOnExit();
+	        	ZipFileUtilities utilities = new ZipFileUtilities();
+	        	ArgoWriter.writeEntry(file, temporaryFile);
+				temporaryFile.delete();
+	        }
+	    } catch (IOException ioe) {
+	        log.error(ioe);
+	    } catch (IncompleteXMIException ixmie) {
+	      	log.error(ixmie);
+	    }
     }
+  }
+
+  public void importPackage(MetaModel targetProject, File file,
+    String packageName) {
   }
 
   public void updateModel(MetaModel model, File file)
@@ -68,13 +97,18 @@ public class NsUmlPersistencyHandler implements PersistencyHandler {
     try {
       MModel mModel = nsUmlTransformer.loadArgoModel(file);
       mdaTransformer.synchronize(model, mModel);
-      File temporaryFile = File.createTempFile("pmMDA", "xmi");
-      temporaryFile.deleteOnExit();
+      File temporaryFile = File.createTempFile("pmMDA",  "xmi");
       nsUmlTransformer.writeArgoModel(mModel, temporaryFile);
-      InputStream input = new FileInputStream(temporaryFile);
-      ZipFileUtilities utilities = new ZipFileUtilities();
-      utilities.replaceEntry(file, getArgoModelFileName(file), input);
-      temporaryFile.delete();
+      if(file.getName().endsWith(".xmi")){
+      	file.delete();
+      	temporaryFile.renameTo(file);
+      }else{
+      	  temporaryFile.deleteOnExit();
+	      InputStream input = new FileInputStream(temporaryFile);
+	      ZipFileUtilities utilities = new ZipFileUtilities();
+	      utilities.replaceEntry(file, getArgoModelFileName(file), input);
+	      temporaryFile.delete();
+      }
     } catch (IOException ioe) {
       log.error(ioe);
     } catch (ParserConfigurationException pce) {
@@ -87,7 +121,7 @@ public class NsUmlPersistencyHandler implements PersistencyHandler {
   }
 
   protected String getArgoModelFileName(File file)
-      throws FileNotFoundException, IOException {
+    throws FileNotFoundException, IOException, SAXException {
     ZipFile zipFile = new ZipFile(file);
     Enumeration entries = zipFile.entries();
     String modelFileName = null;
@@ -96,8 +130,9 @@ public class NsUmlPersistencyHandler implements PersistencyHandler {
       modelFileName = entry.getName();
       if (modelFileName.endsWith(".xmi")) {
         break;
+      } else {
+				modelFileName = null;
       }
-      modelFileName = null;
     }
     zipFile.close();
     return modelFileName;
