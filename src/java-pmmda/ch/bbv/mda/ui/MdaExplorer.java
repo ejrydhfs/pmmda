@@ -38,6 +38,7 @@ import ch.bbv.mda.generators.CartridgeFactory;
 import ch.bbv.mda.persistency.PersistencyException;
 import ch.bbv.mda.ui.actions.*;
 import ch.bbv.utilities.PropertyUtilities;
+import ch.bbv.utilities.ResourceUtility;
 
 /**
  * The MDA explorer provides a user interface to view and manipulate model
@@ -59,7 +60,7 @@ public class MdaExplorer extends Explorer {
    */
   private static Log log = LogFactory.getLog(MdaExplorer.class);
 
-  /*
+  /**
    * User interface node type factory of the explorer instances.
    */
   private static UiNodeTypeFactory factory;
@@ -79,6 +80,8 @@ public class MdaExplorer extends Explorer {
 
   private OpenAction openAction;
 
+  private ExplorerGlobalAction generateAllAction;
+
   /** 
    * Properties of the application.
    */
@@ -95,7 +98,7 @@ public class MdaExplorer extends Explorer {
       log.info("Start initializing MDA explorer");
     }
 
-    // initialize the applcation
+    // initialize the application
     CartridgeFactory.create(getProperties());
     // initiatialize the user interface
     initialize();
@@ -188,6 +191,7 @@ public class MdaExplorer extends Explorer {
   }
 
   protected void initialize() {
+  	new ResourceUtility("ch.bbv.mda.ui.messages", Locale.US);
     ExplorerMenuBar menuBar = new ExplorerMenuBar();
     setMenuBar(menuBar);
 
@@ -215,6 +219,7 @@ public class MdaExplorer extends Explorer {
     saveAsAction = new SaveAsAction();
     openAction = new OpenAction();
     exitAction = new ExplorerExitAction();
+    generateAllAction = new GenerateAllAction();
 
     menu.add(new JMenuItem(newAction));
     menu.addSeparator();
@@ -229,6 +234,12 @@ public class MdaExplorer extends Explorer {
     createGenerateMenu();
     createToolsMenu();
 
+    // TODO remove
+    //menu = new JMenu("Test");
+    //menu.setName("Test");
+    //menu.add(new JMenuItem(new TestAction()));
+    //menuBar.add(menu, menuBar.getMenuCount() - 1);
+    
     menuBar.setExplorer(this);
     createNewDocument();
     MetaFactory.getInstance();
