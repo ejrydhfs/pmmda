@@ -17,6 +17,8 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import com.sun.rsasign.t;
+
 import ch.bbv.dog.*;
 
 /**
@@ -262,6 +264,7 @@ public class Explorer {
     treeModel.nodesWereInserted(node, childIndices);
     if (nodeView != null) {
       nodeView.nodeInserted(node, index);
+      getTree().expandRow(0);
     }
   }
 
