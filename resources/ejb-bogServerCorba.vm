@@ -230,7 +230,7 @@ public class $classname extends ${serverName}POA  {
   private DataObjectHandler getHandler() {
     DataObjectManager manager = (DataObjectManager) Locator.getInstance()
                                     .getComponent(DataObjectManager.NAME);
-    return manager.getBoHandler();
+    return manager.getDataObjectHandler();
   }
   
   /** Creates the IDL representation of a concurrent modification exception.

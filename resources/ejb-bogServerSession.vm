@@ -208,6 +208,6 @@ public class ${className} implements javax.ejb.SessionBean {
    */    
   private DataObjectHandler getHandler() {
     DataObjectManager manager = (DataObjectManager) Locator.getInstance().getComponent(DataObjectManager.NAME);
-    return manager.getBoHandler();
+    return manager.getDataObjectHandler();
   }
 }
