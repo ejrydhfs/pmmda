@@ -76,17 +76,17 @@
 #getType($model $aggregation $type)	
 #isPersistentDataObject($type $isPersistentDataObject)
 #if($isPersistentDataObject)
-  <field-descriptor name="${property.nameFirstLower()}Handle"
+  <field-descriptor name="${aggregation.nameFirstLower()}Handle"
 #if($isDataObject)
-    column="${property.nameUpper()}_FK"
+    column="${aggregation.nameUpper()}_FK"
     jdbc-type="INTEGER"
     access="anonymous"
-    nullable="${property.booleanValueOfTag("ojb-can-be-null")}"/>
+    nullable="${aggregation.booleanValueOfTag("ojb-can-be-null")}"/>
 #else
-    column="${property.getAttribute("ojb-column-name")}"
-    jdbc-type="${property.valueOfTag("ojb-column-type")}"
-    nullable="${property.booleanValueOfTag("ojb-can-be-null")}"
-#if(${property.getTaggedValue("ojb-is-primary")} == "true")
+    column="${aggregation.getAttribute("ojb-column-name")}"
+    jdbc-type="${aggregation.valueOfTag("ojb-column-type")}"
+    nullable="${aggregation.booleanValueOfTag("ojb-can-be-null")}"
+#if(${aggregation.getTaggedValue("ojb-is-primary")} == "true")
     primaryKey="true"
     autoincrement="true"/>
 #end
