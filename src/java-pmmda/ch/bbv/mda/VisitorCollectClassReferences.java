@@ -16,12 +16,12 @@ import java.util.Set;
  * @version $Revision$
  */
 public class VisitorCollectClassReferences implements Visitor {
-  /** 
+  /**
    * Qualified name of the class which references are collected.
    */
   private String className;
-  
-  /** 
+
+  /**
    * Set of classes referencing the class being inferred.
    */
   private Set classes;
@@ -30,16 +30,18 @@ public class VisitorCollectClassReferences implements Visitor {
     classes = new HashSet();
   }
 
-	/** Returns the list of classes referencing the class defined in the visitor.
-	 * @return the list of classes referencing the defined class.
-	 */
+  /**
+   * Returns the list of classes referencing the class defined in the visitor.
+   * @return the list of classes referencing the defined class.
+   */
   public Collection getReferences() {
     return classes;
   }
 
-	/** Sets the class which references should be looked for.
-	 * @param clazz class which references will be collected.
-	 */
+  /**
+   * Sets the class which references should be looked for.
+   * @param clazz class which references will be collected.
+   */
   public void setReferencedClass(MetaClass clazz) {
     assert (clazz != null);
     className = clazz.qualifiedName();
@@ -63,7 +65,7 @@ public class VisitorCollectClassReferences implements Visitor {
     String typeName = property.getTypeName();
     if (className.equals(typeName)) {
       MetaClass type = (MetaClass) property.getContext();
-        classes.add(type);
+      classes.add(type);
     }
   }
 
@@ -71,7 +73,7 @@ public class VisitorCollectClassReferences implements Visitor {
     String typeName = property.getTypeName();
     if (className.equals(typeName)) {
       MetaClass type = (MetaClass) property.getContext();
-        classes.add(type);
+      classes.add(type);
     }
   }
 

@@ -17,24 +17,29 @@ import ch.bbv.dog.reference.ReferenceCodeImpl;
  * @version $Revision$
  */
 public class PropertyModeCode extends ReferenceCodeImpl {
-	/** Code for the read access mode reference code.
-	 */
+  /**
+   * Code for the read access mode reference code.
+   */
   public static final int READ = 1;
 
-  /** Code for the write access mode reference code.
+  /**
+   * Code for the write access mode reference code.
    */
   public static final int WRITE = 2;
 
-  /** Code for the read and write access mode reference code.
+  /**
+   * Code for the read and write access mode reference code.
    */
   public static final int READ_WRITE = 3;
-  
-  /** List of all reference codes of this type.
+
+  /**
+   * List of all reference codes of this type.
    */
   private static List codes;
 
-	/** Initializes the reference codes of this type.
-	 */
+  /**
+   * Initializes the reference codes of this type.
+   */
   static {
     codes = new ArrayList();
     codes.add(new PropertyModeCode(READ, 1, "READ", "READ"));
@@ -42,7 +47,8 @@ public class PropertyModeCode extends ReferenceCodeImpl {
     codes.add(new PropertyModeCode(READ_WRITE, 3, "READ_WRITE", "READ_WRITE"));
   }
 
-  /** Constructor initializes the immutable instance with all property values.
+  /**
+   * Constructor initializes the immutable instance with all property values.
    * @param code unique identifier for the code of this type.
    * @param sortOrder sort order of the code instance.
    * @param shortDescription short description of the code.
@@ -52,9 +58,10 @@ public class PropertyModeCode extends ReferenceCodeImpl {
     super(code, sortOrder, shortDescription, description, true);
   }
 
-	/** Returns the list of all reference codes.
-	 * @return list of all reference codes.
-	 */
+  /**
+   * Returns the list of all reference codes.
+   * @return list of all reference codes.
+   */
   public static List getCodes() {
     return codes;
   }
