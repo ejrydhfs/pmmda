@@ -7,6 +7,7 @@ package ch.bbv.mda.ui.actions;
 
 import ch.bbv.explorer.*;
 import ch.bbv.explorer.actions.ExplorerGlobalActionImpl;
+import ch.bbv.mda.MetaFactory;
 import ch.bbv.mda.MetaModel;
 
 /**
@@ -27,10 +28,11 @@ public class NewAction extends ExplorerGlobalActionImpl {
 		explorer.getMenuBar().documentCreated();
 		UiNodeType nodeType = factory.getNodeTypeForBo(ch.bbv.mda.MetaModel.class);
 		MetaModel model = new MetaModel();
+		MetaFactory.getInstance().initialize(model);
 		model.setName("default");
 		ExplorerNode root = new ExplorerNode(nodeType, model, model);
 		explorer.setRoot(root);
-
+		explorer.getMenuBar().documentCreated();
 	}
 
 }
