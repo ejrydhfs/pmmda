@@ -7,10 +7,13 @@ package ch.bbv.mda.persistency;
 
 import java.io.*;
 
+import javax.swing.JOptionPane;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ch.bbv.mda.MetaModel;
+import ch.bbv.utilities.ResourceUtility;
 
 /**
  * The serialize persistency handler uses the serialize mechanism of the Java
@@ -35,12 +38,22 @@ public class SerializePersistencyHandler implements PersistencyHandler {
       ObjectInput in = new ObjectInputStream(new FileInputStream(file));
       project = (MetaModel) in.readObject();
       in.close();
+      project.accept(new InitVisitor());
+    } catch (InvalidClassException ice) {
+      log.error(ice);
+      JOptionPane.showMessageDialog(null, ResourceUtility
+          .getString("mda.ui.sorryMsg.OLD_FORMAT"), ResourceUtility
+          .getString("mda.ui.sorryMsg.SORRY"), JOptionPane.ERROR_MESSAGE);
     } catch (IOException ioe) {
       log.error(ioe);
     } catch (ClassNotFoundException cnfe) {
       log.error(cnfe);
     }
     return project;
+  }
+
+  public void importPackage(MetaModel targetProject, File file,
+      String packageName) {
   }
 
   public void writeModel(MetaModel project, File file) {
