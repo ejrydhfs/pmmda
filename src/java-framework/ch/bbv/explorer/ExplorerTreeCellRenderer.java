@@ -6,6 +6,7 @@
 package ch.bbv.explorer;
 
 import java.awt.Component;
+import java.awt.Dimension;
 
 import javax.swing.ImageIcon;
 import javax.swing.JTree;
@@ -42,6 +43,9 @@ public class ExplorerTreeCellRenderer extends DefaultTreeCellRenderer {
     if (icon != null) {
       setIcon(icon);
     }
+    Dimension dim = this.getMinimumSize();
+    setPreferredSize(dim);
+    updateUI();
     return this;
   }
 }
