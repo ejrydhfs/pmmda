@@ -66,7 +66,7 @@
     <copy file="${lib.dir}/xpp3-1.1.3.jar" todir="${pmmda-lib.dir}"/>
     <copy file="${lib.dir}/xstream-1.0.2.jar" todir="${pmmda-lib.dir}"/>
     <copy file="${scripts.dir}/dist/pmMDA.bat" todir="${pmmda-dist.dir}"/>
-    <copy file="${scripts.dir}/dist/MdaExplorer.properties" todir="${pmmda-dist.dir}"/>
+    <copy file="${scripts.dir}/dist/pmMDA.properties" todir="${pmmda-dist.dir}"/>
     <copy file="${scripts.dir}/dist/logging.properties" todir="${pmmda-dist.dir}"/>
     <copy file="${src.pmmda.dir}/ReleaseNotes.txt" todir="${pmmda-dist.dir}"/>
     <copy todir="${pmmda-resources.dir}">
@@ -94,9 +94,9 @@
     	 index="true"
     	 manifest="${pmmda-lib.dir}/Manifest.mf">
     	<fileset dir="${build.dir}" 
-    		excludes="ch/bbv/documentor/**,**/*.properties,**/*.html,**/*.xml,**/*.sql"/>
+    		excludes="ch/bbv/documentor/**,**/pmmda.properties,**/*.html,**/*.xml,**/*.sql"/>
     </jar>
-  
+  	<delete file="${pmmda-lib.dir}/Manifest.mf"/>
     <jar destfile="${dist.dir}/${pmmda.name}-src-${pmmda.version}.jar"
     	 compress="true" 
     	 index="true">

@@ -1,5 +1,5 @@
-Binary and source distribution
-------------------------------
+1. Binary and source distribution
+   ------------------------------
 The binary and source distribution of all subprojects are published with a 
 version number in sourceforge.
 - Update the build properties with the new release versions. Release candidates
@@ -17,8 +17,12 @@ version number in sourceforge.
 - Write the news entry on the site.
 - Send an email informing all developers of the update.
 
-Web site distribution
----------------------
+1.1 pmmda distribution
+    ------------------
+- Update version number in project description in the MdaExplorer file.
+
+2. Web site distribution
+   ---------------------
 The sourceforge account provides up to 100 MB disk space for the web site.
 The following steps are necessary to create and upload the site.
 - Generate the site (using the ant jobs defined in build-sourceforge.xml)

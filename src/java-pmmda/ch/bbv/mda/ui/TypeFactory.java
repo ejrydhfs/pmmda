@@ -30,6 +30,17 @@ public class TypeFactory extends AbstractTypeFactory {
   }
 
   /**
+   * Registers all data object types defined in the package.
+   */
+  public void registerAllTypes() {
+    createNodeTypeForMetaProject();
+    createNodeTypeForMetaPackage();
+    createNodeTypeForMetaClass();
+    createNodeTypeForMetaProperty();
+    createNodeTypeForMetaIndexedProperty();
+  }
+
+  /**
    * Creates the node type for a bean type with fields and relations.
    */
   public void createNodeTypeForMetaProject() {

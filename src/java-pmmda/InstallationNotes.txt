@@ -75,7 +75,7 @@ Installation Notes pmMDA
    
 4. Configure pmMDA
    ---------------
-   The resource file "MDAExplorer.properties" is used to configure the loaded
+   The resource file "pmMDA.properties" is used to configure the loaded
    cartridge. Please consult the documentation of the relevant cartridge to
    have a complete lists of its configuration properties and possible values.
    

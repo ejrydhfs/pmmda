@@ -18,10 +18,15 @@ TODO
   classname, prefix, loaded, active, dependants
 - Have a self contained jar file running with java -jar pmMDA
 
-Version 0.2.9 (15 September 2004)
+Version 0.2.9-RC1 (15 September 2004)
 ----------------------------
 The following new features were added.
 - The CVS repository was moved to the sourceforge pmmda account.
+- The properties file of pmmda was renamed pmmda.properties. Please modify
+  the name accordingly if you want to use you old configuration.
+- New versions of the libraries are used.
+- The application now uses the application framework. The code is more
+  similar to the one genenerated with pmmda.
 
 The following errors were corrected.
 - The templates files were fine tuned. The generated Java source files are 
