@@ -2,7 +2,8 @@ Version 0.0.1 (30 June 2004)
 ---------------------------
 The following new features were added.
 - Doclet for precondition, postcondition and invariants generates the HTML code
-  for JavaDoc standard doclet output.
+  for JavaDoc standard doclet output. The doclet is used in the pmMDA project
+  published at sourceforge.
 
 The following errors were corrected.
 - None

@@ -1,3 +1,18 @@
+Version 0.2.2 (15 September 2004)
+---------------------------------
+The following new features were added.
+- The generic properties node dialog was enhanced to support edition of their
+  values based on their types. Date fields are displayed with a powerful open
+  source calendar bean. 
+
+The following errors were corrected.
+- The source code was refactored to support the for pattern when using an 
+  iterator.
+- The tree construction functor had a missing functionality. It was not possible
+  to retrieve an explorer node based on the identifier of its lightweight or
+  data object. Therefore the behavior of open view generated a null pointer
+  exception the first time it was called.
+  
 Version 0.2.1 (01 August 2004)
 ------------------------------
 The following new features were added.

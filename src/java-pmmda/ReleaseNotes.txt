@@ -18,14 +18,17 @@ TODO
   classname, prefix, loaded, active, dependants
 - Have a self contained jar file running with java -jar pmMDA
 
-Version 0.2.9 (01 August 2004)
+Version 0.2.9 (15 September 2004)
 ----------------------------
 The following new features were added.
 - The CVS repository was moved to the sourceforge pmmda account.
 
 The following errors were corrected.
 - The templates files were fine tuned. The generated Java source files are 
-  compiled within Eclipse 3.0 without warnings.
+  compiled within Eclipse 3.0 without warnings. The OJB artifacts were tested
+  more extensively against OJB 1.0 and MySQL.
+- A major error in the handling of build-in non primitive types when saving
+  an ArgoUML model was corrected.
 - The JavaDoc comments were enhanced.
   
 Version 0.2.8 (30 June 2004)

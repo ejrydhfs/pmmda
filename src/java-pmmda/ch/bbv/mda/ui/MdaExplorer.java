@@ -326,6 +326,8 @@ public class MdaExplorer extends Explorer {
         "www.jgoodies.com"));
     librairies.add(new Library("glazedlists", new VersionId(0, 9, 1),
         "Open Source", "www.publicobject.com/glazedlists"));
+    librairies.add(new Library("jcalendar", new VersionId(1, 2, 1),
+        "LGPL", "www.toedter.com/jcalendar"));
     return librairies;
   }
 }

@@ -48,5 +48,6 @@
 	<classpathentry kind="lib" path="lib/xstream-1.0.2.jar"/>
 	<classpathentry kind="lib" path="lib/jbossall-client.jar"/>
 	<classpathentry kind="var" path="JDK_TOOLS"/>
+	<classpathentry sourcepath="C:/bin/jcalendar/src" kind="lib" path="lib/jcalendar-1.2.1.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>

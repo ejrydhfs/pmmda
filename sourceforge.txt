@@ -2,17 +2,18 @@ Binary and source distribution
 ------------------------------
 The binary and source distribution of all subprojects are published with a 
 version number in sourceforge.
-- Update the build properties with the new release versions
-- Update the release notes
+- Update the build properties with the new release versions. Release candidates
+  are marked with a RC postfix follow with a revision number.
+- Update the release notes.
 - Generate the distributions (using the ant jobs defined in 
-  build-sourceforge.xml)
-- Generate the zip file containing all librairies necessary for development
+  build-sourceforge.xml).
+- Generate the zip file containing all librairies necessary for development.
 - Commit to sourceforge CVS and tag the release. This operation is done in 
-  Eclipse
-- Upload the distribution files and the library file using anonymous FTP.
-  (See sourceforge for details)
+  Eclipse.
+- Upload the distribution files and the library file using anonymous FTP
+  (See sourceforge for details).
 - Register them in the sourceforge project in the file list. If necessary remove
-  the oldest one to keep the number of versions reasonable.
+  the oldest ones to keep the number of versions reasonable.
 - Write the news entry on the site.
 - Send an email informing all developers of the update.
 
