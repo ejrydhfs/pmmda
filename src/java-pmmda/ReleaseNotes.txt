@@ -12,15 +12,15 @@ TODO
 - implements 1-1 in OEX
 - Defines the reference code explorer as a pmMDA model
 - Implements interface to Poseidon using MDR UML MOF package.
-- Write JUnit regression test suite.
-- Write Velocity macros to simplify the templates.
 - Add preference dialog to the pmMDA (cartridge, visible tags).
   classname, prefix, loaded, active, dependants
 - Have a self contained jar file running with java -jar pmMDA
 
-Version 0.2.9-RC2 (15 October 2004)
+Version 0.2.9-RC2 (30 October 2004)
 -------------------------------------
 The following new features were added.
+- The naming conventions for tags and the persistence tags were aligned to the
+  terminology of the UML standard version 1.5.
 - The OJB cartridge was extended to support generation of indexes for all 
   foreign keys. This feature is controlled through a property. This option
   simplifies the generation of referential integrity rules.

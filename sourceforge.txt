@@ -1,4 +1,11 @@
-1. Binary and source distribution
+1. Prepare distribution
+   --------------------
+- run "sourceforge" target to generate distribution
+- run "build-all-tests" target to generate the test examples
+- run each test appliction with the provided shell scripts.
+- execute the sanity test cases.
+
+2. Binary and source distribution
    ------------------------------
 The binary and source distribution of all subprojects are published with a 
 version number in sourceforge.
@@ -24,11 +31,11 @@ The following steps must be done after the release
   "-dev". Normally only the patch number should be incremented.
 - Update the version number in the pmmda application.
 
-1.1 pmmda distribution
+2.1 pmmda distribution
     ------------------
 - Update version number in project description in the MdaExplorer file.
 
-2. Web site distribution
+3. Web site distribution
    ---------------------
 The sourceforge account provides up to 100 MB disk space for the web site.
 The following steps are necessary to create and upload the site.
@@ -43,7 +50,7 @@ The following steps are necessary to create and upload the site.
         marcelbaumann@shell.sourceforge.net:/home/groups/p/pm/pmmda/htdocs
    upon request give password of developer account.
  
-3. Mailing list management
+4. Mailing list management
    -----------------------
    
 You can configure your mailing list at the following web page:

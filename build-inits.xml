@@ -78,8 +78,9 @@
     <property name="commons-logging-api.lib"
               value="commons-logging-api-1.0.4.jar" />
     <property name="commons-pool.lib" value="commons-pool-1.1.jar" />
-    <property name="forms.lib" value="forms-1.0.4.jar" />
-    <property name="glazedlists.lib" value="glazedlists-0.9.2.jar" />
+    <property name="dog.lib" value="DoG-0.2.9-RC2.jar" />
+    <property name="forms.lib" value="forms-1.0.5.jar" />
+    <property name="glazedlists.lib" value="glazedlists-0.9.3.jar" />
     <property name="nsuml.lib" value="nsuml.jar" />
     <property name="mysql-connector.lib" value="mysql-connector-3.0.15.jar" />
     <property name="velocity.lib" value="velocity-1.4.jar" />
