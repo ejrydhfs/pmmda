@@ -10,11 +10,18 @@ import java.util.*;
 import ru.novosoft.uml.foundation.core.*;
 import ru.novosoft.uml.foundation.data_types.MExpression;
 import ru.novosoft.uml.foundation.data_types.MMultiplicity;
+import ru.novosoft.uml.foundation.data_types.MVisibilityKind;
+import ru.novosoft.uml.foundation.extension_mechanisms.MStereotype;
 import ru.novosoft.uml.foundation.extension_mechanisms.MTaggedValue;
 import ru.novosoft.uml.foundation.extension_mechanisms.MTaggedValueImpl;
+import ru.novosoft.uml.MFactory;
 import ru.novosoft.uml.model_management.MModel;
 import ru.novosoft.uml.model_management.MPackage;
 import ru.novosoft.uml.model_management.MPackageImpl;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import ch.bbv.mda.*;
 
 /**
@@ -29,6 +36,11 @@ import ch.bbv.mda.*;
  * @version $Revision$
  */
 public class MdaTransformer {
+  /**
+   * Logger of the instances of the class.
+   */
+  private static Log log = LogFactory.getLog(MdaTransformer.class);
+
   /**
    * UML modeling tool using NSUML library stores the documentation of an item
    * in a tagged value named documentation. This tag is the standard one defined
@@ -60,16 +72,39 @@ public class MdaTransformer {
   private Map elements;
 
   /**
+   * Stores MAttributes with associated MetaClasses denoting the type. This map
+   * is needed because type references to MClasses not created at the time we
+   * look it up have to be post processed.
+   */
+  private Map missingAttributeTypes;
+
+  private MModel mModel;
+
+  private MetaModel theMetaModel;
+
+  /**
    * Default constructor of the class.
    */
   public MdaTransformer() {
     elements = new HashMap();
+    missingAttributeTypes = new HashMap();
   }
 
   public void synchronize(MetaModel metaModel, MModel model) {
+    mModel = model;
+    model.setName(metaModel.getName());
+    theMetaModel = metaModel;
+
+    extractDataTypes(metaModel, model);
+
     for (Iterator i = metaModel.getPackages().iterator(); i.hasNext();) {
       extractPackage((MetaPackage) i.next(), model);
     }
+    for (Iterator i = metaModel.getClasses().iterator(); i.hasNext();) {
+      extractClass((MetaClass) i.next(), model);
+    }
+
+    processMissingAttributeTypes();
   }
 
   protected void extractPackage(MetaPackage metaPackage, MModel context) {
@@ -79,6 +114,7 @@ public class MdaTransformer {
     MPackage mPackage = createPackage(context, qualifiedName);
     elements.put(metaPackage, mPackage);
     extractTags(metaPackage, mPackage);
+    extractStereotypeAndVisibility(metaPackage, mPackage);
 
     for (Iterator i = metaPackage.getClasses().iterator(); i.hasNext();) {
       extractClass((MetaClass) i.next(), mPackage);
@@ -92,6 +128,7 @@ public class MdaTransformer {
     elements.put(clazz, mClass);
     mClass.setAbstract(clazz.isAbstract());
     extractTags(clazz, mClass);
+    extractStereotypeAndVisibility(clazz, mClass);
 
     for (Iterator i = clazz.getProperties().iterator(); i.hasNext();) {
       extractProperty((MetaProperty) i.next(), mClass);
@@ -99,6 +136,32 @@ public class MdaTransformer {
 
     for (Iterator i = clazz.getIndexedProperties().iterator(); i.hasNext();) {
       extractIndexedProperty((MetaIndexedProperty) i.next(), mClass);
+    }
+
+    for (Iterator i = clazz.getClasses().iterator(); i.hasNext();) {
+      extractNestedClass((MetaClass) i.next(), mClass);
+    }
+  }
+
+  protected void extractNestedClass(MetaClass clazz, MClass context) {
+    assert ((clazz != null) && (context != null));
+
+    MClass mClass = createClass(context, clazz.getName());
+    elements.put(clazz, mClass);
+    mClass.setAbstract(clazz.isAbstract());
+    extractTags(clazz, mClass);
+    extractStereotypeAndVisibility(clazz, mClass);
+
+    for (Iterator i = clazz.getProperties().iterator(); i.hasNext();) {
+      extractProperty((MetaProperty) i.next(), mClass);
+    }
+
+    for (Iterator i = clazz.getIndexedProperties().iterator(); i.hasNext();) {
+      extractIndexedProperty((MetaIndexedProperty) i.next(), mClass);
+    }
+
+    for (Iterator i = clazz.getClasses().iterator(); i.hasNext();) {
+      extractNestedClass((MetaClass) i.next(), mClass);
     }
   }
 
@@ -113,9 +176,17 @@ public class MdaTransformer {
       if (association != null) {
         updatePropertyFlags(property, association);
         extractTags(property, association);
+        extractStereotypeAndVisibility(property, association);
       }
     } else {
       MAttribute mAttribute = createAttribute(context, property.getName());
+      MClassifier mClassifier = mAttribute.getType();
+      if (mClassifier == null
+          || !mClassifier.getName().equals(property.getTypeName())) {
+        mClassifier = createClassifier(property.getTypeName(), mAttribute);
+        mAttribute.setType(mClassifier);
+      }
+
       MMultiplicity mMultiplicity = mAttribute.getMultiplicity();
       MMultiplicity newMultiplicity = convert(property.getMultiplicity());
       if ((newMultiplicity != null) && (mMultiplicity != newMultiplicity)) {
@@ -124,6 +195,7 @@ public class MdaTransformer {
       updateInitialValue(property, mAttribute);
       updatePropertyFlags(property, mAttribute);
       extractTags(property, mAttribute);
+      extractStereotypeAndVisibility(property, mAttribute);
     }
   }
 
@@ -139,6 +211,7 @@ public class MdaTransformer {
       if (association != null) {
         updatePropertyFlags(property, association);
         extractTags(property, association);
+        extractStereotypeAndVisibility(property, association);
       }
     } else {
       MAttribute attribute = createAttribute(context, property.getName());
@@ -149,6 +222,7 @@ public class MdaTransformer {
       }
       updatePropertyFlags(property, attribute);
       extractTags(property, attribute);
+      extractStereotypeAndVisibility(property, attribute);
     }
   }
 
@@ -188,6 +262,30 @@ public class MdaTransformer {
     }
   }
 
+  public void extractDataTypes(MetaModel metaModel, MModel model) {
+    MDataType mDataType;
+    MetaDataType metaDataType;
+    List datatypes = metaModel.getDataTypes();
+    for (Iterator i = datatypes.iterator(); i.hasNext();) {
+      boolean found = false;
+      metaDataType = (MetaDataType) i.next();
+      Iterator mDatatypes = new FilterIterator(model.getOwnedElements(),
+          MDataType.class);
+      while (mDatatypes.hasNext()) {
+        mDataType = (MDataType) mDatatypes.next();
+        if (mDataType.getName().equals(metaDataType.getName())) {
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        mDataType = MFactory.getDefaultFactory().createDataType();
+        mDataType.setName(metaDataType.getName());
+        model.addOwnedElement(mDataType);
+      }
+    }
+  }
+
   public MTaggedValue findTag(MModelElement item, String tagName) {
     assert ((item != null) && (tagName != null));
 
@@ -218,7 +316,7 @@ public class MdaTransformer {
    * Creates the package with the given qualified name. All necessary surounding
    * packages are created. If the package already exists no creation action is
    * performed.
-   * @param model model containing the package.
+   * @param MModel model containing the package.
    * @param qualifiedName qualified name of the package to create.
    * @return the requested package either found or newly created.
    */
@@ -298,7 +396,34 @@ public class MdaTransformer {
     return mClass;
   }
 
+  public MClass findClass(MClass context, String name) {
+    assert ((context != null) && (name != null));
+
+    MClass mClass = null;
+    for (Iterator i = new FilterIterator(context.getOwnedElements(),
+        MClass.class); i.hasNext();) {
+      mClass = (MClass) i.next();
+      if (name.equals(mClass.getName())) {
+        break;
+      }
+      mClass = null;
+    }
+    return mClass;
+  }
+
   public MClass createClass(MPackage context, String name) {
+    assert ((context != null) && (name != null));
+
+    MClass item = findClass(context, name);
+    if (item == null) {
+      item = new MClassImpl();
+      item.setName(name);
+      context.addOwnedElement(item);
+    }
+    return item;
+  }
+
+  public MClass createClass(MClass context, String name) {
     assert ((context != null) && (name != null));
 
     MClass item = findClass(context, name);
@@ -332,9 +457,61 @@ public class MdaTransformer {
     if (item == null) {
       item = new MAttributeImpl();
       item.setName(name);
-      context.addOwnedElement(item);
+      context.addFeature(item);
     }
     return item;
+  }
+
+  public MClassifier findDataType(String name) {
+    for (Iterator i = new FilterIterator(mModel.getOwnedElements(),
+        MDataType.class); i.hasNext();) {
+      MDataType mDataType = (MDataType) i.next();
+      if (mDataType.getName().equals(name)) {
+        return mDataType;
+      }
+    }
+    return null;
+  }
+
+  public MetaClass findClassInModel(String name) {
+    VisitorFindClass vfc = new VisitorFindClass(name);
+    theMetaModel.accept(vfc);
+    return vfc.getResult();
+  }
+
+  public MClassifier createClassifier(String name, MAttribute mAttribute) {
+    assert (name != null);
+
+    MClassifier item = null;
+    MClass tempMClass = null;
+
+    MetaClass mc = findClassInModel(name);
+    if (mc != null) {
+      tempMClass = (MClass) elements.get(mc);
+      if (tempMClass == null) {
+        missingAttributeTypes.put(mAttribute, mc);
+      }
+    } else {
+      item = findDataType(name);
+      if (item == null) {
+        item = MFactory.getDefaultFactory().createDataType();
+        item.setName(name);
+        mModel.addOwnedElement(item);
+      }
+    }
+    return item;
+  }
+
+  public void processMissingAttributeTypes() {
+    MAttribute mAttribute;
+    MClass mClass;
+    MetaClass metaClass;
+    for (Iterator i = missingAttributeTypes.keySet().iterator(); i.hasNext();) {
+      mAttribute = (MAttribute) i.next();
+      metaClass = (MetaClass) missingAttributeTypes.get(mAttribute);
+      mClass = (MClass) elements.get(metaClass);
+      mAttribute.setType(mClass);
+    }
   }
 
   public MAssociation findAssociation(MPackage context, MClass clazz,
@@ -429,5 +606,41 @@ public class MdaTransformer {
       }
     }
     return mMultiplicity;
+  }
+
+  public void extractStereotypeAndVisibility(MetaElement source,
+      MModelElement item) {
+    String stereotype = source.getStereotype();
+    MStereotype mStereotype = item.getStereotype();
+    if (stereotype != null) {
+      if (mStereotype == null)
+        mStereotype = MFactory.getDefaultFactory().createStereotype();
+      mStereotype.setName(stereotype);
+      item.setStereotype(mStereotype);
+      if (item instanceof MClassifier) {
+        ((MClassifier) item).addOwnedElement(mStereotype);
+      } else if (item instanceof MPackage) {
+        ((MPackage) item).addOwnedElement(mStereotype);
+      } else {
+        log.info("Cannot associate stereotype '" + stereotype + "' to "
+            + item.getName() + " : " + item.getClass());
+      }
+    } else if (mStereotype != null) {
+      mStereotype.setName("");
+    }
+
+    convert(source.getVisibility(), item);
+  }
+
+  protected void convert(VisibilityCode visibility, MModelElement item) {
+    if (VisibilityCode.PUBLIC_VISIBILITY_CODE == visibility.getCode()) {
+      item.setVisibility(MVisibilityKind.PUBLIC);
+    } else if (VisibilityCode.PROTECTED_VISIBILITY_CODE == visibility.getCode()) {
+      item.setVisibility(MVisibilityKind.PROTECTED);
+    } else if (VisibilityCode.PRIVATE_VISIBILITY_CODE == visibility.getCode()) {
+      item.setVisibility(MVisibilityKind.PRIVATE);
+    } else if (VisibilityCode.PACKAGE_VISIBILITY_CODE == visibility.getCode()) {
+      item.setVisibility(MVisibilityKind.PUBLIC);
+    }
   }
 }
