@@ -76,9 +76,19 @@ public class MetaClass extends MetaElement {
    * Default constructor of the class.
    */
   public MetaClass() {
-    ancestors = new ArrayList();
-    properties = new ArrayList();
-    indexedProperties = new ArrayList();
+    init();
+  }
+
+  public void init() {
+    super.init();
+    if (ancestors == null)
+      ancestors = new ArrayList();
+    if (properties == null)
+      properties = new ArrayList();
+    if (indexedProperties == null)
+      indexedProperties = new ArrayList();
+    if (classes == null)
+      classes = new ArrayList();
   }
 
   /**
@@ -317,6 +327,42 @@ public class MetaClass extends MetaElement {
     indexedProperties.clear();
   }
 
+  public MetaClass getClass(int index) {
+    return (MetaClass) classes.get(index);
+  }
+
+  public void addClass(MetaClass metaClass) {
+    classes.add(metaClass);
+    metaClass.setContext(this);
+  }
+
+  public void addClass(int index, MetaClass metaClass) {
+    classes.add(index, metaClass);
+    metaClass.setContext(this);
+  }
+
+  public List getClasses() {
+    return classes;
+  }
+
+  public void setClasses(List classes) {
+    removeAllClasses();
+    classes.addAll(classes);
+
+    Iterator iterator = classes.iterator();
+    while (iterator.hasNext()) {
+      ((MetaClass) iterator.next()).setContext(this);
+    }
+  }
+
+  public void removeAllClasses() {
+    Iterator iterator = classes.iterator();
+    while (iterator.hasNext()) {
+      ((MetaClass) iterator.next()).setContext(null);
+    }
+    classes.clear();
+  }
+
   /**
    * Returns the number of properties being primary keys.
    * @return number of primary properties in the class.
@@ -371,6 +417,10 @@ public class MetaClass extends MetaElement {
     }
     for (Iterator i = indexedProperties.iterator(); i.hasNext();) {
       ((MetaIndexedProperty) i.next()).accept(visitor);
+    }
+    iterator = classes.iterator();
+    while (iterator.hasNext()) {
+      ((MetaClass) iterator.next()).accept(visitor);
     }
   }
 
@@ -437,11 +487,20 @@ public class MetaClass extends MetaElement {
     boolean hasInterface = MdaUtilities.containsElementNamed(interfaces,
         qualifiedName);
     if (!hasInterface) {
-      for (Iterator i = interfaces.iterator(); i.hasNext() && !hasInterface;) {
-        hasInterface = ((MetaClass) i.next()).hasInterface(qualifiedName);
+      Iterator it = interfaces.iterator();
+      while (it.hasNext() && !hasInterface) {
+        hasInterface = ((MetaClass) it.next()).hasInterface(qualifiedName);
       }
     }
     return hasInterface;
+  }
+
+  /**
+   * Returns true if context is of type class, false if not (package)
+   * @return true if context is MetaClass
+   */
+  public boolean isNestedClass() {
+    return getContext() instanceof MetaClass;
   }
 
   /**
@@ -460,5 +519,12 @@ public class MetaClass extends MetaElement {
    */
   public static String getClassName(String qualifiedClassname) {
     return TextUtilities.getComponentName(qualifiedClassname);
+  }
+
+  public boolean isLeaf() {
+    if (properties != null && properties.isEmpty() && indexedProperties != null
+        && indexedProperties.isEmpty() && classes != null & classes.isEmpty())
+      return true;
+    return false;
   }
 }
