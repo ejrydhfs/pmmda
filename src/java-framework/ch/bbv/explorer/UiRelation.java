@@ -15,7 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 
 /**
- * The class defines the user interface characteristics of an displayed
+ * The class defines the user interface characteristics of a displayed
  * relation. A relation is a visible link in the tree view displayed in the left
  * navigator pane. The following conventions are used.
  * <ul>
@@ -71,15 +71,15 @@ public class UiRelation {
 
     addMethodName = ADD_PREFIX
         + TextUtilities.identifierSingular(TextUtilities
-            .identifierFirstUpper(property));
+            .identifierFirstUpper(TextUtilities.removeSpecialCharacters(property)));
 
     removeMethodName = REMOVE_PREFIX
         + TextUtilities.identifierSingular(TextUtilities
-            .identifierFirstUpper(property));
+            .identifierFirstUpper(TextUtilities.removeSpecialCharacters(property)));
 
     getAllMethodName = GET_ALL_PREFIX
         + TextUtilities.identifierPlural(TextUtilities
-            .identifierFirstUpper(property));
+            .identifierFirstUpper(TextUtilities.removeSpecialCharacters(property)));
   }
 
   public String getProperty() {
