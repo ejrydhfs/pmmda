@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="properties"/>
+	<classpathentry kind="src" path="test-java/unit-tests"/>
 	<classpathentry kind="src" path="gendir/j2ee-client"/>
 	<classpathentry kind="src" path="gendir/j2ee-common"/>
 	<classpathentry kind="src" path="gendir/j2ee-server"/>
