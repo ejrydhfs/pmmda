@@ -231,8 +231,9 @@ public class Explorer {
    */
   public void display() {
     frame.setLocation(100, 100);
-    splitPane.setDividerLocation(0.4);
     frame.pack();
+  	frame.setSize(750, 500);
+    splitPane.setDividerLocation(0.4);
     frame.setVisible(true);
   }
 
