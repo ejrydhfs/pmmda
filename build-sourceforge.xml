@@ -240,7 +240,7 @@
              author="true"
              version="true"
              use="true"
-             source="1.4"
+             source="1.5"
              windowtitle="pmMDA API">
       <sourcepath>
         <pathelement path="${src.pmmda.dir}/" />
@@ -272,7 +272,7 @@
              packagenames="ch.bbv.*"
              classpath="${build.dir}"
              classpathref="application.classpath"
-             source="1.4"
+             source="1.5"
              protected="true">
       <sourcepath>
         <pathelement path="${src.pmmda.dir}/" />

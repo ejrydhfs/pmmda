@@ -3,7 +3,7 @@
   <target name="init"
           description="initializes all variables of the project ant file">
     <property name="compile.debug" value="true" />
-    <property name="compile.source" value="1.4" />
+    <property name="compile.source" value="1.5" />
     <property name="compile.deprecation" value="false" />
     <property name="compile.verbose" value="false" />
     <property name="build.dir" value="${basedir}/classes" />
@@ -70,23 +70,26 @@
     <property name="antlr.lib" value="antlr-2.7.3.jar" />
     <property name="commons-beanutils.lib"
               value="commons-beanutils-1.6.1.jar" />
-    <property name="commons-dbcp.lib" value="commons-dbcp-1.1.jar" />
+    <property name="commons-cli.lib" value="commons-cli-1.0.jar" />
     <property name="commons-collections.lib"
               value="commons-collections-2.1.1.jar" />
+    <property name="commons-dbcp.lib" value="commons-dbcp-1.1.jar" />
     <property name="commons-lang.lib" value="commons-lang-2.0.jar" />
     <property name="commons-logging.lib" value="commons-logging-1.0.4.jar" />
     <property name="commons-logging-api.lib"
               value="commons-logging-api-1.0.4.jar" />
     <property name="commons-pool.lib" value="commons-pool-1.1.jar" />
-    <property name="dog.lib" value="DoG-0.2.9-RC2.jar" />
+    <property name="dog.lib" value="DoG-${dog.version}.jar" />
     <property name="forms.lib" value="forms-1.0.5.jar" />
-    <property name="glazedlists.lib" value="glazedlists-0.9.3.jar" />
+    <property name="glazedlists.lib" value="glazedlists-0.9.4.jar" />
+    <property name="jgraph.lib" value="jgraph-5.3.jar" />
+    <property name="jgraphaddons.lib" value="jgraphaddons-1.0.4.jar" />
     <property name="nsuml.lib" value="nsuml.jar" />
     <property name="mysql-connector.lib" value="mysql-connector-3.0.15.jar" />
     <property name="velocity.lib" value="velocity-1.4.jar" />
     <property name="velocity-dep.lib" value="velocity-dep-1.4.jar" />
-    <property name="xpp3.lib" value="xpp3-1.1.3.jar" />
-    <property name="xstream.lib" value="xstream-1.0.2.jar" />
+    <property name="xpp3.lib" value="xpp3-1.1.3.4.jar" />
+    <property name="xstream.lib" value="xstream-1.1.jar" />
   </target>
 
   <target name="dist-init"

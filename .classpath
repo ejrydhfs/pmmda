@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="properties"/>
+	<classpathentry excluding="**/*CVS*.*" kind="src" path="properties"/>
 	<classpathentry excluding="**/*.html" kind="src" path="src/java-business"/>
-	<classpathentry excluding="**/*.html" kind="src" path="gendir/ojb-server"/>
-	<classpathentry kind="src" path="src/etc/properties/unmanaged"/>
-	<classpathentry excluding="**/*.html" kind="src" path="gendir/rich-client"/>
-	<classpathentry excluding="**/*.html" kind="src" path="test-java/unit-tests"/>
-	<classpathentry excluding="**/*.html" kind="src" path="src/java-documentor"/>
-	<classpathentry excluding="**/*.html" kind="src" path="src/java-framework"/>
-	<classpathentry excluding="**/*.html" kind="src" path="src/java-pmmda"/>
-	<classpathentry excluding="**/*.html" kind="src" path="test-java/client"/>
-	<classpathentry excluding="**/*.html" kind="src" path="test-java/common"/>
+	<classpathentry excluding="**/*.html|**/Entries|**/Repository" kind="src" path="gendir/ojb-server"/>
+	<classpathentry excluding="**/Entries|**/Repository|**/Root" kind="src" path="src/etc/properties/unmanaged"/>
+	<classpathentry including="**/*.java|**/*.properties" excluding="**/*.html" kind="src" path="gendir/rich-client"/>
+	<classpathentry including="**/*.java|**/*.properties" excluding="**/*.html" kind="src" path="test-java/unit-tests"/>
+	<classpathentry including="**/*.java|**/*.properties" excluding="**/*.html" kind="src" path="src/java-documentor"/>
+	<classpathentry including="**/*.java|**/*.properties" excluding="**/*.html" kind="src" path="src/java-framework"/>
+	<classpathentry including="**/*.java|**/*.properties" excluding="**/*.html" kind="src" path="src/java-pmmda"/>
+	<classpathentry including="**/*.java|**/*.properties" excluding="**/*.html" kind="src" path="test-java/client"/>
+	<classpathentry including="**/*.java|**/*.properties" excluding="**/*.html" kind="src" path="test-java/common"/>
 	<classpathentry kind="lib" path="lib/jdom.jar"/>
 	<classpathentry kind="lib" path="lib/commons-digester.jar"/>
 	<classpathentry kind="lib" path="lib/jcs.jar"/>
@@ -36,10 +36,7 @@
 	<classpathentry kind="lib" path="lib/commons-pool-1.1.jar"/>
 	<classpathentry kind="lib" path="lib/antlr_compiletime-2.7.3.jar"/>
 	<classpathentry kind="lib" path="lib/commons-beanutils-1.6.1.jar"/>
-	<classpathentry kind="lib" path="lib/xpp3-1.1.3.jar"/>
-	<classpathentry kind="lib" path="lib/xstream-1.0.2.jar"/>
 	<classpathentry kind="lib" path="lib/jbossall-client.jar"/>
-	<classpathentry kind="var" path="JDK_TOOLS"/>
 	<classpathentry sourcepath="C:/bin/jcalendar/src" kind="lib" path="lib/jcalendar-1.2.1.jar"/>
 	<classpathentry kind="lib" path="lib/junit-3.8.1.jar"/>
 	<classpathentry kind="lib" path="lib/jakarta-regexp-1.3.jar"/>
@@ -47,8 +44,16 @@
 	<classpathentry kind="lib" path="lib/bsh-2.0b2.jar"/>
 	<classpathentry kind="lib" path="lib/p6spy.jar"/>
 	<classpathentry kind="lib" path="lib/mysql-connector-3.0.15.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.4"/>
 	<classpathentry kind="lib" path="lib/forms-1.0.5.jar"/>
-	<classpathentry kind="lib" path="lib/glazedlists-0.9.3.jar"/>
+	<classpathentry kind="lib" path="lib/commons-functor.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/glazedlists-0.9.4.jar"/>
+	<classpathentry kind="lib" path="lib/openide-util.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Java/jdk1.5.0_01/lib/tools.jar"/>
+	<classpathentry kind="lib" path="lib/jgraph-5.3.jar"/>
+	<classpathentry kind="lib" path="lib/jgraphaddons-1.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/commons-cli-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/xstream-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/xpp3-1.1.3.4.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
