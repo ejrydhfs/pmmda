@@ -1,10 +1,6 @@
 #set($sign="#")
 #set($dollar="$")
-/* This code was generated automatically with the pmMDA generator. Please do 
-   NOT add code outside the marked zones. All changes outside the marked areas 
-   will be discarded during the next execution of the MDA generator. 
-   ${dollar}Id${dollar}
-*/
+#emitFileHeader()
 
 #if (${package})
 package ${package.getAttribute("bo-lw-package")};
@@ -22,38 +18,18 @@ import $importStatement;
 /* %% USER DEFINED IMPORT START %% */
 /* %% USER DEFINED IMPORT END   %% */
 
-#set($lines = ${class.javaDocComment()})
-/**
-#foreach($line in $lines)
- ${line}
-#end
- * @version ${dollar}Revision${dollar}
- */
+#emitClassDescription($class "")
 #set($className=${class.getAttribute("bo-lw-class")})
 ${class.retrieveVisibilityText()} class ${className} implements LightweightObject {
 #foreach($property in $properties)
 #if(${property.booleanValueOfTag("bo-lightweight")})
-#if(${property.getDescription()})
-#set($lines = ${property.javaDocComment()})
-  /**
-#foreach($line in $lines)
-   ${line}
-#end
-   */
-#end
+#emitPropertyDescription($property "  ")
   private ${property.retrieveTypeClassName()} ${property.nameFirstLower()};
 #end
 #end
 #foreach($aggregation in $aggregations) 
 #if(${aggregation.booleanValueOfTag("bo-lightweight")})
-#if(${aggregation.getDescription()})
-#set($lines = ${aggregation.javaDocComment()})
-  /**
-#foreach($line in $lines)
-   ${line}
-#end
-   */
-#end
+#emitPropertyDescription($aggregation "  ")
   private ${aggregation.getAttribute("bo-storage-interface")} ${aggregation.nameFirstLower()};
 #end
 #end
@@ -138,8 +114,7 @@ ${class.retrieveVisibilityText()} class ${className} implements LightweightObjec
 #set($upName = ${aggregation.nameFirstUpperPlural()})
 #set($interface = ${aggregation.getAttribute("bo-storage-interface")}) 
 #set($storageType = ${aggregation.getAttribute("bo-storage-type")})
-#set($type=false)
-#set($type=${model.findClass(${aggregation.getTypeName()})})
+#getType($model $aggregation $type)
 #set($itemType = ${type.getAttribute("bo-lw-class")})
 #set($keyType = ${aggregation.getKeyType()})
 #set($visibility = ${aggregation.retrieveVisibilityText()})
@@ -274,10 +249,8 @@ ${class.retrieveVisibilityText()} class ${className} implements LightweightObjec
     visitor.visit(this);
 #foreach ($property in $properties)
 #if(${property.booleanValueOfTag("bo-lightweight")})
-#set($typeName=${property.getTypeName()})
-#set($type=false)
-#set($type=${model.findClass(${typeName})})
-#if(${type} && (${type.getStereotype()} == "dataObject") && ${type.getAttribute("bo-lightweight")})
+#isTypeLightweigth($model $property $isTypeLightweigth)
+#if($isTypeLightweigth)
     if (${property.nameFirstLower()} != null) {
       visitor.visit(${property.nameFirstLower()});
     }
@@ -286,10 +259,8 @@ ${class.retrieveVisibilityText()} class ${className} implements LightweightObjec
 #end
 #foreach ($aggregation in $aggregations) 
 #if(${aggregation.booleanValueOfTag("bo-lightweight")})
-#set($typename=${aggregation.getTypeName()})
-#set($type=false)
-#set($type=${model.findClass(${typename})})
-#if(${type} && ${type.getStereotype().equalsIgnoreCase("dataObject")} && ${type.getAttribute("bo-lightweight")})
+#isTypeLightweigth($model $aggregation $isTypeLightweigth)
+#if($isTypeLightweigth)
     for (Iterator i = ${aggregation.nameFirstLower()}.iterator(); i.hasNext();) {
       ((${type.getAttribute("bo-lw-class")})i.next()).accept(visitor);
     }
@@ -313,13 +284,13 @@ ${class.retrieveVisibilityText()} class ${className} implements LightweightObjec
       return null;
     }
 #foreach ($property in $properties)
-#if(${property.booleanValueOfTag("bo-lightweight")})
-#set($stereotype=${property.getStereotype()})
-#if($stereotype == "dataObject")
+#isLightweightDataObject($property $isLightweightDataObject)	
+#if($isLightweightDataObject)
 #set($lName=${property.nameFirstLower()})
-    clone.${lName} = (${property.getReferenceClass().getAttribute("bo-lw-class")})${lName}.getClone();
+    if (${lName} != null) {
+      clone.${lName} = (${property.getReferenceClass().getAttribute("bo-lw-class")})${lName}.getClone();
+	}
 #end 
-#end
 #end
 #foreach ($aggregation in $aggregations) 
 #if(${aggregation.booleanValueOfTag("bo-lightweight")})

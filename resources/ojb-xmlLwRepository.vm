@@ -1,4 +1,5 @@
-#if(${class.getStereotype().equalsIgnoreCase("dataObject")} && (${class.getAttribute("bo-lightweight")} == "true"))
+#isLightweightDataObject($class $isLightweightDataObject)
+#if($isLightweightDataObject)
 #set($schema=${package.valueOfTag("ojb-schema")})
 #if(${schema})#set($schema="${schema}.")#else#set($schema="")#end
 <class-descriptor class="${package.getAttribute("bo-lw-package")}.${class.getAttribute("bo-lw-class")}"
@@ -15,13 +16,12 @@
 ## either a simple property or an indexed property with a cardinality of 1
 ## having as type a class not being a data object.
 #foreach($property in $properties)
-#if($property.booleanValueOfTag("bo-lightweight"))
-#set($typeName=${property.getTypeName()})
-#set($columnType=${property.valueOfTag("ojb-column-type")})
-#set($type=false)
-#set($type=${model.findClass(${typeName})})
+#if(!${property.isTransient()} && $property.booleanValueOfTag("bo-lightweight"))	
+#set($columnType=${property.valueOfTag("ojb-column-type").toUpperCase()})
+#getType($model $property $type)
+#isDataObject($type $isDataObject)
 ## identifies a forward reference 1-0..1 or 1-1
-#if(${type} && ${type.getStereotype().equalsIgnoreCase("dataObject")})
+#if($isDataObject && ${type.booleanValueOfTag("ojb-is-persistent")})
   <field-descriptor name="${property.nameFirstLower()}"
     column="${property.getAttribute("ojb-column-name")}_FK"
     jdbc-type="INTEGER"
@@ -33,10 +33,13 @@
 #if(${columnType.equalsIgnoreCase("BOOLEAN")})
     jdbc-type="INTEGER"
     conversion="org.apache.ojb.broker.accesslayer.conversions.Boolean2IntFieldConversion"
-#elseif(($columnType == "STRING") || ($columnType == "String"))
+#elseif(${columnType.equalsIgnoreCase("STRING")})
     jdbc-type="VARCHAR"
 #else    
     jdbc-type="${columnType}"
+#if (${columnType.equalsIgnoreCase("BOOLEAN")})
+	conversion="org.apache.ojb.broker.accesslayer.conversions.Boolean2IntFieldConversion"
+#end
 #end
 #if(${property.getTaggedValue("ojb-is-primary")} == "true")
     autoincrement="true"
@@ -49,9 +52,9 @@
 #end
 #foreach($property in $properties)
 #if($property.booleanValueOfTag("bo-lightweight"))
-#set($type=false)
-#set($type=${model.findClass(${typeName})})
-#if(${type} && ${type.getStereotype()} == "dataObject")
+#getType($model $property $type)	
+#isDataObject($type $isDataObject)
+#if($isDataObject)
 #set($columnName=${aggregation.getAttribute("ojb-column-name")})
 #set($typeName=${property.getTypeName()})
   <reference-descriptor name="${property.nameFirstLower()}"
@@ -65,12 +68,11 @@
 ## class are generated as reverse foreign keys in the class.
 #set($references=$model.getClassReferences($class))
 #foreach($reference in $references)
-#if(${reference.getStereotype().equalsIgnoreCase("dataObject")} && ${reference.booleanValueOfTag("ojb-is-persistent")})
+#isDataObject($reference $isDataObject)	
+#if($isDataObject && ${reference.booleanValueOfTag("ojb-is-persistent")})
 #set($relations=${reference.getIndexedProperties()})
 #foreach($relation in $relations)
-#set($typeName=${relation.getTypeName()})
-#set($type=false)
-#set($type=${model.findClass(${typeName})})
+#getType($model $relation $type)	
 #if(${type} == ${class})
   <field-descriptor 
     name="${reference.nameFirstLower()}${relation.nameFirstUpper()}Handle" 
@@ -84,10 +86,9 @@
 #end
 #foreach($aggregation in $aggregations)
 #if($aggregation.booleanValueOfTag("bo-lightweight") && (${aggregation.getMultiplicity().getUpperBound()} == 1))
-#set($typeName=${aggregation.getTypeName()})
-#set($type=false)
-#set($type=${model.findClass(${typeName})})
-#if(${type} && (${type.getStereotype()} == "dataObject") && ${type.booleanValueOfTag("ojb-is-persistent")})
+#getType($model $aggregation $type)	
+#isDataObject($type $isDataObject)
+#if($isDataObject && ${type.booleanValueOfTag("ojb-is-persistent")})
 #set($typePackage=${type.getContext()})
 #set($columnName=${aggregation.getAttribute("ojb-column-name")})
   <reference-descriptor
@@ -100,10 +101,9 @@
 #end
 #foreach($aggregation in $aggregations)
 #if(${aggregation.getMultiplicity().getUpperBound()} == -1)
-#set($typeName=${aggregation.getTypeName()})
-#set($type=false)
-#set($type=${model.findClass(${typeName})})
-#if(${type} && ${type.getStereotype().equalsIgnoreCase("dataObject")} && ${type.booleanValueOfTag("ojb-is-persistent")} && ${type.booleanValueOfAttribute("bo-lightweight")})
+#getType($model $aggregation $type)	
+#isDataObject($type $isDataObject)
+#if($isDataObject && ${type.booleanValueOfTag("ojb-is-persistent")} && ${type.booleanValueOfAttribute("bo-lightweight")})
 #set($columnName=${aggregation.getAttribute("ojb-column-name")})
 #set($typePackage=${type.getContext()})
   <collection-descriptor name="${aggregation.getName()}"

@@ -1,9 +1,6 @@
 #set($sign="#")
 #set($dollar="$")
-/* This code was generated automatically with the MDA generator Version 0.2.
-   Please do NOT add code outside the marked zones. All changes outside the 
-   marked area will be discarded during the next execution of the MDA generator. 
-*/
+#emitFileHeader()
    
 #if (${package})
 package ${package.getAttribute("bo-mo-package")};
@@ -54,14 +51,16 @@ public class TypeFactory {
    */
   public void registerAllTypes() {
 #foreach($class in $classes)
-#if((${class.getStereotype()} == "dataObject") && (${class.getAttribute("bo-lightweight")} == "true"))
+#isLightweightDataObject($class $isLightweightDataObject)	
+#if($isLightweightDataObject)
     createNodeTypeFor${class.getName()}();
 #end
 #end
   }
   
 #foreach($class in $classes)
-#if((${class.getStereotype()} == "dataObject") && (${class.getAttribute("bo-lightweight")} == "true"))
+#isLightweightDataObject($class $isLightweightDataObject)	
+#if($isLightweightDataObject)
 #set($boClass=${class.getAttribute("bo-mo-class")})
 #set($lwClass=${class.getAttribute("bo-lw-class")})
 #if(${class.getAttribute("bo-has-interface")} == true)

@@ -5,10 +5,9 @@
 #foreach($property in $properties)
 #if(!${property.isTransient()})
 #set($columnType=${property.valueOfTag("ojb-column-type")})
-#set($typeName=${property.getTypeName()})
-#set($type=false)
-#set($type=${model.findClass(${typeName})})
-#if(${type} && (${type.getStereotype()} == "dataObject") && ${type.booleanValueOfTag("ojb-is-persistent")})
+#getType($model $property $type)
+#isDataObject($type $isDataObject)
+#if($isDataObject && ${type.booleanValueOfTag("ojb-is-persistent")})
 #set($columnName=${property.valueOfTag("ojb-column-name")})
 CREATE INDEX ${table}_${columnName}_IDX ON ${schema}${table} (${columnName}_FK);
 ALTER TABLE ${schema}${table} ADD CONSTRAINT ${columnName}_IR FOREIGN KEY 
@@ -22,10 +21,9 @@ ALTER TABLE ${schema}${table} ADD CONSTRAINT ${columnName}_IR FOREIGN KEY
 ## This situation should never arise because this is a simple property.
 #foreach($aggregation in $aggregations)
 #if(${aggregation.getMultiplicity().getUpperBound()} == 1)
-#set($typeName=${aggregation.getTypeName()})
-#set($type=false)
-#set($type=${model.findClass(${typeName})})
-#if(${type} && (${type.getStereotype()} == "dataObject") && ${type.booleanValueOfTag("ojb-is-persistent")})
+#getType($model $aggregation $type)
+#isDataObject($type $isDataObject)
+#if($isDataObject && ${type.booleanValueOfTag("ojb-is-persistent")})
 #set($columnName=${aggregation.valueOfTag("ojb-column-name")})
 CREATE INDEX ${table}_${columnName}_IDX ON ${schema}${table} (${columnName}_FK);
 ALTER TABLE ${schema}${table} ADD CONSTRAINT ${columnName}_IR FOREIGN KEY 
@@ -43,10 +41,8 @@ ALTER TABLE ${schema}${table} ADD CONSTRAINT ${columnName}_IR FOREIGN KEY
 #if((${reference.getStereotype()} == "dataObject") && ${reference.booleanValueOfTag("ojb-is-persistent")})
 #set($relations=${reference.getIndexedProperties()})
 #foreach($relation in $relations)
-#set($typeName=${relation.getTypeName()})
-#set($type=false)
-#set($type=${model.findClass(${typeName})})
-#if(${type} && (${type} == ${class}) && ${type.booleanValueOfTag("ojb-is-persistent")})
+#getType($model $relation $type)
+#if((${type} == ${class}) && ${type.booleanValueOfTag("ojb-is-persistent")})
 #set($columnName=${relation.valueOfTag("ojb-column-name")})	
 CREATE INDEX ${table}_${columnName}_IDX ON ${schema}${table} (${table}_${columnName}_FK);
 ALTER TABLE ${schema}${table} ADD CONSTRAINT ${reference.valueOfTag("ojb-table-name")}_${relation.valueOfTag("ojb-column-name")}_IR FOREIGN KEY 

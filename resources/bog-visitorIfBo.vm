@@ -1,9 +1,5 @@
 #set($sign="#")
-/* This code was generated automatically with the MDA generator Version 0.2.
-   Please do NOT add code outside the marked zones. All changes outside the 
-   marked area will be discarded during the next execution of the MDA generator. 
-*/
-
+#emitFileHeader()
 
 #set($hasInterface=(${class.getAttribute("bo-has-interface")} == "true"))   
 #if (${package})
@@ -42,7 +38,8 @@ public interface Visitor {
   void setDepth(int depth);
   
 #foreach($class in $classes)
-#if(${class.getStereotype()} == "dataObject")
+#isDataObject($class $isDataObject)
+#if($isDataObject)
 #if($hasInterface)
 #set($name=${class.getAttribute("bo-if-class")})
 #else

@@ -1,8 +1,5 @@
 #set($sign="#")
-/* This code was generated automatically with the MDA generator Version 0.2.
-   Please do NOT add code outside the marked zones. All changes outside the 
-   marked area will be discarded during the next execution of the MDA generator. 
-*/
+#emitFileHeader()
    
 #if (${package})
 package ${package.getAttribute("oex-rich-client-package")};

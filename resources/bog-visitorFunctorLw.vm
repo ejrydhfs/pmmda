@@ -1,9 +1,5 @@
 #set($sign="#")
-/* This code was generated automatically with the MDA generator Version 0.2.
-   Please do NOT add code outside the marked zones. All changes outside the 
-   marked area will be discarded during the next execution of the MDA generator. 
-*/
-
+#emitFileHeader()
 
 #if (${package})
 package ${package.getAttribute("bo-lw-package")};
@@ -45,7 +41,8 @@ public class LwVisitorFunctor implements LwVisitor, AbstractVisitorFunctor {
   }
     
 #foreach($class in $classes)
-#if((${class.getStereotype()} == "dataObject") && (${class.getAttribute("bo-lightweight")} == "true"))
+#isLightweightDataObject($class $isLightweightDataObject)	
+#if($isLightweightDataObject)	
 #set($name=${class.getAttribute("bo-lw-class")})
   public void visit(${name} item) {
     functor.execute(item);

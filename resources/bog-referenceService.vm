@@ -1,3 +1,4 @@
+#emitFileHeader()
 #set($dollar="$")
 #if (${package})
 package ${package.getBoPackage()};

@@ -2,19 +2,7 @@
 #set($dollar="$")
 #set($__="")
 #set($____="")
-#macro(emitDescription $spaces $lines)
-$(spaces)/**
-#foreach($line in $lines)
-$(spaces) ${line}
-#end
-$(spaces) * @version ${dollar}Revision${dollar}
-$(spaces) */
-#end
-/* This code was generated automatically with the pmMDA generator. Please do 
-   NOT add code outside the marked zones. All changes outside the marked areas 
-   will be discarded during the next execution of the MDA generator. 
-   ${dollar}Id${dollar}
-*/
+#emitFileHeader()
    
 #if (${package})
 package ${package.getAttribute("bo-mo-package")};
@@ -43,13 +31,7 @@ import $importStatement;
 /* %% USER DEFINED IMPORT START %% */
 /* %% USER DEFINED IMPORT END   %% */
 
-#set($lines = ${class.javaDocComment()})
-/**
-#foreach($line in $lines)
- ${line}
-#end
- * @version ${dollar}Revision${dollar}
- */
+#emitClassDescription($class "")
 #set($ancestors=${class.retrieveAncestors()})
 #set($interfaces=${class.retrieveInterfaces()})
 #if(${hasAncestors})
@@ -69,37 +51,16 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
 
 #foreach ($property in $properties)
 
-#if(${property.getDescription()})
-#set($lines = ${property.javaDocComment()})
-  /**
-#foreach($line in $lines)
-   ${line}
-#end
-   */
-#end
+#emitPropertyDescription($property "  ")
   private ${property.retrieveTypeClassName()} ${property.nameFirstLower()};
 #end
 #foreach ($reference in $references)
-#if (${reference.getDescription()})
-
-#set($lines = ${reference.javaDocComment()})
-  /**
-#foreach($line in $lines)
-   ${line}
-#end
-   */
-#end
+#emitPropertyDescription($reference "  ")
   private ${reference.getReferenceClass().getName()} ${reference.nameFirstLower()};
 #end
 #foreach ($aggregation in $aggregations) 
 
-#if (${aggregation.getDescription()})
-  /**
-#foreach($line in $lines)
-   ${line}
-#end
-   */
-#end
+#emitPropertyDescription($aggregation "  ")
   private ${aggregation.getAttribute("bo-storage-interface")} ${aggregation.nameFirstLower()};
 #end
 #if (!${hasAncestors})
@@ -483,20 +444,16 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
   	visitor.setDepth(visitor.getDepth() + 1);
     visitor.visit(this);
 #foreach ($property in $properties)
-#set($typename=${property.getTypeName()})
-#set($type=false)
-#set($type=${model.findClass(${typename})})
-#if(${type} && ${type.getStereotype().equalsIgnoreCase("dataObject")})
+#isTypeModel($model $property $isTypeModel)
+#if($isTypeModel)
     if (${property.nameFirstLower()} != null) {
       visitor.visit(${property.nameFirstLower()}); 
     }
 #end
 #end
 #foreach ($aggregation in $aggregations) 
-#set($typename=${aggregation.getTypeName()})
-#set($type=false)
-#set($type=${model.findClass(${typename})})
-#if(${type} && ${type.getStereotype().equalsIgnoreCase("dataObject")})
+#isTypeModel($model $aggregation $isTypeModel)
+#if($isTypeModel)
 #set($itemType = ${aggregation.retrieveTypeClassName()})
     for (Iterator i = ${aggregation.nameFirstLower()}.iterator(); i.hasNext();) {
       ((${type.getAttribute("bo-mo-class")})i.next()).accept(visitor);
@@ -520,9 +477,12 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
       return null;
     }
 #foreach ($property in $properties)
-#if(${property.getStereotype().equalsIgnoreCase("dataObject")})
+#isTypeModel($model $property $isTypeModel)	
+#if($isTypeModel)
 #set($lName=${property.nameFirstLower()})
-    clone.${lName} = (${property.getReferenceClass().getAttribute("bo-mo-class")})${lName}.getClone();
+    if (${lName} != null) {
+      clone.${lName} = (${property.retrieveTypeClassName()})${lName}.copy();
+	}
 #end 
 #end
 #foreach ($aggregation in $aggregations) 

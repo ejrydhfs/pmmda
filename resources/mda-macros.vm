@@ -3,6 +3,15 @@
 #set($sign="#")
 #set($dollar="$")
 
+#macro(emitDollar)
+"$"
+#end
+
+#macro(emitSign)
+"#"
+#end
+
+## emit file header for a Java source file artifact.
 #macro(emitFileHeader)
 /* This code was generated automatically with the pmMDA generator. Please do 
    NOT add code outside the marked zones. All changes outside the marked areas 
@@ -11,25 +20,76 @@
 */
 #end
 
-#macro(emitDescription $spaces $lines)
+## emit the description for a meta class for a Java source file artifact.
+## @param $element element which description should be generated
+## @param $spaces leading spaces for the indentation of the comment.
+#macro(emitClassDescription $element $spaces)
+#set($lines = ${element.javaDocComment()})
 #if(${lines.size()} > 0)
-$(spaces)/**
+${spaces}/**
 #foreach($line in $lines)
-$(spaces) ${line}
+${spaces} ${line}
 #end
-$(spaces) * @version ${dollar}Revision${dollar}
-$(spaces) */
+${spaces} * @version ${dollar}Revision${dollar}
+${spaces} */
+#end
+#end
+
+## emit the description for a meta property for a Java source file artifact.
+#macro(emitPropertyDescription $element $spaces)
+#if(${element.getDescription()})
+#set($lines = ${element.javaDocComment()})
+#if(${lines.size()} > 0)
+${spaces}/**
+#foreach($line in $lines)
+${spaces} ${line}
+#end
+${spaces} */
+#end
 #end
 #end
 
-#macro(isModel $model $typename $isModel)
-#set($type=false)
-#set($type=${model.findClass(${typeName})})
-#set($isModel=${type} && (${type.getStereotype()} == "dataObject")}))
+## Returns true if the element is a data object.
+#macro(isDataObject $element $result)
+#set($DATA_OBJECT="dataObject")
+#set($result=${DATA_OBJECT.equalsIgnoreCase(${element.getStereotype()})})
 #end
 
-#macro(isLightweigth $model $typename $isLightweight)
+## Returns true if the element is a data object.
+#macro(isReferenceCode $element $result)
+#set($REFERENCE_CODE="referenceCode")
+#set($result=${REFERENCE_CODE.equalsIgnoreCase(${element.getStereotype()})})
+#end
+
+## Returns true if the element is a data object.
+#macro(isLightweightDataObject $element $result)
+#set($DATA_OBJECT="dataObject")
+#set($result=${DATA_OBJECT.equalsIgnoreCase(${element.getStereotype()})} && ${element.booleanValueOfAttribute("bo-lightweight")})
+#end
+
+## Returns the type object of the type name defined in the element.
+#macro(getType $model $element $result)
+#set($DATA_OBJECT="dataObject")
+#set($typename=${element.getTypeName()})
+#set($result=false)
+#set($result=${model.findClass(${typename})})
+#end
+	
+## Returns true if the type object of the type name defined in the element is a data object.
+#macro(isTypeModel $model $element $result)
+#set($DATA_OBJECT="dataObject")
+#set($typename=${element.getTypeName()})
 #set($type=false)
-#set($type=${model.findClass(${typeName})})
-#set($isLightweight=${type} && (${type.getStereotype()} == "dataObject") && (${type.getAttribute("bo-lightweight")}))
+#set($type=${model.findClass(${typename})})
+#set($result=$type && ${DATA_OBJECT.equalsIgnoreCase(${type.getStereotype()})})
+#end
+
+## Returns true if the type object of the type name defined in the element is a lightweight 
+## data object.
+#macro(isTypeLightweigth $model $element $result)
+#set($DATA_OBJECT="dataObject")
+#set($typename=${element.getTypeName()})
+#set($type=false)
+#set($type=${model.findClass(${typename})})
+#set($result=$type && ${DATA_OBJECT.equalsIgnoreCase(${type.getStereotype()})} && (${type.getAttribute("bo-lightweight")}))
 #end

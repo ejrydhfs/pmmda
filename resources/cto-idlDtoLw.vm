@@ -1,9 +1,6 @@
 #set($sign="#")
 #set($className=${class.getName().toUpperCase()})
-// This code was generated automatically with the pmMDA generator. Please do 
-// NOT add code outside the marked zones. All changes outside the marked areas 
-// will be discarded during the next execution of the MDA generator. 
-// ${dollar}Id${dollar}
+#emitFileHeader()
 
 ${sign}ifndef _${className}_LW_CTO_
 ${sign}define _${className}_LW_CTO_
@@ -12,20 +9,18 @@ ${sign}include "NullableTypes.idl"
 ## generate the includes for all used data objects
 #foreach ($property in $properties)
 #if(!${property.isTransient()} && ${property.booleanValueOfTag("bo-lightweight")})
-#set($typeName=${property.getTypeName()})
-#set($type=false)
-#set($type=${model.findClass(${typeName})})
-#if(${type} && (${type.getStereotype()} == "dataObject") && ${type.getAttribute("bo-lightweight")})
+#getType($model $property $type)
+#isDataObject($type $isLightweightDataObject)	
+#if($isLightweightDataObject)
 ${sign}include "${type.getAttribute("cto-lw-class")}.idl"
 #end
 #end
 #end
 #foreach ($aggregation in $aggregations)
 #if(!${aggregation.isTransient()} && ${aggregation.booleanValueOfTag("bo-lightweight")})
-#set($typeName=${aggregation.getTypeName()})
-#set($type=false)
-#set($type=${model.findClass(${typeName})})
-#if(${type} && (${type.getStereotype()} == "dataObject") && ${type.getAttribute("bo-lightweight")})
+#getType($model $aggregation $type)
+#isDataObject($type $isLightweightDataObject)	
+#if($isLightweightDataObject)
 ${sign}include "${type.getAttribute("cto-lw-class")}.idl"
 #end
 #end
@@ -39,15 +34,15 @@ module ch {
         NullInteger id;
 #foreach ($property in $properties)
 #if(!${property.isTransient()} && ${property.booleanValueOfTag("bo-lightweight")})
-#set($typeName=${property.getTypeName()})
-#set($type=false)
-#set($type=${model.findClass(${typeName})})
+#getType($model $property $type)	
+#isDataObject($type $isDataObject)
 #if(${type})
-#if(${type.getStereotype()} == "dataObject")
+#if($isDataObject)
+#isReferenceCode($type $isReferenceCode)
 #if(${type.getAttribute("bo-lightweight")})
         sequence<${type.getAttribute("cto-lw-class")}> ${property.getName()};
 #end
-#elseif(${type.getStereotype()} == "referenceCode")
+#elseif($isReferenceCode)
         NullInteger ${property.getName()};
 #else
         ${property.getAttribute("cto-idl-type")} ${property.getName()};
@@ -59,15 +54,15 @@ module ch {
 #end
 #foreach($aggregation in $aggregations)
 #if(${aggregation.booleanValueOfTag("bo-lightweight")})
-#set($typeName=${aggregation.getTypeName()})
-#set($type=false)
-#set($type=${model.findClass(${typeName})})
+#getType($model $aggregation $type)	
+#isDataObject($type $isDataObject)
 #if(${type})
-#if(${type.getStereotype()} == "dataObject") 
+#if($isDataObject) 
+#isReferenceCode($type $isReferenceCode)
 #if(${type.getAttribute("bo-lightweight")})
         sequence<${type.getAttribute("cto-lw-class")}> ${aggregation.getName()};
 #end
-#elseif(${type.getStereotype()} == "referenceCode")
+#elseif($isReferenceCode)
         sequence<NullableInteger> ${aggregation.getName()};
 #end
 #else

@@ -1,9 +1,6 @@
 #set($sign="#")
 #set($className=${class.getName().toUpperCase()})
-// This code was generated automatically with the pmMDA generator. Please do 
-// NOT add code outside the marked zones. All changes outside the marked areas 
-// will be discarded during the next execution of the MDA generator. 
-// ${dollar}Id${dollar}
+#emitFileHeader()
 
 ${sign}ifndef _${className}_BO_CTO_
 ${sign}define _${className}_BO_CTO_
@@ -12,19 +9,17 @@ ${sign}include "NullableTypes.idl"
 ## generate the includes for all used data objects
 #foreach ($property in $properties)
 #if(!${property.isTransient()})
-#set($typeName=${property.getTypeName()})
-#set($type=false)
-#set($type=${model.findClass(${typeName})})
-#if(${type} && (${type.getStereotype()} == "dataObject"))
+#getType($model $property $type)
+#isDataObject($type $isDataObject)	
+#if($isDataObject)
 ${sign}include "${type.getAttribute("cto-mo-class")}.idl"
 #end
 #end
 #end
 #foreach ($aggregation in $aggregations)
-#set($typeName=${aggregation.getTypeName()})
-#set($type=false)
-#set($type=${model.findClass(${typeName})})
-#if(${type} && (${type.getStereotype()} == "dataObject"))
+#getType($model $aggregation $type)
+#isDataObject($type $isDataObject)	
+#if($isDataObject)
 ${sign}include "${type.getAttribute("cto-mo-class")}.idl"
 #end
 #end
@@ -39,13 +34,13 @@ module ch {
         NullTimestamp timestamp;
 #foreach ($property in $properties)
 #if(!${property.isTransient()})
-#set($typeName=${property.getTypeName()})
-#set($type=false)
-#set($type=${model.findClass(${typeName})})
+#getType($model $property $type)	
+#isDataObject($type $isDataObject)
+#isReferenceCode($type $isReferenceCode)
 #if(${type})
-#if(${type.getStereotype()} == "dataObject")
+#if($isDataObject)
         sequence<${type.getAttribute("cto-mo-class")}> ${property.getName()};
-#elseif(${type.getStereotype()} == "referenceCode")
+#elseif($isReferenceCode)
         NullInteger ${property.getName()};
 #else
         ${property.getAttribute("cto-idl-type")} ${property.getName()};
@@ -57,13 +52,13 @@ module ch {
 #end
 #foreach($aggregation in $aggregations)
 #if(!${aggregation.isTransient()})
-#set($typeName=${aggregation.getTypeName()})
-#set($type=false)
-#set($type=${model.findClass(${typeName})})
+#getType($model $aggregation $type)	
+#isDataObject($type $isDataObject)
+#isReferenceCode($type $isReferenceCode)
 #if(${type})
-#if(${type.getStereotype()} == "dataObject")
+#if($isDataObject)
         sequence<${type.getAttribute("cto-mo-class")}> ${aggregation.getName()};
-#elseif(${type.getStereotype()} == "referenceCode")
+#elseif($referenceCode)
         sequence<NullableInteger> ${aggregation.getName()};
 #end
 #else

@@ -1,4 +1,5 @@
 ## generate the table declaration
+#set($DATA_OBJECT="dataObject")
 #if(${database.equalsIgnoreCase("MySQL")})
 #set($postTable="TYPE=InnoDB")
 #end
@@ -7,7 +8,7 @@
 #set($table=${class.getAttribute("ojb-table-name")})
 DROP TABLE IF EXISTS ${schema}${table};
 CREATE TABLE ${schema}${table} (
-#if(${class.getStereotype().equalsIgnoreCase("dataObject")})
+#if(${DATA_OBJECT.equalsIgnoreCase(${class.getStereotype()})})
   ID INTEGER NOT NULL,
   TS TIMESTAMP NOT NULL,
 #end
@@ -15,11 +16,9 @@ CREATE TABLE ${schema}${table} (
 #if(!${property.isTransient()})
 #set($columnType=${property.valueOfTag("ojb-column-type")})
 #set($columnName=${property.getAttribute("ojb-column-name")})
-#set($typeName=${property.getTypeName()})
-#set($type=false)
-#set($type=${model.findClass(${typeName})})
+#getType($model $property $type)
 #if(!${property.booleanValueOfTag("ojb-can-be-null")} || ${property.isPrimaryKey()})#set($nullInfo=" NOT NULL")#else#set($nullInfo="")#end
-#if(${type} && (${type.getStereotype()} == "dataObject") && ${type.booleanValueOfTag("ojb-is-persistent")})
+#if(${DATA_OBJECT.equalsIgnoreCase(${type.getStereotype()})} && ${type.booleanValueOfTag("ojb-is-persistent")})
   ${property.nameUpper()}_FK INTEGER${nullInfo},
 #else
 ## support MySQL version < 4.1. Boolean was introduced as alias only in version 4.1
@@ -42,7 +41,7 @@ CREATE TABLE ${schema}${table} (
 #set($type=false)
 #set($type=${model.findClass(${typeName})})
 #if(!${aggregation.canBeNull()})#set($nullInfo=" NOT NULL")#else#set($nullInfo="")#end
-#if(${type} && (${type.getStereotype()} == "dataObject") && ${type.booleanValueOfTag("ojb-is-persistent")})
+#if(${type} && ${DATA_OBJECT.equalsIgnoreCase(${type.getStereotype()})} && ${type.booleanValueOfTag("ojb-is-persistent")})
   ${columnName}_FK INTEGER${nullInfo},
 #end
 #end
@@ -52,13 +51,12 @@ CREATE TABLE ${schema}${table} (
 ## class are generated as reverse foreign keys in the class.
 #set($references=$model.getClassReferences($class))
 #foreach($reference in $references)
-#if((${reference.getStereotype()} == "dataObject") && ${reference.booleanValueOfTag("ojb-is-persistent")})
+#isDataObject($reference $isDataObject)
+#if($isDataObject && ${reference.booleanValueOfTag("ojb-is-persistent")})
 #set($relations=${reference.getIndexedProperties()})
 #foreach($relation in $relations)
-#set($typeName=${relation.getTypeName()})
-#set($type=false)
-#set($type=${model.findClass(${typeName})})
-#if(${type} && (${type.getStereotype()} == "dataObject") && ${type.booleanValueOfTag("ojb-is-persistent")})
+#getType($model $relation $type)	
+#if(${type} == ${class})
 #if(!${relation.canBeNull()})#set($nullInfo=" NOT NULL")#else#set($nullInfo="")#end
   ${reference.valueOfTag("ojb-table-name")}_${relation.valueOfTag("ojb-column-name")}_FK INTEGER${nullInfo},
 #end
@@ -66,7 +64,7 @@ CREATE TABLE ${schema}${table} (
 #end
 #end
 ## generate the primary keys.
-#if(${class.getStereotype()} == "dataObject")
+#if(${DATA_OBJECT.equalsIgnoreCase(${class.getStereotype()})})
   PRIMARY KEY(ID)
 #elseif(${primaryKeys})
   PRIMARY KEY(${primaryKeys})
@@ -74,7 +72,7 @@ CREATE TABLE ${schema}${table} (
 ) ${postTable};
 
 ## create index for the identifier of a data object.
-#if(${class.getStereotype()} == "dataObject")
+#if(${DATA_OBJECT.equalsIgnoreCase(${class.getStereotype()})})
 CREATE UNIQUE INDEX ${table}_IDX ON ${schema}${table} (ID);
 
 #end

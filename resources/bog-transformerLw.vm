@@ -1,10 +1,6 @@
 #set($sign="#")
 #set($dollar="$")
-/* This code was generated automatically with the MDA generator Version 0.2.
-   Please do NOT add code outside the marked zones. All changes outside the 
-   marked area will be discarded during the next execution of the MDA generator. 
-*/
-
+#emitFileHeader()
 
 #if (${package})
 package ${package.getAttribute("bo-lw-package")};
@@ -20,7 +16,8 @@ import ${package.getAttribute("bo-mo-package")}.*;
  */
 public class LwTransformer {
 #foreach($class in $classes)
-#if((${class.getStereotype()} == "dataObject") && (${class.getAttribute("bo-lightweight")} == "true"))
+#isLightweightDataObject($class $isLightweightDataObject)	
+#if($isLightweightDataObject)
 #set($boClass=${class.getAttribute("bo-mo-class")})
 #set($lwClass=${class.getAttribute("bo-lw-class")})
   public static ${lwClass} transform(${boClass} item) {
@@ -28,10 +25,8 @@ public class LwTransformer {
 #set($properties=${class.getProperties()})
 #foreach ($property in $properties)
 #if(${property.booleanValueOfTag("bo-lightweight")})
-#set($typeName=${property.getTypeName()})
-#set($type=false)
-#set($type=${model.findClass(${typeName})})
-#if(${type} && (${type.getStereotype()} == "dataObject") && ${type.getAttribute("bo-lightweight")})
+#isTypeLightweigth($model $property $isTypeLightweigth)
+#if($isTypeLightweigth)
     lw.set${property.nameFirstUpper}(transform(item.get${property.nameFirstUpper()}()));
 #else
     lw.set${property.nameFirstUpper()}(item.get${property.nameFirstUpper()}());
@@ -43,10 +38,8 @@ public class LwTransformer {
 #set($aggregations=${class.getIndexedProperties()})
 #foreach ($aggregation in $aggregations) 
 #if(${aggregation.booleanValueOfTag("bo-lightweight")})
-#set($typeName=${aggregation.getTypeName()})
-#set($type=false)
-#set($type=${model.findClass(${typeName})})
-#if(${type} && (${type.getStereotype()} == "dataObject") && ${type.getAttribute("bo-lightweight")})
+#isTypeLightweigth($model $aggregation $isTypeLightweigth)	
+#if($isTypeLightweigth)
     for (Iterator i = item.get${aggregation.nameFirstUpper()}().iterator(); i.hasNext();) {
       lw.add${aggregation.nameFirstUpperSingular()}(transform((${type.getAttribute("bo-mo-class")})i.next()));
     }
