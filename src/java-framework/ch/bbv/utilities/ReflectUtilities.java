@@ -37,7 +37,8 @@ public final class ReflectUtilities {
   }
 
   /**
-   * Executes the method on the bean with the help of reflection.
+   * Executes the method on the bean with the help of reflection. First it attempts directly declared methods
+   * then it attempts inherited metods.
    * @param bean bean on which the method should be called.
    * @param name name of the method.
    * @param types types of the method signature.
@@ -55,6 +56,27 @@ public final class ReflectUtilities {
     } catch (SecurityException e) {
       e.printStackTrace();
     } catch (NoSuchMethodException e) {
+      returns = executeInherited(bean, name, types, params);
+    } catch (IllegalArgumentException e) {
+      executeInherited(bean, name, types, params);
+    } catch (IllegalAccessException e) {
+      e.printStackTrace();
+    } catch (InvocationTargetException e) {
+      e.printStackTrace();
+    }
+    return returns;
+  }
+
+  private static Object executeInherited(Object bean, String name, Class[] types,
+      Object[] params){
+    assert ((bean != null) && (name != null));
+    Object returns = null;
+    try {
+      Method method = bean.getClass().getMethod(name, types);
+      returns = method.invoke(bean, params);
+    } catch (SecurityException e) {
+      e.printStackTrace();
+    } catch (NoSuchMethodException e) {
       e.printStackTrace();
     } catch (IllegalArgumentException e) {
       e.printStackTrace();
@@ -65,7 +87,7 @@ public final class ReflectUtilities {
     }
     return returns;
   }
-
+  
   /**
    * Creates a new instance of the class using the default constructor.
    * @param clazz class of the instance to create.
