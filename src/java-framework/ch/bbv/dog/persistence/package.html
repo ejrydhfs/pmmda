@@ -4,15 +4,16 @@
 	<h2>Introduction</h2>
 	<p>The business object graph persistency layer is implemented with the help 
 		of the open source framework object Java bridge <emp>OJB</emp>. from the 
-		Apache group. The framework currently uses the ODMG 3.0 personality of OJB. 
-		This personality is well tested and mature enough for productive environment. 
-		An abstraction layer is provided to hide all specific features of OJB ODMG. 
-		The motivation is to move later to the JDO personality without requiring 
-		changes in the source code of the application using our framework.</p>
+		Apache group. This personality is well tested and mature enough for 
+    productive environment. An abstraction layer is provided to hide all 
+    specific features of OJB ODMG. The motivation is to move later to the 
+    JDO personality without requiring changes in the source code of the 
+    application using our framework.</p>
 	<p>The architecture foresees that transaction contexts are managed at the
 		service level. This assumption enables to define the granularity of a 
 		transaction so that the database is always in a consistent state.</p>
-	
+	<p>A major goal of the architecture is to support various personalities such
+    as ODMG, API broker and JDO.</p>
 	<h2>Cache Handling</h2>
 	<p>It is necessary to programmatically manage the content of the OJB cache 
 		because OJB is not aware that the business object graphs the framework

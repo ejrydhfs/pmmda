@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8" ?>
 <project name="pmMDA-examples" basedir="." default="build-rich-client-tests">
   <property file="build.properties"/>
 
@@ -48,7 +47,6 @@
 
   <target name="build-rich-client-tests" depends = "init-tests"
           description="generate the rich client 2-tiers variant of the tests">
-    <splash/>
   	<delete dir="${test.build.rich-client.dir}"/>
   	<mkdir dir="${test.build.rich-client.dir}"/>
   	<javac destdir="${test.build.rich-client.dir}" 
@@ -72,7 +70,6 @@
   
   <target name="build-corba-tests" depends="init-tests"
           description="generate the CORBA variant of the tests">
-    <splash/>
   	<delete dir="${test.corba-common.dir}/ch/bbv/transport"/>
     <apply executable="${idl.compiler}" failonerror="true"
            description="generates all server java files from the IDL files"
@@ -124,7 +121,6 @@
 
   <target name="build-jboss-tests" depends="init-tests"
           description="generate the J2EE JBoss variant of the tests">
-    <splash/>
   	<delete dir="${test.build.j2ee-server.dir}"/>
   	<mkdir dir="${test.build.j2ee-server.dir}"/>
     <javac destdir="${test.build.j2ee-server.dir}" 

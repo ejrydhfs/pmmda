@@ -2,7 +2,59 @@
 #set($schema=${package.valueOfTag("ojb-schema-name")})
 #if(${schema})#set($schema=${schema} + ".")#else#set($schema="")#end
 #set($table=${class.getAttribute("ojb-table-name")})
-#if(${class.getStereotype()} == "dataObject")
-  CREATE UNIQUE INDEX ${schema}${table}_IDX on ${schema}${table}(id);
-  
+#foreach($property in $properties)
+#if(!${property.isTransient()})
+#set($columnType=${property.valueOfTag("ojb-column-type")})
+#set($typeName=${property.getTypeName()})
+#set($type=false)
+#set($type=${model.findClass(${typeName})})
+#if(${type} && (${type.getStereotype()} == "dataObject") && ${type.booleanValueOfTag("ojb-is-persistent")})
+#set($columnName=${property.valueOfTag("ojb-column-name")})
+CREATE INDEX ${table}_${columnName}_IDX ON ${schema}${table} (${columnName}_FK);
+ALTER TABLE ${schema}${table} ADD CONSTRAINT ${columnName}_IR FOREIGN KEY 
+  ON (${table}_${columnName}_FK)
+  REFERENCES ${schema}${type.getAttribute("ojb-table-name")}(ID)
+  ON DELETE RESTRICT;
+#end
+#end
+#end
+## aggregations with cardinality 1-1 and 1-0..1 are generated as foreign keys.
+## This situation should never arise because this is a simple property.
+#foreach($aggregation in $aggregations)
+#if(${aggregation.getMultiplicity().getUpperBound()} == 1)
+#set($typeName=${aggregation.getTypeName()})
+#set($type=false)
+#set($type=${model.findClass(${typeName})})
+#if(${type} && (${type.getStereotype()} == "dataObject") && ${type.booleanValueOfTag("ojb-is-persistent")})
+#set($columnName=${aggregation.valueOfTag("ojb-column-name")})
+CREATE INDEX ${table}_${columnName}_IDX ON ${schema}${table} (${columnName}_FK);
+ALTER TABLE ${schema}${table} ADD CONSTRAINT ${columnName}_IR FOREIGN KEY 
+  ON (${table}_${columnName}_FK)
+  REFERENCES ${schema}${type.getAttribute("ojb-table-name")}(ID)
+  ON DELETE RESTRICT;
+
+#end
+#end
+#end
+## references to the class having indexed properties with cardinality 1-N to the
+## class are generated as reverse foreign keys in the class.
+#set($references=$model.getClassReferences($class))
+#foreach($reference in $references)
+#if((${reference.getStereotype()} == "dataObject") && ${reference.booleanValueOfTag("ojb-is-persistent")})
+#set($relations=${reference.getIndexedProperties()})
+#foreach($relation in $relations)
+#set($typeName=${relation.getTypeName()})
+#set($type=false)
+#set($type=${model.findClass(${typeName})})
+#if(${type} && (${type} == ${class}) && ${type.booleanValueOfTag("ojb-is-persistent")})
+#set($columnName=${relation.valueOfTag("ojb-column-name")})	
+CREATE INDEX ${table}_${columnName}_IDX ON ${schema}${table} (${table}_${columnName}_FK);
+ALTER TABLE ${schema}${table} ADD CONSTRAINT ${reference.valueOfTag("ojb-table-name")}_${relation.valueOfTag("ojb-column-name")}_IR FOREIGN KEY 
+  ON (${table}_${relation.valueOfTag("ojb-column-name")}_FK)
+  REFERENCES ${schema}${reference.getAttribute("ojb-table-name")}(ID)
+  ON DELETE RESTRICT;
+
+#end
+#end
+#end
 #end

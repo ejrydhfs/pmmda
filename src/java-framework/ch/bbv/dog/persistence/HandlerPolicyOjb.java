@@ -1,5 +1,5 @@
 /* copyright 2000-2004 Marcel Baumann
- * Licensed under the Apache License, Version 2.0 (the "Licence);
+ * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
  */
@@ -103,10 +103,14 @@ class HandlerPolicyOjb {
         database.deletePersistent(i.next());
       }
       for (Iterator i = insertedObjects.iterator(); i.hasNext();) {
-        database.makePersistent(i.next());
+        DataObject object = (DataObject)i.next();
+        object.setModified(false);
+        database.makePersistent(object);
       }
       for (Iterator i = updatedObjects.iterator(); i.hasNext();) {
-        tx.lock(i.next(), Transaction.WRITE);
+        DataObject object = (DataObject)i.next();
+        object.setModified(false);
+        tx.lock(object, Transaction.WRITE);
       }
       cache(tx, copies);
       tx.commit();

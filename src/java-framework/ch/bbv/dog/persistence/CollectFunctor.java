@@ -1,5 +1,5 @@
 /* copyright 2000-2004 Marcel Baumann 
- * Licensed under the Apache License, Version 2.0 (the "Licence); 
+ * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$ 
  */
@@ -84,7 +84,8 @@ public class CollectFunctor implements DoFunctor {
 
   /**
    * Returns the list of collected data object updates. The identifier and the
-   * timestamp are synchronized.
+   * timestamp are synchronized. All updates have a defined identifier and a
+   * timestamp
    * @return list of collected updates.
    */
   public List getUpdates() {
@@ -93,6 +94,7 @@ public class CollectFunctor implements DoFunctor {
       DataObject object = update.getObject();
       update.setId(object.getId());
       update.setTimestamp(object.getTimestamp());
+      assert ((update.getId() != null) && (update.getTimestamp() != null));
     }
     return Collections.unmodifiableList(updates);
   }
@@ -130,6 +132,5 @@ public class CollectFunctor implements DoFunctor {
     update.setObject(object);
     update.setClassname(object.getClass().getName());
     updates.add(update);
-    object.setModified(false);
   }
 }

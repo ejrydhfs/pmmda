@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="properties"/>
+	<classpathentry kind="src" path="gendir/ojb-server"/>
+	<classpathentry kind="src" path="src/etc/properties/unmanaged"/>
 	<classpathentry kind="src" path="gendir/rich-client"/>
 	<classpathentry kind="src" path="test-java/unit-tests"/>
 	<classpathentry kind="src" path="src/java-documentor"/>
@@ -8,10 +10,8 @@
 	<classpathentry kind="src" path="src/java-pmmda"/>
 	<classpathentry kind="src" path="test-java/client"/>
 	<classpathentry kind="src" path="test-java/common"/>
-	<classpathentry kind="src" path="test-java/server"/>
 	<classpathentry kind="lib" path="lib/jdom.jar"/>
 	<classpathentry kind="lib" path="lib/commons-digester.jar"/>
-	<classpathentry kind="lib" path="lib/jakarta-oro.jar"/>
 	<classpathentry kind="lib" path="lib/jcs.jar"/>
 	<classpathentry kind="lib" path="lib/nsuml.jar"/>
 	<classpathentry kind="lib" path="lib/dnsns.jar"/>
@@ -24,11 +24,9 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/commons-logging-1.0.4.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging-api-1.0.4.jar"/>
-	<classpathentry kind="lib" path="lib/db-ojb-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/dbunit-1.5.1.jar"/>
 	<classpathentry kind="lib" path="lib/dtdparser-1.5.1.jar"/>
 	<classpathentry kind="lib" path="lib/forms-1.0.4.jar"/>
-	<classpathentry sourcepath="C:/bin/glazedlists-0.9.1/source" kind="lib" path="lib/glazedlists-0.9.1.jar"/>
 	<classpathentry kind="lib" path="lib/hsqldb.jar"/>
 	<classpathentry kind="lib" path="lib/mysql-connector-3.0.9.jar"/>
 	<classpathentry kind="lib" path="lib/velocity-1.4.jar"/>
@@ -46,5 +44,8 @@
 	<classpathentry kind="var" path="JDK_TOOLS"/>
 	<classpathentry sourcepath="C:/bin/jcalendar/src" kind="lib" path="lib/jcalendar-1.2.1.jar"/>
 	<classpathentry kind="lib" path="lib/junit-3.8.1.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta-regexp-1.3.jar"/>
+	<classpathentry kind="lib" path="lib/db-ojb-1.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/glazedlists-0.9.2.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>

@@ -154,6 +154,7 @@ public class Locator {
       synchronized (Locator.class) {
         if (getInstance() == null) {
           try {
+            log.info("create locator with class " + classname);
             Class clazz = Class.forName(classname);
             Locator locator = null;
             if (params == null) {

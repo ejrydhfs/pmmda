@@ -15,6 +15,8 @@ import java.util.regex.Pattern;
 import ch.bbv.utilities.ReflectUtilities;
 
 /**
+ * The format rule defines the input format of allowed inputs. The format is
+ * defined as a regular expression.
  * @author MarcelBaumann
  * @version $Revision$
  */

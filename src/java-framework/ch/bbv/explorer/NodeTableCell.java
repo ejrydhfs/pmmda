@@ -1,5 +1,5 @@
 /* copyright 2000-2004 Marcel Baumann
- * Licensed under the Apache License, Version 2.0 (the "Licence);
+ * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
  */
@@ -75,12 +75,12 @@ public class NodeTableCell implements WritableTableFormat {
   }
 
   /**
-   * Returns true if the cell is editable otherwise false.
-   * @param row row of the cell to check.
-   * @param column column of the cell to check.
-   * @return value of the flag.
+   * Indicates if the object in the column is editable or not.
+   * @param object object to test as editable or not.
+   * @param column column to check.
+   * @return true if the column is editable otherwise false.
    */
-  public boolean isCellEditable(int row, int column) {
+  public boolean isEditable(Object object, int column) {
     return ((UiField) fields.get(column)).isEditable();
   }
 
@@ -93,7 +93,7 @@ public class NodeTableCell implements WritableTableFormat {
    */
   public Object getColumnValue(Object bean, int column) {
     assert ((0 <= column) && (column <= fields.size()));
-    if(!(bean instanceof ExplorerNode)){
+    if (!(bean instanceof ExplorerNode)) {
       return getField(column).getProperty(bean);
     }
     ExplorerNode node = (ExplorerNode) bean;
@@ -111,7 +111,7 @@ public class NodeTableCell implements WritableTableFormat {
    */
   public Object setColumnValue(Object bean, Object value, int column) {
     assert ((0 <= column) && (column <= fields.size()));
-    if(!(bean instanceof ExplorerNode)){
+    if (!(bean instanceof ExplorerNode)) {
       getField(column).setProperty(bean, value);
       return bean;
     }

@@ -15,6 +15,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ch.bbv.application.Locator;
+import ch.bbv.dog.DataObject;
 import ch.bbv.dog.DataObjectManager;
 
 /**
@@ -35,7 +36,8 @@ public abstract class UsersTest extends TestCase {
   private static final String UPDATE = "update field";
 
   /** Test graph RCRURD operations. The database must be empty before starting
-   * the test.
+   * the test. A graph of data objects are created and compared against the
+   * stored version.
    */
   public void testCrudProvider() {
     DataObjectManager manager = getDataObjectManager();
@@ -147,19 +149,19 @@ public abstract class UsersTest extends TestCase {
     List domainsR = right.getDomains();
     assertEquals(domainsL.size(), domainsR.size());
     for (int i = 0; i < domainsL.size(); i++) {
-      compare(domainsL.get(i), domainsR.get(i));
+      compare((Domain)domainsL.get(i), (Domain)domainsR.get(i));
 
       List unitsL = ((Domain) domainsL.get(i)).getUnits();
       List unitsR = ((Domain) domainsR.get(i)).getUnits();
       assertEquals(unitsL.size(), unitsR.size());
       for (int j = 0; j < unitsL.size(); j++) {
-        compare(unitsL.get(j), unitsR.get(j));
+        compare((Unit) unitsL.get(j), (Unit) unitsR.get(j));
 
         List usersL = ((Unit) unitsL.get(j)).getUsers();
         List usersR = ((Unit) unitsR.get(j)).getUsers();
         assertEquals(usersL.size(), usersR.size());
         for (int k = 0; k < usersL.size(); k++) {
-          compare(usersL.get(k), usersR.get(k));
+          compare((User)usersL.get(k), (User) usersR.get(k));
         }
       }
     }
@@ -203,18 +205,15 @@ public abstract class UsersTest extends TestCase {
     return item;
   }
 
-  private void compare(Object left, Object right) {
+  private void compare(DataObject left, DataObject right) {
     assertNotNull(left);
     assertNotNull(right);
-    try {
-      assertEquals(BeanUtils.getSimpleProperty(left, "id"),
-        BeanUtils.getSimpleProperty(right, "id"));
-    } catch (IllegalAccessException e) {
-      log.fatal(e);
-    } catch (InvocationTargetException e) {
-      log.fatal(e);
-    } catch (NoSuchMethodException e) {
-      log.fatal(e);
+    assertEquals(left.getId(), right.getId());
+    if (left.getId() != null) {
+      assertNotNull(left.getTimestamp());
+    }
+    if (right.getId() != null) {
+      assertNotNull(right.getTimestamp());
     }
   }
 

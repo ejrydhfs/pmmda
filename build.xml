@@ -1,162 +1,193 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <project name="pmMDA" basedir="." default="all">
-  <property file="build.properties"/>
-  <target name="all" depends="init, clean, compile, javadoc"  
+  <property file="build.properties" />
+  <target name="all"
+          depends="init, clean, compile, javadoc"
           description="generate all artifacts from scratch">
     <echo message="Framework application built" />
   </target>
 
   <target name="init"
-  		  description="initializes all variables of the project ant file">
-		<property name="compile.debug" value="true"/>
-		<property name="compile.source" value="1.4"/>
-    <property name="compile.deprecation" value="false"/>
-		<property name="compile.verbose" value="false"/>
+          description="initializes all variables of the project ant file">
+    <property name="compile.debug" value="true" />
+    <property name="compile.source" value="1.4" />
+    <property name="compile.deprecation" value="false" />
+    <property name="compile.verbose" value="false" />
 
-    <property name="build.dir" value="${basedir}/classes"/>
-    <property name="src.dir" value="${basedir}/src"/>
-    <property name="model.dir" value="${basedir}/model"/>
-    <property name="src.dog.dir" value="${src.dir}/java-framework"/>
-    <property name="src.documentor.dir" value="${src.dir}/java-documentor"/>
-    <property name="src.pmmda.dir" value="${src.dir}/java-pmmda"/>
-    <property name="src.corba-framework.dir" value="${src.dir}/corba-framework"/>
-    <property name="idl.framework.dir" value="${src.dir}/idl-framework"/>
-    <property name="lib.dir" value="${basedir}/lib"/>
-    <property name="test-lib.dir" value="${basedir}/test-lib"/>
-    <property name="resources.dir" value="${basedir}/resources"/>
+    <property name="build.dir" value="${basedir}/classes" />
+    <property name="src.dir" value="${basedir}/src" />
+    <property name="model.dir" value="${basedir}/model" />
+    <property name="src.dog.dir" value="${src.dir}/java-framework" />
+    <property name="src.documentor.dir" value="${src.dir}/java-documentor" />
+    <property name="src.pmmda.dir" value="${src.dir}/java-pmmda" />
+    <property name="src.corba-framework.dir"
+              value="${src.dir}/corba-framework" />
+    <property name="idl.framework.dir" value="${src.dir}/idl-framework" />
+    <property name="lib.dir" value="${basedir}/lib" />
+    <property name="test-lib.dir" value="${basedir}/test-lib" />
+    <property name="resources.dir" value="${basedir}/resources" />
 
-  	<property name="ojb-properties-unmanaged.dir" value="${src.dir}/etc/properties/unmanaged"/>
+    <property name="ojb-properties-unmanaged.dir"
+              value="${src.dir}/etc/properties/unmanaged" />
 
-    <property name="test.client.dir" value="${basedir}/test-java/client"/>
-    <property name="test.common.dir" value="${basedir}/test-java/common"/>
-    <property name="test.server.dir" value="${basedir}/test-java/server"/>
+    <property name="test.client.dir" value="${basedir}/test-java/client" />
+    <property name="test.common.dir" value="${basedir}/test-java/common" />
+    <property name="test.server.dir" value="${basedir}/test-java/server" />
 
-  	<property name="example.jar.dir" value="${basedir}/test-lib"/>
-  	<property name="example.build.dir" value="${basedir}/test-classes"/>
+    <property name="example.jar.dir" value="${basedir}/test-lib" />
+    <property name="example.build.dir" value="${basedir}/test-classes" />
 
-    <property name="site.dir" value="${basedir}/build/site"/>
-    <property name="site.api.dir" value="${site.dir}/api"/>
-    <property name="site.quality.dir" value="${site.dir}/metrics"/>
-    <property name="scripts.dir" value="${basedir}/scripts"/>
-    <property name="pmdrules.dir" value="${scripts.dir}/resources/rulesets"/>
-	
-	<path id="jdkjars.classpath">
+    <property name="site.dir" value="${basedir}/build/site" />
+    <property name="site.api.dir" value="${site.dir}/api" />
+    <property name="site.quality.dir" value="${site.dir}/metrics" />
+    <property name="scripts.dir" value="${basedir}/scripts" />
+    <property name="scripts.lib.dir" value="${scripts.dir}/lib" />
+    <property name="pmdrules.dir" value="${scripts.dir}/resources/rulesets" />
+
+    <path id="jdkjars.classpath">
       <fileset dir="${java.jdk}/lib">
-        <include name="**/*tools.jar"/>
+        <include name="**/*tools.jar" />
       </fileset>
-	</path>	
-	
+    </path>
+
     <path id="application.classpath">
-      <path refid="jdkjars.classpath"/>
+      <path refid="jdkjars.classpath" />
       <fileset dir="${lib.dir}">
-        <include name="**/*.jar"/>
-        <include name="**/*.zip"/>
+        <include name="**/*.jar" />
+        <include name="**/*.zip" />
       </fileset>
     </path>
 
     <path id="tests.classpath">
-    	<fileset dir="${test-lib.dir}">
-        <include name="**/*.jar"/>
-        <include name="**/*.zip"/>
+      <fileset dir="${test-lib.dir}">
+        <include name="**/*.jar" />
+        <include name="**/*.zip" />
       </fileset>
     </path>
 
     <path id="tests-build.classpath">
-      <path refid="application.classpath"/>
-    	<fileset dir="${test-lib.dir}">
-        <include name="**/*.jar"/>
-        <include name="**/*.zip"/>
+      <path refid="application.classpath" />
+      <fileset dir="${test-lib.dir}">
+        <include name="**/*.jar" />
+        <include name="**/*.zip" />
       </fileset>
     </path>
 
     <path id="scripts.classpath">
       <fileset dir="${scripts.dir}/lib">
-        <include name="**/*.jar"/>
-        <include name="**/*.zip"/>
+        <include name="**/*.jar" />
+        <include name="**/*.zip" />
       </fileset>
     </path>
   </target>
-      
-  <target name="compile" depends="init"
+
+  <target name="compile"
+          depends="init"
           description="compiles all java files of the projects dog, pmmda, documentor">
-    <javac destdir="${build.dir}" 
-           srcdir="${src.dog.dir}:${src.pmmda.dir}::${src.documentor.dir}" 
-           compiler="modern" verbose="false" debug="on" source="1.4">
+    <javac destdir="${build.dir}"
+           srcdir="${src.dog.dir}:${src.pmmda.dir}::${src.documentor.dir}"
+           compiler="modern"
+           verbose="false"
+           debug="on"
+           source="1.4">
       <classpath refid="application.classpath" />
     </javac>
   </target>
-    	  
-  <target name="clean" depends="init, clean-docs" 
-  	description="removes all generated artifacts - binary, tests, doc, metrics -">
-  	<delete dir="${build.dir}"/>
-  	<mkdir dir="${build.dir}"/>
-  	<delete dir="${genidl.dir}"/>
-  	<mkdir dir="${genidl.dir}"/>
-  	<delete dir="${test.deploy.dir}"/>
-  	<mkdir dir="${test.deploy.dir}"/>
-  </target>
-    
-  <target name="javadoc" depends="init"
-  	description="generates javadoc for the project">
-  	<mkdir dir= "${site.api.dir}"/>
-  	<javadoc destdir="${site.api.dir}"
-  		packagenames="ch.bbv.*" 
-  		classpath="${build.dir}"
-  		classpathref ="application.classpath"
-  		access="private" author="true" version="true" use="true"
-  		source="1.4"  windowtitle="pmMDA API">
-  		<sourcepath>
-  		  <pathelement path="${src.pmmda.dir}/"/>
-  		  <pathelement path="${src.dog.dir}/"/>
-  		  <pathelement path="${src.documentor.dir}/"/> 
-  		</sourcepath>
-  		<taglet name="ch.bbv.documentor.taglets.PreTaglet"
-  			path="${build.dir}" />
-  		<taglet name="ch.bbv.documentor.taglets.PostTaglet"
-  			path="${build.dir}" />
-  		<taglet name="ch.bbv.documentor.taglets.InvTaglet"
-  			path="${build.dir}" />
-    </javadoc>
-  </target>
-    
-  <target name="clean-docs" depends="init"
-          description="remove all generated document and metrics artifacts">
-    <delete dir="${site.api.dir}"/>
-    <mkdir dir="${site.api.dir}"/>
-    <delete dir="${site.quality.dir}"/>
-    <mkdir dir="${site.quality.dir}"/>
+
+  <target name="clean"
+          depends="init, clean-docs"
+          description="removes all generated artifacts - binary, tests, doc, metrics -">
+    <delete dir="${build.dir}" />
+    <mkdir dir="${build.dir}" />
+    <delete dir="${genidl.dir}" />
+    <mkdir dir="${genidl.dir}" />
+    <delete dir="${test.deploy.dir}" />
+    <mkdir dir="${test.deploy.dir}" />
   </target>
 
+  <target name="javadoc"
+          depends="init"
+          description="generates javadoc for the project">
+    <mkdir dir="${site.api.dir}" />
+    <javadoc destdir="${site.api.dir}"
+             packagenames="ch.bbv.*"
+             classpath="${build.dir}"
+             classpathref="application.classpath"
+             access="private"
+             author="true"
+             version="true"
+             use="true"
+             source="1.4"
+             windowtitle="pmMDA API">
+      <sourcepath>
+        <pathelement path="${src.pmmda.dir}/" />
+        <pathelement path="${src.dog.dir}/" />
+        <pathelement path="${src.documentor.dir}/" />
+      </sourcepath>
+      <taglet name="ch.bbv.documentor.taglets.PreTaglet" path="${build.dir}" />
+      <taglet name="ch.bbv.documentor.taglets.PostTaglet" path="${build.dir}" />
+      <taglet name="ch.bbv.documentor.taglets.InvTaglet" path="${build.dir}" />
+    </javadoc>
+  </target>
+
+  <target name="clean-docs"
+          depends="init"
+          description="remove all generated document and metrics artifacts">
+    <delete dir="${site.api.dir}" />
+    <mkdir dir="${site.api.dir}" />
+    <delete dir="${site.quality.dir}" />
+    <mkdir dir="${site.quality.dir}" />
+  </target>
+
+  <target name="build-all-tests" description="build all tests">
+    <antcall target="build-rich-client-tests" />
+    <antcall target="build-corba-tests" />
+    <antcall target="build-jboss-tests" />
+  </target>
   <target name="build-rich-client-tests" depends="init">
-  	<ant antfile="build-examples.xml" inheritrefs="true" target="build-rich-client-tests"/>
+    <ant antfile="build-examples.xml"
+         inheritrefs="true"
+         target="build-rich-client-tests" />
   </target>
   <target name="build-corba-tests" depends="init">
-  	<ant antfile="build-examples.xml" inheritrefs="true" target="build-corba-tests"/>
+    <ant antfile="build-examples.xml"
+         inheritrefs="true"
+         target="build-corba-tests" />
   </target>
   <target name="build-jboss-tests" depends="init">
-  	<ant antfile="build-examples.xml" inheritrefs="true" target="build-jboss-tests"/>
+    <ant antfile="build-examples.xml"
+         inheritrefs="true"
+         target="build-jboss-tests" />
   </target>
   <target name="clean-tests" depends="init">
-  	<ant antfile="build-examples.xml" inheritrefs="true" target="clean-tests"/>
+    <ant antfile="build-examples.xml" inheritrefs="true" target="clean-tests" />
   </target>
   <target name="run-rich-client-tests" depends="init">
-  	<ant antfile="build-examples.xml" inheritrefs="true" target="run-rich-client-tests"/>
+    <ant antfile="build-examples.xml"
+         inheritrefs="true"
+         target="run-rich-client-tests" />
   </target>
   <target name="run-corba-tests" depends="init">
-  	<ant antfile="build-examples.xml" inheritrefs="true" target="run-corba-tests"/>
+    <ant antfile="build-examples.xml"
+         inheritrefs="true"
+         target="run-corba-tests" />
   </target>
   <target name="run-jboss-tests" depends="init">
-  	<ant antfile="build-examples.xml" inheritrefs="true" target="run-jboss-tests"/>
+    <ant antfile="build-examples.xml"
+         inheritrefs="true"
+         target="run-jboss-tests" />
   </target>
 
   <target name="sourceforge" depends="init">
-  	<ant antfile="build-sourceforge.xml" inheritrefs="true" target="sourceforge"/>
+    <ant antfile="build-sourceforge.xml"
+         inheritrefs="true"
+         target="sourceforge" />
   </target>
   <target name="metrics" depends="init">
-  	<ant antfile="build-sourceforge.xml" inheritrefs="true" target="metrics"/>
+    <ant antfile="build-sourceforge.xml" inheritrefs="true" target="metrics" />
   </target>
-	<target name="forrest" depends="init">
-    <ant antfile="${forrest.home}/forrest.antproxy.xml" target="site"/>
-	</target>
+  <target name="forrest" depends="init">
+    <ant antfile="${forrest.home}/forrest.antproxy.xml" target="site" />
+  </target>
 
 </project>

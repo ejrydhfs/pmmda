@@ -1,5 +1,5 @@
 /* copyright 2000-2004 Marcel Baumann
- * Licensed under the Apache License, Version 2.0 (the "Licence);
+ * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
  */
@@ -33,24 +33,40 @@ import ch.bbv.explorer.*;
  * @version $Revision$
  */
 public class ExplorerNodeActions extends ExplorerNodeActionImpl {
+  /**
+   * Code to identify an explorer node action.
+   */
   private static final int VIEW_PROPERTIES = 0;
 
+  /**
+   * Code to identify an explorer node action.
+   */
   private static final int EDIT_PROPERTIES = 1;
 
+  /**
+   * Code to identify an explorer node action.
+   */
   private static final int DISPLAY_NODE_VIEW_ACTION = 2;
 
+  /**
+   * Code to identify an explorer node action.
+   */
   private static final int ADD_ACTION = 3;
 
+  /**
+   * Code to identify an explorer node action.
+   */
   private static final int INSERT_ACTION = 4;
 
+  /**
+   * Code to identify an explorer node action.
+   */
   private static final int SAVE_ACTION = 5;
 
   /**
    * The action which should be executed.
    */
   protected int action;
-
-  protected ExplorerNode before;
 
   /**
    * Constructor of the class.
@@ -165,7 +181,6 @@ public class ExplorerNodeActions extends ExplorerNodeActionImpl {
       createNode(node, getNodeType());
       break;
     case INSERT_ACTION:
-      before = node;
       createNode((ExplorerNode) node.getParent(), node.getNodeType());
       break;
     case SAVE_ACTION:

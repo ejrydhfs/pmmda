@@ -1,5 +1,5 @@
 /* copyright 2000-2004 Marcel Baumann
- * Licensed under the Apache License, Version 2.0 (the "Licence);
+ * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
  */
@@ -11,6 +11,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.odmg.Database;
 
+import ch.bbv.application.Locator;
 import ch.bbv.dog.*;
 
 /**
@@ -47,11 +48,6 @@ public class PersistenceHandler implements DataObjectHandler {
   private HandlerPolicyOjb policy;
 
   /**
-   * The map for all the data object types and their associated type.
-   */
-  private Map types;
-
-  /**
    * Default constructor of the class.
    * @param managed indicates if the managed is used in a managed context or
    *        not.
@@ -63,40 +59,46 @@ public class PersistenceHandler implements DataObjectHandler {
     } else {
       policy = new HandlerPolicyOjb(databaseMgr);
     }
-    types = new HashMap();
   }
 
   public void openDatasource(String source, boolean readonly) {
+    assert (source != null);
     int mode = (readonly ? Database.OPEN_READ_ONLY : Database.OPEN_READ_WRITE);
     databaseMgr.openDatabase(source, mode);
   }
 
   public void closeDatasource(String source) {
+    assert (source != null);
     Database database = getDatabase(source);
     databaseMgr.closeDatabase(database);
   }
 
   public DataObject retrieve(String datasource, Class clazz, Integer id) {
+    assert ((datasource != null) && (clazz != null) && (id != null));
     Database database = getDatabase(datasource);
     return (DataObject) policy.retrieve(database, clazz, id);
   }
 
   public List retrieve(String datasource, Class clazz, String constraints) {
+    assert ((datasource != null) && (clazz != null) && (constraints != null));
     Database database = getDatabase(datasource);
     return policy.retrieve(database, clazz, constraints);
   }
 
   public LightweightObject retrieveLw(String datasource, Class clazz, Integer id) {
+    assert ((datasource != null) && (clazz != null) && (id != null));
     Database database = getDatabase(datasource);
     return (LightweightObject) policy.retrieve(database, clazz, id);
   }
 
   public List retrieveLw(String datasource, Class clazz, String constraints) {
+    assert ((datasource != null) && (clazz != null));
     Database database = getDatabase(datasource);
     return policy.retrieve(database, clazz, constraints);
   }
 
   public List store(String datasource, Class clazz, DataObject root) {
+    assert ((datasource != null) && (clazz != null) && (root != null));
     if (log.isTraceEnabled()) {
       StringBuffer text = new StringBuffer();
       text.append("start store operation in ").append(datasource).append(
@@ -137,6 +139,7 @@ public class PersistenceHandler implements DataObjectHandler {
   }
 
   public void remove(String datasource, Class clazz, DataObject root) {
+    assert ((datasource != null) && (clazz != null) && (root != null));
     if (log.isTraceEnabled()) {
       StringBuffer text = new StringBuffer();
       text.append("start remove operation in ").append(datasource).append(
@@ -171,22 +174,11 @@ public class PersistenceHandler implements DataObjectHandler {
   }
 
   public void remove(String datasource, Class clazz, Integer id) {
+    assert ((datasource != null) && (clazz != null) && (id != null));
     DataObject object = retrieve(datasource, clazz, id);
     if (object != null) {
       remove(datasource, clazz, object);
     }
-  }
-
-  public DataObject deepCopy(Class clazz, DataObject object) {
-    return object.copy();
-  }
-
-  public void register(DataObjectType type) {
-    types.put(type.getBoClass(), type);
-  }
-
-  public DataObjectType getType(DataObject object) {
-    return (DataObjectType) types.get(object.getClass());
   }
 
   /**
@@ -195,7 +187,9 @@ public class PersistenceHandler implements DataObjectHandler {
    * @return requested visitor if found otherwise false.
    */
   private AbstractVisitorFunctor getVisitor(Class clazz) {
-    DataObjectType type = (DataObjectType) types.get(clazz);
+    DataObjectManager manager = (DataObjectManager) Locator.getInstance()
+        .getComponent(DataObjectManager.NAME);
+    DataObjectType type = manager.getType(clazz);
     return type.createVisitorInstance();
   }
 

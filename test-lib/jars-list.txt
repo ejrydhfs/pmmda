@@ -6,10 +6,10 @@ commons-lang-2.0.jar
 commons-logging-1.0.4.jar
 commons-logging-api-1.0.4.jar
 commons-pool-1.1.jar
-db-ojb-1.0.jar
+db-ojb-1.0.1.jar
 dog.jar
 forms-1.0.4.jar
-glazedlists-0.9.1.jars
+glazedlists-0.9.2.jars
 hsgldb.jar
 jbossall.client.jar
 jcalendar-1.2.1.jar

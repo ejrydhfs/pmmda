@@ -126,11 +126,13 @@ public class ${className} extends ComponentImpl
     }
   }  
    
-  public void openDatasource(String source, boolean readonly) {
+  public void openDatasource(String datasource, boolean readonly) {
+    assert (datasource != null);
     // operation ignored because it is under control of the server.
   }
   
-  public void closeDatasource(String source) {
+  public void closeDatasource(String datasource) {
+    assert (datasource != null);
     // operation ignored because it is under control of the server.
   }
   
@@ -141,6 +143,7 @@ public class ${className} extends ComponentImpl
 #end
 #end
   public DataObject retrieve(String datasource, Class clazz, Integer id) {
+    assert ((datasource != null) && (clazz != null) && (id != null));
     List objects = null;
     DataObject object = null;
 #if(!$isEmpty)
@@ -174,6 +177,7 @@ public class ${className} extends ComponentImpl
   }
   
   public List retrieve(String datasource, Class clazz, String constraints) {
+    assert ((datasource != null) && (clazz != null));
     List objects = null;
     
 #if(!$isEmpty)
@@ -209,6 +213,7 @@ public class ${className} extends ComponentImpl
 #end
 
   public LightweightObject retrieveLw(String datasource, Class clazz, Integer id) {
+    assert ((datasource != null) && (clazz != null) && (id != null));
     List objects = null;
     LightweightObject object = null;
 #if(!$isEmpty)
@@ -242,6 +247,7 @@ public class ${className} extends ComponentImpl
   }
 
   public List retrieveLw(String datasource, Class clazz, String constraints) {
+    assert ((datasource != null) && (clazz != null));
     List objects = null;
     
 #if(!$isEmpty)
@@ -277,6 +283,7 @@ public class ${className} extends ComponentImpl
 #end
 #end
   public List store(String datasource, Class clazz, DataObject root) {
+    assert ((datasource != null) && (clazz != null) && (root != null));
     List infos = null;
     
 #if(!$isEmpty)
@@ -306,6 +313,7 @@ public class ${className} extends ComponentImpl
   }
   
   public void remove(String datasource, Class clazz, DataObject root) {
+    assert ((datasource != null) && (clazz != null) && (root != null));
 #if(!$isEmpty)
     try {
 #set($firstCase=true)
@@ -332,6 +340,7 @@ public class ${className} extends ComponentImpl
   }
   
   public void remove(String datasource, Class clazz, Integer id) {
+    assert ((datasource != null) && (clazz != null) && (id != null));
 #if(!$isEmpty)
     try {
 #set($firstCase=true)
@@ -355,19 +364,6 @@ public class ${className} extends ComponentImpl
       log.error(e);
     }
 #end
-  }
-  
-  public DataObject deepCopy(Class clazz, DataObject object) {
-    throw new UnsupportedOperationException();
-  }
-  
-  public void register(DataObjectType type) {
-    // not  supported in wrapper
-  }
-  
-  public DataObjectType getType(DataObject object) {
-    // not  supported in wrapper
-    return null;
   }
   
 #foreach($class in $classes)
