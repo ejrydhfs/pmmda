@@ -13,4 +13,8 @@ package ch.bbv.mda;
  */
 public class MetaReturn extends MetaElement {
   // type definition
+
+  public boolean isLeaf() {
+    return true;
+  }
 }
