@@ -19,7 +19,10 @@ import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
 
 import ch.bbv.application.VersionId;
+import ch.bbv.dog.validation.Validator;
 import ch.bbv.mda.*;
+import ch.bbv.mda.generators.validation.OjbTagRule;
+import ch.bbv.mda.generators.validation.TagRule;
 import ch.bbv.mda.ui.TaggedValuesView;
 
 /**
@@ -59,6 +62,11 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
    * Key for a property of the cartridge used to retrieve user values.
    */
   public static final String SOURCE_ROOT_FOLDER_KEY = "ojb-cartridge.root-folder";
+
+  /**
+   * Key for a property of the cartridge used to retrieve user values.
+   */
+  public static final String GENERATE_FK_INDEX_KEY = "ojb-cartridge.generate-fk-index";
 
   /**
    * Key for a property of the cartridge used to retrieve user values.
@@ -195,17 +203,10 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
 
   private PrintWriter ojbLwWriter;
 
-  private VelocityContext primaryContext;
-
   /**
    * Root directory of the generated source files.
    */
   private File rootDirectory;
-
-  /**
-   * Package currently being processed.
-   */
-  private MetaPackage metaPackage;
 
   /**
    * Default constructor of the class.
@@ -220,6 +221,7 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
     CartridgeFactory factory = CartridgeFactory.getInstance();
     addCartridge(factory.getCartridge("dog"));
     addUndefinedProperty(properties, SOURCE_ROOT_FOLDER_KEY, "");
+    addUndefinedProperty(properties, GENERATE_FK_INDEX_KEY, "false");
     addUndefinedProperty(properties, DATABASE_KEY, "MySQL");
     addUndefinedProperty(properties, TABLE_PREFIX_KEY, "");
     addUndefinedProperty(properties, TABLE_POSTFIX_KEY, "");
@@ -304,6 +306,11 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
     return types;
   }
 
+  public void registerRules(Validator validator) {
+    TagRule tagRule = new OjbTagRule();
+    tagRule.register(validator);
+  }
+  
   public TaggedValue getTaggedValueWithElementDependentDefault(
       TaggedValueType taggedValueType, MetaElement element) {
     TaggedValue value = new TaggedValue(taggedValueType);
@@ -350,18 +357,10 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
     }
   }
 
-  public void processPackage(MetaPackage metaPackage) {
-    this.metaPackage = metaPackage;
-    if (!metaPackage.booleanValueOfTag(BogCartridge.GENERATE_TAG)) {
-      return;
-    }
-  }
-
   public void processModel(MetaModel metaModel) {
     rootDirectory = new File(getContext().getProperty(SOURCE_ROOT_FOLDER_KEY));
 
     String target = getContext().getProperty(DATABASE_KEY);
-    primaryContext = createContext(metaModel);
     try {
       ojbBoWriter = createPrintWriter(new File(rootDirectory,
           "repository_bo_user.xml"));
@@ -435,22 +434,11 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
    * @return the computed context.
    */
   protected VelocityContext createPersistencyContext(MetaClass clazz) {
-    VelocityContext context = new VelocityContext(primaryContext);
-    context.put("database", getContext().getProperty(DATABASE_KEY));
-    context.put("package", metaPackage);
-    context.put("class", clazz);
-
-    List properties = new ArrayList();
-    List aggregations = new ArrayList();
-    List references = new ArrayList();
+    VelocityContext context = createContext(clazz);
     StringBuffer buffer = new StringBuffer();
     int nrOfPrimaryProperties = 0;
     for (Iterator i = clazz.getProperties().iterator(); i.hasNext();) {
       MetaProperty property = (MetaProperty) i.next();
-      if (!isPersistent(property)) {
-        continue;
-      }
-      properties.add(property);
       if (property.booleanValueOfTag(IS_PRIMARY_TAG)) {
         if (buffer.length() > 0) {
           buffer.append(", ");
@@ -458,21 +446,11 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
         buffer.append(property.valueOfTag(COLUMN_NAME_TAG));
         nrOfPrimaryProperties++;
       }
-      if (property.retrieveIsReferenceCode()) {
-        references.add(property);
-      }
-    }
-    for (Iterator i = clazz.getIndexedProperties().iterator(); i.hasNext();) {
-      MetaIndexedProperty property = (MetaIndexedProperty) i.next();
-      aggregations.add(property);
     }
     if (buffer.length() > 0) {
       context.put("primaryKeys", buffer.toString());
     }
     clazz.setNrOfPrimaryProperties(nrOfPrimaryProperties);
-    context.put("properties", properties);
-    context.put("aggregations", aggregations);
-    context.put("keys", references);
     return context;
   }
 

@@ -250,7 +250,7 @@
        the outer edge vice versa.
        Specified below are the default settings.
     -->
-    <margins double-sided="false">
+    <margins double-sided="true">
       <top>1in</top>
       <bottom>1in</bottom>
       <inner>1.25in</inner>
@@ -270,9 +270,23 @@
     <credit>
       <name>Built with Apache Forrest</name>
       <url>http://xml.apache.org/forrest</url>
-      <image>skin/images/built-with-forrest-button.png</image>
+      <image>images/forrest-logo.png</image>
       <width>88</width>
       <height>31</height>
+    </credit>
+    <credit>
+      <name>Ant</name>
+      <url>http://ant.apache.org</url>
+      <image>images/ant.gif</image>
+      <width>80</width>
+      <height>30</height>
+    </credit>
+    <credit>
+      <name>JUnit</name>
+      <url>http://www.junit.org/</url>
+      <image>images/junit.gif</image>
+      <width>80</width>
+      <height>30</height>
     </credit>
     <credit>
       <name>Thanks to Apache Software Foundation ASF</name>
@@ -280,11 +294,6 @@
       <image>images/icon.png</image>
       <width>26</width>
       <height>22</height>
-    </credit>
-    <credit>
-      <name>Hosted on Sourceforge</name>
-      <url>http://www.sourceforge.net</url>
-      <image>images/sourceforge.png</image>
     </credit>
   </credits>
   <!-- A credit with @role='pdf' will have its name and url

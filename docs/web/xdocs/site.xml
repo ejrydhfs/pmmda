@@ -7,12 +7,6 @@
     <download label="Download" href="download.html" description="Downloads"/>
     <todo label="Todo" href="todo.html" description="Todo List"/>
     <support label="Support" href="support.html" description="Support"/>
-<!--
-	<all label="All">
-	    <whole_site_html label="Whole Site HTML" href="site.html"/>
-	    <whole_site_pdf label="Whole Site PDF" href="site.pdf"/>
-	</all>
--->	
   </about>
 
   <project label="Projects" href="projects/" tab="projects">

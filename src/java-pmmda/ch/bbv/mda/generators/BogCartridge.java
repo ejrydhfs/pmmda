@@ -297,8 +297,9 @@ public class BogCartridge extends CartridgeImpl implements Cartridge {
    */
   private static Log log = LogFactory.getLog(BogCartridge.class);
 
-  private static List propertyTypes;
-
+  /**
+   * List of stereotypes managed in the cartride.
+   */
   private static List stereotypes;
 
   /**
@@ -438,38 +439,50 @@ public class BogCartridge extends CartridgeImpl implements Cartridge {
           PropertyModeCode.class, this));
       types.add(new TaggedValueType(CONSTRUCTOR_PARAM_TAG, "false",
           Boolean.TYPE, this));
-      types.add(new TaggedValueType(CHANGE_EVENT_TAG, "false", Boolean.TYPE, this));
-      types.add(new TaggedValueType(VETO_EVENT_TAG, "false", Boolean.TYPE, this));
+      types.add(new TaggedValueType(CHANGE_EVENT_TAG, "false", Boolean.TYPE,
+          this));
+      types
+          .add(new TaggedValueType(VETO_EVENT_TAG, "false", Boolean.TYPE, this));
       types.add(new TaggedValueType(BIDIRECTIONAL_RELATION_TAG, "false",
           Boolean.TYPE, this));
-      types.add(new TaggedValueType(LIGHTWEIGHT_TAG, "false", Boolean.TYPE, this));
+      types.add(new TaggedValueType(LIGHTWEIGHT_TAG, "false", Boolean.TYPE,
+          this));
     } else if (clazz.equals(MetaIndexedProperty.class)) {
-      types.add(new TaggedValueType(MODE_TAG, "READ_WRITE", String.class, this));
-      types.add(new TaggedValueType(MODE_TAG, "READ_WRITE", String.class, this));
+      types
+          .add(new TaggedValueType(MODE_TAG, "READ_WRITE", String.class, this));
+      types
+          .add(new TaggedValueType(MODE_TAG, "READ_WRITE", String.class, this));
       types.add(new TaggedValueType(CONSTRUCTOR_PARAM_TAG, "false",
           Boolean.TYPE, this));
-      types.add(new TaggedValueType(CHANGE_EVENT_TAG, "false", Boolean.TYPE, this));
-      types.add(new TaggedValueType(VETO_EVENT_TAG, "false", Boolean.TYPE, this));
+      types.add(new TaggedValueType(CHANGE_EVENT_TAG, "false", Boolean.TYPE,
+          this));
+      types
+          .add(new TaggedValueType(VETO_EVENT_TAG, "false", Boolean.TYPE, this));
       types.add(new TaggedValueType(BIDIRECTIONAL_RELATION_TAG, "false",
           Boolean.TYPE, this));
       types.add(new TaggedValueType(CONTAINER_CLASS_TAG, "java.util.ArrayList",
           String.class, this));
       types.add(new TaggedValueType(INTERFACE_CLASS_TAG, "java.util.List",
           String.class, this));
-      types.add(new TaggedValueType(IS_ORDERED_TAG, "false", String.class, this));
-      types.add(new TaggedValueType(KEY_CLASS_TAG, "String", String.class, this));
-      types.add(new TaggedValueType(LIGHTWEIGHT_TAG, "false", String.class, this));
+      types
+          .add(new TaggedValueType(IS_ORDERED_TAG, "false", String.class, this));
+      types
+          .add(new TaggedValueType(KEY_CLASS_TAG, "String", String.class, this));
+      types.add(new TaggedValueType(LIGHTWEIGHT_TAG, "false", String.class,
+          this));
     }
     return types;
   }
 
-  public TaggedValue getTaggedValueWithElementDependentDefault(TaggedValueType taggedValueType, MetaElement element){
+  public TaggedValue getTaggedValueWithElementDependentDefault(
+      TaggedValueType taggedValueType, MetaElement element) {
     TaggedValue value = new TaggedValue(taggedValueType);
     updateTaggedValueWithElementDependentDefault(value, element);
     return value;
   }
-  
-  public void updateTaggedValueWithElementDependentDefault(TaggedValue taggedValue, MetaElement element){
+
+  public void updateTaggedValueWithElementDependentDefault(
+      TaggedValue taggedValue, MetaElement element) {
     // intentionally left blank
   }
 

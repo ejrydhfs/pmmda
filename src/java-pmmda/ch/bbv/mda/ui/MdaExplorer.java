@@ -25,6 +25,8 @@ import ch.bbv.explorer.UiNodeTypeFactory;
 import ch.bbv.explorer.about.Contributor;
 import ch.bbv.explorer.about.Licences;
 import ch.bbv.explorer.actions.*;
+import ch.bbv.explorer.components.DockingArea;
+import ch.bbv.explorer.components.ValidationPanel;
 import ch.bbv.mda.generators.Cartridge;
 import ch.bbv.mda.generators.CartridgeFactory;
 import ch.bbv.mda.persistency.PersistencyException;
@@ -123,11 +125,14 @@ public class MdaExplorer extends Explorer {
     projectInfo.setLicenceName("Apache Software License 2.0");
     projectInfo.setLicenceText(Licences.LICENCE_APACHE_2_0);
     projectInfo.setName("pmMDA - poor man Model Driven Architecture -");
-    projectInfo.setVersion(new VersionId(0, 2, 9, "RC1"));
+    projectInfo.setVersion(new VersionId(0, 2, 9, "RC2"));
 
     projectInfo.setContributors(getContributors());
     projectInfo.setLibraries(getLibrairies());
 
+    DockingArea dockingArea = getDockingArea();
+    dockingArea.addTab("Validator", new ValidationPanel());
+    
     JMenu menu = menuBar.getMenu(ExplorerMenuBar.HELP_MENU);
     ExplorerAboutAction aboutAction = new ExplorerAboutAction();
     aboutAction.setProjectInfo(projectInfo);

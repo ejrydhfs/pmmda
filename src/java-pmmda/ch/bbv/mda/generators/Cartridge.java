@@ -9,12 +9,8 @@ import java.util.List;
 import java.util.Properties;
 
 import ch.bbv.application.VersionId;
-import ch.bbv.mda.MetaClass;
-import ch.bbv.mda.MetaElement;
-import ch.bbv.mda.MetaModel;
-import ch.bbv.mda.MetaPackage;
-import ch.bbv.mda.TaggedValue;
-import ch.bbv.mda.TaggedValueType;
+import ch.bbv.dog.validation.Validator;
+import ch.bbv.mda.*;
 
 /**
  * The cartridge defines the interface for all code generators defined in the
@@ -183,6 +179,12 @@ public interface Cartridge {
    */
   List getUsedCartridges();
 
+  /**
+   * Registers the validation rules of the cartridges onto the validator.
+   * @param validator validator in charge of the cartridge validation.
+   */
+  void registerRules(Validator validator);
+  
   /**
    * Preprocesses the project and computes all the attributes used in the
    * cartridge for the model. The context of the model is also computed.

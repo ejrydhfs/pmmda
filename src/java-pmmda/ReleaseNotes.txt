@@ -18,20 +18,30 @@ TODO
   classname, prefix, loaded, active, dependants
 - Have a self contained jar file running with java -jar pmMDA
 
-Version 0.2.9-RC2 (30 September 2004)
+Version 0.2.9-RC2 (15 October 2004)
 -------------------------------------
 The following new features were added.
+- The OJB cartridge was extended to support generation of indexes for all 
+  foreign keys. This feature is controlled through a property. This option
+  simplifies the generation of referential integrity rules.
 - Macros for Velocity template are enabled. The templates were refactored to 
   use macros. The code is now more error resilient. Various inconsistencies
   were corrected.
 - Added a minimal memory usage meter available to the developers of the 
-  application or cartridges.
+  application or cartridges. In the future we will probably use the features
+  provided with JMX in JDK 5.0.
 - Build files based on Ant were refactored to support new version of forrest
   and simplify the structure. All tasks can now be called from build.xml. The
   minimal version of Ant is 1.6.
+- The project team started to use JMX extensions and JConsole to monitor the 
+  application.
 
 The following errors were corrected.
 - Error in the generation of the DDL for MySQL for 1-1 relationships.
+- Modified the templates to implement the new interface signature of lightweight
+  object.
+- Insures that the copy operation sets the modified flag to the value of the 
+  copied object.
  
 Version 0.2.9-RC1 (15 September 2004)
 -------------------------------------

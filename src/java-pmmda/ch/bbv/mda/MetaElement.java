@@ -7,7 +7,9 @@ package ch.bbv.mda;
 
 import java.util.*;
 
+import ch.bbv.dog.DataObject;
 import ch.bbv.dog.DataObjectImpl;
+import ch.bbv.dog.LightweightObject;
 import ch.bbv.utilities.TextUtilities;
 
 /**
@@ -19,7 +21,8 @@ import ch.bbv.utilities.TextUtilities;
  * @author MarcelBaumann
  * @version $Revision$
  */
-public abstract class MetaElement extends DataObjectImpl {
+public abstract class MetaElement extends DataObjectImpl implements DataObject,
+    LightweightObject {
   // %% BEGIN USER DECLARATION
   /**
    * Defines a comparator for meta element based on their name as comparison
@@ -90,7 +93,8 @@ public abstract class MetaElement extends DataObjectImpl {
     if (taggedValues == null)
       taggedValues = new HashMap();
     if (visibility == null)
-      visibility = VisibilityCode.getCode(VisibilityCode.PUBLIC_VISIBILITY_CODE);
+      visibility = VisibilityCode
+          .getCode(VisibilityCode.PUBLIC_VISIBILITY_CODE);
   }
 
   /**
@@ -258,6 +262,10 @@ public abstract class MetaElement extends DataObjectImpl {
   }
 
   // %% BEGIN USER CODE
+
+  public LightweightObject deepCopy() {
+    return null;
+  }
 
   public void addTaggedValue(TaggedValue taggedValue) {
     taggedValues.put(taggedValue.getTag(), taggedValue);

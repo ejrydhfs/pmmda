@@ -17,6 +17,7 @@ import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
 
 import ch.bbv.application.VersionId;
+import ch.bbv.dog.validation.Validator;
 import ch.bbv.mda.*;
 
 /**
@@ -40,6 +41,16 @@ public abstract class CartridgeImpl implements Cartridge {
    * Extension for Java source file.
    */
   public static final String JAVA_EXTENSION = ".java";
+
+  public static final String CONFIGURATION_KEY = "configuration";
+  public static final String CARTRIDGE_KEY = "cartridge";
+  public static final String MODEL_KEY = "model";
+  public static final String PACKAGES_KEY = "packages";
+  public static final String PACKAGE_KEY = "package";
+  public static final String CLASSES_KEY = "classes";
+  public static final String CLASS_KEY = "class";
+  public static final String PROPERTIES_KEY = "properties";
+  public static final String AGGREGATIONS_KEY = "aggregations";
 
   /**
    * logger for the catridge class.
@@ -110,6 +121,9 @@ public abstract class CartridgeImpl implements Cartridge {
 
   public List getAllStereotypes() {
     return Collections.EMPTY_LIST;
+  }
+
+  public void registerRules(Validator validator) {
   }
 
   public void preProcessModel(MetaModel model) {
@@ -348,8 +362,9 @@ public abstract class CartridgeImpl implements Cartridge {
    */
   protected VelocityContext createContext(MetaModel model) {
     VelocityContext context = new VelocityContext();
-    context.put("cartridge", this);
-    context.put("model", model);
+    context.put(CARTRIDGE_KEY, this);
+    context.put(CONFIGURATION_KEY, getContext());
+    context.put(MODEL_KEY, model);
     return context;
   }
 
@@ -360,10 +375,11 @@ public abstract class CartridgeImpl implements Cartridge {
    */
   protected VelocityContext createContext(MetaPackage metaPackage) {
     VelocityContext context = new VelocityContext();
-    context.put("cartridge", this);
-    context.put("model", metaPackage.getRoot());
-    context.put("package", metaPackage);
-    context.put("classes", metaPackage.getClasses());
+    context.put(CARTRIDGE_KEY, this);
+    context.put(CONFIGURATION_KEY, getContext());
+    context.put(MODEL_KEY, metaPackage.getRoot());
+    context.put(PACKAGE_KEY, metaPackage);
+    context.put(CLASSES_KEY, metaPackage.getClasses());
     return context;
   }
 
@@ -375,17 +391,19 @@ public abstract class CartridgeImpl implements Cartridge {
    */
   protected VelocityContext createContext(MetaClass clazz) {
     VelocityContext context = new VelocityContext();
-    context.put("cartridge", this);
-    context.put("model", clazz.getRoot());
-    context.put("package", clazz.getContext());
-    context.put("class", clazz);
+    context.put(CARTRIDGE_KEY, this);
+    context.put(CONFIGURATION_KEY, getContext());
+    context.put(MODEL_KEY, clazz.getRoot());
+    context.put(PACKAGE_KEY, clazz.getContext());
+    context.put(CLASS_KEY, clazz);
 
     List properties = new ArrayList();
     List indexedProperties = new ArrayList();
     List references = new ArrayList();
     getFieldsFor(clazz, properties, indexedProperties, references);
-    context.put("properties", properties);
-    context.put("aggregations", indexedProperties);
+    context.put(PROPERTIES_KEY, properties);
+    context.put(AGGREGATIONS_KEY, indexedProperties);
+    
     context.put("references", references);
     context.put("imports", clazz.getImports());
     context.put("nestedClasses", clazz.getClasses());

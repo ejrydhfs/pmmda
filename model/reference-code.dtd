@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!ELEMENT codes (code)>
+<!ATTLIST codes 
+  classname CDATA #REQUIRED
+  hierarchical (false|true) "false">
+
+<!ELEMENT code (id sort active shortdescription description? parentid?)>
+<!ELEMENT id (#PCDATA)>
+<!ELEMENT sort (#PCDATA)>
+<!ELEMENT active (#PCDATA)>
+<!ELEMENT shortdescription (#PCDATA)>
+<!ELEMENT description (#PCDATA)>
+<!ELEMENT parentid (#PCDATA)>
+

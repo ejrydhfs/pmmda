@@ -7,29 +7,62 @@
 package ch.bbv.mda.generators.validation;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
-import ch.bbv.dog.validation.ValidationRule;
-import ch.bbv.dog.validation.ValidationRuleResult;
+import ch.bbv.dog.validation.*;
 import ch.bbv.mda.*;
+import ch.bbv.utilities.TextUtilities;
 
 /**
+ * The tag rule implements mechanisms to validate tagged values in the validator
+ * framework. All messages about tag rule results have three parameters. The
+ * prefix of the cartridge, the tag name and a parameter. The properties file
+ * for the derived classes must be located in this package. Developers are free
+ * to define their own directory tree to seperate messages from their source
+ * code artifacts.
  * @author MarcelBaumann
  * @version $Revision$
  */
-public abstract class TagRule implements ValidationRule {
+public abstract class TagRule extends ValidationRuleImpl implements
+    ValidationRule {
+  /**
+   * The path to the package containing all message property files.
+   */
+  private static final String MESSAGES_PACKAGAGE_NAME = "ch.bbv.mda.generators.validation.";
+
   /**
    * The prefix of the cartridge which tagged value validation rules are defined
    * in the class.
    */
   private String prefix;
 
+  /**
+   * The resource bundle containing the messages for the validation messages.
+   */
   private ResourceBundle resources;
 
+  /**
+   * Registers the tag rules for all elements of the meta model.
+   * @param validator validator where the rules are registered.
+   */
+  public void register(Validator validator) {
+    validator.registerRule(this, MetaPackage.class);
+    validator.registerRule(this, MetaClass.class);
+    validator.registerRule(this, MetaProperty.class);
+    validator.registerRule(this, MetaIndexedProperty.class);
+  }
+
+  /**
+   * Constructor of the class.
+   * @param prefix prefix of the cartridge owning the rules.
+   */
   public TagRule(String prefix) {
     this.prefix = prefix;
-    resources = ResourceBundle.getBundle(prefix + "-rules");
-
+    StringBuffer buffer = new StringBuffer();
+    buffer.append(MESSAGES_PACKAGAGE_NAME).append(
+        TextUtilities.identifierFirstUpper(prefix)).append("RulesMessages");
+    resources = ResourceBundle.getBundle(buffer.toString(), Locale.US);
   }
 
   public boolean isImmediate() {
@@ -39,47 +72,110 @@ public abstract class TagRule implements ValidationRule {
   public boolean execute(Object bean, String property, List results) {
     boolean sucess = true;
     if (bean instanceof MetaPackage) {
-      validate((MetaPackage) bean, results);
+      sucess = validate((MetaPackage) bean, results);
     } else if (bean instanceof MetaClass) {
-      validate((MetaClass) bean, results);
+      sucess = validate((MetaClass) bean, results);
     } else if (bean instanceof MetaIndexedProperty) {
-      validate((MetaIndexedProperty) bean, results);
+      sucess = validate((MetaIndexedProperty) bean, results);
     } else if (bean instanceof MetaProperty) {
-      validate((MetaProperty) bean, results);
+      sucess = validate((MetaProperty) bean, results);
     }
     return sucess;
   }
 
   public boolean execute(Object bean, String property, Object oldValue,
       Object newValue, List results) {
-    return true;
+    return execute(bean, property, results);
   }
 
-  protected abstract boolean validate(MetaPackage packages, List results);
+  /**
+   * Validates the element with the registered rules and stores the findings in
+   * the result list.
+   * @param element element to validate.
+   * @param results results containing the findings of the validation.
+   * @return true if no errors were found otherwise false.
+   * @pre (element != null) && (results != null)
+   */
+  protected abstract boolean validate(MetaPackage element, List results);
 
-  protected abstract boolean validate(MetaClass clazz, List results);
+  /**
+   * Validates the element with the registered rules and stores the findings in
+   * the result list.
+   * @param element element to validate.
+   * @param results results containing the findings of the validation.
+   * @return true if no errors were found otherwise false.
+   * @pre (element != null) && (results != null)
+   */
+  protected abstract boolean validate(MetaClass element, List results);
 
-  protected abstract boolean validate(MetaProperty property, List results);
+  /**
+   * Validates the element with the registered rules and stores the findings in
+   * the result list.
+   * @param element element to validate.
+   * @param results results containing the findings of the validation.
+   * @return true if no errors were found otherwise false.
+   * @pre (element != null) && (results != null)
+   */
+  protected abstract boolean validate(MetaProperty element, List results);
 
-  protected abstract boolean validate(MetaIndexedProperty property, List results);
+  /**
+   * Validates the element with the registered rules and stores the findings in
+   * the result list.
+   * @param element element to validate.
+   * @param results results containing the findings of the validation.
+   * @return true if no errors were found otherwise false.
+   * @pre (element != null) && (results != null)
+   */
+  protected abstract boolean validate(MetaIndexedProperty element, List results);
 
+  /**
+   * Returns the message associated with the given key.
+   * @param key key of the message to retrieve.
+   * @return the requested message if found otherwise null.
+   * @pre key != null
+   */
   protected String getString(String key) {
     return resources.getString(key);
   }
 
-  protected void addErrorMessage(List results, String key, String itemName) {
-    addMessage(results, ValidationRuleResult.ERROR, key, itemName);
+  /**
+   * Adds an error message to the list of results.
+   * @param results results containing the messages.
+   * @param key key of the message.
+   * @param tag tag origin of the error.
+   * @param name name of the item.
+   */
+  protected void addErrorMessage(List results, String key, String tag,
+      String name) {
+    addMessage(results, ValidationRuleResult.ERROR, key, tag, name);
   }
 
-  protected void addWarningMessage(List results, String key, String itemName) {
-    addMessage(results, ValidationRuleResult.WARNING, key, itemName);
+  /**
+   * Adds a warning message to the list of results.
+   * @param results results containing the messages.
+   * @param key key of the message.
+   * @param tag tag origin of the error.
+   * @param name name of the item.
+   */
+  protected void addWarningMessage(List results, String key, String tag,
+      String name) {
+    addMessage(results, ValidationRuleResult.WARNING, key, tag, name);
   }
 
-  protected void addMessage(List results, int severity, String key, String itemName) {
+  /**
+   * Adds an error message to the list of results.
+   * @param results results containing the messages.
+   * @param severity severity of the message.
+   * @param key key of the message.
+   * @param tag tag origin of the error.
+   * @param name name of the item.
+   */
+  protected void addMessage(List results, int severity, String key, String tag,
+      String name) {
     ValidationRuleResult result = new ValidationRuleResult();
     result.setSeverity(severity);
     result.setKey(key);
-    Object[] parameters = { itemName };
+    Object[] parameters = { prefix, tag, name };
     result.setText(getString(key), parameters);
     results.add(result);
   }

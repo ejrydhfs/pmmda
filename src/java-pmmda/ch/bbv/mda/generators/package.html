@@ -16,7 +16,7 @@ executable code.
 <h2>Analysis</h2>
 <h3>Cartridge Checks</h3>
 <p>Cartridges should perform sanity checks to insure that configuration errors
-  do not impede the sucess of artifacts generations. The framework insures all
+  do not hinder the sucess of artifacts generation. The framework insures all
   necessary cartridges are available.</p>
 <p>All cartridge properties have reasonable default values used when the user
   does not define specific values. These properties can be inspected in the
@@ -26,6 +26,11 @@ executable code.
   directories. Such errors provoke a runtime error and are difficult to trace.
   Therefore the cartridge interface provides a method to verify the existence
   of all defined paths.</p>
+<h3>Validation of Stereotypes and Tags</h3>
+<p>The generator framework provides hooks to validate the tagged values and
+  stereotypes a cartrdige needs. The tag rule class provides a structure to
+  define validation checks for a cartridge. Before a cartridge is asked to 
+  generate artifacts, its validation will be first executed.</p>
 <h3>Cartridge Description</h3>
 <p>Cartridges provide extensive information about their capabilities and actual
   configuration.</p>

@@ -54,6 +54,7 @@ public class TypeFactory extends AbstractTypeFactory {
 
     List params = new ArrayList();
     addField(params, "name", String.class, true);
+    addField(params, "system", Boolean.TYPE, false);
     addField(params, "description", String.class, true);
     nodeType.registerView(new UiNodeViewType("default", nodeType,
         NodeTableView.class, params, true));

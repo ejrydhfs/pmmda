@@ -15,6 +15,8 @@ import org.apache.velocity.app.Velocity;
 import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
 
+import ch.bbv.dnm.users.client.Application;
+import ch.bbv.dog.validation.Validator;
 import ch.bbv.mda.*;
 
 /**
@@ -192,6 +194,9 @@ public class CartridgeFactory {
     registerObsoleteTaggedValueTypes(cartridge, MetaClass.class);
     registerObsoleteTaggedValueTypes(cartridge, MetaProperty.class);
     registerObsoleteTaggedValueTypes(cartridge, MetaIndexedProperty.class);
+    Validator validator = (Validator) Application.getInstance().getComponent(
+        Validator.NAME);
+    cartridge.registerRules(validator);
   }
 
   /**

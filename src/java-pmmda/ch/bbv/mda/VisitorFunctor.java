@@ -29,6 +29,11 @@ public class VisitorFunctor implements AbstractVisitorFunctor, Visitor {
     return depth;
   }
   
+  /**
+   * Sets the current depth of the visitor when executed.
+   * @param depth the depth of the visitor.
+   * @see #getDepth()
+   */
   public void setDepth(int depth) {
     this.depth = depth;
   }
@@ -37,6 +42,10 @@ public class VisitorFunctor implements AbstractVisitorFunctor, Visitor {
     return functor;
   }
   
+  /** Sets the functor of the visitor functor.
+   * @param functor the new functor of the visitor.
+   * @see #getFunctor()
+   */
   public void setFunctor(Object functor) {
     this.functor = (DoFunctor)functor;
   }
