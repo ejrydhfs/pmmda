@@ -1,11 +1,12 @@
-/* copyright 2000-2004 Marcel Baumann 
- * Licensed under the Apache License, Version 2.0 (the "Licence); 
- * you may not use this file except in compliance with the License. 
- * $Id$
+/*
+ * copyright 2000-2004 Marcel Baumann Licensed under the Apache License, Version
+ * 2.0 (the "Licence); you may not use this file except in compliance with the
+ * License. $Id$
  */
 package ch.bbv.mda.ui.actions;
 
 import java.io.*;
+import java.text.MessageFormat;
 import java.util.Arrays;
 
 import javax.swing.JFileChooser;
@@ -21,6 +22,7 @@ import ch.bbv.mda.persistency.PersistencyException;
 import ch.bbv.mda.persistency.PersistencyHandler;
 import ch.bbv.mda.persistency.PersistencyHandlerFactory;
 import ch.bbv.utilities.SystemUtilities;
+import ch.bbv.utilities.ResourceUtility;
 
 /**
  * The save as action for the user interface of <em>pmMDA</em> application.
@@ -64,6 +66,11 @@ public class SaveAsAction extends ExplorerSaveAsAction {
   private static final String[] SERIALIZE_EXT = { "ser" };
 
   /**
+   * File extensions for models according to xmi standard.
+   */
+  private static final String[] XMI_EXT = { "xmi" };
+
+  /**
    * Resource containing the ArgoUML project template.
    */
   private static final String ZARGO_TEMPLATE = "/templates/template.zargo";
@@ -76,15 +83,26 @@ public class SaveAsAction extends ExplorerSaveAsAction {
         "Poseidon 2.x (*.zuml)"));
     fileChooser.addChoosableFileFilter(new SimpleFileFilter(XML_EXT,
         "XML models (*.xml)"));
+    fileChooser.addChoosableFileFilter(new SimpleFileFilter(XMI_EXT,
+        "XMI models (*.xmi)"));
     fileChooser.addChoosableFileFilter(new SimpleFileFilter(SERIALIZE_EXT,
         "XML models (*.ser)"));
   }
 
   public void execute() {
+    if (getSelectedFile().exists()) {
+      String message = MessageFormat.format(ResourceUtility
+          .getString("mda.ui.confirmationMsg.FILE_OVERWRITE_CONFIRMATION"),
+          new Object[] { getSelectedFile().getName() });
+      int no = JOptionPane.showConfirmDialog(getExplorer().getFrame(), message,
+          ResourceUtility.getString("mda.ui.confirmationMsg.CONFIRMATION"),
+          JOptionPane.YES_NO_OPTION);
+      if (no == 1)
+        return;
+    }
     MetaModel model = (MetaModel) getExplorer().getRoot().getDataObject();
     File file = getSelectedFile();
     String extension = SystemUtilities.getFileExtension(file).toLowerCase();
-    model.setFilename(getSelectedFile().toString());
     if (Arrays.binarySearch(ARGOUML_EXT, extension) >= 0) {
       writeArgoUmlFile(model, file);
     } else if (Arrays.binarySearch(POSEIDON_EXT, extension) >= 0) {
@@ -93,8 +111,14 @@ public class SaveAsAction extends ExplorerSaveAsAction {
       writeXmlFile(model, file);
     } else if (Arrays.binarySearch(SERIALIZE_EXT, extension) >= 0) {
       writeSerializedFile(model, file);
+    } else if (Arrays.binarySearch(XMI_EXT, extension) >= 0) {
+      writeArgoUmlFile(model, file);
+    } else {
+      JOptionPane.showMessageDialog(getExplorer().getFrame(), ResourceUtility
+          .getString("mda.ui.sorryMsg.ILLEGAL_FILE_NAME_OR_TYPE"),
+          ResourceUtility.getString("mda.ui.sorryMsg.SORRY"),
+          JOptionPane.ERROR_MESSAGE);
     }
-    getExplorer().getMenuBar().documentSaved();
   }
 
   /**
@@ -107,15 +131,9 @@ public class SaveAsAction extends ExplorerSaveAsAction {
     try {
       PersistencyHandlerFactory factory = new PersistencyHandlerFactory();
       PersistencyHandler handler = factory.getHandler(getSelectedFile());
-      InputStream source = getClass().getResourceAsStream(ZARGO_TEMPLATE);
-      OutputStream target = new BufferedOutputStream(new FileOutputStream(file));
-      SystemUtilities.copy(source, target);
-      source.close();
-      target.close();
-      model.setFilename(getSelectedFile().toString());
       handler.writeModel(model, getSelectedFile());
-    } catch (IOException e) {
-      log.error(e);
+      model.setFilename(getSelectedFile().toString());
+      getExplorer().getMenuBar().documentSaved();
     } catch (PersistencyException e) {
       log.error(e);
     }
@@ -143,6 +161,8 @@ public class SaveAsAction extends ExplorerSaveAsAction {
       PersistencyHandlerFactory factory = new PersistencyHandlerFactory();
       PersistencyHandler handler = factory.getHandler(getSelectedFile());
       handler.writeModel(model, getSelectedFile());
+      model.setFilename(getSelectedFile().toString());
+      getExplorer().getMenuBar().documentSaved();
     } catch (PersistencyException e) {
       log.error(e);
     }
@@ -159,6 +179,8 @@ public class SaveAsAction extends ExplorerSaveAsAction {
       PersistencyHandlerFactory factory = new PersistencyHandlerFactory();
       PersistencyHandler handler = factory.getHandler(getSelectedFile());
       handler.writeModel(model, getSelectedFile());
+      model.setFilename(getSelectedFile().toString());
+      getExplorer().getMenuBar().documentSaved();
     } catch (PersistencyException e) {
       log.error(e);
     }
