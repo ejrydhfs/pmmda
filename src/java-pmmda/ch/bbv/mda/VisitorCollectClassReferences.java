@@ -50,15 +50,14 @@ public class VisitorCollectClassReferences implements Visitor {
 
   public void visit(MetaModel model) {
     assert (model != null);
-    classes.clear();
   }
 
   public void visit(MetaPackage metaPackage) {
-    // empty body
+    assert (metaPackage != null);
   }
 
   public void visit(MetaClass metaClass) {
-    // empty body
+    assert (metaClass != null);
   }
 
   public void visit(MetaProperty property) {
@@ -78,6 +77,6 @@ public class VisitorCollectClassReferences implements Visitor {
   }
 
   public void visit(TaggedValue taggedValue) {
-    // empty body
+    assert (taggedValue != null);
   }
 }
