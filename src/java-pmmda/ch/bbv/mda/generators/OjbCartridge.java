@@ -41,6 +41,10 @@ import ch.bbv.mda.ui.TaggedValuesView;
  */
 public class OjbCartridge extends CartridgeImpl implements Cartridge {
   /**
+   * The prefix of the cartridge.
+   */
+  public static final String PREFIX = "ojb";
+  /**
    * Key part for a property of the cartridge used to retrieve user values.
    */
   public static final String DDL_START_KEY = "ojb-cartridge.ddl.";
@@ -206,7 +210,7 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
    * Default constructor of the class.
    */
   public OjbCartridge() {
-    super("Object Java Bridge Cartridge", "ojb", new VersionId(0, 3, 0));
+    super("Object Java Bridge Cartridge", PREFIX, new VersionId(0, 3, 0));
   }
 
   public void initialize(Properties properties) {
