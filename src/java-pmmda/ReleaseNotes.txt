@@ -38,6 +38,10 @@ The following errors were corrected.
   implement them. The JavaDoc documentation was extended to support serial tag
   information.
 
+The following errors and change requests are closed 
+  1021167, 1029885, 1085670, 1105202, 1105446, 1105974, 1105978, 1106795
+  (see Sourceforge site RFE and Tracker for detailed description)
+  
 Version 0.2.9-RC2 (30 October 2004)
 -----------------------------------
 The following new features were added.
