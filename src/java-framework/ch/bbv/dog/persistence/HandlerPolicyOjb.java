@@ -102,10 +102,10 @@ class HandlerPolicyOjb {
       for (Iterator i = deletedObjects.iterator(); i.hasNext();) {
         database.deletePersistent(i.next());
       }
-      for (Iterator i = deletedObjects.iterator(); i.hasNext();) {
+      for (Iterator i = insertedObjects.iterator(); i.hasNext();) {
         database.makePersistent(i.next());
       }
-      for (Iterator i = deletedObjects.iterator(); i.hasNext();) {
+      for (Iterator i = updatedObjects.iterator(); i.hasNext();) {
         tx.lock(i.next(), Transaction.WRITE);
       }
       cache(tx, copies);
