@@ -428,41 +428,45 @@ public class BogCartridge extends CartridgeImpl implements Cartridge {
   public List getTaggedValueTypes(Class clazz) {
     List types = new ArrayList();
     if (clazz.equals(MetaModel.class)) {
-      types.add(new TaggedValueType(GENERATE_TAG, "true", Boolean.TYPE));
+      types.add(new TaggedValueType(GENERATE_TAG, "true", Boolean.TYPE, this));
     } else if (clazz.equals(MetaPackage.class)) {
-      types.add(new TaggedValueType(GENERATE_TAG, "false", Boolean.TYPE));
+      types.add(new TaggedValueType(GENERATE_TAG, "false", Boolean.TYPE, this));
     } else if (clazz.equals(MetaClass.class)) {
-      types.add(new TaggedValueType(IS_ROOT_TAG, "false", Boolean.TYPE));
+      types.add(new TaggedValueType(IS_ROOT_TAG, "false", Boolean.TYPE, this));
     } else if (clazz.equals(MetaProperty.class)) {
       types.add(new TaggedValueType(MODE_TAG, "READ_WRITE",
-          PropertyModeCode.class));
+          PropertyModeCode.class, this));
       types.add(new TaggedValueType(CONSTRUCTOR_PARAM_TAG, "false",
-          Boolean.TYPE));
-      types.add(new TaggedValueType(CHANGE_EVENT_TAG, "false", Boolean.TYPE));
-      types.add(new TaggedValueType(VETO_EVENT_TAG, "false", Boolean.TYPE));
+          Boolean.TYPE, this));
+      types.add(new TaggedValueType(CHANGE_EVENT_TAG, "false", Boolean.TYPE, this));
+      types.add(new TaggedValueType(VETO_EVENT_TAG, "false", Boolean.TYPE, this));
       types.add(new TaggedValueType(BIDIRECTIONAL_RELATION_TAG, "false",
-          Boolean.TYPE));
-      types.add(new TaggedValueType(LIGHTWEIGHT_TAG, "false", Boolean.TYPE));
+          Boolean.TYPE, this));
+      types.add(new TaggedValueType(LIGHTWEIGHT_TAG, "false", Boolean.TYPE, this));
     } else if (clazz.equals(MetaIndexedProperty.class)) {
-      types.add(new TaggedValueType(MODE_TAG, "READ_WRITE", String.class));
-      types.add(new TaggedValueType(MODE_TAG, "READ_WRITE", String.class));
+      types.add(new TaggedValueType(MODE_TAG, "READ_WRITE", String.class, this));
+      types.add(new TaggedValueType(MODE_TAG, "READ_WRITE", String.class, this));
       types.add(new TaggedValueType(CONSTRUCTOR_PARAM_TAG, "false",
-          Boolean.TYPE));
-      types.add(new TaggedValueType(CHANGE_EVENT_TAG, "false", Boolean.TYPE));
-      types.add(new TaggedValueType(VETO_EVENT_TAG, "false", Boolean.TYPE));
+          Boolean.TYPE, this));
+      types.add(new TaggedValueType(CHANGE_EVENT_TAG, "false", Boolean.TYPE, this));
+      types.add(new TaggedValueType(VETO_EVENT_TAG, "false", Boolean.TYPE, this));
       types.add(new TaggedValueType(BIDIRECTIONAL_RELATION_TAG, "false",
-          Boolean.TYPE));
+          Boolean.TYPE, this));
       types.add(new TaggedValueType(CONTAINER_CLASS_TAG, "java.util.ArrayList",
-          String.class));
+          String.class, this));
       types.add(new TaggedValueType(INTERFACE_CLASS_TAG, "java.util.List",
-          String.class));
-      types.add(new TaggedValueType(IS_ORDERED_TAG, "false", String.class));
-      types.add(new TaggedValueType(KEY_CLASS_TAG, "String", String.class));
-      types.add(new TaggedValueType(LIGHTWEIGHT_TAG, "false", String.class));
+          String.class, this));
+      types.add(new TaggedValueType(IS_ORDERED_TAG, "false", String.class, this));
+      types.add(new TaggedValueType(KEY_CLASS_TAG, "String", String.class, this));
+      types.add(new TaggedValueType(LIGHTWEIGHT_TAG, "false", String.class, this));
     }
     return types;
   }
 
+  public TaggedValue getTaggedValueWithElementDependentDefault(TaggedValueType taggedValueType, MetaElement element){
+    return new TaggedValue(taggedValueType);
+  }
+  
   /**
    * Computes the data object cartridge relevant attributes for the meta
    * package. The following attributes are defined.
