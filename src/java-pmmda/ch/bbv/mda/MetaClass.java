@@ -296,6 +296,14 @@ public class MetaClass extends MetaElement {
     }
     properties.clear();
   }
+  
+  /**
+   * Removes a property from this class
+   * @param metaProperty to be removed.
+   */
+  public void removeProperty(MetaProperty metaProperty){
+    properties.remove(metaProperty);
+  }
 
   public MetaIndexedProperty getIndexedProperty(int index) {
     return (MetaIndexedProperty) indexedProperties.get(index);
@@ -332,6 +340,14 @@ public class MetaClass extends MetaElement {
     indexedProperties.clear();
   }
 
+  /**
+   * Removes an indexed property from this class
+   * @param metaIndexedProperty to be removed.
+   */
+  public void removeIndexedProperty(MetaIndexedProperty metaIndexedProperty){
+    indexedProperties.remove(metaIndexedProperty);
+  }
+
   public MetaClass getClass(int index) {
     return (MetaClass) classes.get(index);
   }
@@ -366,6 +382,14 @@ public class MetaClass extends MetaElement {
       ((MetaClass) iterator.next()).setContext(null);
     }
     classes.clear();
+  }
+  
+  /**
+   * Removes a nested class from this class
+   * @param metaClass to be removed.
+   */
+  public void removeClass(MetaClass metaClass){
+    classes.remove(metaClass);
   }
 
   /**

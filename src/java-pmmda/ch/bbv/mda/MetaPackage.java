@@ -139,6 +139,14 @@ public class MetaPackage extends MetaElement {
   }
 
   /**
+   * Removes a class from the package
+   * @param metaClass to be removed.
+   */
+  public void removeClass(MetaClass metaClass){
+    classes.remove(metaClass);
+  }
+  
+  /**
    * Implements the visitor pattern.
    * @param visitor visitor to process.
    */

@@ -104,6 +104,14 @@ public class MetaModel extends MetaPackage {
     packages.clear();
   }
 
+  /**
+   * Removes a package from the model
+   * @param metaPackage to be removed.
+   */
+  public void removePackage(MetaPackage metaPackage){
+    packages.remove(metaPackage);
+  }
+  
   public MetaDataType getDataType(int index) {
     return (MetaDataType) dataTypes.get(index);
   }
@@ -137,6 +145,10 @@ public class MetaModel extends MetaPackage {
       ((MetaDataType) i.next()).setContext(null);
     }
     dataTypes.clear();
+  }
+  
+  public void removeDataType(MetaDataType metaDataType){
+    dataTypes.remove(metaDataType);
   }
 
   public void accept(Visitor visitor) {
