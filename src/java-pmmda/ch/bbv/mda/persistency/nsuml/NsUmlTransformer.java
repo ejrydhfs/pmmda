@@ -86,20 +86,28 @@ public class NsUmlTransformer {
    */
   public MModel loadArgoModel(File file) throws FileNotFoundException,
       IOException, ParserConfigurationException, SAXException {
+    InputSource source = null;
+    ZipInputStream input = null;
     FileInputStream inputStream = new FileInputStream(file);
-    ZipInputStream input = new ZipInputStream(inputStream);
-    String name = input.getNextEntry().getName();
-    while (!name.endsWith(".xmi")) {
-      name = input.getNextEntry().getName();
-    }
+    if (!file.getName().endsWith(".xmi")) {
+      input = new ZipInputStream(inputStream);
+      String name = input.getNextEntry().getName();
+      while (!name.endsWith(".xmi")) {
+        name = input.getNextEntry().getName();
+      }
 
-    InputSource source = new InputSource(new BufferedInputStream(input));
+      source = new InputSource(new BufferedInputStream(input));
+    } else {
+      source = new InputSource(new FileInputStream(file));
+    }
     source.setEncoding(XML_ENCODING);
 
     XMIReader xmiReader = new XMIReader();
     MModel model = xmiReader.parse(source);
     inputStream.close();
-    input.close();
+    if (input != null) {
+      input.close();
+    }
     return model;
   }
 
@@ -129,6 +137,12 @@ public class NsUmlTransformer {
       extractDataType(mClass, target);
     }
     identifySystemPackages(target);
+
+    for (Iterator i = new FilterIterator(source.getOwnedElements(),
+        MClass.class); i.hasNext();) {
+      MClass mClass = (MClass) i.next();
+      extractClass(mClass, target);
+    }
   }
 
   public void synchronize(MetaPackage metaPackage, MPackage item) {
@@ -251,9 +265,54 @@ public class NsUmlTransformer {
       metaClass.setInterface(true);
     }
 
-    for (Iterator i = new FilterIterator(mClass.getOwnedElements(),
-        MAttribute.class); i.hasNext();) {
+    for (Iterator i = new FilterIterator(mClass.getFeatures(), MAttribute.class); i
+        .hasNext();) {
       extractProperty((MAttribute) i.next(), metaClass);
+    }
+
+    for (Iterator i = new FilterIterator(mClass.getOwnedElements(),
+        MClassifier.class); i.hasNext();) {
+      MClassifier mNestedClass = (MClassifier) i.next();
+      extractClass(mNestedClass, metaClass);
+    }
+  }
+
+  protected void extractClass(MClassifier mNestedClass, MetaClass metaClass) {
+    assert ((mNestedClass != null) && (metaClass != null));
+
+    String name = mNestedClass.getName();
+    if (name == null) {
+      if (log.isErrorEnabled()) {
+        log.error("Parsed nested class without name in class "
+            + metaClass.getName());
+      }
+      return;
+    }
+
+    MetaClass metaNestedClass = metaClass.findClass(name);
+    if (metaNestedClass == null) {
+      metaNestedClass = new MetaClass();
+      metaNestedClass.setName(name);
+      factory.initialize(metaNestedClass);
+      metaClass.addClass(metaNestedClass);
+    }
+    elements.put(mNestedClass, metaNestedClass);
+    metaNestedClass.setAbstract(mNestedClass.isAbstract());
+    extractStereotypeAndTags(mNestedClass, metaNestedClass);
+
+    if (mNestedClass instanceof MInterface) {
+      metaNestedClass.setInterface(true);
+    }
+
+    for (Iterator i = new FilterIterator(mNestedClass.getFeatures(),
+        MAttribute.class); i.hasNext();) {
+      extractProperty((MAttribute) i.next(), metaNestedClass);
+    }
+
+    for (Iterator i = new FilterIterator(mNestedClass.getOwnedElements(),
+        MClassifier.class); i.hasNext();) {
+      MClassifier mNestedNestedClass = (MClassifier) i.next();
+      extractClass(mNestedNestedClass, metaNestedClass);
     }
   }
 
@@ -297,8 +356,9 @@ public class NsUmlTransformer {
     if (mClassifier != null) {
       property.setTypeName(getQualifiedName(attribute.getType()));
     } else {
-      log.error("class. property '" + metaClass.qualifiedName() + "." + name + "'"
-          + "has no type");
+      log.info("Attribute '" + attribute.getName() + "' of class '"
+          + metaClass.getName() + " has no type associated (set to Integer)");
+      property.setTypeName("java.lang.Integer");
     }
 
     Multiplicity multiplicity = convert(attribute.getMultiplicity());
