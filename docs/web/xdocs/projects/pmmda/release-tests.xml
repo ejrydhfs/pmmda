@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" 
-  "http://forrest.apache.org/dtd/document-v13.dtd">
+<!--
+  Copyright 2000-2005 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" 
+  "http://forrest.apache.org/dtd/document-v20.dtd">
 <document> 
   <header> 
     <title>pmMDA Release Tests</title> 
@@ -36,23 +51,23 @@
         started using shell scripts located in the <code>scripts tests</code> 
         directory.</p>
       <ul>
-        <li>Rich client tests</li>
+        <li>Rich client tests
         <ol>
           <li>Starts the client application <code>test-rich-client</code>.</li>
-        </ol>
-        <li>CORBA three tiers tests</li>
+        </ol></li>
+        <li>CORBA three tiers tests
         <ol>
           <li>Starts CORBA request broker <code>orb-start</code>.</li>
           <li>Starts the CORBA server <code>test-corba-server</code></li>
           <li>Starts the CORBA client <code>test-corba-client</code></li>
-        </ol>
-        <li>JBoss three tiers tests</li>
+        </ol></li>
+        <li>JBoss three tiers tests
         <ol>
           <li>Starts the J2EE JBoss container using its start script. The
             J2EE server was copied in the deployment directory when building it
             and will start automatically.</li>
           <li>Starts the J2EE client <code>test-j2ee-client</code>.</li>
-        </ol>
+        </ol></li>
       </ul>
       <p>Please remember that CORBA and J2EE should not be run simultaneously or be
         very careful to avoid port conflicts.</p>

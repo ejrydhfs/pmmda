@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" 
-  "http://forrest.apache.org/dtd/document-v13.dtd">
+<!--
+  Copyright 2000-2005 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" 
+  "http://forrest.apache.org/dtd/document-v20.dtd">
 <document>
   <header>
     <title>News</title>
@@ -10,15 +25,7 @@
       <title>Latest News</title>
       <p>Latest news of the <em>pmMDA</em> for the community.</p>
       <ul>
-        <li>The development team has released <em>pmMDA 0.2.9-RC-2</em> release.
-          The candidate date is 30 October 2004. This release should be run
-          with JDK.1.5.0-RC. The test applications created with the provided
-          ArgoUML model can be build with the provided ant tasks and run with 
-          the available scripts located in scripts/tests. All open issues of
-          the 0.2.x line are corrected.</li>
-        <li>A major contribution to <em>pmMDA</em> users is the introduction of 
-          a validation framework detecting errors in the settings of tagged 
-          values and stereotypes in the model.</li>
+        <li>Trunk has moved to 0.3.x.</li>
       </ul>
     </section>
     <section>
@@ -27,12 +34,14 @@
       <ul>
         <li>Effort was put in the serie to use only actual versions of external 
           components and document all dependencies. The web site was updated to
-          better support forrest capabilities.</li>
-        <li>The application can be run with JDK 1.5-RC. The source code will be 
+          better support forrest capabilities. The documents were updated to
+          use the capabilities of forrest 0.6.</li>
+        <li>The application can be run with JDK 1.5. The source code will be 
           ported to use the new features of the language. Refactoring will be 
           applied to support loop for iteration, enumeration types and 
-          generics.</li>
-        <li>Major </li>
+          generics. The JavaDoc quality will be increased.</li>
+        <li>The copyright notices are updated to reflect modifications 
+          performed during 2005.</li>
       </ul>
     </section>
     <section>
@@ -43,8 +52,19 @@
         innovations are.</p>
       <ul>
         <li>The major goal of the latest version of the series is to remove 
-          identify errors and have a stable code base. Refactoring was applied
+          identify errors and have a stable code base. Refactoring was applied 
           to clean major public interfaces.</li>
+        <li>The release candidate 2 was promoted to official candidate 
+          <em>0.2.9</em> without changes.</li>
+        <li>The development team has released <em>pmMDA 0.2.9-RC-2</em> 
+          release. The candidate date is 30 October 2004. This release should 
+          be run with JDK.1.5.0-RC. The test applications created with the 
+          provided ArgoUML model can be build with the provided ant tasks and 
+          run with the available scripts located in scripts/tests. All open 
+          issues of the 0.2.x line are corrected.</li>
+        <li>A major contribution to <em>pmMDA</em> users is the introduction of 
+          a validation framework detecting errors in the settings of tagged 
+          values and stereotypes in the model.</li>
         <li>An initial version of a complete example is provided with a 
           tutorial. The provided ant files compile and run the tutorial in all 
           supported modes: as 2-tiers application, as CORBA client/server and 
@@ -55,10 +75,10 @@
         <li>The documentation and project web site is generated with forrest 
           version 0.6. A script loads the new web site on sourceforge if 
           desired.</li>
-        <li><em>pmMDA</em> is now available on Sourceforge under <link 
-          href="http://pmmda.sourceforge.net"><em>pmMDA</em></link>. The 
-          published version should run without configuration on any workstation 
-          where Java JDK 1.4 or higher and Ant 1.6 or higher are available.</li>
+        <li><em>pmMDA</em> is now available on Sourceforge under <a 
+          href="http://pmmda.sourceforge.net"><em>pmMDA</em></a>. The published 
+          version should run without configuration on any workstation where 
+          Java JDK 1.4 or higher and Ant 1.6 or higher are available.</li>
         <li><em>pmMDA</em> can be run as a seperate application delivered as a 
           set of jar files and a startup scripts. A <em>pmMDA</em> properties 
           file is provided. The user can modify it to reflect its project 
@@ -77,8 +97,8 @@
         <li>A complete example is provided to ease the learning how to use 
           <em>pmMDA</em> tool.</li>
         <li>The iterator pattern described in Bloch's book is now used in the 
-          source code and code genertor templates. The JavaDoc documentation 
-          is now available for almost all items.</li>
+          source code and code genertor templates. The JavaDoc documentation is 
+          now available for almost all items.</li>
       </ul>
     </section>
     <section>
