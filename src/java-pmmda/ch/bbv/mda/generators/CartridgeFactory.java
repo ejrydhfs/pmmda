@@ -242,6 +242,8 @@ public class CartridgeFactory {
     logProgressInfo(cartridge, model, "{0} Catridge processing model {1}");
     cartridge.processModel(model);
 
+    process(cartridge, (MetaPackage)model);
+    
     for (Iterator i = model.getPackages().iterator(); i.hasNext();) {
       MetaPackage metaPackage = (MetaPackage) i.next();
       process(cartridge, metaPackage);
@@ -298,6 +300,8 @@ public class CartridgeFactory {
     }
     logProgressInfo(cartridge, model, "{0} Catridge pre-processing model {1}");
     cartridge.preProcessModel(model);
+    
+    preprocess(cartridge, (MetaPackage)model);
 
     for (Iterator i = model.getPackages().iterator(); i.hasNext();) {
       preprocess(cartridge, (MetaPackage) i.next());
