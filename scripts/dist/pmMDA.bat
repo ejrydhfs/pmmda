@@ -1,0 +1,1 @@
+java -ea -Djava.util.logging.config.file=logging.properties -cp .;lib/commons-beanutils.jar;lib/commons-collections.jar;lib/commons-logging.jar;lib/commons-logging-api.jar;lib/forms.jar;lib/glazedlists.jar;lib/nsuml.jar;lib/velocity.jar;lib/velocity-dep.jar;lib/xpp.jar;lib/xstream.jar;lib/pmmda.jar ch.bbv.mda.ui.MdaExplorer
