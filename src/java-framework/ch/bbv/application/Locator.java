@@ -198,7 +198,7 @@ public class Locator {
    * @pre theLocator == null
    */
   public static final void register(Locator locator) {
-    assert (theLocator == null);
+    assert theLocator == null;
     synchronized (Locator.class) {
       if (theLocator == null) {
         theLocator = locator;
@@ -341,8 +341,8 @@ public class Locator {
    * @post !isRegistered(component)
    */
   public void unregister(Component component) {
-    assert ((component != null) && isRegistered(component));
-    components.remove(component);
+    assert (component != null) && isRegistered(component);
+    components.remove(component.getName());
     assert !isRegistered(component);
   }
 
@@ -353,18 +353,18 @@ public class Locator {
    * @pre subsystem != null && name != null
    */
   public void register(Object subsystem, String name) {
-    assert ((subsystem != null) && (name != null));
+    assert (subsystem != null) && (name != null);
     subsystems.put(name, subsystem);
   }
 
   /**
    * Unregisters the subsystem.
-   * @param subsystem subsystem to unregister.
+   * @param name name of the subsystem to unregister.
    * @pre subsystem != null
    */
-  public void unregister(Object subsystem) {
-    assert (subsystem != null);
-    subsystems.remove(subsystem);
+  public void unregister(String name) {
+    assert name != null;
+    subsystems.remove(name);
   }
 
   /**
@@ -373,7 +373,7 @@ public class Locator {
    * @return True if registered otherwise false.
    */
   public boolean isRegistered(Component component) {
-    assert (component != null);
+    assert component != null;
     return components.containsValue(component);
   }
 
@@ -384,7 +384,7 @@ public class Locator {
    * @pre name != null
    */
   public Component getComponent(String name) {
-    assert (name != null);
+    assert name != null;
     return components.get(name);
   }
 
@@ -395,7 +395,7 @@ public class Locator {
    * @pre name != null
    */
   public Object getSubsystem(String name) {
-    assert (name != null);
+    assert name != null;
     return subsystems.get(name);
   }
 
