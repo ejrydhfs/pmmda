@@ -1,5 +1,4 @@
 ## generate the table declaration
-#set($DATA_OBJECT="dataObject")
 #set($shouldGenerateFkIndex=${configuration.getProperty("ojb-cartridge.generate-fk-index").equalsIgnoreCase("true")})
 #set($database=${configuration.getProperty("ojb-cartridge.database")})
 #if(${database.equalsIgnoreCase("MySQL")})
@@ -20,7 +19,8 @@ CREATE TABLE ${schema}${table} (
 #set($columnName=${property.getAttribute("ojb-column-name")})
 #getType($model $property $type)
 #if(!${property.booleanValueOfTag("ojb-can-be-null")} || ${property.isPrimaryKey()})#set($nullInfo=" NOT NULL")#else#set($nullInfo="")#end
-#if(${DATA_OBJECT.equalsIgnoreCase(${type.getStereotype()})} && ${type.booleanValueOfTag("ojb-is-persistent")})
+#isPersistentDataObject($type $isPersistentDataObject)
+#if($isPersistentDataObject)
   ${property.nameUpper()}_FK INTEGER${nullInfo},
 #else
 ## support MySQL version < 4.1. Boolean was introduced as alias only in version 4.1
@@ -43,7 +43,8 @@ CREATE TABLE ${schema}${table} (
 #set($type=false)
 #set($type=${model.findClass(${typeName})})
 #if(!${aggregation.canBeNull()})#set($nullInfo=" NOT NULL")#else#set($nullInfo="")#end
-#if(${type} && ${DATA_OBJECT.equalsIgnoreCase(${type.getStereotype()})} && ${type.booleanValueOfTag("ojb-is-persistent")})
+#isPersistentDataObject($type $isPersistentDataObject)
+#if($isPersistentDataObject)
   ${columnName}_FK INTEGER${nullInfo},
 #end
 #end
@@ -53,8 +54,8 @@ CREATE TABLE ${schema}${table} (
 ## class are generated as reverse foreign keys in the class.
 #set($references=$model.getClassReferences($class))
 #foreach($reference in $references)
-#isDataObject($reference $isDataObject)
-#if($isDataObject && ${reference.booleanValueOfTag("ojb-is-persistent")})
+#isPersistentDataObject($reference $isPersistentDataObject)
+#if($isPersistentDataObject)
 #set($relations=${reference.getIndexedProperties()})
 #foreach($relation in $relations)
 #getType($model $relation $type)	
@@ -83,7 +84,8 @@ CREATE UNIQUE INDEX ${table}_IDX ON
 #foreach($property in $properties)
 #if(!${property.isTransient()})
 #getType($model $property $type)
-#if(${DATA_OBJECT.equalsIgnoreCase(${type.getStereotype()})} && ${type.booleanValueOfTag("ojb-is-persistent")})
+#isPersistentDataObject($type $isPersistentDataObject)
+#if($isPersistentDataObject)
 #set($name=${property.nameUpper()})
 CREATE INDEX ${table}_${name}_IDX ON 
   ${schema}${table} (${name}_FK);
@@ -96,7 +98,8 @@ CREATE INDEX ${table}_${name}_IDX ON
 #set($typeName=${aggregation.getTypeName()})
 #set($type=false)
 #set($type=${model.findClass(${typeName})})
-#if(${type} && ${DATA_OBJECT.equalsIgnoreCase(${type.getStereotype()})} && ${type.booleanValueOfTag("ojb-is-persistent")})
+#isPersistentDataObject($type $isPersistentDataObject)
+#if($isPersistentDataObject)
 #set($name=${aggregation.nameUpper()})
 CREATE INDEX ${table}_${name}_IDX ON 
   ${schema}${table} (${name}_FK);
@@ -106,8 +109,8 @@ CREATE INDEX ${table}_${name}_IDX ON
 #end
 #set($references=$model.getClassReferences($class))
 #foreach($reference in $references)
-#isDataObject($reference $isDataObject)
-#if($isDataObject && ${reference.booleanValueOfTag("ojb-is-persistent")})
+#isPersistentDataObject($type $isPersistentDataObject)
+#if($isPersistentDataObject)
 #set($relations=${reference.getIndexedProperties()})
 #foreach($relation in $relations)
 #getType($model $relation $type)	

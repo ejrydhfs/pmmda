@@ -14,6 +14,7 @@ package ${package.getAttribute("bo-mo-package")};
 #set($dummy=${imports.addClassName("ch.bbv.dog.DataObject")})
 #set($dummy=${imports.addClassName("java.beans.PropertyChangeListener")})
 #set($dummy=${imports.addClassName("java.beans.VetoableChangeListener")})
+#set($dummy=${imports.addClassName("java.lang.reflect.Field")})
 #set($dummy=${imports.addClassName("java.sql.Timestamp")})
 #if (${class.getAttribute("bo-changeable")} == "true")
 #set($dummy=${imports.addClassName("java.beans.PropertyChangeSupport")})
@@ -53,8 +54,18 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
 
 #emitPropertyDescription($property "  ")
   private ${property.retrieveTypeClassName()} ${property.nameFirstLower()};
+## identifies a forward reference 1-0..1 or 1-1
+#isTypePersistent($model $property $isPersistentDataObject)
+#if($isPersistentDataObject)
+
+  /**
+   * Mapping for 1: 1 relationship ${relation.getName()} as foreign key.
+   */
+  private Integer ${property.nameFirstLower()}Handle;  
+#end
 #end
 #foreach ($reference in $references)
+
 #emitPropertyDescription($reference "  ")
   private ${reference.getReferenceClass().getName()} ${reference.nameFirstLower()};
 #end
@@ -62,6 +73,25 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
 
 #emitPropertyDescription($aggregation "  ")
   private ${aggregation.getAttribute("bo-storage-interface")} ${aggregation.nameFirstLower()};
+#end
+## emits foreign key attribute for 1:N relationships because anonymous fields
+## do not work when copying data object graphs.
+#set($references=$model.getClassReferences($class))
+#foreach($reference in $references)
+#isPersistentDataObject($reference $isPersistentDataObject)
+#if($isPersistentDataObject)
+#set($relations=${reference.getIndexedProperties()})
+#foreach($relation in $relations)
+#getType($model $relation $type)	
+#if(${type} == ${class})
+
+  /**
+   * Mapping for 1: N relationship ${relation.getName()} as reverse foreign key.
+   */
+  private Integer ${reference.nameFirstLower()}${relation.nameFirstUpper()}Handle;
+#end
+#end
+#end
 #end
 #if (!${hasAncestors})
 
@@ -224,6 +254,10 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
       if (((this.${lName} != null) && !this.${lName}.equals(${lName})) || 
     	  ((this.${lName} == null) && (${lName} != null)))  {    
         this.${lName} = ${lName};
+#isTypePersistent($model $property $isPersistentDataObject)
+#if($isPersistentDataObject)
+        ${property.nameFirstLower()}Handle = (${lName} != null ? ${lName}.getId() : null);
+#end
         setModified(true);
 #if (${changeable})
         changeSupport.firePropertyChange("${lName}", null, ${lName});
@@ -254,6 +288,10 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
     if (((this.${lName} != null) && !this.${lName}.equals(${lName})) || 
     	((this.${lName} == null) && (${lName} != null)))  {    
       this.${lName} = ${lName};
+#isTypePersistent($model $property $isPersistentDataObject)
+#if($isPersistentDataObject)
+      ${property.nameFirstLower()}Handle = (${lName} != null ? ${lName}.getId() : null);
+#end
       setModified(true);
 #if (${changeable})
       changeSupport.firePropertyChange("${lName}", old${uName}, ${lName});
@@ -296,8 +334,8 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
       this.${reference.nameFirstLower()} = ${lName}.getId();
       setModified(true);
     }
-#end    
   }
+#end    
 #end
 #foreach ($aggregation in $aggregations) 
 #set($uName = ${aggregation.nameFirstUpper()})
@@ -309,6 +347,8 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
 #set($itemType = ${aggregation.retrieveTypeClassName()})
 #set($keyType = ${aggregation.getKeyType()})
 #set($visibility = ${aggregation.retrieveVisibilityText()})
+#set($type=false)
+#set($type=${model.findClass(${aggregation.getTypeName()})})
 #if(${aggregation.canBeRead()})
 #if(${aggregation.isOrdered()})
 
@@ -379,6 +419,8 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
     return (${itemType})${lName}.remove(key);
   }
 #else
+#set($isPersistentAggregation=${aggregation.booleanValueOfTag("persistence")})	
+#set($keyName="${class.nameFirstLower()}${aggregation.nameFirstUpper()}Handle")
 
   /** 
    * Appends all of the elements in the specified collection to the end of 
@@ -391,6 +433,11 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
    */
   ${visibility} boolean add${upName}(Collection c) {
     setModified(true);
+#if($isPersistentAggregation)
+    for(Iterator i = c.iterator(); i.hasNext(); i.next()) {
+      setForeignKey((DataObject)i.next(), "${keyName}", getId());
+	}
+#end	
     return ${lName}.addAll(c);
   }  
   
@@ -402,6 +449,9 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
    */
   ${visibility} void set${usName}(int index, ${itemType} element) {
     setModified(true);
+#if($isPersistentAggregation)
+    setForeignKey(element, "${keyName}", getId());
+#end	
     ${lName}.add(index, element);
   }
 
@@ -409,11 +459,15 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
    * Appends the specified element to the end of this list in the relation 
    * ${lName}.
    * @param element to be appended to this list.
-   * @return true (as per the general contract of the Collection.add method)   
+   * @return true (as per the general contract of the Collection.add method).   
    * @see java.util.List#add(Object)
+   * @pre element != null
    */
   ${visibility} boolean add${usName}(${itemType} element) {
     setModified(true);
+#if($isPersistentAggregation)
+    setForeignKey(element, "${keyName}", getId());
+#end	
     return ${lName}.add(element);
   }
   
@@ -428,7 +482,15 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
    */
   ${visibility} boolean remove${usName}(${itemType} element) {
     setModified(true);
+#if($isPersistentAggregation)
+	boolean removed = ${lName}.remove(element);
+	if (removed) {
+	  setForeignKey(element, "${keyName}", getId());
+	}
+	return removed;
+#else	
     return ${lName}.remove(element);
+#end	
   }
 #end
 #end
@@ -570,5 +632,27 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
     throw new UnsupportedOperationException();
   }
 #end
+
+  /**
+   * Convenience method to set the value of a foreign key.
+   * @param bean object which property should be set.
+   * @param property property to be set.
+   * @param key key identifier to set.
+   */
+  protected void setForeignKey(DataObject bean, String property, Integer key) {
+    try {
+      Field field = bean.getClass().getDeclaredField(property);
+      if (field != null) {
+        field.setAccessible(true);
+        field.set(bean, key);
+      }
+    } catch (NoSuchFieldException e) {
+      assert(false);
+    } catch (IllegalArgumentException e) {
+      assert(false);
+    } catch (IllegalAccessException e) {
+      assert(false);
+    }
+  }
 #end
 }

@@ -87,3 +87,16 @@ ${spaces} */
 #set($type=${model.findClass(${typename})})
 #set($result=$type && ${DATA_OBJECT.equalsIgnoreCase(${type.getStereotype()})} && (${type.getAttribute("bo-lightweight")}))
 #end
+
+## Returns true if the type exists and is a persistent data object
+#macro(isPersistentDataObject $type $result)
+#set($DATA_OBJECT="dataObject")
+#set($result=${type} && ${DATA_OBJECT.equalsIgnoreCase(${type.getStereotype()})} && ${type.booleanValueOfTag("persistence")})
+#end
+
+#macro(isTypePersistent $model $element $result)
+#set($type=false)	
+#getType($model $element $type)
+#isPersistentDataObject($type $result)
+#end
+	

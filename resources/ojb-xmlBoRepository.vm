@@ -25,13 +25,11 @@
 #set($columnType=${property.valueOfTag("ojb-column-type").toUpperCase()})
 #set($columnName=${property.getAttribute("ojb-column-name").toUpperCase()})
 #getType($model $property $type)	
-#isDataObject($type $isDataObject)
-## identifies a forward reference 1-0..1 or 1-1
-#if($isDataObject && ${type.booleanValueOfTag("ojb-is-persistent")})
+#isPersistentDataObject($type $isPersistentDataObject)
+#if($isPersistentDataObject)
   <field-descriptor name="${property.nameFirstLower()}Handle"
     column="${property.nameUpper()}_FK"
     jdbc-type="INTEGER"
-    access="anonymous"
     nullable="${property.booleanValueOfTag("ojb-can-be-null")}"/>
 #else
   <field-descriptor name="${property.nameFirstLower()}"
@@ -44,7 +42,6 @@
     conversion="org.apache.ojb.broker.accesslayer.conversions.Boolean2IntFieldConversion"
 #else
     jdbc-type="${columnType}"
-
 #end
 #end
 #if(${property.booleanValueOfTag("ojb-is-primary")})
@@ -55,11 +52,11 @@
 #end
 #end
 ## references of persistent classes having indexed properties with cardinality 1-N 
-## to the processed class are generated as anonymous reverse foreign keys in the class.
+## to the processed class are generated as reverse foreign keys in the class.
 #set($references=$model.getClassReferences($class))
 #foreach($reference in $references)
-#isDataObject($reference $isDataObject)
-#if($isDataObject && ${reference.booleanValueOfTag("ojb-is-persistent")})
+#isPersistentDataObject($reference $isPersistentDataObject)
+#if($isPersistentDataObject)
 #set($relations=${reference.getIndexedProperties()})
 #foreach($relation in $relations)
 #getType($model $relation $type)	
@@ -68,8 +65,7 @@
     name="${reference.nameFirstLower()}${relation.nameFirstUpper()}Handle" 
     column="${reference.valueOfTag("ojb-table-name")}_${relation.valueOfTag("ojb-column-name")}_FK"
     jdbc-type="INTEGER"
-    nullable="${relation.canBeNull()}"
-    access="anonymous"/>
+    nullable="${relation.canBeNull()}"/>
 #end
 #end
 #end
@@ -78,9 +74,8 @@
 #if(${aggregation.getMultiplicity().getUpperBound()} == 1)
 #set($columnName=${aggregation.getAttribute("ojb-column-name")})
 #getType($model $aggregation $type)	
-#isDataObject($type $isDataObject)
-## identifies a forward reference 1-0..1 or 1-1
-#if($isDataObject && ${type.booleanValueOfTag("ojb-is-persistent")})
+#isPersistentDataObject($type $isPersistentDataObject)
+#if($isPersistentDataObject)
   <field-descriptor name="${property.nameFirstLower()}Handle"
 #if($isDataObject)
     column="${property.nameUpper()}_FK"
@@ -117,8 +112,8 @@
 #if(${aggregation.getMultiplicity().getUpperBound()} == 1)
 #set($columnName=${aggregation.getAttribute("ojb-column-name")})
 #getType($model $aggregation $type)	
-#isDataObject($type $isDataObject)
-#if($isDataObject && ${type.booleanValueOfTag("ojb-is-persistent")})
+#isPersistentDataObject($type $isPersistentDataObject)
+#if($isPersistentDataObject)
   <reference-descriptor
     name="${aggregation.getName()}"
     class-ref="${type.qualifiedName()}">
@@ -133,8 +128,8 @@
 #foreach($aggregation in $aggregations)
 #if(${aggregation.getMultiplicity().getUpperBound()} == -1)
 #getType($model $aggregation $type)	
-#isDataObject($type $isDataObject)
-#if($isDataObject && ${type.booleanValueOfTag("ojb-is-persistent")})
+#isPersistentDataObject($type $isPersistentDataObject)
+#if($isPersistentDataObject)
 #set($typePackage=${type.getContext()})
   <collection-descriptor
     name="${aggregation.getName()}"
@@ -143,20 +138,21 @@
     orderby="id"
     sort="ASC">
     <inverse-foreignkey field-ref="${class.nameFirstLower()}${aggregation.nameFirstUpper()}Handle"/>
-   </collection-descriptor>
+  </collection-descriptor>
 #end
 #end
 #end
   <index-descriptor 
-	name="${table}_IDX" 
-	unique="true">
+    name="${table}_IDX" 
+    unique="true">
     <index-column name="id"/>
   </index-descriptor>
 #if($shouldGenerateFkIndex)
 #foreach($property in $properties)
 #if(!${property.isTransient()})
 #getType($model $property $type)
-#if(${DATA_OBJECT.equalsIgnoreCase(${type.getStereotype()})} && ${type.booleanValueOfTag("ojb-is-persistent")})
+#isPersistentDataObject($type $isPersistentDataObject)
+#if($isPersistentDataObject)
 #set($name=${property.nameUpper()})
   <index-descriptor 
 	name="${table}_${name}_IDX" 
@@ -171,7 +167,8 @@
 #set($typeName=${aggregation.getTypeName()})
 #set($type=false)
 #set($type=${model.findClass(${typeName})})
-#if(${type} && ${DATA_OBJECT.equalsIgnoreCase(${type.getStereotype()})} && ${type.booleanValueOfTag("ojb-is-persistent")})
+#isPersistentDataObject($type $isPersistentDataObject)
+#if($isPersistentDataObject)
 #set($name=${aggregation.nameUpper()})
   <index-descriptor 
 	name="${table}_${name}_IDX" 
@@ -183,8 +180,8 @@
 #end
 #set($references=$model.getClassReferences($class))
 #foreach($reference in $references)
-#isDataObject($reference $isDataObject)
-#if($isDataObject && ${reference.booleanValueOfTag("ojb-is-persistent")})
+#isPersistentDataObject($type $isPersistentDataObject)
+#if($isPersistentDataObject)
 #set($relations=${reference.getIndexedProperties()})
 #foreach($relation in $relations)
 #getType($model $relation $type)	

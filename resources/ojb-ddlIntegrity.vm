@@ -6,8 +6,8 @@
 #if(!${property.isTransient()})
 #set($columnType=${property.valueOfTag("ojb-column-type")})
 #getType($model $property $type)
-#isDataObject($type $isDataObject)
-#if($isDataObject && ${type.booleanValueOfTag("ojb-is-persistent")})
+#isPersistentDataObject($type $isPersistentDataObject)
+#if($isPersistentDataObject)
 #set($columnName=${property.valueOfTag("ojb-column-name")})
 ALTER TABLE ${schema}${table} ADD CONSTRAINT ${columnName}_IR FOREIGN KEY 
   ON (${table}_${columnName}_FK)
@@ -22,8 +22,8 @@ ALTER TABLE ${schema}${table} ADD CONSTRAINT ${columnName}_IR FOREIGN KEY
 #foreach($aggregation in $aggregations)
 #if(${aggregation.getMultiplicity().getUpperBound()} == 1)
 #getType($model $aggregation $type)
-#isDataObject($type $isDataObject)
-#if($isDataObject && ${type.booleanValueOfTag("ojb-is-persistent")})
+#isPersistentDataObject($type $isPersistentDataObject)
+#if($isPersistentDataObject)
 #set($columnName=${aggregation.valueOfTag("ojb-column-name")})
 ALTER TABLE ${schema}${table} ADD CONSTRAINT ${columnName}_IR FOREIGN KEY 
   ON (${table}_${columnName}_FK)
@@ -37,11 +37,11 @@ ALTER TABLE ${schema}${table} ADD CONSTRAINT ${columnName}_IR FOREIGN KEY
 ## class are generated as reverse foreign keys in the class.
 #set($references=$model.getClassReferences($class))
 #foreach($reference in $references)
-#if((${reference.getStereotype()} == "dataObject") && ${reference.booleanValueOfTag("ojb-is-persistent")})
+#if((${reference.getStereotype()} == "dataObject") && ${reference.booleanValueOfTag("persistence")})
 #set($relations=${reference.getIndexedProperties()})
 #foreach($relation in $relations)
 #getType($model $relation $type)
-#if((${type} == ${class}) && ${type.booleanValueOfTag("ojb-is-persistent")})
+#if((${type} == ${class}) && ${type.booleanValueOfTag("persistence")})
 #set($columnName=${relation.valueOfTag("ojb-column-name")})	
 ALTER TABLE ${schema}${table} ADD CONSTRAINT ${reference.valueOfTag("ojb-table-name")}_${relation.valueOfTag("ojb-column-name")}_IR FOREIGN KEY 
   ON (${table}_${relation.valueOfTag("ojb-column-name")}_FK)
