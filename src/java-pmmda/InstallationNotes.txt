@@ -1,0 +1,180 @@
+Installation Notes pmMDA
+------------------------
+
+1. Prerequisites
+   -------------
+
+  The following packages are mandatory.
+    Java JRE 1.4.2 (Java Runtime Engine) or higher must be installed on your 
+  	machine. The JRE is available from http://java.sun.com. The product is free 
+  	of charge. Follow the detailed installation procedure of the JRE for your 
+  	platform.
+    
+    pmMDA can be requested at the following email address:
+    	marcel.baumann@computer.org
+   	The package is open source and free of charge. 
+  
+  The following packages are optional.
+    An optional development environment for your Java application is the 
+    Eclipse environment. Eclipse is available from http://www.eclipse.org.
+    Only users wanting to develop their own cartridges should download this
+    package.
+    The product is open source and free of charge. 
+    Follow the detailed installation procedure of Eclipse.
+    
+    UML models can be drawn using the UML modeling tool ArgoUML. ArgoUML is
+    available from http://argouml.tigris.org. ArgoUML is open source and free
+    of charge. We recommand the use of a modeling tool to create your model.
+    Almost all commercial tools can be used as long as they can export their
+    model in the standard XMI format.
+    
+2. Installation
+   ------------
+	pmMDA is delivered as a ZIP file. Unzip the file at your preferred 
+	location. ZIP files can be opened using various open source tools.
+	The file structure of the binary distribution is:
+	  -- pmMDA
+	    -- bin
+	          pmMDA.bat
+	          pmMDA.ico
+	          pmMDA.sh
+  	    -- docs
+	          (documentation of the pmMDA and the delivered cartridges)
+	          all documents are in pdf and html formats.
+    	-- lib
+	          pmMDA.jar
+	          (support jar files)
+	    InstallationNotes.txt
+	    License.txt
+	    ReleaseNotes.txt
+
+    The source distribution contains all source files.
+      -- pmMDA
+        -- src
+          -- idl
+          -- java
+          
+    Packaging of needed packages is performed with the help of a configuration
+    script. The options are
+      - service provider (e.g. server application, power P2P client)
+      - has user interface
+      - has database persistency
+      - transport medium (CORBA, IIOP/RMI)
+      
+3. Run pmMDA
+   ---------
+   The pmMDA application is started with the following command.
+             java -jar pmMDA.jar
+   Upon start, the graphical user interface of pmMDA is displayed. For more
+   information how to work with pmMDA please consult the user manual and
+   reference manual.
+   
+   Developers desiring to run pmMDA inside eclispe can define a new target.
+   The class containing the main method is
+             ch.bbv.explorer.ExplorerTest
+   
+4. Configure pmMDA
+   ---------------
+   The resource file "MDAExplorer.properties" is used to configure the loaded
+   cartridge. Please consult the documentation of the relevant cartridge to
+   have a complete lists of its configuration properties and possible values.
+   
+   The properties defining the path to the Velocity templates must be correctly
+   set to reflect your installation otherwise the pmMDA will not be able to
+   generate any artifact.
+   
+5. Build and Run Examples
+   ----------------------
+   An example is provided to test the pmMDA cartridges and the provided 
+   frameworks. The user management application is defined as a UML model and is
+   generated using pmMDA. The generated files can be compiled. The application
+   provides the following layers.
+   a. The database layer is defined for a MySQL configuration with InnoDB. The
+      DDL files create a database schema in the database OJB. Therefore you
+      must have installed MySQL to run the examples.
+   b. The object relational O/R mapping is provided as a XML configuration file
+      for OJB. Therefore you must have installed OJB to run the examples. Do not
+      forget to define the tables for OJB internal structures. The necessary SQL
+      scripts are provided.
+   c. The server provides business object graph BOG functions as CORBA services.
+      Therefore you must have installed CORBA ORB to run the examples.
+   d. The client provides a user interface based on the explorer framework. The
+      stubs to the CORBA server are also provided. A startup switch allows the
+      user to select if the client should run in 3 tiers or in 2 tiers mode.
+      
+   The installation steps for the examples are:
+   1. Before the first execution of the examples you must generate the database
+      using the generated database definition language DDL files.
+   The start commands for the 3 tiers mode are:
+   1. Start the CORBA broker
+   		start %JAVA_HOME%\bin\orbd -ORBInitialPort 1050
+   2. Start the server
+   		java ch.bbv.dnm.users.server.Application -ORBInitialPort 1050 
+   		                                         -ORBInitialHost localhost
+   3. Start the client
+   		java ch.bbv.dnm.users.client.Application -ORBInitialPort 1050 
+   		                                         -ORBInitialHost localhost
+   		
+5.1. Deployment Conventions
+     ----------------------
+     
+   The examples can be run in three modes: 2 tiers, client/server with CORBA,
+   and client/server with EJB. The used components must be configured 
+   accordingly.
+   - src/etc/properties/CORBA contains the configuration for CORBA.
+   - src/etc/properties/EBJ/JBoss contains the configuration for EJB JBoss.
+   - src/etc/properties/EJB/WebSphere contains the configuratio for EJB 
+     WebSphere.
+   Deployed J2EE servers can easily be debugged from within Eclipse. In the
+   debug menu you should select a remote debug session and attach to the running
+   JBoss server. The JBoss server must first be started in debug mode. Please
+   consult the start script of JBosss and uncomment the debug mode.
+     
+6. Support and Bug Report
+   ----------------------
+   Support requests and bug reports can be sent to the authors of pmMDA.
+   Their names and emails are available in the about box. The actual
+   coordinator of the project can be reached under.
+       marcel.baumann@computer.org
+   
+7. Litterature
+   -----------
+   MDA is an initiative started by the object management group OMG. Extensive
+   information can be found on their site http://www.omg.org.
+   XMI, UML and MOF are standard defined by the object management group OMG. 
+   Extensive information can be found on their site http://www.omg.org.
+   ODMG is an initiative started by the object database management group. More
+   information can be found on their site http://www.odmg.org.
+   
+8. FAQs
+   ----
+   
+   1. Can I use Eclipse to modify the generated source files?
+      Yes. Add your code in the protected regions defined in the generated code.
+      The next run of pmMDA will conserve your code and automatically add it to
+      the newly generated file. If you are using printy printer such as Jalopy
+      disable the sort option. Jalopy does not know anything about protected 
+      regions and could move your code outside these regions.
+      
+   2. Do I have to respect conventions when creating UML diagrams?
+      Yes. The package hierarchy must follow the UML conventions. For example
+      ArgoUML does not prohibit to name a package "xx.yy.zz" which is illegal
+      in Java. You must create packages xx, yy and zz as a hierarchy.
+      
+   3. Does pmMDA provides an example for testing purposes?
+      Yes. The user management application is provided as an example how the
+      provided cartridge can be used to generate source code artifacts. The
+      generated application variants are first a simple two tiers application
+      with a database backend and second a CORBA three tiers application where
+      the business object model is transfered over CORBA middleware.
+      
+   4. Can I write my own cartridges?
+      Yes. Your cartridge must implement the Cartridge interface. An abstract
+      class CartridgeImpl provides basic services to regular cartridge. You can
+      simply derive from it to realize your cartridge. Once written the 
+      cartridge must be registred through a definition in the properties file.
+      The pmMDA will load it automatically in the application. For more details
+      please read the pmMDA documentation.
+      
+   5. 
+   

@@ -1,0 +1,36 @@
+<body>
+  Reference codes are a conerstone of commercial applications. Many application
+	sepcific attributes have a well defined set of legal values. 
+<h2>Introduction</h2>
+  <p>Reference codes are a conerstone of commercial applications. Many application
+	sepcific attributes have a well defined set of legal values. These values are
+	described in a reference code type. The type contains all values of the set.
+	Additional information has the default order of the code, a short description
+	and a long description are provided to simplify client development.</p>
+  <p>A subclass of reference codes are hierarchical code. Each hierarchical code
+	can have at most one parent code.</p>
+	
+<h2>Architecture</h2>
+  <p>The package provides the interface declaration for hierarchical and regular
+	reference code types. A default implementation is provided to speed-up the
+	use of the package. The package also provides a reference code descriptor
+	to allow complex applications to provide a meta level for defining and
+	manipulating reference codes.</p>
+  <p>The reference code manager provides services to locate and retrieve reference
+	codes in the application. It implements a hierarchy of managers to decouple
+	component related reference codes from the application using the components.
+	This mechanism scales for very complex domain models with many referencde
+	code types. All retrieval functions are based on the class implementing a
+	reference code type to insure type checking in the application.</p>
+  <p>A simple user interface is provided to define, manipulate and persists
+	reference code in the database or in a file.</p>
+
+<h2>References</h2>
+  <p>The concrete reference code types are often generated with the MDA tool 
+	<emph>pmMDA</emph> from a PIM model. A reference code manager for the
+	package containing the codes is also generated. This mechanism eliminates 
+	the tedious hand programming of tens or hundreds of reference code types.
+	<emph>pmMDA</emph> considers reference codes as a special variant of business
+	objects.</p>
+   @since Java 2 Platform, Standard Edition, version 1.4
+</body>

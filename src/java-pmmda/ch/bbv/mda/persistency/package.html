@@ -1,0 +1,43 @@
+<body>
+The package provides the persistency mechanisms for MDA models.
+<h2>Introduction</h2>
+<p>The package defines the persistency mechanisms for the business model of
+	the <em>pmMDA</em>. These mechanisms implement data exchange between
+	our application and third party tools.</p> Multiple formats are supported
+	to insure that the tool can exchange data with major open source modeling
+	tools. The following exchange formats are supported.</p>
+<ul>
+	<dt>Java Serialize Format</dt><dd>The Java serialization framework is fully 
+		supported. The format can be used to exchange efficiently data between 
+		<em>pmMDA</em>.</dd>
+	<dt>XML Serialize Format</dt><dd>The tree of objects are transformed in a
+		XML format. The current XML long term persistency framework of Java cannot
+		handle indexed properties based on lists or hash maps. Therefore we use
+		the Jakarta Commons Betwist project to generate and read XML 
+		representations. The XML format supports long term persistency and 
+		migration to newer versions of the <em>pmMDA</em> MDA model.</dd>
+	<dt>XMI 1.1 and MOF-UML 1.3</dt><dd>The standard format XMI 1.1 and MOF-UML
+		1.3 is supported. UML modeling tools like MagicDraw, ArgoUML or Poseidon 
+		support it. Through the use of plugin model for Rational Rose can also be 
+		exchanged. This function is realized with the help of the NSUML library
+		version 0.4.20. This format supports long term persistency and migration 
+		to newer versions of the <em>pmMDA</em> MDA model.</dd>
+	<dt>XMI 2.0 and MOF-UML 2.0</dt><dd>The standard format XMI 2.0 and MOF-UML
+		2.0 will be supported in the future. The function is realized with the
+		help of the MDR library. This format is used in the NetBeans environment.
+		This format supports long term persistency and migration to newer versions 
+		of the <em>pmMDA</em> MDA model.</dd>
+	<dt>XMI 2.0 and Ecore 2.0</dt><dd>This format is the exchange format used
+		in the Eclipse environment. This format supports long term persistency and 
+		migration to newer versions of the <em>pmMDA</em> MDA model.</dd>
+</ul>
+<p>The UML 1.4 format is available to migrate old projects to newer UML 
+	versions. It should not be used for productive development.</p>
+
+<h2>Architecture</h2>
+<p>The persistency framework is based on a persistency handler defining the
+	main functions to read, write and update description information. The 
+	persistency policy defines the detailed methods used to implement the
+	retrieval functions.</p>
+  @since Java 2 Platform, Standard Edition, version 1.4
+</body>

@@ -1,0 +1,51 @@
+#set($dollar="$")
+#set($tableName=${class.getAttribute("ojb-table-name")})
+#set($spaceName=${tableName})
+#if($spaceName.length() > 7)
+#set($spaceName=${spaceName.substring(0, 7)})
+#end
+#set($indexName=${tableName})
+#set($nrOfPrimaryProperties=${class.getNrOfPrimaryProperties()})
+-- Table ${tablePrefix}${classJdbcName}${tablePostfix} and related grant rights
+
+DROP TABLESPACE DIUF.S${spaceName};
+
+CREATE TABLESPACE S${spaceName} IN DIUF
+  USING STOGROUP GSMS PRIQTY 5000 SECQTY 500 FREEPAGE 0 PCTFREE 5 
+        SEGSIZE 4 BUFFERPOOL BP3 LOCKSIZE Any CLOSE NO COMPRESS YES;
+
+CREATE TABLE ${tableName} (
+#foreach($property in $properties)
+#set($columnName=${property.getAttribute("ojb-column-name")})
+#set($columnType=${property.valueOfTag("ojb-column-type")})
+#if(!${property.canBeNull()})#set($nullInfo=" NOT NULL")#else#set($nullInfo="")#end
+#if(${property.isPrimaryKey()})#set($nullInfo=" NOT NULL")#end
+#if(${columnType} == "VARCHAR")
+  ${columnName} VARCHAR(${property.getAttributeValue("size")})${nullInfo},
+#elseif (${jdbcType} == "BOOL")
+  ${columnName} SHORT${nullInfo},
+#else
+  ${columnName} ${columnType}${nullInfo},
+#end
+#end
+#if(${primaryKeys})
+  PRIMARY KEY(${primaryKeys})
+#end
+) IN DIUF.S${spaceName};
+
+CREATE UNIQUE INDEX ${indexPrefix}X${indexName}${indexPostfix} ON ${tableName} (
+#foreach($property in $properties)
+#if(${property.isPrimaryKey()})
+#set($columnName=${property.getAttribute("ojb-column-name")})
+#if($velocityCount < ${nrOfPrimaryProperties})
+  ${columnName} ASC,
+#else
+  ${columnName} ASC
+#end
+#end
+#end
+);
+
+GRANT ALL ON TABLE ${tableName} TO @PORL;
+GRANT ALL ON TABLE ${tableName} TO ${dollar}PORJDB;
+

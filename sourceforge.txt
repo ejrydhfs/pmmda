@@ -1,0 +1,32 @@
+Binary and source distribution
+------------------------------
+The binary and source distribution of all subprojects are published with a 
+version number in sourceforge.
+- Update the build properties with the new release versions
+- Update the release notes
+- Generate the distributions (using the ant jobs defined in 
+  build-sourceforge.xml)
+- Generate the zip file containing all librairies necessary for development
+- Commit to sourceforge CVS and tag the release. This operation is done in 
+  Eclipse
+- Upload the distribution files and the library file using anonymous FTP.
+  (See sourceforge for details)
+- Register them in the sourceforge project in the file list. If necessary remove
+  the oldest one to keep the number of versions reasonable.
+- Write the news entry on the site.
+- Send an email informing all developers of the update.
+
+Web site distribution
+---------------------
+The sourceforge account provides up to 100 MB disk space for the web site.
+The following steps are necessary to create and upload the site.
+- Generate the site (using the ant jobs defined in build-sourceforge.xml)
+    create javadoc - ant javadoc -
+    create metrics - ant metrics -
+    create forrest - ant forrest -
+    create sourceforge - ant sourceforge implies forrest -
+
+- Upload the site
+   pscp -r -C d:\data\projects\pmmda\build\site\* 
+        marcelbaumann@shell.sourceforge.net:/home/groups/p/pm/pmmda/htdocs
+ 

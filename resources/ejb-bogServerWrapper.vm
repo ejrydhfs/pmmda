@@ -1,0 +1,351 @@
+#set($sign="#")
+#set($dollar="$")
+/* This code was generated automatically with the pmMDA generator. Please do 
+   NOT add code outside the marked zones. All changes outside the marked areas 
+   will be discarded during the next execution of the MDA generator. 
+   ${dollar}Id${dollar}
+*/
+
+package ${package.getAttribute("ejb-client-package")};
+
+#set($imports=${model.createImportStatements(${package.getAttribute("ejb-client-package")})})
+#set($dummy=${imports.addClassName("java.rmi.RemoteException")})
+#set($dummy=${imports.addClassName("java.rmi.ServerException")})
+#set($dummy=${imports.addClassName("java.util.List")})
+#set($dummy=${imports.addClassName("java.util.Arrays")})
+#set($dummy=${imports.addClassName("javax.naming.Context")})
+#set($dummy=${imports.addClassName("javax.naming.InitialContext")})
+#set($dummy=${imports.addClassName("javax.rmi.PortableRemoteObject")})
+#set($dummy=${imports.addPackageName(${package.getAttribute("bo-mo-package")})})
+#set($dummy=${imports.addPackageName(${package.getAttribute("bo-lw-package")})})
+#set($dummy=${imports.addPackageName(${package.getAttribute("ejb-server-package")})})
+#set($dummy=${imports.addClassName("ch.bbv.application.ComponentException")})
+#set($dummy=${imports.addClassName("ch.bbv.application.ComponentImpl")})
+#set($dummy=${imports.addClassName("ch.bbv.application.Locator")})
+#set($dummy=${imports.addPackageName("ch.bbv.dog")})
+#set($dummy=${imports.addClassName("org.apache.commons.logging.Log")})
+#set($dummy=${imports.addClassName("org.apache.commons.logging.LogFactory")})
+#set($importStatements=${imports.getImportStatements(4)})
+#foreach($importStatement in $importStatements) 
+import $importStatement;
+#end
+
+#set($serverName=${package.valueOfTag("ejb-server-name")})
+#set($className="${serverName}Wrapper")
+/** 
+ * The ${serverName} wrapper wraps the J2EE session beans and hides the J2EE 
+ * artifacts from the client application.
+ * @version ${dollar}Revision${dollar}
+ */
+public class ${className} extends ComponentImpl implements DataObjectHandler {
+  /** Name of the server as registered in the naming service.
+   */
+   public static final String SERVER_NAME = "${serverName}";
+
+  /** Logger of the server wrapper class.
+   */
+  private static Log log = LogFactory.getLog(${className}.class);
+
+  /** Handle to the EJB session bean providing the data object graph services.
+   */
+  private ${serverName}Session server;
+  
+  /** Creates the EJB session bean wrapper ${serverName} and registers it in 
+   * the locator with the name ${serverName}.
+   * @return the created and registered service wrapper.
+   */
+  public static ${className} create() {
+    return create(SERVER_NAME);
+  }
+  
+  /** Creates the EJB session bean wrapper ${serverName} and registers it in 
+   * the locator with the name ${serverName}.
+   * @param name name of the service wrapper as defined in the locator.
+   * @return the created and registered service wrapper.
+   */
+  public static ${className} create(String name) {
+    ${className} wrapper = null;
+    try {
+      Locator locator = Locator.getInstance();
+      wrapper = new ${className}(name);
+      locator.register(wrapper);
+    } catch (ComponentException e) {
+      log.fatal("Cannot register wrapper ${className}", e); 
+    }
+    return wrapper;
+  }
+  
+  /** Constructor of the class.
+   * @param name unique name of the server used to find through the locator.
+   */
+  public ${className}(String name) {
+    super(name);
+  }
+
+  public void initialize() throws ComponentException {
+    super.initialize();
+    try {
+      Context jndiContext = new InitialContext();
+      Object ref = jndiContext.lookup("dog/${serverName}");
+      ${serverName}Home home = (${serverName}Home)PortableRemoteObject.narrow(
+        ref, ${serverName}Home.class);
+      server = home.create();
+    } catch (java.rmi.RemoteException e) {
+      log.fatal(e);
+    } catch (javax.naming.NamingException e) {
+      log.fatal(e);
+    } catch (javax.ejb.CreateException e) {
+      log.fatal(e);
+    }
+  }  
+   
+  public void openDatasource(String source, boolean readonly) {
+    // operation ignored because it is under control of the server.
+  }
+  
+  public void closeDatasource(String source) {
+    // operation ignored because it is under control of the server.
+  }
+  
+  public DataObject retrieve(String datasource, Class clazz, Integer id) {
+    List objects;
+    DataObject object = null;
+#if(${classes.size()} > 0)
+    try {
+#set($firstCase=true)
+#foreach($class in $classes)
+#if(${class.booleanValueOfTag("bo-is-root")})
+#set($boMoClass=${class.getAttribute("bo-mo-class")})
+#if($firstCase)
+#set($firstCase=false)
+      if (clazz == ${boMoClass}.class) {
+        objects = Arrays.asList(server.retrieve${boMoClass}(datasource, id, null));
+#else
+      } else if (clazz == ${boMoClass}.class) {
+        objects = Arrays.asList(server.retrieve${boMoClass}(datasource, id, null));
+#end	
+#end
+#end
+      } else {      
+        throw new UnsupportedOperationException();
+      }
+      if (objects.size() > 0) {
+        object = (DataObject)objects.get(0);
+      }
+    } catch(ServerException e) {
+      log.error(e);
+    } catch(RemoteException e) {
+      log.error(e);
+    }
+#end	
+    return object;
+  }
+  
+  public List retrieve(String datasource, Class clazz, String constraints) {
+    List objects = null;
+    
+#if(${classes.size()} > 0)
+    try {
+#set($firstCase=true)
+#foreach($class in $classes)
+#if(${class.booleanValueOfTag("bo-is-root")})
+#set($boMoClass=${class.getAttribute("bo-mo-class")})
+#if($firstCase)
+#set($firstCase=false)
+      if (clazz == ${boMoClass}.class) {
+        objects = Arrays.asList(server.retrieve${boMoClass}(datasource, null, constraints));
+#else
+      } else if (clazz == ${boMoClass}.class) {
+        objects = Arrays.asList(server.retrieve${boMoClass}(datasource, null, constraints));
+#end	
+#end
+#end
+      } else {
+        throw new UnsupportedOperationException();
+      }
+    } catch(ServerException e) {
+      log.error(e);
+    } catch(RemoteException e) {
+      log.error(e);
+    }
+#end
+	return objects;
+  }
+#if(${package.booleanValueOfAttribute("bo-lightweight")})  
+
+  public LightweightObject retrieveLw(String datasource, Class clazz, Integer id) {
+    List objects;
+    LightweightObject object = null;
+    
+    try {
+#set($firstCase=true)
+#foreach($class in $classes)
+#if(${class.booleanValueOfTag("bo-is-root")} && ${class.booleanValueOfAttribute("bo-lightweight")})  
+#set($boLwClass=${class.getAttribute("bo-lw-class")})
+#if($firstCase)
+#set($firstCase=false)
+      if (clazz == ${boLwClass}.class) {
+        objects = Arrays.asList(server.retrieveLw${boLwClass}(datasource, id, null));
+#else
+      } else if (clazz == ${boLwClass}.class) {
+        objects = Arrays.asList(server.retrieveLw${boLwClass}(datasource, id, null));
+#end	
+#end
+#end
+      } else {
+        throw new UnsupportedOperationException();
+      }
+      if (objects.size() > 0) {
+        object = (LightweightObject)objects.get(0);
+      }
+    } catch(ServerException e) {
+      log.error(e);
+    } catch(RemoteException e) {
+      log.error(e);
+    }
+    return object;
+  }
+
+  public List retrieveLw(String datasource, Class clazz, String constraints) {
+    List objects = null;
+    
+    try {
+#set($firstCase=true)
+#foreach($class in $classes)
+#set($boLwClass=${class.getAttribute("bo-lw-class")})
+#if(${class.booleanValueOfTag("bo-is-root")} && ${class.booleanValueOfAttribute("bo-lightweight")})  
+#if($firstCase)
+#set($firstCase=false)
+      if (clazz == ${boLwClass}.class) {
+        objects = Arrays.asList(server.retrieveLw${boLwClass}(datasource, null, constraints));
+#else
+      } else if (clazz == ${boLwClass}.class) {
+        objects = Arrays.asList(server.retrieveLw${boLwClass}(datasource, null, constraints));
+#end	
+#end
+#end
+      } else {
+        throw new UnsupportedOperationException();
+      }
+    } catch(ServerException e) {
+      log.error(e);
+    } catch(RemoteException e) {
+      log.error(e);
+    }
+    return objects;
+  }
+#end  
+  
+  public List store(String datasource, Class clazz, DataObject root) {
+    List infos = null;
+    
+    try {
+#set($firstCase=true)
+#foreach($class in $classes)
+#if(${class.booleanValueOfTag("bo-is-root")})
+#set($boMoClass=${class.getAttribute("bo-mo-class")})
+#if($firstCase)
+#set($firstCase=false)
+      if (clazz == ${boMoClass}.class) {
+        infos = Arrays.asList(server.store${boMoClass}(datasource, (${boMoClass}) root));
+#else
+      } else if (clazz == ${boMoClass}.class) {
+        infos = Arrays.asList(server.store${boMoClass}(datasource, (${boMoClass}) root));
+#end	
+#end
+#end
+      } else {
+        throw new UnsupportedOperationException();
+      }
+    } catch(ServerException e) {
+      log.error(e);
+    } catch(RemoteException e) {
+      log.error(e);
+    }
+    return infos;
+  }
+  
+  public void remove(String datasource, Class clazz, DataObject root) {
+    try {
+#set($firstCase=true)
+#foreach($class in $classes)
+#if(${class.booleanValueOfTag("bo-is-root")})
+#set($boMoClass=${class.getAttribute("bo-mo-class")})
+#if($firstCase)
+#set($firstCase=false)
+      if (clazz == ${boMoClass}.class) {
+        server.remove${boMoClass}(datasource, root.getId());
+#else
+      } else if (clazz == ${boMoClass}.class) {
+        server.remove${boMoClass}(datasource, root.getId());
+#end	
+#end
+#end
+      } else {
+        throw new UnsupportedOperationException();
+      }
+    } catch(ServerException e) {
+      log.error(e);
+    } catch(RemoteException e) {
+      log.error(e);
+    }
+  }
+  
+  public void remove(String datasource, Class clazz, Integer id) {
+    try {
+#set($firstCase=true)
+#foreach($class in $classes)
+#if(${class.booleanValueOfTag("bo-is-root")})
+#set($boMoClass=${class.getAttribute("bo-mo-class")})
+#if($firstCase)
+#set($firstCase=false)
+      if (clazz == ${boMoClass}.class) {
+        server.remove${boMoClass}(datasource, id);
+#else
+      } else if (clazz == ${boMoClass}.class) {
+        server.remove${boMoClass}(datasource, id);
+#end	
+#end
+#end
+      } else {
+        throw new UnsupportedOperationException();
+      }
+    } catch(ServerException e) {
+      log.error(e);
+    } catch(RemoteException e) {
+      log.error(e);
+    }
+  }
+  
+  public DataObject deepCopy(Class clazz, DataObject object) {
+    throw new UnsupportedOperationException();
+  }
+  
+  public void register(DataObjectType type) {
+    // not  supported in wrapper
+  }
+  
+  public DataObjectType getType(DataObject object) {
+    // not  supported in wrapper
+    return null;
+  }
+  
+  /** Returns the list of updated reference codes from the server.
+   * @param descriptors list of reference code information describing the 
+   * requested reference codes.
+   * @return the list of requested reference codes with their values.
+   */
+  public List retrieveCodes(List descriptors) {
+    return descriptors;
+  }
+
+  /** Heartbeat function to verify that the server is available.
+   */  
+  public void heartbeat() {
+    try {
+      server.heartbeat();
+    } catch(RemoteException e) {
+      log.error(e);
+	}
+  }
+}

@@ -1,0 +1,28 @@
+Version 0.2.1 (01 August 2004)
+------------------------------
+The following new features were added.
+- The CVS repository was moved to the sourceforge pmmda account.
+- The new major release of glazed lists 0.9.1 is integrated. The table handling
+  is simplified and all columns are sortable.
+
+The following errors were corrected.
+- The JavaDoc comments were enhanced.
+
+Version 0.2.0 (30 June 2004)
+---------------------------
+The following new features were added.
+- The persistence algorithm was optimized. Only one traversal of the tree
+  to update is now needed instead of two.
+- The terminology "data object" of JSR-235 is now used to name the business
+  object. The JavaDoc documentation was 
+- Support of OJB in managed environment such as J2EE containers - tested with
+  JBoss and WebSphere -. 
+- Integration of the lock handler in the CORBA and J2EE servers. The current
+  implementation does not support clustered environments.
+- The explorer about package is now based on the glazed list package.
+
+The following errors were corrected.
+- Error in the event propagation when a node was removed from the navigation
+  tree was corrected. Removal of children through context sensitive menu works.
+- The post-store visitor did not set the modified flag back to false. Therefore
+  too many updates were performed.

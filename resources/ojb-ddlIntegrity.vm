@@ -1,0 +1,8 @@
+## generate the index and integrity constraints
+#set($schema=${package.valueOfTag("ojb-schema-name")})
+#if(${schema})#set($schema=${schema} + ".")#else#set($schema="")#end
+#set($table=${class.getAttribute("ojb-table-name")})
+#if(${class.getStereotype()} == "dataObject")
+  CREATE UNIQUE INDEX ${schema}${table}_IDX on ${schema}${table}(id);
+  
+#end

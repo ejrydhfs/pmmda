@@ -1,0 +1,35 @@
+<body>
+  Functions computing derived attributes can be associated with the update of
+  a property. Mechanisms are provided to implement these services.
+	<h2>Introduction</h2>
+	<p>The package provides functions which can be associated with the update of
+		a property. Each time the property is modified the function is applied and
+		synchronize the values of derived attributes. The functor is associated with
+		a business object type and a property change event.</p>
+	<p>The chosen solution heavily uses services provided in the standard Java 
+		beans package. This approach that application programers find a well-known 
+		and optimally documented approach. The patterns of use are very similar to 
+		the ones used in other Java bean oriented approaches.</p>
+	<p>The decision when to register a set of business objects and starts to
+		compute derived properties is taken in the domain application and not in 
+		the framework. Various derived attributes computation strategies can be
+		implemented in the application. </p>
+		
+	<h2>Cookbook</h2>
+	<h3>Formulas</h3>
+	<p>All formulas are handled in a uniformed way. Support is provided for 
+		recurring kinds of functions. Currently these groups are identified.</p>	
+	<ul>
+		<dt>Aggregators</dt><dd>Aggregators computes a functions on a set of
+			business objects when a property is changed. Often the property is
+			one of the attributes in the set of instances.</dd>
+		<dt>Propagators</dt><dd></dd>
+		<dt>Formulas</dt><dd></dd>
+	</ul>
+	
+	<h2>User Interface Hooks</h2>
+	<h3>Dialog Box Based Interface</h3>
+	<h3>Table Based Interface</h3>
+	<h2>Architecture</h2>
+   @since Java 2 Platform, Standard Edition, version 1.4
+</body>

@@ -1,0 +1,32 @@
+/* copyright 2000-2004 Marcel Baumann
+ * Licensed under the Apache License, Version 2.0 (the "Licence);
+ * you may not use this file except in compliance with the License.
+ * $Id$
+ */
+package ch.bbv.explorer.about;
+
+import java.util.List;
+
+import ch.bbv.explorer.components.TableCell;
+import ch.bbv.explorer.components.TablePanel;
+
+/**
+ * A panel containing a table that lists the libraries used in a project.
+ * @author Marcel Baumann
+ * @version $Revision$
+ */
+public class LibraryPanel extends TablePanel {
+  /**
+   * The name of the columns of the librairies table.
+   */
+  public static final String[] COLUMN_NAMES = { "name", "version", "licence",
+      "info" };
+
+  /**
+   * Constructs a library panel.
+   * @param libraries a list of libraries (represented by Library objects).
+   */
+  public LibraryPanel(List libraries) {
+    super(libraries, new TableCell(COLUMN_NAMES));
+  }
+}

@@ -1,0 +1,104 @@
+<body>
+	<h2>Service Oriented Architecture</h2>
+	<p>Modern software architecture trends push to develop applications using 
+		service oriented architectures. In fact such architectures are not new. 
+		All coarse grained client-server applications implement a service oriented 
+		interface. Application data is passed as value object parameters to the 
+		services and computed data is also returned packed in value objects.</p>
+	<p>The extensions of our framework provide mechanisms to manipulate business
+		object graphs in a client-server topology. The framework assumes that in
+		general clients do not concurrently edit the same data and that the 
+		transmission delays are not negligeable.</p>
+			
+	<h2>Business Layer Client Lifecycle</h2>
+	<p>Graphs of business object instance are manipulated in client applications.
+		A client retrieves a graph of objects, modifies objects, adds new objects
+		or deletes existing ones. After completing a work process the client 
+		either commit his changes or reverts to the original graph. The business
+		layer framework supports this object lifecycle.</p>
+	<ul>
+		<li><strong>Retrieve Objects</strong></li>
+			<ol>
+				<li>The requested objects are retrieved from the server. The graph of
+					objects is stored in a client cache. Each client instance has its 
+					own cache. The cached graph is used when the user cancels his changes.
+					The original data is available without requesting them again from the 
+					server. This mechanism simplifies multiple views support and opening 
+					and closing of views on an already used objects.</li>
+				<li>A clone of the graph retrieved from the client cache is created. 
+					This copy is stored in the clone cache. The clone cache is a convenience 
+					structure to simplify user interface development. It guarantees that 
+					multiple views edit the same copy of the data. The presentation layer 
+					has <strong>never</strong> access to the original business 
+					objects.</li>
+				<li>If the client framework does not request a revert function, the
+					clone cache can be optimized away. This optimzation is useful if
+					the loaded graphs are huge. The revert function can also be emulated
+					by requesting again the data from the server.</li>
+			</ol>
+		<li><strong>Create, Modify and Delete Objects</strong></li>
+			<ol>
+				<li>The presentation view directly manipulates the cloned copy of the
+					data. The user interface can modify properties of objects, create new
+					ones or delete existing ones.</li>
+				<li>These actions are under sole control of the user interface. The 
+					business object layer is not informed about these operations.</li>
+			</ol>
+		<li><strong>Cancel Changes</strong></li>
+			<ol>
+				<li>The user interface decides to cancel all the changes performed
+					during a edition session.</li>
+				<li>The clone copy is discarded and removed from the clone cache.
+					A new clone from the original data is done and returned to the
+					user.</li>
+			</ol>
+		<li><strong>Commit Changes</strong></li>
+			<ol>
+				<li>The modified clone copy is returned to the framework. The
+					copy is sent to the server.</li>
+				<li>The server stores the graph of objects into the database. Objects
+					are updated, inserted or deleted. The optimistic timestamp and server 
+					updated data is sent back to the client origin of the request.</li>
+				<li>The client framework udpates the timestamps of all modified or
+					new objects. The updated properties are modified in the cloned
+					data.</li>
+				<li>The state of all objects in the clone graph is set back to 
+					clean.</li>
+				<li>The objects are cleared from the old original cache and a copy
+					of the clone is inserted in the original cache. At this moment the 
+					clone copy contains the original data. The state fo the cached
+					data is set to clean and not cloned.</li>
+				<li>The updated cloned graph of objects is returned to the client.
+					Now all views have access to the udpated data.</li>
+			</ol>
+			<li><strong>Shallow Operations</strong> Sometimes the client application 
+				only needs to edit properties on one or few business objects. The costs 
+				of manipulating a whole graph is too high. A special class of shallow
+				operations are optionally provided. These operations are as subset
+				of the above described functionality.</li>
+				<ol>
+					<li>The retrieval operation only returns the requested business 
+						object without its children. The cloned copy is returned to the
+						presentation layer.</li>
+					<li>Only updates operations should be performed on such an object. 
+						The presentation layer is responsible to insure this behavior.
+						Erroneously inserted objects will be discarded.</li>
+					<li>The store operation sends the shallow object to the server.
+						The server copies the modified data into the full fledged object
+						stored in the server and updates the database. The updated 
+						timestamp and properties are sent back to the client origin of the
+						request. The cloned object is updated. The original cache is 
+						flushed and a copy of the updated cloned object is inserted.</li>
+				</ol>
+	</ul>
+	<p>The shallow operations can be visualized as node related modifications.
+		The standard operations are graph manipulation routines.</p>
+	
+	<h2>Design Considerations</h2>
+	<p>The business object should carry information describing its lifecycle. The
+		states are: new, clean, modified, and removed. The information if an object
+		is a clone or the original instance is <strong>not</strong> needed in the
+		framework. The identity of any business object is the pair of data: qualified
+		class name, identifier. The framework uses the technical database identifier
+		to uniquely identify an instance of a given type.</p>
+</body>

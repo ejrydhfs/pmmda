@@ -1,0 +1,158 @@
+#if(${class.getStereotype()} == "dataObject")
+#set($schema=${package.valueOfTag("ojb-schema")})
+#if(${schema})#set($schema="${schema}.")#else#set($schema="")#end
+<class-descriptor class="${package.getAttribute("bo-mo-package")}.${class.getAttribute("bo-mo-class")}"
+  table="${schema}${class.getAttribute("ojb-table-name")}">
+  <field-descriptor name="id" 
+    column="ID" 
+    jdbc-type="INTEGER" 
+  	primarykey="true"
+    nullable="false"
+    indexed="true"
+  	autoincrement="true"/>
+## generates all primitive properties as a column. A primitive property is 
+## either a simple property or an indexed property with a cardinality of 1
+## having as type a class not being a data object.
+#foreach($property in $properties)
+#if(!${property.isTransient()})
+#set($columnName=${property.getAttribute("ojb-column-name")})
+#set($typeName=${property.getTypeName()})
+#set($columnType=${property.valueOfTag("ojb-column-type")})
+#set($type=false)
+#set($type=${model.findClass(${typeName})})
+## identifies a forward reference 1-0..1 or 1-1
+#if(${type} && (${type.getStereotype()} == "dataObject") && ${type.booleanValueOfTag("ojb-is-persistent")})
+  <field-descriptor name="${property.nameFirstLower()}Handle"
+    column="${property.nameUpper()}_FK"
+    jdbc-type="INTEGER"
+    access="anonymous"
+    nullable="${property.booleanValueOfTag("ojb-can-be-null")}}"/>
+#else
+  <field-descriptor name="${property.nameFirstLower()}"
+#if(${property.getTaggedValue("ojb-is-primary")} == "true")
+    column="${columnName}"
+#if(($columnType == "STRING") || ($columnType == "String"))
+    jdbc-type="VARCHAR"
+#else    
+    jdbc-type="${columnType}"
+#end
+    nullable="${property.booleanValueOfTag("ojb-can-be-null")}"
+    primarykey="true"
+    autoincrement="true"/>
+#else
+    column="${property.getAttribute("ojb-column-name")}"
+#if(($columnType == "BOOLEAN") || ($columnType == "boolean") || ($columnType == "Boolean")) 
+    jdbc-type="TINYINT"
+    conversion="org.apache.ojb.broker.accesslayer.conversions.Boolean2IntFieldConversion"
+#elseif(($columnType == "STRING") || ($columnType == "String"))
+    jdbc-type="VARCHAR"
+#else    
+    jdbc-type="${columnType}"
+#end
+    nullable="${property.booleanValueOfTag("ojb-can-be-null")}"/>
+#end
+#end
+#end
+#end
+## references to the class having indexed properties with cardinality 1-N to the
+## class are generated as anonymous reverse foreign keys in the class.
+#set($references=$model.getClassReferences($class))
+#foreach($reference in $references)
+#if((${reference.getStereotype()} == "dataObject") && ${reference.booleanValueOfTag("ojb-is-persistent")})
+#set($relations=${reference.getIndexedProperties()})
+#foreach($relation in $relations)
+#set($typeName=${relation.getTypeName()})
+#if($typeName && $typeName == ${class.qualifiedName()})
+#set($type=false)
+#set($type=${model.findClass(${typeName})})
+#if(${type} && (${type.getStereotype()} == "dataObject"))
+  <field-descriptor 
+    name="${reference.nameFirstLower()}${relation.nameFirstUpper()}Handle" 
+    column="${reference.valueOfTag("ojb-table-name")}_${relation.valueOfTag("ojb-column-name")}_FK"
+    jdbc-type="INTEGER"
+    nullable="${relation.booleanValueOfTag("ojb-can-be-null")}"
+    access="anonymous"/>
+#end
+#end
+#end
+#end
+#end
+#foreach($aggregation in $aggregations)
+#if(${aggregation.getMultiplicity().getUpperBound()} == 1)
+#set($columnName=${aggregation.getAttribute("ojb-column-name")})
+#set($typeName=${aggregation.getTypeName()})
+#set($type=false)
+#set($type=${model.findClass(${typeName})})
+#if(${type} && (${type.getStereotype()} == "dataObject") && ${type.booleanValueOfTag("ojb-is-persistent")})
+  <field-descriptor name="${property.nameFirstLower()}Handle"
+#if(${type} && ${type.getStereotype()} == "dataObject")
+    column="${property.nameUpper()}_FK"
+    jdbc-type="INTEGER"
+    access="anonymous"
+    nullable="${property.booleanValueOfTag("ojb-can-be-null")}"/>
+#else
+    column="${property.getAttribute("ojb-column-name")}"
+    jdbc-type="${property.valueOfTag("ojb-column-type")}"
+    nullable="${property.booleanValueOfTag("ojb-can-be-null")}"
+#if(${property.getTaggedValue("ojb-is-primary")} == "true")
+    primaryKey="true"
+    autoincrement="true"/>
+#end
+#end    
+#end
+#end
+#end
+## generates all forward references as a foreign key column. A forward 
+## reference is either a simple property or an indexed property with a 
+## cardinality of 1 having as type a class being a data object.
+#foreach($property in $properties)
+#set($typeName=${property.getTypeName()})
+#set($type=false)
+#set($type=${model.findClass(${typeName})})
+#if(${type} && ${type.getStereotype()} == "dataObject")
+  <reference-descriptor
+    name="${property.getName()}"
+    class-ref="${type.qualifiedName()}">
+    <foreignkey field-ref="${property.getName()}Handle"/>
+  </reference-descriptor>
+#end
+#end
+#foreach($aggregation in $aggregations)
+#if(${aggregation.getMultiplicity().getUpperBound()} == 1)
+#set($columnName=${aggregation.getAttribute("ojb-column-name")})
+#set($typeName=${aggregation.getTypeName()})
+#set($type=false)
+#set($type=${model.findClass(${typeName})})
+#if(${type} && (${type.getStereotype()} == "dataObject") && ${type.booleanValueOfTag("ojb-is-persistent")})
+  <reference-descriptor
+    name="${aggregation.getName()}"
+    class-ref="${type.qualifiedName()}">
+    <foreignkey field-ref="${aggregation.nameFirstLower()}Handle"/>
+  </reference-descriptor>
+#end
+#end
+#end
+## generates all backward references as a foreign key column declared in the
+## owned class. A backward reference is an indexed property with a cardinality
+## of n having as type a class being a data object. 
+#foreach($aggregation in $aggregations)
+#if(${aggregation.getMultiplicity().getUpperBound()} == -1)
+#set($columnName=${aggregation.getAttribute("ojb-column-name")})
+#set($typeName=${aggregation.getTypeName()})
+#set($type=false)
+#set($type=${model.findClass(${typeName})})
+#if(${type} && (${type.getStereotype()} == "dataObject") && ${type.booleanValueOfTag("ojb-is-persistent")})
+#set($typePackage=${type.getContext()})
+  <collection-descriptor
+    name="${aggregation.getName()}"
+    element-class-ref="${typePackage.getAttribute("bo-mo-package")}.${type.getAttribute("bo-mo-class")}"
+    orderby="id"
+    sort="ASC">
+    <inverse-foreignkey field-ref="${class.nameFirstLower()}${aggregation.nameFirstUpper()}Handle"/>
+   </collection-descriptor>
+#end
+#end
+#end
+</class-descriptor>
+#end
+

@@ -1,0 +1,9 @@
+Nr   Description                                                        Status
+------------------------------------------------------------------------------
+0001 Duplicate method generation in Velocity template. Some users       Open
+     encounter the effect that the template generates the same method 
+     multiple times. The error is not always reproducible on other 
+     workstations.
+0002 Some users encounter the effect that part of the template is not   Open
+     generated sometimes. The error is not always reproducible on 
+     other worktations.

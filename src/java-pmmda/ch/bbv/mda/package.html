@@ -1,0 +1,652 @@
+<body>
+	The MDA package implements a complete MDA model following the UML standard.
+	<h2>Introduction</h2>
+	<p>Client server based applications require three software layers. First the
+		persistency layer must connect with the underlying persistent storage,
+		usually a relational database. The connection mechanism should be orthogonal
+		to the application structure. No modifications of the source code should be
+		required. Second data transfer objects must be generated to transmit the 
+		business data between the server and the client. Transport protocols are for
+		example CORBA/IIOP, RMI/J2EE, and JMS. Third the business objects of the 
+		application must be generated to enable applications developers to code the 
+		business logic against them. Often two kinds or business objects exist. One 
+		kind of business objects contains all data of an entity. The second one is 
+		a lightweight representation mainly used for navigation purposes.</p>
+	<p>The meta model presented below defines the needed properties of classes and 
+		fields to describe an application domain and generate the associated skeletons 
+		of a client server application for this domain. The major gains of such a
+		approach are the following.</p>
+	<ul>
+		<li>Standardized layer architecture is enforced through code generation. 
+			The company does not need to train her architects in the technology used
+			in each layer or between layers. Experienced developers can concentrate
+			on the application instead of having to work on infrastructure aspects. 
+			Companies make money with domain specific programs and not with 
+			infrastructure software frameworks.</li>
+		<li>Common patterns are enforced through the meta model and the code 
+			generator. The provided documentation cleanly discussed all aspects of 
+			the used patterns. These documents can be used to train application
+			developers. Multiple solutions for the same problem can be avoided.</li>
+		<li>Coherance between the different layers is enforce at tool level. The
+			development does not any more need to check the consistency of the models
+			by hand.</li>
+		<li>The generated code is human readable. The formatting follows the Sun
+			conventions. Complete JavaDoc comments are provided. If necessary the
+			generated code can be maintained or modified.</li>
+		<li>Coupling to the underlying persistency scheme is removed at the 
+			programing level. The application developers never needs to write SQL 
+			requests or study JDBC subtleties.</li>
+		<li>The tool provides an open architecture. The most experienced architects
+			of the company can create their own code generators to optimaly solve
+			company specific problems and provides the best solution for their
+			custom products.</li>
+		<li>The generated code should be error free because the code generators have
+			extensively been tested in previous projects. Therefore the development
+			and testing costs for the application infrastructure are lower. Experience
+			in commercial and industrial projects reveals that the savings should
+			not be underestimated. Return on investement is reached after three
+			months.</li>
+	</ul>
+	<p>The meta model complies to the MOF 2.0 standard of the OMG. The code
+		generation process follows the MDA initiative of the OMG. For backward
+		compatibility MOF 1.4 is still supported. Literature is available for these
+		technologies. We are voting member of the <em>O</em>bject 
+		<em>M</em>anagement <em>G</em>roup and follows the evolution of
+		the standards. All main players support these standards. They are becoming
+		state of the industry practices for architectural design and major software
+		project development.</p>
+	<p>Our pragmatic and in productive use MDA tool is called <em>pmPDA</em> for 
+		"poor man Model Driven Architecture". This name emphasizes the pragmatic 
+		approach and the fact that we use establish industrial standards and leading 
+		open source tools. The <em>pmMDA</em> is a active code generator. If an error 
+		is found in the application, the model is udpated and the target code is 
+		generated again. Therefore any modifications of the UML model are propagated 
+		to the deployed applications. This behavior is different from the wizard concept 
+		which generates only once the source code. After the programmer must add 
+		adaptations directly in the source code.</p>
+
+	<h2>Requirements</h2>
+	<p>The requirements for the <em>pmMDA</em> are documented in an external
+		document requirements document<a href="doc-files/mda-requirements.html">
+			pmMDA requirements</a>.</p>
+	<p>The software development process used for the realisation of <em>pmMDA</em>
+		is described in the document <a href="doc-files/mda-project-guidelines.html">
+			project guidelines</a>.</p>
+
+	<h2>Tagged Values</h2>
+	<p>The <acronym>UML</acronym> standard provides an extension mechanism called
+		tagged values. A tagged value is a pair containing a key, also called tag 
+		and a value. Both elements are strings. This mechanism is extensively used 
+		in our <em>pmMDA</em> application. The tagged values are used to provide
+		configuration information to the cartridges. Each registered cartridge 
+		registers its tags on the factory. New elements are initialized in the
+		factory with all requested tags and their default values.</p>
+	<p>Tag names are an extension of the used meta model and must be formally
+		defined and handled. It is the responsibility of the cartridge developers
+		to document their tags.</p>
+				
+	<h2>User Interface</h2>
+	<p>The current UML modeling tools are not optimal for defining the attributes 
+		of a PIM model. All the PIM information are stored as stereotypes and tagged 
+		values to respect the semantic of UML 2.0. The <emp>pmMDA</emp> provides
+		a explorer like user interface, which enables the user to efficiently
+		defines its PIM information. Our framework is highly flexible and can
+		import UML models from any XMI standard compliant UML modeling tool. 
+		Therefore you can draw UML diagrams with your favorite modeling tool,
+		import them in <em>pmMDA</em> to edit the PIM model. The result can
+		further be edited with your favorite tool.</p>
+	<p>The user interface is an explorer based application. The tree of all UML
+		elements is displayed. Views are provided to edit all attributes and 
+		tagged values. In place edition is provided in the table views to speed
+		up small correction. The added value of the application is the powerful
+		validation engine which ensures the consistency and completness of the
+		PIM model.</p>
+		
+	<h2>UML Models</h2>
+	<p>Each UML 2.0 element supports the following contract for itself and for
+		each type of children it owns.</p>
+	<ul>
+		<li>The context of the item can be retrieved. The context is the parent
+			owning the item. Each item has exactly one contexte element. The only
+			exception is the root package. The context can be infered from the
+			qualified name of the element. The qualified name uniquely identify
+			the element in the graph of items and also specify its location in the
+			UML hierarchy. Qualified names use positional notation.</li>
+		<li>Any child can be added to the list of children of the same type.</li>
+		<li>Any child can be retrieved through its name. The name is unique for
+			the group of children of this type. The caller is responsible to generate
+			the unique name for the children.</li>
+		<li>Any child can be removed from the list. All its descendants are 
+			removed. Validation if the operation is legal is the responsibility of
+			the domain logic and not of the business object.</li>
+		<li>The list of all children can be retrieved. The list is sorted by the
+			name of the items.</li>
+		<li>Each element can have a set of tagged values. A tagged value is a pair
+			of strings defining the tag name and its value.</li>
+	</ul>
+	<p>The meta model must contain mapping information to allow cartriges to
+		transform PIM models into PSM models. This information is stored as 
+		stereotypes or tagged values.</p>
+	<p>The following constraints exist for named element.</p>
+	<ul>
+		<li><code>(getName() != null) &amp&amp (getName() &lt= 128)</code></li>
+		<li><code>(getDescription() == null) || (getDescription() &lt= 255)</code></li>
+	</ul>
+		
+	<h3>Package Element</h3>
+	<p>A package has a name and a description. A package supports the following 
+		information tags.</p>
+	<table border="2" cellspacing="2">
+		<tr>
+			<th align="center">Name</th>
+			<th align="center">Group</th>
+			<th align="center">Type</th>
+			<th align="center">Mandatory</th>
+			<th align="center">Value</th><th align="center">Comment</th>
+		</tr>
+		<tr>
+			<td>ifPackage</td>
+			<td>bo</td>
+			<td>TG</td>
+			<td>No</td>
+			<td>String</td>
+			<td>Name of the package containing the interfaces. If not defined the PIM 
+				package name is used.</td>
+		</tr>
+		<tr>
+			<td>boPackage</td>
+			<td>bo</td>
+			<td>TG</td>
+			<td>No</td>
+			<td>String</td>
+			<td>Name of the package containing the business object classes. If not 
+				defined the PIM package name is used.</td>
+		</tr>
+		<tr>
+			<td>lwPackage</td>
+			<td>bo</td>
+			<td>TG</td>
+			<td>No</td>
+			<td>String</td>
+			<td>Name of the package containing the lightweight business object classes. 
+				If not defined the PIM package name is used.</td>
+		</tr>
+		<tr>
+			<td>shouldBeGenerated</td>
+			<td>bo</td>
+			<td>TG</td>
+			<td>Yes</td>
+			<td>Boolean</td>
+			<td>Flag indicating if a PSM should be generated for this package. The 
+				default value is no.</td>
+		</tr>
+	</table>
+	
+	<p>The following dependencies exist between tags.</p>
+	<ul>
+		<li><code>!shouldBeGenerated implies 
+				((ifPackage == null) && (boPackage == null) && (lwPackage == null))</code></li>
+	</ul>
+
+	<h3>Class Element</h3>
+	<p>A class has a name, a description, and a visibility. A class supports the 
+		following information tags.</p>
+	<table border="2" cellspacing="2">
+		<tr>
+			<th align="center">Name</th>
+			<th align="center">Group</th>
+			<th align="center">Type</th>
+			<th align="center">Mandatory</th>
+			<th align="center">Value</th>
+			<th align="center">Comment</th>
+		</tr>
+		<tr>
+			<td>Persistent</td>
+			<td>db</td>
+			<td>Stereotype</td>
+			<td>No</td>
+			<td>Boolean</td>
+			<td>If set the stereotype indicates that the class is persistent.</td>
+		</tr>
+		<tr>
+			<td>tableName</td>
+			<td>db</td>
+			<td>TG</td>
+			<td>No</td>
+			<td>String</td>
+			<td>Name of the database table containing the instances of the business object.</td>
+		</tr>
+	</table>
+
+	<p>The following dependencies exist between tags.</p>
+	<ul>
+		<li><code>(Persistent != null) implies (tableName != null)</code></li>
+		<li><code>(Persisten != null) implies 
+			(exists(property : getProperties() | property.isPersistent())</code></li>
+	</ul>
+
+	<p>The following information can be infered from the properties and indexed
+		properties of the class.</p>
+	<ul>
+		<li><code>properties.exists(property | property.isVisible()) implies class.isVisible()</code></li>
+		<li><code>properties.exists(property | property.isTransmissible()) implies class.isTransmissible()</code></li>
+		<li><code>properties.exists(property | property.isLightweight()) implies class.isLightweight()</code></li>
+	</ul>
+	
+	<h3>Property Element</h3>
+	<p>A property has a name, a description, a Java type, a visibility. The 
+		property can be read-only, write-only or read-write. A property is either
+		mandatory or optionnal. A simple property supports the following information 
+		tags.</p>
+	<table border="2" cellspacing="2">
+		<tr>
+			<th align="center">Name</th>
+			<th align="center">Group</th>
+			<th align="center">Type</th>
+			<th align="center">Mandatory</th>
+			<th align="center">Value</th>
+			<th align="center">Comment</th>
+		</tr>
+		<tr>
+			<td>isBound</td>
+			<td>bo</td>
+			<td>TG</td>
+			<td>Yes</td>
+			<td>Boolean</td>
+			<td>Flag defining if the property is bound. The default value is 
+				false.</td>
+		</tr>
+		<tr>
+			<td>isVetoable</td>
+			<td>bo</td>
+			<td>TG</td>
+			<td>Yes</td>
+			<td>Boolean</td>
+			<td>Flag defining if the property is vetoable. The default value is 
+				false.</td>
+		</tr>
+		<tr>
+			<td>isLightweight</td>
+			<td>bo</td><td>TG</td>
+			<td>No</td>
+			<td>Boolean</td>
+			<td>Flag defining if the property exists in the lightweight class.</td>
+		</tr>
+		<tr>
+			<td>isParamOfConstructor</td>
+			<td>bo</td><td>TG</td>
+			<td>No</td>
+			<td>Boolean</td>
+			<td>Flag defining if the property is part of the signature of the 
+				specialized constructor.</td>
+		</tr>
+		<tr>
+			<td>isPersistent</td>
+			<td>db</td>
+			<td>TG</td>
+			<td>Yes</td>
+			<td>Boolean</td>
+			<td>Flag defining if the property is persistent. The default value is 
+				false.</td>
+		</tr>
+		<tr>
+			<td>columnName</td>
+			<td>db</td>
+			<td>TG</td>
+			<td>No</td>
+			<td>String</td>
+			<td>Name of the column in the table containing the property.</td>
+		</tr>
+		<tr>
+			<td>isPrimaryKey</td>
+			<td>db</td>
+			<td>TG</td>
+			<td>No</td>
+			<td>Boolean</td>
+			<td>Flag defining if the property is a primary key member.</td>
+		</tr>
+		<tr>
+			<td>isAutoIncremented</td>
+			<td>db</td>
+			<td>TG</td>
+			<td>No</td>
+			<td>Boolean</td>
+			<td>Flag defining if theproperty is auto incremented through the persistency layer.</td>
+		</tr>
+		<tr
+			><td>isAnonymous</td>
+			<td>db</td>
+			<td>TG</td>
+			<td>No</td>
+			<td>Boolean</td>
+			<td>Flag defining if tthe propery is anonymous.</td>
+		</tr>
+		<tr>
+			<td>isIndexed</td>
+			<td>db</td>
+			<td>TG</td>
+			<td>No</td>
+			<td>Boolean</td>
+			<td>Flag defining if the property has an index in the database.</td>
+		</tr>
+		<tr>
+			<td>isLocking</td>
+			<td>db</td>
+			<td>TG</td>
+			<td>No</td>
+			<td>Boolean</td>
+			<td>Flag defining if the property is used for optimistic locking.</td>
+		</tr>
+		<tr>
+			<td>jdbcType</td>
+			<td>db</td>
+			<td>TG</td>
+			<td>No</td>
+			<td>String</td>
+			<td>JDBC type of the column containing the property in the database.</td>
+		</tr>
+		<tr>
+			<td>size</td>
+			<td>db</td>
+			<td>TG</td>
+			<td>No</td>
+			<td>String</td>
+			<td>size of the JDBC type in the database if relevant.</td>
+		</tr>
+		<tr>
+			<td>conversionClass</td>
+			<td>db</td>
+			<td>TG</td>
+			<td>No</td>
+			<td>String</td>
+			<td>Qualified name of the Java class used in OJB to convert between the 
+				JDBC and the Java type.</td>
+		</tr>
+		<tr>
+			<td>isVisible</td>
+			<td>ui</td>
+			<td>TG</td>
+			<td>No</td>
+			<td>Boolean</td>
+			<td>Flag defining if the property is visible in the user interface.</td>
+		</tr>
+		<tr>
+			<td>label</td>
+			<td>ui</td>
+			<td>TG</td>
+			<td>No</td>
+			<td>String</td>
+			<td>Label of the property in the user interface.</td>
+		</tr>
+		<tr>
+			<td>isTransmissible</td>
+			<td>dv</td>
+			<td>TG</td>
+			<td>No</td>
+			<td>Boolean</td>
+			<td>Flag defining if the property is transfered between server and client.</td>
+		</tr>
+	</table>
+
+	<p>An anonymous property is one used in the database to implement 
+		identification and integrity but which is not visible in the application 
+		domain layer. The advantage of this approach is that technical identifiers 
+		are not visible to the application.</p>
+	<p>The following dependencies exist between tags.</p>
+	<ul>
+		<li><code>isPersistent == ((columnName != null) && (jdbcType != null))</code></li>
+		<li><code>isPrimaryKey implies isPersistent</code></li>
+		<li><code>isAutoIncremented implies isPersistent</code></li>
+		<li><code>isIndexed implies isPersistent</code></li>
+		<li><code>isLocking implies isPersistent</code></li>
+		<li><code>(size != null) implies isPersistent</code></li>
+		<li><code>(conversionClass != null) implies isPersistent</code></li>
+		<li><code>(label != null) implies label</code></li>
+	</ul>
+
+	<h3>Indexed Property Element</h3>
+	<p>An indexed property has a name, a description and a visibility. Three types
+		are associated with it. A target type defines the type of the items contained
+		in the property. A interface type defines which collection type is returned 
+		when the list of items is requested. Finally the storage type defines the
+		collection type used to store the items in the business object layers. The 
+		UML 2.0 standard defines the target type and the storage type but not the
+		interface type because it is defined in the methods associated with the 
+		property.</p>
+		
+		<p>An indexed property supports the following information tags.</p>
+	<table border="2" cellspacing="2">
+		<tr>
+			<th align="center">Name</th>
+			<th align="center">Group</th>
+			<th align="center">Type</th>
+			<th align="center">Mandatory</th>
+			<th align="center">Value</th>
+			<th align="center">Comment</th>
+		</tr>
+		<tr>
+			<td>isPersistent</td>
+			<td>db</td>
+			<td>TG</td>
+			<td>Yes</td>
+			<td>Boolean</td>
+			<td>Flag defining if the property is persistent. The default value is false.</td>
+		</tr>
+		<tr>
+			<td>ifCollection</td>
+			<td>bo</td>
+			<td>TG</td>
+			<td>Yes</td>
+			<td>String</td>
+			<td>Qualified class name of the interface collection.</td>
+		</tr>
+	</table>
+		
+	<h2>Code Generator cartriges</h2>	
+		<p>The code generation framework uses the meta model inputs to transform a
+			PIM model into an executable PSM model. The framework uses the open source
+			Jakarta project <em>Velocity</em> to implement the transformation 
+			process. The code generation framework provides convenience methods to
+			simplify the generation of artifacts at project, package and class level.
+			Handling of destination directories and Velocity contexts is managed in
+			the framework.</p>
+		<p>Developers wishing to develop their own cartriges should consult the
+			documentation of the code generator framework. The Velocity documentation
+			can be downloaded from the Jakarta site. Because Velocity is a Java
+			application complex extensions can directly be realized in Java and called
+			from Velocity scripts.</p>	
+		<p>Properties are defined for all cartriges to unify the information 
+			available during the code generation phase. The following properties are
+			defined.</p>
+		<table border="2" cellspacing="2">
+			<tr>
+				<th align="center">Name</th>
+				<th align="center">Value</th>
+				<th align="center">Mandatory</th>
+				<th align="center">Comment</th>
+			</tr>
+			<tr>
+				<td>classBo.prefix</td>
+				<td>String</td>
+				<td>No</td>
+				<td>Prefix appended to all business object classes. Some companies request 
+					prefixes for all classes.</td></tr>
+			<tr>
+				<td>classBo.postfix</td>
+				<td>String</td><td>No</td>
+				<td>Postfix appended to all business object classes. In SOA design this 
+					prefix is oftem <code>Impl</code>.</td></tr>
+			<tr><td>classIf.prefix</td><td>String</td><td>No</td><td>Prefix appended 
+				to all business object interfaces</td></tr>
+			<tr>
+				<td>classIf.postfix</td>
+				<td>String</td>
+				<td>No</td>
+				<td>Postfix appended to all business object interfaces. Some projects uses
+					the postfix <code>If</code> for all interfaces.</td>
+			</tr>
+			<tr>
+				<td>classLw.prefix</td>
+				<td>String</td>
+				<td>No</td>
+				<td>Prefix appended to all lightweight business object classes.</td>
+			</tr>
+			<tr><td>classLw.postfix</td><td>String</td><td>No</td><td>Postfix appended 
+				to all lightweight business object classes.</td></tr>
+		</table>		
+		
+	<h2>Persistency</h2>
+	<p>The UML model is stored to its persistent representation through the help
+		of a factory. This delegation allows us to support multiple persistent
+		format. The <em>pmMDA</em> tool supports the following external 
+		representations.</p>
+		<ul>
+			<dt>XMI 1.0 and MOF 1.4</dt><dd>The reading and writing of this format
+				is performed with the help of the NSUML library. This library is used
+				in various UML modeling tools as ArgoUML, Poseidon and others.</dd>
+			<dt>XMI 2.0 and MOF 2.0</dt><dd>This standards are the current state
+				of the industry representation format.</dd>
+			<dt>Eclipse Ecore MOF 2.0</dt><dd>The Ecore format is a dialect of
+				MOF 2.0 and is the default representation used in the Eclipse 
+				environment.</dd>
+			<dt>Java Bean Long Term Persistency</dt><dd>The Java Bean XML format is
+				the standard Java format to store a long term representation of Java
+				Bean. This format is human readable and is used extensively during
+				the development of the <emp>pmMDA</emp> tool. Any Java application
+				based on JDK 1.4 or higher can read this format.</dd>
+		</ul>
+		<p><em>pmMDA</em> support the conversion from one of the above format
+			to another one. Simply read the data from its file and save it under
+			another format. Only the <em>pmMDA</em> relevant informtion are
+			fully converted.</p>
+		
+	<h2>Architecture</h2>
+	<h3>UML Diagrams</h3>
+	<img src="doc-files/mda-overview.gif"/>
+	<h3>Persistency</h3>
+	<p>Two major goals constrain which persistency mechanisms should be selected.
+		First the persistency format must track official standards. This requirement
+		ensures the interoperability with other applications. The second goal is
+		to minimize the implementation costs for each supported persistency format.
+		Therefore all our format reader and writer are based on available open
+		source library. Our application will never develop its own persistency
+		scheme.</p>
+	<p>The Java bean long term persistency is a standard persistency scheme 
+		introduced with JDK 1.4. The classes which should be persisted must simply
+		respect the Java bean conventions. This assumption is reasonable for our
+		application. The reader and writer are provided in the Java bean package 
+		part of the J2SE API.</p>	
+	<h3>Tagged Values</h3>
+	<p>Each subclass of named elements returns all supported tagged values when
+		requesting them. If the tag value is null it means the tag is not defined.
+		Only defined tagged are saved in the persistency representation. The
+		subclass is responsible to insure that all supported tags are always 
+		available.</p>
+	<h3>Dependencies</h3>
+	<p><em>pmMDA</em> is dependant of the following tools.</p>
+	<ul>
+		<li>Java JDK 1.4.2</li>
+		<li>Eclipse 2.1, EMF plugin, GEF plugin, Omondo UML plugin</li>
+		<li>Commons Beanutils, Commons Logging, Commons Validator, Commons Functor</li>
+		<li>MySQL 4.0 and JConnector 3.0</li>
+		<li>NSUML 0.4</li>
+	</ul>
+	
+	<h2>Wish List</h2>
+	<ul>
+		<li>Enhance the <em>pmMDA</em> user interface to increase the comfort
+			of the user. Consistency rules should be inforced when modifying related
+			tagged values. Reports should be generated to provide overview information
+			on a package or a whole application. The user interface is based on
+			explorer framework to diminish development costs.</li>
+		<li>Develop cartriges to support web application as a target PSM. The
+			generated code should use the struts framework.</li>
+		<li>As soon as an open source implementation of MOF 2.0 and UML 2.0 is 
+	 		available, we will migrate our meta model reprsentation to this standard.
+	 		The new MOF standard was released after the start of the <em>pmMDA</em> 
+	 		and could not be used as initial format.</li>
+	 	<li>Integration of <em>pmMDA</em> user interface in Eclipse and ArgoUML
+	 		environment to streamline the handling for the users.</li>
+	 </ul>
+	 
+	<h2>Similar Projects</h2>
+	<p>The open source community has developed similar projects to generate source
+		code from a description often based on UML. The following projects are of
+		interest.</p>
+	<ul>
+		<dt>AndroMDA</dt><dd>MDA generation tool using a UML model creating with
+			ArgoUML. The cartriges are written with Velocity.</dd>
+		<dt>XDoclet</dt><dd>An approach based on JavaDoc tags and the attributes
+			JSR.</dd>
+	</ul>
+	<h2>Glossary</h2>
+	<ul>
+		<dt><acronym>CORBA</acronym></dt><dd><em>C</em>ommon <em>O</em>bject 
+			<em>R</em>equest <em>B</em>roker <em>A</em>rchitecture</dd>	
+		<dt><acronym>OCL</acronym></dt><dd><em>O</em>bject <em>C</em>onstraint 
+			<em>L</em>anguage</dd>	
+		<dt><acronym>ODMG</acronym></dt><dd><em>O</em>bject <em>D</em>ata 
+			<em>M</em>anagement <em>G</em>roup</dd>	
+		<dt><acronym>OMG</acronym></dt><dd><em>O</em>bject <em>M</em>anagement 
+			<em>G</em>roup</dd>	
+		<dt><acronym>MDA</acronym></dt><dd><em>M</em>odel <em>D</em>riven 
+			<em>A</em>rchitecture</dd>	
+		<dt><acronym>MOF</acronym></dt><dd><em>M</em>eta <em>O</em>object 
+			<em>F</em>acility</dd>	
+		<dt><acronym>PIM</acronym></dt><dd><em>P</em>latform <em>I</em>ndependent 
+			<em>M</em>odel</dd>	
+		<dt><acronym>PSM</acronym></dt><dd><em>P</em>latform <em>S</em>pecific 
+			<em>M</em>odel</dd>	
+		<dt><acronym>SDK</acronym></dt><dd><em>S</em>oftware <em>D</em>evelopment 
+			<em>K</em>it</dd>	
+		<dt><acronym>UML</acronym></dt><dd><em>U</em>nified <em>M</em>odeling 
+			<em>L</em>anguage</dd>	
+		<dt><acronym>USDP</acronym></dt><dd><em>U</em>nified <em>S</em>oftware 
+			<em>D</em>evelopment <em>P</em>rocess</dd>	
+		<dt><acronym>XMI</acronym></dt><dd><em>X</em>ML <em>M</em>etadata 
+			<em>I</em>nterchange</dd>	
+	</ul>
+	
+	<h2>References</h2>
+	<p>The following information is available about the <em>pmMDA</em> project.</p>
+	<ul>
+		<li><a href="doc-files/mda-project-guidelines.html">Project Guidelines</a></li>
+		<li><a href="doc-files/mda-continuous-integration.html">Continuous Integration</a></li>
+	</ul>
+
+	<ul>
+		<li><a href="doc-files/mda-intro-article.html">pmMDA Introduction</a></li>		
+		<li><a href="doc-files/mda-requirements.html">pmMDA Requirements</a></li>		
+		<li><a href="doc-files/mda-soa-architecture.html">Service Oriented Architecture</a></li>		
+	</ul>
+		
+	<h2>History</h2>
+	<p>The origin of the <em>pmMDA</em> is code generators developed for C/C++
+		embedded applications. These code generators were responsible to create the
+		complete menu structure and callbacks declarations for user interfaces. Other
+		generators mapped configuration data to a record based database stored in
+		flash chips. These generators were used in a familly of communication devices
+		used in governemental and tactical scenarios during the nineties. Studies
+		were done with a SDL and Harel state machine code generators. The generator
+		was technically sucessful but to complex to use in daily applications. In
+		particular the available debuggers were not able to cope with applications
+		driven through table of fuction pointers. The generators were already in the
+		public domain and were used in others projects. Later the complete source
+		tree was put under Apache Software License.</p>
+	<p>Based on the made experience the generators were these products a next 
+		generation of code generator to solve the impedance mismatch between object
+		oriented applications and relational databases. These code generators were
+		used in to generate the persistency layer for industrial control and 
+		visualization systems and web based device management systems.</p>
+	<p>The newly developed <em>pmMDA</em> is based on the incredible evolution
+		of software engineering technologies and standards. Leading institutes as
+		OMG, ODMG, JSR groups has pushed the state of the industry technologies. Now
+		<em>pmMDA</em> is used extensively in complex treaty management in the
+		insurance business. Another application field is the generator of Tuxedo
+		based communication servers connecting legacy systems to modern SAP and J2EE 
+		applications supporting new insurances products. These applications are 
+		deployed worldwide and run 24 hours a day, seven days a week. Expectations 
+		exist to use <em>pmMDA</em> in all major developments done in our 
+		company.</p>
+   @since Java 2 Platform, Standard Edition, version 1.4
+</body>

@@ -1,0 +1,207 @@
+<body>
+  The command line parser package implements a framework for the parsing of 
+  user defined command line languages. 
+<h2>Overview</h2>
+  <p>The command line parser package implements a framework for the parsing of 
+  user defined command line languages. The syntax and behavior is very similar 
+  to the command line compiler provided on the old VAX/VMS operating system. 
+  The supported language allows to define flexible and powerful command line 
+  languages without having to program them explicitly. Such languages are
+  used for all command line tools available from various open source 
+  projects.</p>
+
+  <p>The package provides a programmer interface to define and parse new 
+  command languages. Multiple command languages can be supported in the same
+  application. Features are provided to support optional, mandatory, and
+  multiple values of options. An optional default value can be specified for 
+  each command option. An option can be case sensitive or not. The set of legal 
+  values of an option can be specified. Additionally the user needs only to input 
+  the minimum number of significant characters for an option name. The public 
+  classes support the following features.</p>
+  <dl>
+  <dt>Language Definition</dt><dd> The definition of the input command line 
+    language. Each option defines its shortcut, if defined the legal values 
+    it can take and if it is mandatory or not, or if it is case sensitive or not. 
+    A default value can also be defined. The user should define a clean orthogonal 
+    command language to enhance the legibility of the user manual. Compatibility 
+    modes are provided to emulate UNIX like command interfaces. Such command 
+    interfaces concatenate the option with its value in one string.</dd>
+  <dt>Command line parsing</dt><dd> The parser verifies that the used options 
+    are defined and checks that the characteristics of it like multiple values 
+    allowed or if the chosen value must be member of a set of predefined values 
+    are respected. The parser is independent of the input medium. It expects the 
+    command line as an array of strings.</dd>
+    <dt>Error reporting</dt><dd> The parser detects input errors and provides 
+    detailed information about the type and location of the error. Missing 
+    mandatory options are reported. If an option support only a set of values, 
+    illegal values are reported.</dd>
+  <dt>Querying the value</dt><dd> The querying of the values inputed for a given 
+    option. If an option is erroneous, the associated error code can be 
+    queried.</dd>         
+  <dt>Optional user interface</dt><dd>The user can define the values of the
+    various options through an automatically generated user interface.</dd>
+  </dl>
+  
+  <p>Multiple command line language can be distinguished by defining a unique 
+  mandatory option for each language. This option is used to select which 
+  language description should be used to parse the provided command line.</p>
+
+<h2>User Manual</h2>
+<h3>Installation</h3>
+<p>The package is available as jar or as class files. The files must be
+in our class path. The package is compatible with JDK 1.4 or higher. No 
+additional installation steps are necessary.</p>
+<h3>Define Command Language</h3>
+<p>The definition of a new command language is a streamlined task. The 
+following steps should be performed.</p>
+<dl>
+<li>Create a new instance of a command line parser.</li>
+<li>For each option of the language perform the following steps.</li>
+  <dl>
+  <li>Create a new instance of a command line description. </li>
+  <li>Define its characteristics, supported values and default value.</li>
+  <li>Add the description to the command line parser.</li>
+  </dl>
+<li>The command line parser is ready to parse strings against the newly
+  created command language.</li>
+</dl>
+<h3>Parse Command Line</h3>
+<p>An input stream is parsed against a command line language as follow. 
+The design of the command line parser assumes that at most one command line
+input is simultaneously parsed. If multiple inputs need to be analyzed in
+parallel it is necessary to have multiple parser objects. </p>
+<dl>
+<li>The input stream is delivered as an array of strings from the operating
+  system command line.</li>
+<li>Call the method <emph>parseStringsArray</emph> with the string 
+  array.</li>
+<li>The parsed options and possible errors can now be retrieved through the
+  query methods.</li>
+</dl>
+<h3>Tips and Tricks</h3>
+<p>To be written</p>
+
+<h2>Architecture</h2>
+<p> The command line parser package contains a few important concepts. </p>
+<p> First the edition of the command line itself is not part of the package
+itself. The shell provided in the operating system provides the edition
+functions.</p>
+<p>A set of command line descriptions defines the language of the command
+line for a given application. The inputed data is validated against this
+set.</p>
+<p>A set of command line options describes the result of the analysis of
+an inputed command line against a set of command line descriptions. The
+analysis task is performed in the command line parser. The parser supports
+at most one command language but multiple parsers can be defined. If
+multiple languages are used it is the responsibility of the user to decide
+which parser should be used. See the above remark for a possible 
+solution.</p>
+<p>Extensions are provided to interface the package with a user interface.
+This mechanism is available for casual users who do not want to study  into
+the documentation of a specific tool.</p>
+
+<h2>User Interface</h2>
+<h3>Introduction</h3>
+<p> Casual users of command line tools often have problems which options to 
+input to call a tool. A simple user interface allowing the definition of
+command line options is an incredible help for such users. The command
+line package provides support for the automatic generation of simple 
+user interface for application specific command languages. The goal of this
+interface is the interactive definition of parameters for an application
+before calling it.</p>
+<h3>Requirements</h3>
+<p>The user interface allows the definition of all options necessary for
+a command line tool. The following overall mechanisms should be 
+supported. </p>
+<dl>
+<li>The user interface support provides visual blocks for each type of
+  command line option. These blocks are used to construct the user 
+  interface. </li>
+<li>The name of the option is fully displayed in the block. The part of
+  the name which is necessary to uniquely identify the option is visually 
+  marked. A graphical hint shows if the option is mandatory or 
+  optional. </li>
+<li>Default values are visually marked. A option with a default value is
+  always mandatory. </li>
+<li>A help text describing the purpose of each option is available. It
+  should be possible to describe the meaning of each predefined value
+  of an option. </li>
+<li> The command line string can be generated from the input done in 
+  a user interface. The currently defined command line string can always
+  be displayed in a read-only text field. </li>
+</dl>
+<p>The following types of options should be supported in the user interface.
+An option is single if it can only be defined once otherwise it is multiple.
+An option has either no data if it is used as switch, or known values if the
+possible data are defined, or free values if the user has to input them.</p>
+<dl>
+<dt>Hidden option</dt><dd>This option is not visible in the user interface and
+  can only be accessed through the command line mode. The option indicating
+  if the user interface should be displayed is typically such an option. </dd>
+<dt> Simple option without data</dt><dd> The name of the option must be 
+  displayed with a check box indicating if the option is on or off.</dd>
+<dt>Single option with known values</dt><dd> The name of the option must be 
+  displayed with a combo box containing all the supported values. If the
+  option supports a default value, this value must be identified visually and
+  must be the one visible in the combo box if the option is not defined. If the
+  option is not mandatory a mechanism should be provided to disable the option.
+  This mechanism must be disabled in the option is mandatory. </dd>
+<dt>Single option with free value</dt><dd>The name of the option must be
+  displayed with a text box. The text box is used to input the value of the
+  option.</dd>
+<dt>Multiple option with known values </dt><dd>The name of the option must
+  be displayed with a list box containing already defined values and a
+  combo box containing all possible values. Mechanisms are provided to
+  allow the removal of an already defined value, the addition of a new
+  value and to hinder multiple definition of the same value. </dd>
+<dt>Multiple option with free values</dt><dd>The name of the option must be
+  displayed with a list box containing already defined values and a text box.
+  The text box is used to input the values of the option. Mechanisms are
+  provided to allow the removal of an already defined value, the input of 
+  a new value and to hinder multiple definition of the same value.</dd>
+</dl>
+<p>Each of these option can be mandatory or optional. If an option is mandatory
+it can have a default value.</p>
+
+<h3>Architecture</h3>
+  <p>The architecture of the user interface can be separated into two domains.
+  First how the model is manipulated through the user interface is defined.
+  Second the structure of the view is finalized. </p>
+  
+  <p>The model or in other words the command line parser and its data can be 
+  initialized in two ways.</p>
+  <dl>
+  <li>A command line is read from the operating system and parsed. The parsed
+  result is displayed onto the view with the list of possible found errors. 
+  The major aspect is that such a parser can contain erroneous options.</li>
+  <li>The command line options are directly created through the view. Upon
+  construction of the view all default option values must be generated in the
+  model and displayed into the view. This variant is not supported in the user
+  interface. </li>
+  </dl>
+  <p>The user interface models options with at most one value and options with 
+  multiple values. This separation is the base of the inheritance structure of
+  the visual components. Each option type as described above in the requirements
+  is visualized through a separate class. These class can be added to any panel
+  structure in Swing user interface. The most important feature of the user
+  interface is that no constraint exists how many option descriptions and 
+  associated options are supported.</p>
+
+<h2>History</h2>
+  <dl>
+  <li>An extension was added to better qualify the option with free values. A
+   new type property now defines the type of the values. Options with defined
+   values simply have an enumeration type. The other defined types are: none,
+   integer, double, boolean, char, string, and path. </li>
+  <li>The whole framework was slightly adapted to support the new features
+    provided with JDK 1.4, in particular the assertion mechanism. New
+    functions were added to support the manipulation of the command line
+    parser through a user interface. </li>
+  <li>The initial version of the command line library was written for various
+    documentation tools based on the JavaDoc framework or similar concepts.
+    These tools were placed under open source license and used extensively
+    in various commercial and open source projects. In particular the company
+    bbv Software Services Corp. used them in their projects. </li>
+  </dl>
+   @since Java 2 Platform, Standard Edition, version 1.4
+</body>

@@ -1,0 +1,21 @@
+<jdbc-connection-descriptor
+  jcd-alias="ojb-dnm"
+  default-connection="true"
+  platform="MySQL"
+  jdbc-level="3.0"
+  eager-release="false"
+  batch-mode="true"
+  useAutoCommit="0"
+  ignoreAutoCommitExceptions="false"
+  driver="com.mysql.jdbc.Driver"
+  protocol="jdbc"
+  subprotocol="mysql"
+  jndi-datasource-name="java:MySqlDS"
+  username=""
+  password="">
+  <connection-pool maxActive="21" validationQuery=""/>
+  <sequence-manager 
+    className="org.apache.ojb.broker.util.sequence.SequenceManagerInMemoryImpl">
+    <attribute attribute-name="autoNaming" attribute-value="true"/>
+  </sequence-manager>
+</jdbc-connection-descriptor>

@@ -1,0 +1,176 @@
+<body>
+  The application package implements the main mechanisms used in all our 
+  applications. 
+<h2>Overview</h2>
+  <p> The application package implements the main mechanisms used in all our 
+  applications. These mechanisms support the main functions any workstation 
+  based program should provide. These services can be used in 2-tiers and in
+  client server systems.</p>
+
+  <p>The first mechanism is the application startup and shutdown pattern. This 
+  pattern defines how an application is started, shutdowned and also simplifies 
+  hot updates of configuration data. The application class defines the overall 
+  state machine for the application. Each active subsystem must implement the 
+  behavior defined in the component interface. To simplify its implementation 
+  a reference realization is provided with the default component class. Methods 
+  are provided to inform the application when one of the subsystem encounters 
+  a fatal condition. Such a condition enduces an immediate shutdown of the whole 
+  application. A component subclass can have multiple instances to model multiple
+  instances of a subsystems.</p>
+  
+  <p>The second mechanism is the post-office pattern. This pattern enables to 
+  find any subsystem through its name. Therefore it is possible to add 
+  dynamically subsystems and to find them in a running application. The same
+  subsystem can be loaded and instantiated multiple times as long as they have
+  different name. A subsystem must implement the component interface. The system 
+  architect must insures the uniqueness of the names used to identify the various 
+  components of the application. Legacy systems can also be registered in the
+  locator without implementing the component interface. These components are 
+  not part of the application startup and shutdown pattern.</p>
+  
+  <p>The third mechanism manages the configuration of an application. Each 
+  component subclass responsible for an active subsystem should register all 
+  configuration values in the configuration manager. The following hierarchy 
+  is provided.</p>
+
+  <ul>
+    <li>Each subsystem provides its default configuration values directly. These 
+    values should be hardcoded in the application. So if all configuration files 
+    are lost, the application is still able to regenerate reasonable default 
+    values.</li>
+    <li>It is possible to provide a configuration file to the application. The 
+    user can override all writable configuration parameters by redefining the 
+    values in the file.</li>
+    <li>For a given execution of the application it is possible to provide a new 
+    parameter value through the command line interface of the application.</li>
+  </ul>
+  <p>The two first mechanisms are directly supported by the configuration manager 
+  and the application classes. The third mechanism is supported through another 
+  package. Please consult the documentation of the command line parser package for 
+  more information.</p>
+  
+  <p>The fourth mechanism enables the application to dynamically load components 
+  in the system during the startup sequence. Which components should be loaded is
+  defined in the configuration file. For each component the full class and the 
+  name of the component as registered on the application must be defined in the
+  configuration file. If no name is given the default name of the component is 
+  used. How to use the configurationb file is described in the above 
+  mechanism.</p>
+  
+  <p>The fifth mechanism is logger framework. All relevant application 
+    information should be logged through this logger. The logging services
+    are provided through the <em>Jakarta Logging Commons</em> package.</p>
+
+<h2>User Manual</h2>
+<h3>Howto</h3>
+  <p>The following recipe creates a new application using the application
+    framework.</p>
+  <ol>
+    <li>Defines a subclass of the locator class. Writes convenience methods
+      returning the subsystems of your application with the expected type.
+      These methods minimizes the typecast operators in the source code.</li>
+    <li>Each of the application subsystem must implement the component 
+      interface. A default implementation is provided.</li>
+    <li>Create and register each subsystem in the locator. If legacy systems 
+      exit, register them as subsystem in the locator.</li>
+    <li>Creates a new application and register as default locator. A
+      convenience creation method is provided.</li>
+    <li>Initialize and startup the application.</li>
+  </ol>
+  
+<h3>Logging Rules</h3>
+  <p> It is necessary to state clear rules how and when logging should be 
+  performed. Building on our experience we decided to provide a two levels 
+  logging concept.</p>
+  <p> Framework parts must define a logging object per category. Each class of
+  the package knows its package and uses global services to find their logging
+  context. A log event has the following attributes.</p>
+  <ul>
+  <li> The time stamp when the log was generated. This information is generated 
+    in the logger framework.</li>
+  <li> The qualified class name from which the log was generated. This
+    information uniquely identifies the class generating the logging 
+    event.</li>
+  <li>An identifier defining which logging event was generated. The qualified 
+    class name and the identifier define a key, which can be used  to search
+    occurences of the event.</li>
+  <li> A text describing the log reason. The language is US English 
+    international. The text can contains dynamic data describing in more
+    details the reason of the logging event.</li>
+  <li> The level of the logging event.</li>
+  </ul>
+  <p> The logging package of the Apache project provides a logging event class,
+  which contains all the above requested items. Therefore the logger package
+  implements mainly a facade to the Apache project.</p>  
+  <p> Applications parts can define logging objects. Each logging object is 
+  identified through the logical activity it performs.</p>
+
+<h2> Architecture </h2>
+
+<p> Please consult the Sematech documentation for a detailed discussion how the
+factory startup pattern and the post-office pattern are used for major 
+production control systems in the semiconductor industry. </p>
+
+<p> One major discussion aspect was the retrieval of strings. In particular
+we want to support multiple clients or to generate reports in other languages
+than the local value. Therefore the standard mechanisms provided in the Java
+library are no more so easy to use. In particular we wanted to store our 
+strings into a database.</p>  
+
+<h3>Application Component</h3>
+  <p>The component class and the associated application class implements a 
+    state machine describing the possible state of a software application. The
+    state machine has the following states.</p>
+  <ul>
+    <li> Stopped The application is stopped and no component is running.</li>
+    <li> Initializing The components of the application are initializing.</li>
+    <li> Initialized All components of the application are initialized.</li>
+    <li> Starting The components of the application are starting.</li>
+    <li> Running All components of the application are running without any
+      limitations.</li>
+    <li> Shutting Down Normally The application is going down normally. The
+      components of the application are shutting down.</li>
+    <li> Shutting Down Immediately A problem was detected and all components
+      are shutting down as fast as possible. </li>
+  </ul>
+
+<h3>Locator Pattern</h3>
+  <p>The locator class provides a unique and central entry point in the 
+    application. All requests to find a subsystem are performed through the 
+    locator. This approach enables to define different susbsystem implementations
+    on server and client side. The application developer does not need to care
+    about the correct implementation because the locator will always provide the
+    correct one. This design pattern combines the locator pattern with the 
+    approach where a subsystem interface is defined as a Java interface.</p>
+  <p>Application programmers should always use the locator. Their functions will
+    be location independant and can be moved to the server or client without
+    any changes.</p>
+  <p>The locator class provides a create method enabling an application to 
+    instantiate and register a subclass of locator. The subclass is a 
+    specialized form providing additional functions and convenience methods
+    to the components.</p>
+
+<h2>Modifications</h2>
+  <p>The following modifications and errors were documented.</p>
+  <ul>
+  <li>The internal logging framework was discarded and replaced with the one
+    provided by Jakarta.</li>
+  <li> A new method install was added to the component class. The method is 
+    called the very first time the application is started. This hook enables
+    the definition of component configuration data such as multiple languages,
+    default values for settings, etc. </li>
+  <li> The state machine of the application class was not updated when the
+    corresponding methods were called. To be compliant with the latest release
+    of the factory start-up pattern the state STARTED was added.</li>
+  <li> All state machine constants are now declared as public final static
+    integer values. The naming conventions are compliant to the Java standard and
+    therefore do not respect the known legibility rules. </li>
+  <li> The implemenation uses the new collection framework and assert statement
+    of JDK 1.4 or higher. Support of older JDK is not provided.</li>  
+  <li> The application framework was extended to support a application wide 
+    logger.  The logger structure was adapted to support the concept of handlers.
+    The developers are free to define how the logging information is stored or
+    visualized. </li> 
+  </ul>
+   @since Java 2 Platform, Standard Edition, version 1.4
+</body>

@@ -1,0 +1,81 @@
+/* copyright 2000-2004 Marcel Baumann 
+ * Licensed under the Apache License, Version 2.0 (the "Licence); 
+ * you may not use this file except in compliance with the License. 
+ * $Id$
+ */
+package ch.bbv.mda.persistency.nsuml;
+
+import java.util.Collection;
+import java.util.Iterator;
+
+/**
+ * The filter iterator provides a selective iterator over a collection. Only
+ * items compatible with the filter class are returned.
+ * @author MarcelBaumann
+ * @version $Revision$
+ */
+public class FilterIterator implements Iterator {
+  /**
+   * Iterator used to iterate over the collection.
+   */
+  private Iterator iterator;
+
+  /**
+   * Class used to filter the items of the collection.
+   */
+  private Class filter;
+
+  /**
+   * The next element of the iterator. This buffer is necessary to implement the
+   * has next method.
+   */
+  private Object data;
+
+  /**
+   * Constructor of the class.
+   * @param collection collection on which the iterator will be applied.
+   * @param filter the filter criterium.
+   * @pre collection != null && filter != null
+   */
+  public FilterIterator(Collection collection, Class filter) {
+    assert ((collection != null) && (filter != null));
+    iterator = collection.iterator();
+    this.filter = filter;
+    next();
+  }
+
+  /**
+   * Unsupported operation for filter iterator.
+   * @see java.util.Iterator#remove
+   */
+  public void remove() {
+    throw new UnsupportedOperationException();
+  }
+
+  /**
+   * Returns true if the iterator has a next item.
+   * @return true if a next item exists otherwise false.
+   * @see java.util.Iterator#hasNext
+   */
+  public boolean hasNext() {
+    return data != null;
+  }
+
+  /**
+   * Returns the next object of the iterator.
+   * @return the next object of the iterator if defined otherwise null.
+   * @see java.util.Iterator#next
+   */
+  public Object next() {
+    Object value = data;
+    data = null;
+    while (iterator.hasNext()) {
+      data = iterator.next();
+      if (filter.isAssignableFrom(data.getClass())) {
+        break;
+      }
+      data = null;
+    }
+    return value;
+  }
+}

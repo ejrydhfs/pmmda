@@ -1,0 +1,287 @@
+Test Support
+------------
+The pmMDA provides a set of tests used for regression each time a new version
+is released. The tests are provided a set of UML models and associated java
+classes. The classes are stored in the test tree of the project.
+
+TODO
+----
+- Implements protected code zones for declaration and definition.
+- Handle reference codes in BOG framework
+- test insert at
+- implements 1-1 in OEX
+- Defines the reference code explorer as a pmMDA model
+- Implements interface to Poseidon using MDR UML MOF package.
+- Write JUnit regression test suite.
+- Write Velocity macros to simplify the templates.
+- Add preference dialog to the pmMDA (cartridge, visible tags).
+  classname, prefix, loaded, active, dependants
+- Have a self contained jar file running with java -jar pmMDA
+
+Version 0.2.9 (01 August 2004)
+----------------------------
+The following new features were added.
+- The CVS repository was moved to the sourceforge pmmda account.
+
+The following errors were corrected.
+- The templates files were fine tuned. The generated Java source files are 
+  compiled within Eclipse 3.0 without warnings.
+- The JavaDoc comments were enhanced.
+  
+Version 0.2.8 (30 June 2004)
+---------------------------
+The following new features were added.
+- pmMDA is now available as a sourceforge project. The source code and all
+  artifacts are available under license Apache 2.0 at sourceforge under
+  www.sourceforge.net/projects/pmmda.
+- Release notes for future versions of the BOG framework will be handled in
+  the BOG release notes.
+- The BOG cartridge was optimized not to generate superfluous import 
+  statements.
+- The velocity engine was upgraded to version 1.4.
+- The XML persistency layer moved from the betwixt to the xstream library.
+  The Jakarta Commons Betwixt project is dead. JAXB is not an alternative
+  for our project because JAXB wants control of the bean generation.
+- The PMD rules were modified to allow identifiers with a length [3..20]. 
+- The Ant file was updated to be more usable when used on machines with 
+  different file structures from the one on our development machines.
+- The cartridge properties were extended to allow simultaneous generation of
+  rich client interfaces using direct access, CORBA and J2EE middleware to
+  communicate with the database.
+
+The following errors were corrected.
+- Obsolete tagged values defined in earlier versions of cartridges are now
+  correctly removed from a model when saved. Obsolete tag types must be 
+  registered in the retrieve obsolete tag types.
+- The cartridge factory is now resilient to spaces at start and end of 
+  cartridge names defined in a property file.
+- Import statements for standard classes not defined in the ArgoUML model are
+  now handled without generating an exception. A error message is added in the
+  log file if a non Java standard class is used but not defined in the model.
+- The visitor template does not generate visit method for referenced business
+  objects classes defined in another package. The user can define such cross-
+  package dependencies by hand in his execute method.
+- Corrected an error in the generated XML deployment descriptors for J2EE. The
+  DTD reference had a typo.
+  
+Version 0.2.7 (15 April 2004)
+-----------------------------
+The following new features were added.
+- Reference codes are handled in the server, CORBA, EJB, and client framework.
+- The OJB O/R layer was upgraded to OJB-1.0-RC6. The logging layer was updated
+  to 1.0.3. 
+- First steps were taken to reduce the number of warnings when compiling 
+  generated source codes.  The indentation of the code was also improved.
+- EJB cartridge was extended and has initial support for interface declaration
+  of session beans.
+
+The following errors were corrected.
+- The transformation for java system class for the type of a property was
+  wrong. The name was the name instead of the qualified name.
+- The qualified names of the classes in java.lang were added in the CTO
+  cartridge.
+- The template for the CORBA server was enhanced to support the case where
+  a package has no lightweight representation of business objects.
+- Handling of exceptions during a CORBA request are now handled. The error is
+  catched and a BOG error is thrown.
+
+Version 0.2.6 (04 April 2004)
+-----------------------------
+This version is the first one where most of the work was performed in the
+cartridge and not in the kernel of the pmMDA.
+
+The following new features were added.
+- All cartridges are now loaded dynamically through the extension mechanism.
+  The only requirement is that cartridges implement the cartridge interface.
+- The CTO cartridge was extended to generate complete CORBA server and wrappers
+  for the business object graph framework. The retrieve and update operations
+  are available for all defined business object graphs.
+- The OEX cartridge templates were enhanced to minimize the code the client
+  programmer has to write. 
+- The lightweight template and the OEX cartridge do not request anymore a name
+  property. A new tagged value defines the property used to generate the name
+  of a node.
+- The properties were extended and the cartridges adapted to enable users to
+  generate common, server, and client code in different repositories.
+- The OJB cartridge was extended to support the definition of reference code
+  values and the generation of more complex reference code Java classes.
+- The test application was extended to test more extensively the cartridges.
+
+The following errors were corrected.
+- The import statements support handles the type used in the properties. This 
+  was a regression of the 0.1 series developed during Spring 2003. The 
+  statements are sorted.
+- The OJB cartridge templates had an error when generating backward relations
+  for business objects and generated too many relations in the special case
+  where the business object type of a N relation is persistent but not 
+  lightweight.
+- The OEX framework now expands the tree up to the selected node when the 
+  business object below is loaded.
+
+Version 0.2.5 (10 March 2004) - Internal Release -
+--------------------------------------------------
+The following new features were added.
+- The pmMDA was extended to support pluggable cartridges. Now you can add a new
+  cartridge without modifying or recompiling the pmMDA application. Initial
+  input of the HSR Rapperswil semester project is integrated in this release.
+- The next iteration of the OEX cartridge and the associated explorer framework
+  was performed. The example used to test BOG and OJB cartridges is also used 
+  to test OEX cartridge. Documentation was extended to present the OEX concepts.
+- The OJB cartridge and the BOG framework are more extensively tested with the
+  User test and MySQL database.
+- The BOG cartridge was extended to provide visitor for the lightweight 
+  objects. This feature provides orthogonal functionality to the business object
+  graph framework.
+
+The following errors were corrected.
+- An error in the pre-processing of dependants cartridges was corrected.
+- Non used code was removed from the velocity template to make them more 
+  legible. The OJB templates were extended to support anonymous foreign keys.
+  The template of the visitor was extended to support a depth information - see
+  the pmMDA documentation for the reasons -.
+- Layout correction in the tagged value list providing better display of combo-
+  box.
+- Removal of singleton pattern in the user interface node type factory to 
+  provide more flexible option. Each explorer instance has now its own factory.
+  An error was removed in the generation of the popup menus.
+- System packages and classes are no more extended with tagged values defined 
+  in the cartridge. These classes cannot be generated and should not be handled
+  in the cartridge framework.
+- The generation of setter in the Java beans had an error in the test if the
+  property changed.
+
+Version 0.2.4 (22 February 2004)
+--------------------------------
+The following new features were added.
+- A major upgrade of the explorer framework was made available. A new cartridge
+  OEX was added to support the generation of simple user interface based on the
+  explorer tree list paradigm. The JGoodies layout managers are integrated in 
+  the explorer framework to enhance look and feel. The new framework was used 
+  to refactor all dialogs of the pmMDA. Reference codes can be displayed as
+  field value or as tagged value.
+- The OJB cartridge was extended and has now a Torque target. The generated
+  Torque file can be used to create database for all database products 
+  supported in Torque. The goal was added to help teams already using Torque.
+- The source code copyright was updated from the Apache license 1.1 to version
+  2.0.
+- Build scripts were updated to Ant 1.6. You must use Ant 1.6 or higher to
+  sucessfully build the project.
+- A test example managing user accounts for a web application is provided.
+  The example is compatible with the JDBC realm of Tomcat 5.
+- The properties "ojb-jdbc-type", "ojb-jdbc-size", "ojb-jdbcType" and 
+  "ojb-jdbcSize" are now obsolete and replaced by "ojb-column-type" and 
+  "ojb-column-size". Obsolete properties are automatically removed when
+  the model is loaded. These properties will be deprecated in the next release.
+- Installation notes and support for execution of the pmMDA without eclipse
+  are now provided. The properties file of pmMDA now contains documentation
+  about major configuration options.
+- The user management example shows the capabilities of the various cartridges.
+- Shell scripts are provided to start pmMDA as a standalone application.
+
+The following errors were corrected.
+- Tagged values in the view mode cannot anymore be edited in the dialog. This
+  behavior is coherant with the fact it is no possible to modify a view dialog.
+- The installation nodes were extended to clearly describe how to start the 
+  application outside and inside Eclipse. More information how to write a 
+  compliant ArgoUML model were added to the FAQ part.
+- Handling of aggregation and composition relationship now contain description
+  and UML standard tags. The synchronization works in both directions.
+- The types of the cartridges tagged values are documented in more details. 
+  This modification was performed upon request of students doing a semester
+  work with pmMDA.
+- Testing and debugging are performed with assertion enabled to increase error
+  detection against robustness. Deployment is done without enabling assertions.
+  JDK 1.4 or higher is required.
+
+Version 0.2.3 (05 January 2004)
+--------------------------------
+The following new features were added.
+- Support of version 0.2.0 is stopped and cannot anymore be downloaded.
+- Extensive support of properties to configure runtime behavior of cartridges.
+  All properties have default values are documented in the cartridge 
+  descriptions.
+- Refinement of the business object code, ojb and CORBA generation templates.
+  The handling of reference code and business object stereotype was streamlined.
+- Support of removal of obsolete tags when a cartridge is updated. 
+- Version 1.0 of the business object graph framework documentation was released.
+- Version 0.2 of the compute attributes framework documentation was released.
+- Version 0.3 of the pmMDA documentation framework was released.
+
+The following errors were corrected.
+- the processing of inheritance and implementation relations was moved at 
+  package level to reflect the behaviour of the NSUML library. These relations
+  should now be processed correctly. 
+- Quality metric values with JDepend now works through the update of Ant from
+  version 1.5 to 1.6. In a next step the limits must be set in the project.
+
+Version 0.2.2 (01 December 2003)
+--------------------------------
+The release is a patch to solve the regression error occuring when saving a 
+NSUML project.
+
+The following new features were added.
+- The pmMDA documentation was extended to describe the business object cartridge
+  with all defined stereotypes and tagged values. Articles describing the 
+  business object framework and computation of derived attributes are also 
+  available.
+- The business cartridge used to generate business objects, lightweight objects,
+  visitor pattern, visitor functor and reference code manager was tested with
+  a reference model delivered with the application. The mapping to the NSUML
+  model was also extensively tested including inheritance relations.
+- Sanity test is performed by self-hosting part of the MDA classes in the
+  application. The test is to generate the application with MDA, compile them,
+  execute it to regenerate the classes. If the generated artifacts are the same 
+  the sanity check is sucessful. The proof of concept was sucessfull because 
+  the generated items have a more rich behavior with the same interface.
+
+The following errors were corrected.
+- The save operation of an indexed property to a NSUML model was incorrect.
+- Corrected regression error when storing tagged values from named items.
+- Multiplicity of  indexed properties was incorrectly stored in NSUML model. 
+  The code assumed wrongly that NSUML used a factory for multiplicity.
+
+Version 0.2.1 (01 November 2003)
+--------------------------------
+The following new features were added.
+- Packages can only be created at model level to better reflect the concept of
+  naming scope.
+- UML models are read from UML 1.3/ XMI 1.0 created with the NSUML library.
+  Freely available tools such as ArgoUML 0.14 or Poseidon 1.4 creates such 
+  models. With the help of the Unisys XMI tranformer, Rational Rose models can 
+  also be imported. 
+- Overall documents describing the concepts of 'pmMDA' and 'business object 
+  graph' are written. 
+- Dependencies to the JFree common package were removed.
+
+The following errors were corrected.
+- The menu items in the file menu are now synchronized with the status of the
+  displayed model. 
+- The handling of the filename of the model is now fully performed in the MDA
+  user interface. The user does not need anymore to provide information. The
+  standard save and save as mechanisms are used.
+- Configuration of Velocity engine is now done through a property file to avoid
+  hardcoded paths in the source code.
+- The tag of the release follows the guidelines of the Apache group and is
+  also used to tag the files in the CVS repository as specified in the 
+  development guidelines.
+
+Version 0.2.0 (15 October 2003)
+-------------------------------
+The version is based on the initial prototype used to create an Internet based
+application, which managed network of connected devices. In particular the
+explorer, application and command line parser packages were defined in this
+project. The code generation and persistence packages were defined in private
+projects. Ideas were developed during a big contract management project for 
+an insurance company.
+- The pmMDA has a complete model for project, package, class, property and 
+  indexed property. The models can be saved in a serializable form. The 
+  model handles dynamic addition of tagged values when additional cartridges
+  are added.
+- The business object cartridge generates Java code for the business objects,
+  their lightweight representation, the visitor pattern and visitor functor 
+  template, and the reference code manager. Support classes for the generated 
+  source code are available with documentation.
+- The persistency cartridge generates O/R mapping between the business object
+  model and the persistency layer. The cartridge currently maps the model
+  to the OJB 1.0 persistency framework.
+- The pmMDA has a minimal explorer based user interface to edit MDA models.

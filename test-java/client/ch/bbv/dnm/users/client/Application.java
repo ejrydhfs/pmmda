@@ -1,0 +1,158 @@
+/* copyright 2000-2004 Marcel Baumann
+ * Licensed under the Apache License, Version 2.0 (the "Licence);
+ * you may not use this file except in compliance with the License.
+ * $Id$
+ */
+package ch.bbv.dnm.users.client;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.omg.CORBA.ORB;
+
+import ch.bbv.application.ComponentException;
+import ch.bbv.application.Locator;
+import ch.bbv.dog.*;
+import ch.bbv.dog.persistence.PersistenceHandler;
+import ch.bbv.utilities.ReflectUtilities;
+
+/**
+ * The application implements the users specific locator class for the client.
+ * Convenience methods are provided to access the components.
+ * @author MarcelBaumann
+ * @version $Revision$
+ */
+public class Application extends Locator {
+  /**
+   * The name of the ORB subsystem as registered.
+   */
+  public static final String ORB_NAME = "CORBA_ORB";
+
+  /**
+   * The OJB schema name of the database containing the persistent data.
+   */
+  public static final String SCHEMA = "ojb-dnm";
+
+  /**
+   * The mode for the 2-tier mode of the application.
+   */
+  public static final String USE_DIRECT = "direct";
+
+  /**
+   * The mode for the CORBA mode of the application.
+   */
+  public static final String USE_CORBA = "corba";
+
+  /**
+   * The mode for the J2EE mode of the application.
+   */
+  public static final String USE_J2EE = "j2ee";
+
+  /**
+   * Logger for all instances of the class.
+   */
+  private static Log log = LogFactory.getLog(Application.class);
+
+  /**
+   * Command line arguments of the application.
+   */
+  private static String[] args;
+
+  /**
+   * Constructor of the class.
+   * @param mode mode of the application. The legal values are defined as
+   *        constants (USE_DIRECT, USE_CORBA, USE_J2EE).
+   * @throws ComponentException occured when building the application.
+   */
+  public Application(String mode) throws ComponentException {
+    DataObjectManager manager = null;
+    register(this);
+    if (mode.equalsIgnoreCase(USE_DIRECT)) {
+      log.info("Application started in direct mode");
+      manager = new DataObjectManager(new LocalHandler(new PersistenceHandler(
+          false)), new LightweightObjectHandlerImpl(), null);
+    } else if (mode.equalsIgnoreCase(USE_CORBA)) {
+      log.info("Application started in CORBA mode");
+      register(ORB.init(args, null), ORB_NAME);
+      manager = new DataObjectManager(
+          createHandler("ch.bbv.dnm.users.client.UsersServerCorbaWrapper"),
+          new LightweightObjectHandlerImpl(), null);
+    } else if (mode.equalsIgnoreCase(USE_J2EE)) {
+      log.info("Application started in J2EE mode");
+      manager = new DataObjectManager(
+          createHandler("ch.bbv.dnm.users.client.UsersServerWrapper"),
+          new LightweightObjectHandlerImpl(), null);
+    }
+    register(manager);
+    UserExplorer.registerNodeTypes();
+    initialize();
+    startup();
+    manager.getBoHandler().openDatasource(SCHEMA, false);
+    new UserExplorer("User Explorer", SCHEMA);
+  }
+
+  /**
+   * Convenience method returning the locator instace as an application.
+   * @return the singleton locator as application instance.
+   */
+  public static Application getApplication() {
+    return (Application) Locator.getInstance();
+  }
+
+  /**
+   * Entry point to create a client instance.
+   * @param args command line arguments.
+   */
+  public static void main(String[] args) {
+    try {
+      String mode = USE_DIRECT;
+      Application.args = args;
+      if (log.isInfoEnabled()) {
+        StringBuffer buffer = new StringBuffer();
+        for (int i = 0; i < args.length; i++) {
+          buffer.append(args[i]).append(" ");
+        }
+        log.info(buffer.toString());
+      }
+      if ((args.length >= 2) && args[0].equals("-mode")) {
+        mode = args[1];
+      }
+      new Application(mode);
+    } catch (ComponentException e) {
+      log.fatal(e);
+    }
+  }
+
+  /**
+   * Returns the data object manager of the application. The manager provides
+   * access the data object handler, lock manager and lightweight object
+   * handler.
+   * @return the data object handler of the application.
+   */
+  public DataObjectManager getDataObjectManager() {
+    Locator locator = Locator.getInstance();
+    return (DataObjectManager) locator.getComponent(DataObjectManager.NAME);
+  }
+
+  /**
+   * Returns the CORBA Object Request Broker if run in CORBA mode otherwise
+   * null.
+   * @return the ORB of the application if defined otherwise null.
+   */
+  public final ORB getOrb() {
+    return (ORB) getSubsystem(ORB_NAME);
+  }
+
+  /**
+   * Creates the data object handler of the application. Reflection is used to
+   * insure the correct class is instantiated. The class is created through the
+   * MDA approach and is not know at compilation time of this class.
+   * @param qualifiedName qualified name of the data object handler class to
+   *        instantiated. The class must provide a static create method.
+   * @return the requested instance if sucessful otherwise null
+   * @pre qualifiedName != null
+   */
+  protected final DataObjectHandler createHandler(String qualifiedName) {
+    assert (qualifiedName != null);
+    return (DataObjectHandler) ReflectUtilities.createInstance(qualifiedName);
+  }
+}

@@ -1,0 +1,211 @@
+#set($sign="#")
+#set($dollar="$")
+/* This code was generated automatically with the pmMDA generator. Please do 
+   NOT add code outside the marked zones. All changes outside the marked areas 
+   will be discarded during the next execution of the MDA generator. 
+   ${dollar}Id${dollar}
+*/
+
+package ${package.getAttribute("ejb-server-package")};
+
+#set($imports=${model.createImportStatements(${package.getAttribute("ejb-server-package")})})
+#set($dummy=${imports.addPackageName(${package.getAttribute("bo-mo-package")})})
+#set($dummy=${imports.addPackageName(${package.getAttribute("bo-lw-package")})})
+#set($dummy=${imports.addPackageName("java.util")})
+#set($dummy=${imports.addClassName("java.util.ConcurrentModificationException")})
+#set($dummy=${imports.addClassName("java.rmi.RemoteException")})
+#set($dummy=${imports.addClassName("javax.ejb.SessionContext")})
+#set($dummy=${imports.addClassName("ch.bbv.application.Locator")})
+#set($dummy=${imports.addClassName("ch.bbv.dog.DataObjectManager")})
+#set($dummy=${imports.addClassName("ch.bbv.dog.DataObjectHandler")})
+#set($dummy=${imports.addClassName("ch.bbv.dog.DataObject")})
+#set($dummy=${imports.addClassName("ch.bbv.dog.DataObjectId")})
+#set($dummy=${imports.addClassName("ch.bbv.dog.DataObjectUpdate")})
+#set($dummy=${imports.addClassName("ch.bbv.dog.LightweightObject")})
+#set($dummy=${imports.addClassName("ch.bbv.dog.DogException")})
+#set($dummy=${imports.addClassName("org.apache.commons.logging.Log")})
+#set($dummy=${imports.addClassName("org.apache.commons.logging.LogFactory")})
+#set($importStatements=${imports.getImportStatements(4)})
+#foreach($importStatement in $importStatements) 
+import $importStatement;
+#end
+   
+#set($serverName=${package.valueOfTag("ejb-server-name")})
+#set($className="${serverName}SessionBean")
+/** 
+ * The class implements the data object graph stateless session bean and
+ * implements all the functions defined in the BOG framework.
+ * ${dollar}Revision${dollar}
+ */
+public class ${className} implements javax.ejb.SessionBean {
+  /** 
+   * Logger of the server wrapper class.
+   */
+  private static Log log = LogFactory.getLog(${className}.class);
+
+  /** 
+   * Session context of the session bean.
+   */
+  private SessionContext context;
+  
+#foreach($class in $classes)
+#if(${class.booleanValueOfTag("bo-is-root")})
+#set($boMoClass=${class.getAttribute("bo-mo-class")})
+#set($boLwClass=${class.getAttribute("bo-lw-class")})
+  public ${boMoClass}[] retrieve${boMoClass}(String datasource, Integer id, String constraints) 
+    throws RemoteException {
+    try {
+      List bos;
+      DataObjectHandler handler = getHandler();
+      if (log.isTraceEnabled()) {
+        log.trace("start retrieve${boMoClass} " + datasource + " " + id + " " + constraints);
+      }
+      if (id != null) {
+        bos = new ArrayList();
+        DataObject bo = handler.retrieve(datasource, ${boMoClass}.class, id);
+        if (bo != null) {
+          bos.add(bo);
+        }
+      } else {
+        bos = handler.retrieve(datasource, ${boMoClass}.class, constraints);
+      }
+      ${boMoClass}[] items = (${boMoClass}[])bos.toArray(new ${boMoClass}[bos.size()]);
+      for (int i = 0; i < items.length; i++) {
+        items[i] = (${boMoClass})items[i].copy();
+      }
+      if (log.isTraceEnabled()) {
+        log.trace("end retrieve${boMoClass}");
+      }
+      return items;
+    } catch (ConcurrentModificationException e) {
+      log.warn(e);
+      throw new RemoteException("concurrent access in retrieve${boMoClass}", e);
+    } catch (Exception e) {
+      log.error(e);
+      throw new RemoteException("retrieve${boMoClass}", e);
+    }
+  }
+#if(${class.booleanValueOfAttribute("bo-lightweight")})  
+
+  public ${boLwClass}[] retrieveLw${boLwClass}(String datasource, Integer id, String constraints) 
+    throws RemoteException {
+    try {
+      List lws;
+      DataObjectHandler handler = getHandler();
+      if (log.isTraceEnabled()) {
+        log.trace("start retrieveLw${boLwClass} " + datasource + " " + id + " " + constraints);
+      }
+      if (id != null) {
+        lws = new ArrayList();
+        LightweightObject lw = handler.retrieveLw(datasource, ${boLwClass}.class, id);
+        if (lw != null) {
+          lws.add(lw);
+        }
+  	  } else {
+        lws = handler.retrieveLw(datasource, ${boLwClass}.class, constraints);
+      }
+      ${boLwClass}[] items = (${boLwClass}[])lws.toArray(new ${boLwClass}[lws.size()]);
+      for (int i = 0; i < items.length; i++) {
+        items[i] = (${boLwClass})items[i].copy();
+      }
+      if (log.isTraceEnabled()) {
+        log.trace("end retrieve${boLwClass}");
+      }
+      return items;
+    } catch (Exception e) {
+      log.error(e);
+      throw new RemoteException("retrieveLw${boLwClass}", e);
+    }
+  }
+#end  
+  
+  public DataObjectUpdate[] store${boMoClass}(String datasource, ${boMoClass} root)
+	throws RemoteException {
+	try {
+      DataObjectHandler handler = getHandler();
+      if (log.isTraceEnabled()) {
+        log.trace("start store${boMoClass} " + datasource + " " + root.getId());
+      }
+      List infos = handler.store(datasource, ${boMoClass}.class, root);
+      if (log.isTraceEnabled()) {
+        log.trace("end store${boMoClass}");
+      }
+      return (DataObjectUpdate[])infos.toArray(new DataObjectUpdate[infos.size()]);
+    } catch (ConcurrentModificationException e) {
+      log.warn(e);
+      throw new RemoteException("concurrent access in store${boMoClass}", e);
+    } catch (Exception e) {
+      log.error(e);
+      throw new RemoteException("store${boMoClass}", e);
+    }        
+  }
+  
+  public void remove${boMoClass}(String datasource, Integer id) throws RemoteException {
+    try {
+      DataObjectHandler handler = getHandler();
+      if (log.isTraceEnabled()) {
+        log.trace("start remove${boMoClass} " + datasource + " " + id);
+      }
+      handler.remove(datasource, ${boMoClass}.class, id);
+      if (log.isTraceEnabled()) {
+        log.trace("end remove${boMoClass}");
+      }
+    } catch (ConcurrentModificationException e) {
+      log.warn(e);
+      throw new RemoteException("concurrent access in remove${boMoClass}", e);
+    } catch (Exception e) {
+      log.error(e);
+      throw new RemoteException("remove${boMoClass}", e);
+    }
+  }
+
+#end
+#end
+  public void heartbeat() {
+    assert(Locator.getInstance() != null);
+  }
+
+  public void ejbCreate() {
+#set($locatorClass=${cartridge.getContext().getProperty("ejb-cartridge.server-locator-classname")})  
+    Locator.create("${locatorClass}", null);
+  }
+  
+  public void ejbActivate() {
+    // required j2ee method declaration
+  }
+  
+  public void ejbPassivate() {
+    // required j2ee method declaration
+  }
+  
+  public void ejbRemove() {
+    // required j2ee method declaration
+  }
+
+  /**
+   * Sets the session context of the session bean.
+   * @param context session context of the session bean.
+   * @see #getSessionContext
+   */
+  public void setSessionContext(SessionContext context) {
+    this.context = context;
+  }
+  
+  /**
+   * Returns the session context of the session bean.
+   * @return the session context of the session bean.
+   * @see #setSessionContext
+   */
+   SessionContext getSessionContext() {
+     return context;
+   }
+   
+  /** 
+   * Returns the data object handler of the application.
+   * @return the data object handler of the application.
+   */    
+  private DataObjectHandler getHandler() {
+    DataObjectManager manager = (DataObjectManager) Locator.getInstance().getComponent(DataObjectManager.NAME);
+    return manager.getBoHandler();
+  }
+}

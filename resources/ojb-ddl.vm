@@ -1,0 +1,77 @@
+## generate the table declaration
+#if(${database} == "MySQL")
+#set($postTable=" TYPE=InnoDB")
+#end
+#set($schema=${package.valueOfTag("ojb-schema-name")})
+#if(${schema})#set($schema=${schema} + ".")#else#set($schema="")#end
+#set($table=${class.getAttribute("ojb-table-name")})
+DROP TABLE IF EXISTS ${schema}${table};
+CREATE TABLE ${schema}${table} (
+#if(${class.getStereotype()} == "dataObject")
+  ID INTEGER NOT NULL,
+#end
+#foreach($property in $properties)
+#if(!${property.isTransient()})
+#set($columnType=${property.valueOfTag("ojb-column-type")})
+#set($columnName=${property.getAttribute("ojb-column-name")})
+#set($typeName=${property.getTypeName()})
+#set($type=false)
+#set($type=${model.findClass(${typeName})})
+#if(!${property.booleanValueOfTag("ojb-can-be-null")} || ${property.isPrimaryKey()})#set($nullInfo=" NOT NULL")#else#set($nullInfo="")#end
+#if(${type} && (${type.getStereotype()} == "dataObject") && ${type.booleanValueOfTag("ojb-is-persistent")})
+  ${property.nameUpper()}_FK INTEGER${nullInfo},
+#else
+## support MySQL version < 4.1. Boolean was introduced as alias only in version 4.1
+#if(($columnType == "BOOLEAN") || ($columnType == "Boolean")) 
+  ${columnName} TINYINT(1)${nullInfo},
+#elseif(($columnType == "STRING") || ($columnType == "String")) 
+  ${columnName} VARCHAR(${property.valueOfTag("ojb-column-size")})${nullInfo},
+#else
+  ${columnName} ${columnType}${nullInfo},
+#end
+#end
+#end
+## aggregations with cardinality 1-1 and 1-0..1 are generated as foreign keys.
+## This situation should never arise because this is a simple property.
+#foreach($aggregation in $aggregations)
+#if(${aggregation.getMultiplicity().getUpperBound()} == 1)
+#set($columnType=${property.valueOfTag("ojb-column-type")})
+#set($columnName=${aggregation.getAttribute("ojb-column-name")})
+#set($typeName=${aggregation.getTypeName()})
+#set($type=false)
+#set($type=${model.findClass(${typeName})})
+#if(!${aggregation.canBeNull()})#set($nullInfo=" NOT NULL")#else#set($nullInfo="")#end
+#if(${type} && (${type.getStereotype()} == "dataObject") && ${type.booleanValueOfTag("ojb-is-persistent")})
+  ${columnName}_FK INTEGER${nullInfo},
+#end
+#end
+#end
+#end
+## references to the class having indexed properties with cardinality 1-N to the
+## class are generated as reverse foreign keys in the class.
+#set($references=$model.getClassReferences($class))
+#foreach($reference in $references)
+#if((${reference.getStereotype()} == "dataObject") && ${reference.booleanValueOfTag("ojb-is-persistent")})
+#set($relations=${reference.getIndexedProperties()})
+#foreach($relation in $relations)
+#set($typeName=${relation.getTypeName()})
+#if($typeName && $typeName == ${class.qualifiedName()})
+#if(!${relation.canBeNull()})#set($nullInfo=" NOT NULL")#else#set($nullInfo="")#end
+  ${reference.valueOfTag("ojb-table-name")}_${relation.valueOfTag("ojb-column-name")}_FK INTEGER${nullInfo},
+#end
+#end
+#end
+#end
+## generate the primary keys.
+#if(${class.getStereotype()} == "dataObject")
+  PRIMARY KEY(ID)
+#elseif(${primaryKeys})
+  PRIMARY KEY(${primaryKeys})
+#end
+) ${postTable};
+
+## create index for the identifier of a data object.
+#if(${class.getStereotype()} == "dataObject")
+CREATE UNIQUE INDEX ${table}_IDX ON ${schema}${table} (ID);
+
+#end

@@ -1,0 +1,18 @@
+#include ??
+
+
+namespace {
+#set($classname=??)
+${classname}::${classname}() {
+}
+
+${classname}::${classname}(const ${classname}& lvalue) {
+}
+
+${classname}& ${classname}::operator=(const ${classname}& lvalue) {
+}
+
+${classname}::~${classname}() {
+}
+
+}

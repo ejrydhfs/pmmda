@@ -1,0 +1,61 @@
+#set($sign="#")
+/* This code was generated automatically with the MDA generator Version 0.2.
+   Please do NOT add code outside the marked zones. All changes outside the 
+   marked area will be discarded during the next execution of the MDA generator. 
+*/
+
+   
+#set($hasInterface=(${class.getAttribute("bo-has-interface")} == "true"))   
+#if (${package})
+#if ($hasInterface)
+package ${package.getAttribute("bo-if-package")};
+#else
+package ${package.getAttribute("bo-mo-package")};
+#end
+#end
+
+import ch.bbv.dog.AbstractVisitorFunctor;
+import ch.bbv.dog.DoFunctor;
+
+/** The visitor with functor class implements the visitor pattern for the graph 
+ * of all data object classes defined in the package. The list of all relevant
+ * classes is generated from the MDA model.
+ */
+public class VisitorFunctor implements Visitor, AbstractVisitorFunctor {  
+  /** Functor of the visitor.
+   */
+  private DoFunctor functor; 
+
+  /** The current depth of the visitor when traversing a graph.
+   */
+  private int depth;
+
+  public int getDepth() {
+    return depth;
+  }
+  
+  public void setDepth(int depth) {
+    this.depth = depth;
+  }
+    
+  public Object getFunctor() {
+    return functor;
+  }
+  
+  public void setFunctor(Object functor) {
+    this.functor = (DoFunctor)functor;
+  }
+    
+#foreach($class in $classes)
+#if(${class.getStereotype()} == "dataObject")
+#if($hasInterface)
+#set($name=${class.getAttribute("bo-if-class")})
+#else
+#set($name=${class.getAttribute("bo-mo-class")})
+#end
+  public void visit(${name} item) {
+    functor.execute(item);
+  }
+#end
+#end
+}

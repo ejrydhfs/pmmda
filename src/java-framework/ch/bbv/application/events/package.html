@@ -1,0 +1,37 @@
+<body>
+  Event mechanisms are provided to communicate in client/server environments.
+  <h2>Purpose</h2>
+  <p>Complex client server applications often communicate with other servers 
+    or are part of a company wide workflow. For example the accounting system 
+    can modify administrative information of a contract in the contract and 
+    document management system.</p>
+  <p>Some application changes have impact on the clients currently working. The
+    concerned client applications should be informed when such changes are 
+    comitted. So the user will not try to edit obsolete data or perform 
+    operations no more legal in the new context. The server should push
+    selected information to all interested clients. The amount of data and the 
+    number of occurences should stay at a reasonable level. Otherwise the system 
+    will not scale when the number of concurrent clients increases.</p>
+    
+  <h2>Architecture</h2>
+  <p>Events are propagated through channels. A channel has two ends. One end is
+    used to send events, the other end is used to receive events. At most one
+    provider can send events through a channel. Multiple listeners can receive
+    events from a channel.</p>
+  <p>Channels can use different middleware transmission medium to transmit 
+    events to interested listeners. The framework provides hot plugins to add
+    new channel types.</p>
+  <h3>Java Channel</h3>
+  <p>The Java channel propagates events inside a Java virtual machine. The
+    channel source and listeners are all registered in an event manager. The
+    channel dispatches the event messages as synchronous calls. This channel
+    type is optimal for internal communications or during the development 
+    phase.</p>
+  <h3>EmailChannel</h3>
+  <p>The email channel propagates events to listeners connected to the Internet
+    email system. Each listener registered to an email channel should define
+    an email property otherwise the events cannot be dispatched to them. The
+    email message header identifies the channel and its type, the body contains
+    the XML representation of the event.</p>  
+   @since Java 2 Platform, Standard Edition, version 1.4
+</body>

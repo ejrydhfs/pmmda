@@ -1,0 +1,34 @@
+<body>
+  The package provides converters between the MDR model and the MDA model.
+	<h2>Introduction</h2>
+	<p>The package provides converters between the MDR model and the MDA model.
+		They solve the semantic gap between the UML model and the Java bean 
+		representation of a class. The first major difference is that the bean 
+		concept is data oriented and UML is rather method oriented. Second UML has
+		an artificial distinction between attributes and aggregations. Beans handle
+		both as indexed properties.</p>
+
+	<h2>Mapping Rules</h2>
+	<p>Mapping rules are necessary to transform attributes and relationships into
+		simple and indexed properties. The transformation process uses the 
+		following rules.</p>
+	<ul>
+		<li>An attribute with an undefined multiplicity or a multiplicity with a
+			upper bound of one is mapped to a simple property.</li>
+		<li>An attribute with a multiplicity with a upper bound greater than one is 
+			mapped to an indexed property. The type of the property is only specified
+			as the qualified name of the class or data type. The class object is 
+			retrieved at runtime.</li>
+		<li>An aggregation with an undefined multiplicity or a multiplicity with a
+			upper bound of is mapped to an indexed property. The type of the property
+			items is only specified as the qualified name of the class or data type. 
+			The class object is retrieved at runtime.</li>
+		<li>An aggregation with a multiplicity with a upper bound greater than one 
+			is mapped to an indexed property.</li>
+		<li>Undefined relations are not mapped.</li>
+		<li>Data types are read-only entities in the MDA model.</li>
+	</ul>
+	<p>A well-designed UML model, which can be used as the basis for code generation
+		should only contain directed composite aggregations.</p>
+   @since Java 2 Platform, Standard Edition, version 1.4
+</body>

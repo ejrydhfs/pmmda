@@ -1,0 +1,85 @@
+#set($sign="#")
+#set($className=${class.getName().toUpperCase()})
+// This code was generated automatically with the pmMDA generator. Please do 
+// NOT add code outside the marked zones. All changes outside the marked areas 
+// will be discarded during the next execution of the MDA generator. 
+// ${dollar}Id${dollar}
+
+${sign}ifndef _${className}_LW_CTO_
+${sign}define _${className}_LW_CTO_
+
+${sign}include "NullableTypes.idl"
+## generate the includes for all used data objects
+#foreach ($property in $properties)
+#if(!${property.isTransient()} && ${property.booleanValueOfTag("bo-lightweight")})
+#set($typeName=${property.getTypeName()})
+#set($type=false)
+#set($type=${model.findClass(${typeName})})
+#if(${type} && (${type.getStereotype()} == "dataObject") && ${type.getAttribute("bo-lightweight")})
+${sign}include "${type.getAttribute("cto-lw-class")}.idl"
+#end
+#end
+#end
+#foreach ($aggregation in $aggregations)
+#if(!${aggregation.isTransient()} && ${aggregation.booleanValueOfTag("bo-lightweight")})
+#set($typeName=${aggregation.getTypeName()})
+#set($type=false)
+#set($type=${model.findClass(${typeName})})
+#if(${type} && (${type.getStereotype()} == "dataObject") && ${type.getAttribute("bo-lightweight")})
+${sign}include "${type.getAttribute("cto-lw-class")}.idl"
+#end
+#end
+#end
+
+#set($ctoLwClass=${class.getAttribute("cto-lw-class")})
+module ch {
+  module bbv {
+    module transport {
+      struct ${ctoLwClass} {
+        NullInteger id;
+#foreach ($property in $properties)
+#if(!${property.isTransient()} && ${property.booleanValueOfTag("bo-lightweight")})
+#set($typeName=${property.getTypeName()})
+#set($type=false)
+#set($type=${model.findClass(${typeName})})
+#if(${type})
+#if(${type.getStereotype()} == "dataObject")
+#if(${type.getAttribute("bo-lightweight")})
+        sequence<${type.getAttribute("cto-lw-class")}> ${property.getName()};
+#end
+#elseif(${type.getStereotype()} == "referenceCode")
+        NullInteger ${property.getName()};
+#else
+        ${property.getAttribute("cto-idl-type")} ${property.getName()};
+#end
+#else
+        ${property.getAttribute("cto-idl-type")} ${property.getName()};
+#end
+#end          
+#end
+#foreach($aggregation in $aggregations)
+#if(${aggregation.booleanValueOfTag("bo-lightweight")})
+#set($typeName=${aggregation.getTypeName()})
+#set($type=false)
+#set($type=${model.findClass(${typeName})})
+#if(${type})
+#if(${type.getStereotype()} == "dataObject") 
+#if(${type.getAttribute("bo-lightweight")})
+        sequence<${type.getAttribute("cto-lw-class")}> ${aggregation.getName()};
+#end
+#elseif(${type.getStereotype()} == "referenceCode")
+        sequence<NullableInteger> ${aggregation.getName()};
+#end
+#else
+        sequence<${aggregation.getAttribute("cto-idl-type")})> ${aggregation.getName()};
+#end          
+#end
+#end
+      };
+      
+      typedef sequence<${ctoLwClass}> ${ctoLwClass}Sequence;
+    };
+  };
+};
+
+#endif

@@ -1,0 +1,20 @@
+<body>
+	<h2>Setting up CVS</h2>
+	<p>The following steps allows you to setup a CVS repository.</p>
+	<ol>
+		<li>Make a backup of the whole project.</li>
+		<li><code>CVSROOT /cygdrive/d/cvs; export CVSROOT</code> in .bashrc</li>
+		<li><code>cvs -d /cygdrive/d/cvs init</code> to create the repository.</li>
+		<li><code>cvs import -m "Initial import in CVS" ${PMMDA_HOME}/src pmMDA 0.0</code></li>
+		<li>Remove all files under ${PMMDA_HOME}/src directory.</li>
+	</ol>
+	<p>Now you can directly access the CVS repository using the built-in client of 
+		Eclipse.</p>
+	<h2>Releases</h2>
+	<p>Each internal and external release of the <em>pmMDA</em> must be tagged.</p>
+	<ol>
+		<li>Check-in all the files upon sucessful compilation, unit testing and 
+			sanity test.</li>
+		<li><code>cvs tag tagname ${PMMDA_HOME}/src</code></li>
+	</ol>
+</body>

@@ -1,0 +1,39 @@
+<body>
+  Business object models needs to be validated against a set of business
+  rules. The rules are defined as validation rules. 
+  <h2>Introduction</h2>
+  <p>Business object models needs to be validated against a set of business
+    rules. The rules are defined as validation rules. The business object
+    types being Java beans, the rules are connected to the model through the
+    bean descriptor meta-model. All feature descriptors support set and get
+    of named values.</p>
+    
+  <h2>Validation Types</h2>
+  
+  <dl>
+    <dt>Range Check</dt><dd>The property must be inside the defined range of
+      values. All primitive types and their wrappers are supported.</dd>
+    <dt>Pattern Check</dt><dd>The string property value respects the defined
+      regular expression. Minumum and maximum length of a text are also handled
+      in this check.</dd>
+    <dt>is null</dt><dd>The property value is null.</dd>
+    <dt>is not null</dt><dd>The property value is not null.</dd>
+    <dt>are unique</dt><dd>All the values of an indexed property are 
+      unique.</dd>
+    <dt>are null</dt><dd>All the values of an indexed property are null.</dd>
+    <dt>are not null</dt><dd>All the values of an indexed property are not 
+      null.</dd>
+  </dl>
+  <h2>Conventions</h2>
+  <p>The values are identified through names. Conventions must be defined to
+    find out where validation rules are stored in the descriptors.</p>
+  <ul>
+    <li>The validations rules of a property are defined as a set of rules.
+      They are stored in the property descriptor. The set is stored under the 
+      name "validation".</li>
+    <li>The validations rules of a bean are defined as a set of rules. They are
+      stored in the bean descriptor. The set is stored under the  name 
+      "validation".</li>
+  </ul>
+  @since Java 2 Platform, Standard Edition, version 1.4
+</body>

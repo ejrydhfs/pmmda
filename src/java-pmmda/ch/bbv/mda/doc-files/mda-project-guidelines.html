@@ -1,0 +1,56 @@
+<body>
+	<h2>Introduction</h2>
+	<p>The process development is an agile version of the unified software 
+		development process <acronym>USDP</acronym>. The process is architecture 
+		centric, iterative and uses object-oriented methods. The iterative process 
+		uses continuous integration cycles as published in seminal articles. For a 
+		discussion about the advantages of continuous integration and test cycles 
+		consult <a href="mda-continuous-integration.html"> continuous integration</a>.
+		The integration cycle is automated with Ant tasks.</p>
+	
+	<h2>Processes and Tools</h2>
+	<p>Requirement traceability is done with cross reference tables. The tables
+		are currently filled manually.</p>
+	<p>The planning and desing rules try to eliminate unecessary tasks. Here a 
+		list of seven common pitfalls where resources are wasted.</p>
+	<ul>
+		<li>Partially done work also called the inventory of a development 
+			process.</li>
+		<li>Extra processes are especially easy to find in documentation-centric
+			development.</li>
+		<li>Extra features instead of developing only what customers want right
+			now.</li>
+		<li>Task switching instead of doing one thing at a time.</li>
+		<li>Waiting for instructions or information.</li>
+		<li>Handoffs where tons of tacit knowledge gets lost.</li>
+		<li>Defects that are not quickly caught by a test.</li>
+	</ul>
+	<p>The agile process is backed with the following tools.</p>
+	<ul>
+		<dt>Requirements Management</dt><dd>To be defined.</dd>
+		<dt>Analysis and design</dt><dd>The UML modeling tool <em>ArgoUML</em> is
+			used.</dd>
+		<dt>Development environment</dt><dd>The <em>Eclipse</em> integrated 
+			development environment is used. The programming laguage is Java and is
+			based on JDK 1.4. The project heavily uses open source components from
+			the Apache Jakarta project. Continuous integration is realized with
+			ant scripts and JUnit unit testing framework.</dd>
+		<dt>Version management</dt><dd>The version management CVS is used. The
+			continuous release paradigm is used. Tagged versions contain all the
+			artifacts needed to generate a fully functional applications with its
+			deployment scripts and documentation.</dd>
+		<dt>Documentation</dt><dd>The documentation uses the features of the JavaDoc
+			tool. Extension doclets transform the documentation into DocBook, poscript
+			and PDF formats. The documentation is published online using Apache and
+			Tomcat. Test documents are written with OpenOffice.</dd>
+		<dt>Issues tracking</dt><dd>The issue tracking system <em>Scarab</em> is
+			used.</dd>
+		<dt>Quality assurance</dt><dd>Source code is checked with <acronym>JDepend
+			</acronym>, <acronym>PMD</acronym> and <acronym>javaNCSS</acronym>. 
+			Detailed documentation is checked with DocCheck Sun doclet. Architectural 
+			design is verified through walk-throughs. These metrics are generated each
+			time a new integration cycle is performed.</dd>
+		<dt>Testing</dt><dd>Unit testing is performed with the JUnit test 
+			framework.</dd>
+	</ul>
+</body>

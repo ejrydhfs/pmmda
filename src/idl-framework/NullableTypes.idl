@@ -1,0 +1,67 @@
+#ifndef _NULLABLE_CTO_
+#define _NULLABLE_CTO_
+
+module ch {
+  module bbv {
+    module transport {
+	  	typedef string<10> Date;
+  	  typedef string<29> Timestamp;
+  	  
+      struct NullDate {
+        Date value;
+        boolean hasValue;
+      };
+  		typedef sequence<NullDate> NullDateSequence;
+
+        struct NullTimestamp {
+          Timestamp value;
+          boolean hasValue;
+        };
+  		typedef sequence<NullTimestamp> NullTimestampSequence;
+
+  		struct NullShort {
+    	  short value;          
+    	  boolean hasValue;
+  		};
+  		typedef sequence<NullShort> NullShortSequence;
+
+  		struct NullInteger {
+    	  long value;          
+    	  boolean hasValue;
+  		};
+  		typedef sequence<NullInteger> NullIntegerSequence;
+  
+  		struct NullLong {
+    	  long value;          
+    	  boolean hasValue;
+  		};
+  		typedef sequence<NullLong> NullLongSequence;
+
+	    struct NullFloat {
+    	  float value;          
+    	  boolean hasValue;
+  		};
+  		typedef sequence<NullFloat> NullFloatSequence;
+
+	    struct NullDouble {
+    	  double value;          
+    	  boolean hasValue;
+  		};
+  		typedef sequence<NullDouble> NullDoubleSequence;
+
+  		struct NullString {
+    	  string value;          
+    	  boolean hasValue;
+  		};
+  		typedef sequence<NullString> NullStringSequence;
+
+  		struct NullBoolean {
+    	  boolean value;          
+    	  boolean hasValue;
+  		};
+  		typedef sequence<NullBoolean> NullBooleanSequence;
+    };
+  };
+};
+
+#endif

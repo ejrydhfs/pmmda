@@ -1,0 +1,50 @@
+<body>
+  The UML model synchronization application uses the JavaDoc information of 
+  a Java source code tree to synchronize an UML model with the source code.
+  <h2>Purpose</h2>
+  <p>The UML model synchronization application uses the JavaDoc information of 
+    a Java source code tree to synchronize an UML model with the source code. 
+    The goal is to synchronize and not to enhance the model. Often UML models 
+    have less details than the source code to increase their legibility.</p>
+  <h2>Rules</h2>
+  <p>The following synchronization rules are defined.</p>
+  <ul>
+    <li>No new classes are added to the UML model. Therefore all implementation
+      specific classes never polute the domain model.</li>
+    <li>The methods and static declarations of any interface in the model are 
+      updated to reflect the Java interface declaration. The list of interfaces
+      defined in the source tree and not in the model are logged.</li>
+    <li>The properties and methods of all classes without the stereotype 
+      "business object" or "reference code" are updated to reflect the Java
+      class declaration.</li>
+    <li>The classes with the stereotype "business object" or "reference code"
+      are never updated. The UML model is the master and the Java source code
+      is assumed to be automatically generated using a MDA approach. The user 
+      must always perform modifications in the UML model or through the 
+      <em>pmMDA</em> application.</li>
+  </ul>
+  
+  <h2>Architecture</h2>
+  <p>The doclet architecture uses the <em>pmMDA</em> metamodel as the model
+    representation to manipulate.</p>
+    
+  <h2>Documentor Origins</h2>
+  <p>The documentor project was started as a huge perl script used to document
+    C/C++ projects. The target was HTML, LaTeX and PDF. The goal was to generate
+    legible API documentation. Advanced concepts such preconditions, 
+    postconditions and invariants were already supported. The first version was
+    released as open source in 1994. The project evolved to support round-trip
+    engineering and synchronize source code artifacts with Rational Rose models.
+    Extensions were added to support real-time modeling such as synchronization
+    and message passing.</p>
+  <p>The project was fully rewritten in the second part of the nineties. The 
+    implementation language is now Java. The IBM COM bridge is used to interface
+    with external Booch and UML tools. Step by step the internal documentor
+    model was moved to the JavaDoc model with some extensions to support multiple
+    inheritance.</p>
+  <p>The support of C++ was canceled in 2002. The responsible for the maintenance
+    of these functions moved to another company and could no more provide resources
+    for the document project. The open source tool <em>Doxygen</em> provides 
+    wonderful documentation capabilites for C/C++ projects.</p>
+   @since Java 2 Platform, Standard Edition, version 1.4
+</body>

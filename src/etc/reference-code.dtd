@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!ELEMENT referencecode (definition value*)>
+<!ELEMENT definition EMPTY>
+<!ELEMENT value EMPTY>
+<!ATTLIST definition
+  classname CDATA #REQUIRED
+  package-name CDATA #REQUIRED
+  hierarchical (true | false) "false"
+  display-name CDATA #IMPLIED/>
+<!ATTLIST value
+  id CDATA #REQUIRED
+  name CDATA #IMPLIED
+  sort-order CDATA #REQUIRED
+  short-description CDATA #REQUIRED
+  description CDATA #IMPLIED/>
+  
+  

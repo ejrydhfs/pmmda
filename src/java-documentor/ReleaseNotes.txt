@@ -1,0 +1,8 @@
+Version 0.0.1 (30 June 2004)
+---------------------------
+The following new features were added.
+- Doclet for precondition, postcondition and invariants generates the HTML code
+  for JavaDoc standard doclet output.
+
+The following errors were corrected.
+- None

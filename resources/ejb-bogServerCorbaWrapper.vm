@@ -1,0 +1,451 @@
+#set($sign="#")
+#set($dollar="$")
+/* This code was generated automatically with the pmMDA generator. Please do 
+   NOT add code outside the marked zones. All changes outside the marked areas 
+   will be discarded during the next execution of the MDA generator. 
+   ${dollar}Id${dollar}
+*/
+
+package ${package.getAttribute("ejb-client-package")};
+
+#set($imports=${model.createImportStatements(${package.getAttribute("ejb-client-package")})})
+#set($dummy=${imports.addPackageName(${package.getAttribute("bo-mo-package")})})
+#set($dummy=${imports.addPackageName(${package.getAttribute("bo-lw-package")})})
+#set($dummy=${imports.addPackageName(${package.getAttribute("cto-bo2dto-package")})})
+#set($dummy=${imports.addPackageName(${package.getAttribute("cto-lw2dto-package")})})
+#set($dummy=${imports.addClassName("java.util.List")})
+#set($dummy=${imports.addClassName("org.apache.commons.logging.Log")})
+#set($dummy=${imports.addClassName("org.apache.commons.logging.LogFactory")})
+#set($dummy=${imports.addClassName("org.omg.CosNaming.NamingContextExt")})
+#set($dummy=${imports.addClassName("org.omg.CosNaming.NamingContextExtHelper")})
+#set($dummy=${imports.addClassName("ch.bbv.application.ComponentException")})
+#set($dummy=${imports.addClassName("ch.bbv.application.ComponentImpl")})
+#set($dummy=${imports.addClassName("ch.bbv.application.Locator")})
+#set($dummy=${imports.addClassName("ch.bbv.dog.DataObjectManager")})
+#set($dummy=${imports.addClassName("ch.bbv.dog.DataObjectHandler")})
+#set($dummy=${imports.addClassName("ch.bbv.dog.DataObject")})
+#set($dummy=${imports.addClassName("ch.bbv.dog.DataObjectId")})
+#set($dummy=${imports.addClassName("ch.bbv.dog.LightweightObject")})
+#set($dummy=${imports.addClassName("ch.bbv.dog.DogException")})
+#set($dummy=${imports.addPackageName("ch.bbv.transport")})
+#set($importStatements=${imports.getImportStatements(4)})
+#foreach($importStatement in $importStatements) 
+import $importStatement;
+#end
+   
+#set($serverName=${package.valueOfTag("ejb-server-name")})
+#set($className="${serverName}CorbaWrapper")
+/** 
+ * The wrapper class hides the CORBA middleware and provides all data object  
+ * graph functions free of CORBA artifacts. This functionality is guaranteed 
+ * through the data object handler interface. The wrapper implements the 
+ * component interface and can be registered in the application framework to 
+ * provide IoC - Inversion of Control - pattern.
+ * @version ${dollar}Revision${dollar}
+ */
+public class ${className} extends ComponentImpl 
+  implements DataObjectHandler {
+  /** 
+   * Name of the CORBA ORB subsystem.
+   */
+  public static final String ORB_NAME = "CORBA_ORB";
+
+  /** 
+   * Name of the server as registered in the naming service.
+   */
+  public static final String SERVER_NAME = "${serverName}";
+
+  /**
+   * Defines an illegal identifier to emulate null identifiers.
+   */
+  public static final int ILLEGAL_ID = 0;
+  
+  /** 
+   * Logger of the server wrapper class.
+   */
+  private static Log log = LogFactory.getLog(${className}.class);
+
+  /** 
+   * Handle to the CORBA server providing the data object graph services.
+   */
+  private ${serverName} server;
+
+  /** 
+   * Creates the CORBA server wrapper $serverName and registers it in 
+   * the locator with the name ${serverName}.
+   * @return the created and registered CORBA service wrapper.
+   */
+  public static ${className} create() {
+    return create(SERVER_NAME);
+  }
+  
+  /** 
+   * Creates the CORBA server wrapper $serverName and registers it in 
+   * the locator with the name ${serverName}.
+   * @param name name of the CORBA service wrapper as defined in the locator.
+   * @return the created and registered CORBA service wrapper.
+   */
+  public static ${className} create(String name) {
+    ${className} wrapper = null;
+    try {
+      Locator locator = Locator.getInstance();
+      wrapper = new ${className}(name);
+	  locator.register(wrapper);
+    } catch (ComponentException e) {
+      log.fatal("Cannot register CORBA wrapper ${className}", e); 
+    }
+    return wrapper;
+  }
+  
+  /** 
+   * Default constructor of the class. The name of the component is defined as
+   * ${serverName}.
+   */
+  public ${className}() {
+    this(SERVER_NAME);
+  }
+  
+  /** 
+   * Constructor of the class.
+   * @param name unique name of the server used to find through the locator.
+   */
+  public ${className}(String name) {
+    super(name);
+  }
+
+  public void initialize() throws ComponentException {
+    super.initialize();
+    try {
+      Locator locator = Locator.getInstance();
+      org.omg.CORBA.ORB orb = (org.omg.CORBA.ORB) locator.getSubsystem(ORB_NAME);
+      org.omg.CORBA.Object ref = orb.resolve_initial_references("NameService");
+      NamingContextExt ncRef = NamingContextExtHelper.narrow(ref);
+      server = ${serverName}Helper.narrow(ncRef.resolve_str(SERVER_NAME));
+	} catch (Exception e) {
+	  log.fatal(e);
+    }
+  }  
+   
+  public void openDatasource(String source, boolean readonly) {
+    // operation ignored because it is under control of the server.
+  }
+  
+  public void closeDatasource(String source) {
+    // operation ignored because it is under control of the server.
+  }
+  
+  public DataObject retrieve(String datasource, Class clazz, Integer id) {
+    List objects;
+    DataObject object = null;
+    
+#if(${classes.size()} > 0)
+    try {
+#set($firstCase=true)
+#foreach($class in $classes)
+#if(${class.booleanValueOfTag("bo-is-root")})
+#set($boMoClass=${class.getAttribute("bo-mo-class")})
+#if($firstCase)
+#set($firstCase=false)
+      if (clazz == ${boMoClass}.class) {
+        objects = retrieve${boMoClass}(datasource, id, null);
+#else
+      } else if (clazz == ${boMoClass}.class) {
+        objects = retrieve${boMoClass}(datasource, id, null);
+#end	
+#end
+#end
+      } else {      
+        throw new UnsupportedOperationException();
+      }
+      if (objects.size() > 0) {
+        object = (DataObject)objects.get(0);
+      }
+    } catch(DogException e) {
+      log.error(e);
+    }
+#end
+	return object;
+  }
+  
+  public List retrieve(String datasource, Class clazz, String constraints) {
+    List objects = null;
+    
+#if(${classes.size()} > 0)
+    try {
+#set($firstCase=true)
+#foreach($class in $classes)
+#if(${class.booleanValueOfTag("bo-is-root")})
+#set($boMoClass=${class.getAttribute("bo-mo-class")})
+#if($firstCase)
+#set($firstCase=false)
+      if (clazz == ${boMoClass}.class) {
+        objects = retrieve${boMoClass}(datasource, null, constraints);
+#else
+      } else if (clazz == ${boMoClass}.class) {
+        objects = retrieve${boMoClass}(datasource, null, constraints);
+#end	
+#end
+#end
+      } else {
+        throw new UnsupportedOperationException();
+      }
+    } catch(DogException e) {
+      log.error(e);
+    }
+#end
+	return objects;
+  }
+#if(${package.booleanValueOfAttribute("bo-lightweight")})  
+
+  public LightweightObject retrieveLw(String datasource, Class clazz, Integer id) {
+    List objects;
+    LightweightObject object = null;
+    
+    try {
+#set($firstCase=true)
+#foreach($class in $classes)
+#if(${class.booleanValueOfTag("bo-is-root")} && ${class.booleanValueOfAttribute("bo-lightweight")})  
+#set($boLwClass=${class.getAttribute("bo-lw-class")})
+#if($firstCase)
+#set($firstCase=false)
+      if (clazz == ${boLwClass}.class) {
+        objects = retrieveLw${boLwClass}(datasource, id, null);
+#else
+      } else if (clazz == ${boLwClass}.class) {
+        objects = retrieveLw${boLwClass}(datasource, id, null);
+#end	
+#end
+#end
+      } else {
+        throw new UnsupportedOperationException();
+      }
+      if (objects.size() > 0) {
+        object = (LightweightObject)objects.get(0);
+      }
+    } catch(DogException e) {
+      log.error(e);
+    }
+    return object;
+  }
+
+  public List retrieveLw(String datasource, Class clazz, String constraints) {
+    List objects = null;
+    
+    try {
+#set($firstCase=true)
+#foreach($class in $classes)
+#set($boLwClass=${class.getAttribute("bo-lw-class")})
+#if(${class.booleanValueOfTag("bo-is-root")} && ${class.booleanValueOfAttribute("bo-lightweight")})  
+#if($firstCase)
+#set($firstCase=false)
+      if (clazz == ${boLwClass}.class) {
+        objects = retrieveLw${boLwClass}(datasource, null, constraints);
+#else
+      } else if (clazz == ${boLwClass}.class) {
+        objects = retrieveLw${boLwClass}(datasource, null, constraints);
+#end	
+#end
+#end
+      } else {
+        throw new UnsupportedOperationException();
+      }
+    } catch(DogException e) {
+      log.error(e);
+    }
+    return objects;
+  }
+#end  
+  
+  public List store(String datasource, Class clazz, DataObject root) {
+    List infos = null;
+    
+    try {
+#set($firstCase=true)
+#foreach($class in $classes)
+#if(${class.booleanValueOfTag("bo-is-root")})
+#set($boMoClass=${class.getAttribute("bo-mo-class")})
+#if($firstCase)
+#set($firstCase=false)
+      if (clazz == ${boMoClass}.class) {
+        infos = store${boMoClass}(datasource, (${boMoClass}) root);
+#else
+      } else if (clazz == ${boMoClass}.class) {
+        infos = store${boMoClass}(datasource, (${boMoClass}) root);
+#end	
+#end
+#end
+      } else {
+        throw new UnsupportedOperationException();
+      }
+    } catch(DogException e) {
+      log.error(e);
+    }
+    return infos;
+  }
+  
+  public void remove(String datasource, Class clazz, DataObject root) {
+    try {
+#set($firstCase=true)
+#foreach($class in $classes)
+#if(${class.booleanValueOfTag("bo-is-root")})
+#set($boMoClass=${class.getAttribute("bo-mo-class")})
+#if($firstCase)
+#set($firstCase=false)
+      if (clazz == ${boMoClass}.class) {
+        remove${boMoClass}(datasource, root.getId());
+#else
+      } else if (clazz == ${boMoClass}.class) {
+        remove${boMoClass}(datasource, root.getId());
+#end	
+#end
+#end
+      } else {
+        throw new UnsupportedOperationException();
+      }
+    } catch(DogException e) {
+      log.error(e);
+    }
+  }
+  
+  public void remove(String datasource, Class clazz, Integer id) {
+    try {
+#set($firstCase=true)
+#foreach($class in $classes)
+#if(${class.booleanValueOfTag("bo-is-root")})
+#set($boMoClass=${class.getAttribute("bo-mo-class")})
+#if($firstCase)
+#set($firstCase=false)
+      if (clazz == ${boMoClass}.class) {
+        remove${boMoClass}(datasource, id);
+#else
+      } else if (clazz == ${boMoClass}.class) {
+        remove${boMoClass}(datasource, id);
+#end	
+#end
+#end
+      } else {
+        throw new UnsupportedOperationException();
+      }
+    } catch(DogException e) {
+      log.error(e);
+    }
+  }
+  
+  public DataObject deepCopy(Class clazz, DataObject object) {
+    throw new UnsupportedOperationException();
+  }
+  
+  public void register(DataObjectType type) {
+    // not  supported in wrapper
+  }
+  
+  public DataObjectType getType(DataObject object) {
+    // not  supported in wrapper
+    return null;
+  }
+  
+#foreach($class in $classes)
+#if(${class.booleanValueOfTag("bo-is-root")})
+#set($boMoClass=${class.getAttribute("bo-mo-class")})
+#set($boLwClass=${class.getAttribute("bo-lw-class")})
+#set($ctoMoClass=${class.getAttribute("cto-mo-class")})
+#set($ctoLwClass=${class.getAttribute("cto-lw-class")})
+  /** Retrieves the data object graph with the given root identifier or
+   * constraints.
+   * @param datasource datasource containing the persistent objects.
+   * @param id identifier of the root object.
+   * @param constraints constraints to select the set of requested graphs.
+   * @throws DogException the remote server encountered an error.
+   */  
+  private List retrieve${boMoClass}(String datasource, Integer id, String constraints) 
+    throws DogException {
+    try {
+      int idValue = (id == null) ? ILLEGAL_ID : id.intValue();
+      String constraintsValue = (constraints == null) ? "" : constraints;
+      ${ctoMoClass}[] ctos = server.retrieve${boMoClass}(datasource, idValue, 
+        constraintsValue);
+	  List bos = ${boMoClass}Transformer.transform(ctos);
+	  return bos;
+	} catch (DogExceptionCto e) {
+	  throw TransformerCto.extract(e);
+	}
+  }
+#if(${class.booleanValueOfAttribute("bo-lightweight")})  
+
+  /** Retrieves the lightweight object graph with the given root identifier or
+   * constraints.
+   * @param datasource datasource containing the persistent objects.
+   * @param id identifier of the root object.
+   * @param constraints constraints to select the set of requested graphs.
+   * @throws DogException the remote server encountered an error.
+   */  
+  private List retrieveLw${boLwClass}(String datasource, Integer id, String constraints) 
+    throws DogException {
+    assert(datasource != null);
+    try {
+      int idValue = (id == null) ? ILLEGAL_ID : id.intValue();
+      String constraintsValue = (constraints == null) ? "" : constraints;
+      ${ctoLwClass}[] ctos = server.retrieveLw${boLwClass}(datasource, idValue, 
+	    constraintsValue);
+      List lws = ${boLwClass}Transformer.transform(ctos);
+      return lws;
+	} catch (DogExceptionCto e) {
+	  throw TransformerCto.extract(e);
+	}
+  }
+#end  
+  /** Stores the data object graph with the given root identifier.
+   * @param datasource datasource containing the persistent objects.
+   * @param id identifier of the root object.
+   * @throws DogException the remote server encountered an error.
+   */
+  private List store${boMoClass}(String datasource, ${boMoClass} root)
+	throws DogException {
+    assert((datasource != null) && (root != null));
+	try {
+      ${ctoMoClass} cto = ${boMoClass}Transformer.transform(root);
+      DataObjectUpdateCto[] ctos = server.store${boMoClass}(datasource, cto);
+      List infos = TransformerCto.extractInfos(ctos);
+      return infos;    
+	} catch (DogExceptionCto e) {
+	  throw TransformerCto.extract(e);
+	}
+  }
+  
+  /** Removes the data object graph with the given root identifier.
+   * @param datasource datasource containing the persistent objects.
+   * @param id identifier of the root object.
+   * @throws DogException the remote server encountered an error.
+   */
+  private void remove${boMoClass}(String datasource, Integer id) throws DogException {
+    assert((datasource != null) && (id != null));
+    try {
+      server.remove${boMoClass}(datasource, id.intValue());
+	} catch (DogExceptionCto e) {
+	  throw TransformerCto.extract(e);
+	}
+  }
+  
+#end
+#end
+  /** Returns the list of updated reference codes from the server.
+   * @param descriptors list of reference code information describing the 
+   * requested reference codes.
+   * @return the list of requested reference codes with their values.
+   */
+  public List retrieveCodes(List descriptors) throws DogException {
+    return descriptors;
+  }
+
+  /** Heartbeat function to verify that the server is available.
+   * @throws DogException the remote server encountered an error.
+   */  
+  public void heartbeat() throws DogException {
+    try {
+      server.heartbeat();
+	} catch (DogExceptionCto e) {
+	  throw TransformerCto.extract(e);
+	}
+  }
+
+}

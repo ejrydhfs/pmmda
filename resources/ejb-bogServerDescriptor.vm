@@ -1,0 +1,27 @@
+<!DOCTYPE ejb-jar PUBLIC
+   "-//Sun Microsystems, Inc.//DTD Enterprise JavaBeans 2.0//EN"
+   "http://java.sun.com/dtd/ejb-jar_2_0.dtd">
+
+#set($serverPackage=${package.getAttribute("ejb-server-package")})
+#set($serverName=${package.valueOfTag("ejb-server-name")})
+<ejb-jar>
+  <enterprise-beans>
+    <session>
+      <ejb-name>dog/${serverName}</ejb-name>
+      <display-name>${serverName} BOG Handler</display-name>
+      <home>${serverPackage}.${serverName}Home</home>
+      <remote>${serverPackage}.${serverName}Session</remote>
+      <ejb-class>${serverPackage}.${serverName}SessionBean</ejb-class>
+      <session-type>Stateless</session-type>
+      <transaction-type>Container</transaction-type>
+    </session>
+  </enterprise-beans>
+  
+  <assembly-descriptor>
+    <container-transaction>
+      <ejb-name>dog/${serverName}</ejb-name>
+      <method-name>*</method-name>
+      <trans-attribute>Required</trans-attribute>
+    </container-transaction>    
+  </assembly-descriptor>  
+</ejb-jar>

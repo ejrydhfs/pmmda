@@ -1,0 +1,139 @@
+#set($sign="#")
+/* This code was generated automatically with the pmMDA generator. Please do 
+   NOT add code outside the marked zones. All changes outside the marked areas 
+   will be discarded during the next execution of the MDA generator. 
+   ${dollar}Id${dollar}
+*/
+package ${package.getAttribute("cto-bo2dto-package")};
+
+#set($imports=${cartridge.retrieveImportStatementsForLw(${class}, ${package.getAttribute("cto-bo2dto-package")})})
+#set($dummy=${imports.addPackageName(${package.getAttribute("bo-lw-package")})})
+#set($dummy=${imports.addPackageName("ch.bbv.transport")})
+#set($dummy=${imports.addClassName("java.util.ArrayList")})
+#set($dummy=${imports.addClassName("java.util.List")})
+#set($importStatements=${imports.getImportStatements(4)})
+#foreach($importStatement in $importStatements) 
+import $importStatement;
+#end
+
+#set($dogName=${class.getAttribute("bo-lw-class")})
+#set($dtoName=${class.getAttribute("cto-lw-class")}) 
+#set($classname=${class.getAttribute("cto-lw2dto-class")})
+/** Transformer helper class responsible for the transformation of data 
+ * objects between their data object and data transfer object 
+ * representation.
+ */
+public final class ${classname} {
+  /** Transforms a data object into a data transfer object. The children are
+   * recursively transformed.
+   * @param bo data object to transform.
+   * @return the data transfer object representation.
+   */
+  public static final ${dtoName} transform(${dogName} bo) {
+    ${dtoName} dto = new ${dtoName}();
+#foreach($property in $properties) 
+#if(!${property.isTransient()} && ${property.booleanValueOfTag("bo-lightweight")})
+#set($typeName=${property.getTypeName()})
+#set($type=false)
+#set($type=${model.findClass(${typeName})})
+#if(${type} && (${type.getStereotype()} == "dataObject"))
+#if(${type.booleanValueOfAttribute("bo-lightweight")})
+    if (bo.get${property.nameFirstUpper()}() != null) {
+      dto.${property.getName()} = new ${type.getAttribute("cto-lw-class")}[1];
+      dto.${property.getName()}[0] = ${type.getAttribute("bo-lw-class")}Transformer.transform(bo.get${property.nameFirstUpper()}());
+    } else {
+      dto.${property.getName()} = new ${type.getAttribute("cto-lw-class")}[0];
+    }
+#end    
+#else
+    dto.${property.getName()} = ${cartridge.getBo2DtoConversion(${property}, "bo")};
+#end
+#end
+#end
+#foreach($aggregation in $aggregations)
+#if(!${aggregation.isTransient()} && ${aggregation.booleanValueOfTag("bo-lightweight")})
+#set($aggregationName=${aggregation.getName()})
+#set($typeName=${aggregation.getTypeName()})
+#set($type=false)
+#set($type=${model.findClass(${typeName})})
+#if(${type} && (${type.getStereotype()} == "dataObject"))
+#if(${type.booleanValueOfAttribute("bo-lightweight")})
+    dto.${aggregation.getName()} = ${type.getAttribute("bo-lw-class")}Transformer.transform(bo.get${aggregation.nameFirstUpper()}());
+#end
+#else
+    dto.${aggregation.getName()} = ${cartridge.getBo2DtoConversion(${aggregation}, "bo")};
+#end
+#end
+#end
+    dto.id = TransformerCto.create((Integer)bo.getId());
+    return dto;
+  }
+
+  /** Transforms a data transfer object into a data object. The children are
+   * recursively transformed.
+   * @param dto data transfer object to transform.
+   * @return the data object representation.
+   */  
+  public static final ${dogName} transform(${dtoName} dto) {
+    ${dogName} bo = new ${dogName}(TransformerCto.extract(dto.id));
+#foreach($property in $properties) 
+#if(!${property.isTransient()} && ${property.booleanValueOfTag("bo-lightweight")})
+#set($typeName=${property.getTypeName()})
+#set($type=false)
+#set($type=${model.findClass(${typeName})})
+#if(${type} && (${type.getStereotype()} == "dataObject"))
+#if(${type.booleanValueOfAttribute("bo-lightweight")})
+    if (dto.${property.nameFirstLower()}.length == 1) {
+      bo.set${property.nameFirstUpper()}(${type.getAttribute("bo-lw-class")}Transformer.transform(dto.${property.nameFirstLower()}[0]));
+    }
+#end    
+#else
+    bo.set${property.nameFirstUpper()}(${cartridge.getDto2BoConversion(${property}, "dto")});
+#end
+#end
+#end
+#foreach($aggregation in $aggregations)
+#if(!${aggregation.isTransient()} && ${aggregation.booleanValueOfTag("bo-lightweight")})
+#set($typeName=${aggregation.getTypeName()})
+#set($type=false)
+#set($type=${model.findClass(${typeName})})
+#if(${type} && (${type.getStereotype()} == "dataObject"))
+#if(${type.booleanValueOfAttribute("bo-lightweight")})
+    bo.add${aggregation.nameFirstUpper()}(${type.getAttribute("bo-lw-class")}Transformer.transform(dto.${aggregation.getName()}));
+#end
+#end
+#end
+#end
+    return bo;
+  }
+
+  /** Transforms an list of data objects into a list of corresponding data
+   * transfer objects.
+   * @param bos list of data objects.
+   * @return the array of converted data transfer objects.
+   */
+  public static final ${dtoName}[] transform(List bos) {
+    int size = bos.size();
+    ${dtoName}[] dtos = new ${dtoName}[size];
+	for (int i = 0; i < size; i++) {
+	  dtos[i] = transform((${dogName})bos.get(i));
+	}
+    return dtos;
+  }
+
+  /** Transforms an array of data transfer objects into a list of corresponding
+   * data objects.
+   * @param dtos array of data transfer objects.
+   * @return the list of converted data objects.
+   */
+  public static final List transform(${dtoName}[] dtos) {
+    ArrayList bos = new ArrayList();
+    for (int i = 0; i < dtos.length; i++) {
+      bos.add(transform(dtos[i]));
+    }
+    return bos;
+  }  
+  
+  private ${classname}() {
+  }
+}

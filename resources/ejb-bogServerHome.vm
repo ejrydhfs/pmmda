@@ -1,0 +1,23 @@
+#set($sign="#")
+#set($dollar="$")
+/* This code was generated automatically with the pmMDA generator. Please do 
+   NOT add code outside the marked zones. All changes outside the marked areas 
+   will be discarded during the next execution of the MDA generator. 
+   ${dollar}Id${dollar}
+*/
+
+package ${package.getAttribute("ejb-server-package")};
+
+import java.rmi.RemoteException;
+import javax.ejb.CreateException;
+
+#set($serverName=${package.valueOfTag("ejb-server-name")})
+#set($className="${serverName}Home")
+/** 
+ * The class implements the home interface of the ${serverName} session bean
+ * as defined in the EJB standard.
+ * ${dollar}Revision${dollar}
+ */
+public interface ${className} extends javax.ejb.EJBHome {
+  ${serverName}Session create() throws RemoteException, CreateException;
+}

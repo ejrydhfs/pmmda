@@ -1,0 +1,61 @@
+<body>
+  The business object graph persistence provides a layer to store graphs in
+  a relational database.
+	<h2>Introduction</h2>
+	<p>The business object graph persistency layer is implemented with the help 
+		of the open source framework object Java bridge <emp>OJB</emp>. from the 
+		Apache group. The framework currently uses the ODMG 3.0 personality of OJB. 
+		This personality is well tested and mature enough for productive environment. 
+		An abstraction layer is provided to hide all specific features of OJB ODMG. 
+		The motivation is to move later to the JDO personality without requiring 
+		changes in the source code of the application using our framework.</p>
+	<p>The architecture foresees that transaction contexts are managed at the
+		service level. This assumption enables to define the granularity of a 
+		transaction so that the database is always in a consistent state.</p>
+	
+	<h2>Cache Handling</h2>
+	<p>It is necessary to programmatically manage the content of the OJB cache 
+		because OJB is not aware that the business object graphs the framework
+		manipulates are copies and not the ones stored in the cache. The following
+		algorithm is implemented.</p>
+	<ol>
+		<li>A request to save a business object graph is received.</li>
+		<li>The OJB cache is cleaned from all objects with the same identifier
+			currently cached.</li>
+		<li>The received business object graph is stored in the database. Removed
+			objects are deleted, new objects are inserted, and modified ones are
+			updated.<em>The persistence layer adds all these objects in its 
+			cache.</em></li>
+		<li>If the transaction is rolled back, the received objects are removed
+			from the cache because they do not reflect the values stored in the
+			database.</li>
+	</ol>
+	<p>The framework works only correctly if one threat at a time performs an
+		update. The client must implement its own synchronization mechanisms. Two
+		solutions are feasible. A cache exists on a per thread basis. The client
+		implement mutual exclusion on the common cache.</p>
+		
+	<h2>Helper Classes</h2>
+	<p>Most of the work is programmed in function objects. This approach build
+		on the features available in the business objects and is extremely efficient
+		to implement.</p>
+	<ul>
+		<dt>Swap Object in Cache</dt><dd>Removes the object with the same identifier
+			from the cache and inserts the new one in the cache. </dd>
+		<dt>Collect Store Changes</dt><dd>The functor collects the administrative
+			information of all updated objects. An updated object is identified by
+			its flag <em>modified</em> set to true. For each such an object an 
+			associated <em>business object update</em> instance is created. At the
+			end the flag <em>modified</em> is reset to false.</dd>
+		<dt>Collect Objects</dt><dd>Collects all objects. This is quite a trivial
+			functor.</dd>
+	</ul>
+	
+	<h2>Open Points</h2>
+	<p>The provided implementation handles internally the transactional context
+	  when interacting with the database. Business logic sometimes needs more
+	  control on the transaction. Currently control could be implemented using
+	  nested transactions in non-managed environments and taking over control
+	  of transactional context in managed environments.</p>
+   @since Java 2 Platform, Standard Edition, version 1.4
+</body>

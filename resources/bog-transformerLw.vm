@@ -1,0 +1,61 @@
+#set($sign="#")
+#set($dollar="$")
+/* This code was generated automatically with the MDA generator Version 0.2.
+   Please do NOT add code outside the marked zones. All changes outside the 
+   marked area will be discarded during the next execution of the MDA generator. 
+*/
+
+
+#if (${package})
+package ${package.getAttribute("bo-lw-package")};
+#end
+
+import java.util.Iterator;
+import ${package.getAttribute("bo-mo-package")}.*;
+
+/** 
+ * The transformer is responsible to transform a tree of data objects into its
+ * lighthweight tree representation.
+ * @version ${dollar}Revision${dollar}
+ */
+public class LwTransformer {
+#foreach($class in $classes)
+#if((${class.getStereotype()} == "dataObject") && (${class.getAttribute("bo-lightweight")} == "true"))
+#set($boClass=${class.getAttribute("bo-mo-class")})
+#set($lwClass=${class.getAttribute("bo-lw-class")})
+  public static ${lwClass} transform(${boClass} item) {
+    ${lwClass} lw = new ${lwClass}(item.getId());
+#set($properties=${class.getProperties()})
+#foreach ($property in $properties)
+#if(${property.booleanValueOfTag("bo-lightweight")})
+#set($typeName=${property.getTypeName()})
+#set($type=false)
+#set($type=${model.findClass(${typeName})})
+#if(${type} && (${type.getStereotype()} == "dataObject") && ${type.getAttribute("bo-lightweight")})
+    lw.set${property.nameFirstUpper}(transform(item.get${property.nameFirstUpper()}()));
+#else
+    lw.set${property.nameFirstUpper()}(item.get${property.nameFirstUpper()}());
+#end
+#end
+#end
+## infers if an iterator should be declared.
+#set($needIterator=false)
+#set($aggregations=${class.getIndexedProperties()})
+#foreach ($aggregation in $aggregations) 
+#if(${aggregation.booleanValueOfTag("bo-lightweight")})
+#set($typeName=${aggregation.getTypeName()})
+#set($type=false)
+#set($type=${model.findClass(${typeName})})
+#if(${type} && (${type.getStereotype()} == "dataObject") && ${type.getAttribute("bo-lightweight")})
+    for (Iterator i = item.get${aggregation.nameFirstUpper()}().iterator(); i.hasNext();) {
+      lw.add${aggregation.nameFirstUpperSingular()}(transform((${type.getAttribute("bo-mo-class")})i.next()));
+    }
+#end
+#end
+#end
+    return lw;
+  }
+  
+#end
+#end
+}

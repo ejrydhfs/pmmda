@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE descriptor-repository SYSTEM "repository.dtd" [
+	<!ENTITY repository-database SYSTEM "repository_database.xml">
+	<!ENTITY repository-internal SYSTEM "repository_internal.xml">
+	<!ENTITY repository-lightweight-objects SYSTEM "repository_lw_user.xml">
+	<!ENTITY repository-business-objects SYSTEM "repository_bo_user.xml">
+]>
+
+<descriptor-repository version="1.0" isolation-level="read-uncommitted">
+  &repository-database;
+  &repository-internal;
+  &repository-lightweight-objects;
+  &repository-business-objects;
+</descriptor-repository>

@@ -1,0 +1,92 @@
+#set($sign="#")
+#set($dollar="$")
+/* This code was generated automatically with the pmMDA generator. Please do 
+   NOT add code outside the marked zones. All changes outside the marked areas 
+   will be discarded during the next execution of the MDA generator. 
+   ${dollar}Id${dollar}
+*/
+
+package ${package.getAttribute("ejb-server-package")};
+
+#set($imports=${model.createImportStatements(${package.getAttribute("ejb-server-package")})})
+#set($dummy=${imports.addClassName("java.rmi.RemoteException")})
+#set($dummy=${imports.addPackageName(${package.getAttribute("bo-mo-package")})})
+#set($dummy=${imports.addPackageName(${package.getAttribute("bo-lw-package")})})
+#set($dummy=${imports.addClassName("ch.bbv.dog.DataObjectManager")})
+#set($dummy=${imports.addClassName("ch.bbv.dog.DataObjectHandler")})
+#set($dummy=${imports.addClassName("ch.bbv.dog.DataObject")})
+#set($dummy=${imports.addClassName("ch.bbv.dog.DataObjectId")})
+#set($dummy=${imports.addClassName("ch.bbv.dog.DataObjectUpdate")})
+#set($dummy=${imports.addClassName("ch.bbv.dog.LightweightObject")})
+#set($importStatements=${imports.getImportStatements(4)})
+#foreach($importStatement in $importStatements) 
+import $importStatement;
+#end
+   
+#set($serverName=${package.valueOfTag("ejb-server-name")})
+/** 
+ * The interface ${serverName} defines the session bean interface for the data
+ * object framework service interface.
+ * @version ${dollar}Revision${dollar}
+ */
+public interface ${serverName}Session extends javax.ejb.EJBObject {
+#foreach($class in $classes)
+#if(${class.booleanValueOfTag("bo-is-root")})
+#set($boMoClass=${class.getAttribute("bo-mo-class")})
+#set($boLwClass=${class.getAttribute("bo-lw-class")})
+  /** 
+   * Retrieves the data object graphs either with the root having the given
+   * identifier or fulfilling the given constraint.
+   * @param datasource alias of the logical database containing the objects.
+   * @param id the identifier of the requested root object if defined otherwise
+   * null.
+   * @param constraints the constraints defined for the root objects if defined 
+   * otherwise null.
+   * @return the array of found objects fulfilling the constraints.
+   * @throws RemoteException exception was encountered in transport layer.
+   */
+  ${boMoClass}[] retrieve${boMoClass}(String datasource, Integer id, String constraints) 
+    throws RemoteException;
+#if(${class.booleanValueOfAttribute("bo-lightweight")})  
+
+  /** 
+   * Retrieves the lightweight data object graphs either with the root 
+   * having the given identifier or fulfilling the given constraint.
+   * @param datasource alias of the logical database containing the objects.
+   * @param id the identifier of the requested root object if defined otherwise
+   * null.
+   * @param constraints the constraints defined for the root objects if defined 
+   * otherwise null.
+   * @return the array of found objects fulfilling the constraints.
+   * @throws RemoteException exception was encountered in transport layer.
+   */
+  ${boLwClass}[] retrieveLw${boLwClass}(String datasource, Integer id, String constraints) 
+    throws RemoteException;
+#end  
+  
+  /** 
+   * Stores the data object graph with its updates in the database.
+   * @param datasource alias of the logical database containing the objects.
+   * @param bo the data object graph to store.
+   * @return list of update information. 
+   * @throws RemoteException exception was encountered in transport layer.
+   */
+  DataObjectUpdate[] store${boMoClass}(String datasource, ${boMoClass} bo)
+	throws RemoteException;
+
+  /** 
+   * Removes the data object graph which root has the given identifier.
+   * @param datasource alias of the logical database containing the objects.
+   * @param id the identifier of the requested root object.
+   * @throws RemoteException exception was encountered in transport layer.
+   */
+  void remove${boMoClass}(String datasource, Integer id) 
+    throws RemoteException;
+#end
+#end
+  /** 
+   * Heartbeat function to verify that the server is available.
+   * @throws RemoteException exception was encountered in transport layer.
+   */  
+  void heartbeat() throws RemoteException;
+}

@@ -1,0 +1,16 @@
+1. Introduction
+---------------
+   
+The pmMDA application and the used frameworks should be tested automatically to
+insure quality of the delivered code.
+
+2. Test Scenarios
+-----------------
+
+2.1 Business object graph Test (create, read, update, delete)
+  The test verifies the behavior of the business object framework including  
+  lightweight objects, the transport layer and the persistence framework.
+	- Create a hierarchy of business objects, store them in the database and
+	  retrieve them. 
+	- Modify the hierarchy of business objects, store and retrieve them.
+	- Delete the hierarchy of business objects, store and retrieve them.

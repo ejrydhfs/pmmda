@@ -1,0 +1,30 @@
+<table name="${tablePrefix}${class.getAttributeValue("jdbcName")}${tablePostfix}"
+  javaName="${classPrefix}${class.getAttributeValue("name")}${classPostfix}"
+  idMethod="None">
+#foreach($property in $properties)
+  <column name="${property.getAttributeValue("jdbcName")}"
+    javaName="${property.getAttributeValue("name")}"
+#if(${property.getAttributeValue("isPrimaryKey")} == "true")
+    primaryKey="true"
+#end
+#if(${property.getAttributeValue("canBeNull")} == "false")
+    required="true"
+#else
+    required="false"
+#end
+    type="${property.getAttributeValue("jdbcType")}"
+#if(${property.getAttributeValue("metaType")} == "OBJECT")
+    javaType="OBJECT"/>
+#elseif(${property.getAttributeValue("metaType")} == "PRIMITIVE")
+    javaType="PRIMITIVE"/>
+#else 
+    />
+#end
+#end
+#foreach($property in $keys) 
+  <foreign-key foreignTable="${tablePrefix}LOOKUP${tablePostfix}">
+    <reference local="${property.getAttributeValue("jdbcName")}" foreign="CODE"/>
+  </foreign-key>
+#end
+</table>
+

@@ -1,0 +1,35 @@
+#set($__="")
+#set($____="")
+#set($sign="#")
+#set($dollar="$")
+
+#macro(emitFileHeader)
+/* This code was generated automatically with the pmMDA generator. Please do 
+   NOT add code outside the marked zones. All changes outside the marked areas 
+   will be discarded during the next execution of the MDA generator. 
+   ${dollar}Id${dollar}
+*/
+#end
+
+#macro(emitDescription $spaces $lines)
+#if(${lines.size()} > 0)
+$(spaces)/**
+#foreach($line in $lines)
+$(spaces) ${line}
+#end
+$(spaces) * @version ${dollar}Revision${dollar}
+$(spaces) */
+#end
+#end
+
+#macro(isModel $model $typename $isModel)
+#set($type=false)
+#set($type=${model.findClass(${typeName})})
+#set($isModel=${type} && (${type.getStereotype()} == "dataObject")}))
+#end
+
+#macro(isLightweigth $model $typename $isLightweight)
+#set($type=false)
+#set($type=${model.findClass(${typeName})})
+#set($isLightweight=${type} && (${type.getStereotype()} == "dataObject") && (${type.getAttribute("bo-lightweight")}))
+#end

@@ -1,0 +1,247 @@
+#set($sign="#")
+#set($dollar="$")
+/* This code was generated automatically with the pmMDA generator. Please do 
+   NOT add code outside the marked zones. All changes outside the marked areas 
+   will be discarded during the next execution of the MDA generator. 
+   ${dollar}Id${dollar}
+*/
+
+package ${package.getAttribute("ejb-server-package")};
+
+#set($imports=${model.createImportStatements(${package.getAttribute("ejb-server-package")})})
+#set($dummy=${imports.addPackageName(${package.getAttribute("bo-mo-package")})})
+#set($dummy=${imports.addPackageName(${package.getAttribute("bo-lw-package")})})
+#set($dummy=${imports.addPackageName(${package.getAttribute("cto-bo2dto-package")})})
+#set($dummy=${imports.addPackageName(${package.getAttribute("cto-lw2dto-package")})})
+#set($dummy=${imports.addPackageName(${package.getAttribute("bo-lw-package")})})
+#set($dummy=${imports.addPackageName("ch.bbv.application")})
+#set($dummy=${imports.addClassName("ch.bbv.dog.DataObjectManager")})
+#set($dummy=${imports.addClassName("ch.bbv.dog.DataObjectHandler")})
+#set($dummy=${imports.addClassName("ch.bbv.dog.DataObject")})
+#set($dummy=${imports.addClassName("ch.bbv.dog.DataObjectId")})
+#set($dummy=${imports.addClassName("ch.bbv.dog.LightweightObject")})
+#set($dummy=${imports.addClassName("ch.bbv.dog.DogException")})
+#set($dummy=${imports.addPackageName("ch.bbv.transport")})
+#set($dummy=${imports.addPackageName("java.util")})
+#set($dummy=${imports.addClassName("java.util.ConcurrentModificationException")})
+#set($dummy=${imports.addClassName("org.apache.commons.logging.Log")})
+#set($dummy=${imports.addClassName("org.apache.commons.logging.LogFactory")})
+#set($dummy=${imports.addClassName("org.omg.CosNaming.NameComponent")})
+#set($dummy=${imports.addClassName("org.omg.CosNaming.NamingContextExt")})
+#set($dummy=${imports.addClassName("org.omg.CosNaming.NamingContextExtHelper")})
+#set($dummy=${imports.addClassName("org.omg.PortableServer.POA")})
+#set($dummy=${imports.addClassName("org.omg.PortableServer.POAHelper")})
+#set($importStatements=${imports.getImportStatements(4)})
+#foreach($importStatement in $importStatements) 
+import $importStatement;
+#end
+   
+#set($serverName=${package.valueOfTag("ejb-server-name")})
+#set($classname="${serverName}Corba")
+/** 
+ * The class implements the data object graph CORBA server and implements all
+ * the functions defined in the BOG framework.
+ * ${dollar}Revision${dollar}
+ */
+public class $classname extends ${serverName}POA  {
+  /** 
+   * Name of the CORBA ORB subsystem.
+   */
+  public static final String ORB_NAME = "CORBA_ORB";
+  
+  /** 
+   * Name of the server as registered in the naming service.
+   */
+   public static final String SERVER_NAME = "${serverName}";
+
+  /**
+   * Defines an illegal identifier to emulate null identifiers.
+   */
+  public static final int ILLEGAL_ID = 0;
+
+  /** 
+   * Logger of the server class.
+   */
+  private static Log log = LogFactory.getLog(${classname}.class);
+  
+  /** 
+   * Creates the CORBA server $serverName and registers it into the ORB with
+   * the name ${serverName}.
+   * @return the created and registered CORBA service.
+   */
+  public static ${classname} create() {
+    return create(SERVER_NAME);
+  }
+  
+  /** 
+   * Creates the CORBA server $serverName and registers it into the ORB.
+   * @param name name of the CORBA service registered in the naming service.
+   * @return the created and registered CORBA service.
+   */
+  public static ${classname} create(String name) {
+    ${classname} server = null;
+    try {
+      Locator locator = Locator.getInstance();
+      org.omg.CORBA.ORB orb = (org.omg.CORBA.ORB) locator.getSubsystem(ORB_NAME);
+      server = new ${classname}();
+      POA rootpoa = POAHelper.narrow(orb.resolve_initial_references("RootPOA"));
+      rootpoa.the_POAManager().activate();
+      org.omg.CORBA.Object ref = rootpoa.servant_to_reference(server);
+      ${serverName} href = ${serverName}Helper.narrow(ref);
+      org.omg.CORBA.Object objRef = orb.resolve_initial_references("NameService");
+      NamingContextExt ncRef = NamingContextExtHelper.narrow(objRef);
+      NameComponent path[] = ncRef.to_name(name);
+      ncRef.rebind(path, href);
+      locator.register(server, name);
+      log.info("${serverName} named [" + name + "] ready and waiting ...");
+    } catch (Exception e) {
+      log.fatal(e);
+    }
+    return server;
+  }
+
+#foreach($class in $classes)
+#if(${class.booleanValueOfTag("bo-is-root")})
+#set($boMoClass=${class.getAttribute("bo-mo-class")})
+#set($boLwClass=${class.getAttribute("bo-lw-class")})
+#set($ctoMoClass=${class.getAttribute("cto-mo-class")})
+#set($ctoLwClass=${class.getAttribute("cto-lw-class")})
+  public ${ctoMoClass}[] retrieve${boMoClass}(String datasource, int id, String constraints) 
+    throws DogExceptionCto {
+    try {
+      List bos;
+      DataObjectHandler handler = getHandler();
+      if (log.isTraceEnabled()) {
+        log.trace("start retrieve ${boMoClass} " + datasource + " " + id + " " + constraints);
+      }
+      if (id != ILLEGAL_ID) {
+        bos = new ArrayList();
+        DataObject bo = handler.retrieve(datasource, ${boMoClass}.class, new Integer(id));
+        if (bo != null) {
+          bos.add(bo);
+        }
+      } else {
+        bos = handler.retrieve(datasource, ${boMoClass}.class,
+            ((constraints.length() == 0) ? null : constraints));
+      }
+      ${ctoMoClass}[] ctos = ${boMoClass}Transformer.transform(bos);
+      if (log.isTraceEnabled()) {
+        log.trace("end retrieve ${boMoClass}");
+      }
+      return ctos;
+    } catch (ConcurrentModificationException e) {
+      throw create(e, "concurrent access in retrieve${boMoClass}");
+    } catch (Exception e) {
+      log.error(e);
+      throw new DogExceptionCto();
+    }
+  }
+#if(${class.booleanValueOfAttribute("bo-lightweight")})  
+
+  public ${ctoLwClass}[] retrieveLw${boLwClass}(String datasource, int id, String constraints) 
+    throws DogExceptionCto {
+    try {
+      List lws;
+      DataObjectHandler handler = getHandler();
+      if (log.isTraceEnabled()) {
+        log.trace("start retrieveLw ${boLwClass} " + datasource + " " + id + " " + constraints);
+      }
+      if (id != ILLEGAL_ID) {
+        lws = new ArrayList();
+        LightweightObject lw = handler.retrieveLw(datasource, ${boLwClass}.class, new Integer(id));
+        if (lw != null) {
+          lws.add(lw);
+        }
+  	  } else {
+        lws = handler.retrieveLw(datasource, ${boLwClass}.class, 
+            ((constraints.length() == 0) ? null : constraints));
+      }
+      ${ctoLwClass}[] ctos = ${boLwClass}Transformer.transform(lws);
+      if (log.isTraceEnabled()) {
+        log.trace("end retrieve ${boLwClass}");
+      }
+      return ctos;
+    } catch (Exception e) {
+      log.error(e);
+      throw new DogExceptionCto();
+    }
+  }
+#end  
+  
+  public DataObjectUpdateCto[] store${boMoClass}(String datasource, ${ctoMoClass} cto)
+	throws DogExceptionCto {
+	try {
+      DataObjectHandler handler = getHandler();
+      if (log.isTraceEnabled()) {
+        log.trace("start store ${boMoClass} " + datasource + " " + cto.id);
+      }
+      ${boMoClass} root = ${boMoClass}Transformer.transform(cto);
+      List infos = handler.store(datasource, ${boMoClass}.class, root);
+	  DataObjectUpdateCto[] ctos = TransformerCto.createInfos(infos);
+      if (log.isTraceEnabled()) {
+        log.trace("end store ${boMoClass}");
+      }
+      return ctos;
+    } catch (ConcurrentModificationException e) {
+      throw create(e, "concurrent access in store${boMoClass}");
+    } catch (Exception e) {
+      log.error(e);
+      throw new DogExceptionCto();
+    }    
+  }
+  
+  public void remove${boMoClass}(String datasource, int id) throws DogExceptionCto {
+    try {
+      DataObjectHandler handler = getHandler();
+      if (log.isTraceEnabled()) {
+        log.trace("start remove ${boMoClass} " + datasource + " " + id);
+      }
+      handler.remove(datasource, ${boMoClass}.class, new Integer(id));
+      if (log.isTraceEnabled()) {
+        log.trace("end remove ${boMoClass}");
+      }
+    } catch (ConcurrentModificationException e) {
+      create(e, "concurrent access in remove${boMoClass}");
+    } catch (Exception e) {
+      log.error(e);
+      throw new DogExceptionCto();
+    }
+  }
+
+#end
+#end
+  /** Retrieves the values of the reference codes described in the given list.
+   * @param descriptors list of reference code types to retrieve.
+   * @return list of requested reference code types with their values.
+   * @throws DogExceptionCto an error occured when processing the request.
+   */
+  public ReferenceCodeInfoCto[] retrieveCodes(ReferenceCodeInfoCto[] descriptors) 
+    throws DogExceptionCto {
+    return descriptors;
+  }
+
+  /** Heartbeat tests for the server. Calls an empty method on the server to 
+   * test if it is still available.
+   * @throws DogExceptionCto an error occured when processing the request.
+   */
+  public void heartbeat() throws DogExceptionCto {
+  }
+  
+  private DataObjectHandler getHandler() {
+    DataObjectManager manager = (DataObjectManager) Locator.getInstance()
+                                    .getComponent(DataObjectManager.NAME);
+    return manager.getBoHandler();
+  }
+  
+  /** Creates the IDL representation of a concurrent modification exception.
+   * @param e concurrent modification exception to transform.
+   * @param text text of the IDL data object graph exception.
+   * @return the IDL representtation of a concurrent modification exception.
+   */
+  private DogExceptionCto create(ConcurrentModificationException e, String text) {
+    log.warn(e);
+    DogException doge = new DogException(DogException.CONCURRENT_ACCESS_ERROR, 
+                                         "${classname}", text);
+    return TransformerCto.create(doge);
+  }
+}

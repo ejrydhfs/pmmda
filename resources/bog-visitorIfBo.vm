@@ -1,0 +1,54 @@
+#set($sign="#")
+/* This code was generated automatically with the MDA generator Version 0.2.
+   Please do NOT add code outside the marked zones. All changes outside the 
+   marked area will be discarded during the next execution of the MDA generator. 
+*/
+
+
+#set($hasInterface=(${class.getAttribute("bo-has-interface")} == "true"))   
+#if (${package})
+#if ($hasInterface)
+package ${package.getAttribute("bo-if-package")};
+#else
+package ${package.getAttribute("bo-mo-package")};
+#end
+#end
+
+/* %% USER DEFINED DECLARATIONS START %% */
+/* %% USER DEFINED DECLARATIONS END   %% */
+
+/** The visitor class implements the visitor pattern for the graph of all 
+ * data object classes defined in the package. The list of all relevant
+ * classes is generated from the MDA model.
+ */
+public interface Visitor {
+
+/* %% USER DEFINED DEFINITIONS START %% */
+/* %% USER DEFINED DEFINITIONS END   %% */
+
+  /** Returns the current depth in the graph when traversing it with the 
+   * visitor. The depth is a positive integer with a minimal value of 1.
+   * @return the current depth of the visitor in the graph.
+   */
+  int getDepth();
+
+  /** Sets the current depth in the graph when traversing it with the visitor. 
+   * The depth is a positive integer with a minimal value of 1.	
+   * @param depth current depth of the visitor in the traversed graph.
+   */
+  void setDepth(int depth);
+  
+#foreach($class in $classes)
+#if(${class.getStereotype()} == "dataObject")
+#if($hasInterface)
+#set($name=${class.getAttribute("bo-if-class")})
+#else
+#set($name=${class.getAttribute("bo-mo-class")})
+#end
+  /** Visits the class ${name} as part of the visitor pattern.
+   * @param item item to visit.
+   */
+  void visit(${name} item);
+#end
+#end
+}

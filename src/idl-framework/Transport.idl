@@ -1,0 +1,63 @@
+#ifndef _TRANSPORT_CTO
+#define _TRANSPORT_CTO
+
+#include "NullableTypes.idl"
+
+module ch {
+  module bbv {
+    module transport {
+      exception DogExceptionCto {
+        long code;
+        NullString origin;
+        NullString text;
+      };
+
+	  struct DataPropertyUpdateCto {
+	    string property;
+	    NullString value;
+	  };
+	  typedef sequence<DataPropertyUpdateCto> DataPropertyUpdateSequence;      
+	        
+      struct DataObjectUpdateCto {
+      	string classname;
+      	long id;
+      	Timestamp timestamp;
+      	DataPropertyUpdateSequence updates;
+      };
+      
+      typedef sequence<DataObjectUpdateCto> DataObjectUpdateSequence;
+      
+      struct ReferenceCodeCto {
+      	long code;
+      	long sortOrder;
+      	string description;
+      	string shortDescription;
+      };
+
+      typedef sequence<ReferenceCodeCto> ReferenceCodeSequence;
+      
+      struct HierarchicalReferenceCodeCto {
+      	long code;
+      	long parent;
+      	long sortOrder;
+      	string description;
+      	string shortDescription;
+      };
+      
+      typedef sequence<HierarchicalReferenceCodeCto> HierarchicalReferenceCodeSequence;
+      
+      struct ReferenceCodeInfoCto {
+        string classname;
+        string version;
+        boolean available;
+      	boolean hierarchical;
+      	ReferenceCodeSequence codes;
+      	HierarchicalReferenceCodeSequence hierarchicalCodes;
+      };
+      
+      typedef sequence<ReferenceCodeInfoCto> ReferenceCodeInfoSequence;
+    };
+  };
+};
+
+#endif

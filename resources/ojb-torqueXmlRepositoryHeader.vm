@@ -1,0 +1,8 @@
+<?xml version="1.0" ?>
+<!DOCTYPE database SYSTEM "http://jakarta.apache.org/turbine/dtd/database.dtd">
+<database name="default" 
+  package="${package.getAttributeValue("name")}"
+  defaultIdMethod="none"
+  defaultJavaMethod="object";
+  baseClass="BaseObject"
+  basePeer="BasePeer">

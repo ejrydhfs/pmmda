@@ -1,0 +1,171 @@
+<class-descriptor class="ch.bbv.dnm.users.User"
+  table="OJB.USER"
+  description="see class model documentation">
+  <field-descriptor name="login"
+    description="see class model documentation"
+    column="NAME"
+    jdbc-type="STRING"
+    nullable="false"
+  <field-descriptor name="active"
+    description="see class model documentation"
+    column="ACTIVE"
+    jdbc-type="BOOLEAN"
+    nullable="false"
+  <field-descriptor name="email"
+    description="see class model documentation"
+    column="EMAIL"
+    jdbc-type="STRING"
+    nullable="false"
+  <field-descriptor name="password"
+    description="see class model documentation"
+    column="PASSWORD"
+    jdbc-type="STRING"
+    nullable="false"
+  <field-descriptor name="name"
+    description="see class model documentation"
+    column="LONGNAME"
+    jdbc-type="STRING"
+    nullable="false"
+  <collection-descriptor
+    name="roles"
+    element-class-ref="ch.bbv.dnm.users.UserRole"
+    orderby="id"
+    sort="ASC">
+    <inverse-foreignkey field-ref="ROLES_USER_FK"/>
+   </collection-descriptor>
+
+<class-descriptor class="ch.bbv.dnm.users.Role"
+  table="OJB.USERROLE"
+  description="see class model documentation">
+  <field-descriptor name="name"
+    description="see class model documentation"
+    column="NAME"
+    jdbc-type="STRING"
+    nullable="false"
+  <field-descriptor name="description"
+    description="see class model documentation"
+    column="DESCRIPTION"
+    jdbc-type="STRING"
+    nullable="true"
+
+<class-descriptor class="ch.bbv.dnm.users.Unit"
+  table="OJB.UNIT"
+  description="see class model documentation">
+  <field-descriptor name="name"
+    description="see class model documentation"
+    column="NAME"
+    jdbc-type="STRING"
+    nullable="false"
+  <field-descriptor name="description"
+    description="see class model documentation"
+    column="DESCRIPTION"
+    jdbc-type="STRING"
+    nullable="true"
+  <collection-descriptor
+    name="users"
+    element-class-ref="ch.bbv.dnm.users.User"
+    orderby="id"
+    sort="ASC">
+    <inverse-foreignkey field-ref="USERS_UNIT_FK"/>
+   </collection-descriptor>
+  <collection-descriptor
+    name="units"
+    element-class-ref="ch.bbv.dnm.users.Unit"
+    orderby="id"
+    sort="ASC">
+    <inverse-foreignkey field-ref="UNITS_UNIT_FK"/>
+   </collection-descriptor>
+
+<class-descriptor class="ch.bbv.dnm.users.Domain"
+  table="OJB.DOMAIN"
+  description="see class model documentation">
+  <field-descriptor name="name"
+    description="see class model documentation"
+    column="NAME"
+    jdbc-type="STRING"
+    nullable="false"
+  <field-descriptor name="description"
+    description="see class model documentation"
+    column="DESCRIPTION"
+    jdbc-type="STRING"
+    nullable="true"
+  <field-descriptor name="longname"
+    description="see class model documentation"
+    column="LONGNAME"
+    jdbc-type="STRING"
+    nullable="false"
+  <field-descriptor name="administrator"
+    description="see class model documentation"
+    column="null_FK"
+    jdbc-type="INTEGER"
+    access="anonymous"
+    nullable="false"/>
+  <reference-descriptor
+    name="administrator"
+    class-ref="ch.bbv.dnm.users.User">
+    <foreignkey field-ref="DOMAIN_null_FK"/>
+  </reference>
+  <collection-descriptor
+    name="units"
+    element-class-ref="ch.bbv.dnm.users.Unit"
+    orderby="id"
+    sort="ASC">
+    <inverse-foreignkey field-ref="UNITS_DOMAIN_FK"/>
+   </collection-descriptor>
+
+<class-descriptor class="ch.bbv.dnm.users.Provider"
+  table="OJB.PROVIDER"
+  description="see class model documentation">
+  <field-descriptor name="name"
+    description="see class model documentation"
+    column="NAME"
+    jdbc-type="STRING"
+    nullable="false"
+  <field-descriptor name="email"
+    description="see class model documentation"
+    column="EMAIL"
+    jdbc-type="STRING"
+    nullable="false"
+  <field-descriptor name="description"
+    description="see class model documentation"
+    column="DESCRIPTION"
+    jdbc-type="STRING"
+    nullable="false"
+  <field-descriptor name="longname"
+    description="see class model documentation"
+    column="LONGNAME"
+    jdbc-type="STRING"
+    nullable="false"
+  <collection-descriptor
+    name="domains"
+    element-class-ref="ch.bbv.dnm.users.Domain"
+    orderby="id"
+    sort="ASC">
+    <inverse-foreignkey field-ref="DOMAINS_PROVIDER_FK"/>
+   </collection-descriptor>
+
+<class-descriptor class="ch.bbv.dnm.users.UserRole"
+  table="OJB.USERROLE"
+  description="see class model documentation">
+  <field-descriptor name="username"
+    description="see class model documentation"
+    column="USERNAME"
+    jdbc-type="STRING"
+    nullable="false"
+  <field-descriptor name="rolename"
+    description="see class model documentation"
+    column="ROLENAME"
+    jdbc-type="STRING"
+    nullable="false"
+  <field-descriptor name="role"
+    description="see class model documentation"
+    column="ROLE_FK"
+    jdbc-type="INTEGER"
+    access="anonymous"
+    nullable="false"/>
+  <reference-descriptor
+    name="role"
+    class-ref="ch.bbv.dnm.users.Role">
+    <foreignkey field-ref="USERROLE_ROLE_FK"/>
+  </reference>
+
