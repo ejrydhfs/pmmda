@@ -14,41 +14,41 @@ The explorer provides a tree list user interface tailored to the BOG framework.
 <p>The explorer package provides wrapper classes for the nodes of the hierarchical 
 	structure. The following help classes are provided.</p>
 <ul>
-<li> The node class is wrapper class, which models the concept of a node in a 
-  hierarchical structure. The corresponding object of the underlying model is 
-  referenced in the node. The node contains the name and the current icon. It 
-  implements lazy evaluation for its children. The children nodes are only 
-  instantiated as needed. This mechanism supports tree of thousands of nodes as 
-  long as one node as no more than thousand children. </li>
-<li>The node type defines which attributes of a given underlying node class 
-  are visible in the graphical representation. The visibility and editability of 
-  the attributes are also described. The node type also provides the method 
-  used to retrieve the children of the underlying class and the method to inquiry 
-  the name displayed in the tree. The reflection package is used to provide the 
-  meta information. </li>
-<li> Care was taken to allow sophisticated pictural representations. The node 
-  type class stores all icons associated with its nodes. This mechanism allows a 
-  uniform display of node type. </li>
-<li> Each node type object can define a context menu for nodes of its type. The
-  context menu is acessed through the usual mechanism of the platform on which 
-  the application is executed. </li>
-<li>The node type factory provides a factory pattern to create new nodes and 
-  their associated node type for all underlying nodes part of the model. The 
-  factory creates a new node for a given underlying object and creates objects for 
-  all its children. </li>
-<li>The only assumption made on the objects being visualized is that they provide 
-  a method returning all their children as an enumeration or a list. The method 
-  has no parameters and is public.</li>
+  <li>The node class is wrapper class, which models the concept of a node in a 
+    hierarchical structure. The corresponding object of the underlying model is 
+    referenced in the node. The node contains the name and the current icon. It 
+    implements lazy evaluation for its children. The children nodes are only 
+    instantiated as needed. This mechanism supports tree of thousands of nodes as 
+    long as one node as no more than thousand children. </li>
+  <li>The node type defines which attributes of a given underlying node class 
+    are visible in the graphical representation. The visibility and editability of 
+    the attributes are also described. The node type also provides the method 
+    used to retrieve the children of the underlying class and the method to inquiry 
+    the name displayed in the tree. The reflection package is used to provide the 
+    meta information. </li>
+  <li>Care was taken to allow sophisticated pictural representations. The node 
+    type class stores all icons associated with its nodes. This mechanism allows a 
+    uniform display of node type. </li>
+  <li>Each node type object can define a context menu for nodes of its type. The
+    context menu is acessed through the usual mechanism of the platform on which 
+    the application is executed. </li>
+  <li>The node type factory provides a factory pattern to create new nodes and 
+    their associated node type for all underlying nodes part of the model. The 
+    factory creates a new node for a given underlying object and creates objects for 
+    all its children. </li>
+  <li>The only assumption made on the objects being visualized is that they provide 
+    a method returning all their children as an enumeration or a list. The method 
+    has no parameters and is public.</li>
 </ul>
 <p> To use this package the user must only perform the following task.</p>
-<OL>
-<li> A node type object must be created for each model class, which should be 
-  represented. </li>
-<li> Each such node type must be registered into the node type factory. </li>
-<li> Request the node type to create a new view given the root of a 
-  hierarchical representation. </li>
-<li> Embedd the graphical component into the graphical user interface.</li>
-</OL>
+<ol>
+  <li> A node type object must be created for each model class, which should be 
+    represented. </li>
+  <li> Each such node type must be registered into the node type factory. </li>
+  <li> Request the node type to create a new view given the root of a 
+    hierarchical representation. </li>
+  <li> Embedd the graphical component into the graphical user interface.</li>
+</ol>
 
 <p> The following graphical component are supported.</p>
 <ul>
@@ -72,6 +72,7 @@ The explorer provides a tree list user interface tailored to the BOG framework.
 		<li>The instantiation of the node type factory and the explorer is done
 			programmatically to provide full control to the developers.</li>
 	</ul>
+
 <h2> Requirements </h2>
 <h3> Remote Explorer Interfaces </h3>
 <p> The explorer framework should support multiple remote interfaces. The 
@@ -94,20 +95,20 @@ want to support a novice and an advanced user mode. Second some node types
 need to display over kinds of views. For example a CAD node must show a
 diagram.</p>
 
-<p> Our framework has implicit support for the standard explorer mode. Each
+<p>Our framework has implicit support for the standard explorer mode. Each
 node can add additional views if needed. Finally it is possible to disable
-the standard table view for selected nodes. </p>
+the standard table view for selected nodes.</p>
 
-<h3> Actions and Popup Menu </h3>
-<p> Actions performed on nodes belong to two categories. The standard actions
+<h3>Actions and Popup Menu</h3>
+<p>Actions performed on nodes belong to two categories. The standard actions
 have special support from the framework. Client specific actions are supported
 through a plugin mechanism. The following standard actions are supported.</p>
-<ul>
-<dt>add</dt><dd> Adds a new child to the currently selected node.</dd>
-<dt>get properties</dt><dd> Displays the property of the selected node in a
-  dialog. The values can be edited if the node is editable.</dd>
-<dt>delete</dt><dd> Deletes the seclected node if it is removable.</dd>
-</ul>
+<dl>
+  <dt>add</dt><dd> Adds a new child to the currently selected node.</dd>
+  <dt>get properties</dt><dd> Displays the property of the selected node in a
+    dialog. The values can be edited if the node is editable.</dd>
+  <dt>delete</dt><dd> Deletes the seclected node if it is removable.</dd>
+</dl>
 
 <h2>Cook Book</h2>
 <h3>Define a new Explorer View</h3>
@@ -125,41 +126,41 @@ displayed are handled in the framework. </p>
 view and provides hooks to retrieve data from the underlying model. Each node 
 type defines the following aspects.</p>
 <ul>
-<li>The name of the java class defining the class of the objects contained
-  in the nodes of this type. The class must provide a default constructor if 
-  the node is editable. This constructor is called when a new node should be
-  added through the user interface. 
-<li>The method used to retrieve the name of the node. This name is displayed
-  in the tree view.</li>
-<li>Either the name of the method to retrieve all children or the name of the
-  method to retrieve the unique child. The methods must return respectively
-  an iteration or an object.</li>
-<li>The attributes of the node describe which attributes nodes of this type
-  can display. The attributes are optional.</li>
-<li>The list of possible node types of its children. This information is
-  used to generate the add part of the standard popup menu. This menu is
-  naturally only displayed in the node is editable. This list is 
-  optional.</li>
-<li>The display attributes of the node describe which attributes of its 
-  children should be displayed in the right view. Each display attribute must
-  have a corresponding attribute in all possible node types of its children. 
-  The attributes are inferred through their name. These attributes are 
-  optional.</li>
-<li> Various flag indicates if the node allows children, is editable, and is 
-  removable. If the node is removable the standard popup menu contains a
-  delete item.</li>
-<li> A view can be specified to show details about the object contains in the
-  node. If nodes can be added the same view is used to input the values of
-  the attributes of the object contains in the node. The view is 
-  optional.</li>
-<li> Finally it is possible to register hooks for finer control of the
-  display of the nodes of this type. All these hooks are optional. </li>  
-  <ul>
-  <li> An icon can be registered for display in the tree. </li>
-  <li> If the displayed icon depends upon values of the object displayed
-    in the node, a static method can be registered to compute which icon
-    should be displayed.</li>
-  </ul>
+  <li>The name of the java class defining the class of the objects contained
+    in the nodes of this type. The class must provide a default constructor if 
+    the node is editable. This constructor is called when a new node should be
+    added through the user interface.</li>
+  <li>The method used to retrieve the name of the node. This name is displayed
+    in the tree view.</li>
+  <li>Either the name of the method to retrieve all children or the name of the
+    method to retrieve the unique child. The methods must return respectively
+    an iteration or an object.</li>
+  <li>The attributes of the node describe which attributes nodes of this type
+    can display. The attributes are optional.</li>
+  <li>The list of possible node types of its children. This information is
+    used to generate the add part of the standard popup menu. This menu is
+    naturally only displayed in the node is editable. This list is 
+    optional.</li>
+  <li>The display attributes of the node describe which attributes of its 
+    children should be displayed in the right view. Each display attribute must
+    have a corresponding attribute in all possible node types of its children. 
+    The attributes are inferred through their name. These attributes are 
+    optional.</li>
+  <li>Various flag indicates if the node allows children, is editable, and is 
+    removable. If the node is removable the standard popup menu contains a
+    delete item.</li>
+  <li>A view can be specified to show details about the object contains in the
+    node. If nodes can be added the same view is used to input the values of
+    the attributes of the object contains in the node. The view is 
+    optional.</li>
+  <li>Finally it is possible to register hooks for finer control of the
+    display of the nodes of this type. All these hooks are optional.
+    <ul>
+      <li> An icon can be registered for display in the tree.</li>
+      <li> If the displayed icon depends upon values of the object displayed
+      in the node, a static method can be registered to compute which icon
+      should be displayed.</li>
+    </ul></li>
 </ul>
 
 <h3>Define a Property View</h3>

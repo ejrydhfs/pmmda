@@ -24,13 +24,19 @@ public class ValidationPanel extends TablePanel {
   /**
    * Name of the columns of the validation panel.
    */
-  public static final String[] COLUMN_NAMES = { "level", "text" };
+  public static final TableCell.Cell[] CELLS;
 
+  static {
+    CELLS = new TableCell.Cell[2];
+    CELLS[0] = new TableCell.Cell("severityText", "severity", Integer.TYPE, false);
+    CELLS[1] = new TableCell.Cell("text", "text", String.class, false);
+  }
+  
   /**
    * Default constructor of the class.
    */
   public ValidationPanel() {
-    super(Collections.EMPTY_LIST, new TableCell(COLUMN_NAMES));
+    super(Collections.EMPTY_LIST, new TableCell(CELLS));
   }
 
   /**

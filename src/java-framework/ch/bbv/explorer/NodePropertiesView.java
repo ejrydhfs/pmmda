@@ -20,6 +20,8 @@ import ch.bbv.dog.DataObject;
  * objects. The view can contain child properties view. The framework handles
  * all house keeping activities. The developer needs only to implement a few
  * methods to have a usable properties view tailored for his data object type.
+ * Methods are provided to clean the view when hiding it. This mechanism supports
+ * reuse of views but enable the garbage collector to delete the model objects.
  * @author Marcel Baumann
  * @version $Revision$
  */
@@ -146,6 +148,14 @@ public abstract class NodePropertiesView extends JPanel {
     return editable;
   }
 
+  /** 
+   * Releases all model resources used in the view and its children.
+   *
+   */
+  public void release() {
+    setModel(null);
+  }
+  
   /**
    * Returns the model which properties are displayed in the view.
    * @return the node displayed in the view.

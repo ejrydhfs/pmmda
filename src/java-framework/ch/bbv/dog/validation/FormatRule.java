@@ -6,9 +6,7 @@
 
 package ch.bbv.dog.validation;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,12 +20,6 @@ import ch.bbv.utilities.ReflectUtilities;
  */
 public class FormatRule extends ValidationRuleImpl implements ValidationRule {
   /**
-   * Cache of format rules available in the application. The same rule object
-   * can be used to verify a defined format.
-   */
-  private static Map rules = new HashMap();
-
-  /**
    * The pattern to validate.
    */
   private Pattern pattern;
@@ -38,28 +30,13 @@ public class FormatRule extends ValidationRuleImpl implements ValidationRule {
   private Matcher matcher;
 
   /**
-   * Create the requested rule. The method returns always the same object for
-   * the associated configuration.
-   * @param immediate flag indicating if the rule is immediate or not.
-   * @param format format to validate.
-   * @return the requested format rule.
-   */
-  public static FormatRule create(boolean immediate, String format) {
-    FormatRule rule = (FormatRule) rules.get(format);
-    if (rule == null) {
-      rule = new FormatRule(immediate, format);
-      rules.put(format, rule);
-    }
-    return rule;
-  }
-
-  /**
    * Constructor of the class.
    * @param immediate indicates if the rule should be checked immediately
+   * @param severity the severity level of the rule.
    * @param format format to validate.
    */
-  public FormatRule(boolean immediate, String format) {
-    setImmediate(immediate);
+  public FormatRule(boolean immediate, int severity, String format) {
+    super(immediate, severity);
     pattern = Pattern.compile(format);
     matcher = pattern.matcher("");
   }

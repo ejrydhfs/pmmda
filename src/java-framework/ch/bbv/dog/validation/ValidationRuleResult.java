@@ -18,20 +18,6 @@ import java.text.MessageFormat;
  * @version $Revision$
  */
 public class ValidationRuleResult implements Serializable {
-  /**
-   * The validation rule result is an information message.
-   */
-  public static final int INFO = 0;
-
-  /**
-   * The validation rule result is a warning message.
-   */
-  public static final int WARNING = 1;
-
-  /**
-   * The validation rule result is an error message.
-   */
-  public static final int ERROR = 2;
 
   /**
    * Severity of the validation rule result.
@@ -109,6 +95,24 @@ public class ValidationRuleResult implements Serializable {
    */
   public void setSeverity(int severity) {
     this.severity = severity;
+  }
+
+  public String getSeverityText() {
+    String text;
+    switch (severity) {
+    case ValidationRule.INFO:
+      text = "INFO";
+      break;
+    case ValidationRule.WARNING:
+      text = "WARN";
+      break;
+    case ValidationRule.ERROR:
+      text = "ERROR";
+      break;
+    default:
+      text = null;
+    }
+    return text;
   }
 
   /**

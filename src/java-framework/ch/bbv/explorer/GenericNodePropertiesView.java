@@ -41,8 +41,8 @@ import com.toedter.calendar.JDateChooser;
  * <li>Boolean properties are displayed as check boxes.</li>
  * <li>Date are displayed with a custom calendar components.</li>
  * </ul>
- * The formatted text field features are used to check if the inputted data have
- * the expected format.
+ * The formatted text field features are used to check if the inputed data have
+ * the expected format. The class is well behaved in case the bean is null.
  * @author MarcelBaumann
  * @version $Revision$
  */
@@ -91,9 +91,7 @@ public class GenericNodePropertiesView extends NodePropertiesView {
     DataObject bean = getModel().getDataObject();
     if (type == null) {
       if (log.isDebugEnabled()) {
-        log
-            .debug("Creating generic node properties view for "
-                + type.getName());
+        log.debug("Creating generic node properties view " + type.getName());
       }
       type = bean.getClass();
       retrieveProperties(bean);
@@ -324,7 +322,10 @@ public class GenericNodePropertiesView extends NodePropertiesView {
     public void setModel(DataObject bean) {
       if (this.bean != bean) {
         this.bean = bean;
-        Object value = ReflectUtilities.getProperty(bean, property);
+        Object value = null;
+        if (bean != null) {
+          ReflectUtilities.getProperty(bean, property);
+        }
         setValue(value);
       }
     }

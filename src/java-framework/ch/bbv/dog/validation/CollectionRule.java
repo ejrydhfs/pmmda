@@ -18,25 +18,30 @@ import ch.bbv.utilities.ReflectUtilities;
  * @author MarcelBaumann
  * @version $Revision$
  */
-public class CollectionRule extends ValidationRuleImpl implements ValidationRule {
+public class CollectionRule extends ValidationRuleImpl implements
+    ValidationRule {
   /**
    * The property on which the validation rule should be applied.
    */
   private String indexedProperty;
 
   /**
-   * Validation rule to apply to the defined property of all items in the 
+   * Validation rule to apply to the defined property of all items in the
    * collection.
    */
   private ValidationRule rule;
 
   /**
    * Constructor of the class.
+   * @param immediate flag indicating if the rule is immediate or not.
+   * @param severity the severity level of the rule.
    * @param indexedProperty property which should be unique for all items in the
    *        indexed property to evaluate.
    * @param rule rule to apply.
    */
-  public CollectionRule(String indexedProperty, ValidationRule rule) {
+  public CollectionRule(boolean immediate, int severity,
+      String indexedProperty, ValidationRule rule) {
+    super(immediate, severity);
     this.indexedProperty = indexedProperty;
     this.rule = rule;
   }

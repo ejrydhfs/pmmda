@@ -28,56 +28,63 @@ public class RangeRule extends ValidationRuleImpl implements ValidationRule {
 
   /**
    * Constructor for a new range rule.
-   * @param immediate indicates if the rule should be checked immediately
+   * @param immediate flag indicating if the rule is immediate or not.
+   * @param severity the severity level of the rule.
    * @param min lower bound of the interval. The value is part of the interval.
    * @param max high bound of the interval. The value is part or the interval.
    */
-  public RangeRule(boolean immediate, long min, long max) {
-    setImmediate(immediate);
+  public RangeRule(boolean immediate, int severity, long min, long max) {
+    super(immediate, severity);
     range = new NaturalRange(min, max);
   }
 
   /**
    * Constructor for a new range rule.
    * @param immediate indicates if the rule should be checked immediately
+   * @param severity the severity level of the rule.
    * @param min lower bound of the interval. The value is part of the interval.
    * @param max high bound of the interval. The value is part or the interval.
    */
-  public RangeRule(boolean immediate, double min, double max) {
-    setImmediate(immediate);
+  public RangeRule(boolean immediate, int severity, double min, double max) {
+    super(immediate, severity);
     range = new FractionalRange(min, max);
   }
 
   /**
    * Constructor for a new range rule.
    * @param immediate indicates if the rule should be checked immediately
+   * @param severity the severity level of the rule.
    * @param min lower bound of the interval. The value is part of the interval.
    * @param max high bound of the interval. The value is part or the interval.
    */
-  public RangeRule(boolean immediate, Date min, Date max) {
-    setImmediate(immediate);
+  public RangeRule(boolean immediate, int severity, Date min, Date max) {
+    super(immediate, severity);
     range = new DateRange(min, max);
   }
 
   /**
    * Constructor for a new range rule.
    * @param immediate indicates if the rule should be checked immediately
+   * @param severity the severity level of the rule.
    * @param min lower bound of the interval. The value is part of the interval.
    * @param max high bound of the interval. The value is part or the interval.
    */
-  public RangeRule(boolean immediate, BigInteger min, BigInteger max) {
-    setImmediate(immediate);
+  public RangeRule(boolean immediate, int severity, BigInteger min,
+      BigInteger max) {
+    super(immediate, severity);
     range = new BigNaturalRange(min, max);
   }
 
   /**
    * Constructor for a new range rule.
    * @param immediate indicates if the rule should be checked immediately
+   * @param severity the severity level of the rule.
    * @param min lower bound of the interval. The value is part of the interval.
    * @param max high bound of the interval. The value is part or the interval.
    */
-  public RangeRule(boolean immediate, BigDecimal min, BigDecimal max) {
-    setImmediate(immediate);
+  public RangeRule(boolean immediate, int severity, BigDecimal min,
+      BigDecimal max) {
+    super(immediate, severity);
     range = new BigFractionalRange(min, max);
   }
 

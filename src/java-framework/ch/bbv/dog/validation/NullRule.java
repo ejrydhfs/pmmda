@@ -7,6 +7,7 @@
 package ch.bbv.dog.validation;
 
 import java.util.List;
+import java.util.ResourceBundle;
 
 import ch.bbv.utilities.ReflectUtilities;
 
@@ -17,65 +18,48 @@ import ch.bbv.utilities.ReflectUtilities;
  */
 public class NullRule extends ValidationRuleImpl implements ValidationRule {
   /**
-   * The instance of the immediate rule can be shared for all properties.
+   * Key for validation result message.
    */
-  private static NullRule immediateRule;
+  private static final String IS_NOT_NULL = "ch.bbv.dog.is-not-null-error";
 
   /**
-   * The instance of the not immediate rule can be shared for all properties.
+   * The resource bundle containing the messages for the validation messages.
    */
-  private static NullRule notImmediateRule;
+  private static ResourceBundle resources;
 
-  /**
-   * Create the requested rule. The method returns always the same object for
-   * the associated configuration.
-   * @param immediate flag indicating if the rule is immediate or not.
-   * @return the requested validation rule.
-   */
-  public NullRule create(boolean immediate) {
-    NullRule rule;
-    if (immediate) {
-      if (immediateRule == null) {
-        immediateRule = new NullRule(immediate);
-      }
-      rule = immediateRule;
-    } else {
-      if (notImmediateRule == null) {
-        notImmediateRule = new NullRule(immediate);
-      }
-      rule = notImmediateRule;
-    }
-    return rule;
+  static {
+    resources = ResourceBundle.getBundle("RulesMessages");
+
   }
 
   /**
    * Constructor of the class.
    * @param immediate true if the rule is immediate otherwise false.
+   * @param severity the severity level of the rule.
    */
-  public NullRule(boolean immediate) {
-    setImmediate(immediate);
+  public NullRule(boolean immediate, int severity) {
+    super(immediate, severity);
   }
 
   public boolean execute(Object bean, String property, List results) {
-    return validate(ReflectUtilities.getProperty(bean, property), results);
+    Object value = ReflectUtilities.getProperty(bean, property);
+    if (value != null) {
+      addMessage(results, resources, IS_NOT_NULL, getSeverity(), bean,
+          property, null, null);
+      return (getSeverity() == ERROR);
+    }
+    return true;
   }
 
   public boolean execute(Object bean, String property, Object oldValue,
       Object newValue, List results) {
-    return validate(newValue, results);
-  }
-
-  /**
-   * Validates the rule agains the data.
-   * @param value data to validate.
-   * @param results list of validation rule results.
-   * @return true if sucessful otherwise false.
-   */
-  private boolean validate(Object value, List results) {
+    Object value = ReflectUtilities.getProperty(bean, property);
     if (value != null) {
-      // TODO add message
-      return false;
+      addMessage(results, resources, IS_NOT_NULL, getSeverity(), bean,
+          property, oldValue, newValue);
+      return (getSeverity() == ERROR);
     }
     return true;
   }
+
 }

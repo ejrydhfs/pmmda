@@ -18,6 +18,7 @@ import ch.bbv.dog.DataObjectType;
 import ch.bbv.dog.validation.Validator;
 import ch.bbv.explorer.ExplorerNode;
 import ch.bbv.explorer.UiNodeType;
+import ch.bbv.explorer.components.ValidationPanel;
 
 /**
  * The validate action traverses the data object graph which root is in the
@@ -56,13 +57,11 @@ public class ValidateNodeAction extends AbstractNodeAction {
       AbstractVisitorFunctor visitor = type.createVisitorInstance();
       List results = new ArrayList();
       validator.validate(object, visitor, results);
-      if (results != null && results.size() > 0) {
-        log.debug("Display validator messages " + results.size());
-        node.getExplorer().getDockingArea().getTab("Validator");
-        // TODO display results
-      } else {
-        node.getExplorer().getStatusBar().setInfo("Validation Completed");
-      }
+      log.debug("Display validator messages " + results.size());
+      node.getExplorer().getStatusBar().setInfo("Validation Completed");
+      ValidationPanel panel = (ValidationPanel) node.getExplorer()
+          .getDockingArea().getTab("Validator");
+      panel.setResults(results);
     }
   }
 }

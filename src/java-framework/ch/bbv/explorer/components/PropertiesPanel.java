@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import ch.bbv.explorer.components.TableCell.Cell;
+
 /**
  * A panel containing a table of system or application properties. Convenience
  * methods are provided to retrieve and display the system properties of a Java
@@ -20,14 +22,20 @@ public class PropertiesPanel extends TablePanel {
   /**
    * Name of the columns of the properties panel.
    */
-  public static final String[] COLUMN_NAMES = { "name", "value" };
+  public static final Cell[] CELLS;
+
+  static {
+    CELLS = new TableCell.Cell[2];
+    CELLS[0] = new Cell("name", "name", String.class, false);
+    CELLS[1] = new Cell("value", "value", String.class, false);
+  }
 
   /**
    * Default constructor of the class.
    * @param properties property list to display.
    */
   public PropertiesPanel(List properties) {
-    super(properties, new TableCell(COLUMN_NAMES));
+    super(properties, new TableCell(CELLS));
   }
 
   /**

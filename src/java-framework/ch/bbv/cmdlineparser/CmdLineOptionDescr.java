@@ -366,9 +366,8 @@ public class CmdLineOptionDescr {
    * @see #getDefaultValue()
    */
   public void setDefaultValue(String defaultValue) {
-    assert isMandatory() : "pre";
+    assert isMandatory();
     this.defaultValue = defaultValue;
-    assert (getDefaultValue() == defaultValue);
   }
 
   /**
@@ -433,5 +432,4 @@ public class CmdLineOptionDescr {
     }
     cmdValueList.add(value);
   }
-
 }

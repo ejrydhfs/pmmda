@@ -12,6 +12,9 @@ The following new features were added.
   status and progress information.
 
 The following errors were corrected.
+- Boolean values are handled in sortable table as Swing does it. Boolean values
+  are displayed with checked boxes. The table cell class was refactored and
+  redundant code was removed.
 - The handling of node type in the UI node type factory had an error. The 
   returned view was erroneous if the view class is a parametric one used in
   multiple node type. The selection algorithm was modified to support such 

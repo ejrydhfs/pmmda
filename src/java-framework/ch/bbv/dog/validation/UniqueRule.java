@@ -33,17 +33,21 @@ public class UniqueRule extends ValidationRuleImpl implements ValidationRule {
    *        indexed property to evaluate.
    */
   public UniqueRule(String indexedProperty) {
-    this(indexedProperty, false);
+    this(indexedProperty, false, ERROR, false);
   }
 
   /**
    * Constructor of the class.
+   * @param immediate flag indicating if the rule is immediate or not.
+   * @param severity the severity level of the rule.
    * @param indexedProperty property which should be unique for all items in the
    *        indexed property to evaluate.
    * @param considerNull flag indicating if null values are relevant for the
    *        uniqueness test.
    */
-  public UniqueRule(String indexedProperty, boolean considerNull) {
+  public UniqueRule(String indexedProperty, boolean immediate, int severity,
+      boolean considerNull) {
+    super(immediate, severity);
     this.indexedProperty = indexedProperty;
     this.considerNull = considerNull;
   }

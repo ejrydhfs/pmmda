@@ -15,6 +15,7 @@ import java.util.Comparator;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
 import ca.odell.glazedlists.BasicEventList;
@@ -51,6 +52,8 @@ public class TablePanel extends JPanel {
    */
   private JScrollPane scrollPane;
 
+  private WritableTableFormat tableCell;
+
   /**
    * Constructor of the class. The order of column names and properties names
    * must be the same.
@@ -70,6 +73,7 @@ public class TablePanel extends JPanel {
    */
   public TablePanel(Collection objects, WritableTableFormat tableCell,
       Comparator comparator) {
+    this.tableCell = tableCell;
     setLayout(new BorderLayout());
 
     BasicEventList list = new BasicEventList();
@@ -117,7 +121,9 @@ public class TablePanel extends JPanel {
    * @return the new table view.
    */
   protected JTable createTable(TableModel tableModel) {
-    return new JTable(tableModel);
+    JTable table = new JTable(tableModel);
+    setBooleanMode(table);
+    return table;
   }
 
   /**
@@ -126,5 +132,23 @@ public class TablePanel extends JPanel {
    */
   protected TableComparatorChooser getSelector() {
     return chooser;
+  }
+
+  /**
+   * Sets the boolean mode for the cells with a boolean type. The boolean value
+   * is displayed as a check box.
+   * @param table table to update.
+   */
+  protected void setBooleanMode(JTable table) {
+    if (tableCell instanceof TableCell) {
+      TableCell.Cell[] cells = ((TableCell) tableCell).getCells();
+      for (int i = 0; i < cells.length; i++) {
+        if ((cells[i].type == Boolean.class) || (cells[i].type == Boolean.TYPE)) {
+          TableColumn tableColumn = table.getColumnModel().getColumn(i);
+          tableColumn.setCellRenderer(table.getDefaultRenderer(Boolean.class));
+          tableColumn.setCellEditor(table.getDefaultEditor(Boolean.class));
+        }
+      }
+    }
   }
 }

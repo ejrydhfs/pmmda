@@ -15,6 +15,21 @@ import java.util.List;
  */
 public interface ValidationRule {
   /**
+   * The validation rule result is an information message.
+   */
+  public static final int INFO = 0;
+
+  /**
+   * The validation rule result is a warning message.
+   */
+  public static final int WARNING = 1;
+
+  /**
+   * The validation rule result is an error message.
+   */
+  public static final int ERROR = 2;
+
+  /**
    * Flag indicating if the validation rule should be applied upon change of the
    * property or can be applied later.
    * @return true if the rule is immediate otherwise false.
@@ -30,7 +45,7 @@ public interface ValidationRule {
    * @pre (bean != null) && (results != null)
    */
   boolean execute(Object bean, List results);
-  
+
   /**
    * Executes the validation rule on a Java bean.
    * @param bean bean on which to process the rule.

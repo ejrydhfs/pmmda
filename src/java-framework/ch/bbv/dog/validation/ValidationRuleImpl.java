@@ -7,10 +7,11 @@
 package ch.bbv.dog.validation;
 
 import java.util.List;
+import java.util.ResourceBundle;
 
 /**
  * The default implementation of the validation rule interface provides neutral
- * behavior for all methods. 
+ * behavior for all methods.
  * @author MarcelBaumann
  * @version $Revision$
  */
@@ -20,16 +21,25 @@ public class ValidationRuleImpl implements ValidationRule {
    */
   private boolean immediate;
 
+  /**
+   * Indicates the severity of the rule.
+   */
+  private int severity;
+
+  /**
+   * Returns the immediate flag.
+   * @return the immediate flag.
+   */
   public boolean isImmediate() {
     return immediate;
   }
 
   /**
-   * Sets the immediate flag.
-   * @param immediate new value of the flag. #see #isImmediate()
+   * Returns the severity level.
+   * @return the severity level.
    */
-  protected void setImmediate(boolean immediate) {
-    this.immediate = immediate;
+  public int getSeverity() {
+    return severity;
   }
 
   public boolean execute(Object bean, List results) {
@@ -44,4 +54,38 @@ public class ValidationRuleImpl implements ValidationRule {
       Object newValue, List results) {
     return true;
   }
+
+  /** 
+   * Constructor of the class.
+   * @param immediate flag indicating if the rule is immediate or not.
+   * @param severity the severity level of the rule.
+   */
+  protected ValidationRuleImpl(boolean immediate, int severity) {
+    this.immediate = immediate;
+    this.severity = severity;
+  }
+
+  /**
+   * Adds an error message to the list of results.
+   * @param results results containing the messages.
+   * @param resources resource bundle of messages.
+   * @param key key of the message.
+   * @param severity severity of the message.
+   * @param bean bean origin of the message.
+   * @param property property origin of the message.
+   * @param oldValue old value of the property.
+   * @param newValue new value of the property.
+   * @pre (results != null) && (resources != null) && (key != null)
+   */
+  protected void addMessage(List results, ResourceBundle resources, String key,
+      int severity, Object bean, String property, Object oldValue,
+      Object newValue) {
+    ValidationRuleResult result = new ValidationRuleResult();
+    result.setSeverity(severity);
+    result.setKey(key);
+    Object[] parameters = { bean.toString(), property, oldValue, newValue };
+    result.setText(resources.getString(key), parameters);
+    results.add(result);
+  }
+
 }

@@ -35,9 +35,12 @@ public class BshRule extends ValidationRuleImpl implements ValidationRule {
 
   /**
    * Constructor of the class.
+   * @param immediate flag indicating if the rule is immediate or not.
+   * @param severity the severity level of the rule.
    * @param filename name of the file containing the beanshell script.
    */
-  public BshRule(String filename) {
+  public BshRule(boolean immediate, int severity, String filename) {
+    super(immediate, severity);
     interpreter = new Interpreter();
   }
 

@@ -84,11 +84,6 @@ public abstract class Explorer {
   /**
    * Swing component of the explorer view.
    */
-  private JScrollPane bottomRightPane;
-
-  /**
-   * Swing component of the explorer view.
-   */
   private DockingArea dockingArea;
 
   /**
@@ -216,11 +211,9 @@ public abstract class Explorer {
     frame = new JFrame("Explorer");
     leftPane = new JScrollPane(tree);
     topRightPane = new JScrollPane();
-    bottomRightPane = new JScrollPane();
     dockingArea = new DockingArea();
-    bottomRightPane.setViewportView(dockingArea);
     rightPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, topRightPane,
-        bottomRightPane);
+        dockingArea);
     rightPane.setDividerSize(5);
     rightPane.setResizeWeight(0.8);
     splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPane, rightPane);

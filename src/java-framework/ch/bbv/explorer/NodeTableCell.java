@@ -7,7 +7,7 @@ package ch.bbv.explorer;
 
 import java.util.List;
 
-import ca.odell.glazedlists.swing.WritableTableFormat;
+import ch.bbv.explorer.components.TableCell;
 
 /**
  * The explorer table model models a table displaying a table representation of
@@ -17,43 +17,38 @@ import ca.odell.glazedlists.swing.WritableTableFormat;
  * @author Marcel Baumann
  * @version $Revision$
  */
-public class NodeTableCell implements WritableTableFormat {
+public class NodeTableCell extends TableCell {
   /**
    * List of fields to display for each object member of the table model.
    */
   private List fields;
 
   /**
+   * Creates the cell representation of a list of user interface fields.
+   * @param fields user interface list to transform.
+   * @return the cell based representation of the list.
+   * @pre (fields != null) && (fields.size() > 0)
+   */
+  public static TableCell.Cell[] create(List fields) {
+    assert ((fields != null) && (fields.size() > 0));
+    Cell[] cells = new Cell[fields.size()];
+    for (int i = 0; i < cells.length; i++) {
+      UiField field = (UiField) fields.get(i);
+      cells[i] = new Cell(field.getProperty(), field.getProperty(), field
+          .getType(), field.isEditable());
+    }
+    return cells;
+
+  }
+
+  /**
    * Constructor of the class. All instance fields are initialized.
    * @param fields fields to display of type UiField.
+   * @pre (fields != null) && (fields.size() > 0)
    */
   public NodeTableCell(List fields) {
-    setNodeType(fields);
-  }
-
-  /**
-   * Sets the node type of the node table cell.
-   * @param fields fields to display.
-   */
-  public void setNodeType(List fields) {
+    super(create(fields));
     this.fields = fields;
-  }
-
-  /**
-   * Returns the name of the column with the given index.
-   * @param column index of the requested column.
-   * @return name of the column as displayed in the header of the table.
-   */
-  public String getColumnName(int column) {
-    return ((UiField) fields.get(column)).getProperty();
-  }
-
-  /**
-   * Returns the number of columns in the table model.
-   * @return the column count of the table.
-   */
-  public int getColumnCount() {
-    return fields.size();
   }
 
   /**
@@ -90,6 +85,7 @@ public class NodeTableCell implements WritableTableFormat {
    * @param column the column index.
    * @return the requested value.
    * @see #setColumnValue(Object, Object, int)
+   * @pre (0 <= column) && (column <= fields.size())
    */
   public Object getColumnValue(Object bean, int column) {
     assert ((0 <= column) && (column <= fields.size()));

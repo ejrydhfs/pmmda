@@ -22,76 +22,129 @@ import ca.odell.glazedlists.swing.WritableTableFormat;
  */
 public class TableCell implements WritableTableFormat {
   /**
+   * The cell class defines the characteristic of a table column.
+   * @author MarcelBaumann
+   * @version $Revision$
+   */
+  public static class Cell {
+    /**
+     * The name of the property displayed in the column.
+     */
+    String property;
+
+    /**
+     * The name of the column.
+     */
+    String column;
+
+    /**
+     * The type of the column.
+     */
+    Class type;
+
+    /**
+     * Flag indicating if the column is editable or not.
+     */
+    boolean editable;
+
+    /**
+     * Constructor of the class.
+     * @param property name of the property displayed in the column.
+     * @param column name of the column.
+     * @param type type of the values displayed in the column.
+     * @param editable flag indicating if the values are editable.
+     */
+    public Cell(String property, String column, Class type, boolean editable) {
+      this.property = property;
+      this.column = column;
+      this.type = type;
+      this.editable = editable;
+    }
+
+    /**
+     * Returns the property name.
+     * @return the name of the property.
+     */
+    public String getProperty() {
+      return property;
+    }
+
+    /**
+     * Returns the column header name.
+     * @return the name of the column header.
+     */
+    public String getColumn() {
+      return column;
+    }
+
+    /**
+     * Returns the type of the column.
+     * @return the type of the column.
+     */
+    public Class getType() {
+      return type;
+    }
+
+    /**
+     * Returns the flag defining in the column values are editable.
+     * @return the editable flag.
+     */
+    public boolean isEditable() {
+      return editable;
+    }
+  }
+
+  public static Cell[] create(String[] properties, String[] columns,
+      Class[] types, boolean[] editables) {
+    assert ((properties != null) && (columns != null) && (properties.length == columns.length));
+    Cell[] cells = new Cell[properties.length];
+    for (int i = 0; i < cells.length; i++) {
+      cells[i] = new Cell(properties[i], columns[i], types[i], editables[i]);
+    }
+    return cells;
+  }
+
+  /**
    * Logger for all instances of the class.
    */
   private static Log log = LogFactory.getLog(TableCell.class);
 
   /**
-   * The name of the displayed columns. The order is the same as the order of
-   * the properties.
+   * The description of the displayed columns.
    */
-  private String[] columnNames;
-
-  /**
-   * The name of the properties displayed in the columns.
-   */
-  private String[] propertyNames;
-
-  /**
-   * Flag list defining which columns are editable. If null no column is
-   * editable. The order is the same as the order of the properties.
-   */
-  private boolean[] editableColumns;
+  private Cell[] cells;
 
   /**
    * Constructor of the class. The name of a column is also the name of the
    * property in the Java bean.
-   * @param columnNames the list of column names of the tables.
+   * @param cells the list of column cells of the tables.
    * @pre columnNames != null
    */
-  public TableCell(String[] columnNames) {
-    this(columnNames, columnNames, null);
+  public TableCell(Cell[] cells) {
+    this.cells = cells;
   }
 
   /**
    * Constructor of the class. The name of a column is also the name of the
    * property in the Java bean.
-   * @param columnNames the list of column names of the table.
    * @param propertyNames the list of property names of the table.
-   * @pre (columnNames == null) || (propertyNames.length == columnNames.length)
+   * @pre propertyNames != null
    */
-  public TableCell(String[] columnNames, String[] propertyNames) {
-    this(columnNames, propertyNames, null);
-  }
-
-  /**
-   * Constructor of the class. The name of a column is also the name of the
-   * property in the Java bean.
-   * @param columnNames the list of column names of the table.
-   * @param propertyNames the list of property names of the table.
-   * @param editableColumns the list of editable columns of the table.
-   * @pre (columnNames == null) || (columnNames.length == propertyNames.length)
-   * @pre (editableColumns == null) || (editableColumns.length ==
-   *      propertyNames.length)
-   */
-  public TableCell(String[] columnNames, String[] propertyNames,
-      boolean[] editableColumns) {
-    assert ((columnNames == null) || (columnNames.length == propertyNames.length));
-    assert ((editableColumns == null) || (editableColumns.length == propertyNames.length));
-    this.columnNames = columnNames;
-    this.propertyNames = propertyNames;
-    this.editableColumns = editableColumns;
+  public TableCell(String[] propertyNames) {
+    this(create(propertyNames, propertyNames,
+        new Class[propertyNames.length], new boolean[propertyNames.length]));
   }
 
   /**
    * Sets the editable columns of table panel.
-   * @param editableColumns the list of editable columns of the table.
-   * @pre (editableColumns == null) || (editableColumns.length ==
-   *      propertyNames.length)
+   * @param editables the list of editable columns of the table.
+   * @pre (editables == null) || (editables.length == cells.length)
    */
-  public void setEditableColumns(boolean[] editableColumns) {
-    assert ((editableColumns == null) || (editableColumns.length == propertyNames.length));
-    this.editableColumns = editableColumns;
+  public void setEditableColumns(boolean[] editables) {
+    assert ((editables == null) || (editables.length == cells.length));
+    for (int i = 0; i < cells.length; i++) {
+      cells[i].editable = editables[i];
+    }
   }
 
   /**
@@ -99,18 +152,18 @@ public class TableCell implements WritableTableFormat {
    * @return the column count of the table.
    */
   public int getColumnCount() {
-    return columnNames.length;
+    return cells.length;
   }
 
   /**
    * Returns the name of the specified column.
    * @param column the column index.
    * @return the column name.
-   * @pre (0 <= column) && (column <= columnNames.length)
+   * @pre (0 <= column) && (column <= cells.length)
    */
   public String getColumnName(int column) {
-    assert ((0 <= column) && (column <= columnNames.length));
-    return columnNames[column];
+    assert ((0 <= column) && (column <= cells.length));
+    return cells[column].column;
   }
 
   /**
@@ -118,11 +171,11 @@ public class TableCell implements WritableTableFormat {
    * @param object object to test as editable or not.
    * @param column column to check.
    * @return true if the column is editable otherwise false.
-   * @pre (0 <= column) && (column <= columnNames.length)
+   * @pre (0 <= column) && (column <= cells.length)
    */
   public boolean isEditable(Object object, int column) {
-    assert ((0 <= column) && (column <= columnNames.length));
-    return editableColumns != null && editableColumns[column];
+    assert ((0 <= column) && (column <= cells.length));
+    return cells[column].editable;
   }
 
   /**
@@ -130,15 +183,15 @@ public class TableCell implements WritableTableFormat {
    * @param bean the row index.
    * @param column the column index.
    * @return the requested value.
-   * @pre (0 <= column) && (column <= columnNames.length) && (bean != null)
+   * @pre (0 <= column) && (column <= cells.length) && (bean != null)
    * @see #setColumnValue(Object, Object, int)
    */
   public Object getColumnValue(Object bean, int column) {
-    assert ((0 <= column) && (column <= propertyNames.length) && (bean != null));
+    assert ((0 <= column) && (column <= cells.length) && (bean != null));
 
     Object value = null;
     try {
-      return PropertyUtils.getProperty(bean, propertyNames[column]);
+      return PropertyUtils.getProperty(bean, cells[column].property);
     } catch (IllegalAccessException e) {
       e.printStackTrace();
     } catch (InvocationTargetException e) {
@@ -156,14 +209,14 @@ public class TableCell implements WritableTableFormat {
    * @param value new value of the field displayed at the given column.
    * @param column column of the field to update.
    * @return the updated object if sucessful otherwise null.
-   * @pre (0 <= column) && (column <= columnNames.length) && (bean != null)
+   * @pre (0 <= column) && (column <= cells.length) && (bean != null)
    * @see #getColumnValue(Object, int)
    */
   public Object setColumnValue(Object bean, Object value, int column) {
-    assert ((0 <= column) && (column <= propertyNames.length) && (bean != null));
+    assert ((0 <= column) && (column <= cells.length) && (bean != null));
 
     try {
-      PropertyUtils.setProperty(bean, propertyNames[column], value);
+      PropertyUtils.setProperty(bean, cells[column].property, value);
       return bean;
     } catch (IllegalAccessException e) {
       log.error(e);
@@ -173,5 +226,13 @@ public class TableCell implements WritableTableFormat {
       log.error(e);
     }
     return null;
-  }  
+  }
+
+  /** 
+   * Returns the column description of the table.
+   * @return the column descriptions.
+   */
+  public Cell[] getCells() {
+    return cells;
+  }
 }
