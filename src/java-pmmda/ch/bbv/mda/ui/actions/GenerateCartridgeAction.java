@@ -44,10 +44,14 @@ public class GenerateCartridgeAction extends ExplorerGlobalActionImpl {
     }
   }
 
+  /**
+   * Creates tha action name for the given cartridge.
+   * @param cartridge cartridge which action name should be created.
+   * @return the name of the generation action.
+   */
   private static String createActionName(Cartridge cartridge) {
     StringBuffer buffer = new StringBuffer();
-    buffer.append(GENERATE_ACTION).append(" ").append(
-        cartridge.getPrefix());
+    buffer.append(GENERATE_ACTION).append(" ").append(cartridge.getPrefix());
     return buffer.toString();
   }
 }

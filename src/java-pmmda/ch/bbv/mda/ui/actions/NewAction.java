@@ -11,28 +11,30 @@ import ch.bbv.mda.MetaFactory;
 import ch.bbv.mda.MetaModel;
 
 /**
- * The new action creates a new MDA model in the user interface.
+ * The new action creates a new MDA model in the user interface. No file is
+ * associated with the new model.
  * @author marcelbaumann
  * @version $Revision$
  */
 public class NewAction extends ExplorerGlobalActionImpl {
-	/** Default constructor of the class.
-	 */
-	public NewAction() {
-		super("New");
-	}
-		
-	public void execute() {
-		Explorer explorer = getExplorer();
-		UiNodeTypeFactory factory = explorer.getNodeTypeFactory();
-		explorer.getMenuBar().documentCreated();
-		UiNodeType nodeType = factory.getNodeTypeForBo(ch.bbv.mda.MetaModel.class);
-		MetaModel model = new MetaModel();
-		MetaFactory.getInstance().initialize(model);
-		model.setName("default");
-		ExplorerNode root = new ExplorerNode(nodeType, model, model);
-		explorer.setRoot(root);
-		explorer.getMenuBar().documentCreated();
-	}
+  /**
+   * Default constructor of the class.
+   */
+  public NewAction() {
+    super("New");
+  }
+
+  public void execute() {
+    Explorer explorer = getExplorer();
+    UiNodeTypeFactory factory = explorer.getNodeTypeFactory();
+    explorer.getMenuBar().documentCreated();
+    UiNodeType nodeType = factory.getNodeTypeForBo(ch.bbv.mda.MetaModel.class);
+    MetaModel model = new MetaModel();
+    MetaFactory.getInstance().initialize(model);
+    model.setName("default");
+    ExplorerNode root = new ExplorerNode(nodeType, model, model);
+    explorer.setRoot(root);
+    explorer.getMenuBar().documentCreated();
+  }
 
 }

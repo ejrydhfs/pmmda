@@ -5,7 +5,7 @@
  */
 package ch.bbv.mda.ui.actions;
 
-import java.io.*;
+import java.io.File;
 import java.text.MessageFormat;
 import java.util.Arrays;
 
@@ -21,8 +21,8 @@ import ch.bbv.mda.MetaModel;
 import ch.bbv.mda.persistency.PersistencyException;
 import ch.bbv.mda.persistency.PersistencyHandler;
 import ch.bbv.mda.persistency.PersistencyHandlerFactory;
-import ch.bbv.utilities.SystemUtilities;
 import ch.bbv.utilities.ResourceUtility;
+import ch.bbv.utilities.SystemUtilities;
 
 /**
  * The save as action for the user interface of <em>pmMDA</em> application.
@@ -44,49 +44,18 @@ public class SaveAsAction extends ExplorerSaveAsAction {
    */
   private static Log log = LogFactory.getLog(SaveAsAction.class);
 
-  /**
-   * File extensions for models developed with ArgoUML.
-   */
-  private static final String[] ARGOUML_EXT = { "zargo" };
-
-  /**
-   * File extensions for models developed with ArgoUML.
-   */
-  private static final String[] POSEIDON_EXT = { "zuml" };
-
-  /**
-   * File extensions for models serialized to XML using the open source library
-   * from CodeHaus.
-   */
-  private static final String[] XML_EXT = { "xml" };
-
-  /**
-   * File extensions for models serialized with the Java serialization features.
-   */
-  private static final String[] SERIALIZE_EXT = { "ser" };
-
-  /**
-   * File extensions for models according to xmi standard.
-   */
-  private static final String[] XMI_EXT = { "xmi" };
-
-  /**
-   * Resource containing the ArgoUML project template.
-   */
-  private static final String ZARGO_TEMPLATE = "/templates/template.zargo";
-
   public void initialize() {
     JFileChooser fileChooser = getFileChooser();
-    fileChooser.addChoosableFileFilter(new SimpleFileFilter(ARGOUML_EXT,
-        "ArgoUML, Poseidon 1.x (*.zargo)"));
-    fileChooser.addChoosableFileFilter(new SimpleFileFilter(POSEIDON_EXT,
-        "Poseidon 2.x (*.zuml)"));
-    fileChooser.addChoosableFileFilter(new SimpleFileFilter(XML_EXT,
-        "XML models (*.xml)"));
-    fileChooser.addChoosableFileFilter(new SimpleFileFilter(XMI_EXT,
-        "XMI models (*.xmi)"));
-    fileChooser.addChoosableFileFilter(new SimpleFileFilter(SERIALIZE_EXT,
-        "XML models (*.ser)"));
+    fileChooser.addChoosableFileFilter(new SimpleFileFilter(
+        FileTypes.ARGOUML_EXT, FileTypes.ARGOUML_TEXT));
+    fileChooser.addChoosableFileFilter(new SimpleFileFilter(
+        FileTypes.POSEIDON_EXT, FileTypes.POSEIDON_TEXT));
+    fileChooser.addChoosableFileFilter(new SimpleFileFilter(FileTypes.XML_EXT,
+        FileTypes.XML_TEXT));
+    fileChooser.addChoosableFileFilter(new SimpleFileFilter(FileTypes.XMI_EXT,
+        FileTypes.XMI_TEXT));
+    fileChooser.addChoosableFileFilter(new SimpleFileFilter(
+        FileTypes.SERIALIZE_EXT, FileTypes.SERIALIZE_TEXT));
   }
 
   public void execute() {
@@ -103,15 +72,15 @@ public class SaveAsAction extends ExplorerSaveAsAction {
     MetaModel model = (MetaModel) getExplorer().getRoot().getDataObject();
     File file = getSelectedFile();
     String extension = SystemUtilities.getFileExtension(file).toLowerCase();
-    if (Arrays.binarySearch(ARGOUML_EXT, extension) >= 0) {
+    if (Arrays.binarySearch(FileTypes.ARGOUML_EXT, extension) >= 0) {
       writeArgoUmlFile(model, file);
-    } else if (Arrays.binarySearch(POSEIDON_EXT, extension) >= 0) {
+    } else if (Arrays.binarySearch(FileTypes.POSEIDON_EXT, extension) >= 0) {
       writePoseidonFile(model, file);
-    } else if (Arrays.binarySearch(XML_EXT, extension) >= 0) {
+    } else if (Arrays.binarySearch(FileTypes.XML_EXT, extension) >= 0) {
       writeXmlFile(model, file);
-    } else if (Arrays.binarySearch(SERIALIZE_EXT, extension) >= 0) {
+    } else if (Arrays.binarySearch(FileTypes.SERIALIZE_EXT, extension) >= 0) {
       writeSerializedFile(model, file);
-    } else if (Arrays.binarySearch(XMI_EXT, extension) >= 0) {
+    } else if (Arrays.binarySearch(FileTypes.XMI_EXT, extension) >= 0) {
       writeArgoUmlFile(model, file);
     } else {
       JOptionPane.showMessageDialog(getExplorer().getFrame(), ResourceUtility

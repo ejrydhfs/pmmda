@@ -13,32 +13,30 @@ import ch.bbv.mda.generators.Cartridge;
 import ch.bbv.mda.generators.CartridgeFactory;
 
 /**
+ * Generate the artifacts for all registered and active catridges.
  * @author AdrianBachofen
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
  */
 public class GenerateAllAction extends ExplorerGlobalActionImpl {
 
-	/** Default constructor.
-	 */
+  /**
+   * Default constructor.
+   */
   public GenerateAllAction() {
     super("Generate All");
     initialize();
   }
 
-	/** Executes all cartridges available in a row. Sort order as found.
-	 * @see ch.bbv.explorer.actions.ExplorerGlobalAction#execute()
-	 */
-	public void execute() {
-		MetaModel model = (MetaModel)getExplorer().getRoot().getDataObject();
-		CartridgeFactory factory = CartridgeFactory.getInstance();
-		if (model != null) {
-		    Iterator cartridges = CartridgeFactory.getInstance().getCartridges().iterator();
-		    while (cartridges.hasNext()) {
-		    	factory.execute((Cartridge)cartridges.next(), model);
-		    }
-		}
-	}
-
+  /**
+   * Executes all cartridges available in a row. Sort order as found.
+   * @see ch.bbv.explorer.actions.ExplorerGlobalAction#execute()
+   */
+  public void execute() {
+    MetaModel model = (MetaModel) getExplorer().getRoot().getDataObject();
+    CartridgeFactory factory = CartridgeFactory.getInstance();
+    if (model != null) {
+      for (Iterator i = factory.getCartridges().iterator(); i.hasNext();) {
+        factory.execute((Cartridge) i.next(), model);
+      }
+    }
+  }
 }

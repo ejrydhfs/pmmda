@@ -20,9 +20,9 @@ import ch.bbv.mda.persistency.PersistencyHandlerFactory;
 import ch.bbv.mda.ui.TreeConstructor;
 
 /**
- * The open action implements the loading of a complete meta model. The model 
- * is first loaded from the persistency storage and a graph of meta objects are 
- * instantiated. Second the elements are completed with missing requested tagged 
+ * The open action implements the loading of a complete meta model. The model is
+ * first loaded from the persistency storage and a graph of meta objects are
+ * instantiated. Second the elements are completed with missing requested tagged
  * values - for example if new cartridges were defined -. Last the explorer tree
  * is constructed.
  * @author MarcelBaumann
@@ -31,70 +31,70 @@ import ch.bbv.mda.ui.TreeConstructor;
 public class OpenAction extends ExplorerOpenAction {
   public void initialize() {
     JFileChooser fileChooser = getFileChooser();
-    String[] rose = { "mdl" };
-    String[] mof1_3s = { "zargo" };
-	String[] serials = { "ser" };
-    String[] mof1_4s = { "zuml", "ecore" };
-    String[] xmls = { "xml", "xmi" };
-    fileChooser.addChoosableFileFilter(new SimpleFileFilter(rose,
-    	"Rational Rose models (*.mdl)"));
-	fileChooser.addChoosableFileFilter(new SimpleFileFilter(mof1_3s,
-		"MOF 1.3 models (*.zargo)"));
-    fileChooser.addChoosableFileFilter(new SimpleFileFilter(serials,
-        "Java serialized models (*.ser)"));
-    fileChooser.addChoosableFileFilter(new SimpleFileFilter(mof1_4s,
-        "MOF 1.4 models (*.zuml, *.ecore)"));
-    fileChooser.addChoosableFileFilter(new SimpleFileFilter(xmls,
-    	"XML models (*.xml, *.xmi)"));
+    fileChooser.addChoosableFileFilter(new SimpleFileFilter(
+        FileTypes.RATIONAL_ROSE_EXT, FileTypes.RATIONAL_ROSE_TEXT));
+    fileChooser.addChoosableFileFilter(new SimpleFileFilter(
+        FileTypes.ARGOUML_EXT, FileTypes.ARGOUML_TEXT));
+    fileChooser.addChoosableFileFilter(new SimpleFileFilter(
+        FileTypes.SERIALIZE_EXT, FileTypes.SERIALIZE_TEXT));
+    fileChooser.addChoosableFileFilter(new SimpleFileFilter(
+        FileTypes.POSEIDON_EXT, FileTypes.POSEIDON_TEXT));
+    fileChooser.addChoosableFileFilter(new SimpleFileFilter(FileTypes.XML_EXT,
+        FileTypes.XML_TEXT));
   }
 
   public void execute() {
     try {
-    	openModel(getSelectedFile());
-		} catch (PersistencyException pe) {
-			System.out.println("File Not Found");
-		}
-  }
-  
-  /** Opens the model in the given file programatically.
-   * @param file file containing the model to open.
-   * @throws PersistencyException an exception was encountered when loading the 
-   * model.
-   */ 
-  public void openModel(File file) throws PersistencyException {
-		MetaModel model = null; 
-		PersistencyHandlerFactory factory = new PersistencyHandlerFactory();
-		PersistencyHandler handler = factory.getHandler(file);
-		assert(handler == null);
-		try{
-			model = parseModel(handler, file);
-		}
-		catch(com.thoughtworks.xstream.alias.CannotResolveClassException e){
-			handler = factory.getAlternateHandler(file);
-			model = parseModel(handler, file);
-		}
-		if(model == null) return;
-		TreeConstructor constructor = new TreeConstructor(getExplorer().getNodeTypeFactory());
-		model.accept(constructor);
-		model.setFilename(file.toString());
-		Explorer explorer = getExplorer();
-		explorer.setRoot(constructor.getRoot());
-		explorer.getMenuBar().documentSaved();
+      openModel(getSelectedFile());
+    } catch (PersistencyException pe) {
+      System.out.println("File Not Found");
+    }
   }
 
-  /** Parses given file with given handler
+  /**
+   * Opens the model in the given file programatically.
+   * @param file file containing the model to open.
+   * @throws PersistencyException an exception was encountered when loading the
+   *         model.
+   * @pre file != null
+   */
+  public void openModel(File file) throws PersistencyException {
+    assert (file != null);
+    MetaModel model = null;
+    PersistencyHandlerFactory factory = new PersistencyHandlerFactory();
+    PersistencyHandler handler = factory.getHandler(file);
+    assert (handler != null);
+    try {
+      model = parseModel(handler, file);
+    } catch (com.thoughtworks.xstream.alias.CannotResolveClassException e) {
+      handler = factory.getAlternateHandler(file);
+      model = parseModel(handler, file);
+    }
+    if (model == null)
+      return;
+    TreeConstructor constructor = new TreeConstructor(getExplorer()
+        .getNodeTypeFactory());
+    model.accept(constructor);
+    model.setFilename(file.toString());
+    Explorer explorer = getExplorer();
+    explorer.setRoot(constructor.getRoot());
+    explorer.getMenuBar().documentSaved();
+  }
+
+  /**
+   * Parses given file with given handler
    * @param handler handler to parse the given file.
    * @param file file containing the model to be parsed.
-   * @throws PersistencyException an exception was encountered when loading the 
-   * model.
+   * @throws PersistencyException an exception was encountered when loading the
+   *         model.
    * @return MetaModel containing parsed file
-   */ 
-  private MetaModel parseModel(PersistencyHandler handler, File file) throws PersistencyException {
-		MetaModel model = null; 
-		assert(handler == null);
-		model = handler.readModel(file);
-		if(model == null) return null;
-		model.accept(new TreeChecker());
-		return model;
+   */
+  private MetaModel parseModel(PersistencyHandler handler, File file)
+      throws PersistencyException {
+    MetaModel model = handler.readModel(file);
+    if (model == null)
+      return null;
+    model.accept(new TreeChecker());
+    return model;
   }
 }

@@ -26,12 +26,14 @@ import ch.bbv.mda.persistency.PersistencyHandlerFactory;
  * @version $Revision$
  */
 public class SaveAction extends ExplorerGlobalActionImpl {
-	/** Logger of the instances of the class.
-	 */
-	private static Log log = LogFactory.getLog(SaveAction.class);
+  /**
+   * Logger of the instances of the class.
+   */
+  private static Log log = LogFactory.getLog(SaveAction.class);
 
-	/** Default constructor.
-	 */
+  /**
+   * Default constructor.
+   */
   public SaveAction() {
     super("Save");
     initialize();
@@ -50,15 +52,25 @@ public class SaveAction extends ExplorerGlobalActionImpl {
           handler.writeModel(project, file);
           getExplorer().getMenuBar().documentSaved();
         } else {
-        	JOptionPane.showMessageDialog(getExplorer().getFrame(), ResourceUtility.getString("mda.ui.errorMsg.NO_FILE_DEFINED_ERROR"), ResourceUtility.getString("mda.ui.errorMsg.ERROR"), JOptionPane.ERROR_MESSAGE);
+          JOptionPane.showMessageDialog(getExplorer().getFrame(),
+              ResourceUtility
+                  .getString("mda.ui.errorMsg.NO_FILE_DEFINED_ERROR"),
+              ResourceUtility.getString("mda.ui.errorMsg.ERROR"),
+              JOptionPane.ERROR_MESSAGE);
         }
       }
     } catch (PersistencyException e) {
-    	log.error(e);
-    	JOptionPane.showMessageDialog(getExplorer().getFrame(), ResourceUtility.getString("mda.ui.sorryMsg.UNSUPPORTED_FILE_TYPE_FOR_SAVE"), ResourceUtility.getString("mda.ui.sorryMsg.SORRY"), JOptionPane.ERROR_MESSAGE);
-    } catch (NullPointerException ne){
-    	log.error(ne);
-    	JOptionPane.showMessageDialog(getExplorer().getFrame(), ResourceUtility.getString("mda.ui.sorryMsg.UNSUPPORTED_FILE_TYPE_FOR_SAVE"), ResourceUtility.getString("mda.ui.sorryMsg.SORRY"), JOptionPane.ERROR_MESSAGE);
+      log.error(e);
+      JOptionPane.showMessageDialog(getExplorer().getFrame(), ResourceUtility
+          .getString("mda.ui.sorryMsg.UNSUPPORTED_FILE_TYPE_FOR_SAVE"),
+          ResourceUtility.getString("mda.ui.sorryMsg.SORRY"),
+          JOptionPane.ERROR_MESSAGE);
+    } catch (NullPointerException e) {
+      log.error(e);
+      JOptionPane.showMessageDialog(getExplorer().getFrame(), ResourceUtility
+          .getString("mda.ui.sorryMsg.UNSUPPORTED_FILE_TYPE_FOR_SAVE"),
+          ResourceUtility.getString("mda.ui.sorryMsg.SORRY"),
+          JOptionPane.ERROR_MESSAGE);
     }
   }
 
