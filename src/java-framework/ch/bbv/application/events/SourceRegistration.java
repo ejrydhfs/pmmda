@@ -1,5 +1,5 @@
 /* copyright 2000-2004 Marcel Baumann
- * Licensed under the Apache License, Version 2.0 (the "Licence);
+ * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
  */
@@ -32,7 +32,7 @@ public class SourceRegistration {
 
   /**
    * Returns the channel of the listener.
-   * @return
+   * @return The channel of the source registration.
    */
   public Channel getChannel() {
     return channel;

@@ -197,7 +197,7 @@ public class DataObjectType {
    */
   public AbstractVisitorFunctor createVisitorInstance() {
     return (AbstractVisitorFunctor) ReflectUtilities
-        .createInstance(boVisitorClass);
+        .newInstance(boVisitorClass);
   }
 
   /**
@@ -207,7 +207,7 @@ public class DataObjectType {
    */
   public AbstractVisitorFunctor createLwVisitorInstance() {
     return (AbstractVisitorFunctor) ReflectUtilities
-        .createInstance(lwVisitorClass);
+        .newInstance(lwVisitorClass);
   }
 
   /**

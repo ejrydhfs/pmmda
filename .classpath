@@ -21,7 +21,6 @@
 	<classpathentry kind="lib" path="lib/mof.jar"/>
 	<classpathentry kind="lib" path="lib/nbmdr.jar"/>
 	<classpathentry kind="lib" path="lib/ngen.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/commons-logging-1.0.4.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging-api-1.0.4.jar"/>
 	<classpathentry kind="lib" path="lib/dbunit-1.5.1.jar"/>
@@ -49,5 +48,6 @@
 	<classpathentry kind="lib" path="lib/bsh-2.0b2.jar"/>
 	<classpathentry kind="lib" path="lib/p6spy.jar"/>
 	<classpathentry kind="lib" path="lib/mysql-connector-3.0.15.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.5"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>

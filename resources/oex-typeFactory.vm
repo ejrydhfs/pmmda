@@ -14,6 +14,7 @@ import ${package.getAttribute("bo-lw-package")}.*;
 import ${package.getAttribute("bo-mo-package")}.*;
 import ch.bbv.dog.DataObjectManager;
 import ch.bbv.dog.DataObjectType;
+import ch.bbv.explorer.PopupSelectorDefault;
 import java.util.ArrayList;
 import java.util.List;
 import ch.bbv.explorer.*;
@@ -86,8 +87,7 @@ public class TypeFactory extends AbstractTypeFactory {
 #end
     nodeType.registerView(new UiNodeViewType("default", nodeType, NodeTableView.class,
         params, true));
-    manager.register(type);
-    factory.register(nodeType);
+    register(type, nodeType, new PopupSelectorDefault(nodeType), null);
   }
 #end  
 #end

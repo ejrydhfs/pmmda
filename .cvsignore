@@ -8,3 +8,4 @@ logs
 test-classes
 *.log
 todo.txt
+*.fb

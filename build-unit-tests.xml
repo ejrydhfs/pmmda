@@ -1,3 +1,34 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <project name="pmMDA-inits" basedir="." default="init">
+  <import file="build-inits.xml" />
+  <target name="unit-tests"
+          depends="init"
+          description="Executes all unit tests">
+    <property name="site.quality.unit-tests.dir"
+              value="${site.quality.dir}/unit-tests" />
+    <delete dir="${site.quality.dir}/unit-tests" />
+    <mkdir dir="${site.quality.dir}/unit-tests" />
+    <junit>
+      <classpath>
+        <pathelement path="${example.build.dir}/rich-client" />
+        <fileset dir="${example.jar.dir}">
+          <include name="**/*.jar" />
+          <include name="**/*.zip" />
+        </fileset>
+      </classpath>
+      <jvmarg value="-ea" />
+      <formatter type="xml" />
+      <batchtest fork="yes" todir="${site.quality.unit-tests.dir}">
+        <fileset dir="${test.unit.dir}">
+          <include name="**/*Test.java" />
+        </fileset>
+      </batchtest>
+    </junit>
+    <junitreport todir="${site.quality.unit-tests.dir}">
+      <fileset dir="${site.quality.unit-tests.dir}">
+        <include name="Test-*.xml" />
+      </fileset>
+      <report format="frames" todir="${site.quality.unit-tests.dir}" />
+    </junitreport>
+  </target>
 </project>

@@ -262,7 +262,9 @@
     <mkdir dir="${site.quality.dir}" />
   </target>
 
-  <target name="metrics" description="generates quality metrics on the project">
+  <target name="metrics"
+          depends="init"
+          description="generates quality metrics on the project">
     <mkdir dir="${site.quality.dir}" />
     <javadoc destdir="${site.quality.dir}"
              doclet="com.sun.tools.doclets.doccheck.DocCheck"
@@ -324,30 +326,6 @@
     <xslt in="${site.quality.dir}/jdepend-report.xml"
           out="${site.quality.dir}/jdepend-report.html"
           style="${scripts.dir}/resources/xslt/jdepend.xsl" />
-  </target>
-
-  <target name="unit-tests"
-          depends="dist-init"
-          description="Executes all unit tests">
-    <junit>
-      <classpath>
-        <pathelement path="${example.build.dir}/rich-client" />
-        <fileset dir="${example.jar.dir}">
-          <include name="**/*.jar" />
-          <include name="**/*.zip" />
-        </fileset>
-      </classpath>
-      <jvmarg value="-ea" />
-      <formatter type="xml" />
-      <assertions>
-        <enable />
-      </assertions>
-    </junit>
-    <batchtest fork="yes">
-      <fileset dir="{test.unit.dir}">
-        <include name="**/*Test.java" />
-      </fileset>
-    </batchtest>
   </target>
 
   <target name="sourceforge-without-documentation"

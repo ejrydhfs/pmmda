@@ -183,6 +183,8 @@ class DatabaseMgr {
   /**
    * The logical database defines the information necessary to manipulates\ a
    * database in the ODMG OJB context.
+   * @author MarcelBaumann
+   * @version $Revision$
    */
   private static class LogicalDatabase {
     /**

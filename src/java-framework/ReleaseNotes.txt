@@ -1,11 +1,19 @@
-Version 0.2.2 (15 September 2004)
+Version 0.2.1-RC2 (01 October 2004)
 ---------------------------------
 The following new features were added.
 - The generic properties node dialog was enhanced to support edition of their
   values based on their types. Date fields are displayed with a powerful open
   source calendar bean. 
+- The creation of popup menus for nodes is now delegated to a factory. Now
+  it is a lot easier to extend the framework with its own popup menus. The
+  mechanism is similar to the icon factory. No new paradigm needs to be 
+  learned.  
+- A status bar was added to the explorer. Initial support is provided for
+  status and progress information.
 
 The following errors were corrected.
+- The Swing user interface creation pattern is now used to execute the explorer
+  in the context of the AWT event processing thread.
 - The source code was refactored to support the for pattern when using an 
   iterator.
 - The tree construction functor had a missing functionality. It was not possible
@@ -31,19 +39,13 @@ The following errors were corrected.
 - The handling of identities in the collect functors was wrong when two 
   copies were compared.
   
-Version 0.2.1-RC1 (01 August 2004)
-------------------------------
-The following new features were added.
-- The CVS repository was moved to the sourceforge pmmda account.
-- The new major release of glazed lists 0.9.1 is integrated. The table handling
-  is simplified and all columns are sortable.
-
-The following errors were corrected.
-- The JavaDoc comments were enhanced.
 
 Version 0.2.0 (30 June 2004)
 ---------------------------
 The following new features were added.
+- The CVS repository was moved to the sourceforge pmmda account.
+- The new major release of glazed lists 0.9.1 is integrated. The table handling
+  is simplified and all columns are sortable.
 - The persistence algorithm was optimized. Only one traversal of the tree
   to update is now needed instead of two.
 - The terminology "data object" of JSR-235 is now used to name the business
@@ -55,6 +57,7 @@ The following new features were added.
 - The explorer about package is now based on the glazed list package.
 
 The following errors were corrected.
+- The JavaDoc comments were enhanced.
 - Error in the event propagation when a node was removed from the navigation
   tree was corrected. Removal of children through context sensitive menu works.
 - The post-store visitor did not set the modified flag back to false. Therefore

@@ -1,5 +1,5 @@
 /* copyright 2000-2004 Marcel Baumann 
- * Licensed under the Apache License, Version 2.0 (the "Licence); 
+ * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License.
  * $Id$ 
  */
@@ -131,7 +131,7 @@ public class CmdLineOptionDescr {
   public CmdLineOptionDescr(String cmdId, int minimumLgth,
       boolean isCaseSensitive, boolean isMandatory, boolean hasValues,
       boolean areMultipleValuesAllowed) {
-    assert cmdId != null : "pre";
+    assert (cmdId != null);
     setCmdId(cmdId);
     setMinimumLength(minimumLgth);
     setCaseSensitive(isCaseSensitive);
@@ -368,7 +368,7 @@ public class CmdLineOptionDescr {
   public void setDefaultValue(String defaultValue) {
     assert isMandatory() : "pre";
     this.defaultValue = defaultValue;
-    assert getDefaultValue() == defaultValue : "post";
+    assert (getDefaultValue() == defaultValue);
   }
 
   /**
@@ -407,7 +407,7 @@ public class CmdLineOptionDescr {
    * @return True if the value is a legal one, false otherwise
    * @pre value != null
    */
-public boolean isLegalOptionValue(String value) {
+  public boolean isLegalOptionValue(String value) {
     assert value != null : "pre";
     if (cmdValueList == null) {
       boolean found = false;
@@ -419,6 +419,7 @@ public boolean isLegalOptionValue(String value) {
     }
     return true;
   }
+
   /**
    * Adds a possible option value to the list. The command value list is
    * initialized using lazy evaluation.

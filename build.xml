@@ -3,5 +3,6 @@
   <import file="build-inits.xml" />
   <import file="build-examples.xml" />
   <import file="build-sourceforge.xml" />
+  <import file="build-unit-tests.xml" />
   <property file="build.properties" />
 </project>
