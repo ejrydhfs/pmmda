@@ -17,7 +17,7 @@ import javax.swing.tree.DefaultTreeCellRenderer;
  * @author Marcel Baumann
  * @version $Revision$
  */
-class ExplorerTreeCellRenderer extends DefaultTreeCellRenderer {
+public class ExplorerTreeCellRenderer extends DefaultTreeCellRenderer {
 
   /**
    * Returns the tree cell renderer component for this renderer.
