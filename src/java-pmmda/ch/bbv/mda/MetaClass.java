@@ -70,6 +70,11 @@ public class MetaClass extends MetaElement {
 
   private List definitions;
 
+  /**
+   * List of nested classes of the class.
+   */
+  private List classes;
+
   private boolean system;
 
   /**
@@ -418,9 +423,8 @@ public class MetaClass extends MetaElement {
     for (Iterator i = indexedProperties.iterator(); i.hasNext();) {
       ((MetaIndexedProperty) i.next()).accept(visitor);
     }
-    iterator = classes.iterator();
-    while (iterator.hasNext()) {
-      ((MetaClass) iterator.next()).accept(visitor);
+    for (Iterator i = classes.iterator(); i.hasNext();) {
+      ((MetaClass) i.next()).accept(visitor);
     }
   }
 

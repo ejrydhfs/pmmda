@@ -90,13 +90,13 @@ public abstract class MetaElement extends DataObjectImpl {
     if (taggedValues == null)
       taggedValues = new HashMap();
     if (visibility == null)
-      visibility = VisibilityCode.getCode(VisibilityCode.PUBLIC_VISIBILITY);
+      visibility = VisibilityCode.getCode(VisibilityCode.PUBLIC_VISIBILITY_CODE);
   }
 
   /**
    * Returns the name of the element.
    * @return name of the element.
-   * @see #setName
+   * @see #setName(String)
    */
   public String getName() {
     return name;
@@ -105,7 +105,7 @@ public abstract class MetaElement extends DataObjectImpl {
   /**
    * Sets the name of the element.
    * @param name new value of the name.
-   * @see #getName
+   * @see #getName()
    */
   public void setName(String name) {
     this.name = name;
@@ -114,7 +114,7 @@ public abstract class MetaElement extends DataObjectImpl {
   /**
    * Returns the description of the element.
    * @return description of the element.
-   * @see #setDescription
+   * @see #setDescription(String)
    */
   public String getDescription() {
     return description;
@@ -123,7 +123,7 @@ public abstract class MetaElement extends DataObjectImpl {
   /**
    * Sets the description of the element.
    * @param description new value of the description.
-   * @see #getDescription
+   * @see #getDescription()
    */
   public void setDescription(String description) {
     this.description = description;
@@ -132,7 +132,7 @@ public abstract class MetaElement extends DataObjectImpl {
   /**
    * Returns the context of the element if defined otherwise null.
    * @return context of the element.
-   * @see #setContext
+   * @see #setContext(MetaElement)
    */
   public MetaElement getContext() {
     return context;
@@ -141,7 +141,7 @@ public abstract class MetaElement extends DataObjectImpl {
   /**
    * Sets the context of the element.
    * @param context new context of the context.
-   * @see #getContext
+   * @see #getContext()
    */
   public void setContext(MetaElement context) {
     this.context = context;
