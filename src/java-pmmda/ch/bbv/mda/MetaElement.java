@@ -75,9 +75,22 @@ public abstract class MetaElement extends DataObjectImpl {
    * Default constructor of the class.
    */
   public MetaElement() {
-    attributes = new HashMap();
-    taggedValues = new HashMap();
-    visibility = VisibilityCode.getCode(VisibilityCode.PUBLIC_VISIBILITY_CODE);
+    init();
+  }
+
+  /**
+   * Initializes member variables. Only complex types have to be initialized
+   * here. The init() method is called after deserializing and loading from xml
+   * with XStream. Transient members have to be initialized with this init()
+   * function.
+   */
+  public void init() {
+    if (attributes == null)
+      attributes = new HashMap();
+    if (taggedValues == null)
+      taggedValues = new HashMap();
+    if (visibility == null)
+      visibility = VisibilityCode.getCode(VisibilityCode.PUBLIC_VISIBILITY);
   }
 
   /**
@@ -442,6 +455,11 @@ public abstract class MetaElement extends DataObjectImpl {
 
   public ImportStatements createImportStatements(String context) {
     return new ImportStatements(context);
+  }
+
+  public boolean isLeaf() {
+    assert (false);
+    return false;
   }
   // %% END USER CODE
 }
