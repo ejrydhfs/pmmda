@@ -40,8 +40,21 @@ public class MetaMethod extends MetaElement {
    * Default constructor of the class.
    */
   public MetaMethod() {
-    parameters = new ArrayList();
-    exceptions = new ArrayList();
+    init();
+  }
+
+  /**
+   * Initializes member variables. Only complex types have to be initialized
+   * here. The init() method is called after deserializing and loading from xml
+   * with XStream. Transient members have to be initialized with this init()
+   * function.
+   */
+  public void init() {
+    super.init();
+    if (parameters == null)
+      parameters = new ArrayList();
+    if (exceptions == null)
+      exceptions = new ArrayList();
   }
 
   /**
@@ -94,5 +107,12 @@ public class MetaMethod extends MetaElement {
    */
   public void addException(MetaException exception) {
     exceptions.add(exception);
+  }
+
+  /**
+   * Indicates whether this model element is a leaf (no children)
+   */
+  public boolean isLeaf() {
+    return true;
   }
 }
