@@ -40,36 +40,36 @@ public class MetaProperty extends MetaMember {
   /**
    * Indicates if the property is transient or not.
    */
-  private boolean transients;
+  protected boolean transients;
 
   /**
    * Indicates if the property is volatile or not.
    */
-  private boolean volatiles;
+  protected boolean volatiles;
 
   /**
    * Multiplicity of the property.
    */
-  private Multiplicity multiplicity;
+  protected Multiplicity multiplicity;
 
   /**
    * The optional initial value of the property.
    */
-  private String initialValue;
+  protected String initialValue;
   
   /**
    * A binary association may be declared an aggregation. It is a whole part
    * relationship. In UML terminology the data object has the aggregate end and
    * the items of the property are on the part end.
    */
-  private boolean aggregation;
+  protected boolean aggregation;
 
   /**
    * A composition is a form of aggregation association with strong ownership
    * and coincident lifetime of parts by the whole. A part may belong to only
    * one composite.
    */
-  private boolean composition;
+  protected boolean composition;
 
   /**
    * Default constructor of the class.
