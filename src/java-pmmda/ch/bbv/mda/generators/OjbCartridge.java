@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -257,49 +257,47 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
     }
   }
 
-  public List getTaggedValueTypes(Class clazz) {
-    List types = new ArrayList();
+  public List<TagDefinition> getTaggedValueTypes(Class clazz) {
+    List<TagDefinition> types = new ArrayList<TagDefinition>();
     if (clazz.equals(MetaModel.class)) {
     } else if (clazz.equals(MetaPackage.class)) {
-      types.add(new TagDefinition(SCHEMA_TAG, "", String.class, this));
+      types.add(new TagDefinition(SCHEMA_TAG, "", String.class));
     } else if (clazz.equals(MetaClass.class)) {
       types.add(new TagDefinition(DogCartridge.PERSISTENCE_TAG, "false",
-          Boolean.TYPE, this));
-      types.add(new TagDefinition(TABLE_NAME_TAG, null, String.class, this));
+          Boolean.TYPE));
+      types.add(new TagDefinition(TABLE_NAME_TAG, null, String.class));
     } else if (clazz.equals(MetaProperty.class)) {
-      types.add(new TagDefinition(COLUMN_NAME_TAG, null, String.class, this));
-      types.add(new TagDefinition(COLUMN_TYPE_TAG, "String",
-          JdbcTypeCode.class, this));
-      types.add(new TagDefinition(COLUMN_SIZE_TAG, "255", Integer.TYPE, this));
+      types.add(new TagDefinition(COLUMN_NAME_TAG, null, String.class));
       types
-          .add(new TagDefinition(CAN_BE_NULL_TAG, "false", Boolean.TYPE, this));
-      types.add(new TagDefinition(IS_PRIMARY_TAG, "false", Boolean.TYPE, this));
-      types.add(new TagDefinition(OPTIMISTIC_LOCKING_TAG, "false",
-          Boolean.TYPE, this));
+          .add(new TagDefinition(COLUMN_TYPE_TAG, "String", JdbcTypeCode.class));
+      types.add(new TagDefinition(COLUMN_SIZE_TAG, "255", Integer.TYPE));
+      types.add(new TagDefinition(CAN_BE_NULL_TAG, "false", Boolean.TYPE));
+      types.add(new TagDefinition(IS_PRIMARY_TAG, "false", Boolean.TYPE));
+      types
+          .add(new TagDefinition(OPTIMISTIC_LOCKING_TAG, "false", Boolean.TYPE));
     } else if (clazz.equals(MetaIndexedProperty.class)) {
-      types.add(new TagDefinition(COLUMN_NAME_TAG, null, String.class, this));
-      types.add(new TagDefinition(ORDER_BY_TAG, null, String.class, this));
+      types.add(new TagDefinition(COLUMN_NAME_TAG, null, String.class));
+      types.add(new TagDefinition(ORDER_BY_TAG, null, String.class));
     } else {
       types = null;
     }
     return types;
   }
 
-  public List getObsoleteTaggedValueTypes(Class clazz) {
-    List types = null;
+  public List<TagDefinition> getObsoleteTaggedValueTypes(Class clazz) {
+    List<TagDefinition> types = null;
     if (clazz == MetaClass.class) {
-      types = new ArrayList();
-      types
-          .add(new TagDefinition("ojb-is-persistent", null, Boolean.TYPE, this));
+      types = new ArrayList<TagDefinition>();
+      types.add(new TagDefinition("ojb-is-persistent", null, Boolean.TYPE));
     } else if ((clazz == MetaProperty.class)
         || (clazz == MetaIndexedProperty.class)) {
-      types = new ArrayList();
-      types.add(new TagDefinition("ojb-jdbc-type", null, String.class, this));
-      types.add(new TagDefinition("ojb-jdbc-size", null, Integer.TYPE, this));
-      types.add(new TagDefinition("ojb-jdbcType", null, String.class, this));
-      types.add(new TagDefinition("ojb-jdbcSize", null, Integer.TYPE, this));
-      types.add(new TagDefinition("ojb-orderBy", null, String.class, this));
-      types.add(new TagDefinition("ojb-foreign-key", null, String.class, this));
+      types = new ArrayList<TagDefinition>();
+      types.add(new TagDefinition("ojb-jdbc-type", null, String.class));
+      types.add(new TagDefinition("ojb-jdbc-size", null, Integer.TYPE));
+      types.add(new TagDefinition("ojb-jdbcType", null, String.class));
+      types.add(new TagDefinition("ojb-jdbcSize", null, Integer.TYPE));
+      types.add(new TagDefinition("ojb-orderBy", null, String.class));
+      types.add(new TagDefinition("ojb-foreign-key", null, String.class));
     }
     return types;
   }
@@ -376,7 +374,7 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
   public void preProcessClass(MetaClass clazz) {
     if (clazz.booleanValueOfTag(DogCartridge.PERSISTENCE_TAG)) {
       Properties context = getContext();
-      StringBuffer buffer = new StringBuffer();
+      StringBuilder buffer = new StringBuilder();
       buffer.append(context.get(TABLE_PREFIX_KEY)).append(
           clazz.getTaggedValue(TABLE_NAME_TAG).getValue()).append(
           context.get(TABLE_POSTFIX_KEY));
@@ -421,10 +419,10 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
   }
 
   public void postProcessModel(MetaModel metaModel) {
-    ojbBoWriter.close();
-    ojbLwWriter.close();
-    ddlWriter.close();
-    ddlIntegrityWriter.close();
+    closePrintWriter(ojbBoWriter);
+    closePrintWriter(ojbLwWriter);
+    closePrintWriter(ddlWriter);
+    closePrintWriter(ddlIntegrityWriter);
   }
 
   /**
@@ -434,7 +432,7 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
    */
   protected VelocityContext createPersistencyContext(MetaClass clazz) {
     VelocityContext context = createContext(clazz);
-    StringBuffer buffer = new StringBuffer();
+    StringBuilder buffer = new StringBuilder();
     int nrOfPrimaryProperties = 0;
     for (Iterator i = clazz.getProperties().iterator(); i.hasNext();) {
       MetaProperty property = (MetaProperty) i.next();

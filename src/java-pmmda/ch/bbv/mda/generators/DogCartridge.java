@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -101,6 +101,16 @@ public class DogCartridge extends CartridgeImpl implements Cartridge {
    * Key for a property of the cartridge used to retrieve user values.
    */
   public static final String ROOT_CLIENT_FOLDER_KEY = "bo-cartridge.client-source-root-folder";
+
+  /**
+   * Key for a property of the cartridge used to retrieve user values.
+   */
+  public static final String LANGUAGE_KEY = "bo-cartridge.language";
+
+  /**
+   * Key for a property of the cartridge used to retrieve user values.
+   */
+  public static final String UID_KEY = "bo-cartridge.uid";
 
   /**
    * Key for a property of the cartridge used to retrieve user values.
@@ -308,7 +318,7 @@ public class DogCartridge extends CartridgeImpl implements Cartridge {
   /**
    * List of stereotypes managed in the cartride.
    */
-  private static List stereotypes;
+  private static List<StereotypeType> stereotypes;
 
   /**
    * velocity template to generate data objects.
@@ -385,33 +395,9 @@ public class DogCartridge extends CartridgeImpl implements Cartridge {
    */
   public DogCartridge() {
     super("Data Object Graph Cartridge", PREFIX, new VersionId(0, 3, 0));
-    stereotypes = new ArrayList();
+    stereotypes = new ArrayList<StereotypeType>();
     stereotypes.add(new StereotypeType(DATA_OBJECT_STEREOTYPE));
     stereotypes.add(new StereotypeType(REFERENCE_CODE_STEREOTYPE));
-    try {
-      javaLwTemplate = Velocity.getTemplate("bog-javaLw.vm");
-      javaBoTemplate = Velocity.getTemplate("bog-javaBo.vm");
-      referenceServiceTemplate = Velocity
-          .getTemplate("bog-referenceService.vm");
-      visitorIfBoTemplate = Velocity.getTemplate("bog-visitorIfBo.vm");
-      visitorFunctorBoTemplate = Velocity
-          .getTemplate("bog-visitorFunctorBo.vm");
-      visitorIfLwTemplate = Velocity.getTemplate("bog-visitorIfLw.vm");
-      visitorFunctorLwTemplate = Velocity
-          .getTemplate("bog-visitorFunctorLw.vm");
-      transformerLwTemplate = Velocity.getTemplate("bog-transformerLw.vm");
-      typeFactoryTemplate = Velocity.getTemplate("bog-typeFactory.vm");
-      referenceCodeTemplate = Velocity.getTemplate("bog-referenceCode.vm");
-    } catch (ParseErrorException pee) {
-      log.error(pee);
-      pee.printStackTrace();
-    } catch (ResourceNotFoundException rnfe) {
-      log.error(rnfe);
-      rnfe.printStackTrace();
-    } catch (Exception exception) {
-      log.error(exception);
-      exception.printStackTrace();
-    }
   }
 
   public void initialize(Properties properties) {
@@ -420,6 +406,8 @@ public class DogCartridge extends CartridgeImpl implements Cartridge {
     addUndefinedProperty(properties, ROOT_COMMON_FOLDER_KEY, "");
     addUndefinedProperty(properties, ROOT_SERVER_FOLDER_KEY, "");
     addUndefinedProperty(properties, ROOT_CLIENT_FOLDER_KEY, "");
+    addUndefinedProperty(properties, LANGUAGE_KEY, "java-1.4");
+    addUndefinedProperty(properties, UID_KEY, "99990101");
     addUndefinedProperty(properties, BO_GENERATE_INTERFACE_KEY, "false");
     addUndefinedProperty(properties, IF_PACKAGE_POSTFIX_KEY, "");
     addUndefinedProperty(properties, BO_PACKAGE_POSTFIX_KEY, "");
@@ -432,56 +420,84 @@ public class DogCartridge extends CartridgeImpl implements Cartridge {
     addUndefinedProperty(properties, LW_CLASS_POSTFIX_KEY, "");
     addUndefinedProperty(properties, FIELD_PREFIX_KEY, "");
     addUndefinedProperty(properties, FIELD_POSTFIX_KEY, "");
+    try {
+      String postfix = "-" + getContext().getProperty(LANGUAGE_KEY) + ".vm";
+      javaLwTemplate = Velocity.getTemplate("bog-Lw" + postfix);
+      javaBoTemplate = Velocity.getTemplate("bog-Bo" + postfix);
+      referenceServiceTemplate = Velocity.getTemplate("bog-CodeService"
+          + postfix);
+      visitorIfBoTemplate = Velocity.getTemplate("bog-visitorIfBo" + postfix);
+      visitorFunctorBoTemplate = Velocity.getTemplate("bog-visitorFunctorBo"
+          + postfix);
+      visitorIfLwTemplate = Velocity.getTemplate("bog-visitorIfLw" + postfix);
+      visitorFunctorLwTemplate = Velocity.getTemplate("bog-visitorFunctorLw"
+          + postfix);
+      transformerLwTemplate = Velocity.getTemplate("bog-transformerLw"
+          + postfix);
+      typeFactoryTemplate = Velocity.getTemplate("bog-typeFactory" + postfix);
+      referenceCodeTemplate = Velocity.getTemplate("bog-Code" + postfix);
+    } catch (ParseErrorException pee) {
+      log.error(pee);
+      pee.printStackTrace();
+    } catch (ResourceNotFoundException rnfe) {
+      log.error(rnfe);
+      rnfe.printStackTrace();
+    } catch (Exception exception) {
+      log.error(exception);
+      exception.printStackTrace();
+    }
   }
 
-  public List getTaggedValueTypes(Class clazz) {
-    List types = new ArrayList();
+  public List<TagDefinition> getTaggedValueTypes(Class clazz) {
+    List<TagDefinition> types = new ArrayList<TagDefinition>();
     if (clazz.equals(MetaModel.class)) {
-      types.add(new TagDefinition(GENERATE_TAG, "true", Boolean.TYPE, this));
+      types.add(new TagDefinition(GENERATE_TAG, "true", Boolean.TYPE));
     } else if (clazz.equals(MetaPackage.class)) {
-      types.add(new TagDefinition(GENERATE_TAG, "false", Boolean.TYPE, this));
+      types.add(new TagDefinition(GENERATE_TAG, "false", Boolean.TYPE));
     } else if (clazz.equals(MetaClass.class)) {
-      types
-          .add(new TagDefinition(PERSISTENCE_TAG, "false", Boolean.TYPE, this));
-      types.add(new TagDefinition(IS_ROOT_TAG, "false", Boolean.TYPE, this));
+      types.add(new TagDefinition(PERSISTENCE_TAG, "false", Boolean.TYPE));
+      types.add(new TagDefinition(IS_ROOT_TAG, "false", Boolean.TYPE));
     } else if (clazz.equals(MetaProperty.class)) {
-      types
-          .add(new TagDefinition(PERSISTENCE_TAG, "false", Boolean.TYPE, this));
+      types.add(new TagDefinition(PERSISTENCE_TAG, "false", Boolean.TYPE));
       types.add(new TagDefinition(MODE_TAG, "READ_WRITE",
-          PropertyModeCode.class, this));
-      types.add(new TagDefinition(CONSTRUCTOR_PARAM_TAG, "false", Boolean.TYPE,
-          this));
+          PropertyModeCode.class));
       types
-          .add(new TagDefinition(CHANGE_EVENT_TAG, "false", Boolean.TYPE, this));
-      types.add(new TagDefinition(VETO_EVENT_TAG, "false", Boolean.TYPE, this));
+          .add(new TagDefinition(CONSTRUCTOR_PARAM_TAG, "false", Boolean.TYPE));
+      types.add(new TagDefinition(CHANGE_EVENT_TAG, "false", Boolean.TYPE));
+      types.add(new TagDefinition(VETO_EVENT_TAG, "false", Boolean.TYPE));
       types.add(new TagDefinition(BIDIRECTIONAL_RELATION_TAG, "false",
-          Boolean.TYPE, this));
-      types
-          .add(new TagDefinition(LIGHTWEIGHT_TAG, "false", Boolean.TYPE, this));
+          Boolean.TYPE));
+      types.add(new TagDefinition(LIGHTWEIGHT_TAG, "false", Boolean.TYPE));
     } else if (clazz.equals(MetaIndexedProperty.class)) {
+      types.add(new TagDefinition(PERSISTENCE_TAG, "false", Boolean.TYPE));
+      types.add(new TagDefinition(MODE_TAG, "READ_WRITE", String.class));
+      types.add(new TagDefinition(MODE_TAG, "READ_WRITE", String.class));
       types
-          .add(new TagDefinition(PERSISTENCE_TAG, "false", Boolean.TYPE, this));
-      types.add(new TagDefinition(MODE_TAG, "READ_WRITE", String.class, this));
-      types.add(new TagDefinition(MODE_TAG, "READ_WRITE", String.class, this));
-      types.add(new TagDefinition(CONSTRUCTOR_PARAM_TAG, "false", Boolean.TYPE,
-          this));
-      types
-          .add(new TagDefinition(CHANGE_EVENT_TAG, "false", Boolean.TYPE, this));
-      types.add(new TagDefinition(VETO_EVENT_TAG, "false", Boolean.TYPE, this));
+          .add(new TagDefinition(CONSTRUCTOR_PARAM_TAG, "false", Boolean.TYPE));
+      types.add(new TagDefinition(CHANGE_EVENT_TAG, "false", Boolean.TYPE));
+      types.add(new TagDefinition(VETO_EVENT_TAG, "false", Boolean.TYPE));
       types.add(new TagDefinition(BIDIRECTIONAL_RELATION_TAG, "false",
-          Boolean.TYPE, this));
+          Boolean.TYPE));
       types.add(new TagDefinition(CONTAINER_CLASS_TAG, "java.util.ArrayList",
-          String.class, this));
+          String.class));
       types.add(new TagDefinition(INTERFACE_CLASS_TAG, "java.util.List",
-          String.class, this));
-      types.add(new TagDefinition(IS_ORDERED_TAG, "false", String.class, this));
-      types.add(new TagDefinition(KEY_CLASS_TAG, "String", String.class, this));
-      types
-          .add(new TagDefinition(LIGHTWEIGHT_TAG, "false", String.class, this));
+          String.class));
+      types.add(new TagDefinition(IS_ORDERED_TAG, "false", String.class));
+      types.add(new TagDefinition(KEY_CLASS_TAG, "String", String.class));
+      types.add(new TagDefinition(LIGHTWEIGHT_TAG, "false", String.class));
     }
     return types;
   }
 
+  public List<TagDefinition> getObsoleteTaggedValueTypes(Class clazz) {
+    List<TagDefinition> tags = null;
+    if (MetaProperty.class.equals(clazz)) {
+      tags = new ArrayList<TagDefinition>();
+      tags.add(new TagDefinition("bo-constructor-parameter", "false", Boolean.TYPE));
+    }
+    return tags;
+  }
+  
   public void registerRules(Validator validator) {
     TagRule tagRule = new DogTagRule();
     tagRule.register(validator);
@@ -522,7 +538,7 @@ public class DogCartridge extends CartridgeImpl implements Cartridge {
    */
   public void preProcessPackage(MetaPackage metaPackage) {
     Properties context = getContext();
-    StringBuffer buffer = new StringBuffer();
+    StringBuilder buffer = new StringBuilder();
     String qualifiedName = metaPackage.qualifiedName();
     buffer.append(qualifiedName).append(
         context.getProperty(IF_PACKAGE_POSTFIX_KEY));
@@ -562,7 +578,7 @@ public class DogCartridge extends CartridgeImpl implements Cartridge {
   public void preProcessClass(MetaClass clazz) {
     Properties context = getContext();
     String name = clazz.getName();
-    StringBuffer buffer = new StringBuffer();
+    StringBuilder buffer = new StringBuilder();
     buffer.append(context.getProperty(IF_CLASS_PREFIX_KEY)).append(name)
         .append(context.getProperty(IF_CLASS_POSTFIX_KEY));
     clazz.addAttribute(IF_CLASS, buffer.toString());
@@ -612,18 +628,19 @@ public class DogCartridge extends CartridgeImpl implements Cartridge {
     }
     hasCodes = false;
 
-    for (Iterator i = metaPackage.getClasses().iterator(); i.hasNext()
-        && !hasDataObjects;) {
-      MetaClass clazz = (MetaClass) i.next();
+    for (MetaClass clazz : metaPackage.getClasses()) {
       hasDataObjects = DATA_OBJECT_STEREOTYPE.equalsIgnoreCase(clazz
           .getStereotype());
+      if (hasDataObjects) {
+        break;
+      }
     }
   }
 
   public void processClass(MetaClass clazz) {
-    if (clazz.isNestedClass())
-      return;
     String stereotype = clazz.getStereotype();
+    // class is only emitted if the class is relevant and the package is
+    // generated
     if (!clazz.retrievePackage().booleanValueOfTag(GENERATE_TAG)
         || (!DATA_OBJECT_STEREOTYPE.equalsIgnoreCase(stereotype) && !REFERENCE_CODE_STEREOTYPE
             .equalsIgnoreCase(stereotype))) {
@@ -682,6 +699,15 @@ public class DogCartridge extends CartridgeImpl implements Cartridge {
     }
   }
 
+  public boolean isReferenceCode(MetaProperty property) {
+    MetaModel model = (MetaModel) property.getRoot();
+    MetaClass clazz = model.findClass(property.getTypeName());
+    if ((clazz != null) && (clazz.getStereotype() == REFERENCE_CODE_STEREOTYPE)) {
+      return true;
+    }
+    return false;
+  }
+
   /**
    * Generates the import statements necessary for the class defining the data
    * object type.
@@ -737,17 +763,15 @@ public class DogCartridge extends CartridgeImpl implements Cartridge {
    */
   private ImportStatements retrieveImportStatements(ImportStatements imports,
       MetaClass clazz, String key, String kind) {
-    for (Iterator i = clazz.retrieveAncestors().iterator(); i.hasNext();) {
-      imports.addClass((MetaClass) i.next());
+    for (MetaClass item : clazz.retrieveAncestors()) {
+      imports.addClass(item);
     }
 
-    for (Iterator i = clazz.retrieveInterfaces().iterator(); i.hasNext();) {
-      imports.addClass((MetaClass) i.next());
+    for (MetaClass item : clazz.retrieveInterfaces()) {
+      imports.addClass(item);
     }
 
-    Iterator iterator = clazz.getProperties().iterator();
-    while (iterator.hasNext()) {
-      MetaProperty property = (MetaProperty) iterator.next();
+    for (MetaProperty property : clazz.getProperties()) {
       if ((key == null)
           || (property.booleanValueOfAttribute(key) || property
               .booleanValueOfTag(key))) {
@@ -759,8 +783,7 @@ public class DogCartridge extends CartridgeImpl implements Cartridge {
         }
       }
     }
-    for (Iterator i = clazz.getIndexedProperties().iterator(); i.hasNext();) {
-      MetaIndexedProperty property = (MetaIndexedProperty) i.next();
+    for (MetaIndexedProperty property : clazz.getIndexedProperties()) {
       if ((key == null)
           || (property.booleanValueOfAttribute(key) || property
               .booleanValueOfTag(key))) {
@@ -846,24 +869,33 @@ public class DogCartridge extends CartridgeImpl implements Cartridge {
    * @pre clazz != null
    */
   private boolean hasLightweight(MetaClass clazz) {
-    assert (clazz != null);
-
+    assert clazz != null;
     boolean hasLightweight = false;
-    for (Iterator i = clazz.getProperties().iterator(); i.hasNext()
-        && !hasLightweight;) {
-      hasLightweight = ((MetaProperty) i.next())
-          .booleanValueOfTag(LIGHTWEIGHT_TAG);
+    for (MetaProperty property : clazz.getProperties()) {
+      hasLightweight = property.booleanValueOfTag(LIGHTWEIGHT_TAG);
+      if (hasLightweight) {
+        break;
+      }
     }
     if (!hasLightweight) {
-      for (Iterator i = clazz.getIndexedProperties().iterator(); i.hasNext()
-          && !hasLightweight;) {
-        hasLightweight = ((MetaIndexedProperty) i.next())
-            .booleanValueOfTag(LIGHTWEIGHT_TAG);
+      for (MetaIndexedProperty property : clazz.getIndexedProperties()) {
+        hasLightweight = property.booleanValueOfTag(LIGHTWEIGHT_TAG);
+        if (hasLightweight) {
+          break;
+        }
       }
     }
     return hasLightweight;
   }
 
+  /**
+   * Generate a Java class.
+   * @param packageName package name of the class to generate.
+   * @param className class name of the class to generate.
+   * @param template velocity template for the generation.
+   * @param context velocity context for the generation.
+   * @throws IOException an file IO exception occured when writing the class.
+   */
   private void generateJavaFile(String packageName, String className,
       Template template, VelocityContext context) throws IOException {
     PrintWriter writer = createJavaWriter(sourceRootDirectory, packageName,

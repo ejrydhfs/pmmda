@@ -1,4 +1,5 @@
-/* copyright 2000-2004 Marcel Baumann
+/* 
+ * copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -9,8 +10,14 @@ package ch.bbv.mda.generators.validation;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import ch.bbv.dog.validation.*;
-import ch.bbv.mda.*;
+import ch.bbv.dog.validation.ValidationRule;
+import ch.bbv.dog.validation.ValidationRuleImpl;
+import ch.bbv.dog.validation.ValidationRuleResult;
+import ch.bbv.dog.validation.Validator;
+import ch.bbv.mda.MetaClass;
+import ch.bbv.mda.MetaIndexedProperty;
+import ch.bbv.mda.MetaPackage;
+import ch.bbv.mda.MetaProperty;
 import ch.bbv.utilities.TextUtilities;
 
 /**
@@ -59,7 +66,7 @@ public abstract class TagRule extends ValidationRuleImpl implements
   public TagRule(String prefix) {
     super(false, ERROR);
     this.prefix = prefix;
-    StringBuffer buffer = new StringBuffer();
+    StringBuilder buffer = new StringBuilder();
     buffer.append(MESSAGES_PACKAGAGE_NAME).append(
         TextUtilities.identifierFirstUpper(prefix)).append("RulesMessages");
     resources = ResourceBundle.getBundle(buffer.toString());
@@ -69,7 +76,7 @@ public abstract class TagRule extends ValidationRuleImpl implements
     return false;
   }
 
-  public boolean execute(Object bean, List results) {
+  public boolean execute(Object bean, List<ValidationRuleResult> results) {
     boolean sucess = true;
     if (bean instanceof MetaPackage) {
       sucess = validate((MetaPackage) bean, results);
@@ -83,7 +90,8 @@ public abstract class TagRule extends ValidationRuleImpl implements
     return sucess;
   }
 
-  public boolean execute(Object bean, String property, List results) {
+  public boolean execute(Object bean, String property,
+      List<ValidationRuleResult> results) {
     boolean sucess = true;
     if (bean instanceof MetaPackage) {
       sucess = validate((MetaPackage) bean, results);
@@ -98,7 +106,7 @@ public abstract class TagRule extends ValidationRuleImpl implements
   }
 
   public boolean execute(Object bean, String property, Object oldValue,
-      Object newValue, List results) {
+      Object newValue, List<ValidationRuleResult> results) {
     return execute(bean, property, results);
   }
 
@@ -110,7 +118,8 @@ public abstract class TagRule extends ValidationRuleImpl implements
    * @return true if no errors were found otherwise false.
    * @pre (element != null) && (results != null)
    */
-  protected abstract boolean validate(MetaPackage element, List results);
+  protected abstract boolean validate(MetaPackage element,
+      List<ValidationRuleResult> results);
 
   /**
    * Validates the element with the registered rules and stores the findings in
@@ -120,7 +129,8 @@ public abstract class TagRule extends ValidationRuleImpl implements
    * @return true if no errors were found otherwise false.
    * @pre (element != null) && (results != null)
    */
-  protected abstract boolean validate(MetaClass element, List results);
+  protected abstract boolean validate(MetaClass element,
+      List<ValidationRuleResult> results);
 
   /**
    * Validates the element with the registered rules and stores the findings in
@@ -130,7 +140,8 @@ public abstract class TagRule extends ValidationRuleImpl implements
    * @return true if no errors were found otherwise false.
    * @pre (element != null) && (results != null)
    */
-  protected abstract boolean validate(MetaProperty element, List results);
+  protected abstract boolean validate(MetaProperty element,
+      List<ValidationRuleResult> results);
 
   /**
    * Validates the element with the registered rules and stores the findings in
@@ -140,7 +151,8 @@ public abstract class TagRule extends ValidationRuleImpl implements
    * @return true if no errors were found otherwise false.
    * @pre (element != null) && (results != null)
    */
-  protected abstract boolean validate(MetaIndexedProperty element, List results);
+  protected abstract boolean validate(MetaIndexedProperty element,
+      List<ValidationRuleResult> results);
 
   /**
    * Returns the message associated with the given key.
@@ -159,8 +171,8 @@ public abstract class TagRule extends ValidationRuleImpl implements
    * @param tag tag origin of the error.
    * @param name name of the item.
    */
-  protected void addErrorMessage(List results, String key, String tag,
-      String name) {
+  protected void addErrorMessage(List<ValidationRuleResult> results,
+      String key, String tag, String name) {
     addMessage(results, ValidationRule.ERROR, key, tag, name);
   }
 
@@ -171,8 +183,8 @@ public abstract class TagRule extends ValidationRuleImpl implements
    * @param tag tag origin of the error.
    * @param name name of the item.
    */
-  protected void addWarningMessage(List results, String key, String tag,
-      String name) {
+  protected void addWarningMessage(List<ValidationRuleResult> results,
+      String key, String tag, String name) {
     addMessage(results, ValidationRule.WARNING, key, tag, name);
   }
 
@@ -184,8 +196,8 @@ public abstract class TagRule extends ValidationRuleImpl implements
    * @param tag tag origin of the error.
    * @param name name of the item.
    */
-  protected void addMessage(List results, int severity, String key, String tag,
-      String name) {
+  protected void addMessage(List<ValidationRuleResult> results, int severity,
+      String key, String tag, String name) {
     ValidationRuleResult result = new ValidationRuleResult();
     result.setSeverity(severity);
     result.setKey(key);

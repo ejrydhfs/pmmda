@@ -1,4 +1,5 @@
-/* copyright 2000-2004 Marcel Baumann
+/* 
+ * copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence);
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -6,8 +7,15 @@
 package ch.bbv.mda.ui;
 
 import java.awt.BorderLayout;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import javax.swing.CellEditor;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -15,11 +23,17 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableModel;
 
 import ch.bbv.dog.reference.BooleanCode;
+import ch.bbv.dog.reference.ReferenceCode;
 import ch.bbv.dog.ui.ReferenceCodeComboBox;
 import ch.bbv.explorer.NodePropertiesView;
+import ch.bbv.explorer.components.FocusCellEditor;
 import ch.bbv.explorer.components.TableCell;
 import ch.bbv.explorer.components.TablePanel;
-import ch.bbv.mda.*;
+import ch.bbv.mda.MetaElement;
+import ch.bbv.mda.PropertyModeCode;
+import ch.bbv.mda.TagDefinition;
+import ch.bbv.mda.TaggedValue;
+import ch.bbv.mda.VisibilityCode;
 
 /**
  * The tagged value view displays a set of tagged values in a table. The first
@@ -30,17 +44,22 @@ import ch.bbv.mda.*;
  * @version $Revision$
  */
 public class TaggedValuesView extends NodePropertiesView {
-  private static Map editors;
+  /**
+   * Serial version identifier coded as back compatibility date.
+   */
+  private static final long serialVersionUID = 20041201;
+
+  private static Map<Class, CellEditor> editors;
 
   static {
-    editors = new HashMap();
+    editors = new HashMap<Class, CellEditor>();
 
     ReferenceCodeComboBox comboBox = new ReferenceCodeComboBox(
         BooleanCode.class, BooleanCode.getCodes());
     comboBox.setCaseSensitive(false);
     editors.put(Boolean.TYPE, new DefaultCellEditor(comboBox));
     editors.put(Boolean.class, new DefaultCellEditor(comboBox));
-    editors.put(String.class, new MyEditor(new JTextField()));
+    editors.put(String.class, new FocusCellEditor(new JTextField()));
     // used to resolve issue of stop cell editing in case of focus lost.
     registerReferenceCode(VisibilityCode.class, VisibilityCode.getCodes(),
         false);
@@ -74,8 +93,9 @@ public class TaggedValuesView extends NodePropertiesView {
     return (TableCellEditor) editors.get(clazz);
   }
 
-  public static void registerReferenceCode(Class referenceCode, List codes,
-      boolean caseSensitive) {
+  public static void registerReferenceCode(
+      Class< ? extends ReferenceCode> referenceCode,
+      List< ? extends ReferenceCode> codes, boolean caseSensitive) {
     ReferenceCodeComboBox comboBox = new ReferenceCodeComboBox(referenceCode,
         codes);
     comboBox.setCaseSensitive(caseSensitive);
@@ -87,8 +107,7 @@ public class TaggedValuesView extends NodePropertiesView {
 
   public void commitChanges() {
     MetaElement model = (MetaElement) getDataObject();
-    for (Iterator i = tablePanel.getModel().iterator(); i.hasNext();) {
-      TaggedValue newTag = (TaggedValue) i.next();
+    for (TaggedValue newTag : (Collection<TaggedValue>) tablePanel.getModel()) {
       TaggedValue originalTag = model.getTaggedValue(newTag.getTag());
       String value = originalTag.getValue();
       if (value != null) {
@@ -115,15 +134,20 @@ public class TaggedValuesView extends NodePropertiesView {
     tableCell.setEditableColumns(editableColumns);
   }
 
-  private List cloneTaggedValues(List taggedValues) {
-    List copies = new ArrayList();
-    for (Iterator i = taggedValues.iterator(); i.hasNext();) {
-      copies.add(new TaggedValue((TaggedValue) i.next()));
+  private List<TaggedValue> cloneTaggedValues(List<TaggedValue> taggedValues) {
+    List<TaggedValue> copies = new ArrayList<TaggedValue>();
+    for (TaggedValue value : taggedValues) {
+      copies.add(new TaggedValue(value));
     }
     return copies;
   }
 
   static class TaggedValuePanel extends TablePanel {
+    /**
+     * Serial version identifier coded as back compatibility date.
+     */
+    private static final long serialVersionUID = 20041201;
+
     public TaggedValuePanel(Collection objects, TableCell tableCell) {
       super(objects, tableCell, new TaggedValue.TaggedValueComparator());
     }
@@ -134,12 +158,17 @@ public class TaggedValuesView extends NodePropertiesView {
   }
 
   static class TaggedValuesTable extends JTable {
+    /**
+     * Serial version identifier coded as back compatibility date.
+     */
+    private static final long serialVersionUID = 20041201;
+
     private TablePanel tablePanel;
 
     public TaggedValuesTable(TableModel model, TablePanel tablePanel) {
       super(model);
       this.tablePanel = tablePanel;
-      TableCellEditor tce = new MyEditor(new JTextField());
+      TableCellEditor tce = new FocusCellEditor(new JTextField());
       for (Enumeration i = this.defaultEditorsByColumnClass.keys(); i
           .hasMoreElements();) {
         this.setDefaultEditor(i.nextElement().getClass(), tce);

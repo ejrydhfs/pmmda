@@ -1,10 +1,13 @@
-/* copyright 2000-2004 Marcel Baumann 
+/* copyright 2000-2005 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$
  */
 package ch.bbv.mda;
 
+import java.beans.PropertyChangeSupport;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.*;
 
 import ch.bbv.dog.DataObject;
@@ -25,6 +28,11 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
     LightweightObject {
   // %% BEGIN USER DECLARATION
   /**
+   * The length of a formatted JavaDoc comment line.
+   */
+  public static final int JAVADOC_LINE_LENGTH = 75;
+
+  /**
    * Defines a comparator for meta element based on their name as comparison
    * criteria.
    */
@@ -40,61 +48,73 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
    * Context property of the class. The value is handled in related accessors
    * and does not need to be persisted but reflection directly manipulating
    * fields do not call the accessors.
+   * @serial
    */
   private MetaElement context;
 
   /**
    * Name property of the class.
+   * @serial
    */
   private String name;
 
   /**
    * Description property of the class.
+   * @serial
    */
   private String description;
 
   /**
    * Visibility property of the class.
+   * @serial
    */
   private VisibilityCode visibility;
 
   /**
    * Stereotype property of the class.
+   * @serial
    */
   private String stereotype;
+
+  /**
+   * Indexed property of the class.
+   * @serial
+   */
+  private Map<String, TaggedValue> taggedValues;
 
   /**
    * List of computed attributes of the meta elements. These derived values are
    * transient.
    */
-  private transient Map attributes;
+  private transient Map<String, String> attributes;
 
   /**
-   * Indexed property of the class.
+   * Helper class for managing changeable properties and associated listeners.
    */
-  private Map taggedValues;
+  protected transient PropertyChangeSupport changeSupport;
 
   /**
    * Default constructor of the class.
    */
   public MetaElement() {
-    init();
+    taggedValues = new HashMap<String, TaggedValue>();
+    attributes = new HashMap<String, String>();
+    visibility = VisibilityCode.getCode(VisibilityCode.PUBLIC_VISIBILITY_CODE);
+    changeSupport = new PropertyChangeSupport(this);
   }
 
   /**
-   * Initializes member variables. Only complex types have to be initialized
-   * here. The init() method is called after deserializing and loading from xml
-   * with XStream. Transient members have to be initialized with this init()
-   * function.
+   * Reads an object from a persistent stream and creates all transient
+   * properties.
+   * @param stream object stream read from.
+   * @throws IOException if the object could not be read.
+   * @throws ClassNotFoundException if the class cannot be found.
    */
-  public void init() {
-    if (attributes == null)
-      attributes = new HashMap();
-    if (taggedValues == null)
-      taggedValues = new HashMap();
-    if (visibility == null)
-      visibility = VisibilityCode
-          .getCode(VisibilityCode.PUBLIC_VISIBILITY_CODE);
+  private void readObject(ObjectInputStream stream) throws IOException,
+      ClassNotFoundException {
+    stream.defaultReadObject();
+    attributes = new HashMap<String, String>();
+    changeSupport = new PropertyChangeSupport(this);
   }
 
   /**
@@ -159,7 +179,7 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
    */
   public String getAttribute(String key) {
     assert (key != null);
-    return (String) attributes.get(key);
+    return attributes.get(key);
   }
 
   /**
@@ -174,8 +194,12 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
     attributes.put(key, attribute);
   }
 
-  public List getAllAttributes() {
-    return new ArrayList(attributes.values());
+  /**
+   * Reutrns all the attributes defined in the element.
+   * @return the list of attributes defined in the element.
+   */
+  public List<String> getAllAttributes() {
+    return new ArrayList<String>(attributes.values());
   }
 
   /**
@@ -226,10 +250,11 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
    * @param tag name of the tagged value to retrieve.
    * @return the requested tagged value if found otherwise null.
    * @pre tag != null
-   * @see #setTaggedValue(String, String)
+   * @see #setTaggedValue(String, TaggedValue)
    */
   public TaggedValue getTaggedValue(String tag) {
-    return (TaggedValue) taggedValues.get(tag);
+    assert tag != null;
+    return taggedValues.get(tag);
   }
 
   /**
@@ -238,27 +263,40 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
    * @param tag name of the tagged value to add.
    * @param taggedValue tagged value to add.
    * @pre (tag != null) && tag.equals(taggedValue.getTag()
-   * @see #getTaggedValue
+   * @see #getTaggedValue(String)
    */
   public void setTaggedValue(String tag, TaggedValue taggedValue) {
-    assert ((tag != null) && tag.equals(taggedValue.getTag()));
+    assert (tag != null) && tag.equals(taggedValue.getTag());
+    TaggedValue oldValue = getTaggedValue(tag);
     taggedValues.put(tag, taggedValue);
+    changeSupport.firePropertyChange("taggedValues", oldValue, taggedValue);
   }
 
+  /**
+   * Adds the tagged value.
+   * @param taggedValue the tagged value to add.
+   */
+  public void addTaggedValue(TaggedValue taggedValue) {
+    setTaggedValue(taggedValue.getTag(), taggedValue);
+  }
+
+  /**
+   * Removes the tagged value associated with the tag.
+   * @param tag the tag of the value to remove.
+   * @return the removed value if found otherwise null.
+   */
   public TaggedValue removeTaggedValue(String tag) {
-    return (TaggedValue) taggedValues.remove(tag);
+    TaggedValue oldValue = taggedValues.remove(tag);
+    changeSupport.firePropertyChange("taggedValues", oldValue, null);
+    return oldValue;
   }
 
-  public List getTags() {
-    return new ArrayList(taggedValues.values());
-  }
-
-  protected void setTaggedValue(String tag, String value) {
-    if (value == null) {
-      taggedValues.remove(tag);
-    } else {
-      taggedValues.put(tag, value);
-    }
+  /**
+   * Returns all the tagged values defined in the element.
+   * @return list of all defined tagged values.
+   */
+  public List<TaggedValue> getTags() {
+    return new ArrayList<TaggedValue>(taggedValues.values());
   }
 
   // %% BEGIN USER CODE
@@ -267,10 +305,10 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
     return null;
   }
 
-  public void addTaggedValue(TaggedValue taggedValue) {
-    taggedValues.put(taggedValue.getTag(), taggedValue);
-  }
-
+  /**
+   * Returns the root of the model.
+   * @return the root of the model to which the element belongs.
+   */
   public MetaElement getRoot() {
     MetaElement context = this;
     while (context.getContext() != null) {
@@ -346,7 +384,7 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
    * @return the qualified name of the meta element.
    */
   public String qualifiedName() {
-    StringBuffer qualifiedName = new StringBuffer();
+    StringBuilder qualifiedName = new StringBuilder();
     qualifiedName.append(getName());
 
     MetaElement context = getContext();
@@ -377,12 +415,12 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
    * @return the comment of the element formatted as requested.
    */
   public List javaDocComment() {
-    List lines = new ArrayList();
+    List<String> lines = new ArrayList<String>();
     String text = getDescription();
     if ((text != null) && (text.length() > 0)) {
-      StringBuffer buffer = new StringBuffer();
+      StringBuilder buffer = new StringBuilder();
       int start = 0;
-      int end = start + 75;
+      int end = start + JAVADOC_LINE_LENGTH;
       while (end < (text.length() - 1)) {
         while ((end > start) && !Character.isWhitespace(text.charAt(end - 1))) {
           end--;
@@ -391,14 +429,14 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
         if (end > start) {
           buffer.append(text.substring(start, end));
         } else {
-          end = start + 75;
+          end = start + JAVADOC_LINE_LENGTH;
           buffer.append(text.substring(start, end));
           buffer.append("-");
         }
         lines.add(buffer.toString());
         buffer.setLength(0);
         start = end;
-        end = start + 75;
+        end = start + JAVADOC_LINE_LENGTH;
       }
       if (start < (text.length() - 1)) {
         buffer.append("* ");
@@ -429,20 +467,45 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
     return value;
   }
 
-  public boolean booleanValueOfTag(String key) {
-    TaggedValue taggedValue = getTaggedValue(key);
+  /**
+   * Returns the boolean value of the requested tag. If the tag does not contain
+   * a boolean value false is returned.
+   * @param tag name of the tag to retrieve.
+   * @return boolean value of the tag if found otherwise false.
+   */
+  public boolean booleanValueOfTag(String tag) {
+    TaggedValue taggedValue = getTaggedValue(tag);
     return ((taggedValue != null) && taggedValue.getValue().equals("true"));
   }
 
-  public void setTaggedValue(String key, boolean value) {
-    setTaggedValue(key, Boolean.toString(value));
+  /**
+   * Set a tagged value with a boolean value.
+   * @param tag tag name of the tagged value.
+   * @param value value of the tagged value.
+   * @see #booleanValueOfTag(String)
+   */
+  public void setTaggedValue(String tag, boolean value) {
+    setTaggedValue(tag, new TaggedValue(tag, Boolean.toString(value)));
   }
 
-  public boolean booleanValueOfAttribute(String key) {
-    String value = getAttribute(key);
+  /**
+   * Return the boolean value of a tagged value.
+   * @param tag tag name of the requested tagged value.
+   * @return the boolean value of the tagged value.
+   * @see #setTaggedValue(String, boolean)
+   */
+  public boolean booleanValueOfAttribute(String tag) {
+    String value = getAttribute(tag);
     return ((value != null) && value.equals("true"));
   }
 
+  /** 
+   * Finds the first element with the given name if the list.
+   * @param list list to search for.
+   * @param name name of element to find.
+   * @return the requested element if found otherwise null.
+   * @pre (list != null) && (name != null)
+   */
   protected MetaElement findElement(List list, String name) {
     assert ((list != null) && name != null);
     MetaElement element = null;
@@ -468,10 +531,6 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
   public String toString() {
     return qualifiedName();
   }
-  
-  public boolean isLeaf() {
-    assert (false);
-    return false;
-  }
+
   // %% END USER CODE
 }

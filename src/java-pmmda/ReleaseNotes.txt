@@ -16,8 +16,30 @@ TODO
   classname, prefix, loaded, active, dependants
 - Have a self contained jar file running with java -jar pmMDA
 
+Version 0.3.0-dev (15 February 2005)
+------------------------------------
+The following new features were added.
+- First feedback from Technical University of Raperswil was added to the trunk.
+- The source code was refactored to support the features of JDK 5.0.
+- All Java templates were extended to support Java 1.4 and 5.0. The type
+  checking is more stringent due to the generics features. The property file 
+  is extended to support the new option.
+- The command line interpreter library from Jakara commons is now used to parse
+  the command line of the application and the provided examples. The help
+  message and flexibility is increased.  
+
+The following errors were corrected.
+- Generic properties view had an error when loading an empty object.
+- Version identifiers are now provided for all serializable classes to insure
+  compatibility between minor versions of the application. This compatibility
+  is expected from the versioning scheme.
+- Serialize patterns insure initialization of transient property and uniqueness
+  of singleton instances. The new XStream library uses the JDK foreseen hooks to
+  implement them. The JavaDoc documentation was extended to support serial tag
+  information.
+
 Version 0.2.9-RC2 (30 October 2004)
--------------------------------------
+-----------------------------------
 The following new features were added.
 - The naming conventions for tags and the persistence tags were aligned to the
   terminology of the UML standard version 1.5.

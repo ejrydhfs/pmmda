@@ -1,12 +1,13 @@
-/* copyright 2000-2004 Marcel Baumann
+/* 
+ * copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
  */
 package ch.bbv.mda;
 
-import java.util.List;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author AdrianBachofen Defines a filter for tagged values. Either a tagged
@@ -14,7 +15,6 @@ import java.util.Iterator;
  *         entirely (same type, tag, and value). The non empty rule is used to
  *         select tagged values of same type, tag and a non empty value. This
  *         filter can be used to construct tree views with portions of the model
- * @see FilterTreeConstructor
  */
 public class TaggedValueFilter {
 
@@ -109,8 +109,7 @@ public class TaggedValueFilter {
     return false;
   }
 
-  private boolean equalsTaggedValueType(TagDefinition tvt1,
-      TagDefinition tvt2) {
+  private boolean equalsTaggedValueType(TagDefinition tvt1, TagDefinition tvt2) {
     if (tvt1 == null && tvt2 == null)
       return true;
     if (tvt1 != null && tvt2 != null) {

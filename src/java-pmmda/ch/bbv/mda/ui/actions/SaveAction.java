@@ -1,4 +1,5 @@
-/* copyright 2000-2004 Marcel Baumann 
+/* 
+ * copyright 2000-2005 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence); 
  * you may not use this file except in compliance with the License. 
  * $Id$
@@ -14,11 +15,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ch.bbv.explorer.actions.ExplorerGlobalActionImpl;
-import ch.bbv.utilities.ResourceUtility;
 import ch.bbv.mda.MetaModel;
 import ch.bbv.mda.persistency.PersistencyException;
 import ch.bbv.mda.persistency.PersistencyHandler;
 import ch.bbv.mda.persistency.PersistencyHandlerFactory;
+import ch.bbv.utilities.ResourceUtility;
 
 /**
  * The save action for the user interface of <em>pmMDA</em> application.
@@ -26,6 +27,11 @@ import ch.bbv.mda.persistency.PersistencyHandlerFactory;
  * @version $Revision$
  */
 public class SaveAction extends ExplorerGlobalActionImpl {
+  /**
+   * Serial version identifier coded as back compatibility date.
+   */
+  private static final long serialVersionUID = 20041201;
+
   /**
    * Logger of the instances of the class.
    */

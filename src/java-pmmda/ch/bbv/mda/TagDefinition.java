@@ -1,4 +1,5 @@
-/* copyright 2000-2004 Marcel Baumann 
+/* 
+ * copyright 2000-2005 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$
@@ -6,8 +7,6 @@
 package ch.bbv.mda;
 
 import java.io.Serializable;
-
-import ch.bbv.mda.generators.Cartridge;
 
 /**
  * The tag definition specifies the tagged values that can be attached to a kind
@@ -31,6 +30,11 @@ import ch.bbv.mda.generators.Cartridge;
  */
 public class TagDefinition extends AdornmentType implements Serializable {
   /**
+   * Serial version identifier coded as back compatibility date.
+   */
+  private static final long serialVersionUID = 20041201;
+
+  /**
    * Default value of the tag.
    */
   private String defaultValue;
@@ -41,22 +45,15 @@ public class TagDefinition extends AdornmentType implements Serializable {
   private transient Class type;
 
   /**
-   * Back link to the cartridge having defined this tagged value type
-   */
-  private transient Cartridge cartridge;
-
-  /**
    * Constructor of the class.
    * @param tag tag name for the tagged values of this type.
    * @param defaultValue default value for the tagged values of this type.
    * @param type type of the values for the tagged values of this type.
    */
-  public TagDefinition(String tag, String defaultValue, Class type,
-      Cartridge cartridge) {
+  public TagDefinition(String tag, String defaultValue, Class type) {
     setName(tag);
     this.defaultValue = defaultValue;
     this.type = type;
-    this.cartridge = cartridge;
   }
 
   /**
@@ -89,13 +86,5 @@ public class TagDefinition extends AdornmentType implements Serializable {
    */
   public String getTypename() {
     return (type != null) ? type.getName() : null;
-  }
-
-  /**
-   * Returns the cartridge having defined this tagged value type
-   * @return Cartridge cartridge having defined this tagged value type
-   */
-  public Cartridge getCartridge() {
-    return cartridge;
   }
 }

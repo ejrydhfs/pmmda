@@ -1,11 +1,14 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
  */
 package ch.bbv.mda;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The meta factory class initializes newly created meta element instances. The
@@ -29,22 +32,26 @@ public class MetaFactory {
   private static MetaFactory factory;
 
   /**
-   * Map associating a class with all the tagged values it supports.
+   * Map associating a class with all the active tagged values it supports.
    */
-  private Map taggedValueTypes;
+  private Map<Class, List<TagDefinition>> tagDefinitions;
 
   /**
    * Map associating a class with all the obsolete tagged values it had.
    * Obsolete tagged values are automatically removed.
    */
-  private Map obsoleteTaggedValueTypes;
+  private Map<Class, List<TagDefinition>> obsoleteTaggedValueTypes;
+
+  static {
+    factory = new MetaFactory();
+  }
 
   /**
    * Default constructor of the class.
    */
   public MetaFactory() {
-    taggedValueTypes = new HashMap();
-    obsoleteTaggedValueTypes = new HashMap();
+    tagDefinitions = new HashMap<Class, List<TagDefinition>>();
+    obsoleteTaggedValueTypes = new HashMap<Class, List<TagDefinition>>();
   }
 
   /**
@@ -52,13 +59,6 @@ public class MetaFactory {
    * @return singleton instance of the class.
    */
   public static MetaFactory getInstance() {
-    if (factory == null) {
-      synchronized (MetaFactory.class) {
-        if (factory == null) {
-          factory = new MetaFactory();
-        }
-      }
-    }
     return factory;
   }
 
@@ -67,10 +67,10 @@ public class MetaFactory {
    * @param clazz class owning the tagged value types.
    * @param taggedValueTypes tagged value types to register.
    */
-  public void registerTypes(Class clazz, List taggedValueTypes) {
-    List types = (List) this.taggedValueTypes.get(clazz);
+  public void registerTypes(Class clazz, List<TagDefinition> taggedValueTypes) {
+    List<TagDefinition> types = tagDefinitions.get(clazz);
     if (types == null) {
-      this.taggedValueTypes.put(clazz, taggedValueTypes);
+      tagDefinitions.put(clazz, taggedValueTypes);
     } else {
       types.addAll(taggedValueTypes);
     }
@@ -82,8 +82,8 @@ public class MetaFactory {
    * @param taggedValueTypes tagged value types to register.
    * @pre clazz != null && taggedValueTypes != null
    */
-  public void addObsoleteTypes(Class clazz, List taggedValueTypes) {
-    List types = (List) obsoleteTaggedValueTypes.get(clazz);
+  public void addObsoleteTypes(Class clazz, List<TagDefinition> taggedValueTypes) {
+    List<TagDefinition> types = obsoleteTaggedValueTypes.get(clazz);
     if (types == null) {
       obsoleteTaggedValueTypes.put(clazz, taggedValueTypes);
     } else {
@@ -98,11 +98,11 @@ public class MetaFactory {
    *         defined.
    */
   public List getObsoleteTypes(Class clazz) {
-    List types = (List) obsoleteTaggedValueTypes.get(clazz);
+    List<TagDefinition> types = obsoleteTaggedValueTypes.get(clazz);
     if (types != null) {
       types = Collections.unmodifiableList(types);
     } else {
-      types = Collections.EMPTY_LIST;
+      types = Collections.emptyList();
     }
     return types;
   }
@@ -116,23 +116,18 @@ public class MetaFactory {
   public TagDefinition findType(String name) {
     assert ((name != null) && (name.length() > 0));
 
-    TagDefinition type = null;
-    for (Iterator i = taggedValueTypes.values().iterator(); i.hasNext();) {
-      List list = (List) i.next();
-      for (Iterator j = list.iterator(); j.hasNext();) {
-        type = (TagDefinition) j.next();
-        if (!type.getTag().equals(name)) {
-          type = null;
-        } else {
-          break;
+    for (List<TagDefinition> types : tagDefinitions.values()) {
+      for (TagDefinition type : types) {
+        if (type.getTag().equals(name)) {
+          return type;
         }
       }
     }
-    return type;
+    return null;
   }
 
   /**
-   * Initialize the element with the defined tagged value types. All missing
+   * Initializes the element with the defined tagged value types. All missing
    * tagged values are added with their default value and all obsolete ones are
    * removed.
    * @param element meta element to initialize.
@@ -140,12 +135,11 @@ public class MetaFactory {
   public void initialize(MetaModel element) {
     if (!element.isSystem()) {
       initialize(element, MetaModel.class);
-      initialize((MetaPackage) element);
     }
   }
 
   /**
-   * Initialize the element with the defined tagged value types. All missing
+   * Initializes the element with the defined tagged value types. All missing
    * tagged values are added with their default value and all obsolete ones are
    * removed.
    * @param element meta element to initialize.
@@ -157,7 +151,7 @@ public class MetaFactory {
   }
 
   /**
-   * Initialize the element with the defined tagged value types. All missing
+   * Initializes the element with the defined tagged value types. All missing
    * tagged values are added with their default value and all obsolete ones are
    * removed.
    * @param element meta element to initialize.
@@ -196,23 +190,21 @@ public class MetaFactory {
    * @param clazz class of the meta element to initialize.
    */
   protected void initialize(MetaElement element, Class clazz) {
-    List types = (List) taggedValueTypes.get(clazz);
+    List<TagDefinition> types = tagDefinitions.get(clazz);
     if (types != null) {
-      for (int i = 0; i < types.size(); i++) {
-        TagDefinition type = (TagDefinition) types.get(i);
+      for (TagDefinition type : types) {
         TaggedValue value = element.getTaggedValue(type.getTag());
         if (value == null) {
-          value = type.getCartridge().getTaggedValueWithElementDependentDefault(type, element);
-          element.setTaggedValue(type.getTag(), value);
+          value = new TaggedValue(type);
+          element.addTaggedValue(value);
         } else {
           value.setType(type);
         }
       }
     }
-    types = (List) obsoleteTaggedValueTypes.get(clazz);
+    types = obsoleteTaggedValueTypes.get(clazz);
     if (types != null) {
-      for (int i = 0; i < types.size(); i++) {
-        TagDefinition type = (TagDefinition) types.get(i);
+      for (TagDefinition type : types) {
         element.removeTaggedValue(type.getTag());
       }
     }

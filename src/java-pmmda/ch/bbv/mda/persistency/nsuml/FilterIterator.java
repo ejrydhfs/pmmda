@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann 
+/* copyright 2000-2005 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$
@@ -18,7 +18,7 @@ public class FilterIterator implements Iterator {
   /**
    * Iterator used to iterate over the collection.
    */
-  private Iterator iterator;
+  private Iterator<Object> iterator;
 
   /**
    * Class used to filter the items of the collection.
@@ -38,7 +38,7 @@ public class FilterIterator implements Iterator {
    * @pre collection != null && filter != null
    */
   public FilterIterator(Collection collection, Class filter) {
-    assert ((collection != null) && (filter != null));
+    assert (collection != null) && (filter != null);
     iterator = collection.iterator();
     this.filter = filter;
     next();

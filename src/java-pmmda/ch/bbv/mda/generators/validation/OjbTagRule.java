@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -8,6 +8,7 @@ package ch.bbv.mda.generators.validation;
 
 import java.util.List;
 
+import ch.bbv.dog.validation.ValidationRuleResult;
 import ch.bbv.mda.*;
 import ch.bbv.mda.generators.DogCartridge;
 import ch.bbv.mda.generators.JdbcTypeCode;
@@ -52,7 +53,8 @@ public class OjbTagRule extends TagRule {
     super(OjbCartridge.PREFIX);
   }
 
-  protected boolean validate(MetaPackage packages, List results) {
+  protected boolean validate(MetaPackage packages,
+      List<ValidationRuleResult> results) {
     return true;
   }
 
@@ -65,7 +67,7 @@ public class OjbTagRule extends TagRule {
    * @param results the validation results.
    * @return true if no error were found otherwise false.
    */
-  protected boolean validate(MetaClass clazz, List results) {
+  protected boolean validate(MetaClass clazz, List<ValidationRuleResult> results) {
     boolean sucess = true;
     if (clazz.booleanValueOfTag(DogCartridge.PERSISTENCE_TAG)) {
       if (!exists(clazz, OjbCartridge.TABLE_NAME_TAG)) {
@@ -91,7 +93,8 @@ public class OjbTagRule extends TagRule {
    * @param results the validation results.
    * @return true if no error were found otherwise false.
    */
-  protected boolean validate(MetaProperty property, List results) {
+  protected boolean validate(MetaProperty property,
+      List<ValidationRuleResult> results) {
     boolean sucess = true;
 
     if (!property.isTransient()
@@ -136,7 +139,8 @@ public class OjbTagRule extends TagRule {
    * @param results the validation results.
    * @return true if no error were found otherwise false.
    */
-  protected boolean validate(MetaIndexedProperty property, List results) {
+  protected boolean validate(MetaIndexedProperty property,
+      List<ValidationRuleResult> results) {
     boolean sucess = true;
     if (!property.isTransient()
         && property.getContext()

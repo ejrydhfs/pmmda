@@ -1,11 +1,14 @@
-/* copyright 2000-2004 Marcel Baumann 
+/* copyright 2000-2005 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$
  */
 package ch.bbv.mda;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * The meta project defines a MDA project composed of a set of packages. Overall
@@ -15,6 +18,11 @@ import java.util.*;
  */
 public class MetaModel extends MetaPackage {
   /**
+   * Serial version identifier coded as back compatibility date.
+   */
+  private static final long serialVersionUID = 20041201;
+
+  /**
    * The name of the file containing the meta model. The information is managed
    * within the application and is therefore transient.
    */
@@ -22,33 +30,22 @@ public class MetaModel extends MetaPackage {
 
   /**
    * List of all packages of the model.
+   * @serial
    */
-  private List packages;
+  private List<MetaPackage> packages;
 
   /**
    * List of all data types of the model.
+   * @serial
    */
-  private List dataTypes;
+  private List<MetaDataType> dataTypes;
 
   /**
    * Default constructor of the class.
    */
   public MetaModel() {
-    init();
-  }
-
-  /**
-   * Initializes member variables. Only complex types have to be initialized
-   * here. The init() method is called after deserializing and loading from xml
-   * with XStream. Transient members have to be initialized with this init()
-   * function.
-   */
-  public void init() {
-    super.init();
-    if (packages == null)
-      packages = new ArrayList();
-    if (dataTypes == null)
-      dataTypes = new ArrayList();
+    packages = new ArrayList<MetaPackage>();
+    dataTypes = new ArrayList<MetaDataType>();
   }
 
   /**
@@ -70,7 +67,7 @@ public class MetaModel extends MetaPackage {
   }
 
   public MetaPackage getPackage(int index) {
-    return (MetaPackage) packages.get(index);
+    return packages.get(index);
   }
 
   public void addPackage(MetaPackage metaPackage) {
@@ -84,36 +81,38 @@ public class MetaModel extends MetaPackage {
     Collections.sort(packages, MetaElement.NAME_COMPARATOR);
   }
 
-  public List getPackages() {
+  public List<MetaPackage> getPackages() {
     return packages;
   }
 
-  public void setPackages(List packages) {
+  public void setPackages(List<MetaPackage> packages) {
     removeAllPackages();
-    packages.addAll(packages);
-
-    for (Iterator i = packages.iterator(); i.hasNext();) {
-      ((MetaPackage) i.next()).setContext(this);
+    this.packages.addAll(packages);
+    for (MetaPackage metaPackage : packages) {
+      metaPackage.setContext(this);
     }
   }
 
   public void removeAllPackages() {
-    for (Iterator i = packages.iterator(); i.hasNext();) {
-      ((MetaPackage) i.next()).setContext(null);
+    for (MetaPackage metaPackage : packages) {
+      metaPackage.setContext(null);
     }
     packages.clear();
   }
 
   /**
-   * Removes a package from the model
+   * Removes a package from the model.
    * @param metaPackage to be removed.
    */
-  public void removePackage(MetaPackage metaPackage){
-    packages.remove(metaPackage);
+  public void removePackage(MetaPackage metaPackage) {
+    if (packages.contains(metaPackage)) {
+      packages.remove(metaPackage);
+      metaPackage.setContext(null);
+    }
   }
-  
+
   public MetaDataType getDataType(int index) {
-    return (MetaDataType) dataTypes.get(index);
+    return dataTypes.get(index);
   }
 
   public void addDataType(MetaDataType metaDataType) {
@@ -127,47 +126,41 @@ public class MetaModel extends MetaPackage {
     Collections.sort(packages, MetaElement.NAME_COMPARATOR);
   }
 
-  public List getDataTypes() {
+  public List<MetaDataType> getDataTypes() {
     return dataTypes;
   }
 
-  public void setDataTypes(List dataTypes) {
+  public void setDataTypes(List<MetaDataType> dataTypes) {
     removeAllDataTypes();
     dataTypes.addAll(dataTypes);
 
-    for (Iterator i = dataTypes.iterator(); i.hasNext();) {
-      ((MetaDataType) i.next()).setContext(this);
+    for (MetaDataType dataType : dataTypes) {
+      dataType.setContext(this);
     }
   }
 
   public void removeAllDataTypes() {
-    for (Iterator i = dataTypes.iterator(); i.hasNext();) {
-      ((MetaDataType) i.next()).setContext(null);
+    for (MetaDataType dataType : dataTypes) {
+      dataType.setContext(null);
     }
     dataTypes.clear();
   }
-  
-  public void removeDataType(MetaDataType metaDataType){
-    dataTypes.remove(metaDataType);
+
+  public void removeDataType(MetaDataType dataType) {
+    if (dataTypes.contains(dataType)) {
+      dataTypes.remove(dataType);
+      dataType.setContext(null);
+    }
   }
 
   public void accept(Visitor visitor) {
     visitor.visit(this);
-    for (Iterator i = packages.iterator(); i.hasNext();) {
-      ((MetaPackage) i.next()).accept(visitor);
+    for (MetaPackage metaPackage : packages) {
+      metaPackage.accept(visitor);
     }
-    for (Iterator i = getClasses().iterator(); i.hasNext();) {
-      ((MetaClass) i.next()).accept(visitor);
+    for (MetaClass clazz : getClasses()) {
+      clazz.accept(visitor);
     }
-  }
-
-  /**
-   * Indicates whether this model element is a leaf (no children)
-   */
-  public boolean isLeaf() {
-    if (packages == null || packages.isEmpty())
-      return true;
-    return false;
   }
 
   // %% BEGIN USER CODE
@@ -182,14 +175,14 @@ public class MetaModel extends MetaPackage {
   public MetaClass findClass(String qualifiedName) {
     MetaClass metaClass = null;
     if (qualifiedName != null) {
-	    String packageName = MetaClass.getPackageName(qualifiedName);
-	    if (packageName != null) {
-	      MetaPackage metaPackage = findPackage(packageName);
-	      if (metaPackage != null) {
-	        metaClass = metaPackage
-	            .findClass(MetaClass.getClassName(qualifiedName));
-	      }
-	    }
+      String packageName = MetaClass.getPackageName(qualifiedName);
+      if (packageName != null) {
+        MetaPackage metaPackage = findPackage(packageName);
+        if (metaPackage != null) {
+          metaClass = metaPackage.findClass(MetaClass
+              .getClassName(qualifiedName));
+        }
+      }
     }
     return metaClass;
   }

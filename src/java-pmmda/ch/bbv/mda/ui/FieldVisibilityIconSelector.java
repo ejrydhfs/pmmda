@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann 
+/* copyright 2000-2005 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence); 
  * you may not use this file except in compliance with the License. 
  * $Id$
@@ -39,7 +39,7 @@ public class FieldVisibilityIconSelector implements IconSelector {
 
   public ImageIcon select(ExplorerNode node, boolean expanded) {
     MetaProperty property = (MetaProperty) node.getLightweightObject();
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append(nodeTypeName);
 		buffer.append("-");
 		buffer.append(MdaUtilities.visibilityToString(property.getVisibility().getCode()));

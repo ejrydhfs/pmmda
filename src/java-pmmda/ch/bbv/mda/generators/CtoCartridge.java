@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -133,12 +133,12 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
   public static final String[] PRIMITIVE_TYPES = { "boolean", "byte", "double",
       "float", "integer", "long", "short" };
 
-  private static Map java2idl;
+  private static Map<String, String> java2idl;
 
   static {
     Arrays.sort(NULLABLE_TYPES);
     Arrays.sort(PRIMITIVE_TYPES);
-    java2idl = new HashMap();
+    java2idl = new HashMap<String, String>();
     java2idl.put("java.sql.Date", "NullDate");
     java2idl.put("java.util.Date", "NullDate");
     java2idl.put("java.sql.Timestamp", "NullTimestamp");
@@ -210,10 +210,10 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
     addUndefinedProperty(properties, IDL_POSTFIX_KEY, "");
   }
 
-  public List getTaggedValueTypes(Class clazz) {
-    List types = new ArrayList();
+  public List<TagDefinition> getTaggedValueTypes(Class clazz) {
+    List<TagDefinition> types = new ArrayList<TagDefinition>();
     if (clazz.equals(MetaPackage.class)) {
-      types.add(new TagDefinition(CTO_PACKAGE_IDL_TAG, "", String.class, this));
+      types.add(new TagDefinition(CTO_PACKAGE_IDL_TAG, "", String.class));
     }
     return types;
   }
@@ -239,7 +239,7 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
     assert (metaPackage != null);
 
     Properties context = getContext();
-    StringBuffer buffer = new StringBuffer();
+    StringBuilder buffer = new StringBuilder();
     buffer.append(metaPackage.qualifiedName()).append(
         context.getProperty(TRANSFORM_PACKAGE_POSTFIX));
     metaPackage.addAttribute(CTO_BO2DTO_PACKAGE, buffer.toString());
@@ -251,7 +251,7 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
 
     Properties context = getContext();
     String name = clazz.getName();
-    StringBuffer buffer = new StringBuffer();
+    StringBuilder buffer = new StringBuilder();
     buffer.append(context.getProperty(IDL_PREFIX_KEY)).append(name).append(
         context.getProperty(DogCartridge.BO_CLASS_POSTFIX_KEY)).append(
         context.getProperty(IDL_POSTFIX_KEY));
@@ -272,14 +272,14 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
 
     for (Iterator i = clazz.getProperties().iterator(); i.hasNext();) {
       MetaProperty property = (MetaProperty) i.next();
-      String idlType = (String) java2idl.get(property.getTypeName());
+      String idlType = java2idl.get(property.getTypeName());
       if (idlType != null) {
         property.addAttribute(CTO_IDL_TYPE, idlType);
       }
     }
     for (Iterator i = clazz.getIndexedProperties().iterator(); i.hasNext();) {
       MetaProperty property = (MetaProperty) i.next();
-      String idlType = (String) java2idl.get(property.getTypeName());
+      String idlType = java2idl.get(property.getTypeName());
       if (idlType != null) {
         property.addAttribute(CTO_IDL_TYPE, idlType);
       }
@@ -337,7 +337,7 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
    * @return Java statement performing the transformation.
    */
   public String getBo2DtoConversion(MetaProperty property, String param) {
-    StringBuffer buffer = new StringBuffer();
+    StringBuilder buffer = new StringBuilder();
     String uName = TextUtilities.identifierFirstUpper(property.getName());
     String typeName = property.getTypeName();
     if (Arrays.binarySearch(NULLABLE_TYPES, typeName) >= 0) {
@@ -376,7 +376,7 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
    * @return Java statement performing the transformation.
    */
   public String getDto2BoConversion(MetaProperty property, String param) {
-    StringBuffer buffer = new StringBuffer();
+    StringBuilder buffer = new StringBuilder();
     String typeName = property.getTypeName();
     if (Arrays.binarySearch(NULLABLE_TYPES, typeName) >= 0) {
       buffer.append("TransformerCto.extract(").append(param).append(".")

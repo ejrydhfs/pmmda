@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -42,14 +42,54 @@ public abstract class CartridgeImpl implements Cartridge {
    */
   public static final String JAVA_EXTENSION = ".java";
 
+  /**
+   * Velocity context key to identify the object stored in the context.
+   */
   public static final String CONFIGURATION_KEY = "configuration";
+
+  /**
+   * Velocity context key to identify the object stored in the context.
+   */
   public static final String CARTRIDGE_KEY = "cartridge";
+
+  /**
+   * Velocity context key to identify the object stored in the context.
+   */
+  public static final String UTILITIES_KEY = "utilities";
+
+  /**
+   * Velocity context key to identify the object stored in the context.
+   */
   public static final String MODEL_KEY = "model";
+
+  /**
+   * Velocity context key to identify the object stored in the context.
+   */
   public static final String PACKAGES_KEY = "packages";
+
+  /**
+   * Velocity context key to identify the object stored in the context.
+   */
   public static final String PACKAGE_KEY = "package";
+
+  /**
+   * Velocity context key to identify the object stored in the context.
+   */
   public static final String CLASSES_KEY = "classes";
+
+  /**
+   * Velocity context key to identify the object stored in the context.
+   */
   public static final String CLASS_KEY = "class";
+
+  /**
+   * Velocity context key to identify the object stored in the context.
+   */
   public static final String PROPERTIES_KEY = "properties";
+
+  /**
+   * Velocity context key to identify the object stored in the context.
+   */
   public static final String AGGREGATIONS_KEY = "aggregations";
 
   /**
@@ -60,7 +100,7 @@ public abstract class CartridgeImpl implements Cartridge {
   /**
    * List of all cartridges the cartridge is dependant of.
    */
-  private List cartridges;
+  private List<Cartridge> cartridges;
 
   /**
    * Properties for the code generation.
@@ -82,6 +122,8 @@ public abstract class CartridgeImpl implements Cartridge {
    */
   private String abbreviation;
 
+  private Utilities utilities;
+  
   /**
    * Constructor fo the class.
    * @param name name of the cartridge.
@@ -92,7 +134,8 @@ public abstract class CartridgeImpl implements Cartridge {
     this.name = name;
     this.abbreviation = abbreviation;
     this.version = version;
-    cartridges = new ArrayList();
+    cartridges = new ArrayList<Cartridge>();
+    utilities = new Utilities();
   }
 
   public String getName() {
@@ -107,7 +150,7 @@ public abstract class CartridgeImpl implements Cartridge {
     return abbreviation;
   }
 
-  public List getUsedCartridges() {
+  public List<Cartridge> getUsedCartridges() {
     return Collections.unmodifiableList(cartridges);
   }
 
@@ -119,8 +162,12 @@ public abstract class CartridgeImpl implements Cartridge {
     return Collections.EMPTY_LIST;
   }
 
-  public List getAllStereotypes() {
-    return Collections.EMPTY_LIST;
+  public List<StereotypeType> getAllStereotypes() {
+    return Collections.emptyList();
+  }
+
+  public ElementInitialize getInitalizor() {
+    return null;
   }
 
   public void registerRules(Validator validator) {
@@ -154,12 +201,12 @@ public abstract class CartridgeImpl implements Cartridge {
     this.properties = properties;
   }
 
-  public List getTaggedValueTypes(Class clazz) {
+  public List<TagDefinition> getTaggedValueTypes(Class clazz) {
     return null;
   }
 
-  public List getObsoleteTaggedValueTypes(Class clazz) {
-    return Collections.EMPTY_LIST;
+  public List<TagDefinition> getObsoleteTaggedValueTypes(Class clazz) {
+    return Collections.emptyList();
   }
 
   public Properties getContext() {
@@ -250,13 +297,12 @@ public abstract class CartridgeImpl implements Cartridge {
    * @param packageName name of the package.
    * @param filename name of the file.
    * @return the created file if sucessfull otherwise null.
-   * @pre (root != null && root.isDirectory()) && (packageName != null &&
-   *      packageName.length() > 0) (className != null && className.length() >
-   *      0)
+   * @pre (root != null && root.isDirectory()) && (className != null &&
+   *      className.length() > 0)
    */
   protected File createFile(File root, String packageName, String filename) {
-    assert (((root != null) && root.isDirectory()) && ((filename != null) && (filename
-        .length() > 0)));
+    assert ((root != null) && root.isDirectory())
+        && ((filename != null) && (filename.length() > 0));
 
     File file = null;
     File directory;
@@ -291,9 +337,18 @@ public abstract class CartridgeImpl implements Cartridge {
    */
   protected PrintWriter createPrintWriter(File file)
       throws FileNotFoundException {
-    assert (file != null);
-    // assert ((file != null) && file.canWrite());
+    assert (file != null) && file.canWrite();
     return new PrintWriter(new BufferedOutputStream(new FileOutputStream(file)));
+  }
+
+  /**
+   * Closes the print writer if not null.
+   * @param writer print writer to close.
+   */
+  protected void closePrintWriter(PrintWriter writer) {
+    if (writer != null) {
+      writer.close();
+    }
   }
 
   /**
@@ -327,41 +382,13 @@ public abstract class CartridgeImpl implements Cartridge {
   }
 
   /**
-   * Returns all fields of the given class and of all its ancestors in the given
-   * lists based on their type.
-   * @param clazz meta class, which fields should be generated.
-   * @param properties properties of the class and its direct and indirect
-   *        ancestors.
-   * @param indexedProperties indexed properties of the class and its direct and
-   *        indirect ancestors.
-   * @param references references of the class and its direct and indirect
-   *        ancestors.
-   */
-  protected void getFieldsFor(MetaClass clazz, List properties,
-      List indexedProperties, List references) {
-    for (Iterator i = clazz.getProperties().iterator(); i.hasNext();) {
-      MetaProperty property = (MetaProperty) i.next();
-      if (property.retrieveIsReferenceCode()) {
-        references.add(property);
-      } else {
-        properties.add(property);
-      }
-    }
-    indexedProperties.addAll(clazz.getIndexedProperties());
-
-    for (Iterator i = clazz.retrieveAncestors().iterator(); i.hasNext();) {
-      MetaClass ancestor = (MetaClass) i.next();
-      getFieldsFor(ancestor, properties, indexedProperties, references);
-    }
-  }
-
-  /**
    * Creates the context for a model.
    * @param model model which context should be created.
    * @return the requested velocity context.
    */
   protected VelocityContext createContext(MetaModel model) {
     VelocityContext context = new VelocityContext();
+    context.put(UTILITIES_KEY, utilities);
     context.put(CARTRIDGE_KEY, this);
     context.put(CONFIGURATION_KEY, getContext());
     context.put(MODEL_KEY, model);
@@ -375,6 +402,7 @@ public abstract class CartridgeImpl implements Cartridge {
    */
   protected VelocityContext createContext(MetaPackage metaPackage) {
     VelocityContext context = new VelocityContext();
+    context.put(UTILITIES_KEY, utilities);
     context.put(CARTRIDGE_KEY, this);
     context.put(CONFIGURATION_KEY, getContext());
     context.put(MODEL_KEY, metaPackage.getRoot());
@@ -391,20 +419,14 @@ public abstract class CartridgeImpl implements Cartridge {
    */
   protected VelocityContext createContext(MetaClass clazz) {
     VelocityContext context = new VelocityContext();
+    context.put(UTILITIES_KEY, utilities);
     context.put(CARTRIDGE_KEY, this);
     context.put(CONFIGURATION_KEY, getContext());
     context.put(MODEL_KEY, clazz.getRoot());
     context.put(PACKAGE_KEY, clazz.getContext());
     context.put(CLASS_KEY, clazz);
-
-    List properties = new ArrayList();
-    List indexedProperties = new ArrayList();
-    List references = new ArrayList();
-    getFieldsFor(clazz, properties, indexedProperties, references);
-    context.put(PROPERTIES_KEY, properties);
-    context.put(AGGREGATIONS_KEY, indexedProperties);
-    
-    context.put("references", references);
+    context.put(PROPERTIES_KEY, utilities.getTransitiveFieldsFor(clazz));
+    context.put(AGGREGATIONS_KEY, utilities.getTransitiveIndexedFieldsFor(clazz));
     context.put("imports", clazz.getImports());
     context.put("nestedClasses", clazz.getClasses());
     return context;
@@ -422,7 +444,7 @@ public abstract class CartridgeImpl implements Cartridge {
   protected void extractUserStatements(File file, MetaClass clazz) {
     assert ((file != null) && (clazz != null));
 
-    List statements;
+    List<String> statements;
     if (file.exists() && file.canRead()) {
       statements = extractBlock(file, USER_IMPORT_BEGIN, USER_IMPORT_END);
       clazz.setImports(statements);
@@ -447,8 +469,9 @@ public abstract class CartridgeImpl implements Cartridge {
    * @return list of read lines if found otherwise null.
    * @pre file != null && startComment != null && endComment != null
    */
-  protected List extractBlock(File file, String startComment, String endComment) {
-    assert ((file != null) && (startComment != null) && (endComment != null));
+  protected List<String> extractBlock(File file, String startComment,
+      String endComment) {
+    assert (file != null) && (startComment != null) && (endComment != null);
     return null;
   }
 

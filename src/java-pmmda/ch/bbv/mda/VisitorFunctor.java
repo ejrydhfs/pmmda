@@ -1,4 +1,5 @@
-/* copyright 2000-2004 Marcel Baumann 
+/* 
+ * copyright 2000-2005 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$ 
@@ -15,12 +16,12 @@ import ch.bbv.dog.DoFunctor;
  * @version $Revision$
  */
 public class VisitorFunctor implements AbstractVisitorFunctor, Visitor {
-  /** 
+  /**
    * Functor of the visitor.
    */
-  private DoFunctor functor; 
+  private DoFunctor functor;
 
-  /** 
+  /**
    * The current depth of the visitor when traversing a graph.
    */
   private int depth;
@@ -28,7 +29,7 @@ public class VisitorFunctor implements AbstractVisitorFunctor, Visitor {
   public int getDepth() {
     return depth;
   }
-  
+
   /**
    * Sets the current depth of the visitor when executed.
    * @param depth the depth of the visitor.
@@ -37,17 +38,18 @@ public class VisitorFunctor implements AbstractVisitorFunctor, Visitor {
   public void setDepth(int depth) {
     this.depth = depth;
   }
-    
+
   public Object getFunctor() {
     return functor;
   }
-  
-  /** Sets the functor of the visitor functor.
+
+  /**
+   * Sets the functor of the visitor functor.
    * @param functor the new functor of the visitor.
    * @see #getFunctor()
    */
   public void setFunctor(Object functor) {
-    this.functor = (DoFunctor)functor;
+    this.functor = (DoFunctor) functor;
   }
 
   public void visit(MetaModel item) {

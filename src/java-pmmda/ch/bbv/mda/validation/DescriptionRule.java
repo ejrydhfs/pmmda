@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -11,6 +11,7 @@ import java.util.ResourceBundle;
 
 import ch.bbv.dog.validation.ValidationRule;
 import ch.bbv.dog.validation.ValidationRuleImpl;
+import ch.bbv.dog.validation.ValidationRuleResult;
 import ch.bbv.mda.MetaClass;
 import ch.bbv.mda.MetaPackage;
 import ch.bbv.mda.MetaProperty;
@@ -48,7 +49,8 @@ public class DescriptionRule extends ValidationRuleImpl implements
     super(immediate, severity);
   }
 
-  public boolean execute(Object bean, String property, List results) {
+  public boolean execute(Object bean, String property,
+      List<ValidationRuleResult> results) {
     boolean success = true;
     if (bean instanceof MetaPackage) {
       MetaPackage element = (MetaPackage) bean;

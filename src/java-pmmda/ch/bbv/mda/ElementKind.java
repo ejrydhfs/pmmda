@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann 
+/* copyright 2000-2005 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$
@@ -17,6 +17,8 @@ import ch.bbv.dog.reference.ReferenceCodeImpl;
  * @version $Revision$
  */
 public class ElementKind extends ReferenceCodeImpl {
+  private static final long serialVersionUID = 20041201;
+
   /**
    * Code for package kind code reference code.
    */
@@ -40,13 +42,13 @@ public class ElementKind extends ReferenceCodeImpl {
   /**
    * List of all reference codes of this type.
    */
-  private static List codes;
+  private static List<ElementKind> codes;
 
   /**
    * Initializes the reference codes of this type.
    */
   static {
-    codes = new ArrayList();
+    codes = new ArrayList<ElementKind>();
     codes.add(new ElementKind(PACKAGE_CODE, 1, "package", "package"));
     codes.add(new ElementKind(CLASS_CODE, 2, "class", "class"));
     codes.add(new ElementKind(PROPERTY_KIND, 3, "property", "property"));

@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -59,8 +59,14 @@ public class MdaTransformer {
    */
   public static final String TRANSIENT_TAG = "transient";
 
+  /**
+   * Boolean true value as stored in a NSUML XMI file.
+   */
   private static final String TRUE_STRING = "TRUE";
 
+  /**
+   * Boolean false value as stored in a NSUML XMI file.
+   */
   private static final String FALSE_STRING = "FALSE";
 
   /**
@@ -68,7 +74,7 @@ public class MdaTransformer {
    * values. Source objects are MDA entities, target objects are NSUML
    * instances.
    */
-  private Map elements;
+  private Map<Object, Object> elements;
 
   /**
    * Stores MAttributes with associated MetaClasses denoting the type. This map
@@ -77,15 +83,21 @@ public class MdaTransformer {
    */
   private Map missingAttributeTypes;
 
+  /**
+   * NSUML model read from a XMI file.
+   */
   private MModel mModel;
 
+  /**
+   * Meta model representation of the NSUML model.
+   */
   private MetaModel metaModel;
 
   /**
    * Default constructor of the class.
    */
   public MdaTransformer() {
-    elements = new HashMap();
+    elements = new HashMap<Object, Object>();
     missingAttributeTypes = new HashMap();
   }
 
@@ -164,6 +176,11 @@ public class MdaTransformer {
     }
   }
 
+  /**
+   * Extracts the property from the meta model and updates the NS UML class.
+   * @param property
+   * @param context
+   */
   protected void extractProperty(MetaProperty property, MClass context) {
     assert ((property != null) && (context != null));
     if (property.isAggregation()) {
@@ -267,11 +284,8 @@ public class MdaTransformer {
 
   public void extractDataTypes(MetaModel metaModel, MModel model) {
     MDataType mDataType;
-    MetaDataType metaDataType;
-    List datatypes = metaModel.getDataTypes();
-    for (Iterator i = datatypes.iterator(); i.hasNext();) {
+    for (MetaDataType metaDataType : metaModel.getDataTypes()) {
       boolean found = false;
-      metaDataType = (MetaDataType) i.next();
       Iterator mDatatypes = new FilterIterator(model.getOwnedElements(),
           MDataType.class);
       while (mDatatypes.hasNext()) {
@@ -304,7 +318,7 @@ public class MdaTransformer {
   }
 
   public MTaggedValue createTag(MModelElement item, String tagName) {
-    assert ((item != null) && (tagName != null));
+    assert (item != null) && (tagName != null);
 
     MTaggedValue taggedValue = findTag(item, tagName);
     if (taggedValue == null) {
@@ -324,7 +338,7 @@ public class MdaTransformer {
    * @return the requested package either found or newly created.
    */
   public MPackage createPackage(MModel model, String qualifiedName) {
-    assert ((model != null) && (qualifiedName != null));
+    assert (model != null) && (qualifiedName != null);
 
     MPackage mPackage = null;
     StringTokenizer tokenizer = new StringTokenizer(qualifiedName, ".");
@@ -349,7 +363,7 @@ public class MdaTransformer {
    * @return the requested package if found otherwise null.
    */
   public MPackage findPackage(MModel model, String qualifiedName) {
-    assert ((model != null) && (qualifiedName != null));
+    assert (model != null) && (qualifiedName != null);
 
     MPackage mPackage = null;
     StringTokenizer tokenizer = new StringTokenizer(qualifiedName, ".");
@@ -366,7 +380,7 @@ public class MdaTransformer {
   }
 
   public MPackage findPackage(MPackage context, String name) {
-    assert ((context != null) && (name != null));
+    assert (context != null) && (name != null);
 
     MPackage mPackage = null;
     if (name.equals(context.getName())) {
@@ -385,7 +399,7 @@ public class MdaTransformer {
   }
 
   public MClass findClass(MPackage context, String name) {
-    assert ((context != null) && (name != null));
+    assert (context != null) && (name != null);
 
     MClass mClass = null;
     for (Iterator i = new FilterIterator(context.getOwnedElements(),
@@ -415,7 +429,7 @@ public class MdaTransformer {
   }
 
   public MClass createClass(MPackage context, String name) {
-    assert ((context != null) && (name != null));
+    assert (context != null) && (name != null);
 
     MClass item = findClass(context, name);
     if (item == null) {
@@ -427,7 +441,7 @@ public class MdaTransformer {
   }
 
   public MClass createClass(MClass context, String name) {
-    assert ((context != null) && (name != null));
+    assert (context != null) && (name != null);
 
     MClass item = findClass(context, name);
     if (item == null) {
@@ -439,7 +453,7 @@ public class MdaTransformer {
   }
 
   public MAttribute findAttribute(MClass context, String name) {
-    assert ((context != null) && (name != null));
+    assert (context != null) && (name != null);
 
     MAttribute mAttribute = null;
     for (Iterator i = new FilterIterator(context.getFeatures(),
@@ -464,7 +478,7 @@ public class MdaTransformer {
   }
 
   public MAttribute createAttribute(MClass context, String name) {
-    assert ((context != null) && (name != null));
+    assert (context != null) && (name != null);
 
     MAttribute item = findAttribute(context, name);
     if (item == null) {
@@ -486,19 +500,13 @@ public class MdaTransformer {
     return null;
   }
 
-  public MetaClass findClassInModel(String name) {
-    VisitorFindClass vfc = new VisitorFindClass(name);
-    metaModel.accept(vfc);
-    return vfc.getResult();
-  }
-
-  public MClassifier createClassifier(String name, MAttribute mAttribute) {
+  private MClassifier createClassifier(String name, MAttribute mAttribute) {
     assert (name != null);
 
     MClassifier item = null;
     MClass tempMClass = null;
 
-    MetaClass mc = findClassInModel(name);
+    MetaClass mc = metaModel.findClass(name);
     if (mc != null) {
       tempMClass = (MClass) elements.get(mc);
       if (tempMClass == null) {
@@ -529,7 +537,7 @@ public class MdaTransformer {
 
   private MAssociation findAssociation(MPackage context, MClass clazz,
       String name) {
-    assert ((context != null) && (clazz != null) && (name != null));
+    assert (context != null) && (clazz != null) && (name != null);
 
     MAssociation association = null;
     for (Iterator i = new FilterIterator(context.getOwnedElements(),
@@ -554,7 +562,7 @@ public class MdaTransformer {
   }
 
   protected void updatePropertyFlags(MetaProperty property, MModelElement item) {
-    assert ((property != null) && (item != null));
+    assert (property != null) && (item != null);
     if (property.isVolatile()) {
       MTaggedValue taggedValue = createTag(item, VOLATILE_TAG);
       taggedValue.setValue(TRUE_STRING);

@@ -1,5 +1,5 @@
-/* copyright 2000-2004 Marcel Baumann 
- * Licensed under the Apache License, Version 2.0 (the "Licence); 
+/* copyright 2000-2005 Marcel Baumann 
+ * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$ 
  */
@@ -15,10 +15,16 @@ import ch.bbv.mda.generators.Cartridge;
 import ch.bbv.mda.generators.CartridgeFactory;
 
 /**
- * Generate the artifacts for all registered and active catridges.
- * @author AdrianBachofen
+ * Generate the artifacts for all registered and active catridges. If the
+ * validation of the model detects errors a warning message is displayed.
+ * @author Marcel Baumann
+ * @version $Revision$
  */
 public class GenerateAllAction extends ExplorerGlobalActionImpl {
+  /**
+   * Serial version identifier coded as back compatibility date.
+   */
+  private static final long serialVersionUID = 20041201;
 
   /**
    * Default constructor.
@@ -36,10 +42,11 @@ public class GenerateAllAction extends ExplorerGlobalActionImpl {
     MetaModel model = (MetaModel) getExplorer().getRoot().getDataObject();
     CartridgeFactory factory = CartridgeFactory.getInstance();
     if (model != null) {
-      List cartridges = new ArrayList(factory.getCartridges());
+      List<Cartridge> cartridges = new ArrayList<Cartridge>(factory
+          .getCartridges());
       StatusBar statusBar = getExplorer().getStatusBar();
-      for (int i =0; i < cartridges.size(); i++) {
-        Cartridge cartridge = (Cartridge)cartridges.get(i);
+      for (int i = 0; i < cartridges.size(); i++) {
+        Cartridge cartridge = cartridges.get(i);
         statusBar.setInfo("Generate" + cartridge.getPrefix());
         statusBar.setProgress(i / cartridges.size() * 100);
         factory.execute(cartridge, model);

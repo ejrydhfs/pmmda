@@ -1,4 +1,5 @@
-/* copyright 2000-2004 Marcel Baumann 
+/* 
+ * copyright 2000-2005 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$
@@ -38,7 +39,6 @@ public class SerializePersistencyHandler implements PersistencyHandler {
       ObjectInput in = new ObjectInputStream(new FileInputStream(file));
       project = (MetaModel) in.readObject();
       in.close();
-      project.accept(new InitVisitor());
     } catch (InvalidClassException ice) {
       log.error(ice);
       JOptionPane.showMessageDialog(null, ResourceUtility

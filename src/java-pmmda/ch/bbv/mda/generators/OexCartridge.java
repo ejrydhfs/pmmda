@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann 
+/* copyright 2000-2005 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$
@@ -82,16 +82,16 @@ public class OexCartridge extends CartridgeImpl {
     super.initialize(properties);
     addUndefinedProperty(properties, RICH_CLIENT_PACKAGE_POSTFIX_KEY, "");
     try {
-      javaRichClientTypeTemplate = Velocity.getTemplate("oex-typeFactory.vm");
-    } catch (ParseErrorException pee) {
-      log.equals(pee);
-      pee.printStackTrace();
-    } catch (ResourceNotFoundException rnfe) {
-      log.equals(rnfe);
-      rnfe.printStackTrace();
-    } catch (Exception exception) {
-      log.equals(exception);
-      exception.printStackTrace();
+      String postfix = "-" + getContext().getProperty(DogCartridge.LANGUAGE_KEY)
+          + ".vm";
+      javaRichClientTypeTemplate = Velocity.getTemplate("oex-typeFactory"
+          + postfix);
+    } catch (ParseErrorException e) {
+      log.error(e);
+    } catch (ResourceNotFoundException e) {
+      log.error(e);
+    } catch (Exception e) {
+      log.error(e);
     }
   }
 
@@ -102,7 +102,7 @@ public class OexCartridge extends CartridgeImpl {
    * @return the list of visible fields of the class.
    */
   public Collection getVisibleFields(MetaClass clazz) {
-    Map fields = new HashMap();
+    Map<String, MetaProperty> fields = new HashMap<String, MetaProperty>();
     MetaModel model = (MetaModel) clazz.getRoot();
     for (Iterator i = clazz.getIndexedProperties().iterator(); i.hasNext();) {
       MetaIndexedProperty object = (MetaIndexedProperty) i.next();
@@ -135,23 +135,23 @@ public class OexCartridge extends CartridgeImpl {
     return fields.values();
   }
 
-  public List getTaggedValueTypes(Class clazz) {
-    List types = new ArrayList();
+  public List<TagDefinition> getTaggedValueTypes(Class clazz) {
+    List<TagDefinition> types = new ArrayList<TagDefinition>();
     if (clazz.equals(MetaClass.class)) {
-      types.add(new TagDefinition(VIEW_CLASS_TAG, "", String.class, this));
+      types.add(new TagDefinition(VIEW_CLASS_TAG, "", String.class));
     } else if (clazz.equals(MetaProperty.class)) {
-      types.add(new TagDefinition(IS_VISIBLE_TAG, "false", Boolean.TYPE, this));
+      types.add(new TagDefinition(IS_VISIBLE_TAG, "false", Boolean.TYPE));
     } else if (clazz.equals(MetaIndexedProperty.class)) {
-      types.add(new TagDefinition(IS_VISIBLE_TAG, "false", Boolean.TYPE, this));
+      types.add(new TagDefinition(IS_VISIBLE_TAG, "false", Boolean.TYPE));
     }
     return types;
   }
 
-  public List getObsoleteTaggedValueTypes(Class clazz) {
-    List types = null;
+  public List<TagDefinition> getObsoleteTaggedValueTypes(Class clazz) {
+    List<TagDefinition> types = null;
     if (clazz == MetaClass.class) {
-      types = new ArrayList();
-      types.add(new TagDefinition("oex-is-root", null, Boolean.class, this));
+      types = new ArrayList<TagDefinition>();
+      types.add(new TagDefinition("oex-is-root", null, Boolean.class));
     }
     return types;
   }
@@ -175,7 +175,7 @@ public class OexCartridge extends CartridgeImpl {
 
   public void preProcessPackage(MetaPackage metaPackage) {
     Properties context = getContext();
-    StringBuffer buffer = new StringBuffer();
+    StringBuilder buffer = new StringBuilder();
     String qualifiedName = metaPackage.qualifiedName();
     buffer.append(qualifiedName).append(
         context.getProperty(RICH_CLIENT_PACKAGE_POSTFIX_KEY));
@@ -199,8 +199,8 @@ public class OexCartridge extends CartridgeImpl {
             .getAttribute(OEX_RICH_CLIENT_PACKAGE), "TypeFactory");
         writer.print(processTemplate(javaRichClientTypeTemplate, context));
         writer.close();
-      } catch (IOException ioe) {
-        ioe.printStackTrace();
+      } catch (IOException e) {
+        log.equals(e);
       }
     }
   }

@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -31,7 +31,12 @@ import java.util.Arrays;
  * @version $Revision$
  */
 public class MetaProperty extends MetaMember {
-  /** 
+  /**
+   * Serial version identifier coded as back compatibility date.
+   */
+  private static final long serialVersionUID = 20041201;
+
+  /**
    * The list of primitive types in Java, C and C++.
    */
   public static final String[] PRIMITIVES_TYPES = { "boolean", "byte", "char",
@@ -39,28 +44,33 @@ public class MetaProperty extends MetaMember {
 
   /**
    * Indicates if the property is transient or not.
+   * @serial
    */
   protected boolean transients;
 
   /**
    * Indicates if the property is volatile or not.
+   * @serial
    */
   protected boolean volatiles;
 
   /**
    * Multiplicity of the property.
+   * @serial
    */
   protected Multiplicity multiplicity;
 
   /**
    * The optional initial value of the property.
+   * @serial
    */
   protected String initialValue;
-  
+
   /**
    * A binary association may be declared an aggregation. It is a whole part
    * relationship. In UML terminology the data object has the aggregate end and
    * the items of the property are on the part end.
+   * @serial
    */
   protected boolean aggregation;
 
@@ -68,6 +78,7 @@ public class MetaProperty extends MetaMember {
    * A composition is a form of aggregation association with strong ownership
    * and coincident lifetime of parts by the whole. A part may belong to only
    * one composite.
+   * @serial
    */
   protected boolean composition;
 
@@ -75,20 +86,9 @@ public class MetaProperty extends MetaMember {
    * Default constructor of the class.
    */
   public MetaProperty() {
-    init();
     multiplicity = Multiplicity.MULTIPLICITY_0_1;
     transients = false;
     volatiles = false;
-  }
-
-  /**
-   * Initializes member variables. Only complex types have to be initialized
-   * here. The init() method is called after deserializing and loading from xml
-   * with XStream. Transient members have to be initialized with this init()
-   * function.
-   */
-  public void init() {
-    super.init();
   }
 
   /**
@@ -117,7 +117,7 @@ public class MetaProperty extends MetaMember {
   public String getInitialValue() {
     return initialValue;
   }
-  
+
   /**
    * Sets the initial value of the property.
    * @param initialValue new initial value.
@@ -126,7 +126,7 @@ public class MetaProperty extends MetaMember {
   public void setInitialValue(String initialValue) {
     this.initialValue = initialValue;
   }
-  
+
   /**
    * Returns true if the property is transient otherwise false.
    * @return the value of the transient flag.
@@ -209,15 +209,6 @@ public class MetaProperty extends MetaMember {
   }
 
   /**
-   * Returns true if the property is a reference code, meaning it implements the
-   * reference code or hierarchical reference code interface.
-   * @return true if the property is a reference code otherwise false.
-   */
-  public boolean retrieveIsReferenceCode() {
-    return booleanValueOfTag("bo-reference-code");
-  }
-
-  /**
    * Returns the value of the tagged value.
    * @return value of the requested tagged value.
    */
@@ -257,21 +248,5 @@ public class MetaProperty extends MetaMember {
    */
   public boolean isTypePrimitive() {
     return Arrays.binarySearch(PRIMITIVES_TYPES, getTypeName()) >= 0;
-  }
-
-  public MetaClass retrieveReferenceClass() {
-    MetaClass referenceClass = null;
-    String reference = getTaggedValue("reference").getValue();
-    if (reference != null) {
-      referenceClass = findClass(reference);
-    }
-    return referenceClass;
-  }
-
-  /**
-   * Indicates whether this model element is a leaf (no children)
-   */
-  public boolean isLeaf() {
-    return true;
   }
 }

@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann 
+/* copyright 2000-2005 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$ 
@@ -13,11 +13,19 @@ import java.util.Comparator;
  * @version $Revision$
  */
 public class MetaElementNameComparator implements Comparator {
-	public int compare(Object left, Object right) {
-		String leftName = getString(left);
-		String rightName = getString(right);
-		return (leftName.compareTo(rightName));
-	}
+  /**
+   * Compares two elements. The two elements are equivalent if both elements
+   * have the same name.
+   * @param left tagged value to compare with.
+   * @param right tagged value to compare with.
+   * @return result of comparing both tag names. The ordering is based on the
+   *         name of the element.
+   */
+  public int compare(Object left, Object right) {
+    String leftName = getString(left);
+    String rightName = getString(right);
+    return (leftName.compareTo(rightName));
+  }
 
   /**
    * Returns the name of the meta element or the string if the object is a

@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann 
+/* copyright 2000-2005 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$
@@ -21,11 +21,12 @@ import ch.bbv.mda.*;
  * traversal of the components is a three steps process.
  * <ul>
  * <li>The pre-processing phase is used to compute all the attributes of the
- * component and generates the associated context.</li>
+ * component and generates the associated context. The cartridge should process
+ * the public attributes to allow dependant cartridges to use them.</li>
  * <li>The processing phase is used to generate all the MDA artifacts specific
- * to the cartridge.</li>
+ * to the cartridge. Often the artifacts are written during this phase.</li>
  * <li>The post-processing phase is used to perform house-keeping activities.
- * and complete operations.</li>
+ * and complete operations. For example file handles can be closed.</li>
  * </ul>
  * @author Marcel Baumann
  * @version $Revision$
@@ -82,37 +83,23 @@ public interface Cartridge {
   /**
    * Sets the cartridge context for the cartridge. The context contains all user
    * specific configuration values.
-   * @param properties new cartridge context properties.
+   * @param properties new cartridge context properties. All the properties
+   *          available to the application are part of the property parameter.
    * @pre (properties != null)
    */
   void initialize(Properties properties);
 
   /**
    * Returns the list of tagged value types for the given class type. The class
-   * should be a descended of meta element.
+   * should be a descendent of meta element.
    * @param clazz class, which tagged value types should be returned.
    * @return the list of tagged values for the class. If none exists and the
    *         class is handled in the cartdrige an empty list is returned else
    *         null is returned.
    * @pre (clazz != null)
    */
-  List getTaggedValueTypes(Class clazz);
-  
-  /**
-   * Returns a tagged value initialized with a cartridge dependent default value.
-   * @param taggedValueType being the type for the tagged value to be initialized with a default value.
-   * @param element The MetaElement providing additional information to initialize the tagged value.
-   * @return TaggedValue the initialized tagged value.
-   */
-  TaggedValue getTaggedValueWithElementDependentDefault(TagDefinition taggedValueType, MetaElement element);
+  List<TagDefinition> getTaggedValueTypes(Class clazz);
 
-  /**
-   * Updates tagged value with information from element
-   * @param taggedValue to be updated
-   * @param element to obtain information for the tagged value from
-   */
-  void updateTaggedValueWithElementDependentDefault(TaggedValue taggedValue, MetaElement element);
-  
   /**
    * Returns the list of obsolete tagged value types for the given class type.
    * The class should be a descended of meta element.
@@ -122,7 +109,7 @@ public interface Cartridge {
    *         null is returned.
    * @pre (clazz != null)
    */
-  List getObsoleteTaggedValueTypes(Class clazz);
+  List<TagDefinition> getObsoleteTaggedValueTypes(Class clazz);
 
   /**
    * Returns all the properties declared in the cartrige with their values and
@@ -135,7 +122,7 @@ public interface Cartridge {
    * Returns all the stereotypes used in the cartridge.
    * @return list of all stereotypes.
    */
-  List getAllStereotypes();
+  List<StereotypeType> getAllStereotypes();
 
   /**
    * Returns the cartridge context of the cartridge.
@@ -177,33 +164,42 @@ public interface Cartridge {
    * @return the list of cartridge classes from which the cartridge is
    *         dependant.
    */
-  List getUsedCartridges();
+  List<Cartridge> getUsedCartridges();
+
+  /**
+   * Returns the instance responsible to initialize an item. Upon initialization
+   * the item contains reasonable values for all tagged values relevant to the
+   * cartridge.
+   * @return the init instance if defined otherwise null.
+   */
+  ElementInitialize getInitalizor();
 
   /**
    * Registers the validation rules of the cartridges onto the validator.
    * @param validator validator in charge of the cartridge validation.
+   * @pre validator != null
    */
   void registerRules(Validator validator);
-  
+
   /**
    * Preprocesses the project and computes all the attributes used in the
    * cartridge for the model. The context of the model is also computed.
    * @param model MDA model to process.
-   * @pre (model != null)
+   * @pre model != null
    */
   void preProcessModel(MetaModel model);
 
   /**
    * Processes the project. The context contains the project information.
    * @param model MDA model to process.
-   * @pre (model != null)
+   * @pre model != null
    */
   void processModel(MetaModel model);
 
   /**
    * Postprocesses the project. The context contains the project information.
    * @param model MDA model to process.
-   * @pre (model != null)
+   * @pre model != null
    */
   void postProcessModel(MetaModel model);
 
@@ -211,21 +207,21 @@ public interface Cartridge {
    * Preprocesses the package and computes all the attributes used in the
    * cartridge for the package. The context of the package is also computed.
    * @param metaPackage MDA package to process.
-   * @pre (metaPackage != null)
+   * @pre metaPackage != null
    */
   void preProcessPackage(MetaPackage metaPackage);
 
   /**
    * Processes the given package.
    * @param metaPackage MDA package to process.
-   * @pre (metaPackage != null)
+   * @pre metaPackage != null
    */
   void processPackage(MetaPackage metaPackage);
 
   /**
    * Postprocesses the given package.
    * @param metaPackage MDA package to process.
-   * @pre (metaPackage != null)
+   * @pre metaPackage != null
    */
   void postProcessPackage(MetaPackage metaPackage);
 
@@ -233,14 +229,14 @@ public interface Cartridge {
    * Preprocesses the class and computes all the attributes used in the
    * cartridge for the class. The context of the class is also computed.
    * @param clazz MDA class to process.
-   * @pre (clazz != null)
+   * @pre clazz != null
    */
   void preProcessClass(MetaClass clazz);
 
   /**
    * Processes the given class.
    * @param clazz MDA clas to process.
-   * @pre (clazz != null)
+   * @pre clazz != null
    */
   void processClass(MetaClass clazz);
 }

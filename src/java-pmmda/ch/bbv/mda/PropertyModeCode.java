@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann 
+/* copyright 2000-2005 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$
@@ -18,6 +18,11 @@ import ch.bbv.dog.reference.ReferenceCodeImpl;
  */
 public class PropertyModeCode extends ReferenceCodeImpl {
   /**
+   * Serial version identifier coded as back compatibility date.
+   */
+  private static final long serialVersionUID = 20041201;
+
+  /**
    * Code for the read access mode reference code.
    */
   public static final int READ = 1;
@@ -35,13 +40,13 @@ public class PropertyModeCode extends ReferenceCodeImpl {
   /**
    * List of all reference codes of this type.
    */
-  private static List codes;
+  private static List<PropertyModeCode> codes;
 
   /**
    * Initializes the reference codes of this type.
    */
   static {
-    codes = new ArrayList();
+    codes = new ArrayList<PropertyModeCode>();
     codes.add(new PropertyModeCode(READ, 1, "READ", "READ"));
     codes.add(new PropertyModeCode(WRITE, 2, "WRITE", "WRITE"));
     codes.add(new PropertyModeCode(READ_WRITE, 3, "READ_WRITE", "READ_WRITE"));
@@ -54,7 +59,8 @@ public class PropertyModeCode extends ReferenceCodeImpl {
    * @param shortDescription short description of the code.
    * @param description description of the code.
    */
-  public PropertyModeCode(int code, int sortOrder, String shortDescription, String description) {
+  public PropertyModeCode(int code, int sortOrder, String shortDescription,
+      String description) {
     super(code, sortOrder, shortDescription, description, true);
   }
 
@@ -62,7 +68,29 @@ public class PropertyModeCode extends ReferenceCodeImpl {
    * Returns the list of all reference codes.
    * @return list of all reference codes.
    */
-  public static List getCodes() {
+  public static List<PropertyModeCode> getCodes() {
     return codes;
+  }
+
+  /**
+   * Returns the code instance associated with the given identifier.
+   * @param code identifier of the requested code.
+   * @return the requested code if found otherwise null.
+   */
+  public static PropertyModeCode getCode(int code) {
+    for (PropertyModeCode item : codes) {
+      if (item.getCode() == code) {
+        return item;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Guarantees that the returned object is unique in the virtual machine.
+   * @return the code read from the stream if defined otherwise null.
+   */
+  private Object readResolve() {
+    return getCode(getCode());
   }
 }

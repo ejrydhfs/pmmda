@@ -1,4 +1,5 @@
-/* copyright 2000-2004 Marcel Baumann 
+/* 
+ * copyright 2000-2005 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$
@@ -41,12 +42,11 @@ public class XmlPersistencyHandler implements PersistencyHandler {
       XStream stream = new XStream();
       model = (MetaModel) stream.fromXML(reader);
       reader.close();
-      model.accept(new InitVisitor());
     } catch (FileNotFoundException e) {
       log.error(e);
     } catch (IOException e) {
       log.error(e);
-    }	catch(ConversionException e){
+    } catch (ConversionException e) {
       log.error(e);
       JOptionPane.showMessageDialog(null, ResourceUtility
           .getString("mda.ui.sorryMsg.OLD_FORMAT"), ResourceUtility

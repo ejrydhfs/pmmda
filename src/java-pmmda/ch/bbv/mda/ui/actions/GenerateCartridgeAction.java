@@ -12,11 +12,17 @@ import ch.bbv.mda.generators.CartridgeFactory;
 /**
  * The generate data object action generates the data objects for the model
  * displayed in the explorer. The cartdridge is instantiated, initialized and
- * executed.
+ * executed. If the validation of the model detects errors a warning message is
+ * displayed.
  * @author Marcel Baumann
  * @version $Revision$
  */
 public class GenerateCartridgeAction extends ExplorerGlobalActionImpl {
+  /**
+   * Serial version identifier coded as back compatibility date.
+   */
+  private static final long serialVersionUID = 20041201;
+
   /**
    * Name of the generate action as displayed in the menu.
    */
@@ -50,7 +56,7 @@ public class GenerateCartridgeAction extends ExplorerGlobalActionImpl {
    * @return the name of the generation action.
    */
   private static String createActionName(Cartridge cartridge) {
-    StringBuffer buffer = new StringBuffer();
+    StringBuilder buffer = new StringBuilder();
     buffer.append(GENERATE_ACTION).append(" ").append(cartridge.getPrefix());
     return buffer.toString();
   }

@@ -3,7 +3,7 @@ The package provides the persistency mechanisms for MDA models.
 <h2>Introduction</h2>
 <p>The package defines the persistency mechanisms for the business model of
 	the <em>pmMDA</em>. These mechanisms implement data exchange between
-	our application and third party tools.</p> Multiple formats are supported
+	our application and third party tools. Multiple formats are supported
 	to insure that the tool can exchange data with major open source modeling
 	tools. The following exchange formats are supported.</p>
 <ul>
@@ -39,5 +39,20 @@ The package provides the persistency mechanisms for MDA models.
 	main functions to read, write and update description information. The 
 	persistency policy defines the detailed methods used to implement the
 	retrieval functions.</p>
+
+<h3>XML Serialization</h3>  
+<p>Releases 0.3.x and higher use the open source XStream library and serialize
+patterns. The following design decisions were taken.</p>
+<ul>
+  <li>Read object is as documented in "Effective Java" a factory method implementing 
+    a constructor of the class. Initialization of transient fields, computation 
+    of derived attributes and validation of class invariants must be performed 
+    in this method.</li>
+  <li>The Java library provide a method read resolve to insure that singleton
+    patterns hold when  serializing objects. This method must be provided for
+    all classes implementing a singleton.</li>
+  <li>The JavaDoc environment provides tags for serialized properties. They must be 
+  used in the application to provide complete documentation. </li>
+</ul>
   @since Java 2 Platform, Standard Edition, version 1.4
 </body>

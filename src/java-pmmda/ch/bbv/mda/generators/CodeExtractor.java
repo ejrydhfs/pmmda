@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -232,13 +232,13 @@ public class CodeExtractor {
 
     Pattern endPattern;
 
-    List statements;
+    List<String> statements;
 
     public Block(BlockDescription description) {
       this.description = description;
       startPattern = Pattern.compile(description.startPatternString);
       endPattern = Pattern.compile(description.endPatternString);
-      statements = new ArrayList();
+      statements = new ArrayList<String>();
     }
   }
 }

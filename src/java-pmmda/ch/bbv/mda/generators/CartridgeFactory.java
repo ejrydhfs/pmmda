@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -26,7 +26,7 @@ import ch.bbv.mda.*;
  * @author MarcelBaumann
  * @version $Revision$
  */
-public class CartridgeFactory {
+public class CartridgeFactory implements ElementInitialize {
   /**
    * Logger for all instances of the class.
    */
@@ -41,15 +41,27 @@ public class CartridgeFactory {
    * Map of all registered cartridges. The key is the abbreviation of the
    * cartridge.
    */
-  private Map cartridges;
+  private Map<String, Cartridge> cartridges;
 
-  private List cartridgeDescriptors;
+  /**
+   * List of all cartridge descriptors defined in the factory.
+   */
+  private List<CartridgeDescriptor> cartridgeDescriptors;
+
+  /**
+   * List of all registered listeners.
+   */
+  private List<CartridgeListener> listeners;
 
   /**
    * Initialization properties.
    */
   private Properties properties;
 
+  /**
+   * Format instance used to read the cartridge specifications in the properties
+   * file.
+   */
   private NumberFormat format;
 
   /**
@@ -57,8 +69,9 @@ public class CartridgeFactory {
    * @param properties properties used to configure the factory.
    */
   protected CartridgeFactory(Properties properties) {
-    cartridges = new HashMap();
-    cartridgeDescriptors = new ArrayList();
+    cartridges = new HashMap<String, Cartridge>();
+    cartridgeDescriptors = new ArrayList<CartridgeDescriptor>();
+    listeners = new ArrayList<CartridgeListener>();
     this.properties = new Properties(properties);
     format = NumberFormat.getInstance();
     format.setParseIntegerOnly(true);
@@ -129,7 +142,7 @@ public class CartridgeFactory {
    * @param properties properties containing user specific values.
    */
   public static void create(Properties properties) {
-    assert (factory == null);
+    assert factory == null;
     synchronized (CartridgeFactory.class) {
       if (factory == null) {
         factory = new CartridgeFactory(properties);
@@ -150,7 +163,7 @@ public class CartridgeFactory {
    * Returns the list of loaded and instantiated cartridges.
    * @return list of instantiated cartridges.
    */
-  public Collection getCartridges() {
+  public Collection<Cartridge> getCartridges() {
     return cartridges.values();
   }
 
@@ -158,7 +171,7 @@ public class CartridgeFactory {
    * Returns the list of all defined cartridge descriptors.
    * @return list of catridge descriptors.
    */
-  public Collection getCartridgeDescriptors() {
+  public Collection<CartridgeDescriptor> getCartridgeDescriptors() {
     return cartridgeDescriptors;
   }
 
@@ -169,8 +182,8 @@ public class CartridgeFactory {
    * @pre abbreviation != null
    */
   public Cartridge getCartridge(String abbreviation) {
-    assert (abbreviation != null);
-    return (Cartridge) cartridges.get(abbreviation);
+    assert abbreviation != null;
+    return cartridges.get(abbreviation);
   }
 
   /**
@@ -181,7 +194,7 @@ public class CartridgeFactory {
    * @param cartridge cartridge to register.
    */
   public void register(Cartridge cartridge) {
-    assert (cartridge != null);
+    assert cartridge != null;
     cartridge.initialize(properties);
     cartridges.put(cartridge.getPrefix(), cartridge);
     registerTaggedValueTypes(cartridge, MetaModel.class);
@@ -200,9 +213,50 @@ public class CartridgeFactory {
   }
 
   /**
+   * Registers a listener in the factory.
+   * @param listener listener to register.
+   * @pre listener != null
+   * @see #unregister(CartridgeListener)
+   */
+  public void register(CartridgeListener listener) {
+    assert listener != null;
+    if (!listeners.contains(listener)) {
+      listeners.add(listener);
+    }
+  }
+
+  /**
+   * Unregisters a listener from the factory.
+   * @param listener listener to unregister.
+   * @pre listener != null
+   * @see #register(CartridgeListener)
+   */
+  public void unregister(CartridgeListener listener) {
+    assert listener != null;
+    listeners.remove(listener);
+  }
+
+  /**
+   * Returns the list of cartridges and their dependancies sorted using the
+   * dependency depth. A cartridge is dependant of itself.
+   * @param cartridges cartridges to process.
+   * @return the list of dependant cartridges.
+   * @pre cartridges != null
+   */
+  public List<Cartridge> generateOrder(Collection<Cartridge> cartridges) {
+    assert cartridges != null;
+    List<Cartridge> dependants = new ArrayList<Cartridge>();
+    for (Cartridge cartridge : cartridges) {
+      generateOrder(cartridge, dependants);
+    }
+    return dependants;
+  }
+
+  /**
    * Executes the cartridge on the given model.
    * @param cartridge cartridge to execute on the model.
    * @param model model to process.
+   * @pre (cartridge != null) && (model != null)
    */
   public void execute(Cartridge cartridge, MetaModel model) {
     assert ((cartridge != null) && (model != null));
@@ -214,9 +268,10 @@ public class CartridgeFactory {
    * Executes the cartridge on the given model.
    * @param cartridge cartridge to execute on the model.
    * @param metaPackage package to process.
+   * @pre (cartridge != null) && (metaPackage != null)
    */
   public void execute(Cartridge cartridge, MetaPackage metaPackage) {
-    assert ((cartridge != null) && (metaPackage != null));
+    assert (cartridge != null) && (metaPackage != null);
     if (metaPackage.isSystem()) {
       return;
     }
@@ -228,14 +283,44 @@ public class CartridgeFactory {
    * Executes the cartridge on the given class.
    * @param cartridge cartridge to execute.
    * @param clazz class to process.
+   * @pre (cartridge != null) && (clazz != null)
    */
   public void execute(Cartridge cartridge, MetaClass clazz) {
-    assert ((cartridge != null) && (clazz != null));
-    if (clazz.isSystem()) {
-      return;
+    assert (cartridge != null) && (clazz != null);
+    if (!clazz.isSystem()) {
+      preprocess(cartridge, clazz);
+      process(cartridge, clazz);
     }
-    preprocess(cartridge, clazz);
-    process(cartridge, clazz);
+  }
+
+  public void initialize(MetaModel item) {
+    for (ElementInitialize functor : generateFunctors()) {
+      functor.initialize(item);
+    }
+  }
+
+  public void initialize(MetaPackage item) {
+    for (ElementInitialize functor : generateFunctors()) {
+      functor.initialize(item);
+    }
+  }
+
+  public void initialize(MetaClass item) {
+    for (ElementInitialize functor : generateFunctors()) {
+      functor.initialize(item);
+    }
+  }
+
+  public void initialize(MetaProperty item) {
+    for (ElementInitialize functor : generateFunctors()) {
+      functor.initialize(item);
+    }
+  }
+
+  public void initialize(MetaIndexedProperty item) {
+    for (ElementInitialize functor : generateFunctors()) {
+      functor.initialize(item);
+    }
   }
 
   /**
@@ -250,9 +335,7 @@ public class CartridgeFactory {
     if (!((MetaPackage) model).getClasses().isEmpty()) {
       process(cartridge, (MetaPackage) model);
     }
-
-    for (Iterator i = model.getPackages().iterator(); i.hasNext();) {
-      MetaPackage metaPackage = (MetaPackage) i.next();
+    for (MetaPackage metaPackage : model.getPackages()) {
       process(cartridge, metaPackage);
     }
     logProgressInfo(cartridge, model, "{0} Catridge post-processing model {1}");
@@ -273,8 +356,8 @@ public class CartridgeFactory {
         "{0} Catridge processing package {1}");
     cartridge.processPackage(metaPackage);
 
-    for (Iterator i = metaPackage.getClasses().iterator(); i.hasNext();) {
-      process(cartridge, (MetaClass) i.next());
+    for (MetaClass clazz : metaPackage.getClasses()) {
+      process(cartridge, clazz);
     }
     logProgressInfo(cartridge, metaPackage,
         "{0} Catridge post-processing package {1}");
@@ -285,14 +368,14 @@ public class CartridgeFactory {
    * Processes the cartridge on the given model.
    * @param cartridge cartridge to execute on the model.
    * @param clazz item to process.
+   * @pre (cartridge != null) && (clazz != null)
    */
   protected void process(Cartridge cartridge, MetaClass clazz) {
-    assert ((cartridge != null) && (clazz != null));
-    if (clazz.isSystem()) {
-      return;
+    assert (cartridge != null) && (clazz != null);
+    if (!clazz.isSystem()) {
+      logProgressInfo(cartridge, clazz, "{0} Catridge processing class {1}");
+      cartridge.processClass(clazz);
     }
-    logProgressInfo(cartridge, clazz, "{0} Catridge processing class {1}");
-    cartridge.processClass(clazz);
   }
 
   /**
@@ -301,8 +384,7 @@ public class CartridgeFactory {
    * @param model element being preprocessed.
    */
   protected void preprocess(Cartridge cartridge, MetaModel model) {
-    for (Iterator i = cartridge.getUsedCartridges().iterator(); i.hasNext();) {
-      Cartridge supplier = (Cartridge) i.next();
+    for (Cartridge supplier : cartridge.getUsedCartridges()) {
       supplier.preProcessModel(model);
     }
     logProgressInfo(cartridge, model, "{0} Catridge pre-processing model {1}");
@@ -312,8 +394,8 @@ public class CartridgeFactory {
       preprocess(cartridge, (MetaPackage) model);
     }
 
-    for (Iterator i = model.getPackages().iterator(); i.hasNext();) {
-      preprocess(cartridge, (MetaPackage) i.next());
+    for (MetaPackage item : model.getPackages()) {
+      preprocess(cartridge, item);
     }
   }
 
@@ -327,8 +409,7 @@ public class CartridgeFactory {
       return;
     }
 
-    for (Iterator i = cartridge.getUsedCartridges().iterator(); i.hasNext();) {
-      Cartridge supplier = (Cartridge) i.next();
+    for (Cartridge supplier : cartridge.getUsedCartridges()) {
       supplier.preProcessPackage(metaPackage);
     }
     logProgressInfo(cartridge, metaPackage,
@@ -336,8 +417,8 @@ public class CartridgeFactory {
     cartridge.preProcessPackage(metaPackage);
 
     // List dependencies = resolveDependencies(mPackage.getClasses());
-    for (Iterator i = metaPackage.getClasses().iterator(); i.hasNext();) {
-      preprocess(cartridge, (MetaClass) i.next());
+    for (MetaClass clazz : metaPackage.getClasses()) {
+      preprocess(cartridge, clazz);
     }
   }
 
@@ -351,8 +432,7 @@ public class CartridgeFactory {
       return;
     }
 
-    for (Iterator i = cartridge.getUsedCartridges().iterator(); i.hasNext();) {
-      Cartridge supplier = (Cartridge) i.next();
+    for (Cartridge supplier : cartridge.getUsedCartridges()) {
       supplier.preProcessClass(clazz);
     }
     logProgressInfo(cartridge, clazz, "{0} Catridge pre-processing class {1}");
@@ -366,9 +446,9 @@ public class CartridgeFactory {
    * @param clazz meta element class to complete with tags.
    */
   protected void registerTaggedValueTypes(Cartridge cartridge, Class clazz) {
-    List taggedValueTypes = cartridge.getTaggedValueTypes(clazz);
-    if (taggedValueTypes != null) {
-      MetaFactory.getInstance().registerTypes(clazz, taggedValueTypes);
+    List<TagDefinition> types = cartridge.getTaggedValueTypes(clazz);
+    if (types != null) {
+      MetaFactory.getInstance().registerTypes(clazz, types);
     }
   }
 
@@ -380,7 +460,7 @@ public class CartridgeFactory {
    */
   protected void registerObsoleteTaggedValueTypes(Cartridge cartridge,
       Class clazz) {
-    List types = cartridge.getObsoleteTaggedValueTypes(clazz);
+    List<TagDefinition> types = cartridge.getObsoleteTaggedValueTypes(clazz);
     if ((types != null) && (types.size() > 0)) {
       MetaFactory.getInstance().addObsoleteTypes(clazz, types);
     }
@@ -398,5 +478,34 @@ public class CartridgeFactory {
       Object[] arguments = { cartridge.getPrefix(), element.qualifiedName() };
       log.info(MessageFormat.format(message, arguments));
     }
+  }
+
+  /**
+   * Returns the list of dependant cartridges of the given cartridge.
+   * @param cartridge catridge to process.
+   * @param dependants list of dependant cartridges.
+   */
+  private void generateOrder(Cartridge cartridge,
+      Collection<Cartridge> dependants) {
+    for (Cartridge item : cartridge.getUsedCartridges()) {
+      if (!dependants.contains(item)) {
+        generateOrder(item, dependants);
+      }
+    }
+    if (!dependants.contains(cartridge)) {
+      dependants.add(cartridge);
+    }
+  }
+
+  private List<ElementInitialize> generateFunctors() {
+    List<ElementInitialize> functors = new ArrayList<ElementInitialize>();
+    List<Cartridge> dependants = generateOrder(cartridges.values());
+    for (Cartridge cartridge : dependants) {
+      ElementInitialize functor = cartridge.getInitalizor();
+      if (functor != null) {
+        functors.add(functor);
+      }
+    }
+    return functors;
   }
 }

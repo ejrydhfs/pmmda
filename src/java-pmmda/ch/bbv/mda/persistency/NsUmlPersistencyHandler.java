@@ -1,4 +1,5 @@
-/* copyright 2000-2004 Marcel Baumann 
+/* 
+ * copyright 2000-2005 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$
@@ -17,14 +18,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.xml.sax.SAXException;
 
-import ru.novosoft.uml.model_management.MModel;
 import ru.novosoft.uml.MFactory;
+import ru.novosoft.uml.model_management.MModel;
 import ru.novosoft.uml.xmi.IncompleteXMIException;
 import ch.bbv.mda.MetaFactory;
 import ch.bbv.mda.MetaModel;
+import ch.bbv.mda.persistency.nsuml.ArgoWriter;
 import ch.bbv.mda.persistency.nsuml.MdaTransformer;
 import ch.bbv.mda.persistency.nsuml.NsUmlTransformer;
-import ch.bbv.mda.persistency.nsuml.ArgoWriter;
 import ch.bbv.utilities.ResourceUtility;
 
 /**

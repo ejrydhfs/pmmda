@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann 
+/* copyright 2000-2005 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$
@@ -14,6 +14,11 @@ import java.io.Serializable;
  * @version $Revision$
  */
 public class Multiplicity implements Serializable {
+  /**
+   * Serial version identifier coded as back compatibility date.
+   */
+  private static final long serialVersionUID = 20041201;
+
   /**
    * Constant for a standard multiplicity value.
    */
@@ -87,7 +92,7 @@ public class Multiplicity implements Serializable {
     this.upperBound = upperBound;
   }
 
-  /** 
+  /**
    * Returns the lower bound of the multiplicity.
    * @return the lower bound of the multiplicity.
    * @see #setLowerBound(int)
@@ -99,13 +104,13 @@ public class Multiplicity implements Serializable {
   /**
    * Sets the lower bound of the multiplicity.
    * @param lowerBound new lower bound of the multiplicity.
-   * @see #getLowerBound() 
+   * @see #getLowerBound()
    */
   public void setLowerBound(int lowerBound) {
     this.lowerBound = lowerBound;
   }
 
-  /** 
+  /**
    * Returns the upper bound of the multiplicity.
    * @return the upper bound of the multiplicity.
    * @see #setUpperBound(int)
@@ -117,7 +122,7 @@ public class Multiplicity implements Serializable {
   /**
    * Sets the upper bound of the multiplicity.
    * @param upperBound new upper bound of the multiplicity.
-   * @see #getUpperBound() 
+   * @see #getUpperBound()
    */
   public void setUpperBound(int upperBound) {
     this.upperBound = upperBound;
@@ -144,8 +149,8 @@ public class Multiplicity implements Serializable {
     }
     return value;
   }
-  
-  /** 
+
+  /**
    * Computes the integer value of the string representation of a bound.
    * @param bound bound to convert.
    * @return the integer value of the bound.

@@ -1,4 +1,5 @@
-/* copyright 2000-2004 Marcel Baumann 
+/* 
+ * copyright 2000-2005 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$
@@ -12,12 +13,18 @@ import java.util.List;
 import ch.bbv.dog.reference.ReferenceCodeImpl;
 
 /**
- * The visibility reference code defines the available visibility levels in Java
- * as business codes.
+ * The visibility reference code defines the available visibility levels in UML
+ * as business codes. These codes covers all the visibility values for common
+ * languages such as Java or C++.
  * @author MarcelBaumann
  * @version $Revision$
  */
 public class VisibilityCode extends ReferenceCodeImpl {
+  /**
+   * Serial version identifier coded as back compatibility date.
+   */
+  private static final long serialVersionUID = 20041201;
+
   /**
    * The code for the public visibility.
    */
@@ -41,13 +48,13 @@ public class VisibilityCode extends ReferenceCodeImpl {
   /**
    * List of all reference codes of this type.
    */
-  private static List codes;
+  private static List<VisibilityCode> codes;
 
   /**
    * Initializes the reference codes of this type.
    */
   static {
-    codes = new ArrayList();
+    codes = new ArrayList<VisibilityCode>();
     codes.add(new VisibilityCode(PUBLIC_VISIBILITY_CODE, 1, "public",
         "public visibility"));
     codes.add(new VisibilityCode(PROTECTED_VISIBILITY_CODE, 2, "protected",
@@ -74,7 +81,7 @@ public class VisibilityCode extends ReferenceCodeImpl {
    * Returns the list of all reference codes.
    * @return list of all reference codes.
    */
-  public static List getCodes() {
+  public static List<VisibilityCode> getCodes() {
     return codes;
   }
 

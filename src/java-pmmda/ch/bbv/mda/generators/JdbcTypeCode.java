@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann 
+/* copyright 2000-2005 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$
@@ -6,7 +6,6 @@
 package ch.bbv.mda.generators;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import ch.bbv.dog.reference.ReferenceCodeImpl;
@@ -18,6 +17,11 @@ import ch.bbv.dog.reference.ReferenceCodeImpl;
  * @version $Revision$
  */
 public class JdbcTypeCode extends ReferenceCodeImpl {
+  /**
+   * Serial version identifier coded as back compatibility date.
+   */
+  private static final long serialVersionUID = 20041201;
+
   /**
    * Code for the associated JDBC type reference code.
    */
@@ -116,13 +120,13 @@ public class JdbcTypeCode extends ReferenceCodeImpl {
   /**
    * List of all reference codes of this type.
    */
-  private static List codes;
+  private static List<JdbcTypeCode> codes;
 
   /**
    * Initializes the reference codes of this type.
    */
   static {
-    codes = new ArrayList();
+    codes = new ArrayList<JdbcTypeCode>();
     codes.add(new JdbcTypeCode(STRING, 1, "String",
         "CHAR, VARCHAR, LONGVARCHAR"));
     codes
@@ -163,7 +167,7 @@ public class JdbcTypeCode extends ReferenceCodeImpl {
    * Returns the list of all reference codes.
    * @return list of all reference codes.
    */
-  public static List getCodes() {
+  public static List<JdbcTypeCode> getCodes() {
     return codes;
   }
 
@@ -173,13 +177,19 @@ public class JdbcTypeCode extends ReferenceCodeImpl {
    * @return the requested code if found otherwise null.
    */
   public static JdbcTypeCode getCode(int code) {
-    JdbcTypeCode visibility = null;
-    for (Iterator i = codes.iterator(); visibility == null && i.hasNext();) {
-      visibility = (JdbcTypeCode) i.next();
-      if (visibility.getCode() != code) {
-        visibility = null;
+    for (JdbcTypeCode type : codes) {
+      if (type.getCode() == code) {
+        return type;
       }
     }
-    return visibility;
+    return null;
+  }
+
+  /**
+   * Guarantees that the returned object is unique in the virtual machine.
+   * @return the code read from the stream if defined otherwise null.
+   */
+  private Object readResolve() {
+    return getCode(getCode());
   }
 }

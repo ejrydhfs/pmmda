@@ -40,21 +40,36 @@
 	<h2>Command Line</h2>
 	<p>The <em>pmMDA Client</em> supports a command line interface to streamline
 		the start of the application with the expected configuration and data. The
-		following options are supported.</p>
-	<ul>
-		<dt>-model "path-model"</dt><dd>Loads the given model at startup. The value
+    command line can also be used to execute the pmMDA application in batch
+    mode. The following options are supported.</p>
+	<dl>
+    <dt>-v --verbose</dt><dd>An optional boolean argument. if set the logging
+      level is verbose.</dd>
+    <dt>-q --quiet</dt><dd>An optional boolean argument. If set the logging
+      level is quiet.</dd>
+    <dt>-h --help</dt><dd></dd>
+		<dt>-m --model "path-model"</dt><dd>Loads the given model at startup. The value
 			defines the qualified file name containing the model to load. The command
 			is optional.</dd>
-	</ul>
+	</dl>
 		
 	<h2>Architecture</h2>
-	<p>The architectural design of the <emph>pmMDA</emph> user interface has two
+	<p>The architectural design of the <em>pmMDA</em> user interface has two
 		major goals. First the amount of written code should be minimized. Second it
 		provides a test bed for the new release of the explorer user interface 
 		framework.</p>		
 		
+  <h3>Document Model</h3>
+  <p>The application should provide a document model supporting the users.</p>
+  <ul>
+    <li>If the user tries to leave the application and a modified model is
+      available, he should be asked if he wants to save the model.</li>
+    <li>If the user generates artifiacts and a validation error exists, he
+      should be informed that the artifacts could contain errors.</li>
+  </ul>
+  
 	<h2>History</h2>
-	<p>The prototype of the <emph>pmMDA</emph> was developed with the EMF framework
+	<p>The prototype of the <em>pmMDA</em> was developed with the EMF framework
 		of Eclipse. This framework uses passive code generators. This way of 
 		developing applications is against our beliefs how to develop applications.
 		We decided to use the explorer framework to develop a new version of the user

@@ -1,0 +1,204 @@
+/* copyright 2000-2005 Marcel Baumann
+ * Licensed under the Apache License, Version 2.0 (the "Licence");
+ * you may not use this file except in compliance with the License.
+ * $Id$
+ */
+
+package ch.bbv.mda.graphs;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Rectangle;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+
+import org.jgraph.JGraph;
+import org.jgraph.graph.*;
+import org.jgraph.layout.AnnealingLayoutAlgorithm;
+import org.jgraph.util.JGraphUtilities;
+
+import ch.bbv.explorer.ExplorerNode;
+import ch.bbv.explorer.NodeView;
+import ch.bbv.explorer.UiNodeType;
+import ch.bbv.mda.*;
+import ch.bbv.mda.generators.DogCartridge;
+
+/**
+ * The class graph view displays a UML class diagram of the package or of the
+ * class. The JGraph component is used to display the graphs.
+ * @author MarcelBaumann
+ * @version $Revision$
+ */
+public class ClassGraphView extends JPanel implements NodeView {
+  /**
+   * Serial version identifier coded as back compatibility date.
+   */
+  private static final long serialVersionUID = 20041201;
+
+  private JScrollPane pane;
+
+  private GraphModel model;
+
+  private JGraph graph;
+
+  private Map<GraphCell, Map> attributes;
+
+  private static class UmlCellViewFactory extends DefaultCellViewFactory {
+    /**
+     * Serial version identifier coded as back compatibility date.
+     */
+    private static final long serialVersionUID = 20041201;
+
+    public CellView createView(GraphModel model, Object cell) {
+      if (cell instanceof ClassCell) {
+        return new ClassView(cell);
+      }
+      return super.createView(model, cell);
+    }
+  }
+
+  /**
+   * Creates an instance of the class.
+   * @param type user interface type of the nodes to display.
+   * @param object parameters list for the constructor.
+   * @return a new instance of the class.
+   */
+  public static ClassGraphView create(UiNodeType type, Object object) {
+    return new ClassGraphView();
+  }
+
+  public ClassGraphView() {
+    super(new BorderLayout());
+    attributes = new HashMap<GraphCell, Map>();
+    model = new DefaultGraphModel();
+    graph = new JGraph(model);
+    graph.setEditable(false);
+    graph.getGraphLayoutCache().setFactory(new UmlCellViewFactory());
+    pane = new JScrollPane(graph);
+    add(pane, BorderLayout.CENTER);
+  }
+
+  public void nodeChanged(ExplorerNode node) {
+
+  }
+
+  public void nodeInserted(ExplorerNode node, int index) {
+
+  }
+
+  public void nodeRemoved(ExplorerNode parent, ExplorerNode node, int index) {
+
+  }
+
+  public void setModel(ExplorerNode node) {
+    attributes.clear();
+    model = new DefaultGraphModel();
+    graph.setModel(model);
+    MetaElement element = (MetaElement) node.getDataObject();
+    if (element instanceof MetaClass) {
+      generateDependencies((MetaClass) element);
+      JGraphUtilities.applyLayout(graph, new AnnealingLayoutAlgorithm());
+    }
+  }
+
+  public void viewClosed() {
+
+  }
+
+  public void setViewEditable(boolean editable) {
+
+  }
+
+  /**
+   * Generates all classes in the package. Simple and indexed properties which
+   * type is a class defined in the package are shown as aggregations.
+   * @param packages package which dependencies should be drawn.
+   */
+  protected void generateDependencies(MetaPackage packages) {
+
+  }
+
+  /**
+   * Generates the graph of dependencies of the class. Simple and indexed
+   * properties which type is not a data object or a reference code are drawn as
+   * properties. Properties with other types are drawn as aggregations and the
+   * type is shown as target class.
+   * @param clazz class which dependencies graph should be drawn.
+   */
+  protected void generateDependencies(MetaClass clazz) {
+    MetaModel model = (MetaModel) clazz.getRoot();
+    List<MetaProperty> properties = clazz.getProperties();
+    List<MetaIndexedProperty> indexedProperties = clazz.getIndexedProperties();
+    GraphCell source = createVertex(clazz);
+    for (MetaProperty property : properties) {
+      String qualifiedName = property.getTypeName();
+      MetaClass type = model.findClass(qualifiedName);
+      if ((type != null)
+          && (DogCartridge.DATA_OBJECT_STEREOTYPE.equalsIgnoreCase(type
+              .getStereotype()) || DogCartridge.REFERENCE_CODE_STEREOTYPE
+              .equalsIgnoreCase(type.getStereotype()))) {
+        GraphCell target = createVertex(type);
+        createEdge(source, target, property, AssociationEdge.Type.aggregation);
+      }
+    }
+    for (MetaIndexedProperty property : indexedProperties) {
+      String qualifiedName = property.getTypeName();
+      MetaClass type = model.findClass(qualifiedName);
+      if ((type != null)
+          && (DogCartridge.DATA_OBJECT_STEREOTYPE.equalsIgnoreCase(type
+              .getStereotype()) || DogCartridge.REFERENCE_CODE_STEREOTYPE
+              .equalsIgnoreCase(type.getStereotype()))) {
+        GraphCell target = createVertex(type);
+        createEdge(source, target, property, AssociationEdge.Type.aggregation);
+      }
+    }
+  }
+
+  protected GraphCell createVertex(MetaElement element) {
+    DefaultGraphCell node = new ClassCell((MetaClass) element);
+    Map nodeAttributes = new HashMap();
+    GraphConstants.setOpaque(nodeAttributes, true);
+    GraphConstants.setBorderColor(nodeAttributes, Color.BLACK);
+    GraphConstants.setBounds(nodeAttributes, new Rectangle(20, 20, 40, 20));
+    GraphConstants.setAutoSize(nodeAttributes, true);
+    GraphConstants.setResize(nodeAttributes, true);
+    DefaultPort port = new DefaultPort();
+    node.add(port);
+    attributes.put(node, nodeAttributes);
+    Object[] nodes = { node };
+    model.insert(nodes, attributes, null, null, null);
+    return node;
+  }
+
+  protected Edge createEdge(GraphCell source, GraphCell target,
+      MetaProperty property, AssociationEdge.Type type) {
+    // AssociatonEdge edge = new AssociationEdge();
+    DefaultEdge edge = new DefaultEdge(property.getName());
+    Map edgeAttributes = new HashMap();
+    int arrow = GraphConstants.ARROW_CLASSIC;
+    Port sourcePort = getDefaultPort(source);
+    Port targetPort = getDefaultPort(target);
+    GraphConstants.setLineEnd(edgeAttributes, arrow);
+    GraphConstants.setEndFill(edgeAttributes, true);
+    ConnectionSet connectionSet = new ConnectionSet(edge, sourcePort,
+        targetPort);
+    attributes.put(edge, edgeAttributes);
+    Object[] edges = { edge };
+    model.insert(edges, attributes, connectionSet, null, null);
+    return edge;
+  }
+
+  protected Port getDefaultPort(Object vertex) {
+    for (int i = 0; i < model.getChildCount(vertex); i++) {
+      Object child = model.getChild(vertex, i);
+      if (child instanceof Port) {
+        return (Port) child;
+      }
+    }
+    return null;
+  }
+}

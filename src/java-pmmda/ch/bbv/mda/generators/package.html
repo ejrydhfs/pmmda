@@ -1,4 +1,7 @@
-<body>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" 
+  "http://www.w3.org/TR/html4/strict.dtd>
+  <html>
+  <body>
 The package provides various code generators to transform MDA models into
 executable code.
 
@@ -43,11 +46,19 @@ executable code.
   <ul>
     <li>Model Context</li>
     <dl>
+      <dt>properties</dt><dd>The properties defined in the configuration file
+        and read in the running instance.</dd>
+      <dt>utilities</dt><dd>Utility class provided in the package to simplify 
+        complex catridge operations.</dd>
       <dt>cartridge</dt><dd>the cartridge instance invoking the template.</dd>
       <dt>model</dt><dd>the meta model instance being processed.</dd>
     </dl>
     <li>Package Context</li>
     <dl>
+      <dt>properties</dt><dd>The properties defined in the configuration file
+        and read in the running instance.</dd>
+      <dt>utilities</dt><dd>Utility class provided in the package to simplify 
+        complex catridge operations.</dd>
       <dt>cartridge</dt><dd>the cartridge instance invoking the template.</dd>
       <dt>model</dt><dd>the meta model instance being processed.</dd>
       <dt>package</dt><dd>the meta package instance being processed.</dd>
@@ -55,6 +66,10 @@ executable code.
     </dl>
     <li>Class Context</li>
     <dl>
+      <dt>properties</dt><dd>The properties defined in the configuration file
+        and read in the running instance.</dd>
+      <dt>utilities</dt><dd>Utility class provided in the package to simplify 
+        complex catridge operations.</dd>
       <dt>cartridge</dt><dd>the cartridge instance invoking the template.</dd>
       <dt>model</dt><dd>the meta model instance being processed.</dd>
       <dt>package</dt><dd>the meta package instance being processed.</dd>
@@ -65,5 +80,10 @@ executable code.
       <dt>imports</dt><dd>the list of computed import statements of the class.</dd>
     </dl>
   </ul>
+  <h3>Initialization of Tagged Values</h3>
+  <p></p>
+  <h3>Validation of Tagged Values</h3>
+  <p></p>
   @since Java 2 Platform, Standard Edition, version 1.4
 </body>
+</html>

@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -43,57 +43,69 @@ import ch.bbv.utilities.TextUtilities;
  */
 public class MetaClass extends MetaElement {
   /**
+   * Serial version identifier coded as back compatibility date.
+   */
+  private static final long serialVersionUID = 20041201;
+
+  /**
    * Number of properties being used as primary keys in the persistent
    * representation of the class.
    */
   private transient int nrOfPrimaryProperties;
 
+  /**
+   * Flag indicating if the element has the associated property.
+   */
   private boolean interfaces;
 
+  /**
+   * Flag indicating if the element has the associated property.
+   */
   private boolean abstracts;
 
+  /**
+   * Flag indicating if the element has the associated property.
+   */
   private boolean finals;
 
+  /**
+   * Flag indicating if the element has the associated property.
+   */
   private boolean statics;
 
-  private List ancestors;
+  private List<MetaClass> ancestors;
 
-  private List properties;
+  private List<MetaProperty> properties;
 
-  private List indexedProperties;
+  private List<MetaIndexedProperty> indexedProperties;
 
-  private List imports;
+  private List<String> imports;
 
-  private List declarations;
+  private List<String> declarations;
+
+  private List<String> definitions;
 
   private List constructors;
-
-  private List definitions;
 
   /**
    * List of nested classes of the class.
    */
-  private List classes;
+  private List<MetaClass> classes;
 
+  /**
+   * Flag indicating if the element is a system element defined in the
+   * environment.
+   */
   private boolean system;
 
   /**
    * Default constructor of the class.
    */
   public MetaClass() {
-    init();
-  }
-
-  public void init() {
-    super.init();
-    if (ancestors == null)
-      ancestors = new ArrayList();
-    if (properties == null)
-      properties = new ArrayList();
-    if (indexedProperties == null)
-      indexedProperties = new ArrayList();
-    if (classes == null)
-      classes = new ArrayList();
+    ancestors = new ArrayList<MetaClass>();
+    properties = new ArrayList<MetaProperty>();
+    indexedProperties = new ArrayList<MetaIndexedProperty>();
+    classes = new ArrayList<MetaClass>();
   }
 
   /**
@@ -101,7 +113,7 @@ public class MetaClass extends MetaElement {
    * @return List of user defined import statements.
    * @see #setImports
    */
-  public List getImports() {
+  public List<String> getImports() {
     return imports;
   }
 
@@ -110,7 +122,7 @@ public class MetaClass extends MetaElement {
    * @param imports new list of user defined import statements.
    * @see #getImports
    */
-  public void setImports(List imports) {
+  public void setImports(List<String> imports) {
     this.imports = imports;
   }
 
@@ -128,7 +140,7 @@ public class MetaClass extends MetaElement {
    * @param declarations new list of user defined declarations.
    * @see #getDeclarations
    */
-  public void setDeclarations(List declarations) {
+  public void setDeclarations(List<String> declarations) {
     this.declarations = declarations;
   }
 
@@ -155,7 +167,7 @@ public class MetaClass extends MetaElement {
    * @return the definitions of the class.
    * @see #setDefinitions(List)
    */
-  public List getDefinitions() {
+  public List<String> getDefinitions() {
     return definitions;
   }
 
@@ -164,7 +176,7 @@ public class MetaClass extends MetaElement {
    * @param definitions hte new definitions of the class.
    * @see #getDefinitions()
    */
-  public void setDefinitions(List definitions) {
+  public void setDefinitions(List<String> definitions) {
     this.definitions = definitions;
   }
 
@@ -260,7 +272,7 @@ public class MetaClass extends MetaElement {
   }
 
   public MetaProperty getProperty(int index) {
-    return (MetaProperty) properties.get(index);
+    return properties.get(index);
   }
 
   public void addProperty(MetaProperty metaProperty) {
@@ -277,36 +289,35 @@ public class MetaClass extends MetaElement {
     metaProperty.setContext(this);
   }
 
-  public List getProperties() {
+  public List<MetaProperty> getProperties() {
     return properties;
   }
 
-  public void setProperties(List properties) {
+  public void setProperties(List<MetaProperty> properties) {
     removeAllProperties();
     properties.addAll(properties);
-
-    for (Iterator i = properties.iterator(); i.hasNext();) {
-      ((MetaProperty) i.next()).setContext(this);
+    for (MetaProperty property : properties) {
+      property.setContext(this);
     }
   }
 
   public void removeAllProperties() {
-    for (Iterator i = properties.iterator(); i.hasNext();) {
-      ((MetaProperty) i.next()).setContext(null);
+    for (MetaProperty property : properties) {
+      property.setContext(null);
     }
     properties.clear();
   }
-  
+
   /**
    * Removes a property from this class
    * @param metaProperty to be removed.
    */
-  public void removeProperty(MetaProperty metaProperty){
+  public void removeProperty(MetaProperty metaProperty) {
     properties.remove(metaProperty);
   }
 
   public MetaIndexedProperty getIndexedProperty(int index) {
-    return (MetaIndexedProperty) indexedProperties.get(index);
+    return indexedProperties.get(index);
   }
 
   public void addIndexedProperty(MetaIndexedProperty metaIndexedProperty) {
@@ -314,42 +325,44 @@ public class MetaClass extends MetaElement {
     metaIndexedProperty.setContext(this);
   }
 
-  public void addIndexedProperty(int index,
-      MetaIndexedProperty metaIndexedProperty) {
-    indexedProperties.add(index, metaIndexedProperty);
-    metaIndexedProperty.setContext(this);
+  public void addIndexedProperty(int index, MetaIndexedProperty property) {
+    indexedProperties.add(index, property);
+    property.setContext(this);
   }
 
-  public List getIndexedProperties() {
+  public List<MetaIndexedProperty> getIndexedProperties() {
     return indexedProperties;
   }
 
-  public void setIndexedProperties(List indexedProperties) {
+  public void setIndexedProperties(List<MetaIndexedProperty> indexedProperties) {
     removeAllIndexedProperties();
     this.indexedProperties.addAll(indexedProperties);
 
-    for (Iterator i = properties.iterator(); i.hasNext();) {
-      ((MetaIndexedProperty) i.next()).setContext(this);
+    for (MetaIndexedProperty property : indexedProperties) {
+      property.setContext(this);
     }
   }
 
   public void removeAllIndexedProperties() {
-    for (Iterator i = indexedProperties.iterator(); i.hasNext();) {
-      ((MetaIndexedProperty) i.next()).setContext(null);
+    for (MetaIndexedProperty property : indexedProperties) {
+      property.setContext(null);
     }
     indexedProperties.clear();
   }
 
   /**
-   * Removes an indexed property from this class
-   * @param metaIndexedProperty to be removed.
+   * Removes an indexed property from this class.
+   * @param property to be removed.
    */
-  public void removeIndexedProperty(MetaIndexedProperty metaIndexedProperty){
-    indexedProperties.remove(metaIndexedProperty);
+  public void removeIndexedProperty(MetaIndexedProperty property) {
+    if (indexedProperties.contains(property)) {
+      indexedProperties.remove(property);
+      property.setContext(null);
+    }
   }
 
   public MetaClass getClass(int index) {
-    return (MetaClass) classes.get(index);
+    return classes.get(index);
   }
 
   public void addClass(MetaClass metaClass) {
@@ -366,29 +379,26 @@ public class MetaClass extends MetaElement {
     return classes;
   }
 
-  public void setClasses(List classes) {
+  public void setClasses(List<MetaClass> classes) {
     removeAllClasses();
     classes.addAll(classes);
-
-    Iterator iterator = classes.iterator();
-    while (iterator.hasNext()) {
-      ((MetaClass) iterator.next()).setContext(this);
+    for (MetaClass clazz : classes) {
+      clazz.setContext(this);
     }
   }
 
   public void removeAllClasses() {
-    Iterator iterator = classes.iterator();
-    while (iterator.hasNext()) {
-      ((MetaClass) iterator.next()).setContext(null);
+    for (MetaClass clazz : classes) {
+      clazz.setContext(null);
     }
     classes.clear();
   }
-  
+
   /**
    * Removes a nested class from this class
    * @param metaClass to be removed.
    */
-  public void removeClass(MetaClass metaClass){
+  public void removeClass(MetaClass metaClass) {
     classes.remove(metaClass);
   }
 
@@ -460,23 +470,21 @@ public class MetaClass extends MetaElement {
     return (MetaPackage) getContext();
   }
 
-  public List retrieveAncestors() {
-    List list = new ArrayList();
-    for (Iterator i = ancestors.iterator(); i.hasNext();) {
-      MetaClass mClass = (MetaClass) i.next();
-      if (!mClass.isInterface()) {
-        list.add(mClass);
+  public List<MetaClass> retrieveAncestors() {
+    List<MetaClass> list = new ArrayList<MetaClass>();
+    for (MetaClass clazz : ancestors) {
+      if (!clazz.isInterface()) {
+        list.add(clazz);
       }
     }
     return list;
   }
 
-  public List retrieveInterfaces() {
-    List list = new ArrayList();
-    for (Iterator i = ancestors.iterator(); i.hasNext();) {
-      MetaClass mClass = (MetaClass) i.next();
-      if (mClass.isInterface()) {
-        list.add(mClass);
+  public List<MetaClass> retrieveInterfaces() {
+    List<MetaClass> list = new ArrayList<MetaClass>();
+    for (MetaClass clazz : ancestors) {
+      if (clazz.isInterface()) {
+        list.add(clazz);
       }
     }
     return list;
@@ -511,13 +519,13 @@ public class MetaClass extends MetaElement {
   public boolean hasInterface(String qualifiedName) {
     assert (qualifiedName != null);
 
-    List interfaces = retrieveInterfaces();
+    List<MetaClass> interfaces = retrieveInterfaces();
     boolean hasInterface = MdaUtilities.containsElementNamed(interfaces,
         qualifiedName);
     if (!hasInterface) {
-      Iterator it = interfaces.iterator();
-      while (it.hasNext() && !hasInterface) {
-        hasInterface = ((MetaClass) it.next()).hasInterface(qualifiedName);
+      for (Iterator<MetaClass> i = interfaces.iterator(); i.hasNext()
+          && !hasInterface;) {
+        hasInterface = i.next().hasInterface(qualifiedName);
       }
     }
     return hasInterface;
@@ -547,12 +555,5 @@ public class MetaClass extends MetaElement {
    */
   public static String getClassName(String qualifiedClassname) {
     return TextUtilities.getComponentName(qualifiedClassname);
-  }
-
-  public boolean isLeaf() {
-    if (properties != null && properties.isEmpty() && indexedProperties != null
-        && indexedProperties.isEmpty() && classes != null & classes.isEmpty())
-      return true;
-    return false;
   }
 }

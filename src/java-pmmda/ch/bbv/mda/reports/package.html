@@ -1,0 +1,32 @@
+<body>
+  <h2>Introduction</h2>
+  <p>The <em>pmMDA</em> application provides a set of standard reports. They 
+    can be used to document a model, its stereotypes and all tagged values.</p>
+  <h2>Reports</h2>
+  <p>The reports provide criteria to select the subset of classes which should 
+    be included in the reports.</p>
+    <ul>
+      <li>The list of packages which should be generated.</li>
+      <li>The list of stereotypes which are relevant. A class is part of the 
+        report only if it implements one of the listed stereotypes.</li>
+      <li>The list of cartridges which tagged values should be documented. The 
+        tagged values are identified through their prefix.</li>
+    </ul>
+    <p>Each package contains the set of relevant classes with their properties
+      and associated tagged values.</p>
+  <h2>Design</h2>
+  <p>The report engine is based on the open source free report. The data must
+    be provided as a table model. The model must be transfered into a huge
+    table where each tree node is a row and each property or tag is a column.
+    The following conventions are defined to simplify the creation of custom
+    reports.</p>
+  <ul>
+    <li>The column name of based on positional notation. The name of the class
+      is the first element. The legal values are model, package, class, datatype,
+      property, and indexed property. The second element is either the name of
+      the property or the name of the tag.</li>
+    <li>If the column value is defined for the row element, its value is 
+      returned otherwise null is returned. It is the responsibility of the 
+      report template to handle null values.</li>
+  </ul>
+</body>

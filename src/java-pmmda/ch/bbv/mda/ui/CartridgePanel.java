@@ -1,5 +1,5 @@
-/* copyright 2000-2004 Marcel Baumann
- * Licensed under the Apache License, Version 2.0 (the "Licence);
+/* copyright 2000-2005 Marcel Baumann
+ * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
  */
@@ -20,8 +20,8 @@ import ch.bbv.mda.generators.Cartridge;
  * <ul>
  * <li>The abbreviation of the cartridge.</li>
  * <li>The list of stereotypes defined in the cartridge and to which kind of
- * items - package, class, method, field - it can be applied to. The kind
- * of stereotype is chosen with a combo box.</li>
+ * items - package, class, method, field - it can be applied to. The kind of
+ * stereotype is chosen with a combo box.</li>
  * <li>The list of tagged values defined in the cartridge and their default
  * values, and the kind of items - package, class, method, field -it can be
  * applied to.</li>
@@ -33,6 +33,11 @@ import ch.bbv.mda.generators.Cartridge;
  * @version $Revision$
  */
 public class CartridgePanel extends JPanel {
+  /**
+   * Serial version identifier coded as back compatibility date.
+   */
+  private static final long serialVersionUID = 20041201;
+
   /**
    * Column names for the sterotypes of the cartridge.
    */
@@ -84,18 +89,18 @@ public class CartridgePanel extends JPanel {
   /**
    * Default constructor of the class.
    */
-public CartridgePanel() {
+  public CartridgePanel() {
     stereotypes = new TablePanel(Collections.EMPTY_LIST, new TableCell(
         STEREOTYPE_COLUMN_NAMES));
     taggedValueTypes = new TablePanel(Collections.EMPTY_LIST, new TableCell(
         TAGGED_VALUE_TYPE_COLUMN_NAMES));
-    properties = new TablePanel(Collections.EMPTY_LIST, new TableCell (
+    properties = new TablePanel(Collections.EMPTY_LIST, new TableCell(
         PROPERTY_COLUMN_NAMES));
-    cartridges = new TablePanel(Collections.EMPTY_LIST, new TableCell (
+    cartridges = new TablePanel(Collections.EMPTY_LIST, new TableCell(
         CARTRIDGE_COLUMN_NAMES));
-    
 
   }
+
   /**
    * Sets the new cartridge of the panel.
    * @param cartridge new cartridge of the panel.

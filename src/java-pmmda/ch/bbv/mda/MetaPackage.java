@@ -1,11 +1,12 @@
-/* copyright 2000-2004 Marcel Baumann 
+/* copyright 2000-2005 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$
  */
 package ch.bbv.mda;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The meta package models a package object as defined in the UML standard. It
@@ -33,13 +34,19 @@ import java.util.*;
  */
 public class MetaPackage extends MetaElement {
   /**
+   * Serial version identifier coded as back compatibility date.
+   */
+  private static final long serialVersionUID = 20041201;
+
+  /**
    * List of all classes defined in the package.
    */
-  private List classes;
+  private List<MetaClass> classes;
 
   /**
    * Flag indicating if the package belongs to the standard packages of the
    * environment or not.
+   * @serial
    */
   private boolean system;
 
@@ -47,19 +54,7 @@ public class MetaPackage extends MetaElement {
    * Default constructor of the class.
    */
   public MetaPackage() {
-    init();
-  }
-
-  /**
-   * Initializes member variables. Only complex types have to be initialized
-   * here. The init() method is called after deserializing and loading from xml
-   * with XStream. Transient members have to be initialized with this init()
-   * function.
-   */
-  public void init() {
-    super.init();
-    if (classes == null)
-      classes = new ArrayList();
+    classes = new ArrayList<MetaClass>();
   }
 
   /**
@@ -86,26 +81,30 @@ public class MetaPackage extends MetaElement {
    * @return the requested class.
    */
   public MetaClass getClass(int index) {
-    return (MetaClass) classes.get(index);
+    return classes.get(index);
   }
 
   /**
    * Adds the class in the list of classes of the package.
-   * @param metaClass class to add.
+   * @param clazz class to add.
+   * @pre clazz != null
    */
-  public void addClass(MetaClass metaClass) {
-    classes.add(metaClass);
-    metaClass.setContext(this);
+  public void addClass(MetaClass clazz) {
+    assert clazz != null;
+    classes.add(clazz);
+    clazz.setContext(this);
   }
 
   /**
    * Adds the class in the list of classes of the package.
    * @param index position where the class should be inserted in the list.
-   * @param metaClass class to add.
+   * @param clazz class to add.
+   * @pre clazz != null
    */
-  public void addClass(int index, MetaClass metaClass) {
-    classes.add(index, metaClass);
-    metaClass.setContext(this);
+  public void addClass(int index, MetaClass clazz) {
+    assert clazz != null;
+    classes.add(index, clazz);
+    clazz.setContext(this);
   }
 
   /**
@@ -113,7 +112,7 @@ public class MetaPackage extends MetaElement {
    * @return list of all classes.
    * @see #setClasses(List)
    */
-  public List getClasses() {
+  public List<MetaClass> getClasses() {
     return classes;
   }
 
@@ -122,52 +121,55 @@ public class MetaPackage extends MetaElement {
    * @param classes new list of classes.
    * @see #getClasses()
    */
-  public void setClasses(List classes) {
+  public void setClasses(List<MetaClass> classes) {
     removeAllClasses();
     classes.addAll(classes);
-
-    for (Iterator i = classes.iterator(); i.hasNext();) {
-      ((MetaClass) i.next()).setContext(this);
+    for (MetaClass clazz : classes) {
+      clazz.setContext(this);
     }
   }
 
+  /**
+   * Remove all classes of the package.
+   */
   public void removeAllClasses() {
-    for (Iterator i = classes.iterator(); i.hasNext();) {
-      ((MetaClass) i.next()).setContext(null);
+    for (MetaClass clazz : classes) {
+      clazz.setContext(null);
     }
     classes.clear();
   }
 
   /**
-   * Removes a class from the package
-   * @param metaClass to be removed.
+   * Removes a class from the package.
+   * @param clazz to be removed.
    */
-  public void removeClass(MetaClass metaClass){
-    classes.remove(metaClass);
+  public void removeClass(MetaClass clazz) {
+    if (classes.contains(clazz)) {
+      classes.remove(clazz);
+      clazz.setContext(null);
+    }
   }
-  
+
   /**
    * Implements the visitor pattern.
    * @param visitor visitor to process.
    */
   public void accept(Visitor visitor) {
+    assert visitor != null;
     visitor.visit(this);
-    for (Iterator i = classes.iterator(); i.hasNext();) {
-      ((MetaClass) i.next()).accept(visitor);
+    for (MetaClass clazz : classes) {
+      clazz.accept(visitor);
     }
   }
 
+  /**
+   * Returns the class with the given name.
+   * @param name simple name of the class to find.
+   * @return the requested class if found otherwise null.
+   * @pre name != null
+   */
   public MetaClass findClass(String name) {
+    assert name != null;
     return (MetaClass) findElement(classes, name);
   }
-
-  /**
-   * Indicates whether this model element is a leaf (no children)
-   */
-  public boolean isLeaf() {
-    if (classes == null || classes.isEmpty())
-      return true;
-    return false;
-  }
-
 }

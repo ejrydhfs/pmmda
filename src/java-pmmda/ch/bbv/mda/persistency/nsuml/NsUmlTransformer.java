@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -30,11 +30,12 @@ import ru.novosoft.uml.xmi.IncompleteXMIException;
 import ru.novosoft.uml.xmi.XMIReader;
 import ru.novosoft.uml.xmi.XMIWriter;
 import ch.bbv.mda.*;
+import ch.bbv.mda.generators.CartridgeFactory;
 
 /**
- * The NSUML transformer defines rules how to transform a NS-UML element into
- * the corresponding MDA representation. Special is the mapping of aggregations
- * and compositions to indexed properties to reflect the capabilities of modern
+ * The NSUML transformer defines rules how to transform a NSUML element into the
+ * corresponding MDA representation. Special is the mapping of aggregations and
+ * compositions to indexed properties to reflect the capabilities of modern
  * object oriented programming languages.
  * @author Marcel Baumann
  * @version $Revision$
@@ -64,14 +65,14 @@ public class NsUmlTransformer {
    * values. Source objects are NSUML entities, target objects are MDA
    * instances.
    */
-  private Map elements;
+  private Map<Object, MetaElement> elements;
 
   /**
    * Default constructor of the class.
    */
   public NsUmlTransformer() {
     factory = MetaFactory.getInstance();
-    elements = new HashMap();
+    elements = new HashMap<Object, MetaElement>();
   }
 
   /**
@@ -136,7 +137,7 @@ public class NsUmlTransformer {
       MClassifier mClass = (MClassifier) i.next();
       extractDataType(mClass, target);
     }
-    identifySystemPackages(target);
+    flagSystemPackages(target);
 
     for (Iterator i = new FilterIterator(source.getOwnedElements(),
         MClass.class); i.hasNext();) {
@@ -189,16 +190,16 @@ public class NsUmlTransformer {
     }
   }
 
-  protected void extractPackage(MPackage mPackage, MetaModel metaModel) {
+  protected void extractPackage(MPackage mPackage, MetaModel model) {
     String qualifiedName = NsUmlUtilities.getQualifiedName(mPackage);
-    MetaPackage metaPackage = metaModel.findPackage(qualifiedName);
+    MetaPackage metaPackage = model.findPackage(qualifiedName);
     if (metaPackage == null) {
       metaPackage = new MetaPackage();
       metaPackage.setName(qualifiedName);
+      model.addPackage(metaPackage);
       factory.initialize(metaPackage);
     }
     extractStereotypeAndTags(mPackage, metaPackage);
-    metaModel.addPackage(metaPackage);
 
     for (Iterator i = new FilterIterator(mPackage.getOwnedElements(),
         MClassifier.class); i.hasNext();) {
@@ -209,7 +210,7 @@ public class NsUmlTransformer {
     for (Iterator i = new FilterIterator(mPackage.getOwnedElements(),
         MPackage.class); i.hasNext();) {
       MPackage mSubPackage = (MPackage) i.next();
-      extractPackage(mSubPackage, metaModel);
+      extractPackage(mSubPackage, model);
     }
   }
 
@@ -229,8 +230,8 @@ public class NsUmlTransformer {
     if (metaClass == null) {
       metaClass = new MetaClass();
       metaClass.setName(name);
-      factory.initialize(metaClass);
       metaPackage.addClass(metaClass);
+      factory.initialize(metaClass);
     }
     elements.put(mClass, metaClass);
     metaClass.setAbstract(mClass.isAbstract());
@@ -256,24 +257,25 @@ public class NsUmlTransformer {
     }
   }
 
-  protected void extractClass(MClassifier mNestedClass, MetaClass metaClass) {
-    assert ((mNestedClass != null) && (metaClass != null));
+  protected void extractClass(MClassifier mNestedClass, MetaClass clazz) {
+    assert (mNestedClass != null) && (clazz != null);
 
     String name = mNestedClass.getName();
     if (name == null) {
       if (log.isErrorEnabled()) {
         log.error("Parsed nested class without name in class "
-            + metaClass.getName());
+            + clazz.getName());
       }
       return;
     }
 
-    MetaClass metaNestedClass = metaClass.findClass(name);
+    MetaClass metaNestedClass = clazz.findClass(name);
     if (metaNestedClass == null) {
       metaNestedClass = new MetaClass();
       metaNestedClass.setName(name);
       factory.initialize(metaNestedClass);
-      metaClass.addClass(metaNestedClass);
+      clazz.addClass(metaNestedClass);
+      CartridgeFactory.getInstance().initialize(clazz);
     }
     elements.put(mNestedClass, metaNestedClass);
     metaNestedClass.setAbstract(mNestedClass.isAbstract());
@@ -305,7 +307,6 @@ public class NsUmlTransformer {
       }
       return;
     }
-
     MetaDataType metaDataType = metaModel.findDataType(name);
     if (metaDataType == null) {
       metaDataType = new MetaDataType();
@@ -380,7 +381,7 @@ public class NsUmlTransformer {
    * @pre (target != null) && (mPackage != null)
    */
   protected void extractRelations(MetaModel target, MPackage mPackage) {
-    assert ((target != null) && (mPackage != null));
+    assert (target != null) && (mPackage != null);
     for (Iterator i = new FilterIterator(mPackage.getOwnedElements(),
         MGeneralization.class); i.hasNext();) {
       MGeneralization generalization = (MGeneralization) i.next();
@@ -518,20 +519,28 @@ public class NsUmlTransformer {
     return visibility;
   }
 
-  protected void identifySystemPackages(MetaModel model) {
-    for (Iterator i = model.getPackages().iterator(); i.hasNext();) {
-      MetaPackage metaPackage = (MetaPackage) i.next();
+  /**
+   * Flags all system packages found in the model. A system package name is
+   * identified through a regular expresssion. See the Java package naming
+   * conventions for a detailed discussion.
+   * @param model model to flag.
+   */
+  protected void flagSystemPackages(MetaModel model) {
+    for (MetaPackage metaPackage : model.getPackages()) {
       if (isSystemPackage(metaPackage)) {
         metaPackage.setSystem(true);
-
-        for (Iterator j = metaPackage.getClasses().iterator(); j.hasNext();) {
-          MetaClass clazz = (MetaClass) j.next();
+        for (MetaClass clazz : metaPackage.getClasses()) {
           clazz.setSystem(true);
         }
       }
     }
   }
 
+  /**
+   * Returns true if the package is identified as a system package.
+   * @param metaPackage package to check.
+   * @return true if the package belongs to the Java system otherwise false.
+   */
   protected boolean isSystemPackage(MetaPackage metaPackage) {
     String name = metaPackage.getName();
     return ((name != null) && (name.startsWith("java.")

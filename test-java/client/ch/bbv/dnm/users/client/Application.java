@@ -1,23 +1,46 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
  */
 package ch.bbv.dnm.users.client;
 
+import java.util.Arrays;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.OptionGroup;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.Parser;
+import org.apache.commons.cli.PosixParser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.omg.CORBA.ORB;
 
 import ch.bbv.application.ComponentException;
 import ch.bbv.application.Locator;
-import ch.bbv.dog.*;
+import ch.bbv.cmdlineparser.CmdLineBuilder;
+import ch.bbv.dog.CacheHandler;
+import ch.bbv.dog.DataObjectHandler;
+import ch.bbv.dog.DataObjectManager;
+import ch.bbv.dog.LightweightObjectHandlerImpl;
 import ch.bbv.dog.persistence.PersistenceHandler;
 import ch.bbv.utilities.ReflectUtilities;
 
 /**
  * The application implements the users specific locator class for the client.
- * Convenience methods are provided to access the components.
+ * Convenience methods are provided to access the components. The command line
+ * provides the following options.
+ * <dl>
+ * <dt>mode (corba direct j2ee)</dt>
+ * <dd>defines the mode of the client.</dd>
+ * <dt>ORBInitialPort</dt>
+ * <dd>port of the CORBA broker as defined in the Java CORBA package.</dd>
+ * <dt>ORBInitialHost</dt>
+ * <dd>name of the host where the CORBA broker is running as defined in the
+ * Java CORBA package.</dd>
+ * </dl>
  * @author MarcelBaumann
  * @version $Revision$
  */
@@ -61,7 +84,7 @@ public class Application extends Locator {
    * Constructor of the class. The data object handler instiates a cache handler
    * with cache enabled and without copy cache.
    * @param mode mode of the application. The legal values are defined as
-   *        constants (USE_DIRECT, USE_CORBA, USE_J2EE).
+   *          constants (USE_DIRECT, USE_CORBA, USE_J2EE).
    * @throws ComponentException occured when building the application.
    */
   public Application(String mode) throws ComponentException {
@@ -72,9 +95,9 @@ public class Application extends Locator {
    * Constructor of the class. The data object handler instiates a cache handler
    * with cache enabled and without copy cache.
    * @param mode mode of the application. The legal values are defined as
-   *        constants (USE_DIRECT, USE_CORBA, USE_J2EE).
+   *          constants (USE_DIRECT, USE_CORBA, USE_J2EE).
    * @param commandLineMode flag indicating if the application is used in
-   *        command line mode or in user interface mode.
+   *          command line mode or in user interface mode.
    * @throws ComponentException occured when building the application.
    */
   public Application(String mode, boolean commandLineMode)
@@ -120,21 +143,47 @@ public class Application extends Locator {
    * @param args command line arguments.
    */
   public static void main(String[] args) {
+    Options options = new Options();
+    OptionGroup group = new OptionGroup();
+    options.addOption(CmdLineBuilder.createNoArgOption("h", "help",
+        "display the list of available commands", false));
+    group.addOption(CmdLineBuilder.createNoArgOption("v", "verbose",
+        "set the logging level to verbose", false));
+    group.addOption(CmdLineBuilder.createNoArgOption("q", "quiet",
+        "set the logging level to quiet", false));
+    options.addOptionGroup(group);
+    options.addOption(CmdLineBuilder.createArgOption("m", "mode",
+        "defines the mode of the application [direct | CORBA | J2EE]", false,
+        String.class));
+    options.addOption(CmdLineBuilder.createArgOption(null, "ORBInitialPort",
+        "the ORB TCP/IP port", false, String.class));
+    options.addOption(CmdLineBuilder.createArgOption(null, "ORBInitialHost",
+        "the host where the ORB is running", false, String.class));
+    options.addOption(CmdLineBuilder.createArgOption("D", "D",
+        "Sun virtual machine parameters", false, String.class));
+    Parser parser = new PosixParser();
     try {
-      String mode = USE_DIRECT;
+      CommandLine line = parser.parse(options, args);
+      if (line.hasOption("h")) {
+        HelpFormatter formatter = new HelpFormatter();
+        formatter.printHelp("pmMDA", options);
+      }
+      if (line.hasOption("v")) {
+        log.info("logging level set to verbose");
+      }
+      if (line.hasOption("q")) {
+        log.info("logging level set to quiet");
+      }
+      String mode = line.getOptionValue("m", USE_DIRECT);
+      
       Application.args = args;
       if (log.isInfoEnabled()) {
-        StringBuffer buffer = new StringBuffer();
-        for (int i = 0; i < args.length; i++) {
-          buffer.append(args[i]).append(" ");
-        }
-        log.info(buffer.toString());
-      }
-      if ((args.length >= 2) && args[0].equals("-mode")) {
-        mode = args[1];
+        log.info(Arrays.asList(args));
       }
       new Application(mode);
     } catch (ComponentException e) {
+      log.fatal(e);
+    } catch (ParseException e) {
       log.fatal(e);
     }
   }
@@ -165,7 +214,7 @@ public class Application extends Locator {
    * The class is created through the MDA approach and is not know at
    * compilation time of this class.
    * @param qualifiedName qualified name of the data object handler class to
-   *        instantiated. The class must provide a static create method.
+   *          instantiated. The class must provide a static create method.
    * @return the requested instance if sucessful otherwise null
    * @pre qualifiedName != null
    */

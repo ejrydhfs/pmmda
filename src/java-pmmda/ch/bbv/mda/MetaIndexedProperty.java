@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann 
+/* copyright 2000-2005 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$
@@ -15,11 +15,18 @@ package ch.bbv.mda;
 public class MetaIndexedProperty extends MetaProperty {
   public static final String DEFAULT_META_INDEX_TYPE = "ARRAY_LIST";
 
-  public MetaIndexedProperty(){
-    super();
+  /**
+   * Serial version identifier coded as back compatibility date.
+   */
+  private static final long serialVersionUID = 20041201;
+
+  /**
+   * Default constructor of the class.
+   */
+  public MetaIndexedProperty() {
     multiplicity = Multiplicity.MULTIPLICITY_0_N;
   }
-  
+
   public boolean isOrdered() {
     return booleanValueOfTag("bo-is-ordered");
   }
@@ -50,12 +57,5 @@ public class MetaIndexedProperty extends MetaProperty {
 
   public boolean canBeNull() {
     return getMultiplicity().getLowerBound() == 0;
-  }
-
-  /**
-   * Indicates whether this model element is a leaf (no children)
-   */
-  public boolean isLeaf() {
-    return true;
   }
 }

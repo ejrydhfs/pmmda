@@ -39,7 +39,27 @@
     </section>
     <section>
       <title>Edit Models</title>
-      <p>To be written.</p>
+      <p><em>pmMDA</em> UML models can be edited either using the provided user 
+        interface or more conveniently UML modeling tools such as 
+        <em>ArgoUML</em> or <em>Poseidon</em>.</p>
+      <p>MDA approaches require more formal UML models to allow model 
+        transformations and source code artifacts generation. Here we provide 
+        some hints which conventions should be followed in UML models 
+        transformed with pmMDA.</p>
+      <p>The naming conventions should follow best practices of UML. Class and 
+        interface names starts with uppercase. Property names always start with 
+        lowercase. All names should be legal identifiers in the target 
+        programming language. The validator framework checks the corectness of 
+        identifiers, uppercase and lowercase.</p>
+      <p>The name of all UML entities should be formulated in English. The 
+        pmMDA engine currently only support grammar rules for English 
+        language.</p>
+      <p>The name of properties should be singular if their cardinality is 
+        limited to one and plural if multiple instances are possible.</p>
+      <p>All relashionships should be named. All relationships should be 
+        directed. Role names can be defined but are not currently used in the 
+        transformation. The validator framework checks that all relationships 
+        are named. </p>
     </section>
     <section>
       <title>Configure</title>

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2000-2005 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" 
+  "http://forrest.apache.org/dtd/document-v20.dtd">
+<document>
+  <header>
+    <title>PIM Example</title>
+  </header>
+  <body>
+    <section>
+      <title>Purpose</title>
+      <p>Modern calendar systems provides to do lists, events, meetings as 
+        <code>iCal</code> files. Interfaces are provided to exchange data with 
+        other users or a central server. Often these systems have limited 
+        reporting and consolidation functions. The system we plan is an 
+        integration platform of calendar data and contacts management. The goal 
+        is to define a framework for reporting, consolidation and 
+        transformation functions. The system will never replace desktop 
+        personal information managers.</p>
+      <p>The requirements will support the <code>iCal</code> family of 
+        standards for time events and the <code>vCard</code> family of 
+        standards for all contacts. This approach guarantees compatibility with 
+        all major PIM systems and minimizes the cost for the interfaces. The 
+        major functions are.</p>
+      <ul>
+        <li>Multiple calendars are supported. A person can define multiple 
+          calendars such as work and private ones. The person can also 
+          subscribe to department, company and customer calendars.</li>
+        <li>A user can access public calendars of over persons to schedule 
+          meetings.</li>
+        <li>A person can define multiple contact lists such as work and private 
+          ones.</li>
+        <li>A user can subscribe to public contact lists of a department or a 
+          company.</li>
+      </ul>
+    </section>
+    <section>
+      <title>Requirements</title>
+      <p>The test application to validate the pmmda application is a to do list 
+        manager. The complete application is generated from an UML model.</p>
+      <p> A todo item has the following information</p>
+      <dl>
+        <dt>title</dt>
+        <dd>string(255) defines the title of the todo item.</dd>
+        <dt>description</dt>
+        <dd>string(65536) is the description of the todo item.</dd>
+        <dt>priority</dt>
+        <dd>reference code (low normal high) defines the priority of the todo 
+          item.</dd>
+        <dt>start date</dt>
+        <dd>when the todo item should be started.</dd>
+        <dt>due date</dt>
+        <dd>when the todo item should be completed.</dd>
+        <dt>progress</dt>
+        <dd>percentage value indicating the progress of the todo item.</dd>
+        <dt>owner</dt>
+        <dd>dynamic reference code identifying the owner of the item.</dd>
+        <dt>project</dt>
+        <dd>dynamic reference code of the project involved in the item.</dd>
+      </dl>
+      <p> A todo item can have dependencies to a set of todo items. The 
+        dependency means that the dependant todo must be completed before 
+        completing the owning item.</p>
+      <p>Obsolete owners or projects are displayed in grey. They cannot be 
+        selected for new todo items but are displayed for existing ones.</p>
+      <p>The list of todo item can be sorted through all the properties part of 
+        it. Completed todo items can be filtered out. </p>
+    </section>
+    <section>
+      <title>Planning</title>
+      <p>The first prototype is a proof of concept for the calendar functions. 
+        The client applications are Thunderbird, Firefox and Sunbird. The 
+        server functions will be provided through a WebDAV server. The events 
+        are stored using the <code>iCal</code> standards. The prototype 
+        provides reporting functions for events, meetings and to do items. The 
+        prototype will be started 1 March 2005 and be completed 31 March 2005. 
+        </p>
+      <p>The second prototype is a proof of concept for the address functions. 
+        The client applications are Thunderbird. The server functions will be 
+        provided trhough a WebDAV server. The contacts are stored using the 
+        <code>vCard</code> standards.</p>
+    </section>
+  </body>
+</document>

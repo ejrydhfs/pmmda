@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann 
+/* copyright 2000-2005 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$
@@ -203,10 +203,10 @@ public class EjbCartridge extends CartridgeImpl {
     addUndefinedProperty(properties, ROOT_CLIENT_J2EE_KEY, "");
   }
 
-  public List getTaggedValueTypes(Class clazz) {
-    List types = new ArrayList();
+  public List<TagDefinition> getTaggedValueTypes(Class clazz) {
+    List<TagDefinition> types = new ArrayList<TagDefinition>();
     if (clazz.equals(MetaPackage.class)) {
-      types.add(new TagDefinition(SERVER_NAME_TAG, "", String.class, this));
+      types.add(new TagDefinition(SERVER_NAME_TAG, "", String.class));
     }
     return types;
   }
@@ -230,7 +230,7 @@ public class EjbCartridge extends CartridgeImpl {
 
   public void preProcessPackage(MetaPackage metaPackage) {
     Properties context = getContext();
-    StringBuffer buffer = new StringBuffer();
+    StringBuilder buffer = new StringBuilder();
     String qualifiedName = metaPackage.qualifiedName();
     buffer.append(qualifiedName).append(
         context.getProperty(SERVER_PACKAGE_EXTENSION_KEY));

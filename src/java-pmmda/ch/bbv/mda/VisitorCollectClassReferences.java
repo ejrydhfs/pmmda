@@ -1,4 +1,5 @@
-/* copyright 2000-2004 Marcel Baumann
+/* 
+ * copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -24,10 +25,13 @@ public class VisitorCollectClassReferences implements Visitor {
   /**
    * Set of classes referencing the class being inferred.
    */
-  private Set classes;
+  private Set<MetaClass> classes;
 
+  /**
+   * Default constructor of the class.
+   */
   public VisitorCollectClassReferences() {
-    classes = new HashSet();
+    classes = new HashSet<MetaClass>();
   }
 
   /**
@@ -56,11 +60,12 @@ public class VisitorCollectClassReferences implements Visitor {
     assert (metaPackage != null);
   }
 
-  public void visit(MetaClass metaClass) {
-    assert (metaClass != null);
+  public void visit(MetaClass clazz) {
+    assert (clazz != null);
   }
 
   public void visit(MetaProperty property) {
+    assert (property != null);
     String typeName = property.getTypeName();
     if (className.equals(typeName)) {
       MetaClass type = (MetaClass) property.getContext();
@@ -69,6 +74,7 @@ public class VisitorCollectClassReferences implements Visitor {
   }
 
   public void visit(MetaIndexedProperty property) {
+    assert (property != null);
     String typeName = property.getTypeName();
     if (className.equals(typeName)) {
       MetaClass type = (MetaClass) property.getContext();

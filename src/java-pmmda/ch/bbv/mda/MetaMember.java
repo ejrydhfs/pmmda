@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -16,16 +16,19 @@ public abstract class MetaMember extends MetaElement {
   /**
    * Type property of the class. The type is the qualified name of the class
    * defining the type of the property or the name of the primitive type.
+   * @serial
    */
   private String typeName;
 
   /**
    * Flag indicating if the member is static or not.
+   * @serial
    */
   private boolean statics;
 
   /**
    * Flag indicating if the member is final or not.
+   * @serial
    */
   private boolean finals;
 
@@ -97,12 +100,5 @@ public abstract class MetaMember extends MetaElement {
    */
   public String retrieveTypeClassName() {
     return MetaClass.getClassName(getTypeName());
-  }
-
-  /**
-   * Indicates whether this model element is a leaf (no children)
-   */
-  public boolean isLeaf() {
-    return true;
   }
 }

@@ -1,4 +1,5 @@
-/* copyright 2000-2004 Marcel Baumann 
+/* 
+ * copyright 2000-2005 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$
@@ -17,9 +18,28 @@ import ch.bbv.dog.DataObjectImpl;
  * @version $Revision$
  */
 public class TaggedValue extends DataObjectImpl implements Comparable {
+  /**
+   * Serial version identifier coded as back compatibility date.
+   */
+  private static final long serialVersionUID = 20041201;
+
   // %% BEGIN USER DECLARATION
+  /**
+   * Implements a comparator functor for the tagged value instances.
+   * @author MarcelBaumann
+   * @version $Revision$
+   */
   public static class TaggedValueComparator implements Comparator {
 
+    /**
+     * Compares two tag values. The two tagged values are equivalent if
+     * both tags are the same.
+     * @param left tagged value to compare with.
+     * @param right tagged value to compare with.
+     * @return result of comparing both tag names. The ordering is based on the
+     *         name of the tag.
+     * @see TaggedValue#compareTo(Object)
+     */
     public int compare(Object left, Object right) {
       return ((TaggedValue) left).compareTo(right);
     }
@@ -43,7 +63,7 @@ public class TaggedValue extends DataObjectImpl implements Comparable {
   private TagDefinition type;
 
   /**
-   * Default constructor of the class.
+   * Default constructor of the class. No type is defined for the new tag.
    */
   public TaggedValue() {
     // default constructor
@@ -99,7 +119,7 @@ public class TaggedValue extends DataObjectImpl implements Comparable {
   /**
    * Returns the value of the tagged value.
    * @return the value of the tagged value.
-   * @see #setValue
+   * @see #setValue(String)
    */
   public String getValue() {
     return value;
@@ -108,7 +128,7 @@ public class TaggedValue extends DataObjectImpl implements Comparable {
   /**
    * Sets the value of the tagged value.
    * @param value new value of the tagged value.
-   * @see #getValue
+   * @see #getValue()
    */
   public void setValue(String value) {
     this.value = value;
@@ -117,7 +137,7 @@ public class TaggedValue extends DataObjectImpl implements Comparable {
   /**
    * Returns the type of the tagged value.
    * @return the type of the tagged value.
-   * @see #setType
+   * @see #setType(TagDefinition)
    */
   public TagDefinition getType() {
     return type;
@@ -126,7 +146,7 @@ public class TaggedValue extends DataObjectImpl implements Comparable {
   /**
    * Sets the type of the tagged value.
    * @param type new type of the tagged value.
-   * @see #getType
+   * @see #getType()
    */
   public void setType(TagDefinition type) {
     this.type = type;
@@ -155,7 +175,8 @@ public class TaggedValue extends DataObjectImpl implements Comparable {
    * Compares to another tag value. The two tagged values are equivalent if both
    * tags are the same.
    * @param object tagged value to compare with.
-   * @return result of comparing both tag names.
+   * @return result of comparing both tag names. The ordering is based on the
+   *         name of the tag.
    */
   public int compareTo(Object object) {
     TaggedValue taggedValue = (TaggedValue) object;

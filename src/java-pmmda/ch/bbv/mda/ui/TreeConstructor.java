@@ -1,4 +1,5 @@
-/* copyright 2000-2004 Marcel Baumann
+/* 
+ * copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence);
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -14,7 +15,14 @@ import org.apache.commons.logging.LogFactory;
 import ch.bbv.explorer.ExplorerNode;
 import ch.bbv.explorer.UiNodeType;
 import ch.bbv.explorer.UiNodeTypeFactory;
-import ch.bbv.mda.*;
+import ch.bbv.mda.MetaClass;
+import ch.bbv.mda.MetaElement;
+import ch.bbv.mda.MetaIndexedProperty;
+import ch.bbv.mda.MetaModel;
+import ch.bbv.mda.MetaPackage;
+import ch.bbv.mda.MetaProperty;
+import ch.bbv.mda.TaggedValue;
+import ch.bbv.mda.Visitor;
 
 /**
  * The tree constructor constructs a navigation tree representation of a MDA
@@ -23,15 +31,19 @@ import ch.bbv.mda.*;
  * @version $Revision$
  */
 public class TreeConstructor implements Visitor {
-  /** Logger of the class.
+  /**
+   * Logger of the class.
    */
   private static Log log = LogFactory.getLog(TreeConstructor.class);
+
   private ExplorerNode root;
-  private Map nodes;
+
+  private Map<MetaElement, ExplorerNode> nodes;
+
   private UiNodeTypeFactory factory;
 
   public TreeConstructor(UiNodeTypeFactory factory) {
-    nodes = new HashMap();
+    nodes = new HashMap<MetaElement, ExplorerNode>();
     this.factory = factory;
   }
 
@@ -69,11 +81,12 @@ public class TreeConstructor implements Visitor {
     ExplorerNode node = new ExplorerNode(nodeType, element, element);
     nodes.put(element, node);
 
-    ExplorerNode context = (ExplorerNode) nodes.get(element.getContext());
+    ExplorerNode context = nodes.get(element.getContext());
     if ((context == null) && log.isDebugEnabled()) {
-      log.debug("Not context found for " + element + " context " +
-        element.getContext());
+      log.debug("Not context found for " + element + " context "
+          + element.getContext());
     }
-    if(context != null) context.addChild(node);
+    if (context != null)
+      context.addChild(node);
   }
 }

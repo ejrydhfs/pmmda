@@ -1,10 +1,9 @@
-/* copyright 2000-2004 Marcel Baumann 
+/* copyright 2000-2005 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$ 
  */
 package ch.bbv.mda.persistency;
-
 
 /**
  * The exception class for all exceptions thrown when reading or writing a UML
@@ -13,10 +12,15 @@ package ch.bbv.mda.persistency;
  * @version $Revision$
  */
 public class PersistencyException extends Exception {
-	public PersistencyException() {
-	}
+  /**
+   * Serial version identifier coded as back compatibility date.
+   */
+  private static final long serialVersionUID = 20041201;
 
-	public PersistencyException(Exception exception) {
-		super(exception);
-	}
+  public PersistencyException() {
+  }
+
+  public PersistencyException(Exception exception) {
+    super(exception);
+  }
 }

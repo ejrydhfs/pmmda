@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -17,22 +17,31 @@ import java.util.List;
  */
 public class MetaMethod extends MetaElement {
   /**
-   * Parameters of the method.
+   * Serial version identifier coded as back compatibility date.
    */
-  private List parameters;
+  private static final long serialVersionUID = 20041201;
+
+  /**
+   * Parameters of the method.
+   * @serial
+   */
+  private List<MetaParameter> parameters;
 
   /**
    * Return value of the method.
+   * @serial
    */
   private MetaReturn returns;
 
   /**
    * Exceptions thrown in the method.
+   * @serial
    */
-  private List exceptions;
+  private List<MetaException> exceptions;
 
   /**
    * Flag indicating if the method is abstract or not.
+   * @serial
    */
   private boolean abstracts;
 
@@ -40,21 +49,8 @@ public class MetaMethod extends MetaElement {
    * Default constructor of the class.
    */
   public MetaMethod() {
-    init();
-  }
-
-  /**
-   * Initializes member variables. Only complex types have to be initialized
-   * here. The init() method is called after deserializing and loading from xml
-   * with XStream. Transient members have to be initialized with this init()
-   * function.
-   */
-  public void init() {
-    super.init();
-    if (parameters == null)
-      parameters = new ArrayList();
-    if (exceptions == null)
-      exceptions = new ArrayList();
+    parameters = new ArrayList<MetaParameter>();
+    exceptions = new ArrayList<MetaException>();
   }
 
   /**
@@ -107,12 +103,5 @@ public class MetaMethod extends MetaElement {
    */
   public void addException(MetaException exception) {
     exceptions.add(exception);
-  }
-
-  /**
-   * Indicates whether this model element is a leaf (no children)
-   */
-  public boolean isLeaf() {
-    return true;
   }
 }

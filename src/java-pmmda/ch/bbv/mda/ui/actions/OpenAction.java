@@ -1,6 +1,7 @@
 /*
- * copyright 2000-2004 Marcel Baumann Licensed under the Apache License, Version
- * 2.0 (the "Licence); you may not use this file except in compliance with the
+ * copyright 2000-2005 Marcel Baumann 
+ * Licensed under the Apache License, Version 2.0 (the "Licence); 
+ * you may not use this file except in compliance with the
  * License. $Id$
  */
 package ch.bbv.mda.ui.actions;
@@ -32,6 +33,11 @@ import ch.bbv.mda.ui.TreeConstructor;
  * @version $Revision$
  */
 public class OpenAction extends ExplorerOpenAction {
+  /**
+   * Serial version identifier coded as back compatibility date.
+   */
+  private static final long serialVersionUID = 20041201;
+
   /**
    * Logger for all instances of the class.
    */
@@ -65,7 +71,7 @@ public class OpenAction extends ExplorerOpenAction {
    * Opens the model in the given file programatically.
    * @param file file containing the model to open.
    * @throws PersistencyException an exception was encountered when loading the
-   *         model.
+   *           model.
    * @pre file != null
    */
   public void openModel(File file) throws PersistencyException {
@@ -96,7 +102,7 @@ public class OpenAction extends ExplorerOpenAction {
    * @param handler handler to parse the given file.
    * @param file file containing the model to be parsed.
    * @throws PersistencyException an exception was encountered when loading the
-   *         model.
+   *           model.
    * @return MetaModel containing parsed file
    */
   private MetaModel parseModel(PersistencyHandler handler, File file)

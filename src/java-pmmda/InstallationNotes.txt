@@ -5,28 +5,28 @@ Installation Notes pmMDA
    -------------
 
   The following packages are mandatory.
-    Java JRE 1.4.2 (Java Runtime Engine) or higher must be installed on your 
+    Java JRE 1.5.0 (Java Runtime Engine) or higher must be installed on your 
   	machine. The JRE is available from http://java.sun.com. The product is free 
   	of charge. Follow the detailed installation procedure of the JRE for your 
   	platform.
     
     pmMDA can be requested at the following email address:
     	marcel.baumann@computer.org
-   	The package is open source and free of charge. 
+   	The package is open source - Apache Licence 2.0 - and free of charge. 
   
   The following packages are optional.
-    An optional development environment for your Java application is the 
-    Eclipse environment. Eclipse is available from http://www.eclipse.org.
-    Only users wanting to develop their own cartridges should download this
-    package.
-    The product is open source and free of charge. 
-    Follow the detailed installation procedure of Eclipse.
+    - An optional development environment for your Java application is the 
+      Eclipse environment. Eclipse is available from http://www.eclipse.org.
+      Only users wanting to develop their own cartridges should download this
+      package.
+      The product is open source and free of charge. 
+      Follow the detailed installation procedure of Eclipse.
     
-    UML models can be drawn using the UML modeling tool ArgoUML. ArgoUML is
-    available from http://argouml.tigris.org. ArgoUML is open source and free
-    of charge. We recommand the use of a modeling tool to create your model.
-    Almost all commercial tools can be used as long as they can export their
-    model in the standard XMI format.
+    - UML models can be drawn using the UML modeling tool ArgoUML. ArgoUML is
+      available from http://argouml.tigris.org. ArgoUML is open source and free
+      of charge. We recommand the use of a modeling tool to create your model.
+      Almost all commercial tools can be used as long as they can export their
+      model in the standard XMI format.
     
 2. Installation
    ------------
@@ -176,5 +176,4 @@ Installation Notes pmMDA
       The pmMDA will load it automatically in the application. For more details
       please read the pmMDA documentation.
       
-   5. 
    
