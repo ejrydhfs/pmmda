@@ -10,8 +10,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import ch.bbv.utilities.SystemUtilities;
-
 /**
  * The Zip file utilities class provides convenience methods to manipulate a ZIP
  * file containing a XMI model.
@@ -19,6 +17,8 @@ import ch.bbv.utilities.SystemUtilities;
  * @version $Revision$
  */
 public class ZipFileUtilities {
+  private static final int BUFFER_SIZE = 4096;
+
   /**
    * Replace the entry with the given name in the zip file. The content of the
    * new entry is given as stream. This method implements the following
@@ -33,9 +33,8 @@ public class ZipFileUtilities {
    * original file and rename the temporary name to the original file.
    * </ul>
    * @param file zip file containing the entry.
-   * @param entryName name of the entry to be replaced.
-   * @param stream new content of the entry to update.
-   * @throws PersistencyException an I/O error occurred during processing.
+   * @param entryName
+   * @param stream
    */
   public void replaceEntry(File file, String entryName, InputStream stream)
       throws PersistencyException {
@@ -50,9 +49,9 @@ public class ZipFileUtilities {
       while (entry != null) {
         output.putNextEntry(new ZipEntry(entry));
         if (!entry.getName().equals(entryName)) {
-          SystemUtilities.copy(input, output);
+          copy(input, output);
         } else {
-          SystemUtilities.copy(stream, output);
+          copy(stream, output);
         }
         input.closeEntry();
         output.closeEntry();
@@ -73,4 +72,22 @@ public class ZipFileUtilities {
       throw new PersistencyException(ioe);
     }
   }
+
+  public void copy(InputStream source, OutputStream target) throws IOException {
+    byte[] buffer = new byte[BUFFER_SIZE];
+    int nrOfReadBytes;
+    do {
+      nrOfReadBytes = source.read(buffer, 0, BUFFER_SIZE);
+      if (nrOfReadBytes != -1) {
+        target.write(buffer, 0, nrOfReadBytes);
+      }
+    } while (nrOfReadBytes != -1);
+  }
+
+  public void copy(String source, OutputStream target) throws IOException {
+    byte[] buffer;
+    buffer = source.getBytes();
+    target.write(buffer);
+  }
+
 }
