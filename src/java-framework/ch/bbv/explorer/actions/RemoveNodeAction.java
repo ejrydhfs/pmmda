@@ -40,7 +40,7 @@ public class RemoveNodeAction extends ExplorerNodeActionImpl {
           if (relation != null) {
             relation.removeProperty(parent.getLightweightObject(), node
                 .getLightweightObject());
-            if (parent.getDataObject() != null && parent.getLightweightObject() != parent.getDataObject()) {
+            if (parent.getDataObject() != null && node.getDataObject() != null && parent.getLightweightObject() != parent.getDataObject()) {
               relation.removeProperty(parent.getDataObject(), node
                   .getDataObject());
             }
