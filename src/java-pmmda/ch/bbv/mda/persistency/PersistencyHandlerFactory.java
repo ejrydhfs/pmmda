@@ -41,9 +41,25 @@ public class PersistencyHandlerFactory {
     PersistencyHandler persistencyHandler = null;
     if (filename.endsWith(".ser")) {
       persistencyHandler = getSerializeHandler();
-    } else if (filename.endsWith(".xmi") || filename.endsWith(".xml")) {
+    } else if (filename.endsWith(".xml")) {
       persistencyHandler = getXmlHandler();
-    } else if (filename.endsWith(".zargo")) {
+    } else if (filename.endsWith(".xmi") || filename.endsWith(".zargo")) {
+      persistencyHandler = getNsUmlHandler();
+    }
+    return persistencyHandler;
+  }
+
+  /**
+   * Returns the an alternate best match for the given file. The selection of
+   * the optimal persistency handler is based on the extension of the file.
+   * @param file file, which best persistency handler should be infered.
+   * @return the optimal handler if found otherwise null.
+   * @pre file != null
+   */
+  public PersistencyHandler getAlternateHandler(File file) {
+    String filename = file.getName().toLowerCase();
+    PersistencyHandler persistencyHandler = null;
+    if (filename.endsWith(".xmi") || filename.endsWith(".xml")) {
       persistencyHandler = getNsUmlHandler();
     }
     return persistencyHandler;
