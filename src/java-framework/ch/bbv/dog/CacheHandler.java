@@ -336,8 +336,12 @@ public class CacheHandler implements DataObjectHandler, CachesHandler {
         addToCache(copy, originalsCache);
       }
       if (copiedEnabled) {
-        removeFromCache(root.getClass(), root.getId(), copiesCache);
-        addToCache(root, copiesCache);
+        DataObjectId objectId = new DataObjectId(root.getClass(), root.getId());
+        DataObject copy = (DataObject) copiesCache.get(objectId);
+        if (copy != root) {
+          removeFromCache(root.getClass(), root.getId(), copiesCache);
+          addToCache(root, copiesCache);
+        }
       }
     }
     return root;

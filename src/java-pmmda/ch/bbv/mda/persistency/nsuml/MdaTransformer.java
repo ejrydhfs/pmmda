@@ -1,5 +1,5 @@
 /* copyright 2000-2004 Marcel Baumann
- * Licensed under the Apache License, Version 2.0 (the "Licence);
+ * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
  */
@@ -7,6 +7,10 @@ package ch.bbv.mda.persistency.nsuml;
 
 import java.util.*;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import ru.novosoft.uml.MFactory;
 import ru.novosoft.uml.foundation.core.*;
 import ru.novosoft.uml.foundation.data_types.MExpression;
 import ru.novosoft.uml.foundation.data_types.MMultiplicity;
@@ -14,14 +18,9 @@ import ru.novosoft.uml.foundation.data_types.MVisibilityKind;
 import ru.novosoft.uml.foundation.extension_mechanisms.MStereotype;
 import ru.novosoft.uml.foundation.extension_mechanisms.MTaggedValue;
 import ru.novosoft.uml.foundation.extension_mechanisms.MTaggedValueImpl;
-import ru.novosoft.uml.MFactory;
 import ru.novosoft.uml.model_management.MModel;
 import ru.novosoft.uml.model_management.MPackage;
 import ru.novosoft.uml.model_management.MPackageImpl;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import ch.bbv.mda.*;
 
 /**
@@ -172,7 +171,7 @@ public class MdaTransformer {
       while (!(mElement instanceof MetaPackage)) {
         mElement = mElement.getContext();
       }
-      MetaPackage metaPackage = (MetaPackage)mElement; 
+      MetaPackage metaPackage = (MetaPackage) mElement;
       MPackage mPackage = (MPackage) elements.get(metaPackage);
       MAssociation association = findAssociation(mPackage, context, property
           .getName());
@@ -261,7 +260,7 @@ public class MdaTransformer {
 
     for (Iterator i = MetaFactory.getInstance().getObsoleteTypes(
         source.getClass()).iterator(); i.hasNext();) {
-      TaggedValueType type = (TaggedValueType) i.next();
+      TagDefinition type = (TagDefinition) i.next();
       item.removeTaggedValue(type.getTag());
     }
   }
@@ -450,6 +449,16 @@ public class MdaTransformer {
         break;
       }
       mAttribute = null;
+    }
+    if (mAttribute == null) {
+      for (Iterator i = new FilterIterator(context.getOwnedElements(),
+          MAttribute.class); i.hasNext();) {
+        mAttribute = (MAttribute) i.next();
+        if (name.equals(mAttribute.getName())) {
+          break;
+        }
+        mAttribute = null;
+      }
     }
     return mAttribute;
   }

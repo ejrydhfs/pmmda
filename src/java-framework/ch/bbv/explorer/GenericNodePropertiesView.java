@@ -140,8 +140,7 @@ public class GenericNodePropertiesView extends NodePropertiesView {
 
     int row = generateRows(builder, "Simple Properties",
         primitivePropertyViews, 1);
-    row = generateRows(builder, "Data Object Properties", dataPropertyViews,
-        row);
+    row = generateRows(builder, "Data Objects", dataPropertyViews, row);
     row = generateRows(builder, "Indexed Properties", indexedPropertyViews, row);
     row = generateRows(builder, "Mapped Properties", mappedPropertyViews, row);
 
@@ -320,14 +319,14 @@ public class GenericNodePropertiesView extends NodePropertiesView {
      * @param bean bean which property should be displayed.
      */
     public void setModel(DataObject bean) {
-      if (this.bean != bean) {
-        this.bean = bean;
-        Object value = null;
-        if (bean != null) {
-          ReflectUtilities.getProperty(bean, property);
-        }
-        setValue(value);
+      this.bean = bean;
+      Object value;
+      if (bean != null) {
+        value = ReflectUtilities.getProperty(bean, property);
+      } else {
+        value = null;
       }
+      setValue(value);
     }
 
     /**
@@ -337,7 +336,8 @@ public class GenericNodePropertiesView extends NodePropertiesView {
     public void update() {
       Object oldValue = ReflectUtilities.getProperty(bean, property);
       Object value = getValue();
-      if (((oldValue != null) && oldValue.equals(value)) || (value != null)) {
+      if (((oldValue != null) && !oldValue.equals(value))
+          || ((oldValue == null) && (value != null))) {
         ReflectUtilities.setProperty(bean, property, value);
       }
     }
@@ -436,7 +436,9 @@ public class GenericNodePropertiesView extends NodePropertiesView {
       if (type.equals(String.class)) {
         text.setText((String) value);
       } else if (Boolean.class.equals(type) || Boolean.TYPE.equals(type)) {
-        checkBox.setSelected(((Boolean) value).booleanValue());
+        boolean booleanValue = value != null ? ((Boolean) value).booleanValue()
+            : false;
+        checkBox.setSelected(booleanValue);
       } else if (Date.class.equals(type)) {
         if (value != null) {
           dateChooser.setDate((Date) value);
@@ -552,7 +554,7 @@ public class GenericNodePropertiesView extends NodePropertiesView {
     }
 
     public JComponent getComponent() {
-      return null;
+      return button;
     }
 
     public void setEditable(boolean editable) {

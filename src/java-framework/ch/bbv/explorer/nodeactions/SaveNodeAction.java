@@ -33,7 +33,7 @@ public class SaveNodeAction extends ExplorerNodeActionImpl {
   }
 
   public void execute(ExplorerNode node) {
-    DataObject object = (DataObject) node.getDataObject();
+    DataObject object = node.getDataObject();
     Explorer explorer = node.getExplorer();
     if ((object == null) || !object.isModified()) {
       JOptionPane.showMessageDialog(explorer.getFrame(),
@@ -59,7 +59,7 @@ public class SaveNodeAction extends ExplorerNodeActionImpl {
     ExplorerNode root = node;
     boolean continues = true;
     while (continues && (root != null)) {
-      DataObject boOwner = (DataObject) root.getDataObject();
+      DataObject boOwner = root.getDataObject();
       if (root.getNodeType().getDataObjectType().isRoot() && !boOwner.isNew()) {
         continues = false;
       } else {

@@ -1,7 +1,7 @@
-/*
- * copyright 2000-2004 Marcel Baumann Licensed under the Apache License, Version
- * 2.0 (the "Licence); you may not use this file except in compliance with the
- * License. $Id: RemoveNodeAction.java,v 1.1 2004/08/10 17:36:18 marcelbaumann
+/* copyright 2000-2004 Marcel Baumann 
+ * Licensed under the Apache License, Version 2.0 (the "Licence"); 
+ * you may not use this file except in compliance with the License. 
+ * $Id: RemoveNodeAction.java,v 1.1 2004/08/10 17:36:18 marcelbaumann
  * Exp $
  */
 package ch.bbv.explorer.actions;
@@ -40,7 +40,8 @@ public class RemoveNodeAction extends ExplorerNodeActionImpl {
           if (relation != null) {
             relation.removeProperty(parent.getLightweightObject(), node
                 .getLightweightObject());
-            if (parent.getDataObject() != null && node.getDataObject() != null && parent.getLightweightObject() != parent.getDataObject()) {
+            if (parent.getDataObject() != null && node.getDataObject() != null
+                && parent.getLightweightObject() != parent.getDataObject()) {
               relation.removeProperty(parent.getDataObject(), node
                   .getDataObject());
             }
@@ -55,9 +56,11 @@ public class RemoveNodeAction extends ExplorerNodeActionImpl {
   }
 
   /**
-   * Retrieves the type identifier of the dataObject visualized by the ExplorerNode.
-   * The type identifier or property is then used to obtain the UiRelation between parent and child node to be deleted.
-   * @param node ExplorerNode to be obtained the dataObject type identifier (property)
+   * Retrieves the type identifier of the dataObject visualized by the
+   * ExplorerNode. The type identifier or property is then used to obtain the
+   * UiRelation between parent and child node to be deleted.
+   * @param node ExplorerNode to be obtained the dataObject type identifier
+   *        (property)
    * @return String property.
    */
   private String findProperty(ExplorerNode node) {

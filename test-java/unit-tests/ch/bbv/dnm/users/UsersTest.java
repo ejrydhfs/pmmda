@@ -47,7 +47,7 @@ public class UsersTest extends TestCase {
   public static Test suite() {
     return new TestSuite(UsersTest.class);
   }
-  
+
   public void setUp() throws Exception {
     if (Application.getApplication() == null) {
       new Application(Application.USE_DIRECT, true);
@@ -92,7 +92,11 @@ public class UsersTest extends TestCase {
     for (int i = 1; i <= 5; i++) {
       Domain domain = createDomainGraph(2, 1, 5, 5);
       provider.addDomain(domain);
+      int nrDomains = provider.getDomains().size();
       manager.getDataObjectHandler().store(DATASOURCE, Domain.class, domain);
+      provider = (Provider) manager.getDataObjectHandler().retrieve(DATASOURCE,
+          provider.getClass(), provider.getId());
+      assert(provider.getDomains().size() == nrDomains);
     }
     manager.getDataObjectHandler().remove(DATASOURCE, Provider.class, provider);
 

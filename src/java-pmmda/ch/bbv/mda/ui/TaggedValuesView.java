@@ -150,7 +150,7 @@ public class TaggedValuesView extends NodePropertiesView {
       TaggedValue taggedValue = (TaggedValue) tablePanel.getRow(row);
       TableCellEditor editor = null;
       if (taggedValue != null) {
-        TaggedValueType type = taggedValue.getType();
+        TagDefinition type = taggedValue.getType();
         if (type != null) {
           editor = getEditor(type.getType());
         }

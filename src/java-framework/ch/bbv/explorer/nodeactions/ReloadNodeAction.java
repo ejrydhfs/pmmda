@@ -34,7 +34,7 @@ public class ReloadNodeAction extends AbstractNodeAction {
   }
 
   public void execute(ExplorerNode node) {
-    DataObject object = (DataObject) node.getDataObject();
+    DataObject object = node.getDataObject();
     Explorer explorer = node.getExplorer();
     if ((object == null) || object.isNew()) {
       JOptionPane.showMessageDialog(explorer.getFrame(), "Object is new.",

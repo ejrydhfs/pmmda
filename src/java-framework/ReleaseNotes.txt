@@ -1,5 +1,10 @@
-Version 0.2.1-RC2 (15 October 2004)
+Version 0.2.1-RC2 (30 October 2004)
 ---------------------------------
+The following known open issues exist.
+- The insert of sub-elements in an existing graph does not work with the
+  current version patched of OJB library. We are waiting to the new
+  official release of OJB to correct it in the final release. 
+
 The following new features were added.
 - The generic properties node dialog was enhanced to support edition of their
   values based on their types. Date fields are displayed with a powerful open

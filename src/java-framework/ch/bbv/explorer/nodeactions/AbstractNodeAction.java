@@ -155,7 +155,7 @@ public abstract class AbstractNodeAction extends ExplorerNodeActionImpl {
       if ((lwClass != null) && (lwClass != boClass)) {
         lwObject = type.createLwInstance();
       } else {
-        lwObject = (LightweightObject) (Object) boObject;
+        lwObject = (LightweightObject) boObject;
       }
     }
 

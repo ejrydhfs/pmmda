@@ -15,14 +15,13 @@ import ch.bbv.explorer.ExplorerNode;
 import ch.bbv.explorer.UiNodeType;
 
 /**
- * The revert node retrieves the local representation of the data 
- * object graph. The behaviour is described in details in the 
- * referenced class.
+ * The revert node retrieves the local representation of the data object graph.
+ * The behaviour is described in details in the referenced class.
  * @see ch.bbv.dog.CachesHandler
  * @author MarcelBaumann
  * @version $Revision$
  */
-public class RevertNodeAction extends AbstractNodeAction  {
+public class RevertNodeAction extends AbstractNodeAction {
   /**
    * Constructor of the class.
    * @param type node type for which the action is defined.
@@ -34,12 +33,11 @@ public class RevertNodeAction extends AbstractNodeAction  {
   }
 
   public void execute(ExplorerNode node) {
-    DataObject object = (DataObject) node.getDataObject();
+    DataObject object = node.getDataObject();
     Explorer explorer = node.getExplorer();
-    if ((object == null) || !object.isModified() || object.isNew()) {
-      JOptionPane.showMessageDialog(explorer.getFrame(),
-          "Object was not modified or is new.", "Revert Operation",
-          JOptionPane.WARNING_MESSAGE);
+    if ((object == null) || object.isNew()) {
+      JOptionPane.showMessageDialog(explorer.getFrame(), "Object is new.",
+          "Revert Operation", JOptionPane.WARNING_MESSAGE);
     } else {
       CachesHandler handler = (CachesHandler) explorer.getManager()
           .getDataObjectHandler();
