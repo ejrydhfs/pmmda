@@ -14,7 +14,7 @@ import ch.bbv.mda.generators.OjbCartridge;
 
 /**
  * The OJB tag rule implements all validation rules for the tag values defined
- * in the OJB cartridge.
+ * in the OJB cartridge. The rules are only applied to persistent data objects.
  * @author MarcelBaumann
  * @version $Revision$
  */
@@ -70,7 +70,7 @@ public class OjbTagRule extends TagRule {
       if (!exists(clazz, OjbCartridge.TABLE_NAME_TAG)) {
         sucess = false;
         addErrorMessage(results, ERROR_MISSING_TABLE,
-            OjbCartridge.IS_PERSISTENT_TAG, clazz.getName());
+            OjbCartridge.IS_PERSISTENT_TAG, clazz.qualifiedName());
       }
     }
     return sucess;
@@ -92,30 +92,33 @@ public class OjbTagRule extends TagRule {
    */
   protected boolean validate(MetaProperty property, List results) {
     boolean sucess = true;
-    if (!property.isTransient()) {
+
+    if (!property.isTransient()
+        && property.getContext().booleanValueOfTag(
+            OjbCartridge.IS_PERSISTENT_TAG)) {
       if (!exists(property, OjbCartridge.COLUMN_NAME_TAG)) {
         sucess = false;
         addErrorMessage(results, ERROR_MISSING_COLUMN,
-            OjbCartridge.COLUMN_NAME_TAG, property.getName());
+            OjbCartridge.COLUMN_NAME_TAG, property.qualifiedName());
       }
       if (!exists(property, OjbCartridge.COLUMN_TYPE_TAG)) {
         sucess = false;
         addErrorMessage(results, ERROR_MISSING_TYPE,
-            OjbCartridge.COLUMN_TYPE_TAG, property.getName());
+            OjbCartridge.COLUMN_TYPE_TAG, property.qualifiedName());
       }
       String value = property.valueOfTag(OjbCartridge.COLUMN_TYPE_TAG);
-      if (value.equals(JdbcTypeCode.getCode(JdbcTypeCode.STRING)
+      if (value.equalsIgnoreCase(JdbcTypeCode.getCode(JdbcTypeCode.STRING)
           .getShortDescription())) {
         if (!exists(property, OjbCartridge.COLUMN_SIZE_TAG)) {
           sucess = false;
           addErrorMessage(results, ERROR_MISSING_LENGTH,
-              OjbCartridge.COLUMN_SIZE_TAG, property.getName());
+              OjbCartridge.COLUMN_SIZE_TAG, property.qualifiedName());
         }
       } else {
-        if (exists(property, OjbCartridge.COLUMN_SIZE_TAG)) {
+        if (intValue(property, OjbCartridge.COLUMN_SIZE_TAG) != 0) {
           sucess = false;
           addErrorMessage(results, WARNING_SUPERFLUOUS_LENGTH,
-              OjbCartridge.COLUMN_SIZE_TAG, property.getName());
+              OjbCartridge.COLUMN_SIZE_TAG, property.qualifiedName());
         }
       }
     }
@@ -134,11 +137,13 @@ public class OjbTagRule extends TagRule {
    */
   protected boolean validate(MetaIndexedProperty property, List results) {
     boolean sucess = true;
-    if (!property.isTransient()) {
+    if (!property.isTransient()
+        && property.getContext().booleanValueOfTag(
+            OjbCartridge.IS_PERSISTENT_TAG)) {
       if (!exists(property, OjbCartridge.COLUMN_NAME_TAG)) {
         sucess = false;
         addErrorMessage(results, ERROR_MISSING_COLUMN,
-            OjbCartridge.COLUMN_NAME_TAG, property.getName());
+            OjbCartridge.COLUMN_NAME_TAG, property.qualifiedName());
       }
     }
     return sucess;
@@ -153,5 +158,20 @@ public class OjbTagRule extends TagRule {
   private boolean exists(MetaElement element, String tag) {
     String value = element.valueOfTag(tag);
     return (value != null && value.trim().length() > 0);
+  }
+
+  /**
+   * Returns the value of a numerical tag value. The default value follows the
+   * convention of major programming languages.
+   * @param element element containing the tag to check.
+   * @param tag name of the tag to check.
+   * @return the numerical value of the tag if defined otherwise 0.
+   */
+  private int intValue(MetaElement element, String tag) {
+    int value = 0;
+    if (exists(element, tag)) {
+      Integer.parseInt(element.valueOfTag(tag));
+    }
+    return value;
   }
 }

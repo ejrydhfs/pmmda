@@ -7,7 +7,6 @@
 package ch.bbv.mda.generators.validation;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.ResourceBundle;
 
 import ch.bbv.dog.validation.*;
@@ -58,15 +57,30 @@ public abstract class TagRule extends ValidationRuleImpl implements
    * @param prefix prefix of the cartridge owning the rules.
    */
   public TagRule(String prefix) {
+    super(false, ERROR);
     this.prefix = prefix;
     StringBuffer buffer = new StringBuffer();
     buffer.append(MESSAGES_PACKAGAGE_NAME).append(
         TextUtilities.identifierFirstUpper(prefix)).append("RulesMessages");
-    resources = ResourceBundle.getBundle(buffer.toString(), Locale.US);
+    resources = ResourceBundle.getBundle(buffer.toString());
   }
 
   public boolean isImmediate() {
     return false;
+  }
+
+  public boolean execute(Object bean, List results) {
+    boolean sucess = true;
+    if (bean instanceof MetaPackage) {
+      sucess = validate((MetaPackage) bean, results);
+    } else if (bean instanceof MetaClass) {
+      sucess = validate((MetaClass) bean, results);
+    } else if (bean instanceof MetaIndexedProperty) {
+      sucess = validate((MetaIndexedProperty) bean, results);
+    } else if (bean instanceof MetaProperty) {
+      sucess = validate((MetaProperty) bean, results);
+    }
+    return sucess;
   }
 
   public boolean execute(Object bean, String property, List results) {
@@ -147,7 +161,7 @@ public abstract class TagRule extends ValidationRuleImpl implements
    */
   protected void addErrorMessage(List results, String key, String tag,
       String name) {
-    addMessage(results, ValidationRuleResult.ERROR, key, tag, name);
+    addMessage(results, ValidationRule.ERROR, key, tag, name);
   }
 
   /**
@@ -159,7 +173,7 @@ public abstract class TagRule extends ValidationRuleImpl implements
    */
   protected void addWarningMessage(List results, String key, String tag,
       String name) {
-    addMessage(results, ValidationRuleResult.WARNING, key, tag, name);
+    addMessage(results, ValidationRule.WARNING, key, tag, name);
   }
 
   /**

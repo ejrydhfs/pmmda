@@ -6,14 +6,7 @@
 package ch.bbv.mda.ui;
 
 import java.awt.BorderLayout;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JTable;
@@ -26,11 +19,7 @@ import ch.bbv.dog.ui.ReferenceCodeComboBox;
 import ch.bbv.explorer.NodePropertiesView;
 import ch.bbv.explorer.components.TableCell;
 import ch.bbv.explorer.components.TablePanel;
-import ch.bbv.mda.MetaElement;
-import ch.bbv.mda.PropertyModeCode;
-import ch.bbv.mda.TaggedValue;
-import ch.bbv.mda.TaggedValueType;
-import ch.bbv.mda.VisibilityCode;
+import ch.bbv.mda.*;
 
 /**
  * The tagged value view displays a set of tagged values in a table. The first
@@ -51,7 +40,7 @@ public class TaggedValuesView extends NodePropertiesView {
     comboBox.setCaseSensitive(false);
     editors.put(Boolean.TYPE, new DefaultCellEditor(comboBox));
     editors.put(Boolean.class, new DefaultCellEditor(comboBox));
-    editors.put(String.class, new MyEditor(new JTextField())); 
+    editors.put(String.class, new MyEditor(new JTextField()));
     // used to resolve issue of stop cell editing in case of focus lost.
     registerReferenceCode(VisibilityCode.class, VisibilityCode.getCodes(),
         false);
@@ -63,16 +52,20 @@ public class TaggedValuesView extends NodePropertiesView {
 
   private TablePanel tablePanel;
 
-  private static final String[] COLUMN_NAMES = { "tag", "value" };
+  private static final TableCell.Cell[] CELLS;
 
-  private static final String[] PROPERTY_NAMES = { "tag", "value" };
+  static {
+    CELLS = new TableCell.Cell[2];
+    CELLS[0] = new TableCell.Cell("tag", "tag", String.class, false);
+    CELLS[1] = new TableCell.Cell("value", "value", String.class, true);
+  }
 
   /**
    * Default constructor of the class. The content of the view is constructed.
    */
   public TaggedValuesView() {
     setLayout(new BorderLayout());
-    tableCell = new TableCell(COLUMN_NAMES, PROPERTY_NAMES);
+    tableCell = new TableCell(CELLS);
     tablePanel = new TaggedValuePanel(Collections.EMPTY_LIST, tableCell);
     add(tablePanel);
   }
@@ -129,7 +122,7 @@ public class TaggedValuesView extends NodePropertiesView {
     }
     return copies;
   }
-  
+
   static class TaggedValuePanel extends TablePanel {
     public TaggedValuePanel(Collection objects, TableCell tableCell) {
       super(objects, tableCell, new TaggedValue.TaggedValueComparator());
@@ -147,7 +140,8 @@ public class TaggedValuesView extends NodePropertiesView {
       super(model);
       this.tablePanel = tablePanel;
       TableCellEditor tce = new MyEditor(new JTextField());
-      for(Enumeration i = this.defaultEditorsByColumnClass.keys(); i.hasMoreElements();){
+      for (Enumeration i = this.defaultEditorsByColumnClass.keys(); i
+          .hasMoreElements();) {
         this.setDefaultEditor(i.nextElement().getClass(), tce);
       }
     }

@@ -19,20 +19,25 @@ import ch.bbv.mda.generators.CartridgeFactory;
  */
 public class CartridgesPanel extends TablePanel {
   /**
-   * Name of the columns of the cartridge information tuples.
+   * Cells of the columns of the cartridge information tuples.
    */
-  private static final String[] COLUMN_NAMES = { "name", "prefix", "version",
-      "loaded", "active", "classname" };
+  private static final TableCell.Cell[] CELLS;
 
-  private static final boolean[] ACTIVE_COLUMNS = { false, false, false, false,
-      true, false };
+  static {
+    CELLS = new TableCell.Cell[6];
+    CELLS[0] = new TableCell.Cell("name", "name", String.class, false);
+    CELLS[1] = new TableCell.Cell("prefix", "prefix", String.class, false);
+    CELLS[2] = new TableCell.Cell("version", "version", String.class, false);
+    CELLS[3] = new TableCell.Cell("loaded", "loaded", Boolean.class, false);
+    CELLS[4] = new TableCell.Cell("active", "active", Boolean.class, true);
+    CELLS[5] = new TableCell.Cell("classname", "classname", String.class, false);
+  }
 
   /**
    * Constructor of the class.
    * @param factory cartridge factory.
    */
   public CartridgesPanel(CartridgeFactory factory) {
-    super(factory.getCartridgeDescriptors(), new TableCell(COLUMN_NAMES,
-        COLUMN_NAMES, ACTIVE_COLUMNS));
+    super(factory.getCartridgeDescriptors(), new TableCell(CELLS));
   }
 }

@@ -69,6 +69,7 @@ public class TypeFactory extends AbstractTypeFactory {
     DataObjectType type = new DataObjectType(MetaPackage.class,
         MetaPackage.class, MetaPackage.class, VisitorFunctor.class,
         VisitorFunctor.class, null);
+    type.setRoot(true);
     UiNodeTypeImpl nodeType = new UiNodeTypeImpl(type, "name",
         MetaPackageView.class);
     addRelation(nodeType, "classes", MetaClass.class, true, true);
@@ -88,6 +89,7 @@ public class TypeFactory extends AbstractTypeFactory {
   public void createNodeTypeForMetaClass() {
     DataObjectType type = new DataObjectType(MetaClass.class, MetaClass.class,
         MetaClass.class, VisitorFunctor.class, VisitorFunctor.class, null);
+    type.setRoot(true);
     UiNodeTypeImpl nodeType = new UiNodeTypeImpl(type, "name",
         MetaClassView.class);
     addRelation(nodeType, "properties", MetaProperty.class, true, true);

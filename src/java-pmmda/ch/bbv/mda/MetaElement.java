@@ -465,6 +465,10 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
     return new ImportStatements(context);
   }
 
+  public String toString() {
+    return qualifiedName();
+  }
+  
   public boolean isLeaf() {
     assert (false);
     return false;

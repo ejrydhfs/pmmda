@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="properties"/>
+	<classpathentry excluding="**/*.html" kind="src" path="src/java-business"/>
 	<classpathentry excluding="**/*.html" kind="src" path="gendir/ojb-server"/>
 	<classpathentry kind="src" path="src/etc/properties/unmanaged"/>
 	<classpathentry excluding="**/*.html" kind="src" path="gendir/rich-client"/>

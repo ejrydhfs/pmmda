@@ -11,13 +11,19 @@
       <p>The <em>pmMDA - poor man Model Driven Architecture -</em> is a framework
         to generate source code artifacts and the associated documentation following
         the MDA approach.</p>
+      <p>The development method is agile USDP using UML. The programming 
+        language is Java JDK-5.0. The license of the project is Apache 
+        Foundation License 2.0.</p>
     </section>
     <section>
       <title>DOG and Explorer framework</title>
-      <p>The <em>pmMDA</em> provides powerful framework to implement mission
-        critical applications. The data object graph <em>DOG</em> framework
-        manipulates graphs of business objects. The explorer framework displays
-        and manipulates such graphs.</p>
+      <p>The <em>DOG</em> provides powerful framework to implement mission 
+        critical applications. The data object graph <em>DOG</em> framework 
+        manipulates graphs of business objects. The explorer framework 
+        <em>OEX</em>displays and manipulates such graphs.</p>
+      <p>The development method is agile USDP using UML. The programming 
+        language is Java JDK-5.0. The license of the project is Apache 
+        Foundation License 2.0.</p>
     </section>
     <section>
       <title>Documentor JavaDoc Extensions</title>

@@ -10,6 +10,30 @@
       <title>Introduction</title>
       <p>This area contains articles and presentations about the applications 
         and frameworks hosted on this site.</p>
+      <dl>
+        <dt><link href="site:articles/pmda-design">pmMDA Design</link></dt>
+        <dd>describes the architecture and design decisions of the 
+          <em>pmMDA</em> application.</dd>
+        <dt><link href="site:articles/pmda-ui">pmMDA User Interface</link></dt>
+        <dd>describes the graphical user interface and the command line 
+          interface of the <em>pmMDA</em> application.</dd>
+        <dt><link href="site:articles/dog-design">Data Object Graph Design</link></dt>
+        <dd> describes the architecture and design decision of the data object 
+          graph framework.</dd>
+        <dt>
+          <link href="site:articles/dog-transactions">Data Object Graph Lessons 
+            Learned</link>
+        </dt>
+        <dd>documents the lesson learned using the DOG framework in 
+          mission-critical entreprise applications. The programs were 
+          developed and deployed between 2002 and 2004.</dd>
+        <dt>
+          <link href="site:articles/oex-design">Data Object Graph 
+            Explorer</link>
+        </dt>
+        <dd>describes the architecture and design decisons of the explorer
+          framework.</dd>
+      </dl>
     </section>
   </body>
 </document>

@@ -24,6 +24,11 @@ public class RulesFactory {
   private static final String NAME = "name";
 
   /**
+   * Name of the description property of the meta element.
+   */
+  private static final String DESCRIPTION = "description";
+
+  /**
    * Defines the regular format for a Java identifier. An identifier is used to
    * name packages, classes, properties and methods.
    */
@@ -34,11 +39,18 @@ public class RulesFactory {
    */
   private FormatRule identifierRule;
 
+  private NotNullRule nameNotNullRule;
+
+  private NotNullRule descriptionNotNullRule;
+
   /**
    * Registers all rules constraining the MDA model.
    */
   public void registerAllRules() {
-    identifierRule = new FormatRule(false, JAVA_IDENTIFIER_PATTERN);
+    identifierRule = new FormatRule(false, ValidationRule.ERROR,
+        JAVA_IDENTIFIER_PATTERN);
+    nameNotNullRule = new NotNullRule(true, ValidationRule.ERROR);
+    descriptionNotNullRule = new NotNullRule(true, ValidationRule.WARNING);
     createRulesForMetaModel();
     createRulesForMetaModel();
     createRulesForMetaClass();
@@ -51,7 +63,7 @@ public class RulesFactory {
    */
   public void createRulesForMetaModel() {
     Validator validator = getValidator();
-    validator.registerRule(new NotNullRule(true), MetaModel.class, NAME);
+    validator.registerRule(nameNotNullRule, MetaModel.class, NAME);
     validator.registerRule(identifierRule, MetaModel.class, NAME);
     validator.registerRule(new UniqueRule(NAME), MetaModel.class, "packages");
   }
@@ -61,10 +73,11 @@ public class RulesFactory {
    */
   public void createRulesForMetaPackage() {
     Validator validator = getValidator();
-    validator.registerRule(new NotNullRule(true), MetaPackage.class, NAME);
+    validator.registerRule(nameNotNullRule, MetaPackage.class, NAME);
     validator.registerRule(identifierRule, MetaPackage.class, NAME);
     validator.registerRule(new UniqueRule(NAME), MetaPackage.class, "classes");
-
+    validator.registerRule(descriptionNotNullRule, MetaPackage.class,
+        DESCRIPTION);
   }
 
   /**
@@ -72,11 +85,13 @@ public class RulesFactory {
    */
   public void createRulesForMetaClass() {
     Validator validator = getValidator();
-    validator.registerRule(new NotNullRule(true), MetaClass.class, NAME);
+    validator.registerRule(nameNotNullRule, MetaClass.class, NAME);
     validator.registerRule(identifierRule, MetaClass.class, NAME);
     validator.registerRule(new UniqueRule(NAME), MetaClass.class, "properties");
     validator.registerRule(new UniqueRule(NAME), MetaClass.class,
         "indexedProperties");
+    validator
+        .registerRule(descriptionNotNullRule, MetaClass.class, DESCRIPTION);
   }
 
   /**
@@ -84,10 +99,12 @@ public class RulesFactory {
    */
   public void createRulesForMetaProperty() {
     Validator validator = getValidator();
-    validator.registerRule(new NotNullRule(true), MetaProperty.class, NAME);
+    validator.registerRule(nameNotNullRule, MetaProperty.class, NAME);
     validator.registerRule(identifierRule, MetaProperty.class, NAME);
-    validator.registerRule(new NotNullRule(true), MetaProperty.class,
-        "typeName");
+    validator.registerRule(new NotNullRule(true, ValidationRule.ERROR),
+        MetaProperty.class, "typeName");
+    validator.registerRule(descriptionNotNullRule, MetaProperty.class,
+        DESCRIPTION);
 
   }
 
@@ -96,11 +113,12 @@ public class RulesFactory {
    */
   public void createRulesForMetaIndexedProperty() {
     Validator validator = getValidator();
-    validator.registerRule(new NotNullRule(true), MetaIndexedProperty.class,
-        NAME);
+    validator.registerRule(nameNotNullRule, MetaIndexedProperty.class, NAME);
     validator.registerRule(identifierRule, MetaIndexedProperty.class, NAME);
-    validator.registerRule(new NotNullRule(true), MetaIndexedProperty.class,
-        "typeName");
+    validator.registerRule(new NotNullRule(true, ValidationRule.ERROR),
+        MetaIndexedProperty.class, "typeName");
+    validator.registerRule(descriptionNotNullRule, MetaIndexedProperty.class,
+        DESCRIPTION);
   }
 
   /**

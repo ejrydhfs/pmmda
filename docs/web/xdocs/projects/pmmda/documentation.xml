@@ -9,7 +9,16 @@
     <section>
       <title>Whitepapers and Articles</title>
       <p>White papers and in depth articles describing architectural decisions 
-        and implementation details are available.</p>
+        and implementation details are available. Documents exist for each 
+        project.</p>
+      <dl>
+        <dt>pmMDA</dt><dd>The MDA infrastructure to generate code and document
+          artifacts.</dd>
+        <dt>DOG</dt><dd>The data object graph framework provides services to
+          manipulate graph of objects.</dd>
+        <dt>OEX</dt><dd>The data object graph explorer framework displaying
+          graphs of objects in a tree list view.</dd>
+      </dl>
       <p>Please consult the articles section of this site.</p>
     </section>
   </body>
