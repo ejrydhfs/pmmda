@@ -7,13 +7,7 @@ package ch.bbv.dnm.users.client;
 
 import java.util.Arrays;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.OptionGroup;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.Parser;
-import org.apache.commons.cli.PosixParser;
+import org.apache.commons.cli.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.omg.CORBA.ORB;
@@ -30,8 +24,10 @@ import ch.bbv.utilities.ReflectUtilities;
 
 /**
  * The application implements the users specific locator class for the client.
- * Convenience methods are provided to access the components. The command line
- * provides the following options.
+ * Convenience methods are provided to access the components. The application is
+ * configured to support 2 tiers, CORBA client server and J2EE client server
+ * modes through start-up parameters.The command line provides the following
+ * options.
  * <dl>
  * <dt>mode (corba direct j2ee)</dt>
  * <dd>defines the mode of the client.</dd>
@@ -143,6 +139,7 @@ public class Application extends Locator {
    * @param args command line arguments.
    */
   public static void main(String[] args) {
+    Application.args = args;
     Options options = new Options();
     OptionGroup group = new OptionGroup();
     options.addOption(CmdLineBuilder.createNoArgOption("h", "help",
@@ -153,20 +150,20 @@ public class Application extends Locator {
         "set the logging level to quiet", false));
     options.addOptionGroup(group);
     options.addOption(CmdLineBuilder.createArgOption("m", "mode",
-        "defines the mode of the application [direct | CORBA | J2EE]", false,
-        String.class));
-    options.addOption(CmdLineBuilder.createArgOption(null, "ORBInitialPort",
-        "the ORB TCP/IP port", false, String.class));
-    options.addOption(CmdLineBuilder.createArgOption(null, "ORBInitialHost",
-        "the host where the ORB is running", false, String.class));
-    options.addOption(CmdLineBuilder.createArgOption("D", "D",
-        "Sun virtual machine parameters", false, String.class));
+        "defines the mode of the application [direct | CORBA | J2EE]", "mode",
+        false, String.class));
+    options.addOption(CmdLineBuilder.createArgOption("ORBInitialPort", null,
+        "the ORB TCP/IP port", "port", false, String.class));
+    options.addOption(CmdLineBuilder.createArgOption("ORBInitialHost", null,
+        "the host where the ORB is running", "host", false, String.class));
+    options.addOption(CmdLineBuilder.createJavaProperty());
     Parser parser = new PosixParser();
     try {
-      CommandLine line = parser.parse(options, args);
+      CommandLine line = parser.parse(options, args, true);
       if (line.hasOption("h")) {
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp("pmMDA", options);
+        return;
       }
       if (line.hasOption("v")) {
         log.info("logging level set to verbose");
@@ -175,8 +172,8 @@ public class Application extends Locator {
         log.info("logging level set to quiet");
       }
       String mode = line.getOptionValue("m", USE_DIRECT);
-      
-      Application.args = args;
+      // Handles the case where mode is not defined at all.
+      mode = (mode == null ? USE_DIRECT : mode);
       if (log.isInfoEnabled()) {
         log.info(Arrays.asList(args));
       }

@@ -1,29 +1,37 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
  */
 package ch.bbv.dnm.users.server;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.OptionGroup;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.Parser;
+import org.apache.commons.cli.PosixParser;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.omg.CORBA.ORB;
+
 import ch.bbv.application.ComponentException;
 import ch.bbv.application.Locator;
-
+import ch.bbv.cmdlineparser.CmdLineBuilder;
 import ch.bbv.dnm.users.TypeFactory;
 import ch.bbv.dog.DataObjectManager;
 import ch.bbv.dog.LightweightObjectHandlerImpl;
 import ch.bbv.dog.persistence.PersistenceHandler;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import org.omg.CORBA.ORB;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 /**
- * The class defines the client application connecting to the database and to
- * the servers.
+ * The class defines the server application connecting to the database and to
+ * the servers. The application is configured to support 2 tiers, CORBA client
+ * server and J2EE client server modes through start-up parameters.
  * @author MarcelBaumann
  * @version $Revision$
  */
@@ -83,10 +91,10 @@ public class Application extends Locator {
    * @throws ComponentException occured when creating the client application.
    */
   public Application(String mode) throws ComponentException {
+    assert mode != null;
     DataObjectManager manager = null;
     ORB orb = null;
     register(this);
-
     if (mode.equalsIgnoreCase(USE_DIRECT)) {
       log.info("Application started in direct mode");
       manager = new DataObjectManager(new PersistenceHandler(false),
@@ -106,13 +114,12 @@ public class Application extends Locator {
           new LightweightObjectHandlerImpl(), null);
       register(manager);
     }
-
     TypeFactory factory = new TypeFactory(manager);
     factory.registerAllTypes();
     initialize();
     startup();
     manager.getDataObjectHandler().openDatasource(USERS_DATABASE, false);
-
+    // starts the ORB main loop
     if (mode.equalsIgnoreCase(USE_CORBA)) {
       orb.run();
     }
@@ -120,7 +127,7 @@ public class Application extends Locator {
 
   /**
    * Returns the client application singleton instance. The application uses the
-   * locator pattern.
+   * locator pattern.   
    * @return the client application unique instance.
    */
   public static Application getApplication() {
@@ -134,19 +141,48 @@ public class Application extends Locator {
    */
   public static void main(String[] args) {
     Application.args = args;
-    if (log.isInfoEnabled()) {
-      StringBuffer buffer = new StringBuffer();
-      for (int i = 0; i < args.length; i++) {
-        buffer.append(args[i]).append(" ");
-      }
-      log.info(buffer.toString());
-    }
-    if ((args.length >= 2) && args[0].equals("-mode")) {
-      mode = args[1];
-    }
+    Options options = new Options();
+    OptionGroup group = new OptionGroup();
+    options.addOption(CmdLineBuilder.createNoArgOption("h", "help",
+        "display the list of available commands", false));
+    group.addOption(CmdLineBuilder.createNoArgOption("v", "verbose",
+        "set the logging level to verbose", false));
+    group.addOption(CmdLineBuilder.createNoArgOption("q", "quiet",
+        "set the logging level to quiet", false));
+    options.addOptionGroup(group);
+    options.addOption(CmdLineBuilder.createArgOption("m", "mode",
+        "defines the mode of the application [direct | CORBA | J2EE]", "mode",
+        false, String.class));
+    options.addOption(CmdLineBuilder.createArgOption("ORBInitialPort", null,
+        "the ORB TCP/IP port", "port", false, String.class));
+    options.addOption(CmdLineBuilder.createArgOption("ORBInitialHost", null,
+        "the host where the ORB is running", "host", false, String.class));
+    options.addOption(CmdLineBuilder.createJavaProperty());
+    Parser parser = new PosixParser();
     try {
-      new Application();
+      CommandLine line = parser.parse(options, args, true);
+      if (line.hasOption("h")) {
+        HelpFormatter formatter = new HelpFormatter();
+        formatter.printHelp("pmMDA", options);
+        return;
+      }
+      if (line.hasOption("v")) {
+        log.info("logging level set to verbose");
+      }
+      if (line.hasOption("q")) {
+        log.info("logging level set to quiet");
+      }
+      String mode = line.getOptionValue("m", USE_DIRECT);
+      // Handles the case where mode is not defined at all.
+      mode = (mode == null ? USE_DIRECT : mode);
+      if (log.isInfoEnabled()) {
+        log.info(Arrays.asList(args));
+      }
+      // starts the application in the requested mode
+      new Application(mode);
     } catch (ComponentException e) {
+      log.fatal(e);
+    } catch (ParseException e) {
       log.fatal(e);
     }
   }
@@ -171,17 +207,15 @@ public class Application extends Locator {
   }
 
   /**
-   * Creates teh CORBA server using reflection to avoid compile dependencies to
+   * Creates the CORBA server using reflection to avoid compile dependencies to
    * the CORBA libraries.
    * @param qualifiedName qualified name of the corba wrapper server.
    */
   protected final void createCorbaServer(String qualifiedName) {
-    Class clazz;
     try {
-      clazz = Class.forName(qualifiedName);
-
-      Method method = clazz.getMethod("create", null);
-      method.invoke(null, null);
+      Class clazz = Class.forName(qualifiedName);
+      Method method = clazz.getMethod("create");
+      method.invoke(null);
     } catch (ClassNotFoundException e) {
       log.fatal(e);
     } catch (SecurityException e) {
