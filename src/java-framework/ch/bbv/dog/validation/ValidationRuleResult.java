@@ -39,11 +39,6 @@ public class ValidationRuleResult implements Serializable {
   private int severity;
 
   /**
-   * An memonic for the component origin of the validation rule result.
-   */
-  private String origin;
-
-  /**
    * Identifier of the text of the validation rule result.
    */
   private String key;
@@ -65,31 +60,19 @@ public class ValidationRuleResult implements Serializable {
     // default constructor
   }
 
+  /**
+   * Constructor of the class.
+   * @param severity severity of the validation result.
+   * @param origin orgin of the validation result.
+   * @param key key to retrieve the validation result message.
+   * @param object object origin of the validation rule.
+   */
   public ValidationRuleResult(int severity, String origin, String key,
       Object object) {
     this.severity = severity;
-    this.origin = origin;
     this.key = key;
     this.object = object;
 
-  }
-
-  /**
-   * Returns the message origin.
-   * @return origin of the validation rule result message.
-   * @see #setOrigin(String)
-   */
-  public String getOrigin() {
-    return origin;
-  }
-
-  /**
-   * Sets the message origin.
-   * @param origin new origin of the validation rule result message.
-   * @see #getKey()
-   */
-  public void setOrigin(String origin) {
-    this.origin = origin;
   }
 
   /**

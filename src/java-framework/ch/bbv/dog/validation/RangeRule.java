@@ -20,12 +20,7 @@ import ch.bbv.utilities.ReflectUtilities;
  * @author MarcelBaumann
  * @version $Revision$
  */
-public class RangeRule implements ValidationRule {
-  /**
-   * Indicates if the rule should be applied immediately or only
-   */
-  private boolean immediate;
-
+public class RangeRule extends ValidationRuleImpl implements ValidationRule {
   /**
    * Legal range of the property.
    */
@@ -38,7 +33,7 @@ public class RangeRule implements ValidationRule {
    * @param max high bound of the interval. The value is part or the interval.
    */
   public RangeRule(boolean immediate, long min, long max) {
-    this.immediate = immediate;
+    setImmediate(immediate);
     range = new NaturalRange(min, max);
   }
 
@@ -49,7 +44,7 @@ public class RangeRule implements ValidationRule {
    * @param max high bound of the interval. The value is part or the interval.
    */
   public RangeRule(boolean immediate, double min, double max) {
-    this.immediate = immediate;
+    setImmediate(immediate);
     range = new FractionalRange(min, max);
   }
 
@@ -60,7 +55,7 @@ public class RangeRule implements ValidationRule {
    * @param max high bound of the interval. The value is part or the interval.
    */
   public RangeRule(boolean immediate, Date min, Date max) {
-    this.immediate = immediate;
+    setImmediate(immediate);
     range = new DateRange(min, max);
   }
 
@@ -71,7 +66,7 @@ public class RangeRule implements ValidationRule {
    * @param max high bound of the interval. The value is part or the interval.
    */
   public RangeRule(boolean immediate, BigInteger min, BigInteger max) {
-    this.immediate = immediate;
+    setImmediate(immediate);
     range = new BigNaturalRange(min, max);
   }
 
@@ -82,7 +77,7 @@ public class RangeRule implements ValidationRule {
    * @param max high bound of the interval. The value is part or the interval.
    */
   public RangeRule(boolean immediate, BigDecimal min, BigDecimal max) {
-    this.immediate = immediate;
+    setImmediate(immediate);
     range = new BigFractionalRange(min, max);
   }
 
@@ -94,14 +89,6 @@ public class RangeRule implements ValidationRule {
   public boolean execute(Object bean, String property, Object oldValue,
       Object newValue, List results) {
     return (newValue != null) && range.isInRange(newValue);
-  }
-
-  /**
-   * Returns true if the rule is immediate otherwise false.
-   * @return value of the immediate flag.
-   */
-  public boolean isImmediate() {
-    return immediate;
   }
 
   private static interface Range {

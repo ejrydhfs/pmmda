@@ -6,7 +6,9 @@
 
 package ch.bbv.dog.validation;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 import ch.bbv.utilities.ReflectUtilities;
 
@@ -16,12 +18,7 @@ import ch.bbv.utilities.ReflectUtilities;
  * @author MarcelBaumann
  * @version $Revision$
  */
-public class CollectionRule implements ValidationRule {
-  /**
-   * Indicates if the rule should be applied immediately or only
-   */
-  private boolean immediate;
-
+public class CollectionRule extends ValidationRuleImpl implements ValidationRule {
   /**
    * The property on which the validation rule should be applied.
    */
@@ -57,9 +54,5 @@ public class CollectionRule implements ValidationRule {
   public boolean execute(Object bean, String property, Object oldValue,
       Object newValue, List results) {
     return execute(bean, property, results);
-  }
-
-  public boolean isImmediate() {
-    return immediate;
   }
 }

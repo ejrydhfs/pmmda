@@ -7,8 +7,7 @@
 package ch.bbv.dog.validation;
 
 import java.beans.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -45,6 +44,11 @@ public class Validator extends ComponentImpl {
   private String key;
 
   /**
+   * The rules defined at class scope for this validator.
+   */
+  private Map rules;
+
+  /**
    * Creates a new validator in the application. Multiple validators can be used
    * to manage different sets of validation rules.
    * @param name unique name identifying the validator as component.
@@ -52,6 +56,7 @@ public class Validator extends ComponentImpl {
   public Validator(String name) {
     super(name);
     key = "Validator-Rules-" + name;
+    rules = new HashMap();
   }
 
   /**
@@ -60,8 +65,15 @@ public class Validator extends ComponentImpl {
    * @param results list to which validation rule results are added.
    */
   public void validate(DataObject object, List results) {
-    PropertyDescriptor[] descriptors = getBeanInfo(object.getClass())
-        .getPropertyDescriptors();
+    BeanInfo beanInfo = getBeanInfo(object.getClass());
+    List beanRules = (List)rules.get(beanInfo);
+    if (beanRules != null) {
+      for (int i = 0; i < beanRules.size(); i++) {
+        ((ValidationRule) beanRules.get(i)).execute(object, results);
+        
+      }
+    }
+    PropertyDescriptor[] descriptors = beanInfo.getPropertyDescriptors();
     for (int i = 0; i < descriptors.length; i++) {
       List rules = (List) descriptors[i].getValue(key);
       if (rules != null) {
@@ -94,10 +106,25 @@ public class Validator extends ComponentImpl {
     results.addAll(functor.getResults());
     if (log.isTraceEnabled()) {
       StringBuffer buffer = new StringBuffer();
-      buffer.append("End validation for ").append(root.getClass())
-          .append(" ").append(root.getId());
+      buffer.append("End validation for ").append(root.getClass()).append(" ")
+          .append(root.getId());
       log.trace(buffer.toString());
     }
+  }
+
+  /**
+   * Registers a validation rule defined for a class.
+   * @param rule rule to register.
+   * @param clazz class on which instances the rule will be applied.
+   */
+  public void registerRule(ValidationRule rule, Class clazz) {
+    BeanInfo beanInfo = getBeanInfo(clazz);
+    List availableRules = (List) rules.get(beanInfo);
+    if (availableRules == null) {
+      availableRules = new ArrayList();
+      rules.put(beanInfo, availableRules);
+    }
+    availableRules.add(rule);
   }
 
   /**

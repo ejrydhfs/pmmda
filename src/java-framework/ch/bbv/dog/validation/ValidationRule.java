@@ -24,6 +24,16 @@ public interface ValidationRule {
   /**
    * Executes the validation rule on a Java bean.
    * @param bean bean on which to process the rule.
+   * @param results list where rule results can be added. The result is a
+   *        validation rule result.
+   * @return true if the rule did not found any errors otherwise false.
+   * @pre (bean != null) && (results != null)
+   */
+  boolean execute(Object bean, List results);
+  
+  /**
+   * Executes the validation rule on a Java bean.
+   * @param bean bean on which to process the rule.
    * @param property property to validate.
    * @param results list where rule results can be added. The result is a
    *        validation rule result.

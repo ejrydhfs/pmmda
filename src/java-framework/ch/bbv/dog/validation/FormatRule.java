@@ -20,17 +20,12 @@ import ch.bbv.utilities.ReflectUtilities;
  * @author MarcelBaumann
  * @version $Revision$
  */
-public class FormatRule implements ValidationRule {
+public class FormatRule extends ValidationRuleImpl implements ValidationRule {
   /**
    * Cache of format rules available in the application. The same rule object
    * can be used to verify a defined format.
    */
   private static Map rules = new HashMap();
-
-  /**
-   * Indicates if the rule should be applied immediately or only
-   */
-  private boolean immediate;
 
   /**
    * The pattern to validate.
@@ -64,9 +59,9 @@ public class FormatRule implements ValidationRule {
    * @param format format to validate.
    */
   public FormatRule(boolean immediate, String format) {
-    this.immediate = immediate;
+    setImmediate(immediate);
     pattern = Pattern.compile(format);
-    matcher = pattern.matcher(null);
+    matcher = pattern.matcher("");
   }
 
   public boolean execute(Object bean, String property, List results) {
@@ -77,10 +72,6 @@ public class FormatRule implements ValidationRule {
   public boolean execute(Object bean, String property, Object oldValue,
       Object newValue, List results) {
     return validate(newValue, results);
-  }
-
-  public boolean isImmediate() {
-    return immediate;
   }
 
   /**

@@ -15,7 +15,7 @@ import ch.bbv.utilities.ReflectUtilities;
  * @author MarcelBaumann
  * @version $Revision$
  */
-public class NotNullRule implements ValidationRule {
+public class NotNullRule extends ValidationRuleImpl implements ValidationRule {
   /**
    * The instance of the immediate rule can be shared for all properties.
    */
@@ -53,13 +53,8 @@ public class NotNullRule implements ValidationRule {
    * @param immediate true if the rule is immediate otherwise false.
    */
   public NotNullRule(boolean immediate) {
-    this.immediate = immediate;
+    setImmediate(immediate);
   }
-
-  /**
-   * Indicates if the rule should be applied immediately or only
-   */
-  private boolean immediate;
 
   public boolean execute(Object bean, String property, List results) {
     return validate(ReflectUtilities.getProperty(bean, property), results);
@@ -68,10 +63,6 @@ public class NotNullRule implements ValidationRule {
   public boolean execute(Object bean, String property, Object oldValue,
       Object newValue, List results) {
     return validate(newValue, results);
-  }
-
-  public boolean isImmediate() {
-    return immediate;
   }
 
   /**

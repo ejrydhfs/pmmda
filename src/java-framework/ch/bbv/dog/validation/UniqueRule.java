@@ -15,12 +15,7 @@ import ch.bbv.utilities.ReflectUtilities;
  * @author MarcelBaumann
  * @version $Revision$
  */
-public class UniqueRule implements ValidationRule {
-  /**
-   * Indicates if the rule should be applied immediately or only.
-   */
-  private boolean immediate;
-
+public class UniqueRule extends ValidationRuleImpl implements ValidationRule {
   /**
    * Indicates if null values should be considered for uniqueness check. private
    */
@@ -62,10 +57,6 @@ public class UniqueRule implements ValidationRule {
   public boolean execute(Object bean, String property, Object oldValue,
       Object newValue, List results) {
     return validate((Collection) newValue, results);
-  }
-
-  public boolean isImmediate() {
-    return immediate;
   }
 
   private boolean validate(Collection objects, List results) {
