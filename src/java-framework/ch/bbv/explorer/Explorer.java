@@ -108,6 +108,7 @@ public class Explorer {
     rightPane = new JScrollPane(tree);
     leftPane = new JScrollPane();
     splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, rightPane, leftPane);
+    splitPane.setDividerSize(5);
     frame.getContentPane().add(BorderLayout.CENTER, splitPane);
     frame.addWindowListener(new ExplorerWindowListener(this));
   }
@@ -230,6 +231,7 @@ public class Explorer {
    */
   public void display() {
     frame.setLocation(100, 100);
+    splitPane.setDividerLocation(0.4);
     frame.pack();
     frame.setVisible(true);
   }
