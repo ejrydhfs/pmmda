@@ -1,5 +1,5 @@
 /* copyright 2000-2004 Marcel Baumann
- * Licensed under the Apache License, Version 2.0 (the "Licence);
+ * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
  */
@@ -15,7 +15,9 @@ import javax.swing.JPopupMenu;
 import org.apache.commons.beanutils.PropertyUtils;
 
 import ch.bbv.dog.DataObjectType;
-import ch.bbv.explorer.actions.ExplorerNodeActions;
+import ch.bbv.explorer.actions.*;
+import ch.bbv.explorer.nodeactions.*;
+import ch.bbv.utilities.ReflectUtilities;
 
 /**
  * The node type implementation provides a default implementation for the node
@@ -190,15 +192,7 @@ public class UiNodeTypeImpl implements UiNodeType {
   }
 
   public void setProperty(Object object, UiField field, Object value) {
-    try {
-      PropertyUtils.setProperty(object, field.getProperty(), value);
-    } catch (InvocationTargetException ite) {
-      ite.printStackTrace();
-    } catch (NoSuchMethodException nsmi) {
-      nsmi.printStackTrace();
-    } catch (IllegalAccessException iae) {
-      iae.printStackTrace();
-    }
+    ReflectUtilities.setProperty(object, field.getProperty(), value);
   }
 
   public Object getDataObjectFor(Object lwObject) {
@@ -209,16 +203,15 @@ public class UiNodeTypeImpl implements UiNodeType {
     if (popupMenu == null) {
       UiNodeType nodeType = node.getNodeType();
       popupMenu = new JPopupMenu();
-      popupMenu.add(ExplorerNodeActions.createViewNode(this, "View"));
+      popupMenu.add(new DisplayNodeAction(this, "View"));
       if (nodeType.isEditable(null)) {
-        popupMenu.add(ExplorerNodeActions.createEditNode(this, "Edit"));
+        popupMenu.add(new EditNodeAction(this, "Edit"));
       }
       if (uiNodeViews.size() > 0) {
         JMenu viewMenu = new JMenu("Views...");
         for (Iterator i = uiNodeViews.iterator(); i.hasNext();) {
           UiNodeViewType view = (UiNodeViewType) i.next();
-          viewMenu.add(ExplorerNodeActions.createDisplayNode(this, view
-              .getName()));
+          viewMenu.add(new DisplayNodeAction(this, view.getName()));
         }
         popupMenu.add(viewMenu);
       }
@@ -234,17 +227,17 @@ public class UiNodeTypeImpl implements UiNodeType {
           UiNodeType childType = factory
               .getNodeTypeForLw(relation.getLwClass());
           if (childType != null) {
-            createMenu.add(ExplorerNodeActions.createAddNode(childType,
-                relation.getProperty()));
+            createMenu
+                .add(new AddNodeAction(childType, relation.getProperty()));
           }
         }
         popupMenu.add(createMenu);
       }
       if (nodeType.getDataObjectType().isRoot()) {
-        popupMenu.add(ExplorerNodeActions.createSaveNode(this, "Save"));
+        popupMenu.add(createRootNodeActions());
       }
       if (nodeType.isStructureEditable(null)) {
-        popupMenu.add(ExplorerNodeActions.createRemoveNode(this, "Remove"));
+        popupMenu.add(new RemoveNodeAction(this, "Remove"));
       }
     }
 
@@ -347,5 +340,17 @@ public class UiNodeTypeImpl implements UiNodeType {
 
   void setFactory(UiNodeTypeFactory factory) {
     this.factory = factory;
+  }
+
+  /**
+   * Creates the menu of actions for a root node.
+   * @return the menu of actions available to a root node.
+   */
+  private JMenu createRootNodeActions() {
+    JMenu actions = new JMenu("Actions...");
+    actions.add(new SaveNodeAction(this, "Save"));
+    actions.add(new RevertNodeAction(this, "Revert"));
+    actions.add(new ReloadNodeAction(this, "Reload"));
+    return actions;
   }
 }

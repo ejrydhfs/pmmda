@@ -1,0 +1,50 @@
+/* copyright 2000-2004 Marcel Baumann
+ * Licensed under the Apache License, Version 2.0 (the "Licence");
+ * you may not use this file except in compliance with the License.
+ * $Id$
+ */
+
+package ch.bbv.explorer.nodeactions;
+
+import javax.swing.JOptionPane;
+
+import ch.bbv.dog.CachesHandler;
+import ch.bbv.dog.DataObject;
+import ch.bbv.explorer.Explorer;
+import ch.bbv.explorer.ExplorerNode;
+import ch.bbv.explorer.UiNodeType;
+
+/**
+ * The revert node retrieves the local representation of the data 
+ * object graph. The behaviour is described in details in the 
+ * referenced class.
+ * @see ch.bbv.dog.CachesHandler
+ * @author MarcelBaumann
+ * @version $Revision$
+ */
+public class RevertNodeAction extends AbstractNodeAction  {
+  /**
+   * Constructor of the class.
+   * @param type node type for which the action is defined.
+   * @param name name of the action. If the action is an add, the name must be
+   *        the name of the property.
+   */
+  public RevertNodeAction(UiNodeType type, String name) {
+    super(type, name, false);
+  }
+
+  public void execute(ExplorerNode node) {
+    DataObject object = (DataObject) node.getDataObject();
+    Explorer explorer = node.getExplorer();
+    if ((object == null) || !object.isModified() || object.isNew()) {
+      JOptionPane.showMessageDialog(explorer.getFrame(),
+          "Object was not modified or is new.", "Revert Operation",
+          JOptionPane.WARNING_MESSAGE);
+    } else {
+      CachesHandler handler = (CachesHandler) explorer.getManager()
+          .getDataObjectHandler();
+      DataObject root = handler.revert(explorer.getDatasource(), object);
+      updateNavigator(node, root, root);
+    }
+  }
+}
