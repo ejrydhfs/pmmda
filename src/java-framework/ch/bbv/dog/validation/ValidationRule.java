@@ -1,4 +1,5 @@
-/* copyright 2000-2004 Marcel Baumann
+/* 
+ * copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -40,22 +41,23 @@ public interface ValidationRule {
    * Executes the validation rule on a Java bean.
    * @param bean bean on which to process the rule.
    * @param results list where rule results can be added. The result is a
-   *        validation rule result.
+   *          validation rule result.
    * @return true if the rule did not found any errors otherwise false.
    * @pre (bean != null) && (results != null)
    */
-  boolean execute(Object bean, List results);
+  boolean execute(Object bean, List<ValidationRuleResult> results);
 
   /**
    * Executes the validation rule on a Java bean.
    * @param bean bean on which to process the rule.
    * @param property property to validate.
    * @param results list where rule results can be added. The result is a
-   *        validation rule result.
+   *          validation rule result.
    * @return true if the rule did not found any errors otherwise false.
    * @pre (bean != null) && (property != null) && (results != null)
    */
-  boolean execute(Object bean, String property, List results);
+  boolean execute(Object bean, String property,
+      List<ValidationRuleResult> results);
 
   /**
    * Executes the validation rule on a Java bean in an immediate mode.
@@ -64,10 +66,10 @@ public interface ValidationRule {
    * @param oldValue old value of the property if defined.
    * @param newValue new value of the property.
    * @param results list where rule results can be added. The result is a
-   *        validation rule result.
+   *          validation rule result.
    * @return true if the rule did not found any errors otherwise false.
    * @pre (bean != null) && (property != null) && (results != null)
    */
   boolean execute(Object bean, String property, Object oldValue,
-      Object newValue, List results);
+      Object newValue, List<ValidationRuleResult> results);
 }

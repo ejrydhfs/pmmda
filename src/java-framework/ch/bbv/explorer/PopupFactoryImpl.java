@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -20,13 +20,13 @@ public class PopupFactoryImpl implements PopupFactory {
   /**
    * List of all registered selectors.
    */
-  private Map selectors;
+  private Map<UiNodeType, PopupSelector> selectors;
 
   /**
    * Default constructor of the class.
    */
   public PopupFactoryImpl() {
-    selectors = new HashMap();
+    selectors = new HashMap<UiNodeType, PopupSelector>();
   }
 
   public void registerPopupSelector(UiNodeType nodeType, PopupSelector selector) {
@@ -37,7 +37,7 @@ public class PopupFactoryImpl implements PopupFactory {
   public JPopupMenu getMenu(ExplorerNode node) {
     assert (node != null);
     JPopupMenu menu = null;
-    PopupSelector selector = (PopupSelector) selectors.get(node.getNodeType());
+    PopupSelector selector = selectors.get(node.getNodeType());
     if (selector != null) {
       menu = selector.select(node);
     }

@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -33,21 +33,18 @@ import ch.bbv.explorer.actions.ExplorerGlobalAction;
  * @version $Revision$
  */
 public class ExplorerMenuBar extends JMenuBar {
+  /**
+   * Serial version identifier coded as back compatibility date.
+   */
+  private static final long serialVersionUID = 20041201;
+
   public static final String FILE_MENU = "File";
 
   public static final String HELP_MENU = "Help";
 
   public static final String EDIT_MENU = "Edit";
 
-  private static final int NEW_DOCUMENT = 0;
-
-  private static final int MODIFIED_DOCUMENT = 1;
-
-  private static final int SAVED_DOCUMENT = 2;
-
-  private int state;
-
-  private Map menus;
+  private Map<String, JMenu> menus;
 
   /**
    * Standard global action to manipulate documents.
@@ -88,7 +85,7 @@ public class ExplorerMenuBar extends JMenuBar {
    * Default constructor of the class.
    */
   public ExplorerMenuBar() {
-    menus = new HashMap();
+    menus = new HashMap<String, JMenu>();
 
     JMenu menu = new JMenu(FILE_MENU);
     add(menu);
@@ -106,8 +103,8 @@ public class ExplorerMenuBar extends JMenuBar {
    * @see #add(JMenu, int)
    */
   public JMenu getMenu(String name) {
-    assert (name != null);
-    return (JMenu) menus.get(name);
+    assert name != null;
+    return menus.get(name);
   }
 
   /**
@@ -118,7 +115,7 @@ public class ExplorerMenuBar extends JMenuBar {
    * @see #getMenu(String)
    */
   public void add(JMenu menu, int index) {
-    assert ((menu != null) && (menu.getName() != null));
+    assert (menu != null) && (menu.getName() != null);
     menus.put(menu.getName(), menu);
     super.add(menu, index);
   }
@@ -145,7 +142,6 @@ public class ExplorerMenuBar extends JMenuBar {
    * Called when a document is created.
    */
   public void documentCreated() {
-    state = NEW_DOCUMENT;
     setActionEnabled(saveAction, false);
     setActionEnabled(saveAsAction, true);
   }
@@ -154,7 +150,6 @@ public class ExplorerMenuBar extends JMenuBar {
    * Called when a document is opened.
    */
   public void documentOpened() {
-    state = SAVED_DOCUMENT;
     setActionEnabled(saveAction, true);
     setActionEnabled(saveAsAction, true);
   }
@@ -163,8 +158,7 @@ public class ExplorerMenuBar extends JMenuBar {
    * Called when a document is saved.
    */
   public void documentSaved() {
-    state = SAVED_DOCUMENT;
-    setActionEnabled(saveAction, true);
+    setActionEnabled(saveAction, false);
     setActionEnabled(saveAsAction, true);
   }
 
@@ -172,7 +166,8 @@ public class ExplorerMenuBar extends JMenuBar {
    * Called when a document is modified.
    */
   public void documentModified() {
-    state = MODIFIED_DOCUMENT;
+    setActionEnabled(saveAction, true);
+    setActionEnabled(saveAsAction, true);
   }
 
   /**

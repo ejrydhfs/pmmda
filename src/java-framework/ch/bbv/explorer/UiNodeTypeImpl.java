@@ -1,4 +1,5 @@
-/* copyright 2000-2004 Marcel Baumann
+/* 
+ * copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -6,7 +7,13 @@
 package ch.bbv.explorer;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
@@ -32,12 +39,12 @@ public class UiNodeTypeImpl implements UiNodeType {
   /**
    * List of fields of the children to display on the right pane.
    */
-  private List fields;
+  private List<UiField> fields;
 
   /**
    * Map of all relations of the user interface node type.
    */
-  private Map relations;
+  private Map<String, UiRelation> relations;
 
   /**
    * The simple property containing the name of the node as displayed in the
@@ -55,7 +62,7 @@ public class UiNodeTypeImpl implements UiNodeType {
    */
   private boolean structureEditable;
 
-  private List uiNodeViews;
+  private List<UiNodeViewType> uiNodeViews;
 
   private UiNodeViewType currentView;
 
@@ -64,26 +71,26 @@ public class UiNodeTypeImpl implements UiNodeType {
    */
   private UiNodeTypeFactory factory;
 
-  private Map parameters;
+  private Map<String, Object> parameters;
 
   /**
    * Constructor of the class.
    * @param type tyupe of the data object which user interface representation is
-   *        defined.
+   *          defined.
    * @param nameProperty property containing the name to display in the left
-   *        view.
+   *          view.
    * @param nodePropertiesViewClass class defining the property view for the
-   *        data object.
+   *          data object.
    */
   public UiNodeTypeImpl(DataObjectType type, String nameProperty,
       Class nodePropertiesViewClass) {
     this.type = type;
-    fields = new ArrayList();
-    relations = new HashMap();
+    fields = new ArrayList<UiField>();
+    relations = new HashMap<String, UiRelation>();
     this.nameProperty = nameProperty;
     this.nodePropertiesViewClass = nodePropertiesViewClass;
-    parameters = new HashMap();
-    uiNodeViews = new ArrayList();
+    parameters = new HashMap<String, Object>();
+    uiNodeViews = new ArrayList<UiNodeViewType>();
     editable = true;
     structureEditable = true;
   }
@@ -126,7 +133,7 @@ public class UiNodeTypeImpl implements UiNodeType {
     return structureEditable;
   }
 
-  public void registerViews(List uiNodeViews) {
+  public void registerViews(List<UiNodeViewType> uiNodeViews) {
     this.uiNodeViews = uiNodeViews;
   }
 
@@ -134,13 +141,13 @@ public class UiNodeTypeImpl implements UiNodeType {
     uiNodeViews.add(uiNodeView);
   }
 
-  public List getViews() {
+  public List<UiNodeViewType> getViewTypes() {
     return Collections.unmodifiableList(uiNodeViews);
   }
 
   public UiNodeViewType getCurrentView() {
     if ((currentView == null) && (uiNodeViews.size() > 0)) {
-      currentView = (UiNodeViewType) uiNodeViews.get(0);
+      currentView = uiNodeViews.get(0);
     }
     return currentView;
   }
@@ -192,7 +199,7 @@ public class UiNodeTypeImpl implements UiNodeType {
     return type;
   }
 
-  public Collection getRelations() {
+  public Collection<UiRelation> getRelations() {
     return relations.values();
   }
 
@@ -214,31 +221,32 @@ public class UiNodeTypeImpl implements UiNodeType {
    * Adds an indexed property to the list of indexed properties belonging to the
    * node type.
    * @param relation user interface relation describing the characteristics of
-   *        relation to a data object.
-   * @pre property != null
+   *          relation to a data object.
+   * @pre relation != null
    */
   public void addRelation(UiRelation relation) {
-    assert (relation != null);
+    assert relation != null;
     relations.put(relation.getProperty(), relation);
   }
 
   public UiRelation getRelation(String property) {
-    assert (property != null);
-    return (UiRelation) relations.get(property);
+    assert property != null;
+    return relations.get(property);
   }
 
   /**
    * Adds a simple property to the list of indexed properties belonging to the
    * node type.
    * @param field user interface property describing the characteristics of a
-   *        simple property.
-   * @pre property != null
+   *          simple property.
+   * @pre field != null
    */
   public void addField(UiField field) {
+    assert field != null;
     fields.add(field);
   }
 
-  public List getFields() {
+  public List<UiField> getFields() {
     return fields;
   }
 

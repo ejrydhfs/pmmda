@@ -1,4 +1,5 @@
-/* copyright 2000-2004 Marcel Baumann
+/* 
+ * copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * License. $Id: UiNodeTypeFactory.java,v 1.1 2004/08/10 17:36:00 marcelbaumann
@@ -6,7 +7,9 @@
  */
 package ch.bbv.explorer;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -33,17 +36,27 @@ public class UiNodeTypeFactory {
    */
   private static Log log = LogFactory.getLog(UiNodeTypeFactory.class);
 
-  private Map nodeTypesForBo;
+  /**
+   * Map of node types associated with the class of a business object type.
+   */
+  private Map<Class, UiNodeType> nodeTypesForBo;
 
-  private Map nodeTypesForLw;
+  /**
+   * Map of node types associated with the class of a lightweight business
+   * object type.
+   */
+  private Map<Class, UiNodeType> nodeTypesForLw;
 
-  private Map nodePropertiesViews;
+  /**
+   * Map of the node types associated with their property view.
+   */
+  private Map<UiNodeType, NodePropertiesView> nodePropertiesViews;
 
   /**
    * The node views map contains all the views of the registered node types. The
    * node views is Map <UiNodeType, Map <UiNodeViewType, NodeView> >.
    */
-  private Map nodeViews;
+  private Map<UiNodeType, Map<UiNodeViewType, NodeView>> nodeViews;
 
   /**
    * The icon factory of the node type factory used to retrieve node icons.
@@ -56,10 +69,10 @@ public class UiNodeTypeFactory {
    * Default constructor of the class.
    */
   public UiNodeTypeFactory() {
-    nodeTypesForBo = new HashMap();
-    nodeTypesForLw = new HashMap();
-    nodePropertiesViews = new HashMap();
-    nodeViews = new HashMap();
+    nodeTypesForBo = new HashMap<Class, UiNodeType>();
+    nodeTypesForLw = new HashMap<Class, UiNodeType>();
+    nodePropertiesViews = new HashMap<UiNodeType, NodePropertiesView>();
+    nodeViews = new HashMap<UiNodeType, Map<UiNodeViewType, NodeView>>();
     iconFactory = new IconFactoryImpl();
     popupFactory = new PopupFactoryImpl();
   }
@@ -102,7 +115,7 @@ public class UiNodeTypeFactory {
    */
   public UiNodeType getNodeTypeForLw(Class clazz) {
     assert (clazz != null);
-    return (UiNodeType) nodeTypesForLw.get(clazz);
+    return nodeTypesForLw.get(clazz);
   }
 
   /**
@@ -113,7 +126,7 @@ public class UiNodeTypeFactory {
    */
   public UiNodeType getNodeTypeForBo(Class clazz) {
     assert (clazz != null);
-    return (UiNodeType) nodeTypesForBo.get(clazz);
+    return nodeTypesForBo.get(clazz);
   }
 
   /**
@@ -126,18 +139,16 @@ public class UiNodeTypeFactory {
    */
   public NodePropertiesView getViewFor(UiNodeType type) {
     assert (type != null);
-
-    NodePropertiesView view = (NodePropertiesView) nodePropertiesViews
-        .get(type);
+    NodePropertiesView view = nodePropertiesViews.get(type);
     if (view == null) {
       try {
         Class clazz = type.getPropertiesView();
         view = (NodePropertiesView) clazz.newInstance();
         nodePropertiesViews.put(type, view);
-      } catch (InstantiationException ie) {
-        ie.printStackTrace();
-      } catch (IllegalAccessException iae) {
-        iae.printStackTrace();
+      } catch (InstantiationException e) {
+        log.error(e);
+      } catch (IllegalAccessException e) {
+        log.error(e);
       }
     }
 
@@ -146,10 +157,40 @@ public class UiNodeTypeFactory {
 
   /**
    * Returns a free properties dialog.
+   * @param explorer explorer owning the dialog.
    * @return the node properties dialog.
    */
-  public NodePropertiesDialog getPropertiesDialog() {
-    return new NodePropertiesDialog();
+  public NodePropertiesDialog getPropertiesDialog(Explorer explorer) {
+    return new NodePropertiesDialog(explorer.getFrame());
+  }
+
+  /**
+   * Returns the node views defined for the given explorer node. If the type of
+   * the node has no associated views, an empty list is returned.
+   * @param node explorer node to display in the view.
+   * @return list of node views for the expected type.
+   * @pre node != null
+   */
+  public List<NodeView> getNodeViews(ExplorerNode node) {
+    assert node != null;
+    List<NodeView> views = new ArrayList<NodeView>();
+    UiNodeType nodeType = node.getNodeType();
+    for (UiNodeViewType viewType : nodeType.getViewTypes()) {
+      NodeView view = getViewFor(nodeType, viewType);
+      if (view == null) {
+        Class viewClass = viewType.getNodeView();
+        Object[] params = { nodeType, viewType.getParameters() };
+        view = (NodeView) ReflectUtilities.createInstance(viewClass, types,
+            params);
+        view.setName(viewType.getName());
+        addView(nodeType, viewType, view);
+      }
+      if (view != null) {
+        views.add(view);
+        view.setModel(node);
+      }
+    }
+    return views;
   }
 
   /**
@@ -158,9 +199,10 @@ public class UiNodeTypeFactory {
    * @param node explorer node to display in the view.
    * @param type user interface node view type describing the view.
    * @return instance of the expected type.
+   * @pre (node != null) && (type != null)
    */
   public NodeView getNodeViewFor(ExplorerNode node, UiNodeViewType type) {
-    assert (node != null && type != null);
+    assert (node != null) && (type != null);
     NodeView view = getViewFor(node.getNodeType(), type);
     if (view == null) {
       Class viewClass = type.getNodeView();
@@ -182,12 +224,14 @@ public class UiNodeTypeFactory {
    * @param nodeType type of user interface node to display.
    * @param viewType the requested view type.
    * @return the requested view if found otherwise null.
+   * @pre (nodeType != null) && (viewType != null)
    */
   private NodeView getViewFor(UiNodeType nodeType, UiNodeViewType viewType) {
+    assert (nodeType != null) && (viewType != null);
     NodeView view = null;
-    Map views = (Map) nodeViews.get(nodeType);
+    Map<UiNodeViewType, NodeView> views = nodeViews.get(nodeType);
     if (views != null) {
-      view = (NodeView) views.get(viewType);
+      view = views.get(viewType);
     }
     return view;
   }
@@ -200,9 +244,9 @@ public class UiNodeTypeFactory {
    */
   private void addView(UiNodeType nodeType, UiNodeViewType viewType,
       NodeView view) {
-    Map views = (Map) nodeViews.get(nodeType);
+    Map<UiNodeViewType, NodeView> views = nodeViews.get(nodeType);
     if (views == null) {
-      views = new HashMap();
+      views = new HashMap<UiNodeViewType, NodeView>();
       nodeViews.put(nodeType, views);
     }
     views.put(viewType, view);

@@ -1,16 +1,15 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
  */
 package ch.bbv.dog.reference;
 
+import java.io.*;
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.io.*;
-
-import java.util.List;
 
 /**
  * The file reference code retriever provides mechanisms to save to and

@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -33,12 +33,12 @@ public class CacheHandler implements DataObjectHandler, CachesHandler {
   /**
    * Cache containing the original data object graphs.
    */
-  private Map originalsCache;
+  private Map<DataObjectId, DataObject> originalsCache;
 
   /**
    * Cache containing the copied data object graphs.
    */
-  private Map copiesCache;
+  private Map<DataObjectId, DataObject> copiesCache;
 
   /**
    * Flag indicating if data object graphs should be cached.
@@ -73,8 +73,8 @@ public class CacheHandler implements DataObjectHandler, CachesHandler {
     this.handler = handler;
     this.cachedEnabled = cachedEnabled;
     this.copiedEnabled = copiedEnabled;
-    originalsCache = new HashMap();
-    copiesCache = new HashMap();
+    originalsCache = new HashMap<DataObjectId, DataObject>();
+    copiesCache = new HashMap<DataObjectId, DataObject>();
   }
 
   /**
@@ -122,7 +122,7 @@ public class CacheHandler implements DataObjectHandler, CachesHandler {
   public DataObject getCopy(Class clazz, Integer id) {
     assert ((clazz != null) && (id != null) && isCopiedEnabled());
     DataObjectId objectId = new DataObjectId(clazz, id);
-    return (DataObject) copiesCache.get(objectId);
+    return copiesCache.get(objectId);
   }
 
   /**
@@ -161,7 +161,7 @@ public class CacheHandler implements DataObjectHandler, CachesHandler {
 
   public List retrieve(String datasource, Class clazz, String constraints) {
     assert ((datasource != null) && (clazz != null) && (constraints != null));
-    List copies = new ArrayList();
+    List<DataObject> copies = new ArrayList<DataObject>();
     List roots = handler.retrieve(datasource, clazz, constraints);
     for (Iterator i = roots.iterator(); i.hasNext();) {
       DataObject root = (DataObject) i.next();
@@ -244,7 +244,7 @@ public class CacheHandler implements DataObjectHandler, CachesHandler {
    * @param root root of the data object graph.
    * @param cache cache containing the data objects to remove.
    */
-  private void addToCache(DataObject root, Map cache) {
+  private void addToCache(DataObject root, Map<DataObjectId, DataObject> cache) {
     DataObjectManager manager = (DataObjectManager) Locator.getInstance()
         .getComponent(DataObjectManager.NAME);
     for (Iterator i = manager.getRoots(root).iterator(); i.hasNext();) {
@@ -281,10 +281,10 @@ public class CacheHandler implements DataObjectHandler, CachesHandler {
     DataObject root = null;
     DataObjectId objectId = new DataObjectId(clazz, id);
     if (copiedEnabled) {
-      root = (DataObject) copiesCache.get(objectId);
+      root = copiesCache.get(objectId);
     }
     if (cachedEnabled && (root == null)) {
-      root = (DataObject) originalsCache.get(objectId);
+      root = originalsCache.get(objectId);
       if (copiedEnabled && (root != null)) {
         // handles the case where the copies cache was flushed.
         root = root.copy();
@@ -337,7 +337,7 @@ public class CacheHandler implements DataObjectHandler, CachesHandler {
       }
       if (copiedEnabled) {
         DataObjectId objectId = new DataObjectId(root.getClass(), root.getId());
-        DataObject copy = (DataObject) copiesCache.get(objectId);
+        DataObject copy = copiesCache.get(objectId);
         if (copy != root) {
           removeFromCache(root.getClass(), root.getId(), copiesCache);
           addToCache(root, copiesCache);

@@ -1,4 +1,5 @@
-/* copyright 2000-2004 Marcel Baumann
+/* 
+ * copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -94,6 +95,14 @@ public class TableCell implements WritableTableFormat {
     }
   }
 
+  /**
+   * Creates a cell array describing a table with the passed parameters.
+   * @param properties list of properties displayed in the table.
+   * @param columns list of column header names in the table.
+   * @param types list of types for each column in the table.
+   * @param editables list of flag indicating if the column is editable.
+   * @return the cell array describing the table to construct.
+   */
   public static Cell[] create(String[] properties, String[] columns,
       Class[] types, boolean[] editables) {
     assert ((properties != null) && (columns != null) && (properties.length == columns.length));
@@ -131,8 +140,8 @@ public class TableCell implements WritableTableFormat {
    * @pre propertyNames != null
    */
   public TableCell(String[] propertyNames) {
-    this(create(propertyNames, propertyNames,
-        new Class[propertyNames.length], new boolean[propertyNames.length]));
+    this(create(propertyNames, propertyNames, new Class[propertyNames.length],
+        new boolean[propertyNames.length]));
   }
 
   /**
@@ -228,7 +237,7 @@ public class TableCell implements WritableTableFormat {
     return null;
   }
 
-  /** 
+  /**
    * Returns the column description of the table.
    * @return the column descriptions.
    */

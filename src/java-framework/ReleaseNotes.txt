@@ -1,3 +1,10 @@
+Version 0.2.2-dev (xx December 2004)
+-----------------------------------
+The following new features were added.
+- The views of a node are now displayed in a tabbed window. Therefore the
+  selection entries in the popup menu were removed. This behavior is similar
+  to the one found in environment such as Eclipse.
+  
 Version 0.2.1-RC2 (30 October 2004)
 -----------------------------------
 The following new features were added.

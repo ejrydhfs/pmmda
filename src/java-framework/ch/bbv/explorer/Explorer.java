@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -6,9 +6,9 @@
 package ch.bbv.explorer;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Window;
 import java.awt.event.*;
+import java.util.List;
 
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
@@ -79,7 +79,7 @@ public abstract class Explorer {
   /**
    * Swing component of the explorer view.
    */
-  private JScrollPane topRightPane;
+  private DockingArea topRightPane;
 
   /**
    * Swing component of the explorer view.
@@ -210,7 +210,7 @@ public abstract class Explorer {
     this.datasource = datasource;
     frame = new JFrame("Explorer");
     leftPane = new JScrollPane(tree);
-    topRightPane = new JScrollPane();
+    topRightPane = new DockingArea();
     dockingArea = new DockingArea();
     rightPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, topRightPane,
         dockingArea);
@@ -267,7 +267,7 @@ public abstract class Explorer {
   public DockingArea getDockingArea() {
     return dockingArea;
   }
-  
+
   /**
    * Returns the menu bar of the explorer.
    * @return the menu bar of the explorer.
@@ -406,13 +406,17 @@ public abstract class Explorer {
   }
 
   /**
-   * Displays the data object member of the node with the provided view type.
+   * Displays the data object members of the node with the provided view type.
    * @param type type of the node view to display.
    * @param node node which data object should be displayed.
    */
-  public void displayView(UiNodeViewType type, ExplorerNode node) {
-    nodeView = factory.getNodeViewFor(node, type);
-    topRightPane.setViewportView((Component) nodeView);
+  public void displayViews(UiNodeViewType type, ExplorerNode node) {
+    List<NodeView> views = factory.getNodeViews(node);
+    topRightPane.removeAll();
+    for (NodeView view : views) {
+      topRightPane.addTab(view.getName(), (JComponent) view);
+    }
+    // topRightPane.setViewportView((Component) nodeView);
   }
 
   /**
@@ -425,6 +429,11 @@ public abstract class Explorer {
     return true;
   }
 
+  public void close() {
+    frame.setVisible(false);
+    frame.dispose();
+  }
+  
   /**
    * The initialize method is called after the construction and before the
    * explorer is displayed on the screen.
@@ -439,7 +448,7 @@ public abstract class Explorer {
     if (node != null) {
       UiNodeViewType type = node.getNodeType().getCurrentView();
       if (type != null) {
-        displayView(type, node);
+        displayViews(type, node);
       }
     }
   }
@@ -553,7 +562,6 @@ public abstract class Explorer {
         Window window = e.getWindow();
         window.setVisible(false);
         window.dispose();
-        System.exit(0);
       }
     }
   }

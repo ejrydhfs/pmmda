@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -100,7 +100,7 @@ public class PersistenceHandler implements DataObjectHandler {
   public List store(String datasource, Class clazz, DataObject root) {
     assert ((datasource != null) && (clazz != null) && (root != null));
     if (log.isTraceEnabled()) {
-      StringBuffer text = new StringBuffer();
+      StringBuilder text = new StringBuilder();
       text.append("start store operation in ").append(datasource).append(
           " class:").append(clazz.getName()).append(" id: ").append(
           root.getId());
@@ -110,13 +110,13 @@ public class PersistenceHandler implements DataObjectHandler {
     Database database = getDatabase(datasource);
     CollectFunctor collect = new CollectFunctor();
     AbstractVisitorFunctor visitor = getVisitor(clazz);
-    List originals = Collections.EMPTY_LIST;
+    List<DataObject> originals = Collections.emptyList();
     visitor.setFunctor(collect);
     if (!root.isNew()) {
       DataObject originalRoot = retrieve(datasource, clazz, root.getId());
       if (originalRoot != null) {
         DataObjectType.invokeVisitor(clazz, originalRoot, visitor);
-        originals = new ArrayList(collect.getObjects());
+        originals = new ArrayList<DataObject>(collect.getObjects());
       }
     }
     collect.reset();
@@ -129,7 +129,7 @@ public class PersistenceHandler implements DataObjectHandler {
     policy.update(database, originals, objects, deleted, inserted, updated);
 
     if (log.isTraceEnabled()) {
-      StringBuffer text = new StringBuffer();
+      StringBuilder text = new StringBuilder();
       text.append("end store operation ").append(objects.size()).append(
           " inserted: ").append(inserted.size()).append(" updated: ").append(
           updated.size()).append("deleted ").append(deleted.size());
@@ -190,7 +190,7 @@ public class PersistenceHandler implements DataObjectHandler {
   private void remove(String datasource, Class clazz, DataObject root,
       DataObject originalRoot) {
     if (log.isTraceEnabled()) {
-      StringBuffer text = new StringBuffer();
+      StringBuilder text = new StringBuilder();
       text.append("start remove operation in ").append(datasource).append(
           " class:").append(clazz.getName()).append(" id: ").append(
           originalRoot.getId());
@@ -201,11 +201,11 @@ public class PersistenceHandler implements DataObjectHandler {
     AbstractVisitorFunctor visitor = getVisitor(clazz);
     visitor.setFunctor(collect);
     DataObjectType.invokeVisitor(clazz, originalRoot, visitor);
-    List deleted = new ArrayList(collect.getObjects());
-    policy.update(database, deleted, deleted, deleted, Collections.EMPTY_LIST,
-        Collections.EMPTY_LIST);
+    List<DataObject> deleted = new ArrayList<DataObject>(collect.getObjects());
+    policy.update(database, deleted, deleted, deleted, Collections.emptyList(),
+        Collections.emptyList());
     if (log.isTraceEnabled()) {
-      StringBuffer text = new StringBuffer();
+      StringBuilder text = new StringBuilder();
       text.append("end remove operation ").append(deleted.size());
       log.trace(text.toString());
     }

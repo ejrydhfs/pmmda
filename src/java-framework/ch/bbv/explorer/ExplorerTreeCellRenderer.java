@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -21,6 +21,11 @@ import ch.bbv.dog.DataObject;
  */
 public class ExplorerTreeCellRenderer extends DefaultTreeCellRenderer {
   /**
+   * Serial version identifier coded as back compatibility date.
+   */
+  private static final long serialVersionUID = 20041201;
+
+  /**
    * Formats for the tree label: The first part is not-loaded, loaded, modified
    * for editable nodes, the second part is for read-only nodes.
    */
@@ -39,13 +44,13 @@ public class ExplorerTreeCellRenderer extends DefaultTreeCellRenderer {
    * buffer used to minimize the cost of string operations and of object
    * creation.
    */
-  private StringBuffer buffer;
+  private StringBuilder buffer;
 
   /**
    * Default constructor of the class.
    */
   public ExplorerTreeCellRenderer() {
-    buffer = new StringBuffer();
+    buffer = new StringBuilder();
   }
 
   /**
@@ -80,7 +85,7 @@ public class ExplorerTreeCellRenderer extends DefaultTreeCellRenderer {
    * @param node node which text label should be computed.
    */
   private void setText(ExplorerNode node) {
-    DataObject object = (DataObject) node.getDataObject();
+    DataObject object = node.getDataObject();
     int index;
     if (object == null) {
       index = 0;

@@ -1,4 +1,5 @@
-/* copyright 2000-2004 Marcel Baumann
+/* 
+ * copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -40,7 +41,7 @@ public final class TextUtilities {
   public static String identifierFirstLower(String identifier) {
     assert ((identifier != null) && (identifier.length() > 0));
 
-    StringBuffer buffer = new StringBuffer(identifier);
+    StringBuilder buffer = new StringBuilder(identifier);
     buffer.setCharAt(0, Character.toLowerCase(buffer.charAt(0)));
     return buffer.toString();
   }
@@ -53,7 +54,7 @@ public final class TextUtilities {
   public static String identifierFirstUpper(String identifier) {
     assert ((identifier != null) && (identifier.length() > 0));
 
-    StringBuffer buffer = new StringBuffer(identifier);
+    StringBuilder buffer = new StringBuilder(identifier);
     buffer.setCharAt(0, Character.toUpperCase(buffer.charAt(0)));
     return buffer.toString();
   }
@@ -68,7 +69,7 @@ public final class TextUtilities {
   public static String identifierUpper(String identifier) {
     assert ((identifier != null) && (identifier.length() > 0));
 
-    StringBuffer buffer = new StringBuffer();
+    StringBuilder buffer = new StringBuilder();
     buffer.append(Character.toUpperCase(identifier.charAt(0)));
     for (int i = 1; i < identifier.length(); i++) {
       char letter = identifier.charAt(i);

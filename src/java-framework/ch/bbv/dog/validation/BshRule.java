@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -66,7 +66,7 @@ public class BshRule extends ValidationRuleImpl implements ValidationRule {
       log.error(e);
     } catch (EvalError e) {
       if (log.isErrorEnabled()) {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append(e.getErrorSourceFile()).append(" : ").append(
             e.getErrorLineNumber()).append(" ").append(e.getErrorText());
         log.error(buffer.toString(), e);

@@ -1,4 +1,5 @@
-/* copyright 2000-2004 Marcel Baumann
+/* 
+ * copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -72,7 +73,7 @@ public class VersionId implements Comparable {
    * @param minorVersionId minor version identifier.
    * @param patchVersionId patch version identifier.
    * @param postfix postfix information of the version, for example release
-   *        candidate information.
+   *          candidate information.
    */
   public VersionId(int majorVersionId, int minorVersionId, int patchVersionId,
       String postfix) {
@@ -222,7 +223,7 @@ public class VersionId implements Comparable {
    * @return The version identifier as major.minor.patch[-postfix] value.
    */
   public String toString() {
-    StringBuffer buffer = new StringBuffer();
+    StringBuilder buffer = new StringBuilder();
     buffer.append(majorVersionId).append(".").append(minorVersionId)
         .append(".").append(patchVersionId);
     if (postfix != null) {

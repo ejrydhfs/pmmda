@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $id$
@@ -97,13 +97,13 @@ public class Locator {
    * implements the component interface. The key is a string, the value is a
    * component.
    */
-  private Map components;
+  private Map<String, Component> components;
 
   /**
    * List of all registered subsystems in the application. No constraints exist
    * on a subsystem. The key is a string, the value is an object.
    */
-  private Map subsystems;
+  private Map<String, Object> subsystems;
 
   /**
    * State of the application.
@@ -127,8 +127,8 @@ public class Locator {
    * Default constructor of the class.
    */
   public Locator() {
-    components = new HashMap();
-    subsystems = new HashMap();
+    components = new HashMap<String, Component>();
+    subsystems = new HashMap<String, Object>();
     isDebugOn = false;
     isSimulationOn = false;
   }
@@ -312,11 +312,11 @@ public class Locator {
    * registered if there is already a component with the same name.
    * @param component component to register
    * @throws ComponentException an error occured in one of the components.
-   * @pre !isRegistered(component)
+   * @pre (component != null) && !isRegistered(component)
    * @post isRegistered(component)
    */
   public void register(Component component) throws ComponentException {
-    assert ((component != null) && !isRegistered(component));
+    assert (component != null) && !isRegistered(component);
     components.put(component.getName(), component);
     switch (state) {
     case INITIALIZING:
@@ -384,8 +384,8 @@ public class Locator {
    * @pre name != null
    */
   public Component getComponent(String name) {
-    assert name != null;
-    return (Component) components.get(name);
+    assert (name != null);
+    return components.get(name);
   }
 
   /**
@@ -395,7 +395,7 @@ public class Locator {
    * @pre name != null
    */
   public Object getSubsystem(String name) {
-    assert name != null;
+    assert (name != null);
     return subsystems.get(name);
   }
 

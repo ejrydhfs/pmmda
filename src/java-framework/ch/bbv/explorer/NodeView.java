@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$ 
@@ -20,6 +20,22 @@ package ch.bbv.explorer;
  * @version $Revision$
  */
 public interface NodeView {
+
+  /**
+   * Returns the name of the view as displayed in the user interface.
+   * @return name of the view.
+   * @see #setName(String)
+   */
+  String getName();
+
+  /**
+   * Sets the name of hte view.
+   * @param name new name of the view.
+   * @see #getName()
+   * @pre name != null
+   */
+  void setName(String name);
+
   /**
    * Sets the node which should be displayed in the view.
    * @param node new explorer node displayed in the view.

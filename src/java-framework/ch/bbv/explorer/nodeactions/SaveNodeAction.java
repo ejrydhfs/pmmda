@@ -1,4 +1,5 @@
-/* copyright 2000-2004 Marcel Baumann
+/* 
+ * copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -22,6 +23,11 @@ import ch.bbv.explorer.actions.ExplorerNodeActionImpl;
  * @version $Revision$
  */
 public class SaveNodeAction extends ExplorerNodeActionImpl {
+  /**
+   * Serial version identifier coded as back compatibility date.
+   */
+  private static final long serialVersionUID = 20041201;
+
   /**
    * Constructor of the class.
    * @param type node type for which the action is defined.

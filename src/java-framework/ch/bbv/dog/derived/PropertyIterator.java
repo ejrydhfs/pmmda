@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -13,7 +13,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * The property iterator traverses all property values defined through a 
+ * The property iterator traverses all property values defined through a
  * relative path following the bean utility syntax. The syntax was extended to
  * traverse complete collections. The wildcard character is used to define that
  * a collection must be traverse. The wildcard can be used for a collection, an
@@ -24,33 +24,40 @@ import org.apache.commons.logging.LogFactory;
 public class PropertyIterator implements Iterator {
   public static final String PATTERN = "[*]";
 
-  /** Logger of the class.
+  /**
+   * Logger of the class.
    */
   private static Log log = LogFactory.getLog(PropertyIterator.class);
-  
-  /** List of path elements containing at the end a collection to traverse.
+
+  /**
+   * List of path elements containing at the end a collection to traverse.
    */
   private String[] pathElements;
-  
-  /** The list of objects being the bean used to evaluate the associated path
-   * element. Object with index i is the bean of the path element with the 
-   * same index. 
+
+  /**
+   * The list of objects being the bean used to evaluate the associated path
+   * element. Object with index i is the bean of the path element with the same
+   * index.
    */
   private Object[] objects;
- 
- 	/** The iterator associated with the path element with the same index.
- 	 */
+
+  /**
+   * The iterator associated with the path element with the same index.
+   */
   private Iterator[] iterators;
-  
-  /** The last part of the path pointing to a property.
+
+  /**
+   * The last part of the path pointing to a property.
    */
   private String endPath;
+
   private Object nextObject;
 
-	/** Constructor of the class.
-	 * @param bean bean root of the path used to retrieve values.
-	 * @param path path to the properties to retrieve.
-	 */
+  /**
+   * Constructor of the class.
+   * @param bean bean root of the path used to retrieve values.
+   * @param path path to the properties to retrieve.
+   */
   public PropertyIterator(Object bean, String path) {
     pathElements = extractCollections(path);
     objects = new Object[pathElements.length];
@@ -61,24 +68,24 @@ public class PropertyIterator implements Iterator {
   }
 
   public boolean hasNext() {
-  	try {
-  		if (nextObject != null) {
-				nextObject = nextObject();
-  		}
-		} catch (NoSuchElementException e) {
-			nextObject = null;
-		}
-		return nextObject != null;
+    try {
+      if (nextObject != null) {
+        nextObject = nextObject();
+      }
+    } catch (NoSuchElementException e) {
+      nextObject = null;
+    }
+    return nextObject != null;
   }
 
   public Object next() throws NoSuchElementException {
-  	Object result = null;
-  	if (nextObject != null) {
-  		result = nextObject;
-  		nextObject = null;
-  	} else {
-  		result = nextObject();
-  	}
+    Object result = null;
+    if (nextObject != null) {
+      result = nextObject;
+      nextObject = null;
+    } else {
+      result = nextObject();
+    }
     return result;
   }
 
@@ -86,7 +93,8 @@ public class PropertyIterator implements Iterator {
     throw new UnsupportedOperationException();
   }
 
-  /** Returns the next object of a set of nested iterators. If the iterator is
+  /**
+   * Returns the next object of a set of nested iterators. If the iterator is
    * null or has no more objects the chain is traversed and next object is
    * retrieved.
    * @return the requested next object.
@@ -100,25 +108,25 @@ public class PropertyIterator implements Iterator {
       i--;
     }
     if (i < 0) {
-    	// no more elements are available.
+      // no more elements are available.
       throw new NoSuchElementException("No more elements");
     }
     while (i < (iterators.length - 1)) {
-    	if (iterators[i].hasNext()) {
-	      objects[i + 1] = iterators[i].next();
-	      i++;
-	      iterators[i] = getIterator(i);
-	      if (iterators[i] == null) {
-	        throw new NoSuchElementException("Illegal path expression");
-	      }
-			} else {
-				// the iterator has no more elements, retrieve the next elements of
-				// higher iterator, if none exists no more elements are available.
-				i--;
-				if (i < 0) {
-				  throw new NoSuchElementException("No more elements");
-				}
-			}
+      if (iterators[i].hasNext()) {
+        objects[i + 1] = iterators[i].next();
+        i++;
+        iterators[i] = getIterator(i);
+        if (iterators[i] == null) {
+          throw new NoSuchElementException("Illegal path expression");
+        }
+      } else {
+        // the iterator has no more elements, retrieve the next elements of
+        // higher iterator, if none exists no more elements are available.
+        i--;
+        if (i < 0) {
+          throw new NoSuchElementException("No more elements");
+        }
+      }
     }
     try {
       object = BeanUtils.getProperty(objects[i], pathElements[i]);
@@ -158,7 +166,7 @@ public class PropertyIterator implements Iterator {
   }
 
   private String[] extractCollections(String path) {
-    List elements = new ArrayList();
+    List<String> elements = new ArrayList<String>();
     int fromIndex = 0;
     int indexOf = path.indexOf(PATTERN);
     while (indexOf != -1) {
@@ -168,6 +176,6 @@ public class PropertyIterator implements Iterator {
     if (fromIndex < path.length()) {
       endPath = path.substring(fromIndex);
     }
-    return (String[]) elements.toArray(new String[elements.size()]);
+    return elements.toArray(new String[elements.size()]);
   }
 }

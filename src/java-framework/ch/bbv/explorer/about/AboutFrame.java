@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann 
+/* copyright 2000-2005 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$
@@ -13,6 +13,7 @@ import javax.swing.*;
 import javax.swing.border.Border;
 
 import ch.bbv.application.ProjectInfo;
+import ch.bbv.explorer.ExplorerUtilities;
 import ch.bbv.explorer.components.PropertiesPanel;
 import ch.bbv.explorer.components.TableCell;
 import ch.bbv.explorer.components.TablePanel;
@@ -23,6 +24,11 @@ import ch.bbv.explorer.components.TablePanel;
  * @version $Revision$
  */
 public class AboutFrame extends JDialog {
+  /**
+   * Serial version identifier coded as back compatibility date.
+   */
+  private static final long serialVersionUID = 20041201;
+
   /**
    * The name of the columns of the contributors table list.
    */
@@ -61,6 +67,7 @@ public class AboutFrame extends JDialog {
     content.add(tabs);
     setContentPane(content);
     pack();
+    ExplorerUtilities.centerOnParent(this);
   }
 
   /**
@@ -102,12 +109,9 @@ public class AboutFrame extends JDialog {
    */
   private JPanel createAboutPanel() {
     JPanel about = new JPanel(new BorderLayout());
-
     JPanel details = new AboutPanel(projectInfo);
-
     boolean includetabs = false;
     JTabbedPane tabs = new JTabbedPane();
-
     List contributors = projectInfo.getContributors();
     if (contributors != null) {
       JPanel contributorsPane = new TablePanel(contributors, new TableCell(

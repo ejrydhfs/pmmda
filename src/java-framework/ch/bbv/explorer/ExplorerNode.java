@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -23,7 +23,7 @@ public class ExplorerNode implements MutableTreeNode {
   /**
    * List of all children of the node.
    */
-  private List children;
+  private List<ExplorerNode> children;
 
   /**
    * The parent node of this node if defined otherwise null.
@@ -46,13 +46,16 @@ public class ExplorerNode implements MutableTreeNode {
    */
   private UiNodeType nodeType;
 
+  /**
+   * The explorer owning the node.
+   */
   private Explorer explorer;
 
   /**
    * Default constructor of the class.
    */
   public ExplorerNode() {
-    children = new ArrayList();
+    children = new ArrayList<ExplorerNode>();
   }
 
   /**
@@ -62,7 +65,8 @@ public class ExplorerNode implements MutableTreeNode {
    * @param boObject data object to display.
    * @pre (nodeType != null) && (lwObject != null)
    */
-  public ExplorerNode(UiNodeType nodeType, LightweightObject lwObject, DataObject boObject) {
+  public ExplorerNode(UiNodeType nodeType, LightweightObject lwObject,
+      DataObject boObject) {
     this();
     this.nodeType = nodeType;
     setLightweightObject(lwObject);
@@ -155,7 +159,7 @@ public class ExplorerNode implements MutableTreeNode {
    */
   public void insert(MutableTreeNode child, int index) {
     child.setParent(this);
-    children.add(index, child);
+    children.add(index, (ExplorerNode) child);
 
     Explorer explorer = getExplorer();
     if (explorer != null) {
@@ -175,7 +179,7 @@ public class ExplorerNode implements MutableTreeNode {
    * @param index index of the child node to remove.
    */
   public void remove(int index) {
-    ExplorerNode removedChild = (ExplorerNode) children.get(index);
+    ExplorerNode removedChild = children.get(index);
     children.remove(index);
     removedChild.setParent(null);
     getExplorer().nodeRemoved(this, removedChild, index);
@@ -217,7 +221,7 @@ public class ExplorerNode implements MutableTreeNode {
   }
 
   public TreeNode getChildAt(int index) {
-    return (ExplorerNode) children.get(index);
+    return children.get(index);
   }
 
   public int getIndex(TreeNode node) {
@@ -231,7 +235,7 @@ public class ExplorerNode implements MutableTreeNode {
    *         element in the path is the root and the last element is this node.
    */
   public ExplorerNode[] getPath() {
-    Stack stack = new Stack();
+    Stack<ExplorerNode> stack = new Stack<ExplorerNode>();
     ExplorerNode node = this;
     while (node != null) {
       stack.push(node);
@@ -239,7 +243,7 @@ public class ExplorerNode implements MutableTreeNode {
     }
     ExplorerNode[] path = new ExplorerNode[stack.size()];
     for (int i = 0; i < path.length; i++) {
-      path[i] = (ExplorerNode) stack.pop();
+      path[i] = stack.pop();
     }
     return path;
   }
@@ -274,6 +278,9 @@ public class ExplorerNode implements MutableTreeNode {
     this.explorer = explorer;
   }
 
+  /**
+   * @inheritDoc
+   */
   public String toString() {
     return getName();
   }

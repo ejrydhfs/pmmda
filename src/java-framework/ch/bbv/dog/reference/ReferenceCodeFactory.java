@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -37,7 +37,7 @@ public class ReferenceCodeFactory {
    */
   private Object remoteHandler;
 
-  private List infos;
+  private List<ReferenceCodeInfo> infos;
 
   /**
    * Constructor of the class.
@@ -52,12 +52,12 @@ public class ReferenceCodeFactory {
     this.remoteHandler = remoteHandler;
   }
 
-  void addReferenceCodeInfos(List infos) {
+  void addReferenceCodeInfos(List<ReferenceCodeInfo> infos) {
     this.infos.addAll((infos));
   }
 
   void addReferenceCodeInfo(ReferenceCodeInfo info) {
-    infos.add(infos);
+    infos.add(info);
   }
 
   void addReferenceCodeInfos(ReferenceCodeMgr manager) {

@@ -1,16 +1,16 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
  */
 package ch.bbv.dog.ui;
 
-import ch.bbv.dog.reference.ReferenceCode;
-
 import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.JComboBox;
+
+import ch.bbv.dog.reference.ReferenceCode;
 
 /**
  * The reference code combo box provides a combo box for reference codes.
@@ -19,6 +19,11 @@ import javax.swing.JComboBox;
  */
 public class ReferenceCodeComboBox extends JComboBox {
   /**
+   * Serial version identifier coded as back compatibility date.
+   */
+  private static final long serialVersionUID = 20041201;
+
+  /**
    * Reference code class displayed in the combobox.
    */
   private Class clazz;
@@ -26,7 +31,7 @@ public class ReferenceCodeComboBox extends JComboBox {
   /**
    * List of all codes for the reference code type.
    */
-  private List codes;
+  private List< ? extends ReferenceCode> codes;
 
   /**
    * Flag indicating if it is possible to have a null value.
@@ -49,7 +54,8 @@ public class ReferenceCodeComboBox extends JComboBox {
    * @param clazz reference code class.
    * @param codes list of codes of the reference code type.
    */
-  public ReferenceCodeComboBox(Class clazz, List codes) {
+  public ReferenceCodeComboBox(Class< ? extends ReferenceCode> clazz,
+      List< ? extends ReferenceCode> codes) {
     this(clazz, codes, false);
   }
 
@@ -59,7 +65,8 @@ public class ReferenceCodeComboBox extends JComboBox {
    * @param codes list of codes of the reference code type.
    * @param hasEmptyValue flag defining if null value is supported or not.
    */
-  public ReferenceCodeComboBox(Class clazz, List codes, boolean hasEmptyValue) {
+  public ReferenceCodeComboBox(Class< ? extends ReferenceCode> clazz,
+      List< ? extends ReferenceCode> codes, boolean hasEmptyValue) {
     assert (codes != null);
     caseSensitive = true;
     this.clazz = clazz;
@@ -135,10 +142,10 @@ public class ReferenceCodeComboBox extends JComboBox {
     ReferenceCode code = null;
     if (hasEmptyValue) {
       if (index > 1) {
-        code = (ReferenceCode) codes.get(index + 1);
+        code = codes.get(index + 1);
       }
     } else {
-      code = (ReferenceCode) codes.get(index);
+      code = codes.get(index);
     }
     return code;
   }

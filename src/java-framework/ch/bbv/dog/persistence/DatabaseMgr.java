@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann 
+/* copyright 2000-2005 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$
@@ -35,13 +35,13 @@ class DatabaseMgr {
   /**
    * List of all opened databases.
    */
-  private Map databases;
+  private Map<String, LogicalDatabase> databases;
 
   /**
    * Default constructor of the class.
    */
   public DatabaseMgr() {
-    databases = new HashMap();
+    databases = new HashMap<String, LogicalDatabase>();
   }
 
   /**
@@ -77,7 +77,7 @@ class DatabaseMgr {
   public Database getDatabase(String jcdAlias) {
     assert (jcdAlias != null);
     Database database = null;
-    LogicalDatabase logicalDb = (LogicalDatabase) databases.get(jcdAlias);
+    LogicalDatabase logicalDb = databases.get(jcdAlias);
     if (logicalDb != null) {
       database = logicalDb.database;
     }

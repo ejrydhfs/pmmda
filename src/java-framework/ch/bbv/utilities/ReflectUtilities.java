@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -214,6 +214,13 @@ public final class ReflectUtilities {
     return instance;
   }
 
+  public static boolean isDefined(Object bean, String property) {
+    assert ((bean != null) && (property != null));
+    boolean isDefined = false;
+    PropertyUtils.isReadable(bean, property);
+    return isDefined;
+  }
+  
   /**
    * Gets the property of a data object described in the node type.
    * @param bean object which property should be retrieved.

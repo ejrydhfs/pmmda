@@ -1,5 +1,5 @@
-/*
- /* copyright 2000-2004 Marcel Baumann
+/* 
+ * copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -30,6 +30,8 @@ import ca.odell.glazedlists.swing.WritableTableFormat;
  * @version $Revision$
  */
 public class TablePanel extends JPanel {
+  private static final long serialVersionUID = 20041201;
+
   private TableComparatorChooser chooser;
 
   /**
@@ -73,8 +75,8 @@ public class TablePanel extends JPanel {
    */
   public TablePanel(Collection objects, WritableTableFormat tableCell,
       Comparator comparator) {
+    super(new BorderLayout());
     this.tableCell = tableCell;
-    setLayout(new BorderLayout());
 
     BasicEventList list = new BasicEventList();
     list.addAll(objects);

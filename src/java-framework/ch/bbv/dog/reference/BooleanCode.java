@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann 
+/* copyright 2000-2005 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$ 
@@ -14,6 +14,11 @@ import java.util.List;
  * @version $Revision$
  */
 public class BooleanCode extends ReferenceCodeImpl {
+  /**
+   * Serial version identifier coded as back compatibility date.
+   */
+  private static final long serialVersionUID = 20041201;
+
   /**
    * Code object for the code value false.
    */
@@ -37,13 +42,13 @@ public class BooleanCode extends ReferenceCodeImpl {
   /**
    * List of all reference codes of this type.
    */
-  private static List codes;
+  private static List<BooleanCode> codes;
 
   /**
    * Initializes the reference codes of this type.
    */
   static {
-    codes = new ArrayList();
+    codes = new ArrayList<BooleanCode>();
     TRUE = new BooleanCode(TRUE_CODE, 0, "true", "true");
     FALSE = new BooleanCode(FALSE_CODE, 1, "false", "false");
     codes.add(TRUE);
@@ -66,7 +71,7 @@ public class BooleanCode extends ReferenceCodeImpl {
    * Returns the list of all reference codes.
    * @return list of all reference codes.
    */
-  public static List getCodes() {
+  public static List<BooleanCode> getCodes() {
     return codes;
   }
 
@@ -76,13 +81,7 @@ public class BooleanCode extends ReferenceCodeImpl {
    * @return the requested boolean code.
    */
   public static BooleanCode getCode(boolean value) {
-    BooleanCode bool = null;
-    if (value) {
-      bool = (BooleanCode) codes.get(0);
-    } else {
-      bool = (BooleanCode) codes.get(1);
-    }
-    return bool;
+    return (value ? TRUE : FALSE);
   }
 
   /**

@@ -1,4 +1,5 @@
-/* copyright 2000-2004 Marcel Baumann 
+/* 
+ * copyright 2000-2005 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$ 
@@ -18,12 +19,21 @@ public class UiNodeViewType {
    */
   private String name;
 
+  /**
+   * The type of the user interface node of the items displayed in the view.
+   */
   private UiNodeType nodeType;
 
   private Class nodeView;
 
+  /**
+   * Parameters of the constructor of the view.
+   */
   private Object parameters;
 
+  /**
+   * True if the view is the preferred one.
+   */
   private boolean preferred;
 
   public UiNodeViewType(String name, UiNodeType nodeType, Class nodeView,

@@ -1,4 +1,5 @@
-/* copyright 2000-2004 Marcel Baumann
+/* 
+ * copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -10,13 +11,13 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.*;
 
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
+import javax.swing.*;
+
+import ch.bbv.explorer.ExplorerUtilities;
 
 /**
- * The simple dialog defines a simple dialog with a view and two buttons. One
- * to accept the changes and one to cancel the changes.
+ * The simple dialog defines a simple dialog with a view and two buttons. One to
+ * accept the changes and one to cancel the changes.
  * @author MarcelBaumann
  * @version $Revision$
  */
@@ -42,9 +43,11 @@ public abstract class SimpleDialog extends JDialog implements ActionListener {
   private JButton cancelButton;
 
   /**
-   * Default constructor of the class.
+   * Constructor of the class.
+   * @param owner owner of the dialog. 
    */
-  public SimpleDialog() {
+  public SimpleDialog(JFrame owner) {
+    super(owner);
     addWindowListener(new PropertiesWindowListener());
     okButton = new JButton(OK_BUTTON_LABEL);
     okButton.addActionListener(this);
@@ -55,6 +58,7 @@ public abstract class SimpleDialog extends JDialog implements ActionListener {
     panel.add(cancelButton);
     panel.add(okButton);
     getContentPane().add(panel, BorderLayout.SOUTH);
+    ExplorerUtilities.centerOnParent(this);
   }
 
   /**
@@ -79,9 +83,10 @@ public abstract class SimpleDialog extends JDialog implements ActionListener {
   public void setView(JPanel view) {
     getContentPane().add(view, BorderLayout.CENTER);
     pack();
+    ExplorerUtilities.centerOnParent(this);
   }
-  
-  /** 
+
+  /**
    * Sets the enabled status of the button.
    * @param enabled new status of the button.
    */
@@ -89,7 +94,7 @@ public abstract class SimpleDialog extends JDialog implements ActionListener {
     okButton.setEnabled(enabled);
   }
 
-  /** 
+  /**
    * Sets the enabled status of the button.
    * @param enabled new status of the button.
    */

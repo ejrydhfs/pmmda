@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann 
+/* copyright 2000-2005 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$ 
@@ -23,7 +23,8 @@ public interface GraphLockHandler {
    * @throws ConcurrentModificationException At least one of the data object
    *         roots was already locked.
    */
-  List lockGraph(DataObject root) throws ConcurrentModificationException;
+  List<DataObjectId> lockGraph(DataObject root)
+      throws ConcurrentModificationException;
 
   /**
    * Locks all the root data objects members of the list of graphs. The graphs
@@ -34,7 +35,8 @@ public interface GraphLockHandler {
    * @throws ConcurrentModificationException At least one of the data object
    *         roots was already locked.
    */
-  List lockGraphs(List graphs) throws ConcurrentModificationException;
+  List<DataObjectId> lockGraphs(List<DataObject> graphs)
+      throws ConcurrentModificationException;
 
   /**
    * Lock the data object identity.
@@ -43,7 +45,8 @@ public interface GraphLockHandler {
    * @throws ConcurrentModificationException At least one of the data object
    *         roots was already locked.
    */
-  List lockRootId(DataObjectId id) throws ConcurrentModificationException;
+  List<DataObjectId> lockRootId(DataObjectId id)
+      throws ConcurrentModificationException;
 
   /**
    * Locks all the data object identities.
@@ -52,11 +55,12 @@ public interface GraphLockHandler {
    * @throws ConcurrentModificationException At least one of the data object
    *         roots was already locked.
    */
-  List lockRootIds(List ids) throws ConcurrentModificationException;
+  List<DataObjectId> lockRootIds(List<DataObjectId> ids)
+      throws ConcurrentModificationException;
 
   /**
    * Unlocks all the given data object root identities.
    * @param rootIds identifiers of the root objects to unlock.
    */
-  void unlockGraphs(List rootIds);
+  void unlockGraphs(List<DataObjectId> rootIds);
 }

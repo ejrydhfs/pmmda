@@ -1,18 +1,18 @@
-/* copyright 2000-2004 Marcel Baumann
+/* 
+ * copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
  */
 package ch.bbv.explorer;
 
-import ch.bbv.utilities.ReflectUtilities;
-import ch.bbv.utilities.TextUtilities;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
-import java.lang.reflect.InvocationTargetException;
-
-import java.util.Collection;
+import ch.bbv.utilities.ReflectUtilities;
+import ch.bbv.utilities.TextUtilities;
 
 /**
  * The class defines the user interface characteristics of a displayed relation.
@@ -147,8 +147,8 @@ public class UiRelation {
    * Sets the indexed property of a data object described in the node type.
    * @param bean object which property should be retrieved.
    * @param index index of the requested value. If the value is higher than the
-   *        size of the collection when the value is inserted at the end. If the
-   *        value is negative the value is inserted at the beginning.
+   *          size of the collection when the value is inserted at the end. If
+   *          the value is negative the value is inserted at the beginning.
    * @param value value to set.
    * @pre bean != null
    */

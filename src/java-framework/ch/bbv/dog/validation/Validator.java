@@ -1,4 +1,5 @@
-/* copyright 2000-2004 Marcel Baumann
+/* 
+ * copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -6,8 +7,14 @@
 
 package ch.bbv.dog.validation;
 
-import java.beans.*;
-import java.util.*;
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -46,7 +53,7 @@ public class Validator extends ComponentImpl {
   /**
    * The rules defined at class scope for this validator.
    */
-  private Map rules;
+  private Map<BeanInfo, List<ValidationRule>> rules;
 
   /**
    * Creates a new validator in the application. Multiple validators can be used
@@ -56,7 +63,7 @@ public class Validator extends ComponentImpl {
   public Validator(String name) {
     super(name);
     key = "Validator-Rules-" + name;
-    rules = new HashMap();
+    rules = new HashMap<BeanInfo, List<ValidationRule>>();
   }
 
   /**
@@ -64,13 +71,13 @@ public class Validator extends ComponentImpl {
    * @param object data object to validate.
    * @param results list to which validation rule results are added.
    */
-  public void validate(DataObject object, List results) {
+  public void validate(DataObject object, List<ValidationRuleResult> results) {
     BeanInfo beanInfo = getBeanInfo(object.getClass());
-    List beanRules = (List)rules.get(beanInfo);
+    List<ValidationRule> beanRules = rules.get(beanInfo);
     if (beanRules != null) {
       for (int i = 0; i < beanRules.size(); i++) {
-        ((ValidationRule) beanRules.get(i)).execute(object, results);
-        
+        beanRules.get(i).execute(object, results);
+
       }
     }
     PropertyDescriptor[] descriptors = beanInfo.getPropertyDescriptors();
@@ -93,9 +100,9 @@ public class Validator extends ComponentImpl {
    * @param results list to which validation rule results are added.
    */
   public void validate(DataObject root, AbstractVisitorFunctor visitor,
-      List results) {
+      List<ValidationRuleResult> results) {
     if (log.isTraceEnabled()) {
-      StringBuffer buffer = new StringBuffer();
+      StringBuilder buffer = new StringBuilder();
       buffer.append("Start validation for ").append(root.getClass())
           .append(" ").append(root.getId());
       log.trace(buffer.toString());
@@ -105,7 +112,7 @@ public class Validator extends ComponentImpl {
     DataObjectType.invokeVisitor(root, visitor);
     results.addAll(functor.getResults());
     if (log.isTraceEnabled()) {
-      StringBuffer buffer = new StringBuffer();
+      StringBuilder buffer = new StringBuilder();
       buffer.append("End validation for ").append(root.getClass()).append(" ")
           .append(root.getId());
       log.trace(buffer.toString());
@@ -119,9 +126,9 @@ public class Validator extends ComponentImpl {
    */
   public void registerRule(ValidationRule rule, Class clazz) {
     BeanInfo beanInfo = getBeanInfo(clazz);
-    List availableRules = (List) rules.get(beanInfo);
+    List<ValidationRule> availableRules = rules.get(beanInfo);
     if (availableRules == null) {
-      availableRules = new ArrayList();
+      availableRules = new ArrayList<ValidationRule>();
       rules.put(beanInfo, availableRules);
     }
     availableRules.add(rule);
@@ -134,7 +141,7 @@ public class Validator extends ComponentImpl {
    * @param property property on which the rule will be applied.
    */
   public void registerRule(ValidationRule rule, Class clazz, String property) {
-    List availableRules = findOrCreate(clazz, property);
+    List<ValidationRule> availableRules = findOrCreate(clazz, property);
     availableRules.add(rule);
   }
 
@@ -144,8 +151,9 @@ public class Validator extends ComponentImpl {
    * @param clazz class on which instances the rule will be applied.
    * @param property property on which the rule will be applied.
    */
-  public void registerRules(List rules, Class clazz, String property) {
-    List availableRules = findOrCreate(clazz, property);
+  public void registerRules(List<ValidationRule> rules, Class clazz,
+      String property) {
+    List<ValidationRule> availableRules = findOrCreate(clazz, property);
     availableRules.addAll(rules);
   }
 
@@ -189,11 +197,12 @@ public class Validator extends ComponentImpl {
    * @param property name of the property.
    * @return the list of rules of the property.
    */
-  private List findOrCreate(Class clazz, String property) {
+  private List<ValidationRule> findOrCreate(Class clazz, String property) {
     PropertyDescriptor descriptor = getDescriptor(clazz, property);
-    List availableRules = (List) descriptor.getValue(key);
+    List<ValidationRule> availableRules = (List<ValidationRule>) descriptor
+        .getValue(key);
     if (availableRules == null) {
-      availableRules = new ArrayList();
+      availableRules = new ArrayList<ValidationRule>();
       descriptor.setValue(key, availableRules);
     }
     return availableRules;

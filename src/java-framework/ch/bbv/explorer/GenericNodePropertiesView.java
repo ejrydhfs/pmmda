@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -48,6 +48,11 @@ import com.toedter.calendar.JDateChooser;
  */
 public class GenericNodePropertiesView extends NodePropertiesView {
   /**
+   * Serial version identifier coded as back compatibility date.
+   */
+  private static final long serialVersionUID = 20041201;
+
+  /**
    * Logger for all instances of the class.
    */
   private static Log log = LogFactory.getLog(GenericNodePropertiesView.class);
@@ -55,22 +60,22 @@ public class GenericNodePropertiesView extends NodePropertiesView {
   /**
    * List of all views for simple properties.
    */
-  private List primitivePropertyViews;
+  private List<PrimitivePropertyView> primitivePropertyViews;
 
   /**
    * List of all views for simple data object properties.
    */
-  private List dataPropertyViews;
+  private List<DataObjectPropertyView> dataPropertyViews;
 
   /**
    * List of all views for indexed properties.
    */
-  private List indexedPropertyViews;
+  private List<IndexedPropertyView> indexedPropertyViews;
 
   /**
    * List of all views for mapped properties.
    */
-  private List mappedPropertyViews;
+  private List<MappedPropertyView> mappedPropertyViews;
 
   /**
    * Class of the instance displayed in the generic properties view.
@@ -81,37 +86,38 @@ public class GenericNodePropertiesView extends NodePropertiesView {
    * Default constructor of the class.
    */
   public GenericNodePropertiesView() {
-    primitivePropertyViews = new ArrayList();
-    dataPropertyViews = new ArrayList();
-    indexedPropertyViews = new ArrayList();
-    mappedPropertyViews = new ArrayList();
+    primitivePropertyViews = new ArrayList<PrimitivePropertyView>();
+    dataPropertyViews = new ArrayList<DataObjectPropertyView>();
+    indexedPropertyViews = new ArrayList<IndexedPropertyView>();
+    mappedPropertyViews = new ArrayList<MappedPropertyView>();
   }
 
   public void populateView() {
     DataObject bean = getModel().getDataObject();
     if (type == null) {
-      if (log.isDebugEnabled()) {
-        log.debug("Creating generic node properties view " + type.getName());
-      }
-      type = bean.getClass();
-      retrieveProperties(bean);
-      initialize();
+      // first time the dialog is populated, the visible fields are infered
+      // and the associated user interface items are created.
+	    type = bean.getClass();
+	    if (log.isDebugEnabled()) {
+	      log.debug("Creating generic node properties view " + type.getName());
+	    }
+	    retrieveProperties(bean);
+	    initialize();
     }
-
-    for (Iterator i = primitivePropertyViews.iterator(); i.hasNext();) {
-      ((PropertyView) i.next()).setModel(bean);
+    for (PropertyView view : primitivePropertyViews) {
+      view.setModel(bean);
     }
-    for (Iterator i = indexedPropertyViews.iterator(); i.hasNext();) {
-      ((PropertyView) i.next()).setModel(bean);
+    for (IndexedPropertyView view : indexedPropertyViews) {
+      view.setModel(bean);
     }
-    for (Iterator i = mappedPropertyViews.iterator(); i.hasNext();) {
-      ((PropertyView) i.next()).setModel(bean);
+    for (MappedPropertyView view : mappedPropertyViews) {
+      view.setModel(bean);
     }
   }
 
   public void commitChanges() {
-    for (Iterator i = primitivePropertyViews.iterator(); i.hasNext();) {
-      ((PropertyView) i.next()).update();
+    for (PropertyView view : primitivePropertyViews) {
+      view.update();
     }
   }
 
@@ -120,13 +126,13 @@ public class GenericNodePropertiesView extends NodePropertiesView {
   }
 
   public void setViewEditable(boolean editable) {
-    for (Iterator i = primitivePropertyViews.iterator(); i.hasNext();) {
-      ((PropertyView) i.next()).setEditable(editable);
+    for (PropertyView view : primitivePropertyViews) {
+      view.setEditable(editable);
     }
   }
 
   protected void initialize() {
-    StringBuffer buffer = new StringBuffer();
+    StringBuilder buffer = new StringBuilder();
     generateRowsLayout(buffer, primitivePropertyViews);
     generateRowsLayout(buffer, dataPropertyViews);
     generateRowsLayout(buffer, indexedPropertyViews);
@@ -153,7 +159,7 @@ public class GenericNodePropertiesView extends NodePropertiesView {
    * @param buffer buffer in which the layout is written.
    * @param properties the properties which layout should be generated.
    */
-  protected void generateRowsLayout(StringBuffer buffer, List properties) {
+  protected void generateRowsLayout(StringBuilder buffer, List properties) {
     int size = properties.size();
     if (size > 0) {
       if (buffer.length() > 0) {
@@ -231,16 +237,16 @@ public class GenericNodePropertiesView extends NodePropertiesView {
             }
           } else {
             // handle simple properties with at most one item.
-            PropertyView view;
             if (containsInterface(clazz.getInterfaces(), DataObject.class)) {
               DataObjectType type = getModel().getNodeType().getFactory()
                   .getNodeTypeForBo(clazz).getDataObjectType();
-              view = new DataObjectPropertyView(descriptor.getName(), clazz,
-                  descriptor.getDisplayName(), type);
+              DataObjectPropertyView view = new DataObjectPropertyView(
+                  descriptor.getName(), clazz, descriptor.getDisplayName(),
+                  type);
               dataPropertyViews.add(view);
             } else {
-              view = new PrimitivePropertyView(descriptor.getName(), clazz,
-                  descriptor.getDisplayName());
+              PrimitivePropertyView view = new PrimitivePropertyView(descriptor
+                  .getName(), clazz, descriptor.getDisplayName());
               primitivePropertyViews.add(view);
             }
           }

@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann 
+/* copyright 2000-2005 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$ 
@@ -19,6 +19,8 @@ import java.util.List;
  * @version $Revision$
  */
 public class DataObjectUpdate implements Serializable {
+  private static final long serialVersionUID = 20041201;
+
   /**
    * Identifier of the object been updated.
    */
@@ -43,13 +45,13 @@ public class DataObjectUpdate implements Serializable {
   /**
    * List of all modified properties of the object.
    */
-  private List updates;
+  private List<DataPropertyUpdate> updates;
 
   /**
    * Default constructor of the class.
    */
   public DataObjectUpdate() {
-    updates = new ArrayList();
+    updates = new ArrayList<DataPropertyUpdate>();
   }
 
   /**
@@ -138,7 +140,7 @@ public class DataObjectUpdate implements Serializable {
    * @param updates new updates list.
    * @see #getUpdates
    */
-  public void setUpdates(List updates) {
+  public void setUpdates(List<DataPropertyUpdate> updates) {
     this.updates = updates;
   }
 
@@ -148,7 +150,7 @@ public class DataObjectUpdate implements Serializable {
    * @return the requested data property update.
    */
   public DataPropertyUpdate getUpdate(int index) {
-    return (DataPropertyUpdate) updates.get(index);
+    return updates.get(index);
   }
 
   /**
@@ -163,7 +165,7 @@ public class DataObjectUpdate implements Serializable {
    * Adds a list of updates.
    * @param updates list of data property updates to add.
    */
-  public void addUpdates(List updates) {
+  public void addUpdates(List<DataPropertyUpdate> updates) {
     updates.addAll(updates);
   }
 }

@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -13,13 +13,15 @@ import javax.swing.UIManager;
 import javax.swing.text.*;
 
 /**
- * The completion adapter provides auto completion features for
- * Swing combo boxes. Once you wrapped an adapter on the combo
- * box, auto completion is available.
+ * The completion adapter provides auto completion features for Swing combo
+ * boxes. Once you wrapped an adapter on the combo box, auto completion is
+ * available.
  * @author MarcelBaumann
  * @version $Revision$
  */
 public class CompletionAdapter extends PlainDocument {
+  private static final long serialVersionUID = 20041201;
+
   /**
    * The combo box to extend with auto completion features.
    */
@@ -33,12 +35,12 @@ public class CompletionAdapter extends PlainDocument {
   /**
    * Flag indicating if backspace was hit.
    */
-  private boolean hitBackspace;
+  boolean hitBackspace;
 
   /**
    * Flag indicating if backspace was hit on a selection.
    */
-  private boolean hitBackspaceOnSelection;
+  boolean hitBackspaceOnSelection;
 
   /**
    * Creates a completion adapter for the given combo box.
@@ -131,7 +133,7 @@ public class CompletionAdapter extends PlainDocument {
     }
     return null;
   }
-  
+
   JComboBox getComboBox() {
     return comboBox;
   }
@@ -139,7 +141,7 @@ public class CompletionAdapter extends PlainDocument {
   JTextComponent getEditor() {
     return editor;
   }
-  
+
   private void setText(String text) throws BadLocationException {
     // remove all text and insert the new text
     super.remove(0, getLength());

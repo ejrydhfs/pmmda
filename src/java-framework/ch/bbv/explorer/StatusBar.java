@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -17,10 +17,13 @@ import javax.swing.*;
  * @version $Revision$
  */
 public class StatusBar extends JPanel {
+  private static final long serialVersionUID = 20041201;
+
   private JLabel textLabel;
+
   private JProgressBar progressBar;
 
-  private StringBuffer buffer;
+  private StringBuilder buffer;
 
   private static String[] WARNING_FORMATS = { "<html><font color=yellow>",
       "</font></html>" };
@@ -37,7 +40,7 @@ public class StatusBar extends JPanel {
     textLabel = new JLabel("");
     progressBar = new JProgressBar(0, 100);
     progressBar.setValue(0);
-    buffer = new StringBuffer();
+    buffer = new StringBuilder();
     add(BorderLayout.WEST, textLabel);
     add(BorderLayout.EAST, progressBar);
   }
@@ -53,9 +56,9 @@ public class StatusBar extends JPanel {
   public void setError(String text) {
     textLabel.setText(format(ERROR_FORMATS, text));
   }
-  
+
   public void setProgress(int progress) {
-    assert((0 <= progress) && (progress <= 100));
+    assert ((0 <= progress) && (progress <= 100));
     progressBar.setValue(progress);
   }
 

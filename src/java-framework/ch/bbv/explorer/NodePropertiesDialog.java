@@ -1,9 +1,11 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
  */
 package ch.bbv.explorer;
+
+import javax.swing.JFrame;
 
 import ch.bbv.dog.LightweightObjectHandler;
 import ch.bbv.explorer.actions.ExplorerNodeAction;
@@ -22,6 +24,8 @@ import ch.bbv.explorer.components.SimpleDialog;
  * @version $Revision$
  */
 public class NodePropertiesDialog extends SimpleDialog {
+  private static final long serialVersionUID = 20041201;
+
   /**
    * View displayed in the dialog.
    */
@@ -31,6 +35,14 @@ public class NodePropertiesDialog extends SimpleDialog {
    * The explorer node action to execute.
    */
   private ExplorerNodeAction action;
+
+  /**
+   * Constructor of the class.
+   * @param owner owner of the dialog.
+   */
+  public NodePropertiesDialog(JFrame owner) {
+    super(owner);
+  }
 
   /**
    * The data object to display and the view containing its properties are

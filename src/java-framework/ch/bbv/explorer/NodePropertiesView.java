@@ -1,17 +1,15 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
  */
 package ch.bbv.explorer;
 
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.*;
+import javax.swing.JPanel;
 
 import ch.bbv.dog.DataObject;
 
@@ -20,8 +18,9 @@ import ch.bbv.dog.DataObject;
  * objects. The view can contain child properties view. The framework handles
  * all house keeping activities. The developer needs only to implement a few
  * methods to have a usable properties view tailored for his data object type.
- * Methods are provided to clean the view when hiding it. This mechanism supports
- * reuse of views but enable the garbage collector to delete the model objects.
+ * Methods are provided to clean the view when hiding it. This mechanism
+ * supports reuse of views but enable the garbage collector to delete the model
+ * objects.
  * @author Marcel Baumann
  * @version $Revision$
  */
@@ -44,13 +43,13 @@ public abstract class NodePropertiesView extends JPanel {
   /**
    * List of subviews defined in the panel.
    */
-  private List nodePropertiesSubViews;
+  private List<NodePropertiesView> nodePropertiesSubViews;
 
   /**
    * Default constructor of the class.
    */
   public NodePropertiesView() {
-    nodePropertiesSubViews = new ArrayList();
+    nodePropertiesSubViews = new ArrayList<NodePropertiesView>();
   }
 
   /**
@@ -148,14 +147,13 @@ public abstract class NodePropertiesView extends JPanel {
     return editable;
   }
 
-  /** 
+  /**
    * Releases all model resources used in the view and its children.
-   *
    */
   public void release() {
     setModel(null);
   }
-  
+
   /**
    * Returns the model which properties are displayed in the view.
    * @return the node displayed in the view.
@@ -221,43 +219,5 @@ public abstract class NodePropertiesView extends JPanel {
       object = node.getDataObject();
     }
     return object;
-  }
-
-  /**
-   * Customized Editor, which adds a FocusListener to editors being of type
-   * TextField The FocusListener will stop editting when focus is lost.
-   */
-  protected static class MyEditor extends DefaultCellEditor {
-
-    public MyEditor(JCheckBox checkBox) {
-      super(checkBox);
-    }
-
-    public MyEditor(JComboBox comboBox) {
-      super(comboBox);
-    }
-
-    public MyEditor(JTextField textField) {
-      super(textField);
-      textField.addFocusListener(new MyFocusListener(this));
-    }
-
-    /**
-     * Implements a focus adapter ending cell editing in case of focus lost.
-     */
-    private final class MyFocusListener extends FocusAdapter {
-      MyEditor editor;
-
-      public MyFocusListener(MyEditor editor) {
-        this.editor = editor;
-      }
-
-      public void focusGained(FocusEvent e) {
-      }
-
-      public void focusLost(FocusEvent e) {
-        editor.stopCellEditing();
-      }
-    }
   }
 }

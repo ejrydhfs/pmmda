@@ -1,4 +1,5 @@
-/* copyright 2000-2004 Marcel Baumann
+/* 
+ * copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -93,7 +94,7 @@ public interface UiNodeType {
    * Returns the user interface node type views defined for the node type.
    * @return the list of views.
    */
-  List getViews();
+  List<UiNodeViewType> getViewTypes();
 
   /**
    * Returns the class of the view associated with the given name.
@@ -116,7 +117,7 @@ public interface UiNodeType {
    * current view is set back to the default one. The default view is the first
    * one in the list of known user interface views with the default flag.
    * @param name name of the new current view. If null no current view is
-   *        defined.
+   *          defined.
    * @pre name != null
    * @see #getCurrentView()
    */
@@ -133,7 +134,7 @@ public interface UiNodeType {
    * used to retrieve the data object children of an instance of this node type.
    * @return list of relations displayed in the explorer.
    */
-  Collection getRelations();
+  Collection<UiRelation> getRelations();
 
   /**
    * Returns the user interface relation with the given name.
@@ -147,7 +148,7 @@ public interface UiNodeType {
    * Returns the list of properties as a list of user interface properties.
    * @return list of simple properties displayed in the explorer.
    */
-  List getFields();
+  List<UiField> getFields();
 
   /**
    * Returns the size of the properties with the given name of the specified

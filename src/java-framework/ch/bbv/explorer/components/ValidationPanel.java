@@ -1,4 +1,5 @@
-/* copyright 2000-2004 Marcel Baumann
+/* 
+ * copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -17,6 +18,11 @@ import java.util.List;
  */
 public class ValidationPanel extends TablePanel {
   /**
+   * Serial version identifier coded as back compatibility date.
+   */
+  private static final long serialVersionUID = 20041201;
+
+  /**
    * List of displayed validation results.
    */
   private List results;
@@ -28,10 +34,11 @@ public class ValidationPanel extends TablePanel {
 
   static {
     CELLS = new TableCell.Cell[2];
-    CELLS[0] = new TableCell.Cell("severityText", "severity", Integer.TYPE, false);
+    CELLS[0] = new TableCell.Cell("severityText", "severity", Integer.TYPE,
+        false);
     CELLS[1] = new TableCell.Cell("text", "text", String.class, false);
   }
-  
+
   /**
    * Default constructor of the class.
    */

@@ -1,14 +1,14 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
  */
 package ch.bbv.dog;
 
+import java.util.*;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.util.*;
 
 /**
  * This implementation of graph lock handler is only optimal for an application
@@ -36,7 +36,7 @@ public class GraphLockHandlerImpl implements GraphLockHandler {
   /**
    * Set of all locks currently hold in the application.
    */
-  private Set locks;
+  private Set<DataObjectId> locks;
 
   /**
    * Constructor of the class.
@@ -45,22 +45,22 @@ public class GraphLockHandlerImpl implements GraphLockHandler {
   public GraphLockHandlerImpl(DataObjectManager manager) {
     this.manager = manager;
     functor = new CollectRootFunctor(manager);
-    locks = new HashSet();
+    locks = new HashSet<DataObjectId>();
   }
 
-  public List lockGraph(DataObject root) throws ConcurrentModificationException {
-    List roots = new ArrayList();
+  public List<DataObjectId> lockGraph(DataObject root)
+      throws ConcurrentModificationException {
+    List<DataObject> roots = new ArrayList<DataObject>();
     roots.add(root);
     return lockGraphs(roots);
   }
 
-  public synchronized List lockGraphs(List graphs)
+  public synchronized List<DataObjectId> lockGraphs(List<DataObject> graphs)
       throws ConcurrentModificationException {
-    List lockedObjects = new ArrayList();
-    List ids = null;
-    for (Iterator i = graphs.iterator(); i.hasNext();) {
-      DataObject root = (DataObject) i.next();
-      List subroots = collectRoots(root);
+    List<DataObject> lockedObjects = new ArrayList<DataObject>();
+    List<DataObjectId> ids = null;
+    for (DataObject root : graphs) {
+      List<DataObject> subroots = collectRoots(root);
       if (!locks.containsAll(subroots)) {
         lockedObjects.clear();
         break;
@@ -74,16 +74,16 @@ public class GraphLockHandlerImpl implements GraphLockHandler {
     return ids;
   }
 
-  public List lockRootId(DataObjectId id)
+  public List<DataObjectId> lockRootId(DataObjectId id)
       throws ConcurrentModificationException {
-    List ids = new ArrayList();
+    List<DataObjectId> ids = new ArrayList<DataObjectId>();
     ids.add(id);
     return lockRootIds(ids);
   }
 
-  public synchronized List lockRootIds(List identities)
-      throws ConcurrentModificationException {
-    List ids = null;
+  public synchronized List<DataObjectId> lockRootIds(
+      List<DataObjectId> identities) throws ConcurrentModificationException {
+    List<DataObjectId> ids = null;
     if (!identities.isEmpty()) {
       ids = identities;
       locks.addAll(ids);
@@ -91,8 +91,8 @@ public class GraphLockHandlerImpl implements GraphLockHandler {
     return ids;
   }
 
-  public synchronized void unlockGraphs(List roots) {
-    locks.removeAll(roots);
+  public synchronized void unlockGraphs(List<DataObjectId> rootIds) {
+    locks.removeAll(rootIds);
   }
 
   /**
@@ -100,7 +100,7 @@ public class GraphLockHandlerImpl implements GraphLockHandler {
    * @param root root of the graph to parse.
    * @return list of all found root objects part of the graph.
    */
-  private final List collectRoots(DataObject root) {
+  private final List<DataObject> collectRoots(DataObject root) {
     functor.reset();
 
     DataObjectType type = manager.getType(root);
@@ -116,11 +116,9 @@ public class GraphLockHandlerImpl implements GraphLockHandler {
     return functor.getRoots();
   }
 
-  private List createIds(List objects) {
-    List ids = new ArrayList();
-    Iterator objs = objects.iterator();
-    while (objs.hasNext()) {
-      DataObject object = (DataObject) objs.next();
+  private List<DataObjectId> createIds(List<DataObject> objects) {
+    List<DataObjectId> ids = new ArrayList<DataObjectId>();
+    for (DataObject object : objects) {
       if ((object != null) && (object.getId() != null)) {
         ids.add(new DataObjectId(object));
       }

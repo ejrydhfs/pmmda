@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann 
+/* copyright 2000-2005 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$
@@ -25,7 +25,7 @@ public class InvTaglet extends GenericTaglet implements Taglet {
 	/** Registers the taglet in the taglet map.
 	 * @param tagletMap map of all registered taglets.
 	 */
-  public static void register(Map tagletMap) {
+  public static void register(Map<String, Taglet> tagletMap) {
   	GenericTaglet.register(new InvTaglet(), tagletMap);
   }
 

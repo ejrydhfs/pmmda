@@ -1,4 +1,5 @@
-/* copyright 2000-2004 Marcel Baumann
+/* 
+ * copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -45,7 +46,7 @@ public class SyncHandler implements DataObjectHandler {
   }
 
   public DataObject retrieve(String datasource, Class clazz, Integer id) {
-    List ids = null;
+    List<DataObjectId> ids = null;
     if (id != null) {
       ids = lockHandler.lockRootId(new DataObjectId(clazz, id));
     }
@@ -71,7 +72,7 @@ public class SyncHandler implements DataObjectHandler {
 
   public List store(String datasource, Class clazz, DataObject root) {
     DataObject oldRoot = delegate.retrieve(datasource, clazz, root.getId());
-    List ids = lockHandler.lockGraph(oldRoot);
+    List<DataObjectId> ids = lockHandler.lockGraph(oldRoot);
     List updates = delegate.store(datasource, clazz, root);
     lockHandler.unlockGraphs(ids);
     return updates;
@@ -79,14 +80,14 @@ public class SyncHandler implements DataObjectHandler {
 
   public void remove(String datasource, Class clazz, DataObject root) {
     DataObject oldRoot = delegate.retrieve(datasource, clazz, root.getId());
-    List ids = lockHandler.lockGraph(oldRoot);
+    List<DataObjectId> ids = lockHandler.lockGraph(oldRoot);
     delegate.remove(datasource, clazz, root);
     lockHandler.unlockGraphs(ids);
   }
 
   public void remove(String datasource, Class clazz, Integer id) {
     DataObject oldRoot = delegate.retrieve(datasource, clazz, id);
-    List ids = lockHandler.lockGraph(oldRoot);
+    List<DataObjectId> ids = lockHandler.lockGraph(oldRoot);
     delegate.remove(datasource, clazz, id);
     lockHandler.unlockGraphs(ids);
   }

@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann 
+/* copyright 2000-2005 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id: RemoveNodeAction.java,v 1.1 2004/08/10 17:36:18 marcelbaumann
@@ -19,9 +19,14 @@ import ch.bbv.explorer.UiRelation;
  */
 public class RemoveNodeAction extends ExplorerNodeActionImpl {
   /**
+   * Serial version identifier coded as back compatibility date.
+   */
+  private static final long serialVersionUID = 20041201;
+
+  /**
    * Constructor of the class.
    * @param type user interface node type on which the operation will be
-   *        performed.
+   *          performed.
    * @param name display name of the action.
    */
   public RemoveNodeAction(UiNodeType type, String name) {
@@ -60,7 +65,7 @@ public class RemoveNodeAction extends ExplorerNodeActionImpl {
    * ExplorerNode. The type identifier or property is then used to obtain the
    * UiRelation between parent and child node to be deleted.
    * @param node ExplorerNode to be obtained the dataObject type identifier
-   *        (property)
+   *          (property)
    * @return String property.
    */
   private String findProperty(ExplorerNode node) {

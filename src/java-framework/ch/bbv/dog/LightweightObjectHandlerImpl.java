@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann 
+/* copyright 2000-2005 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$ 
@@ -23,16 +23,16 @@ import org.apache.commons.beanutils.PropertyUtils;
  */
 public class LightweightObjectHandlerImpl implements LightweightObjectHandler {
 
-  private Map typesbyLw;
+  private Map<Class, DataObjectType> typesbyLw;
 
-  private Map typesbyBo;
+  private Map<Class, DataObjectType> typesbyBo;
 
   /**
    * Default constructor of the class.
    */
   public LightweightObjectHandlerImpl() {
-    typesbyLw = new HashMap();
-    typesbyBo = new HashMap();
+    typesbyLw = new HashMap<Class, DataObjectType>();
+    typesbyBo = new HashMap<Class, DataObjectType>();
   }
 
   public void synchronize(Object lightweight, Object object) {
@@ -74,7 +74,7 @@ public class LightweightObjectHandlerImpl implements LightweightObjectHandler {
   }
 
   public LightweightObject create(DataObject object) {
-    DataObjectType type = (DataObjectType) typesbyLw.get(object.getClass());
+    DataObjectType type = typesbyLw.get(object.getClass());
     LightweightObject lightweight = type.createLwInstance();
     synchronize(lightweight, object);
     return lightweight;
@@ -95,7 +95,7 @@ public class LightweightObjectHandlerImpl implements LightweightObjectHandler {
   }
 
   public DataObjectType getType(LightweightObject object) {
-    return (DataObjectType) typesbyLw.get(object.getClass());
+    return typesbyLw.get(object.getClass());
   }
 
   /**
@@ -105,7 +105,7 @@ public class LightweightObjectHandlerImpl implements LightweightObjectHandler {
    * @pre object != null
    */
   protected final DataObjectType getType(DataObject object) {
-    return (DataObjectType) typesbyBo.get(object.getClass());
+    return typesbyBo.get(object.getClass());
   }
 
   /**

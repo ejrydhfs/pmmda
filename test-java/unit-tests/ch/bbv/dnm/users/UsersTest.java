@@ -1,11 +1,14 @@
-/* copyright 2000-2004 Marcel Baumann
+/* 
+ * copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
  */
 package ch.bbv.dnm.users;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -96,7 +99,7 @@ public class UsersTest extends TestCase {
       manager.getDataObjectHandler().store(DATASOURCE, Domain.class, domain);
       provider = (Provider) manager.getDataObjectHandler().retrieve(DATASOURCE,
           provider.getClass(), provider.getId());
-      assert(provider.getDomains().size() == nrDomains);
+      assert (provider.getDomains().size() == nrDomains);
     }
     manager.getDataObjectHandler().remove(DATASOURCE, Provider.class, provider);
 
@@ -124,7 +127,7 @@ public class UsersTest extends TestCase {
   }
 
   public void testStressCrdProvider() {
-    List providers = new ArrayList();
+    List<Provider> providers = new ArrayList<Provider>();
     DataObjectManager manager = getDataObjectManager();
     assertNotNull(manager);
     for (int i = 0; i < 10; i++) {
@@ -135,8 +138,7 @@ public class UsersTest extends TestCase {
       assertNotNull(provider.getId());
       providers.add(provider);
     }
-    for (Iterator i = providers.iterator(); i.hasNext();) {
-      Provider provider = (Provider) i.next();
+    for (Provider provider : providers) {
       Integer id = provider.getId();
       manager.getDataObjectHandler().remove(DATASOURCE, Provider.class,
           provider);

@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -25,7 +25,7 @@ public class CollectRootFunctor implements DoFunctor {
   /**
    * List of collected root objects found in the data object graph.
    */
-  private List roots;
+  private List<DataObject> roots;
 
   /**
    * Constructor of the class.
@@ -40,7 +40,7 @@ public class CollectRootFunctor implements DoFunctor {
    * Resets the functor so it is ready to collect the next set of roots.
    */
   public void reset() {
-    roots = new ArrayList();
+    roots = new ArrayList<DataObject>();
   }
 
   /**
@@ -48,7 +48,7 @@ public class CollectRootFunctor implements DoFunctor {
    * graph.
    * @return the list of collected roots.
    */
-  public List getRoots() {
+  public List<DataObject> getRoots() {
     return Collections.unmodifiableList(roots);
   }
 

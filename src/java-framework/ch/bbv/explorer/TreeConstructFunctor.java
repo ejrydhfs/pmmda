@@ -1,4 +1,5 @@
-/* copyright 2000-2004 Marcel Baumann
+/* 
+ * copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -9,7 +10,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
-import ch.bbv.dog.*;
+import ch.bbv.dog.AbstractVisitorFunctor;
+import ch.bbv.dog.DataObject;
+import ch.bbv.dog.DataObjectId;
+import ch.bbv.dog.DoFunctor;
+import ch.bbv.dog.HasId;
+import ch.bbv.dog.LightweightObject;
+import ch.bbv.dog.LwFunctor;
 
 /**
  * The tree construct functor constructs the graph of explorer nodes

@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann 
+/* copyright 2000-2005 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$
@@ -24,14 +24,14 @@ public interface ReferenceCodeGroup extends Serializable {
 	
 	void setDescription(String description);
 	
-	List getGroup();
-	void setGroup(List groups);
+	List<ReferenceCodeGroup> getGroup();
+	void setGroup(List<ReferenceCodeGroup> groups);
 	ReferenceCodeGroup getGroup(int index);
 	void setGroup(int index, ReferenceCodeGroup group);
 	void addGroup(ReferenceCodeGroup group);
 	
-	List getDescriptor();
-	void setDescriptor(List descriptors);
+	List<ReferenceCodeDescriptor> getDescriptor();
+	void setDescriptor(List<ReferenceCodeDescriptor> descriptors);
 	ReferenceCodeDescriptor get(int index);
 	void setDescriptor(int index, ReferenceCodeDescriptor descriptor);
 }

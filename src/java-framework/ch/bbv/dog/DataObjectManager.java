@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -48,7 +48,7 @@ public class DataObjectManager extends ComponentImpl implements Component {
   /**
    * The map for all the data object types and their associated type.
    */
-  private Map types;
+  private Map<Class, DataObjectType> types;
 
   /**
    * Constructor of the class.
@@ -62,7 +62,7 @@ public class DataObjectManager extends ComponentImpl implements Component {
     this.dataObjectHandler = dataObjectHandler;
     this.lwHandler = lwHandler;
     this.lockHandler = lockHandler;
-    types = new HashMap();
+    types = new HashMap<Class, DataObjectType>();
   }
 
   /**
@@ -98,7 +98,7 @@ public class DataObjectManager extends ComponentImpl implements Component {
    */
   public DataObjectType getType(DataObject object) {
     assert (object != null);
-    return (DataObjectType) types.get(object.getClass());
+    return types.get(object.getClass());
   }
 
   /**
@@ -109,7 +109,7 @@ public class DataObjectManager extends ComponentImpl implements Component {
    */
   public DataObjectType getType(Class clazz) {
     assert (clazz != null);
-    return (DataObjectType) types.get(clazz);
+    return types.get(clazz);
   }
 
   /**

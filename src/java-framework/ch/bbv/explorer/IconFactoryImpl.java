@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$ 
@@ -40,23 +40,22 @@ public class IconFactoryImpl implements IconFactory {
   /**
    * Local cache of all loaded icons.
    */
-  private Map icons;
+  private Map<String, ImageIcon> icons;
 
-  /** 
+  /**
    * List of all registered selectors.
    */
-  private Map selectors;
+  private Map<UiNodeType, IconSelector> selectors;
 
   /**
    * Default constructor of the class.
    */
   public IconFactoryImpl() {
-    icons = new HashMap();
-    selectors = new HashMap();
+    icons = new HashMap<String, ImageIcon>();
+    selectors = new HashMap<UiNodeType, IconSelector>();
   }
 
-  public void registerIconSelector(UiNodeType nodeType,
-      IconSelector selector) {
+  public void registerIconSelector(UiNodeType nodeType, IconSelector selector) {
     selectors.put(nodeType, selector);
   }
 
@@ -66,8 +65,7 @@ public class IconFactoryImpl implements IconFactory {
 
   public ImageIcon getSmallIconFor(ExplorerNode node, boolean isExpanded) {
     ImageIcon icon = null;
-    IconSelector selector = (IconSelector) selectors
-        .get(node.getNodeType());
+    IconSelector selector = selectors.get(node.getNodeType());
     if (selector != null) {
       icon = selector.select(node, isExpanded);
     }
@@ -75,9 +73,9 @@ public class IconFactoryImpl implements IconFactory {
   }
 
   public ImageIcon getSmallIconFor(String identifier) {
-    ImageIcon icon = (ImageIcon) icons.get(identifier);
+    ImageIcon icon = icons.get(identifier);
     if (icon == null) {
-      StringBuffer buffer = new StringBuffer();
+      StringBuilder buffer = new StringBuilder();
       buffer.append("/images/").append(identifier).append(GIF_EXTENSION);
       URL url = getClass().getResource(buffer.toString());
       Image image = Toolkit.getDefaultToolkit().createImage(url);

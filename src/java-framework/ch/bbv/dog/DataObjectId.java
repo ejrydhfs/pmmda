@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -14,6 +14,8 @@ import java.io.Serializable;
  * @version $Revision$
  */
 public final class DataObjectId implements Serializable {
+  private static final long serialVersionUID = 20041201;
+
   /**
    * Defines the value of an illegal identifier.
    */
@@ -67,7 +69,7 @@ public final class DataObjectId implements Serializable {
   }
 
   /**
-   * @see Object#equals(Object)
+   * @inheritDoc Object#equals(Object)
    */
   public boolean equals(Object object) {
     boolean equals = false;
@@ -82,7 +84,7 @@ public final class DataObjectId implements Serializable {
   }
 
   /**
-   * @see Object#hashCode
+   * @inheritDoc Object#hashCode
    */
   public int hashCode() {
     return id.hashCode() ^ clazz.hashCode();

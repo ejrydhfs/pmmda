@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -30,19 +30,19 @@ public class ReferenceCodeMgrImpl implements ReferenceCodeMgr {
    * Contains all reference codes managed in this server. Each set of reference
    * codes is stored with its class as key.
    */
-  private Map referenceCodes;
+  private Map<Class, List<ReferenceCode>> referenceCodes;
 
   /**
    * Contains all version numbers of reference code types. Each version is
    * stored with its class as key.
    */
-  private Map codeVersions;
+  private Map<Class, String> codeVersions;
 
   /**
    * Contains all reference codes managed through a known reference code
    * manager.
    */
-  private Map referenceCodeMgrs;
+  private Map<Class, ReferenceCodeMgr> referenceCodeMgrs;
 
   /**
    * List of reference code retrievers
@@ -53,27 +53,27 @@ public class ReferenceCodeMgrImpl implements ReferenceCodeMgr {
    * Constructor of the class.
    */
   public ReferenceCodeMgrImpl() {
-    referenceCodes = new HashMap();
-    codeVersions = new HashMap();
-    referenceCodeMgrs = new HashMap();
+    referenceCodes = new HashMap<Class, List<ReferenceCode>>();
+    codeVersions = new HashMap<Class, String>();
+    referenceCodeMgrs = new HashMap<Class, ReferenceCodeMgr>();
     retrievers = new ArrayList();
   }
 
-  public List getAllRoots(Class clazz) {
+  public List<ReferenceCode> getAllRoots(Class clazz) {
     assert (clazz != null);
     return getRootsFor(getAllReferenceCodes(clazz));
   }
 
-  public List getRoots(Class clazz) {
+  public List<ReferenceCode> getRoots(Class clazz) {
     assert (clazz != null);
     return getRootsFor(getReferenceCodes(clazz));
   }
 
-  public List getAllReferenceCodes(Class clazz) {
+  public List<ReferenceCode> getAllReferenceCodes(Class clazz) {
     assert (clazz != null);
 
     ReferenceCodeMgr referenceCodeMgr = getReferenceCodeMgr(clazz);
-    List codes = null;
+    List<ReferenceCode> codes = null;
     if (referenceCodeMgr != null) {
       if (referenceCodeMgr == this) {
         codes = getAllCodes(clazz);
@@ -85,11 +85,11 @@ public class ReferenceCodeMgrImpl implements ReferenceCodeMgr {
     return codes;
   }
 
-  public List getReferenceCodes(Class clazz) {
+  public List<ReferenceCode> getReferenceCodes(Class clazz) {
     assert (clazz != null);
 
     ReferenceCodeMgr referenceCodeMgr = getReferenceCodeMgr(clazz);
-    List codes = null;
+    List<ReferenceCode> codes = null;
     if (referenceCodeMgr != null) {
       if (referenceCodeMgr == this) {
         codes = getActiveCodes(clazz);
@@ -156,7 +156,8 @@ public class ReferenceCodeMgrImpl implements ReferenceCodeMgr {
     }
   }
 
-  public void registerReferenceCode(Class clazz, List codes, String version) {
+  public void registerReferenceCode(Class clazz, List<ReferenceCode> codes,
+      String version) {
     assert ((clazz != null) && (codes != null));
     referenceCodes.put(clazz, codes);
     codeVersions.put(clazz, version);
@@ -209,19 +210,17 @@ public class ReferenceCodeMgrImpl implements ReferenceCodeMgr {
    * @param clazz class of the reference codes to retrieve.
    * @return list of all active regular reference codes.
    */
-  protected List getActiveCodes(Class clazz) {
+  protected List<ReferenceCode> getActiveCodes(Class clazz) {
     assert (clazz != null);
 
-    HashMap codes = (HashMap) referenceCodes.get(clazz);
+    List<ReferenceCode> codes = referenceCodes.get(clazz);
     if (codes == null) {
       return null;
     }
 
-    List list = new ArrayList();
+    List<ReferenceCode> list = new ArrayList<ReferenceCode>();
 
-    for (Iterator i = codes.values().iterator(); i.hasNext();) {
-      ReferenceCode code = (ReferenceCode) i.next();
-
+    for (ReferenceCode code : codes) {
       if (code.getActive()) {
         list.add(code);
       }
@@ -256,15 +255,15 @@ public class ReferenceCodeMgrImpl implements ReferenceCodeMgr {
    * @param clazz class of the reference codes to retrieve.
    * @return list of all regular reference codes.
    */
-  protected List getAllCodes(Class clazz) {
+  protected List<ReferenceCode> getAllCodes(Class clazz) {
     assert (clazz != null);
 
-    HashMap codes = (HashMap) referenceCodes.get(clazz);
+    List<ReferenceCode> codes = referenceCodes.get(clazz);
     if (codes == null) {
       return null;
     }
 
-    List list = new ArrayList(codes.values());
+    List<ReferenceCode> list = new ArrayList<ReferenceCode>(codes);
     Collections.sort(list, codeComparator);
 
     return list;

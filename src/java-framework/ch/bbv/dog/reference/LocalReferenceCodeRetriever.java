@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -21,13 +21,13 @@ public class LocalReferenceCodeRetriever implements ReferenceCodeRetriever {
   /**
    * The list of reference codes available to the retriever.
    */
-  private List infos;
+  private List<ReferenceCodeInfo> infos;
 
   /**
    * Default constructor of the class.
    */
   public LocalReferenceCodeRetriever() {
-    infos = new ArrayList();
+    infos = new ArrayList<ReferenceCodeInfo>();
   }
 
   /**

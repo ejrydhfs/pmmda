@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -119,8 +119,9 @@ public abstract class AbstractNodeAction extends ExplorerNodeActionImpl {
       newNode = updateNodeWithBo(node);
       boObject = newNode.getDataObject();
     }
-    UiNodeTypeFactory factory = newNode.getExplorer().getNodeTypeFactory();
-    NodePropertiesDialog dialog = factory.getPropertiesDialog();
+    Explorer explorer = newNode.getExplorer();
+    UiNodeTypeFactory factory = explorer.getNodeTypeFactory();
+    NodePropertiesDialog dialog = factory.getPropertiesDialog(explorer);
     dialog.setModel(newNode, editable, created, getViewLabel(node), this);
     dialog.setVisible(true);
   }
@@ -180,7 +181,7 @@ public abstract class AbstractNodeAction extends ExplorerNodeActionImpl {
    * @return label of the view.
    */
   private String getViewLabel(ExplorerNode node) {
-    StringBuffer viewName = new StringBuffer();
+    StringBuilder viewName = new StringBuilder();
     viewName.append(getName());
 
     String name = node.getName();

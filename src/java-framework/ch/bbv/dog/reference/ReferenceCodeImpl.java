@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -14,27 +14,37 @@ import java.util.Date;
  */
 public class ReferenceCodeImpl implements ReferenceCode {
   /**
+   * Serial version identifier coded as back compatibility date.
+   */
+  private static final long serialVersionUID = 20041201;
+
+  /**
    * Code of the reference code instance.
+   * @serial
    */
   private int code;
 
   /**
    * Sort order of the reference code instance in the set of related codes.
+   * @serial
    */
   private int sortOrder;
 
   /**
    * Flag indicating if the code is active or not.
+   * @serial
    */
   private boolean active;
 
   /**
    * Description of the reference code instance.
+   * @serial
    */
   private String description;
 
   /**
    * Short description reference code instance.
+   * @serial
    */
   private String shortDescription;
 

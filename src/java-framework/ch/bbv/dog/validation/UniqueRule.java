@@ -1,4 +1,5 @@
-/* copyright 2000-2004 Marcel Baumann
+/* 
+ * copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -6,7 +7,10 @@
 
 package ch.bbv.dog.validation;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import ch.bbv.utilities.ReflectUtilities;
 
@@ -30,7 +34,7 @@ public class UniqueRule extends ValidationRuleImpl implements ValidationRule {
   /**
    * Constructor of the class where null values are considered.
    * @param indexedProperty property which should be unique for all items in the
-   *        indexed property to evaluate.
+   *          indexed property to evaluate.
    */
   public UniqueRule(String indexedProperty) {
     this(indexedProperty, false, ERROR, false);
@@ -41,9 +45,9 @@ public class UniqueRule extends ValidationRuleImpl implements ValidationRule {
    * @param immediate flag indicating if the rule is immediate or not.
    * @param severity the severity level of the rule.
    * @param indexedProperty property which should be unique for all items in the
-   *        indexed property to evaluate.
+   *          indexed property to evaluate.
    * @param considerNull flag indicating if null values are relevant for the
-   *        uniqueness test.
+   *          uniqueness test.
    */
   public UniqueRule(String indexedProperty, boolean immediate, int severity,
       boolean considerNull) {
@@ -52,21 +56,23 @@ public class UniqueRule extends ValidationRuleImpl implements ValidationRule {
     this.considerNull = considerNull;
   }
 
-  public boolean execute(Object bean, String property, List results) {
+  public boolean execute(Object bean, String property,
+      List<ValidationRuleResult> results) {
     Collection objects = (Collection) ReflectUtilities.getProperty(bean,
         property);
     return validate(objects, results);
   }
 
   public boolean execute(Object bean, String property, Object oldValue,
-      Object newValue, List results) {
+      Object newValue, List<ValidationRuleResult> results) {
     return validate((Collection) newValue, results);
   }
 
-  private boolean validate(Collection objects, List results) {
-    Set values = new HashSet();
-    for (Iterator i = objects.iterator(); i.hasNext();) {
-      Object value = ReflectUtilities.getProperty(i.next(), indexedProperty);
+  private boolean validate(Collection objects,
+      List<ValidationRuleResult> results) {
+    Set<Object> values = new HashSet<Object>();
+    for (Object object : objects) {
+      Object value = ReflectUtilities.getProperty(object, indexedProperty);
       if ((value == null) && !considerNull) {
         continue;
       }

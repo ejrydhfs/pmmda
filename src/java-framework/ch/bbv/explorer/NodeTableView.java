@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$ 
@@ -13,11 +13,16 @@ import ch.bbv.explorer.components.TablePanel;
 /**
  * The table view for explorer nodes. The class is generic and uses type
  * information from the framework to define the table content. The node table
- * view defines the table structure with a node table cell.
+ * view defines the table structure with a node table cell. A table view without
+ * columns can be created to handle degenerated cases.
  * @author marcelbaumann
  * @version $Revision$
  */
 public class NodeTableView extends TablePanel implements NodeView {
+  /**
+   * Serial version identifier coded as back compatibility date.
+   */
+  private static final long serialVersionUID = 20041201;
 
   /**
    * Node displayed by this view
@@ -60,5 +65,4 @@ public class NodeTableView extends TablePanel implements NodeView {
   public void nodeChanged(ExplorerNode node) {
     setModel(this.node);
   }
-
 }

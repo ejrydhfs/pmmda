@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann 
+/* copyright 2000-2005 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$
@@ -34,7 +34,7 @@ public class DerivedAttributeMgr implements PropertyChangeListener {
    * key is the property name and the value is a list of functors. More formally
    * we have <code>classes = Map(clazz, Map(property, List(functor))).</code>
    */
-  private Map classes;
+  private Map<Class, Map<String, Object>> classes;
 
   /**
    * List of the visitor with functor class associated with each registered data
@@ -54,7 +54,7 @@ public class DerivedAttributeMgr implements PropertyChangeListener {
    * Default constructor of the class.
    */
   public DerivedAttributeMgr() {
-    classes = new HashMap();
+    classes = new HashMap<Class, Map<String, Object>>();
     visitorClasses = new HashMap();
     visitors = new HashMap();
   }
@@ -94,7 +94,7 @@ public class DerivedAttributeMgr implements PropertyChangeListener {
    */
   public void unregister(Class clazz, String property, DoFunctor functor) {
     assert (clazz != null && property != null && functor != null);
-    Map properties = (Map) classes.get(clazz);
+    Map properties = classes.get(clazz);
     if (properties != null) {
       List functors = (List) properties.get(property);
       if (functors != null) {
@@ -177,7 +177,7 @@ public class DerivedAttributeMgr implements PropertyChangeListener {
    */
   public List getFunctors(Class clazz, String property) {
     List functors = null;
-    Map properties = (Map) classes.get(clazz);
+    Map properties = classes.get(clazz);
     if (properties != null) {
       functors = (List) properties.get(property);
     }
@@ -185,6 +185,6 @@ public class DerivedAttributeMgr implements PropertyChangeListener {
   }
 
   protected Map getProperties(Class clazz) {
-    return (Map) classes.get(clazz);
+    return classes.get(clazz);
   }
 }

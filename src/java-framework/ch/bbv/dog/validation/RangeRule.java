@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -88,13 +88,14 @@ public class RangeRule extends ValidationRuleImpl implements ValidationRule {
     range = new BigFractionalRange(min, max);
   }
 
-  public boolean execute(Object bean, String property, List results) {
+  public boolean execute(Object bean, String property,
+      List<ValidationRuleResult> results) {
     Object value = ReflectUtilities.getProperty(bean, property);
     return (value != null) && range.isInRange(value);
   }
 
   public boolean execute(Object bean, String property, Object oldValue,
-      Object newValue, List results) {
+      Object newValue, List<ValidationRuleResult> results) {
     return (newValue != null) && range.isInRange(newValue);
   }
 

@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -13,6 +13,8 @@ package ch.bbv.dog;
  * @version $Revision$
  */
 public class DogException extends Exception {
+  private static final long serialVersionUID = 20041201;
+
   /**
    * Error code for a database or O/R layer error.
    */

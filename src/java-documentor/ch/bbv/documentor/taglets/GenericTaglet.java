@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -32,7 +32,7 @@ public abstract class GenericTaglet implements Taglet {
    * @param taglet taglet to register.
    * @param tagletMap map of all registered taglets.
    */
-  public static void register(Taglet taglet, Map tagletMap) {
+  public static void register(Taglet taglet, Map<String, Taglet> tagletMap) {
     String name = taglet.getName();
     if (tagletMap.get(name) != null) {
       tagletMap.remove(name);
@@ -77,7 +77,7 @@ public abstract class GenericTaglet implements Taglet {
       return null;
     }
 
-    StringBuffer buffer = new StringBuffer();
+    StringBuilder buffer = new StringBuilder();
     for (int i = 0; i < tags.length; i++) {
       buffer.append(toString(tags[i]));
     }
@@ -92,7 +92,7 @@ public abstract class GenericTaglet implements Taglet {
 	 * @return the converted tag in HTML.
 	 */
   protected String convert(Tag tag, String text) {
-    StringBuffer buffer = new StringBuffer();
+    StringBuilder buffer = new StringBuilder();
     buffer.append("<dt>").append("<strong>").append(text).append("</strong></dt>")
           .append("<dd>").append(tag.text()).append("</code>").append("</dd>\n");
     return buffer.toString();

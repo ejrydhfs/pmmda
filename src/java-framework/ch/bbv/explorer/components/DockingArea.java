@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -16,6 +16,10 @@ import javax.swing.JTabbedPane;
  * @version $Revision$
  */
 public class DockingArea extends JTabbedPane {
+  /**
+   * Serial version identifier coded as back compatibility date.
+   */
+  private static final long serialVersionUID = 20041201;
 
   /**
    * Default constructor of the class.
@@ -23,6 +27,11 @@ public class DockingArea extends JTabbedPane {
   public DockingArea() {
   }
 
+  /**
+   * Returns the tab component witht the given tile.
+   * @param title title of the tab component to return.
+   * @return the requested tab component if found otherwise null.
+   */
   public JComponent getTab(String title) {
     JComponent tab = null;
     int index = indexOfTab(title);

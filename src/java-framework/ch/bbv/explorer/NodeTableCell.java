@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -25,17 +25,21 @@ public class NodeTableCell extends TableCell {
 
   /**
    * Creates the cell representation of a list of user interface fields.
-   * @param fields user interface list to transform.
+   * @param fields user interface list to transform. if field list is null or
+   *        empty an empty table is created.
    * @return the cell based representation of the list.
-   * @pre (fields != null) && (fields.size() > 0)
    */
   public static TableCell.Cell[] create(List fields) {
-    assert ((fields != null) && (fields.size() > 0));
-    Cell[] cells = new Cell[fields.size()];
-    for (int i = 0; i < cells.length; i++) {
-      UiField field = (UiField) fields.get(i);
-      cells[i] = new Cell(field.getProperty(), field.getProperty(), field
-          .getType(), field.isEditable());
+    Cell[] cells;
+    if ((fields != null) && (fields.size() > 0)) {
+      cells = new Cell[fields.size()];
+      for (int i = 0; i < cells.length; i++) {
+        UiField field = (UiField) fields.get(i);
+        cells[i] = new Cell(field.getProperty(), field.getProperty(), field
+            .getType(), field.isEditable());
+      }
+    } else {
+      cells = new Cell[0];
     }
     return cells;
 

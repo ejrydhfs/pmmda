@@ -1,4 +1,5 @@
-/* copyright 2000-2004 Marcel Baumann
+/* 
+ * copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -42,16 +43,17 @@ public class ValidationRuleImpl implements ValidationRule {
     return severity;
   }
 
-  public boolean execute(Object bean, List results) {
+  public boolean execute(Object bean, List<ValidationRuleResult> results) {
     return true;
   }
 
-  public boolean execute(Object bean, String property, List results) {
+  public boolean execute(Object bean, String property,
+      List<ValidationRuleResult> results) {
     return true;
   }
 
   public boolean execute(Object bean, String property, Object oldValue,
-      Object newValue, List results) {
+      Object newValue, List<ValidationRuleResult> results) {
     return true;
   }
 
@@ -77,9 +79,9 @@ public class ValidationRuleImpl implements ValidationRule {
    * @param newValue new value of the property.
    * @pre (results != null) && (resources != null) && (key != null)
    */
-  protected void addMessage(List results, ResourceBundle resources, String key,
-      int severity, Object bean, String property, Object oldValue,
-      Object newValue) {
+  protected void addMessage(List<ValidationRuleResult> results,
+      ResourceBundle resources, String key, int severity, Object bean,
+      String property, Object oldValue, Object newValue) {
     ValidationRuleResult result = new ValidationRuleResult();
     result.setSeverity(severity);
     result.setKey(key);

@@ -1,4 +1,5 @@
-/* copyright 2000-2004 Marcel Baumann
+/* 
+ * copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -28,7 +29,7 @@ public class ValidateFunctor implements DoFunctor {
   /**
    * List of validation rule results of the last traversal.
    */
-  private List results;
+  private List<ValidationRuleResult> results;
 
   /**
    * Constructor of the class.
@@ -36,16 +37,17 @@ public class ValidateFunctor implements DoFunctor {
    */
   public ValidateFunctor(Validator validator) {
     this.validator = validator;
-    results = new ArrayList();
+    results = new ArrayList<ValidationRuleResult>();
   }
 
   /**
    * Returns the validation results of the last graph traversal.
    * @return list of validation rule results.
    */
-  public List getResults() {
+  public List<ValidationRuleResult> getResults() {
     return results;
   }
+
   /**
    * Resets the results list. Once reseted the functor can be used for a new
    * traversal.

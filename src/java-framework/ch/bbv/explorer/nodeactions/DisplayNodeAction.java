@@ -1,4 +1,4 @@
-/* copyright 2000-2004 Marcel Baumann
+/* copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -16,11 +16,12 @@ import ch.bbv.explorer.UiNodeType;
  * @version $Revision$
  */
 public class DisplayNodeAction extends AbstractNodeAction {
+  private static final long serialVersionUID = 20041201;
+  
   /**
    * Constructor of the class.
    * @param type node type for which the action is defined.
-   * @param name name of the action. If the action is an add, the name must be
-   *        the name of the property.
+   * @param name name of the view to display. 
    */
   public DisplayNodeAction(UiNodeType type, String name) {
     super(type, name, false);

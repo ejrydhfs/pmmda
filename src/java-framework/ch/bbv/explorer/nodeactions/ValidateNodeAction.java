@@ -1,4 +1,5 @@
-/* copyright 2000-2004 Marcel Baumann
+/* 
+ * copyright 2000-2005 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -15,6 +16,7 @@ import org.apache.commons.logging.LogFactory;
 import ch.bbv.dog.AbstractVisitorFunctor;
 import ch.bbv.dog.DataObject;
 import ch.bbv.dog.DataObjectType;
+import ch.bbv.dog.validation.ValidationRuleResult;
 import ch.bbv.dog.validation.Validator;
 import ch.bbv.explorer.ExplorerNode;
 import ch.bbv.explorer.UiNodeType;
@@ -29,6 +31,11 @@ import ch.bbv.explorer.components.ValidationPanel;
  */
 public class ValidateNodeAction extends AbstractNodeAction {
   /**
+   * Serial version identifier coded as back compatibility date.
+   */
+  private static final long serialVersionUID = 20041201;
+
+  /**
    * Logger of the instances of the class.
    */
   private static Log log = LogFactory.getLog(ValidateNodeAction.class);
@@ -42,7 +49,7 @@ public class ValidateNodeAction extends AbstractNodeAction {
    * Constructor of the class.
    * @param type node type for which the action is defined.
    * @param name name of the action. If the action is an add, the name must be
-   *        the name of the property.
+   *          the name of the property.
    * @param validator validator used to validate the data object graph.
    */
   public ValidateNodeAction(UiNodeType type, String name, Validator validator) {
@@ -55,7 +62,7 @@ public class ValidateNodeAction extends AbstractNodeAction {
     if (object != null) {
       DataObjectType type = node.getNodeType().getDataObjectType();
       AbstractVisitorFunctor visitor = type.createVisitorInstance();
-      List results = new ArrayList();
+      List<ValidationRuleResult> results = new ArrayList<ValidationRuleResult>();
       validator.validate(object, visitor, results);
       log.debug("Display validator messages " + results.size());
       node.getExplorer().getStatusBar().setInfo("Validation Completed");
