@@ -5,11 +5,11 @@
  */
 package ch.bbv.explorer;
 
-import ch.bbv.dog.*;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
+
+import ch.bbv.dog.*;
 
 /**
  * The tree construct functor constructs the graph of explorer nodes
@@ -45,8 +45,14 @@ public class TreeConstructFunctor implements DoFunctor, LwFunctor {
    */
   private Stack ancestors;
 
+  /**
+   * Depth of the tree traversal.
+   */
   private int depth;
 
+  /**
+   * User interface node type factory used to create nodes during traversal.
+   */
   private UiNodeTypeFactory factory;
 
   private AbstractVisitorFunctor visitor;
@@ -95,6 +101,18 @@ public class TreeConstructFunctor implements DoFunctor, LwFunctor {
   public ExplorerNode retrieveNode(DataObject object) {
     assert (object != null);
     return (ExplorerNode) doNodes.get(object);
+  }
+
+  /**
+   * Returns the explorer node associated with the object identity.
+   * @param object lightweight object which node is requested.
+   * @return the requested node if found otherwise null.
+   * @pre object != null
+   * @see DataObjectId
+   */
+  public ExplorerNode retrieveNodeById(HasId object) {
+    DataObjectId id = new DataObjectId(object.getClass(), object.getId());
+    return (ExplorerNode) nodes.get(id);
   }
 
   public void execute(DataObject object) {

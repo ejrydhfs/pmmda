@@ -12,12 +12,10 @@ import ch.bbv.dog.*;
 import ch.bbv.explorer.*;
 
 /**
- * <p>
  * The explorer node actions provides a set of standard actions used in almost
  * all explorer based applications. The class provides methods to create these
  * standard actions. The design is functor oriented. The actions are the
  * following.
- * </p>
  * <ul>
  * <li>View the properties of a node as read-only.</li>
  * <li>Edit the properties of a node.</li>
@@ -196,7 +194,7 @@ public class ExplorerNodeActions extends ExplorerNodeActionImpl {
         UiRelation relation = type.getRelation(getName());
         relation.addProperty(parent.getLightweightObject(), node
             .getLightweightObject());
-        if(parent.getLightweightObject() != parent.getDataObject()){
+        if (parent.getLightweightObject() != parent.getDataObject()) {
           relation.addProperty(parent.getDataObject(), node.getDataObject());
         }
         node.nodeChanged();
@@ -212,7 +210,7 @@ public class ExplorerNodeActions extends ExplorerNodeActionImpl {
         UiRelation relation = type.getRelation(getName());
         relation.setProperty(parent.getLightweightObject(), index, node
             .getLightweightObject());
-        if(parent.getLightweightObject() != parent.getDataObject()){
+        if (parent.getLightweightObject() != parent.getDataObject()) {
           relation.setProperty(parent.getDataObject(), index, node
               .getDataObject());
         }
@@ -377,8 +375,8 @@ public class ExplorerNodeActions extends ExplorerNodeActionImpl {
       DataObjectType.invokeVisitor(boGraph.getClass(), boGraph, boVisitor);
 
       ExplorerNode newRoot = functor.retrieveNode(lwGraph);
-      newNode = functor.retrieveNode((LightweightObject) newNode
-          .getLightweightObject());
+      newNode = functor
+          .retrieveNodeById((HasId) newNode.getLightweightObject());
 
       int index = root.getParent().getIndex(root);
       ExplorerNode parent = ((ExplorerNode) root.getParent());

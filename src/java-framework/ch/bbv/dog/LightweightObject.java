@@ -5,7 +5,6 @@
  */
 package ch.bbv.dog;
 
-import java.io.Serializable;
 
 /**
  * The lightweight object interface defines the common signature of all
@@ -13,19 +12,12 @@ import java.io.Serializable;
  * @author MarcelBaumann
  * @version $Revision$
  */
-public interface LightweightObject extends Serializable {
+public interface LightweightObject extends HasId {
   /**
    * List of simple system properties which should not be handled through
    * introspection.
    */
   static final String[] SYSTEM_SIMPLE_PROPERTIES = { "class", "id" };
-
-  /**
-   * Returns the identifier of the object.
-   * @return the identifier of the object. If the object is a new one, null is
-   *         returned.
-   */
-  Integer getId();
 
   /**
    * Performs a deep copy of all referenced data objects and their properties.

@@ -1,5 +1,5 @@
 /* copyright 2000-2004 Marcel Baumann
- * Licensed under the Apache License, Version 2.0 (the "Licence);
+ * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
  */
@@ -8,29 +8,54 @@ package ch.bbv.explorer;
 import java.beans.IndexedPropertyDescriptor;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.util.*;
 
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
 
 import org.apache.commons.beanutils.MappedPropertyDescriptor;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import ch.bbv.dog.DataObject;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+import com.toedter.calendar.JDateChooser;
 
 /**
  * The generic node properties view displays all the properties of a data object
- * type. The properties are inferred through reflection. The view handles
- * simple, indexed and mapped properties.
+ * type. Their values can be edited. The properties are inferred through
+ * reflection. The view handles simple, indexed and mapped properties. The view
+ * has knowledge how to handle strings, natural numbers, decimal numbers,
+ * booleans and dates. The following conventions exist.
+ * <ul>
+ * <li>String properties are displayed as text lines.</li>
+ * <li>Natural numbers and decimal numbers are displayed as a text input field
+ * with a format filter to allow only legal values. Overflows are only detected
+ * during the internal conversion and not during user input.</li>
+ * <li>Boolean properties are displayed as check boxes.</li>
+ * <li>Date are displayed with a custom calendar components.</li>
+ * </ul>
+ * The formatted text field features are used to check if the inputted data have
+ * the expected format.
  * @author MarcelBaumann
  * @version $Revision$
  */
 public class GenericNodePropertiesView extends NodePropertiesView {
+  /**
+   * Logger for all instances of the class.
+   */
+  private static Log log = LogFactory.getLog(GenericNodePropertiesView.class);
+
+  /**
+   * The date format used to convert string representation of dates.
+   */
+  private DateFormat dateFormat;
+
   /**
    * List of all views for simple properties.
    */
@@ -55,6 +80,7 @@ public class GenericNodePropertiesView extends NodePropertiesView {
    * Default constructor of the class.
    */
   public GenericNodePropertiesView() {
+    dateFormat = DateFormat.getDateInstance();
     propertyViews = new ArrayList();
     indexedPropertyViews = new ArrayList();
     mappedPropertyViews = new ArrayList();
@@ -87,7 +113,7 @@ public class GenericNodePropertiesView extends NodePropertiesView {
 
   public void setViewEditable(boolean editable) {
     for (Iterator i = propertyViews.iterator(); i.hasNext();) {
-      ((PropertyView) i.next()).text.setEditable(editable);
+      ((PropertyView) i.next()).setEditable(editable);
     }
   }
 
@@ -143,7 +169,8 @@ public class GenericNodePropertiesView extends NodePropertiesView {
         AbstractPropertyView view = (AbstractPropertyView) properties.get(i);
         builder.addLabel(view.label, cc.xy(1, currentRow));
         if (view instanceof PropertyView) {
-          builder.add(((PropertyView) view).text, cc.xy(3, currentRow));
+          builder.add(((PropertyView) view).getComponent(), cc
+              .xy(3, currentRow));
         } else if (view instanceof IndexedPropertyView) {
           builder
               .add(((IndexedPropertyView) view).button, cc.xy(5, currentRow));
@@ -197,42 +224,53 @@ public class GenericNodePropertiesView extends NodePropertiesView {
   protected void getTextValue(Object object, PropertyView view) {
     try {
       Object value = PropertyUtils.getProperty(object, view.property);
-      if (value != null) {
-        view.text.setText(value.toString());
-      }
+      view.setValue(value);
     } catch (IllegalAccessException e) {
-      e.printStackTrace();
+      log.error(e);
     } catch (InvocationTargetException e) {
-      e.printStackTrace();
+      log.error(e);
     } catch (NoSuchMethodException e) {
-      e.printStackTrace();
+      log.error(e);
     }
   }
 
   protected void setTextValue(Object object, PropertyView view) {
-    String textValue = view.text.getText();
-    try {
-      Object value = null;
-      if (Short.TYPE.equals(view.type)) {
-        value = Short.decode(textValue);
-      } else if (Integer.TYPE.equals(view.type)) {
-        value = Integer.decode(textValue);
-      } else if (Long.TYPE.equals(view.type)) {
-        value = Long.decode(textValue);
-      } else if (Float.TYPE.equals(view.type)) {
-        value = Float.valueOf(textValue);
-      } else if (Double.TYPE.equals(view.type)) {
-        value = Double.valueOf(textValue);
-      } else if (String.class.equals(view.type)) {
+    Object value = view.getValue();
+    if (value instanceof String) {
+      String textValue = (String) value;
+      if (String.class.equals(view.type)) {
         value = textValue;
+      } else if (Boolean.TYPE.equals(view.type)
+          || Boolean.class.equals(view.type)) {
+        value = Boolean.valueOf(textValue);
+      } else if (Short.TYPE.equals(view.type) || Short.class.equals(view.type)) {
+        value = Short.decode(textValue);
+      } else if (Integer.TYPE.equals(view.type)
+          || Integer.class.equals(view.type)) {
+        value = Integer.decode(textValue);
+      } else if (Long.TYPE.equals(view.type) || Long.class.equals(view.type)) {
+        value = Long.decode(textValue);
+      } else if (Float.TYPE.equals(view.type) || Float.class.equals(view.type)) {
+        value = Float.valueOf(textValue);
+      } else if (Double.TYPE.equals(view.type)
+          || Double.class.equals(view.type)) {
+        value = Double.valueOf(textValue);
+      } else if (Date.class.equals(view.type)) {
+        try {
+          value = dateFormat.parseObject(textValue);
+        } catch (ParseException e) {
+          log.error(e);
+        }
       }
+    }
+    try {
       PropertyUtils.setProperty(object, view.property, value);
     } catch (IllegalAccessException e) {
-      e.printStackTrace();
+      log.error(e);
     } catch (InvocationTargetException e) {
-      e.printStackTrace();
+      log.error(e);
     } catch (NoSuchMethodException e) {
-      e.printStackTrace();
+      log.error(e);
     }
   }
 
@@ -264,11 +302,81 @@ public class GenericNodePropertiesView extends NodePropertiesView {
   }
 
   static class PropertyView extends AbstractPropertyView {
-    JTextField text;
+    private JTextField text;
+
+    private JFormattedTextField formattedText;
+
+    private JDateChooser dateChooser;
+
+    private JCheckBox checkBox;
 
     public PropertyView(String property, Class type, String label) {
       super(property, type, label);
-      this.text = new JTextField(TEXT_FIELD_SIZE);
+      if (type.equals(String.class)) {
+        text = new JTextField(TEXT_FIELD_SIZE);
+      } else if (Boolean.class.equals(type) || Boolean.TYPE.equals(type)) {
+        checkBox = new JCheckBox();
+      } else if (Date.class.equals(type)) {
+        dateChooser = new JDateChooser();
+      } else {
+        formattedText = new JFormattedTextField();
+      }
+    }
+
+    public Object getValue() {
+      Object value = null;
+      if (type.equals(String.class)) {
+        value = text.getText();
+      } else if (Boolean.class.equals(type) || Boolean.TYPE.equals(type)) {
+        value = new Boolean(checkBox.isSelected());
+      } else if (Date.class.equals(type)) {
+        value = dateChooser.getDate();
+      } else {
+        formattedText.getText();
+      }
+      return value;
+    }
+
+    public void setValue(Object value) {
+      if (type.equals(String.class)) {
+        text.setText((String) value);
+      } else if (Boolean.class.equals(type) || Boolean.TYPE.equals(type)) {
+        checkBox.setSelected(((Boolean) value).booleanValue());
+      } else if (Date.class.equals(type)) {
+        if (value != null) {
+          dateChooser.setDate((Date) value);
+        } else {
+          dateChooser = new JDateChooser(true);
+        }
+      } else {
+        formattedText.setValue(value);
+      }
+    }
+
+    public JComponent getComponent() {
+      JComponent component = null;
+      if (text != null) {
+        component = text;
+      } else if (dateChooser != null) {
+        component = dateChooser;
+      } else if (checkBox != null) {
+        component = checkBox;
+      } else if (formattedText != null) {
+        component = formattedText;
+      }
+      return component;
+    }
+
+    public void setEditable(boolean editable) {
+      if (text != null) {
+        text.setEditable(editable);
+      } else if (dateChooser != null) {
+        dateChooser.setEnabled(editable);
+      } else if (checkBox != null) {
+        checkBox.setEnabled(editable);
+      } else if (formattedText != null) {
+        formattedText.setEditable(editable);
+      }
     }
   }
 

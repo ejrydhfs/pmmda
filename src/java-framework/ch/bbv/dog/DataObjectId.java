@@ -46,7 +46,7 @@ public final class DataObjectId implements Serializable {
    * @param object data object which identity should be created.
    * @pre (object != null) && (object.getId() != null)
    */
-  public DataObjectId(DataObject object) {
+  public DataObjectId(HasId object) {
     this(object.getClass(), object.getId());
   }
 

@@ -1,14 +1,15 @@
 ## generate the table declaration
-#if(${database} == "MySQL")
-#set($postTable=" TYPE=InnoDB")
+#if(${database.equalsIgnoreCase("MySQL")})
+#set($postTable="TYPE=InnoDB")
 #end
 #set($schema=${package.valueOfTag("ojb-schema-name")})
 #if(${schema})#set($schema=${schema} + ".")#else#set($schema="")#end
 #set($table=${class.getAttribute("ojb-table-name")})
 DROP TABLE IF EXISTS ${schema}${table};
 CREATE TABLE ${schema}${table} (
-#if(${class.getStereotype()} == "dataObject")
+#if(${class.getStereotype().equalsIgnoreCase("dataObject")})
   ID INTEGER NOT NULL,
+  TS TIMESTAMP NOT NULL,
 #end
 #foreach($property in $properties)
 #if(!${property.isTransient()})
@@ -22,12 +23,12 @@ CREATE TABLE ${schema}${table} (
   ${property.nameUpper()}_FK INTEGER${nullInfo},
 #else
 ## support MySQL version < 4.1. Boolean was introduced as alias only in version 4.1
-#if(($columnType == "BOOLEAN") || ($columnType == "Boolean")) 
-  ${columnName} TINYINT(1)${nullInfo},
+#if(${columnType.equalsIgnoreCase("BOOLEAN")})
+  ${columnName} INTEGER${nullInfo},
 #elseif(($columnType == "STRING") || ($columnType == "String")) 
   ${columnName} VARCHAR(${property.valueOfTag("ojb-column-size")})${nullInfo},
 #else
-  ${columnName} ${columnType}${nullInfo},
+  ${columnName} ${columnType.toUpperCase()}${nullInfo},
 #end
 #end
 #end

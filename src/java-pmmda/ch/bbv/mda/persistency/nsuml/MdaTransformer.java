@@ -80,7 +80,7 @@ public class MdaTransformer {
 
   private MModel mModel;
 
-  private MetaModel theMetaModel;
+  private MetaModel metaModel;
 
   /**
    * Default constructor of the class.
@@ -93,7 +93,7 @@ public class MdaTransformer {
   public void synchronize(MetaModel metaModel, MModel model) {
     mModel = model;
     model.setName(metaModel.getName());
-    theMetaModel = metaModel;
+    this.metaModel = metaModel;
 
     extractDataTypes(metaModel, model);
 
@@ -182,7 +182,8 @@ public class MdaTransformer {
       MAttribute mAttribute = createAttribute(context, property.getName());
       MClassifier mClassifier = mAttribute.getType();
       if (mClassifier == null
-          || !mClassifier.getName().equals(property.getTypeName())) {
+          || !NsUmlUtilities.getQualifiedName(mClassifier).equals(
+              property.getTypeName())) {
         mClassifier = createClassifier(property.getTypeName(), mAttribute);
         mAttribute.setType(mClassifier);
       }
@@ -316,7 +317,7 @@ public class MdaTransformer {
    * Creates the package with the given qualified name. All necessary surounding
    * packages are created. If the package already exists no creation action is
    * performed.
-   * @param MModel model containing the package.
+   * @param model model containing the package.
    * @param qualifiedName qualified name of the package to create.
    * @return the requested package either found or newly created.
    */
@@ -475,7 +476,7 @@ public class MdaTransformer {
 
   public MetaClass findClassInModel(String name) {
     VisitorFindClass vfc = new VisitorFindClass(name);
-    theMetaModel.accept(vfc);
+    metaModel.accept(vfc);
     return vfc.getResult();
   }
 
@@ -502,7 +503,7 @@ public class MdaTransformer {
     return item;
   }
 
-  public void processMissingAttributeTypes() {
+  private void processMissingAttributeTypes() {
     MAttribute mAttribute;
     MClass mClass;
     MetaClass metaClass;
@@ -514,7 +515,7 @@ public class MdaTransformer {
     }
   }
 
-  public MAssociation findAssociation(MPackage context, MClass clazz,
+  private MAssociation findAssociation(MPackage context, MClass clazz,
       String name) {
     assert ((context != null) && (clazz != null) && (name != null));
 

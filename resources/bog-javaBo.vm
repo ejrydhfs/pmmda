@@ -492,8 +492,6 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
     }
 #end
 #end
-## infers if an iterator should be declared.
-#set($needIterator=false)
 #foreach ($aggregation in $aggregations) 
 #set($typename=${aggregation.getTypeName()})
 #set($type=false)
@@ -501,7 +499,7 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
 #if(${type} && ${type.getStereotype().equalsIgnoreCase("dataObject")})
 #set($itemType = ${aggregation.retrieveTypeClassName()})
     for (Iterator i = ${aggregation.nameFirstLower()}.iterator(); i.hasNext();) {
-      ((${itemType})i.next()).accept(visitor);
+      ((${type.getAttribute("bo-mo-class")})i.next()).accept(visitor);
     }
 #end
 #end

@@ -190,7 +190,7 @@ public class NsUmlTransformer {
   }
 
   protected void extractPackage(MPackage mPackage, MetaModel metaModel) {
-    String qualifiedName = getQualifiedName(mPackage);
+    String qualifiedName = NsUmlUtilities.getQualifiedName(mPackage);
     MetaPackage metaPackage = metaModel.findPackage(qualifiedName);
     if (metaPackage == null) {
       metaPackage = new MetaPackage();
@@ -211,31 +211,6 @@ public class NsUmlTransformer {
       MPackage mSubPackage = (MPackage) i.next();
       extractPackage(mSubPackage, metaModel);
     }
-  }
-
-  /**
-   * Returns the qualified name of the model element. The root context is the
-   * model itself and does not belong to the qualified name as defined in the
-   * Java language.
-   * @param element element, which qualified name should be returned.
-   * @return the qualified name of the element if defined otherwise an empty
-   *         string.
-   * @pre element != null
-   */
-  protected String getQualifiedName(MModelElement element) {
-    assert (element != null);
-
-    MModelElement context = element;
-    StringBuffer buffer = new StringBuffer();
-    if ((context != null) && (context.getModelElementContainer() != null)) {
-      buffer.append(element.getName());
-      context = context.getModelElementContainer();
-      while ((context != null) && (context.getModelElementContainer() != null)) {
-        buffer.insert(0, ".").insert(0, context.getName());
-        context = context.getModelElementContainer();
-      }
-    }
-    return buffer.toString();
   }
 
   protected void extractClass(MClassifier mClass, MetaPackage metaPackage) {
@@ -269,8 +244,8 @@ public class NsUmlTransformer {
         .hasNext();) {
       extractProperty((MAttribute) i.next(), metaClass);
     }
-    for (Iterator i = new FilterIterator(mClass.getOwnedElements(), MAttribute.class); i
-        .hasNext();) {
+    for (Iterator i = new FilterIterator(mClass.getOwnedElements(),
+        MAttribute.class); i.hasNext();) {
       extractProperty((MAttribute) i.next(), metaClass);
     }
 
@@ -358,7 +333,8 @@ public class NsUmlTransformer {
     }
     MClassifier mClassifier = attribute.getType();
     if (mClassifier != null) {
-      property.setTypeName(getQualifiedName(attribute.getType()));
+      property
+          .setTypeName(NsUmlUtilities.getQualifiedName(attribute.getType()));
     } else {
       log.info("Attribute '" + attribute.getName() + "' of class '"
           + metaClass.getName() + " has no type associated (set to Integer)");

@@ -1,4 +1,4 @@
-#if((${class.getStereotype()} == "dataObject") && (${class.getAttribute("bo-lightweight")} == "true"))
+#if(${class.getStereotype().equalsIgnoreCase("dataObject")} && (${class.getAttribute("bo-lightweight")} == "true"))
 #set($schema=${package.valueOfTag("ojb-schema")})
 #if(${schema})#set($schema="${schema}.")#else#set($schema="")#end
 <class-descriptor class="${package.getAttribute("bo-lw-package")}.${class.getAttribute("bo-lw-class")}"
@@ -21,7 +21,7 @@
 #set($type=false)
 #set($type=${model.findClass(${typeName})})
 ## identifies a forward reference 1-0..1 or 1-1
-#if(${type} && ${type.getStereotype()} == "dataObject")
+#if(${type} && ${type.getStereotype().equalsIgnoreCase("dataObject")})
   <field-descriptor name="${property.nameFirstLower()}"
     column="${property.getAttribute("ojb-column-name")}_FK"
     jdbc-type="INTEGER"
@@ -30,8 +30,8 @@
 #else
   <field-descriptor name="${property.nameFirstLower()}"
     column="${property.getAttribute("ojb-column-name")}"
-#if(($columnType == "BOOLEAN") || ($columnType == "boolean") || ($columnType == "Boolean")) 
-    jdbc-type="TINYINT"
+#if(${columnType.equalsIgnoreCase("BOOLEAN")})
+    jdbc-type="INTEGER"
     conversion="org.apache.ojb.broker.accesslayer.conversions.Boolean2IntFieldConversion"
 #elseif(($columnType == "STRING") || ($columnType == "String"))
     jdbc-type="VARCHAR"
@@ -65,18 +65,18 @@
 ## class are generated as reverse foreign keys in the class.
 #set($references=$model.getClassReferences($class))
 #foreach($reference in $references)
-#if((${reference.getStereotype()} == "dataObject") && ${reference.booleanValueOfTag("ojb-is-persistent")})
+#if(${reference.getStereotype().equalsIgnoreCase("dataObject")} && ${reference.booleanValueOfTag("ojb-is-persistent")})
 #set($relations=${reference.getIndexedProperties()})
 #foreach($relation in $relations)
 #set($typeName=${relation.getTypeName()})
 #set($type=false)
 #set($type=${model.findClass(${typeName})})
-#if(${type} && (${type.getStereotype()} == "dataObject"))
+#if(${type} == ${class})
   <field-descriptor 
     name="${reference.nameFirstLower()}${relation.nameFirstUpper()}Handle" 
     column="${reference.valueOfTag("ojb-table-name")}_${relation.valueOfTag("ojb-column-name")}_FK"
     jdbc-type="INTEGER"
-    nullable="${relation.booleanValueOfTag("ojb-can-be-null")}"
+    nullable="${relation.canBeNull()}"
     access="anonymous"/>
 #end
 #end
@@ -101,10 +101,9 @@
 #foreach($aggregation in $aggregations)
 #if(${aggregation.getMultiplicity().getUpperBound()} == -1)
 #set($typeName=${aggregation.getTypeName()})
-#if($typeName && $typeName == ${class.qualifiedName()})
 #set($type=false)
 #set($type=${model.findClass(${typeName})})
-#if(${type} && (${type.getStereotype()} == "dataObject") && ${type.booleanValueOfTag("ojb-is-persistent")} && ${type.booleanValueOfAttribute("bo-lightweight")})
+#if(${type} && ${type.getStereotype().equalsIgnoreCase("dataObject")} && ${type.booleanValueOfTag("ojb-is-persistent")} && ${type.booleanValueOfAttribute("bo-lightweight")})
 #set($columnName=${aggregation.getAttribute("ojb-column-name")})
 #set($typePackage=${type.getContext()})
   <collection-descriptor name="${aggregation.getName()}"
@@ -113,7 +112,6 @@
     sort="ASC">
     <inverse-foreignkey field-ref="${class.nameFirstLower()}${aggregation.nameFirstUpper()}Handle"/>
   </collection-descriptor>
-#end
 #end
 #end
 #end

@@ -1,4 +1,4 @@
-#if(${class.getStereotype()} == "dataObject")
+#if(${class.getStereotype().equalsIgnoreCase("dataObject")})
 #set($schema=${package.valueOfTag("ojb-schema")})
 #if(${schema})#set($schema="${schema}.")#else#set($schema="")#end
 <class-descriptor class="${package.getAttribute("bo-mo-package")}.${class.getAttribute("bo-mo-class")}"
@@ -10,6 +10,11 @@
     nullable="false"
     indexed="true"
   	autoincrement="true"/>
+  <field-descriptor name="timestamp"
+    column="TS"
+    jdbc-type="TIMESTAMP"
+    nullable="false"
+    locking="true"/>
 ## generates all primitive properties as a column. A primitive property is 
 ## either a simple property or an indexed property with a cardinality of 1
 ## having as type a class not being a data object.
@@ -41,8 +46,8 @@
     autoincrement="true"/>
 #else
     column="${property.getAttribute("ojb-column-name")}"
-#if(($columnType == "BOOLEAN") || ($columnType == "boolean") || ($columnType == "Boolean")) 
-    jdbc-type="TINYINT"
+#if(${columnType.equalsIgnoreCase("BOOLEAN")})
+    jdbc-type="INTEGER"
     conversion="org.apache.ojb.broker.accesslayer.conversions.Boolean2IntFieldConversion"
 #elseif(($columnType == "STRING") || ($columnType == "String"))
     jdbc-type="VARCHAR"
@@ -62,17 +67,15 @@
 #set($relations=${reference.getIndexedProperties()})
 #foreach($relation in $relations)
 #set($typeName=${relation.getTypeName()})
-#if($typeName && $typeName == ${class.qualifiedName()})
 #set($type=false)
 #set($type=${model.findClass(${typeName})})
-#if(${type} && (${type.getStereotype()} == "dataObject"))
+#if(${type} == ${class})
   <field-descriptor 
     name="${reference.nameFirstLower()}${relation.nameFirstUpper()}Handle" 
     column="${reference.valueOfTag("ojb-table-name")}_${relation.valueOfTag("ojb-column-name")}_FK"
     jdbc-type="INTEGER"
-    nullable="${relation.booleanValueOfTag("ojb-can-be-null")}"
+    nullable="${relation.canBeNull()}"
     access="anonymous"/>
-#end
 #end
 #end
 #end
@@ -137,11 +140,10 @@
 ## of n having as type a class being a data object. 
 #foreach($aggregation in $aggregations)
 #if(${aggregation.getMultiplicity().getUpperBound()} == -1)
-#set($columnName=${aggregation.getAttribute("ojb-column-name")})
 #set($typeName=${aggregation.getTypeName()})
 #set($type=false)
 #set($type=${model.findClass(${typeName})})
-#if(${type} && (${type.getStereotype()} == "dataObject") && ${type.booleanValueOfTag("ojb-is-persistent")})
+#if(${type} && ${type.getStereotype().equalsIgnoreCase("dataObject")} && ${type.booleanValueOfTag("ojb-is-persistent")})
 #set($typePackage=${type.getContext()})
   <collection-descriptor
     name="${aggregation.getName()}"

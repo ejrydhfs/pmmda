@@ -7,7 +7,6 @@ package ch.bbv.dog;
 
 import java.beans.PropertyChangeListener;
 import java.beans.VetoableChangeListener;
-import java.io.Serializable;
 import java.sql.Timestamp;
 
 /**
@@ -20,7 +19,7 @@ import java.sql.Timestamp;
  * @author MarcelBaumann
  * @version $Revision$
  */
-public interface DataObject extends Serializable, Cloneable {
+public interface DataObject extends HasId {
   /**
    * List of simple system properties which should not be handled through
    * introspection.
@@ -29,17 +28,9 @@ public interface DataObject extends Serializable, Cloneable {
       "new", "timestamp" };
 
   /**
-   * Returns the identifier of the object.
-   * @return the identifier of the object. If the object is a new one, null is
-   *         returned.
-   * @see #setId
-   */
-  Integer getId();
-
-  /**
    * Sets the identifier of the data object.
    * @param id new identifier of the data object.
-   * @see #getId
+   * @see HasId#getId
    */
   void setId(Integer id);
 

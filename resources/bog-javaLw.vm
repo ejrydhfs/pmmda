@@ -284,17 +284,14 @@ ${class.retrieveVisibilityText()} class ${className} implements LightweightObjec
 #end
 #end
 #end
-## infers if an iterator should be declared.
-#set($needIterator=false)
 #foreach ($aggregation in $aggregations) 
 #if(${aggregation.booleanValueOfTag("bo-lightweight")})
 #set($typename=${aggregation.getTypeName()})
 #set($type=false)
 #set($type=${model.findClass(${typename})})
 #if(${type} && ${type.getStereotype().equalsIgnoreCase("dataObject")} && ${type.getAttribute("bo-lightweight")})
-#set($itemType = ${aggregation.getType()})
     for (Iterator i = ${aggregation.nameFirstLower()}.iterator(); i.hasNext();) {
-      ((${itemType})i.next()).accept(visitor);
+      ((${type.getAttribute("bo-lw-class")})i.next()).accept(visitor);
     }
 #end
 #end
