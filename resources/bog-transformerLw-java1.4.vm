@@ -2,6 +2,8 @@
 #set($dollar="$")
 #emitFileHeader()
 
+#set($properties=${class.getProperties()})
+#set($aggregations=${class.getIndexedProperties()})
 #if (${package})
 package ${package.getAttribute("bo-lw-package")};
 #end
@@ -27,7 +29,7 @@ public class LwTransformer {
 #if(${property.booleanValueOfTag("bo-lightweight")})
 #isTypeLightweigth($model $property $isTypeLightweigth)
 #if($isTypeLightweigth)
-    lw.set${property.nameFirstUpper}(transform(item.get${property.nameFirstUpper()}()));
+    lw.set${property.nameFirstUpper()}(transform(item.get${property.nameFirstUpper()}()));
 #else
     lw.set${property.nameFirstUpper()}(item.get${property.nameFirstUpper()}());
 #end
@@ -40,7 +42,7 @@ public class LwTransformer {
 #if(${aggregation.booleanValueOfTag("bo-lightweight")})
 #isTypeLightweigth($model $aggregation $isTypeLightweigth)	
 #if($isTypeLightweigth)
-    for (Iterator i = item.get${aggregation.nameFirstUpper()}().iterator(); i.hasNext();) {
+    for (Iterator i = item.get${aggregation.nameFirstUpperPlural()}().iterator(); i.hasNext();) {
       lw.add${aggregation.nameFirstUpperSingular()}(transform((${type.getAttribute("bo-mo-class")})i.next()));
     }
 #end

@@ -6,10 +6,13 @@
 package ${package.getAttribute("bo-lw-package")};
 #end
 
+#set($properties=${class.getProperties()})
+#set($aggregations=${class.getIndexedProperties()})
+#set($ancestors=${class.retrieveAncestors()})
+#set($interfaces=${class.retrieveInterfaces()})
+#set($hasAncestors = (${ancestors.size()} > 0))
 #set($imports=${cartridge.retrieveImportStatementsForLw(${class}, ${package.getAttribute("bo-lw-package")})})
-#if(!${hasAncestors})
 #set($dummy=${imports.addClassName("ch.bbv.dog.LightweightObject")})
-#end
 #set($importStatements=${imports.getImportStatements(4)})
 #foreach($importStatement in $importStatements) 
 import $importStatement;
@@ -21,16 +24,35 @@ import $importStatement;
 #emitClassDescription($class "")
 #set($className=${class.getAttribute("bo-lw-class")})
 ${class.retrieveVisibilityText()} class ${className} implements LightweightObject {
+
+/* %% USER DEFINED DECLARATION START %% */
+/* %% USER DEFINED DECLARATION END %% */
+
+  /**
+   * Serial version identifier coded as back compatibility date.
+   */
+  private static final long serialVersionUID = ${configuration.getProperty("bo-cartridge.uid")};
 #foreach($property in $properties)
 #if(${property.booleanValueOfTag("bo-lightweight")})
+#getType($model $property $type)
+#isTypeLightweigth($model $type $isTypeLightweight)
+
 #emitPropertyDescription($property "  ")
+#if($isTypeLightweight)
+#set($itemType = ${type.getAttribute("bo-lw-class")})
+  private ${itemType} ${property.nameFirstLower()};
+#else
   private ${property.retrieveTypeClassName()} ${property.nameFirstLower()};
+#end
 #end
 #end
 #foreach($aggregation in $aggregations) 
 #if(${aggregation.booleanValueOfTag("bo-lightweight")})
+#getType($model $aggregation $type)
+#set($itemType = ${type.getAttribute("bo-lw-class")})
+
 #emitPropertyDescription($aggregation "  ")
-  private ${aggregation.getAttribute("bo-storage-interface")} ${aggregation.nameFirstLower()};
+  private ${aggregation.getAttribute("bo-storage-interface")}<$itemType> ${aggregation.nameFirstLower()};
 #end
 #end
 #if (!${hasAncestors})
@@ -58,7 +80,9 @@ ${class.retrieveVisibilityText()} class ${className} implements LightweightObjec
     this.id = id;
 #foreach ($aggregation in $aggregations) 
 #if(${aggregation.booleanValueOfTag("bo-lightweight")})
-  	${aggregation.nameFirstLower()} = new ${aggregation.getAttribute("bo-storage-type")}();
+#getType($model $aggregation $type)
+#set($itemType = ${type.getAttribute("bo-lw-class")})
+  	${aggregation.nameFirstLower()} = new ${aggregation.getAttribute("bo-storage-type")}<$itemType>();
 #end
 #end
   }
@@ -67,7 +91,13 @@ ${class.retrieveVisibilityText()} class ${className} implements LightweightObjec
 #if(${property.canBeRead()})
 #set($uName = ${property.nameFirstUpper()})
 #set($lName=${property.nameFirstLower()})
+#getType($model $property $type)
+#isTypeLightweigth($model $type $isTypeLightweight)
+#if($isTypeLightweight)
+#set($itemType = ${type.getAttribute("bo-lw-class")})
+#else
 #set($itemType = ${property.retrieveTypeClassName()})
+#end
 #set($visibility = ${property.retrieveVisibilityText()})
 
   /** 
@@ -126,7 +156,7 @@ ${class.retrieveVisibilityText()} class ${className} implements LightweightObjec
    * @return List of all children.
    * @see java.util.Map#values()
    */
-  ${visibility} Collection get${upName}() {
+  ${visibility} Collection<$itemType> get${upName}() {
     return ${lName}.values();
   }
 
@@ -146,7 +176,7 @@ ${class.retrieveVisibilityText()} class ${className} implements LightweightObjec
    * Gets all elements of the relation ${lName}.
    * @return List of all children.
    */
-  ${visibility} ${interface} get${upName}() {
+  ${visibility} ${interface}<$itemType> get${upName}() {
     return ${lName};
   }
 
@@ -158,7 +188,7 @@ ${class.retrieveVisibilityText()} class ${className} implements LightweightObjec
    * @see java.util.List#get(int)
    */
   ${visibility} ${itemType} get${usName}(int index) {
-    return (${itemType})${lName}.get(index);  
+    return ${lName}.get(index);  
    }
 #end  
 #end
@@ -183,7 +213,7 @@ ${class.retrieveVisibilityText()} class ${className} implements LightweightObjec
    * @see java.util.Map#remove(Object)
    */
   ${visibility} ${itemType} remove${usName}(${keyType} key) {
-    return (${itemType})${lName}.remove(key);
+    return ${lName}.remove(key);
   }
 #else
 
@@ -196,7 +226,7 @@ ${class.retrieveVisibilityText()} class ${className} implements LightweightObjec
    * @return true if this list changed as a result of the call. 
    * @see java.util.List#addAll(Collection)
    */
-  ${visibility} boolean add${upName}(Collection c) {
+  ${visibility} boolean add${upName}(Collection<$itemType> c) {
     return ${lName}.addAll(c);
   }  
   
@@ -252,7 +282,7 @@ ${class.retrieveVisibilityText()} class ${className} implements LightweightObjec
 #isTypeLightweigth($model $property $isTypeLightweigth)
 #if($isTypeLightweigth)
     if (${property.nameFirstLower()} != null) {
-      visitor.visit(${property.nameFirstLower()});
+      ${property.nameFirstLower()}.accept(visitor);
     }
 #end
 #end
@@ -261,8 +291,8 @@ ${class.retrieveVisibilityText()} class ${className} implements LightweightObjec
 #if(${aggregation.booleanValueOfTag("bo-lightweight")})
 #isTypeLightweigth($model $aggregation $isTypeLightweigth)
 #if($isTypeLightweigth)
-    for (Iterator i = ${aggregation.nameFirstLower()}.iterator(); i.hasNext();) {
-      ((${type.getAttribute("bo-lw-class")})i.next()).accept(visitor);
+    for (${type.getAttribute("bo-lw-class")} item : ${aggregation.nameFirstLower()}) {
+      item.accept(visitor);
     }
 #end
 #end
@@ -294,10 +324,12 @@ ${class.retrieveVisibilityText()} class ${className} implements LightweightObjec
 #end
 #foreach ($aggregation in $aggregations) 
 #if(${aggregation.booleanValueOfTag("bo-lightweight")})
+#getType($model $aggregation $type)
+#set($itemType = ${type.getAttribute("bo-lw-class")})
 #set($lName = ${aggregation.nameFirstLower()})
-    clone.${lName} = new ${aggregation.getStorageType()}();
+    clone.${lName} = new ${aggregation.getStorageType()}<$itemType>();
     for (int i = 0; i < ${lName}.size(); i++) {
-      clone.${lName}.add(((LightweightObject)${lName}.get(i)).deepCopy());
+      clone.${lName}.add((($itemType)(${lName}.get(i)).deepCopy()));
     }
 #end
 #end

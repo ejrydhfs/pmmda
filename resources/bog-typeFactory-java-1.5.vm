@@ -1,0 +1,98 @@
+#set($sign="#")
+#set($dollar="$")
+#emitFileHeader()
+   
+#if (${package})
+package ${package.getAttribute("bo-mo-package")};
+#end
+
+#set($imports=${model.createImportStatements(${package.getAttribute("bo-mo-package")})})
+#if(${package.getAttribute("bo-has-interface")} == "true")
+#set($dummy=${imports.addPackageName(${package.getAttribute("bo-if-package")})})
+#end
+#if(${package.getAttribute("bo-lightweight")} == "true")
+#set($dummy=${imports.addPackageName(${package.getAttribute("bo-lw-package")})})
+#end
+#set($dummy=${imports.addPackageName(${package.getAttribute("bo-mo-package")})})
+#set($dummy=${imports.addClassName("ch.bbv.dog.DataObjectManager")})
+#set($dummy=${imports.addClassName("ch.bbv.dog.DataObjectType")})
+#set($dummy=${imports.addClassName("java.util.List")})
+#set($dummy=${imports.addClassName("java.util.ArrayList")})
+#set($importStatements=${imports.getImportStatements(4)})
+#foreach($importStatement in $importStatements) 
+import $importStatement;
+#end
+
+/**
+ * The type factory provides meta information about all data objects and
+ * reference code defined in the package to which the factory belongs. The 
+ * package approach scales for complex system.
+ * @version ${dollar}Revision${dollar}
+ */
+public class TypeFactory {
+/* %% USER DEFINED DEFINITIONS START %% */
+/* %% USER DEFINED DEFINITIONS END   %% */
+
+  /** 
+   * The data object manager responsible of the types defines in the package.
+   */
+  private DataObjectManager manager;
+  
+  /** 
+   * Constructor of the class.
+   * @param manager data object manager where the types should be created.
+   */
+  public TypeFactory(DataObjectManager manager) {
+    this.manager = manager;
+  }
+
+  /** 
+   * Registers all data object types defined in the package.
+   */
+  public void registerAllTypes() {
+#foreach($class in $classes)
+#isLightweightDataObject($class $isLightweightDataObject)	
+#if($isLightweightDataObject)
+    createNodeTypeFor${class.getName()}();
+#end
+#end
+  }
+  
+#foreach($class in $classes)
+#isLightweightDataObject($class $isLightweightDataObject)	
+#if($isLightweightDataObject)
+#set($boClass=${class.getAttribute("bo-mo-class")})
+#set($lwClass=${class.getAttribute("bo-lw-class")})
+#if(${class.getAttribute("bo-has-interface")} == true)
+#set($ifClass=${class.getAttribute("bo-if-class")})
+#else
+#set($ifClass=${class.getAttribute("bo-mo-class")})
+#end
+
+  /** 
+   * Creates a new data object type for the data object graph framework.
+   */
+  public void createNodeTypeFor${class.getName()}() {
+    DataObjectType type = new DataObjectType(${lwClass}.class,
+      ${boClass}.class, ${ifClass}.class, VisitorFunctor.class, 
+      LwVisitorFunctor.class, LwTransformer.class);
+    manager.register(type);
+  }
+#end  
+#end
+
+  /** 
+   * Returns the list of the classnames of all reference code types defined in 
+   * the package.
+   * @return list of class names of all reference code types in the package.
+   */
+  public List<String> getReferenceCodeTypes() {
+    List<String> classnames = new ArrayList<String>();
+#foreach($class in $classes)
+#if(${class.getStereotype()} == "referenceCode")
+    classnames.add("${class.qualifiedName()}");
+#end
+#end
+    return classnames;
+  }
+}

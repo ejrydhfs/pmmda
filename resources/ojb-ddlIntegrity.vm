@@ -9,8 +9,8 @@
 #isPersistentDataObject($type $isPersistentDataObject)
 #if($isPersistentDataObject)
 #set($columnName=${property.valueOfTag("ojb-column-name")})
-ALTER TABLE ${schema}${table} ADD CONSTRAINT ${columnName}_IR FOREIGN KEY 
-  ON (${table}_${columnName}_FK)
+ALTER TABLE ${schema}${table} ADD CONSTRAINT ${columnName}_IR 
+  FOREIGN KEY (${table}_${columnName}_FK)
   REFERENCES ${schema}${type.getAttribute("ojb-table-name")}(ID)
   ON DELETE RESTRICT;
   
@@ -25,8 +25,8 @@ ALTER TABLE ${schema}${table} ADD CONSTRAINT ${columnName}_IR FOREIGN KEY
 #isPersistentDataObject($type $isPersistentDataObject)
 #if($isPersistentDataObject)
 #set($columnName=${aggregation.valueOfTag("ojb-column-name")})
-ALTER TABLE ${schema}${table} ADD CONSTRAINT ${columnName}_IR FOREIGN KEY 
-  ON (${table}_${columnName}_FK)
+ALTER TABLE ${schema}${table} ADD CONSTRAINT ${columnName}_IR 
+  FOREIGN KEY (${table}_${columnName}_FK)
   REFERENCES ${schema}${type.getAttribute("ojb-table-name")}(ID)
   ON DELETE RESTRICT;
 
@@ -43,8 +43,8 @@ ALTER TABLE ${schema}${table} ADD CONSTRAINT ${columnName}_IR FOREIGN KEY
 #getType($model $relation $type)
 #if((${type} == ${class}) && ${type.booleanValueOfTag("persistence")})
 #set($columnName=${relation.valueOfTag("ojb-column-name")})	
-ALTER TABLE ${schema}${table} ADD CONSTRAINT ${reference.valueOfTag("ojb-table-name")}_${relation.valueOfTag("ojb-column-name")}_IR FOREIGN KEY 
-  ON (${table}_${relation.valueOfTag("ojb-column-name")}_FK)
+ALTER TABLE ${schema}${table} ADD CONSTRAINT ${reference.valueOfTag("ojb-table-name")}_${relation.valueOfTag("ojb-column-name")}_IR 
+  FOREIGN KEY (${table}_${relation.valueOfTag("ojb-column-name")}_FK)
   REFERENCES ${schema}${reference.getAttribute("ojb-table-name")}(ID)
   ON DELETE RESTRICT;
 

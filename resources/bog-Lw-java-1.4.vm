@@ -1,0 +1,323 @@
+#set($sign="#")
+#set($dollar="$")
+#emitFileHeader()
+
+#if (${package})
+package ${package.getAttribute("bo-lw-package")};
+#end
+
+#set($properties=${class.getProperties()})
+#set($aggregations=${class.getIndexedProperties()})
+#set($ancestors=${class.retrieveAncestors()})
+#set($interfaces=${class.retrieveInterfaces()})
+#set($hasAncestors = (${ancestors.size()} > 0))
+#set($imports=${cartridge.retrieveImportStatementsForLw(${class}, ${package.getAttribute("bo-lw-package")})})
+#set($dummy=${imports.addClassName("ch.bbv.dog.LightweightObject")})
+#set($importStatements=${imports.getImportStatements(4)})
+#foreach($importStatement in $importStatements) 
+import $importStatement;
+#end
+
+/* %% USER DEFINED IMPORT START %% */
+/* %% USER DEFINED IMPORT END   %% */
+
+#emitClassDescription($class "")
+#set($className=${class.getAttribute("bo-lw-class")})
+${class.retrieveVisibilityText()} class ${className} implements LightweightObject {
+#foreach($property in $properties)
+#if(${property.booleanValueOfTag("bo-lightweight")})
+#getType($model $property $type)
+#isTypeLightweigth($model $type $isTypeLightweight)
+
+#emitPropertyDescription($property "  ")
+#if($isTypeLightweight)
+#set($itemType = ${type.getAttribute("bo-lw-class")})
+  private ${itemType} ${property.nameFirstLower()};
+#else
+  private ${property.retrieveTypeClassName()} ${property.nameFirstLower()};
+#end
+#end
+#end
+#foreach($aggregation in $aggregations) 
+#if(${aggregation.booleanValueOfTag("bo-lightweight")})
+#emitPropertyDescription($aggregation "  ")
+  private ${aggregation.getAttribute("bo-storage-interface")} ${aggregation.nameFirstLower()};
+#end
+#end
+#if (!${hasAncestors})
+
+  /** 
+   * Unique identifier of the data object instance distinguishing it from 
+   * all other instances of the same data object type.
+   */
+  private Integer id;
+#end
+
+  /** 
+   * Default constructor of the class used to create new lightweight data 
+   * object instances.
+   */
+  public ${className}() {
+    this(null);
+  }
+     
+  /** 
+   * Constructor of the class.
+   * @param id identifier of the object to which the proxy is associated.
+   */
+  public ${className}(Integer id) {
+    this.id = id;
+#foreach ($aggregation in $aggregations) 
+#if(${aggregation.booleanValueOfTag("bo-lightweight")})
+  	${aggregation.nameFirstLower()} = new ${aggregation.getAttribute("bo-storage-type")}();
+#end
+#end
+  }
+#foreach ($property in $properties)
+#if(${property.booleanValueOfTag("bo-lightweight")})
+#if(${property.canBeRead()})
+#set($uName = ${property.nameFirstUpper()})
+#set($lName=${property.nameFirstLower()})
+#getType($model $property $type)
+#isTypeLightweigth($model $type $isTypeLightweight)
+#if($isTypeLightweight)
+#set($itemType = ${type.getAttribute("bo-lw-class")})
+#else
+#set($itemType = ${property.retrieveTypeClassName()})
+#end
+#set($visibility = ${property.retrieveVisibilityText()})
+
+  /** 
+   * Gets the current value of the attribute ${uName}.
+   * @return the value of the attribute ${uName}.
+#if(${property.canBeWritten()})
+   * @see ${sign}set${uName}
+#end    
+   */
+  ${visibility} ${itemType} get${uName}() {
+    return ${lName};
+  }
+#end
+#if(${property.canBeWritten()})
+
+  /** 
+   * Sets the new value of the simple property ${uName}.
+   * @param ${lName} new value of the property.
+#if(${property.canBeRead()})
+   * @see ${sign}get${uName}
+#end    
+   */    
+  ${visibility} void set${uName}(${itemType} ${lName}) {
+    this.${lName} = ${lName};
+  }
+#end
+#end
+#end
+#if (!${hasAncestors})
+
+  /** 
+   * Returns the unique identifier of the data object instance.
+   * @return the identifier of the instance.
+   */
+  public Integer getId() {
+  	return id;
+  }
+#end
+#foreach ($aggregation in $aggregations) 
+#if(${aggregation.booleanValueOfTag("bo-lightweight")})
+#set($uName = ${aggregation.nameFirstUpper()})
+#set($lName = ${aggregation.nameFirstLower()})
+#set($usName = ${aggregation.nameFirstUpperSingular()})
+#set($upName = ${aggregation.nameFirstUpperPlural()})
+#set($interface = ${aggregation.getAttribute("bo-storage-interface")}) 
+#set($storageType = ${aggregation.getAttribute("bo-storage-type")})
+#getType($model $aggregation $type)
+#set($itemType = ${type.getAttribute("bo-lw-class")})
+#set($keyType = ${aggregation.getKeyType()})
+#set($visibility = ${aggregation.retrieveVisibilityText()})
+#if(${aggregation.canBeRead()})
+#if(${aggregation.isOrdered()})
+
+  /** 
+   * Gets all elements of the ordered relation ${lName}.
+   * @return List of all children.
+   * @see java.util.Map#values()
+   */
+  ${visibility} Collection get${upName}() {
+    return ${lName}.values();
+  }
+
+  /** 
+   * Returns the element with the specified key in the ordered indexed  
+   * property ${lName}.
+   * @param key key of element to return. 
+   * @return the element at the specified position in this list.
+   * @see java.util.Map#get(key)
+   */
+  ${visibility} ${itemType} get${usName}(${keyType} key) {
+    return (${itemType})${lName}.get(key);  
+   }
+#else
+
+  /** 
+   * Gets all elements of the relation ${lName}.
+   * @return List of all children.
+   */
+  ${visibility} ${interface} get${upName}() {
+    return ${lName};
+  }
+
+  /** 
+   * Returns the element at the specified position in the indexed property 
+   * ${lName}.
+   * @param index index of element to return. 
+   * @return the element at the specified position in this list.
+   * @see java.util.List#get(int)
+   */
+  ${visibility} ${itemType} get${usName}(int index) {
+    return (${itemType})${lName}.get(index);  
+   }
+#end  
+#end
+#if(${aggregation.canBeWritten()})
+#if(${aggregation.isOrdered()})
+
+  /** 
+   * Inserts the given child with the given key in the ordered indexed 
+   * property ${lName}.
+   * @param key key at which the specified element is to be inserted.
+   * @param value value to be inserted.
+   * @see java.util.Map#put(Object, Object)
+   */
+  ${visibility} void put${usName}(${keyType} key, ${itemType} value) {
+    ${lName}.put(key, value);
+  }
+  
+  /** 
+   * Removes the element with the specified key.
+   * @param key key whose mappingis to be removed from the map. 
+   * @return true if this list contained the specified element. 
+   * @see java.util.Map#remove(Object)
+   */
+  ${visibility} ${itemType} remove${usName}(${keyType} key) {
+    return (${itemType})${lName}.remove(key);
+  }
+#else
+
+  /** 
+   * Appends all of the elements in the specified collection to the end of 
+   * this list, in the order that they are returned by the specified 
+   * collection's iterator. The behavior of this operation is unspecified if 
+   * the specified collection is modified while the operation is in progress. 
+   * @param c collection whose elements are to be added to this list. 
+   * @return true if this list changed as a result of the call. 
+   * @see java.util.List#addAll(Collection)
+   */
+  ${visibility} boolean add${upName}(Collection c) {
+    return ${lName}.addAll(c);
+  }  
+  
+  /** 
+   * Inserts the given child at the select position in the relation ${lName}.
+   * @param index index at which the specified element is to be inserted.
+   * @param element element to be inserted.
+   * @see java.util.List#add(int, Object)
+   */
+  ${visibility} void add${usName}(int index, ${itemType} element) {
+    ${lName}.add(index, element);
+  }
+
+  /** 
+   * Appends the specified element to the end of this list in the relation 
+   * ${uName}.
+   * @param element to be appended to this list.
+   * @return true (as per the general contract of the Collection.add method)   
+   * @see java.util.List#add(Object)
+   */
+  ${visibility} boolean add${usName}(${itemType} element) {
+    return ${lName}.add(element);
+  }
+  
+  /**
+   * Removes the first occurrence in this list of the specified element 
+   * If this list does not contain the element, it is unchanged. More formally, 
+   * removes the element with the lowest index i such that 
+   * (o==null ? get(i)==null : o.equals(get(i))) (if such an element exists). 
+   * @param element element to be removed from this list, if present. 
+   * @return true if this list contained the specified element. 
+   * @see java.util.List#remove(Object)
+   */
+  ${visibility} boolean remove${usName}(${itemType} element) {
+    return ${lName}.remove(element);
+  }
+#end
+#end
+#end
+#end
+
+  /** 
+   * Implements the visitor pattern in the data object class. The accept
+   * method dispatches the visitor to all its relevant children. A relevant
+   * child is always another data object.
+   * @param visitor visitor to act on the data object.
+   */  
+  public void accept(LwVisitor visitor) {
+  	visitor.setDepth(visitor.getDepth() + 1);
+    visitor.visit(this);
+#foreach ($property in $properties)
+#if(${property.booleanValueOfTag("bo-lightweight")})
+#isTypeLightweigth($model $property $isTypeLightweigth)
+#if($isTypeLightweigth)
+    if (${property.nameFirstLower()} != null) {
+      ${property.nameFirstLower()}.accept(visitor);
+    }
+#end
+#end
+#end
+#foreach ($aggregation in $aggregations) 
+#if(${aggregation.booleanValueOfTag("bo-lightweight")})
+#isTypeLightweigth($model $aggregation $isTypeLightweigth)
+#if($isTypeLightweigth)
+    for (Iterator i = ${aggregation.nameFirstLower()}.iterator(); i.hasNext();) {
+      ((${type.getAttribute("bo-lw-class")})i.next()).accept(visitor);
+    }
+#end
+#end
+#end
+    visitor.setDepth(visitor.getDepth() - 1);
+  }
+
+  /** 
+   * Creates and returns a deep copy of the object and its descendants. The 
+   * properties containing keys are not cloned because they are immutable.
+   * @return a deep copy of the instance.
+   */
+  public LightweightObject deepCopy() {
+    ${class.getAttribute("bo-lw-class")} clone = null;
+    try {
+      clone = (${class.getAttribute("bo-lw-class")})clone();
+    } catch (CloneNotSupportedException e) {
+      // impossible exception because data object is cloneable.
+      return null;
+    }
+#foreach ($property in $properties)
+#isLightweightDataObject($property $isLightweightDataObject)	
+#if($isLightweightDataObject)
+#set($lName=${property.nameFirstLower()})
+    if (${lName} != null) {
+      clone.${lName} = (${property.getReferenceClass().getAttribute("bo-lw-class")})${lName}.getClone();
+	}
+#end 
+#end
+#foreach ($aggregation in $aggregations) 
+#if(${aggregation.booleanValueOfTag("bo-lightweight")})
+#set($lName = ${aggregation.nameFirstLower()})
+    clone.${lName} = new ${aggregation.getStorageType()}();
+    for (int i = 0; i < ${lName}.size(); i++) {
+      clone.${lName}.add(((LightweightObject)${lName}.get(i)).deepCopy());
+    }
+#end
+#end
+	return clone;
+  }
+}

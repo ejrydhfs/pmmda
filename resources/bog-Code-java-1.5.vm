@@ -1,0 +1,26 @@
+#emitFileHeader()
+   
+#if (${package})
+package ${package.getAttribute("bo-mo-package")};
+#end
+
+#if($class.booleanValueOf("bo-is-hierarchical"))
+import ch.bbv.dog.reference.HierarchicalReferenceCodeImpl;
+#else
+import ch.bbv.dog.reference.ReferenceCodeImpl;
+#end
+
+#set($lines = ${class.javaDocComment()})
+/**
+#foreach($line in $lines)
+ ${line}
+#end
+ * @version ${dollar}Revision${dollar}
+ */
+#if($class.booleanValueOf("bo-is-hierarchical"))
+#set($extends="HierarchicalReferenceCodeImpl")
+#else
+#set($extends="ReferenceCodeImpl")
+#end
+public class ${class.getAttribute("bo-mo-class")} extends $extends {
+}

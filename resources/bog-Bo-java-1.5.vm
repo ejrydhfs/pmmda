@@ -1,0 +1,666 @@
+#set($sign="#")
+#set($dollar="$")
+#set($__="")
+#set($____="")
+#emitFileHeader()
+   
+#if (${package})
+package ${package.getAttribute("bo-mo-package")};
+#end
+
+#set($properties=${class.getProperties()})
+#set($aggregations=${class.getIndexedProperties()})
+#set($ancestors=${class.retrieveAncestors()})
+#set($interfaces=${class.retrieveInterfaces()})
+#set($hasAncestors = (${ancestors.size()} > 0))
+#set($imports=${cartridge.retrieveImportStatementsForBo(${class}, ${package.getAttribute("bo-mo-package")})})
+#set($dummy=${imports.addClassName("ch.bbv.dog.DataObject")})
+#if(!${hasAncestors})
+#set($dummy=${imports.addClassName("java.beans.PropertyChangeListener")})
+#set($dummy=${imports.addClassName("java.beans.VetoableChangeListener")})
+#set($dummy=${imports.addClassName("java.lang.reflect.Field")})
+#set($dummy=${imports.addClassName("java.sql.Timestamp")})
+#if (${class.getAttribute("bo-changeable")} == "true")
+#set($dummy=${imports.addClassName("java.beans.PropertyChangeSupport")})
+#end
+#if (${class.getAttribute("bo-vetoable")} == "true")
+#set($dummy=${imports.addClassName("java.beans.VetoableChangeSupport")})
+#end
+#end
+#if (${class.getAttribute("bo-vetoable")} == "true")
+#set($dummy=${imports.addClassName("java.beans.PropertyVetoException")})
+#end
+#set($importStatements=${imports.getImportStatements(4)})
+#foreach($importStatement in $importStatements) 
+import $importStatement;
+#end
+
+/* %% USER DEFINED IMPORT START %% */
+/* %% USER DEFINED IMPORT END   %% */
+
+#emitClassDescription($class "")
+#if(${hasAncestors})
+#set($extends=" extends ${ancestors.get(0).getName()}")
+#else
+#set($extends="")
+#end
+#set($implements=" implements ")
+#foreach ($interface in $interfaces)
+#set($implements="${implements}${interface.getName()}, ")
+#end
+#set($implements="${implements}DataObject")
+${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$extends$implements {
+
+/* %% USER DEFINED DECLARATION START %% */
+/* %% USER DEFINED DECLARATION END %% */
+
+  /**
+   * Serial version identifier coded as back compatibility date.
+   */
+  private static final long serialVersionUID = ${configuration.getProperty("bo-cartridge.uid")};
+#foreach ($property in $properties)
+
+#emitPropertyDescription($property "  ")
+  private ${property.retrieveTypeClassName()} ${property.nameFirstLower()};
+## identifies a forward reference 1-0..1 or 1-1
+#isTypePersistent($model $property $isPersistentDataObject)
+#if($isPersistentDataObject)
+
+  /**
+   * Mapping for 1: 1 relationship ${relation.getName()} as foreign key.
+   */
+  private Integer ${property.nameFirstLower()}Handle;  
+#end
+#end
+#foreach ($reference in $references)
+
+#emitPropertyDescription($reference "  ")
+  private ${reference.getReferenceClass().getName()} ${reference.nameFirstLower()};
+#end
+#foreach ($aggregation in $aggregations) 
+#set($itemType = ${aggregation.retrieveTypeClassName()})
+
+#emitPropertyDescription($aggregation "  ")
+  private ${aggregation.getAttribute("bo-storage-interface")}<$itemType> ${aggregation.nameFirstLower()};
+#end
+## emits foreign key attribute for 1:N relationships because anonymous fields
+## do not work when copying data object graphs.
+#set($references=$model.getClassReferences($class))
+#foreach($reference in $references)
+#isPersistentDataObject($reference $isPersistentDataObject)
+#if($isPersistentDataObject)
+#set($relations=${reference.getIndexedProperties()})
+#foreach($relation in $relations)
+#getType($model $relation $type)	
+#if(${type} == ${class})
+
+  /**
+   * Mapping for 1: N relationship ${relation.getName()} as reverse foreign key.
+   */
+  private Integer ${reference.nameFirstLower()}${relation.nameFirstUpper()}Handle;
+#end
+#end
+#end
+#end
+#if (!${hasAncestors})
+
+  /** 
+   * Unique identifier of the data object instance distinguishing it from all
+   * other instances of the same data object type.
+   */
+  private Integer id;
+   
+  /** 
+   * Flag indicated if the data object is dirty or not.
+   */
+  private boolean modified;
+  
+  /** 
+   * Timestamp used to implement optimistic locking. 
+   */
+  private Timestamp timestamp;   
+#if (${class.getAttribute("bo-changeable")} == "true")
+
+  /** 
+   * Helper class for managing changeable properties and associated listeners.
+   */
+  protected transient PropertyChangeSupport changeSupport;
+#end
+#if (${class.getAttribute("bo-vetoable")} == "true")
+
+  /** 
+   * Helper class for managing vetoable properties and associated listeners.
+   */
+  protected transient VetoableChangeSupport vetoSupport;
+#end
+#end
+
+  /** 
+   * Default constructor of the class necessary for Java bean convention. The 
+   * object identifier is set to null to indicate it is a new object.
+   */
+  public ${class.getAttribute("bo-mo-class")}() {
+#foreach ($aggregation in $aggregations) 
+#set($itemType = ${aggregation.retrieveTypeClassName()})
+  	${aggregation.nameFirstLower()} = new ${aggregation.getAttribute("bo-storage-type")}<${itemType}>();
+#end
+#if (${class.getAttribute("bo-changeable")} == "true")
+    changeSupport = new PropertyChangeSupport(this);
+#end
+#if (${class.getAttribute("bo-vetoable")} == "true")
+    vetoSupport = new VetoableChangeSupport(this);
+#end
+  }
+
+/* %% USER DEFINED CONSTRUCTORS START %% */
+/* %% USER DEFINED CONSTRUCTORS END %% */
+
+/* %% USER DEFINED CODE START %% */
+/* %% USER DEFINED CODE END %% */
+
+#if (!${hasAncestors})
+  /** 
+   * Returns the unique identifier of the data object instance.
+   * @return the identifier of the instance.
+   * @see ${sign}setId(Integer)
+   */
+  public Integer getId() {
+  	return id;
+  }
+  
+  /** 
+   * Sets the identifier of the data object instance.
+   * @param id new identifier of the instance.
+   * @see ${sign}getId()
+   */
+  public void setId(Integer id) {
+    this.id = id;
+  }
+
+  /** 
+   * Returns the flag indicating if the data object instance was modified.
+   * @return true if the object was modified otherwise false.
+   * @see ${sign}setModified
+   */
+  public boolean isModified() {
+    return modified;
+  }
+  
+  /** 
+   * Sets the flag indicating if the data object instance was modified.
+   * @param modified new value of the flag.
+   * @see ${sign}isModified
+   */
+  public void setModified(boolean modified) {
+    this.modified = modified;
+  }
+  
+  /** 
+   * Convenience method indicating if the instance is a new one or not.
+   * @return true if the object is new otherwise false.
+   */
+  public boolean isNew()  {
+    return (getId() == null);
+  }
+  
+  /** 
+   * Returns the timestamp of the data object instance.
+   * @return the timestamp of the last persistent modification.
+   * @see ${sign}setTimestamp(Timestamp)
+   */
+  public Timestamp getTimestamp() {
+    return timestamp;
+  }
+  
+  /** 
+   * Sets the timestamp of the data object instance.
+   * @param timestamp timestamp of the instance.
+   * @see ${sign}getTimestamp()
+   */
+   public void setTimestamp(Timestamp timestamp) {
+     this.timestamp = timestamp;
+   }
+#end
+## generates the source code for all simple properties. Two variants are 
+## defined to guarantee correct indenting of the generated source code.
+#foreach ($property in $properties)
+#set($uName = ${property.nameFirstUpper()})
+#set($lName=${property.nameFirstLower()})
+#set($itemType = ${property.retrieveTypeClassName()})
+#set($visibility = ${property.retrieveVisibilityText()})
+#set($vetoable=${property.booleanValueOfTag("bo-veto-event")})
+#set($changeable=${property.booleanValueOfTag("bo-change-event")})
+#if(${property.canBeRead()})
+
+  /** 
+   * Gets the current value of the simple property ${uName}.
+   * @return the value of the simple property ${uName}.
+#if(${property.canBeWritten()})
+   * @see ${sign}set${uName}
+#end    
+   */
+  ${visibility} ${itemType} get${uName}() {
+    return ${lName};
+  }
+#end
+#if(${property.canBeWritten()})
+
+  /** 
+   * Sets the new value of the simple property ${lName}.
+   * @param ${lName} new value of the property.
+#if(${vetoable})
+   * @throws PropertyVetoException if a listener refuses the change.
+#end
+#if(${property.canBeRead()})
+   * @see ${sign}get${uName}
+#end    
+   */    
+#if(${vetoable})
+  ${visibility} void set${uName}(${itemType} ${lName}) throws PropertyVetoException {
+#else
+  ${visibility} void set${uName}(${itemType} ${lName}) {
+#end	
+#if(${vetoable} || ${changeable})
+	${itemType} old${uName} = this.${lName};
+#end	
+#if(${property.isTypePrimitive()})
+    if (this.${lName} != ${lName}) {  
+      this.${lName} = ${lName};
+#if (${vetoable})
+	  try {
+        vetoSupport.fireVetoableChange("${lName}", old${uName}, ${lName});
+#if(${changeable})		  
+        changeSupport.firePropertyChange("${lName}", old${uName}, ${lName});
+#end		  
+      } catch (PropertyVetoException e) {
+        this.${lName} = old${uName};
+	    throw e;
+	  }
+#elseif (${changeable})
+      changeSupport.firePropertyChange("${lName}", old${uName}, ${lName});
+#end
+      setModified(true);
+    }
+  }
+#else
+    if (((this.${lName} != null) && !this.${lName}.equals(${lName})) || 
+   	    ((this.${lName} == null) && (${lName} != null)))  {    
+      this.${lName} = ${lName};
+#isTypePersistent($model $property $isPersistentDataObject)
+#if($isPersistentDataObject)
+      ${property.nameFirstLower()}Handle = (${lName} != null ? ${lName}.getId() : null);
+#end
+#if (${vetoable})
+	  try {
+        vetoSupport.fireVetoableChange("${lName}", old${uName}, ${lName});
+#if (${changeable})
+        changeSupport.firePropertyChange("${lName}", old${uName}, ${lName});
+#end
+      } catch (PropertyVetoException e) {
+        this.${lName} = old${uName};
+		throw e;
+	  }
+#elseif (${changeable})
+      changeSupport.firePropertyChange("${lName}", old${uName}, ${lName});
+#end
+      setModified(true);
+    }
+  }    
+#end
+#end
+#end
+#foreach ($reference in $references)
+#set($lName=${reference.nameFirstLower()})
+#set($uName=${reference.nameFirstUpper()})
+#set($visibility = ${reference.retrieveVisibilityText()})
+#if(${reference.canBeRead()})
+
+  /**
+   * Gets the current value of the attribute ${lName}.
+   * @return the value of the attribute ${lName}.
+#if(${reference.canBeWritten()})
+   * #see ${sign}set${uName}
+#end    
+   */
+  ${visibility} ${reference.getReferenceClass().getName()} get${uName}() {
+    return ${lName};
+  }
+#end
+#if(${reference.canBeWritten()})
+
+  /** 
+   * Sets the new value of the attribute ${lName}.
+   * @param ${lName} new value of the attribute.
+#if(${reference.canBeRead()})
+   * @see ${sign}get${uName}
+#end    
+   */    
+  ${visibility} void set${uName}(${reference.getReferenceClass().getName()} ${lName}) {
+    if (!this.${lName}.equals(${lName})) {    
+      this.${lName} = ${lName};
+      this.${reference.nameFirstLower()} = ${lName}.getId();
+      setModified(true);
+    }
+  }
+#end    
+#end
+#foreach ($aggregation in $aggregations) 
+#set($uName = ${aggregation.nameFirstUpper()})
+#set($lName = ${aggregation.nameFirstLower()})
+#set($usName = ${aggregation.nameFirstUpperSingular()})
+#set($upName = ${aggregation.nameFirstUpperPlural()})
+#set($interface = ${aggregation.getAttribute("bo-storage-interface")}) 
+#set($storageType = ${aggregation.getAttribute("bo-storage-type")})
+#set($itemType = ${aggregation.retrieveTypeClassName()})
+#set($keyType = ${aggregation.getKeyType()})
+#set($visibility = ${aggregation.retrieveVisibilityText()})
+#set($type=false)
+#set($type=${model.findClass(${aggregation.ypeName()})})
+#if(${aggregation.canBeRead()})
+#if(${aggregation.isOrdered()})
+
+  /** 
+   * Gets all elements of the ordered relation ${lName}.
+   * @return non mutable list of all children.
+   * @see java.util.Map#values()
+   */
+  ${visibility} Collection get${upName}() {
+    return ${lName}.values();
+  }
+
+  /** 
+   * Returns the element with the specified key in the ordered indexed  
+   * property ${lName}.
+   * @param key key of element to return. 
+   * @return the element at the specified position in this list.
+   * @see java.util.Map#get(key)
+   */
+  ${visibility} ${itemType} get${usName}(${keyType} key) {
+    return (${itemType})${lName}.get(key);  
+   }
+#else
+
+  /** 
+   * Gets all elements of the relation ${lName}.
+   * @return List of all children.
+   */
+  ${visibility} ${interface}<$itemType> get${upName}() {
+    return ${lName};
+  }
+
+  /** 
+   * Returns the element at the specified position in the indexed property 
+   * ${lName}.
+   * @param index index of element to return. 
+   * @return the element at the specified position in this list.
+   * @see java.util.List#get(int)
+   */
+  ${visibility} ${itemType} get${usName}(int index) {
+    return ${lName}.get(index);  
+   }
+#end  
+#end
+#if(${aggregation.canBeWritten()})
+#if(${aggregation.isOrdered()})
+
+  /** 
+   * Inserts the given child with the given key in the ordered indexed
+   * property ${lName}.
+   * @param key key at which the specified element is to be inserted.
+   * @param value value to be inserted.
+   * @see java.util.Map#put(Object, Object)
+   */
+  ${visibility} void put${usName}(${keyType} key, ${itemType} value) {
+    setModified(true);
+    ${lName}.put(key, value);
+  }
+  
+  /** 
+   * Removes the element with the specified key.
+   * @param key key whose mappingis to be removed from the map. 
+   * @return true if this list contained the specified element. 
+   * @see java.util.Map#remove(Object)
+   */
+  ${visibility} ${itemType} remove${usName}(${keyType} key) {
+    setModified(true);
+    return ${lName}.remove(key);
+  }
+#else
+#set($isPersistentAggregation=${aggregation.booleanValueOfTag("persistence")})	
+#set($keyName="${class.nameFirstLower()}${aggregation.nameFirstUpper()}Handle")
+
+  /** 
+   * Appends all of the elements in the specified collection to the end of 
+   * this list, in the order that they are returned by the specified 
+   * collection's iterator. The behavior of this operation is unspecified if 
+   * the specified collection is modified while the operation is in progress. 
+   * @param c collection whose elements are to be added to this list. 
+   * @return true if this list changed as a result of the call. 
+   * @see java.util.List#addAll(Collection)
+   */
+  ${visibility} boolean add${upName}(Collection<$itemType> c) {
+    setModified(true);
+#if($isPersistentAggregation)
+    for(Iterator i = c.iterator(); i.hasNext(); i.next()) {
+      setForeignKey((DataObject)i.next(), "${keyName}", getId());
+	}
+#end	
+    return ${lName}.addAll(c);
+  }  
+  
+  /** 
+   * Inserts the given child at the select position in the relation ${lName}.
+   * @param index index at which the specified element is to be inserted.
+   * @param element element to be inserted.
+   * @see java.util.List#add(int, Object)
+   */
+  ${visibility} void set${usName}(int index, ${itemType} element) {
+    setModified(true);
+#if($isPersistentAggregation)
+    setForeignKey(element, "${keyName}", getId());
+#end	
+    ${lName}.add(index, element);
+  }
+
+  /** 
+   * Appends the specified element to the end of this list in the relation 
+   * ${lName}.
+   * @param element to be appended to this list.
+   * @return true (as per the general contract of the Collection.add method).   
+   * @see java.util.List#add(Object)
+   * @pre element != null
+   */
+  ${visibility} boolean add${usName}(${itemType} element) {
+    setModified(true);
+#if($isPersistentAggregation)
+    setForeignKey(element, "${keyName}", getId());
+#end	
+    return ${lName}.add(element);
+  }
+  
+  /** 
+   * Removes the first occurrence in this list of the specified element 
+   * If this list does not contain the element, it is unchanged. More formally, 
+   * removes the element with the lowest index i such that 
+   * (o==null ? get(i)==null : o.equals(get(i))) (if such an element exists). 
+   * @param element element to be removed from this list, if present. 
+   * @return true if this list contained the specified element. 
+   * @see java.util.List#remove(Object)
+   */
+  ${visibility} boolean remove${usName}(${itemType} element) {
+    setModified(true);
+#if($isPersistentAggregation)
+	boolean removed = ${lName}.remove(element);
+	if (removed) {
+	  setForeignKey(element, "${keyName}", getId());
+	}
+	return removed;
+#else	
+    return ${lName}.remove(element);
+#end	
+  }
+#end
+#end
+#end
+
+  /** 
+   * Implements the visitor pattern in the data object class. The accept
+   * method dispatches the visitor to all its relevant children. A relevant
+   * child is always another data object.
+   * @param visitor visitor to act on the data object.
+   */  
+  public void accept(Visitor visitor) {
+  	visitor.setDepth(visitor.getDepth() + 1);
+    visitor.visit(this);
+#foreach ($property in $properties)
+#isTypeModel($model $property $isTypeModel)
+#if($isTypeModel)
+    if (${property.nameFirstLower()} != null) {
+      ${property.nameFirstLower()}.accept(visitor);
+    }
+#end
+#end
+#foreach ($aggregation in $aggregations) 
+#isTypeModel($model $aggregation $isTypeModel)
+#if($isTypeModel)
+#set($itemType = ${aggregation.retrieveTypeClassName()})
+    for (${type.getAttribute("bo-mo-class")} item : ${aggregation.nameFirstLower()}) {
+      item.accept(visitor);
+    }
+#end
+#end
+  	visitor.setDepth(visitor.getDepth() - 1);
+  }
+  
+  /** 
+   * Creates and returns a deep copy of the object and its descendants. The 
+   * properties containing keys are not cloned because they are immutable.
+   * @return a deep copy of the instance.
+   */
+  public DataObject copy() {
+    ${class.getAttribute("bo-mo-class")} clone = null;
+    try {
+      clone = (${class.getAttribute("bo-mo-class")})clone();
+    } catch (CloneNotSupportedException e) {
+      // impossible exception because data object is cloneable.
+      return null;
+    }
+#foreach ($property in $properties)
+#isTypeModel($model $property $isTypeModel)	
+#if($isTypeModel)
+#set($lName=${property.nameFirstLower()})
+    if (${lName} != null) {
+      clone.${lName} = (${property.retrieveTypeClassName()})${lName}.copy();
+	}
+#end 
+#end
+#foreach ($aggregation in $aggregations) 
+#set($lName = ${aggregation.nameFirstLower()})
+#set($itemType = ${aggregation.retrieveTypeClassName()})
+    clone.${lName} = new ${aggregation.getStorageType()}<${itemType}>();
+    for (int i = 0; i < ${lName}.size(); i++) {
+      clone.${lName}.add(((${itemType})(${lName}.get(i)).copy()));
+    }
+#end
+    clone.setModified(isModified());
+    return clone;
+  }
+
+#foreach ($nestedClass in $nestedClasses)
+  // sorry nested classes not yet supported: ${nestedClass.nameFirstLower()}
+#end
+#if (!${hasAncestors})
+#if (${class.getAttribute("bo-changeable")} == "true")
+
+  public void addPropertyChangeListener(PropertyChangeListener listener) {
+    changeSupport.addPropertyChangeListener(listener);
+  }
+  
+  public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+    changeSupport.addPropertyChangeListener(propertyName, listener);
+  }
+  
+  public void removePropertyChangeListener(PropertyChangeListener listener) {
+    changeSupport.removePropertyChangeListener(listener);
+  }
+  
+  public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+    changeSupport.removePropertyChangeListener(propertyName, listener);
+  }
+#else
+
+  public void addPropertyChangeListener(PropertyChangeListener listener) {
+    throw new UnsupportedOperationException();
+  }
+  
+  public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+    throw new UnsupportedOperationException();
+  }
+  
+  public void removePropertyChangeListener(PropertyChangeListener listener) {
+    throw new UnsupportedOperationException();
+  }
+  
+  public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+    throw new UnsupportedOperationException();
+  }
+#end  
+#if (${class.getAttribute("bo-vetoable")} == "true")
+
+  public void addVetoableChangeListener(VetoableChangeListener listener) {
+    vetoSupport.addVetoableChangeListener(listener);
+  }
+  
+  public void addVetoableChangeListener(String propertyName, VetoableChangeListener listener) {
+    vetoSupport.addVetoableChangeListener(propertyName, listener);
+  }
+  
+  public void removeVetoableChangeListener(VetoableChangeListener listener) {
+    vetoSupport.removeVetoableChangeListener(listener);
+  }
+  
+  public void removeVetoableChangeListener(String propertyName, VetoableChangeListener listener) {
+    vetoSupport.removeVetoableChangeListener(propertyName, listener);
+  }
+#else
+  
+  public void addVetoableChangeListener(VetoableChangeListener listener) {
+    throw new UnsupportedOperationException();
+  }
+  
+  public void addVetoableChangeListener(String propertyName, VetoableChangeListener listener) {
+    throw new UnsupportedOperationException();
+  }
+  
+  public void removeVetoableChangeListener(VetoableChangeListener listener) {
+    throw new UnsupportedOperationException();
+  }
+  
+  public void removeVetoableChangeListener(String propertyName, VetoableChangeListener listener) {
+    throw new UnsupportedOperationException();
+  }
+#end
+
+  /**
+   * Convenience method to set the value of a foreign key.
+   * @param bean object which property should be set.
+   * @param property property to be set.
+   * @param key key identifier to set.
+   */
+  protected void setForeignKey(DataObject bean, String property, Integer key) {
+    try {
+      Field field = bean.getClass().getDeclaredField(property);
+      if (field != null) {
+        field.setAccessible(true);
+        field.set(bean, key);
+      }
+    } catch (NoSuchFieldException e) {
+      assert(false);
+    } catch (IllegalArgumentException e) {
+      assert(false);
+    } catch (IllegalAccessException e) {
+      assert(false);
+    }
+  }
+#end
+}

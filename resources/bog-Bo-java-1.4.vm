@@ -8,10 +8,14 @@
 package ${package.getAttribute("bo-mo-package")};
 #end
 
+#set($properties=${class.getProperties()})
+#set($aggregations=${class.getIndexedProperties()})
+#set($ancestors=${class.retrieveAncestors()})
+#set($interfaces=${class.retrieveInterfaces()})
 #set($hasAncestors = (${ancestors.size()} > 0))
 #set($imports=${cartridge.retrieveImportStatementsForBo(${class}, ${package.getAttribute("bo-mo-package")})})
-#if(!${hasAncestors})
 #set($dummy=${imports.addClassName("ch.bbv.dog.DataObject")})
+#if(!${hasAncestors})
 #set($dummy=${imports.addClassName("java.beans.PropertyChangeListener")})
 #set($dummy=${imports.addClassName("java.beans.VetoableChangeListener")})
 #set($dummy=${imports.addClassName("java.lang.reflect.Field")})
@@ -21,8 +25,10 @@ package ${package.getAttribute("bo-mo-package")};
 #end
 #if (${class.getAttribute("bo-vetoable")} == "true")
 #set($dummy=${imports.addClassName("java.beans.VetoableChangeSupport")})
-#set($dummy=${imports.addClassName("java.beans.PropertyVetoException")})
 #end
+#end
+#if (${class.getAttribute("bo-vetoable")} == "true")
+#set($dummy=${imports.addClassName("java.beans.PropertyVetoException")})
 #end
 #set($importStatements=${imports.getImportStatements(4)})
 #foreach($importStatement in $importStatements) 
@@ -33,8 +39,6 @@ import $importStatement;
 /* %% USER DEFINED IMPORT END   %% */
 
 #emitClassDescription($class "")
-#set($ancestors=${class.retrieveAncestors()})
-#set($interfaces=${class.retrieveInterfaces()})
 #if(${hasAncestors})
 #set($extends=" extends ${ancestors.get(0).getName()}")
 #else
@@ -50,6 +54,10 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
 /* %% USER DEFINED DECLARATION START %% */
 /* %% USER DEFINED DECLARATION END %% */
 
+  /**
+   * Serial version identifier coded as back compatibility date.
+   */
+  private static final long serialVersionUID = ${configuration.getProperty("bo-cartridge.uid")};
 #foreach ($property in $properties)
 
 #emitPropertyDescription($property "  ")
@@ -152,6 +160,7 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
   /** 
    * Returns the unique identifier of the data object instance.
    * @return the identifier of the instance.
+   * @see ${sign}setId(Integer)
    */
   public Integer getId() {
   	return id;
@@ -160,6 +169,7 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
   /** 
    * Sets the identifier of the data object instance.
    * @param id new identifier of the instance.
+   * @see ${sign}getId()
    */
   public void setId(Integer id) {
     this.id = id;
@@ -194,6 +204,7 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
   /** 
    * Returns the timestamp of the data object instance.
    * @return the timestamp of the last persistent modification.
+   * @see ${sign}setTimestamp(Timestamp)
    */
   public Timestamp getTimestamp() {
     return timestamp;
@@ -202,6 +213,7 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
   /** 
    * Sets the timestamp of the data object instance.
    * @param timestamp timestamp of the instance.
+   * @see getTimestamp()
    */
    public void setTimestamp(Timestamp timestamp) {
      this.timestamp = timestamp;
@@ -214,8 +226,8 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
 #set($lName=${property.nameFirstLower()})
 #set($itemType = ${property.retrieveTypeClassName()})
 #set($visibility = ${property.retrieveVisibilityText()})
-#set($vetoable=(${class.getAttribute("bo-vetoeable")} == "true"))
-#set($changeable=(${class.getAttribute("bo-changeable")} == "true"))
+#set($vetoable=${property.booleanValueOfTag("bo-veto-event")})
+#set($changeable=${property.booleanValueOfTag("bo-change-event")})
 #if(${property.canBeRead()})
 
   /** 
@@ -234,71 +246,64 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
   /** 
    * Sets the new value of the simple property ${lName}.
    * @param ${lName} new value of the property.
+#if(${vetoable})
+   * @throws PropertyVetoException if a listener refuses the change.
+#end
 #if(${property.canBeRead()})
    * @see ${sign}get${uName}
 #end    
    */    
 #if(${vetoable})
   ${visibility} void set${uName}(${itemType} ${lName}) throws PropertyVetoException {
-    ${itemType} old${uName} = this.${lName};
-    try {
-#if(${property.isTypePrimitive()})
-      if (this.${lName} != ${lName}) {  
-        this.${lName} = ${lName};
-        setModified(true);
-        vetoSupport.fireVetoableChange("${lName}", old${uName}, ${lName});
-#if (${changeable})
-        changeSupport.firePropertyChange("${lName}", old${uName}, ${lName});
-#end
-#else
-      if (((this.${lName} != null) && !this.${lName}.equals(${lName})) || 
-    	  ((this.${lName} == null) && (${lName} != null)))  {    
-        this.${lName} = ${lName};
-#isTypePersistent($model $property $isPersistentDataObject)
-#if($isPersistentDataObject)
-        ${property.nameFirstLower()}Handle = (${lName} != null ? ${lName}.getId() : null);
-#end
-        setModified(true);
-#if (${changeable})
-        changeSupport.firePropertyChange("${lName}", null, ${lName});
-#end
-      }
-#end    
-    }
-    catch (PropertyVetoException pve) {
-      this.${lName} = old${uName};
-      vetoSupport.fireVetoableChange("${lName}", ${lName}, old${uName});
-      throw pve;
-    }
-  }    
 #else
   ${visibility} void set${uName}(${itemType} ${lName}) {
-#if (${changeable})
-    ${itemType} old${uName} = this.${lName};
-#end
+#end	
+#if(${vetoable} || ${changeable})
+	${itemType} old${uName} = this.${lName};
+#end	
 #if(${property.isTypePrimitive()})
     if (this.${lName} != ${lName}) {  
       this.${lName} = ${lName};
-      setModified(true);
-#if (${changeable})
+#if (${vetoable})
+	  try {
+        vetoSupport.fireVetoableChange("${lName}", old${uName}, ${lName});
+#if(${changeable})		  
+        changeSupport.firePropertyChange("${lName}", old${uName}, ${lName});
+#end		  
+      } catch (PropertyVetoException e) {
+        this.${lName} = old${uName};
+	    throw e;
+	  }
+#elseif (${changeable})
       changeSupport.firePropertyChange("${lName}", old${uName}, ${lName});
 #end
+      setModified(true);
     }
+  }
 #else
     if (((this.${lName} != null) && !this.${lName}.equals(${lName})) || 
-    	((this.${lName} == null) && (${lName} != null)))  {    
+   	    ((this.${lName} == null) && (${lName} != null)))  {    
       this.${lName} = ${lName};
 #isTypePersistent($model $property $isPersistentDataObject)
 #if($isPersistentDataObject)
       ${property.nameFirstLower()}Handle = (${lName} != null ? ${lName}.getId() : null);
 #end
-      setModified(true);
+#if (${vetoable})
+	  try {
+        vetoSupport.fireVetoableChange("${lName}", old${uName}, ${lName});
 #if (${changeable})
+        changeSupport.firePropertyChange("${lName}", old${uName}, ${lName});
+#end
+      } catch (PropertyVetoException e) {
+        this.${lName} = old${uName};
+		throw e;
+	  }
+#elseif (${changeable})
       changeSupport.firePropertyChange("${lName}", old${uName}, ${lName});
 #end
+      setModified(true);
     }
-#end    
-  }
+  }    
 #end
 #end
 #end
@@ -509,14 +514,13 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
 #isTypeModel($model $property $isTypeModel)
 #if($isTypeModel)
     if (${property.nameFirstLower()} != null) {
-      visitor.visit(${property.nameFirstLower()}); 
+      ${property.nameFirstLower()}.accept(visitor);
     }
 #end
 #end
 #foreach ($aggregation in $aggregations) 
 #isTypeModel($model $aggregation $isTypeModel)
 #if($isTypeModel)
-#set($itemType = ${aggregation.retrieveTypeClassName()})
     for (Iterator i = ${aggregation.nameFirstLower()}.iterator(); i.hasNext();) {
       ((${type.getAttribute("bo-mo-class")})i.next()).accept(visitor);
     }
