@@ -132,10 +132,7 @@ public class MetaFactory {
   }
 
   public void initialize(MetaModel element) {
-    if (!element.isSystem()) {
-      initialize(element, MetaModel.class);
-      if(element instanceof MetaPackage) initialize((MetaPackage) element);
-    }
+    initialize(element, MetaModel.class);
   }
 
   /**
