@@ -112,6 +112,7 @@ public class PersistencyHandlerFactory {
 
   public PersistencyHandler getEcoreHandler() {
     //return new EcorePersistencyHandler();
+    return null; // TODO
   }
 
   public PersistencyHandler getJavaDocHandler() {
@@ -120,6 +121,7 @@ public class PersistencyHandlerFactory {
 
   public PersistencyHandler getRoseHandler() {
     //return new RosePersistencyHandler();
+    return null; // TODO
   }
 
 }
