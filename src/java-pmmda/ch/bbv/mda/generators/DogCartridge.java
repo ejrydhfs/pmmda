@@ -20,7 +20,10 @@ import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
 
 import ch.bbv.application.VersionId;
+import ch.bbv.dog.validation.Validator;
 import ch.bbv.mda.*;
+import ch.bbv.mda.generators.validation.DogTagRule;
+import ch.bbv.mda.generators.validation.TagRule;
 
 /**
  * The data object handler is responsible for the generation of all data object
@@ -58,11 +61,11 @@ import ch.bbv.mda.*;
  * @author Marcel Baumann
  * @version $Revision$
  */
-public class BogCartridge extends CartridgeImpl implements Cartridge {
+public class DogCartridge extends CartridgeImpl implements Cartridge {
   /**
-   * Name of the cartridge as identified in the factory.
+   * The prefix of the cartridge.
    */
-  public static final String NAME = "dog";
+  public static final String PREFIX = "dog";
 
   /**
    * Stereotype name for the data object stereotype.
@@ -300,7 +303,7 @@ public class BogCartridge extends CartridgeImpl implements Cartridge {
   /**
    * Log instance for the class.
    */
-  private static Log log = LogFactory.getLog(BogCartridge.class);
+  private static Log log = LogFactory.getLog(DogCartridge.class);
 
   /**
    * List of stereotypes managed in the cartride.
@@ -380,8 +383,8 @@ public class BogCartridge extends CartridgeImpl implements Cartridge {
    * Constructor of the class. All data object related code generator templates
    * are loaded.
    */
-  public BogCartridge() {
-    super("Data Object Graph Cartridge", NAME, new VersionId(0, 3, 0));
+  public DogCartridge() {
+    super("Data Object Graph Cartridge", PREFIX, new VersionId(0, 3, 0));
     stereotypes = new ArrayList();
     stereotypes.add(new StereotypeType(DATA_OBJECT_STEREOTYPE));
     stereotypes.add(new StereotypeType(REFERENCE_CODE_STEREOTYPE));
@@ -477,6 +480,11 @@ public class BogCartridge extends CartridgeImpl implements Cartridge {
           .add(new TagDefinition(LIGHTWEIGHT_TAG, "false", String.class, this));
     }
     return types;
+  }
+
+  public void registerRules(Validator validator) {
+    TagRule tagRule = new DogTagRule();
+    tagRule.register(validator);
   }
 
   public TaggedValue getTaggedValueWithElementDependentDefault(

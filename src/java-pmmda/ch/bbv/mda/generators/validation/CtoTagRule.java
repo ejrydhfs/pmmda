@@ -12,8 +12,8 @@ import ch.bbv.mda.*;
 import ch.bbv.mda.generators.OjbCartridge;
 
 /**
- * The BOG tag rule implements all validation rules for the tag values defined
- * in the BOG cartridge.
+ * The CTO tag rule implements all validation rules for the tag values defined
+ * in the CORBA transfer object cartridge.
  * @author MarcelBaumann
  * @version $Revision$
  */

@@ -11,11 +11,14 @@
       <p>Latest news of the <em>pmMDA</em> for the community.</p>
       <ul>
         <li>The development team has released <em>pmMDA 0.2.9-RC-2</em> release.
-          The candidate date is 01 October 2004. This release should be run
+          The candidate date is 30 October 2004. This release should be run
           with JDK.1.5.0-RC. The test applications created with the provided
           ArgoUML model can be build with the provided ant tasks and run with 
           the available scripts located in scripts/tests. All open issues of
           the 0.2.x line are corrected.</li>
+        <li>A major contribution to <em>pmMDA</em> users is the introduction of 
+          a validation framework detecting errors in the settings of tagged 
+          values and stereotypes in the model.</li>
       </ul>
     </section>
     <section>

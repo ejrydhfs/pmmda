@@ -1,10 +1,5 @@
 Version 0.2.1-RC2 (30 October 2004)
----------------------------------
-The following known open issues exist.
-- The insert of sub-elements in an existing graph does not work with the
-  current version patched of OJB library. We are waiting to the new
-  official release of OJB to correct it in the final release. 
-
+-----------------------------------
 The following new features were added.
 - The generic properties node dialog was enhanced to support edition of their
   values based on their types. Date fields are displayed with a powerful open
@@ -17,6 +12,7 @@ The following new features were added.
   status and progress information.
 
 The following errors were corrected.
+- Wrong error message was displayed in revert and reload actions.
 - Boolean values are handled in sortable table as Swing does it. Boolean values
   are displayed with checked boxes. The table cell class was refactored and
   redundant code was removed.
@@ -38,7 +34,7 @@ The following errors were corrected.
   right pane.
 
 Version 0.2.1-RC1 (30 September 2004)
--------------------------------
+-------------------------------------
 The following new features were added.
 - Validation framework is completed and an initial test application uses it.
 - The minor release of glazed lists 0.9.2 is integrated. 
@@ -57,7 +53,7 @@ The following errors were corrected.
   
 
 Version 0.2.0 (30 June 2004)
----------------------------
+----------------------------
 The following new features were added.
 - The CVS repository was moved to the sourceforge pmmda account.
 - The new major release of glazed lists 0.9.1 is integrated. The table handling

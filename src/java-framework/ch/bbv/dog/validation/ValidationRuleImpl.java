@@ -55,7 +55,7 @@ public class ValidationRuleImpl implements ValidationRule {
     return true;
   }
 
-  /** 
+  /**
    * Constructor of the class.
    * @param immediate flag indicating if the rule is immediate or not.
    * @param severity the severity level of the rule.
@@ -87,5 +87,4 @@ public class ValidationRuleImpl implements ValidationRule {
     result.setText(resources.getString(key), parameters);
     results.add(result);
   }
-
 }

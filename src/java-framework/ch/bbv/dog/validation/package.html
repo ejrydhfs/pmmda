@@ -9,7 +9,21 @@
     named values. All rules must implement the validation rule interface.
     A set of standard rules are provides as examples. They are discribed
     below.</p>
-        
+  <p>The package provides a set of predefined rules useful for typical 
+    checks such null values, uniqueness, regular expressions based format
+    verification.</p> 
+           
+  <h2>Design</h2>
+  <p>The framework supports the definition and registration of validation rules
+    to check properties and beans. Users can defined their own rules and
+    register them in a validator instance. A powerful extension would be
+    to have the ability of composing rules. Here a set of composition rules and
+    their meaning.</p>
+  <dl>
+    <dt>Conditional Execution</dt><dd> The rule is only checked if the 
+      condition is true. The condition is specified as functor.</dd>
+  </dl>
+
   <h2>Validation Types</h2>
   
   <dl>

@@ -30,6 +30,11 @@ import ch.bbv.mda.*;
  */
 public class EjbCartridge extends CartridgeImpl {
   /**
+   * The prefix of the cartridge.
+   */
+  public static final String PREFIX = "ejb";
+
+  /**
    * Extension for IDL source file.
    */
   public static final String IDL_EXTENSION = ".idl";
@@ -158,7 +163,7 @@ public class EjbCartridge extends CartridgeImpl {
    * Default constructor of the class.
    */
   public EjbCartridge() {
-    super("Entity Java Bean Cartridge", "ejb", new VersionId(0, 3, 0));
+    super("Entity Java Bean Cartridge", PREFIX, new VersionId(0, 3, 0));
     try {
       idlDogCorbaTemplate = Velocity.getTemplate("ejb-bogServerCorbaIdl.vm");
       dogCorbaTemplate = Velocity.getTemplate("ejb-bogServerCorba.vm");
@@ -237,7 +242,7 @@ public class EjbCartridge extends CartridgeImpl {
   }
 
   public void processPackage(MetaPackage metaPackage) {
-    if (!metaPackage.booleanValueOfTag(BogCartridge.GENERATE_TAG)) {
+    if (!metaPackage.booleanValueOfTag(DogCartridge.GENERATE_TAG)) {
       return;
     }
 
@@ -245,9 +250,9 @@ public class EjbCartridge extends CartridgeImpl {
     try {
       if (getContext().getProperty(GENERATE_CORBA_KEY).equals("true")) {
         File serverRoot = getRoot(ROOT_SERVER_CORBA_KEY,
-            BogCartridge.ROOT_SERVER_FOLDER_KEY);
+            DogCartridge.ROOT_SERVER_FOLDER_KEY);
         File clientRoot = getRoot(ROOT_CLIENT_CORBA_KEY,
-            BogCartridge.ROOT_CLIENT_FOLDER_KEY);
+            DogCartridge.ROOT_CLIENT_FOLDER_KEY);
         File IdlRoot = new File(getContext().getProperty(
             CtoCartridge.ROOT_IDL_KEY));
         processTemplate(IdlRoot, metaPackage
@@ -265,11 +270,11 @@ public class EjbCartridge extends CartridgeImpl {
       }
       if (getContext().getProperty(GENERATE_BEAN_KEY).equals("true")) {
         File serverRoot = getRoot(ROOT_SERVER_J2EE_KEY,
-            BogCartridge.ROOT_SERVER_FOLDER_KEY);
+            DogCartridge.ROOT_SERVER_FOLDER_KEY);
         File clientRoot = getRoot(ROOT_CLIENT_J2EE_KEY,
-            BogCartridge.ROOT_CLIENT_FOLDER_KEY);
+            DogCartridge.ROOT_CLIENT_FOLDER_KEY);
         File commonRoot = getRoot(ROOT_COMMON_J2EE_KEY,
-            BogCartridge.ROOT_COMMON_FOLDER_KEY);
+            DogCartridge.ROOT_COMMON_FOLDER_KEY);
         processJavaTemplate(commonRoot, metaPackage
             .getAttribute(SERVER_PACKAGE), metaPackage
             .valueOfTag(SERVER_NAME_TAG)

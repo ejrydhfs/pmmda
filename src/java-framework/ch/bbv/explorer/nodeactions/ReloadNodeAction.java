@@ -36,14 +36,17 @@ public class ReloadNodeAction extends AbstractNodeAction {
   public void execute(ExplorerNode node) {
     DataObject object = node.getDataObject();
     Explorer explorer = node.getExplorer();
-    if ((object == null) || object.isNew()) {
-      JOptionPane.showMessageDialog(explorer.getFrame(), "Object is new.",
-          "Reload Operation", JOptionPane.WARNING_MESSAGE);
-    } else {
-      CachesHandler handler = (CachesHandler) explorer.getManager()
-          .getDataObjectHandler();
-      DataObject root = handler.reload(explorer.getDatasource(), object);
-      updateNavigator(node, root, root);
+    if (object != null) {
+      // data object graph was loaded previously.
+      if (object.isNew()) {
+        JOptionPane.showMessageDialog(explorer.getFrame(), "Object is new.",
+            "Reload Operation", JOptionPane.WARNING_MESSAGE);
+      } else {
+        CachesHandler handler = (CachesHandler) explorer.getManager()
+            .getDataObjectHandler();
+        DataObject root = handler.reload(explorer.getDatasource(), object);
+        updateNavigator(node, root, root);
+      }
     }
   }
 }

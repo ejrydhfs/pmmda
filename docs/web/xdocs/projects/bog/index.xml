@@ -27,7 +27,7 @@
         </tr>
         <tr>
           <td>JForms</td>
-          <td>to be defined</td>
+          <td>www.jgoodies.com</td>
         </tr>
         <tr>
           <td>OJB Object Java Bridge</td>
@@ -47,62 +47,80 @@
         <tr>
           <th>Jar File</th>
           <th>Version</th>
+          <th>Licence</th>
           <th>Comment</th>
         </tr>
         <tr>
           <td>antlr</td>
           <td>2.7.3</td>
+          <td>Open Source</td>
           <td>antlr parser</td>
         </tr>
         <tr>
           <td>commons-beanutils</td>
           <td>1.6.1</td>
+          <td>Apache Licence</td>
           <td>jakarta commons</td>
         </tr>
         <tr>
           <td>commons-collections</td>
           <td>2.1.1</td>
+          <td>Apache Licence</td>
           <td>jakarta commons</td>
         </tr>
         <tr>
           <td>commons-dbcp</td>
           <td>1.1</td>
+          <td>Apache Licence</td>
           <td>jakarta commons</td>
         </tr>
         <tr>
           <td>commons-lang</td>
           <td>2.0</td>
+          <td>Apache Licence</td>
           <td>jakarta commons</td>
         </tr>
         <tr>
           <td>commons-logging</td>
           <td>1.0.4</td>
+          <td>Apache Licence</td>
           <td>jakarta commons</td>
         </tr>
         <tr>
           <td>commons-logging-api</td>
           <td>1.0.4</td>
+          <td>Apache Licence</td>
           <td>jakarta commons</td>
         </tr>
         <tr>
           <td>commons-pool</td>
           <td>1.1</td>
+          <td>Apache Licence</td>
           <td>jakarta commons</td>
         </tr>
         <tr>
           <td>db-ojb</td>
           <td>1.0.1</td>
+          <td>Apache Licence</td>
           <td>apache database</td>
         </tr>
         <tr>
           <td>forms</td>
-          <td>1.0.4</td>
+          <td>1.0.5</td>
+          <td>LGPL</td>
           <td>www.goodies.com</td>
         </tr>
         <tr>
           <td>glazedlist</td>
-          <td>0.9.2</td>
+          <td>0.9.3</td>
+          <td>LGPL</td>
           <td>www.java.net</td>
+        </tr>
+        <tr>
+          <td>jcalendar</td>
+          <td>1.2.1</td>
+          <td>LGPL</td>
+          <td>www.toedter.com</td>
         </tr>
       </table>
     </section>

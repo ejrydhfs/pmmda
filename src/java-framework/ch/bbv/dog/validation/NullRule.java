@@ -28,7 +28,7 @@ public class NullRule extends ValidationRuleImpl implements ValidationRule {
   private static ResourceBundle resources;
 
   static {
-    resources = ResourceBundle.getBundle("RulesMessages");
+    resources = ResourceBundle.getBundle("ch.bbv.dog.validation.RulesMessages");
 
   }
 
@@ -61,5 +61,4 @@ public class NullRule extends ValidationRuleImpl implements ValidationRule {
     }
     return true;
   }
-
 }

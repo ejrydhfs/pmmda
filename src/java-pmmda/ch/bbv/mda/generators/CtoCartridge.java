@@ -1,7 +1,7 @@
-/*
- * copyright 2000-2004 Marcel Baumann Licensed under the Apache License, Version
- * 2.0 (the "Licence); you may not use this file except in compliance with the
- * License. $Id$
+/* copyright 2000-2004 Marcel Baumann
+ * Licensed under the Apache License, Version 2.0 (the "Licence");
+ * you may not use this file except in compliance with the License.
+ * $Id$
  */
 package ch.bbv.mda.generators;
 
@@ -36,6 +36,11 @@ import ch.bbv.utilities.TextUtilities;
  * @version $Revision$
  */
 public class CtoCartridge extends CartridgeImpl implements Cartridge {
+  /**
+   * The prefix of the cartridge.
+   */
+  public static final String PREFIX = "cto";
+
   /**
    * Extension for IDL source file.
    */
@@ -179,7 +184,7 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
    * Constructor of the class.
    */
   public CtoCartridge() {
-    super("CORBA Transfer Object Cartridge", "cto", new VersionId(0, 3, 0));
+    super("CORBA Transfer Object Cartridge", PREFIX, new VersionId(0, 3, 0));
     try {
       idlDtoBoTemplate = Velocity.getTemplate("cto-idlDtoBo.vm");
       idlDtoLwTemplate = Velocity.getTemplate("cto-idlDtoLw.vm");
@@ -198,7 +203,7 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
     super.initialize(properties);
 
     CartridgeFactory factory = CartridgeFactory.getInstance();
-    addCartridge(factory.getCartridge(BogCartridge.NAME));
+    addCartridge(factory.getCartridge(DogCartridge.PREFIX));
     addUndefinedProperty(properties, ROOT_IDL_KEY, "");
     addUndefinedProperty(properties, TRANSFORM_PACKAGE_POSTFIX, "");
     addUndefinedProperty(properties, IDL_PREFIX_KEY, "");
@@ -208,8 +213,7 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
   public List getTaggedValueTypes(Class clazz) {
     List types = new ArrayList();
     if (clazz.equals(MetaPackage.class)) {
-      types
-          .add(new TagDefinition(CTO_PACKAGE_IDL_TAG, "", String.class, this));
+      types.add(new TagDefinition(CTO_PACKAGE_IDL_TAG, "", String.class, this));
     }
     return types;
   }
@@ -249,20 +253,20 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
     String name = clazz.getName();
     StringBuffer buffer = new StringBuffer();
     buffer.append(context.getProperty(IDL_PREFIX_KEY)).append(name).append(
-        context.getProperty(BogCartridge.BO_CLASS_POSTFIX_KEY)).append(
+        context.getProperty(DogCartridge.BO_CLASS_POSTFIX_KEY)).append(
         context.getProperty(IDL_POSTFIX_KEY));
     clazz.addAttribute(CTO_MO_CLASS, buffer.toString());
     buffer.setLength(0);
     buffer.append(context.getProperty(IDL_PREFIX_KEY)).append(name).append(
-        context.getProperty(BogCartridge.LW_CLASS_POSTFIX_KEY)).append(
+        context.getProperty(DogCartridge.LW_CLASS_POSTFIX_KEY)).append(
         context.getProperty(IDL_POSTFIX_KEY));
     clazz.addAttribute(CTO_LW_CLASS, buffer.toString());
     buffer.setLength(0);
-    buffer.append(clazz.getAttribute(BogCartridge.BO_CLASS)).append(
+    buffer.append(clazz.getAttribute(DogCartridge.BO_CLASS)).append(
         "Transformer");
     clazz.addAttribute(CTO_BO2DTO_CLASS, buffer.toString());
     buffer.setLength(0);
-    buffer.append(clazz.getAttribute(BogCartridge.LW_CLASS)).append(
+    buffer.append(clazz.getAttribute(DogCartridge.LW_CLASS)).append(
         "Transformer");
     clazz.addAttribute(CTO_LW2DTO_CLASS, buffer.toString());
 
@@ -286,13 +290,13 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
   }
 
   public void processClass(MetaClass clazz) {
-    File javaRoot = getRoot(ROOT_JAVA_KEY, BogCartridge.ROOT_COMMON_FOLDER_KEY);
+    File javaRoot = getRoot(ROOT_JAVA_KEY, DogCartridge.ROOT_COMMON_FOLDER_KEY);
     File idlRoot = new File(getContext().getProperty(ROOT_IDL_KEY));
-    if (!clazz.retrievePackage().booleanValueOfTag(BogCartridge.GENERATE_TAG)) {
+    if (!clazz.retrievePackage().booleanValueOfTag(DogCartridge.GENERATE_TAG)) {
       return;
     }
     try {
-      if (BogCartridge.DATA_OBJECT_STEREOTYPE.equals(clazz.getStereotype())) {
+      if (DogCartridge.DATA_OBJECT_STEREOTYPE.equals(clazz.getStereotype())) {
         MetaPackage metaPackage = (MetaPackage) clazz.getContext();
         VelocityContext context = createContext(clazz);
         PrintWriter writer = createWriter(idlRoot, metaPackage
@@ -305,7 +309,7 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
             .getAttribute(CTO_BO2DTO_CLASS));
         writer.print(processTemplate(javaBo2DtoTemplate, context));
         writer.close();
-        if (clazz.booleanValueOfAttribute(BogCartridge.BO_LIGHTWEIGHT)) {
+        if (clazz.booleanValueOfAttribute(DogCartridge.BO_LIGHTWEIGHT)) {
           writer = createWriter(idlRoot, metaPackage
               .valueOfTag(CTO_PACKAGE_IDL_TAG), clazz
               .getAttribute(CTO_LW_CLASS)
@@ -412,8 +416,8 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
    */
   public ImportStatements retrieveImportStatementsForBo(MetaClass clazz,
       String packageName) {
-    BogCartridge cartridge = (BogCartridge) CartridgeFactory.getInstance()
-        .getCartridge(BogCartridge.NAME);
+    DogCartridge cartridge = (DogCartridge) CartridgeFactory.getInstance()
+        .getCartridge(DogCartridge.PREFIX);
     return cartridge.retrieveImportStatementsForBo(clazz, packageName);
   }
 
@@ -427,8 +431,8 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
    */
   public ImportStatements retrieveImportStatementsForIf(MetaClass clazz,
       String packageName) {
-    BogCartridge cartridge = (BogCartridge) CartridgeFactory.getInstance()
-        .getCartridge(BogCartridge.NAME);
+    DogCartridge cartridge = (DogCartridge) CartridgeFactory.getInstance()
+        .getCartridge(DogCartridge.PREFIX);
     return cartridge.retrieveImportStatementsForIf(clazz, packageName);
   }
 
@@ -442,8 +446,8 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
    */
   public ImportStatements retrieveImportStatementsForLw(MetaClass clazz,
       String packageName) {
-    BogCartridge cartridge = (BogCartridge) CartridgeFactory.getInstance()
-        .getCartridge(BogCartridge.NAME);
+    DogCartridge cartridge = (DogCartridge) CartridgeFactory.getInstance()
+        .getCartridge(DogCartridge.PREFIX);
     return cartridge.retrieveImportStatementsForLw(clazz, packageName);
   }
 

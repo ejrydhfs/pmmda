@@ -29,6 +29,11 @@ import ch.bbv.mda.*;
  */
 public class OexCartridge extends CartridgeImpl {
   /**
+   * The prefix of the cartridge.
+   */
+  public static final String PREFIX = "bog";
+
+  /**
    * Key for a property of the cartridge used to retrieve user values.
    */
   public static final String RICH_CLIENT_PACKAGE_POSTFIX_KEY = "oex-cartridge.rich-client-package-extension";
@@ -67,7 +72,7 @@ public class OexCartridge extends CartridgeImpl {
    * Default constructor of the class.
    */
   public OexCartridge() {
-    super("Object Explorer Cartridge", "oex", new VersionId(0, 3, 0));
+    super("Object Explorer Cartridge", PREFIX, new VersionId(0, 3, 0));
 
     CartridgeFactory factory = CartridgeFactory.getInstance();
     addCartridge(factory.getCartridge("dog"));
@@ -108,7 +113,7 @@ public class OexCartridge extends CartridgeImpl {
 
       MetaClass objectClass = model.findClass(className);
       if ((objectClass == null)
-          || !BogCartridge.DATA_OBJECT_STEREOTYPE.equals(objectClass
+          || !DogCartridge.DATA_OBJECT_STEREOTYPE.equals(objectClass
               .getStereotype())) {
         continue;
       }
@@ -183,8 +188,8 @@ public class OexCartridge extends CartridgeImpl {
 
   public void postProcessPackage(MetaPackage metaPackage) {
     File sourceRoot = getRoot(ROOT_RICH_CLIENT_KEY,
-        BogCartridge.ROOT_CLIENT_FOLDER_KEY);
-    if (metaPackage.booleanValueOfTag(BogCartridge.GENERATE_TAG)) {
+        DogCartridge.ROOT_CLIENT_FOLDER_KEY);
+    if (metaPackage.booleanValueOfTag(DogCartridge.GENERATE_TAG)) {
       VelocityContext context = createContext(metaPackage);
       log
           .info("OEX Catridge processing package "

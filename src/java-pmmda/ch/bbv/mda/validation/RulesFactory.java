@@ -40,8 +40,9 @@ public class RulesFactory {
   private FormatRule identifierRule;
 
   private NotNullRule nameNotNullRule;
+  
+  private DescriptionRule descriptionNotNullRule;
 
-  private NotNullRule descriptionNotNullRule;
 
   /**
    * Registers all rules constraining the MDA model.
@@ -50,7 +51,7 @@ public class RulesFactory {
     identifierRule = new FormatRule(false, ValidationRule.ERROR,
         JAVA_IDENTIFIER_PATTERN);
     nameNotNullRule = new NotNullRule(true, ValidationRule.ERROR);
-    descriptionNotNullRule = new NotNullRule(true, ValidationRule.WARNING);
+    descriptionNotNullRule = new DescriptionRule(false, ValidationRule.WARNING);
     createRulesForMetaModel();
     createRulesForMetaModel();
     createRulesForMetaClass();
