@@ -111,12 +111,13 @@ public abstract class AbstractNodeAction extends ExplorerNodeActionImpl {
    * @param editable indicates if the node is editable or not.
    * @param created indicates if the node was created in the action or not.
    */
-  protected void displayView(ExplorerNode node, boolean editable, boolean created) {
-    Object boObject = node.getDataObject();
+  protected void displayView(ExplorerNode node, boolean editable,
+      boolean created) {
+    DataObject boObject = node.getDataObject();
     ExplorerNode newNode = node;
     if (boObject == null) {
       newNode = updateNodeWithBo(node);
-      boObject = (DataObject) newNode.getDataObject();
+      boObject = newNode.getDataObject();
     }
     UiNodeTypeFactory factory = newNode.getExplorer().getNodeTypeFactory();
     NodePropertiesDialog dialog = factory.getPropertiesDialog();
@@ -137,10 +138,10 @@ public abstract class AbstractNodeAction extends ExplorerNodeActionImpl {
    */
   protected void createNode(ExplorerNode node, UiNodeType nodeType) {
     ExplorerNode newNode = node;
-    Object boObject = node.getDataObject();
+    DataObject boObject = node.getDataObject();
     if (boObject == null) {
       newNode = updateNodeWithBo(node);
-      boObject = (DataObject) newNode.getDataObject();
+      boObject = newNode.getDataObject();
     }
 
     DataObjectType type = nodeType.getDataObjectType();
@@ -148,13 +149,13 @@ public abstract class AbstractNodeAction extends ExplorerNodeActionImpl {
     Class lwClass = type.getLwClass();
     boObject = null;
 
-    Object lwObject = null;
+    LightweightObject lwObject = null;
     if (boClass != null) {
       boObject = type.createBoInstance();
       if ((lwClass != null) && (lwClass != boClass)) {
         lwObject = type.createLwInstance();
       } else {
-        lwObject = boObject;
+        lwObject = (LightweightObject) (Object) boObject;
       }
     }
 

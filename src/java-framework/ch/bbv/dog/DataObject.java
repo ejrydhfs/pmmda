@@ -1,5 +1,5 @@
 /* copyright 2000-2004 Marcel Baumann
- * Licensed under the Apache License, Version 2.0 (the "Licence);
+ * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
  */
@@ -10,12 +10,10 @@ import java.beans.VetoableChangeListener;
 import java.sql.Timestamp;
 
 /**
- * <p>
  * The data object interface defines the common interface for all data objects
  * manipulated through the data object tree framework. The interface requires a
  * minimal set of methods and follows the convention of Java beans. Change and
  * vetoable change listeners are supported.
- * </p>
  * @author MarcelBaumann
  * @version $Revision$
  */
@@ -51,7 +49,7 @@ public interface DataObject extends HasId {
 
   /**
    * Returns true if the object is a new one otherwise false. A object is new if
-   * its identity is null.
+   * its identity is null. No property is associated with it.
    * @return true if the object is new otherwise false.
    */
   boolean isNew();
@@ -67,14 +65,14 @@ public interface DataObject extends HasId {
    * store.
    * @return the timestamp of the last update. If the object is new, null is
    *         returned.
-   * @see #setTimestamp
+   * @see #setTimestamp(Timestamp)
    */
   Timestamp getTimestamp();
 
   /**
    * Sets the timestamp of the data object.
    * @param timestamp new timestamp value.
-   * @see #getTimestamp
+   * @see #getTimestamp()
    */
   void setTimestamp(Timestamp timestamp);
 

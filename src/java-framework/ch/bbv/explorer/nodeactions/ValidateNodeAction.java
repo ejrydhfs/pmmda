@@ -9,6 +9,9 @@ package ch.bbv.explorer.nodeactions;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import ch.bbv.dog.AbstractVisitorFunctor;
 import ch.bbv.dog.DataObject;
 import ch.bbv.dog.DataObjectType;
@@ -24,6 +27,11 @@ import ch.bbv.explorer.UiNodeType;
  * @version $Revision$
  */
 public class ValidateNodeAction extends AbstractNodeAction {
+  /**
+   * Logger of the instances of the class.
+   */
+  private static Log log = LogFactory.getLog(ValidateNodeAction.class);
+
   /**
    * The validator used to validate the data object graphs.
    */
@@ -42,13 +50,15 @@ public class ValidateNodeAction extends AbstractNodeAction {
   }
 
   public void execute(ExplorerNode node) {
-    DataObject object = (DataObject) node.getDataObject();
+    DataObject object = node.getDataObject();
     if (object != null) {
       DataObjectType type = node.getNodeType().getDataObjectType();
       AbstractVisitorFunctor visitor = type.createVisitorInstance();
       List results = new ArrayList();
       validator.validate(object, visitor, results);
       if (results != null && results.size() > 0) {
+        log.debug("Display validator messages " + results.size());
+        node.getExplorer().getDockingArea().getTab("Validator");
         // TODO display results
       } else {
         node.getExplorer().getStatusBar().setInfo("Validation Completed");

@@ -191,7 +191,7 @@ public interface UiNodeType {
   Object getParameter(String key);
 
   /**
-   * Sets the parameter with the specified key and the corresponding value
+   * Sets the parameter with the specified key and the corresponding value.
    * @param key the property key.
    * @param value the value of the parameter.
    * @return the previous value of the specified key in this parameter list, or

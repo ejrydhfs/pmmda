@@ -21,7 +21,9 @@ public interface LightweightObject extends HasId {
 
   /**
    * Performs a deep copy of all referenced data objects and their properties.
+   * The name is not copy to avoid collision with the copy of the data object
+   * type for classes implementing both interfaces.
    * @return the cloned data object.
    */
-  LightweightObject copy();
+  LightweightObject deepCopy();
 }

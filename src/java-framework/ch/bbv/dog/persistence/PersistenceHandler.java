@@ -180,7 +180,14 @@ public class PersistenceHandler implements DataObjectHandler {
     return database;
   }
 
-  public void remove(String datasource, Class clazz, DataObject root,
+  /**
+   * Remvoes the data object graph.
+   * @param datasource datasouce containing the data objects to remove.
+   * @param clazz class of the root object.
+   * @param root root of the data object graph to remove.
+   * @param originalRoot root of the orginal data object graph to remove.
+   */
+  private void remove(String datasource, Class clazz, DataObject root,
       DataObject originalRoot) {
     if (log.isTraceEnabled()) {
       StringBuffer text = new StringBuffer();

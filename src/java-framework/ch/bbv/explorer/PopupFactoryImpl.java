@@ -12,6 +12,7 @@ import java.util.Map;
 import javax.swing.JPopupMenu;
 
 /**
+ * The popup factory is a default implementation of the popup factory interface.
  * @author MarcelBaumann
  * @version $Revision$
  */

@@ -6,14 +6,19 @@
 
 package ch.bbv.explorer.components;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
- * The validation panel displays a list of validation messages.
+ * The validation panel displays a list of validation messages. The messages are
+ * displayed in a table.
  * @author MarcelBaumann
  * @version $Revision$
  */
 public class ValidationPanel extends TablePanel {
+  /**
+   * List of displayed validation results.
+   */
   private List results;
 
   /**
@@ -25,9 +30,14 @@ public class ValidationPanel extends TablePanel {
    * Default constructor of the class.
    */
   public ValidationPanel() {
-    super(null, new TableCell(COLUMN_NAMES));
+    super(Collections.EMPTY_LIST, new TableCell(COLUMN_NAMES));
   }
 
+  /**
+   * Sets the validation results in the panel. The previous values are
+   * discarded.
+   * @param results list of validation results to display.
+   */
   public void setResults(List results) {
     this.results = results;
     setModel(results);

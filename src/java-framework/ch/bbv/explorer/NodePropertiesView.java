@@ -1,5 +1,5 @@
 /* copyright 2000-2004 Marcel Baumann
- * Licensed under the Apache License, Version 2.0 (the "Licence);
+ * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
  */
@@ -11,11 +11,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.DefaultCellEditor;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
+
+import ch.bbv.dog.DataObject;
 
 /**
  * The node properties view defines the view displaying all properties of a data
@@ -176,9 +174,8 @@ public abstract class NodePropertiesView extends JPanel {
   protected void propagateModel(ExplorerNode node) {
     this.node = node;
 
-    Iterator subviews = nodePropertiesSubViews.iterator();
-    while (subviews.hasNext()) {
-      ((NodePropertiesView) subviews.next()).propagateModel(node);
+    for (Iterator i = nodePropertiesSubViews.iterator(); i.hasNext();) {
+      ((NodePropertiesView) i.next()).propagateModel(node);
     }
   }
 
@@ -189,10 +186,17 @@ public abstract class NodePropertiesView extends JPanel {
   protected void populateSubViews() {
     populateView();
 
-    Iterator subviews = nodePropertiesSubViews.iterator();
-    while (subviews.hasNext()) {
-      ((NodePropertiesView) subviews.next()).populateView();
+    for (Iterator i = nodePropertiesSubViews.iterator(); i.hasNext();) {
+      ((NodePropertiesView) i.next()).populateView();
     }
+  }
+
+  /**
+   * Returns the explorer node displayed in the node properties view.
+   * @return explorer node displayed in the view.
+   */
+  protected ExplorerNode getNode() {
+    return node;
   }
 
   /**
@@ -201,8 +205,8 @@ public abstract class NodePropertiesView extends JPanel {
    * @return the data object stored in the explorer node if defined otherwise
    *         null.
    */
-  protected Object getDataObject() {
-    Object object = null;
+  protected DataObject getDataObject() {
+    DataObject object = null;
     if (node != null) {
       object = node.getDataObject();
     }

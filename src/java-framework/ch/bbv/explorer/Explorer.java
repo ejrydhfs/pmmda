@@ -18,6 +18,7 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import ch.bbv.dog.*;
+import ch.bbv.explorer.components.DockingArea;
 import ch.bbv.utilities.ReflectUtilities;
 
 /**
@@ -37,6 +38,11 @@ import ch.bbv.utilities.ReflectUtilities;
  * subclass, which overwrites the method must call the parent method.</li>
  * <li>The display method shows the explorer on the screen.</li>
  * </ol>
+ * <p>
+ * The right pane provide two panels. The top panel provides a detailed view of
+ * the selected node in the navigator. The bottom panel is a docking panel where
+ * additional information view can be displayed.
+ * </p>
  * @author Marcel Baumann
  * @version $Revision$
  */
@@ -63,12 +69,27 @@ public abstract class Explorer {
   /**
    * Swing component of the explorer view.
    */
-  private JScrollPane rightPane;
+  private JScrollPane leftPane;
 
   /**
    * Swing component of the explorer view.
    */
-  private JScrollPane leftPane;
+  private JSplitPane rightPane;
+
+  /**
+   * Swing component of the explorer view.
+   */
+  private JScrollPane topRightPane;
+
+  /**
+   * Swing component of the explorer view.
+   */
+  private JScrollPane bottomRightPane;
+
+  /**
+   * Swing component of the explorer view.
+   */
+  private DockingArea dockingArea;
 
   /**
    * Status bar of the explorer view.
@@ -98,8 +119,14 @@ public abstract class Explorer {
    */
   private DataObjectManager manager;
 
+  /**
+   * Data source used to retrieve the data objects.
+   */
   private String datasource;
 
+  /**
+   * The menu bar of the explorer frame.
+   */
   private ExplorerMenuBar menuBar;
 
   /**
@@ -160,6 +187,7 @@ public abstract class Explorer {
    * Resets the current selected node used to generate the popup menu. To reset
    * the value, the node parameter can be set to null.
    * @param node new selected node of the explorer.
+   * @see #getSelectedNodeForPopup()
    */
   public static void setSelectedNodeForPopup(ExplorerNode node) {
     selectedNodeForPopup = node;
@@ -168,6 +196,7 @@ public abstract class Explorer {
   /**
    * Returns the current selected node uded to generate the popup menu.
    * @return selected node if existing otherwise null.
+   * @see #setSelectedNodeForPopup(ExplorerNode)
    */
   public static ExplorerNode getSelectedNodeForPopup() {
     return selectedNodeForPopup;
@@ -185,10 +214,18 @@ public abstract class Explorer {
     this.manager = manager;
     this.datasource = datasource;
     frame = new JFrame("Explorer");
-    rightPane = new JScrollPane(tree);
-    leftPane = new JScrollPane();
+    leftPane = new JScrollPane(tree);
+    topRightPane = new JScrollPane();
+    bottomRightPane = new JScrollPane();
+    dockingArea = new DockingArea();
+    bottomRightPane.setViewportView(dockingArea);
+    rightPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, topRightPane,
+        bottomRightPane);
+    rightPane.setDividerSize(5);
+    rightPane.setResizeWeight(0.8);
     splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPane, rightPane);
     splitPane.setDividerSize(5);
+    splitPane.setResizeWeight(0.3);
     frame.getContentPane().add(BorderLayout.CENTER, splitPane);
     statusBar = new StatusBar();
     frame.getContentPane().add(BorderLayout.SOUTH, statusBar);
@@ -230,6 +267,14 @@ public abstract class Explorer {
     frame.setTitle(title);
   }
 
+  /**
+   * Returns the docking area of the explorer.
+   * @return the docking area of the explorer.
+   */
+  public DockingArea getDockingArea() {
+    return dockingArea;
+  }
+  
   /**
    * Returns the menu bar of the explorer.
    * @return the menu bar of the explorer.
@@ -305,8 +350,8 @@ public abstract class Explorer {
   void display() {
     frame.setLocation(100, 100);
     frame.pack();
-    frame.setSize(750, 500);
-    splitPane.setDividerLocation(0.4);
+    frame.setSize(800, 600);
+    splitPane.setDividerLocation(-1);
     frame.setVisible(true);
   }
 
@@ -374,7 +419,7 @@ public abstract class Explorer {
    */
   public void displayView(UiNodeViewType type, ExplorerNode node) {
     nodeView = factory.getNodeViewFor(node, type);
-    rightPane.setViewportView((Component) nodeView);
+    topRightPane.setViewportView((Component) nodeView);
   }
 
   /**
@@ -497,8 +542,15 @@ public abstract class Explorer {
    * @version $Revision$
    */
   public static class ExplorerWindowListener extends WindowAdapter {
+    /**
+     * The explorer listened to.
+     */
     private Explorer explorer;
 
+    /**
+     * Constructor of the class.
+     * @param explorer the explorer the listener should listen.
+     */
     public ExplorerWindowListener(Explorer explorer) {
       this.explorer = explorer;
     }

@@ -5,11 +5,10 @@
  */
 package ch.bbv.explorer;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.IndexedPropertyDescriptor;
 import java.beans.PropertyDescriptor;
-import java.lang.reflect.InvocationTargetException;
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.util.*;
 
 import javax.swing.*;
@@ -20,6 +19,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ch.bbv.dog.DataObject;
+import ch.bbv.dog.DataObjectType;
+import ch.bbv.utilities.ReflectUtilities;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -52,14 +53,14 @@ public class GenericNodePropertiesView extends NodePropertiesView {
   private static Log log = LogFactory.getLog(GenericNodePropertiesView.class);
 
   /**
-   * The date format used to convert string representation of dates.
-   */
-  private DateFormat dateFormat;
-
-  /**
    * List of all views for simple properties.
    */
-  private List propertyViews;
+  private List primitivePropertyViews;
+
+  /**
+   * List of all views for simple data object properties.
+   */
+  private List dataPropertyViews;
 
   /**
    * List of all views for indexed properties.
@@ -80,30 +81,39 @@ public class GenericNodePropertiesView extends NodePropertiesView {
    * Default constructor of the class.
    */
   public GenericNodePropertiesView() {
-    dateFormat = DateFormat.getDateInstance();
-    propertyViews = new ArrayList();
+    primitivePropertyViews = new ArrayList();
+    dataPropertyViews = new ArrayList();
     indexedPropertyViews = new ArrayList();
     mappedPropertyViews = new ArrayList();
   }
 
   public void populateView() {
-    Object object = getModel().getDataObject();
+    DataObject bean = getModel().getDataObject();
     if (type == null) {
-      type = object.getClass();
-      retrieveProperties(object);
+      if (log.isDebugEnabled()) {
+        log
+            .debug("Creating generic node properties view for "
+                + type.getName());
+      }
+      type = bean.getClass();
+      retrieveProperties(bean);
       initialize();
     }
 
-    for (Iterator i = propertyViews.iterator(); i.hasNext();) {
-      getTextValue(object, (PropertyView) i.next());
+    for (Iterator i = primitivePropertyViews.iterator(); i.hasNext();) {
+      ((PropertyView) i.next()).setModel(bean);
+    }
+    for (Iterator i = indexedPropertyViews.iterator(); i.hasNext();) {
+      ((PropertyView) i.next()).setModel(bean);
+    }
+    for (Iterator i = mappedPropertyViews.iterator(); i.hasNext();) {
+      ((PropertyView) i.next()).setModel(bean);
     }
   }
 
   public void commitChanges() {
-    Object object = getModel().getDataObject();
-    Iterator views = propertyViews.iterator();
-    while (views.hasNext()) {
-      setTextValue(object, (PropertyView) views.next());
+    for (Iterator i = primitivePropertyViews.iterator(); i.hasNext();) {
+      ((PropertyView) i.next()).update();
     }
   }
 
@@ -112,14 +122,15 @@ public class GenericNodePropertiesView extends NodePropertiesView {
   }
 
   public void setViewEditable(boolean editable) {
-    for (Iterator i = propertyViews.iterator(); i.hasNext();) {
+    for (Iterator i = primitivePropertyViews.iterator(); i.hasNext();) {
       ((PropertyView) i.next()).setEditable(editable);
     }
   }
 
   protected void initialize() {
     StringBuffer buffer = new StringBuffer();
-    generateRowsLayout(buffer, propertyViews);
+    generateRowsLayout(buffer, primitivePropertyViews);
+    generateRowsLayout(buffer, dataPropertyViews);
     generateRowsLayout(buffer, indexedPropertyViews);
     generateRowsLayout(buffer, mappedPropertyViews);
 
@@ -129,7 +140,10 @@ public class GenericNodePropertiesView extends NodePropertiesView {
     PanelBuilder builder = new PanelBuilder(layout);
     builder.setDefaultDialogBorder();
 
-    int row = generateRows(builder, "Properties", propertyViews, 1);
+    int row = generateRows(builder, "Simple Properties",
+        primitivePropertyViews, 1);
+    row = generateRows(builder, "Data Object Properties", dataPropertyViews,
+        row);
     row = generateRows(builder, "Indexed Properties", indexedPropertyViews, row);
     row = generateRows(builder, "Mapped Properties", mappedPropertyViews, row);
 
@@ -166,24 +180,31 @@ public class GenericNodePropertiesView extends NodePropertiesView {
       builder.addSeparator(seperator, cc.xywh(1, currentRow, 5, 1));
       currentRow += 2;
       for (int i = 0; i < size; i++) {
-        AbstractPropertyView view = (AbstractPropertyView) properties.get(i);
+        PropertyView view = (PropertyView) properties.get(i);
         builder.addLabel(view.label, cc.xy(1, currentRow));
-        if (view instanceof PropertyView) {
-          builder.add(((PropertyView) view).getComponent(), cc
-              .xy(3, currentRow));
-        } else if (view instanceof IndexedPropertyView) {
-          builder
-              .add(((IndexedPropertyView) view).button, cc.xy(5, currentRow));
-        } else if (view instanceof MappedPropertyView) {
-          builder.add(((MappedPropertyView) view).button, cc.xy(5, currentRow));
-        }
+        builder.add(view.getComponent(), cc.xy(3, currentRow));
         currentRow += 2;
       }
     }
     return currentRow;
   }
 
-  protected void retrieveProperties(Object object) {
+  /**
+   * Retrieves the properties of the data object. The following rules are
+   * defined.
+   * <ul>
+   * <li>Indexed property descriptors are only added if the type of their
+   * elements is not a data object type. Indexed properties with data objects
+   * are always displayed in the navigator.</li>
+   * <li>Mapped property descriptors are only added if the type of their
+   * elements is not a data object type. Mapped properties with data objects are
+   * always displayed in the navigator.</li>
+   * <li>Simple properties are displayed if they contains at most one item or
+   * if their elements are not data objects.</li>
+   * </ul>
+   * @param object data object which properties should be infered.
+   */
+  protected void retrieveProperties(DataObject object) {
     type = object.getClass();
 
     PropertyDescriptor[] descriptors = PropertyUtils
@@ -204,73 +225,30 @@ public class GenericNodePropertiesView extends NodePropertiesView {
           if (containsInterface(clazz.getInterfaces(),
               java.util.Collection.class)
               || containsInterface(clazz.getInterfaces(), java.util.Map.class)) {
-            // plural name of the indexed property
-            IndexedPropertyView propertyView = new IndexedPropertyView(
-                descriptor.getName(), descriptor.getPropertyType(), descriptor
-                    .getDisplayName());
-            indexedPropertyViews.add(propertyView);
+            // handle indexed or mapped properties with multiple items.
+            if (getNode().getNodeType().getRelation(descriptor.getName()) == null) {
+              IndexedPropertyView propertyView = new IndexedPropertyView(
+                  descriptor.getName(), descriptor.getPropertyType(),
+                  descriptor.getDisplayName());
+              indexedPropertyViews.add(propertyView);
+            }
           } else {
-            if (!containsInterface(clazz.getInterfaces(), clazz)) {
-              PropertyView propertyView = new PropertyView(
-                  descriptor.getName(), clazz, descriptor.getDisplayName());
-              propertyViews.add(propertyView);
+            // handle simple properties with at most one item.
+            PropertyView view;
+            if (containsInterface(clazz.getInterfaces(), DataObject.class)) {
+              DataObjectType type = getModel().getNodeType().getFactory()
+                  .getNodeTypeForBo(clazz).getDataObjectType();
+              view = new DataObjectPropertyView(descriptor.getName(), clazz,
+                  descriptor.getDisplayName(), type);
+              dataPropertyViews.add(view);
+            } else {
+              view = new PrimitivePropertyView(descriptor.getName(), clazz,
+                  descriptor.getDisplayName());
+              primitivePropertyViews.add(view);
             }
           }
         }
       }
-    }
-  }
-
-  protected void getTextValue(Object object, PropertyView view) {
-    try {
-      Object value = PropertyUtils.getProperty(object, view.property);
-      view.setValue(value);
-    } catch (IllegalAccessException e) {
-      log.error(e);
-    } catch (InvocationTargetException e) {
-      log.error(e);
-    } catch (NoSuchMethodException e) {
-      log.error(e);
-    }
-  }
-
-  protected void setTextValue(Object object, PropertyView view) {
-    Object value = view.getValue();
-    if (value instanceof String) {
-      String textValue = (String) value;
-      if (String.class.equals(view.type)) {
-        value = textValue;
-      } else if (Boolean.TYPE.equals(view.type)
-          || Boolean.class.equals(view.type)) {
-        value = Boolean.valueOf(textValue);
-      } else if (Short.TYPE.equals(view.type) || Short.class.equals(view.type)) {
-        value = Short.decode(textValue);
-      } else if (Integer.TYPE.equals(view.type)
-          || Integer.class.equals(view.type)) {
-        value = Integer.decode(textValue);
-      } else if (Long.TYPE.equals(view.type) || Long.class.equals(view.type)) {
-        value = Long.decode(textValue);
-      } else if (Float.TYPE.equals(view.type) || Float.class.equals(view.type)) {
-        value = Float.valueOf(textValue);
-      } else if (Double.TYPE.equals(view.type)
-          || Double.class.equals(view.type)) {
-        value = Double.valueOf(textValue);
-      } else if (Date.class.equals(view.type)) {
-        try {
-          value = dateFormat.parseObject(textValue);
-        } catch (ParseException e) {
-          log.error(e);
-        }
-      }
-    }
-    try {
-      PropertyUtils.setProperty(object, view.property, value);
-    } catch (IllegalAccessException e) {
-      log.error(e);
-    } catch (InvocationTargetException e) {
-      log.error(e);
-    } catch (NoSuchMethodException e) {
-      log.error(e);
     }
   }
 
@@ -285,23 +263,105 @@ public class GenericNodePropertiesView extends NodePropertiesView {
     return containsInterface;
   }
 
-  static class AbstractPropertyView {
+  /**
+   * The abstract property view defines the interface for all property views. A
+   * property view displays a property of a bean on the user interface.
+   * @author MarcelBaumann
+   * @version $Revision$
+   */
+  static abstract class PropertyView {
     protected static final int TEXT_FIELD_SIZE = 32;
 
+    /**
+     * The bean which property is displayed.
+     */
+    DataObject bean;
+
+    /**
+     * Name of the property displayed in the view.
+     */
     String property;
 
+    /**
+     * Label of the property in the view.
+     */
     String label;
 
+    /**
+     * Type of the property.
+     */
     Class type;
 
-    public AbstractPropertyView(String property, Class type, String label) {
+    /**
+     * Constructor of the property view.
+     * @param property property name to be displayed in the view.
+     * @param type type of the simple property.
+     * @param label label of the simple property.
+     */
+    public PropertyView(String property, Class type, String label) {
       this.property = property;
       this.label = label;
       this.type = type;
     }
+
+    /**
+     * Returns the component used to manipulate the property.
+     * @return the visual component displaying the property.
+     */
+    public abstract JComponent getComponent();
+
+    /**
+     * Sets the visual component to the given editable mode.
+     * @param editable new value of the editable flag.
+     */
+    public abstract void setEditable(boolean editable);
+
+    /**
+     * Sets the model of the view to the new data object. The view is
+     * automatically updated.
+     * @param bean bean which property should be displayed.
+     */
+    public void setModel(DataObject bean) {
+      if (this.bean != bean) {
+        this.bean = bean;
+        Object value = ReflectUtilities.getProperty(bean, property);
+        setValue(value);
+      }
+    }
+
+    /**
+     * Updates the bean with the value edited in the view. The update is only
+     * performed if the value is different from the one stored in the bean.
+     */
+    public void update() {
+      Object oldValue = ReflectUtilities.getProperty(bean, property);
+      Object value = getValue();
+      if (((oldValue != null) && oldValue.equals(value)) || (value != null)) {
+        ReflectUtilities.setProperty(bean, property, value);
+      }
+    }
+
+    /**
+     * Returns the value of the displayed property. The type is the one of the
+     * property.
+     * @return the value of the displayed property.
+     */
+    protected abstract Object getValue();
+
+    /**
+     * Sets the value of the displayed property.
+     * @param value value of the property.
+     */
+    protected abstract void setValue(Object value);
   }
 
-  static class PropertyView extends AbstractPropertyView {
+  /**
+   * The simple property view displays a simple property with a language
+   * build-in type, meaning not a data object type.
+   * @author MarcelBaumann
+   * @version $Revision$
+   */
+  class PrimitivePropertyView extends PropertyView {
     private JTextField text;
 
     private JFormattedTextField formattedText;
@@ -310,46 +370,16 @@ public class GenericNodePropertiesView extends NodePropertiesView {
 
     private JCheckBox checkBox;
 
-    public PropertyView(String property, Class type, String label) {
+    public PrimitivePropertyView(String property, Class type, String label) {
       super(property, type, label);
       if (type.equals(String.class)) {
         text = new JTextField(TEXT_FIELD_SIZE);
       } else if (Boolean.class.equals(type) || Boolean.TYPE.equals(type)) {
         checkBox = new JCheckBox();
       } else if (Date.class.equals(type)) {
-        dateChooser = new JDateChooser();
+        dateChooser = new JDateChooser(true);
       } else {
         formattedText = new JFormattedTextField();
-      }
-    }
-
-    public Object getValue() {
-      Object value = null;
-      if (type.equals(String.class)) {
-        value = text.getText();
-      } else if (Boolean.class.equals(type) || Boolean.TYPE.equals(type)) {
-        value = new Boolean(checkBox.isSelected());
-      } else if (Date.class.equals(type)) {
-        value = dateChooser.getDate();
-      } else {
-        formattedText.getText();
-      }
-      return value;
-    }
-
-    public void setValue(Object value) {
-      if (type.equals(String.class)) {
-        text.setText((String) value);
-      } else if (Boolean.class.equals(type) || Boolean.TYPE.equals(type)) {
-        checkBox.setSelected(((Boolean) value).booleanValue());
-      } else if (Date.class.equals(type)) {
-        if (value != null) {
-          dateChooser.setDate((Date) value);
-        } else {
-          dateChooser = new JDateChooser(true);
-        }
-      } else {
-        formattedText.setValue(value);
       }
     }
 
@@ -378,23 +408,187 @@ public class GenericNodePropertiesView extends NodePropertiesView {
         formattedText.setEditable(editable);
       }
     }
+
+    protected Object getValue() {
+      Object value = null;
+      if (type.equals(String.class)) {
+        value = text.getText();
+      } else if (Boolean.class.equals(type) || Boolean.TYPE.equals(type)) {
+        value = new Boolean(checkBox.isSelected());
+      } else if (Date.class.equals(type)) {
+        value = dateChooser.getDate();
+      } else if (Short.TYPE.equals(type) || Short.class.equals(type)) {
+        value = Short.decode(text.getText());
+      } else if (Integer.TYPE.equals(type) || Integer.class.equals(type)) {
+        value = Integer.decode(text.getText());
+      } else if (Long.TYPE.equals(type) || Long.class.equals(type)) {
+        value = Long.decode(text.getText());
+      } else if (Float.TYPE.equals(type) || Float.class.equals(type)) {
+        value = Float.valueOf(text.getText());
+      } else if (Double.TYPE.equals(type) || Double.class.equals(type)) {
+        value = Double.valueOf(text.getText());
+      }
+      return value;
+    }
+
+    protected void setValue(Object value) {
+      if (type.equals(String.class)) {
+        text.setText((String) value);
+      } else if (Boolean.class.equals(type) || Boolean.TYPE.equals(type)) {
+        checkBox.setSelected(((Boolean) value).booleanValue());
+      } else if (Date.class.equals(type)) {
+        if (value != null) {
+          dateChooser.setDate((Date) value);
+        } else {
+          dateChooser = new JDateChooser(true);
+        }
+      } else {
+        formattedText.setValue(value);
+      }
+    }
   }
 
-  static class IndexedPropertyView extends AbstractPropertyView {
+  /**
+   * The data object property view displays a data object property . The object
+   * is cloned to allow the user to cancel the operation once it was edited in a
+   * child dialog.
+   * @author MarcelBaumann
+   * @version $Revision$
+   */
+  class DataObjectPropertyView extends PropertyView {
+    private JComponent propertyArea;
+
+    private DataObjectType type;
+
+    private DataObject dataObject;
+
+    private DataObject copy;
+
+    private ButtonActions actions;
+
+    JButton deleteButton;
+
+    JButton editButton;
+
+    public DataObjectPropertyView(String property, Class clazz, String label,
+        DataObjectType type) {
+      super(property, clazz, label);
+      this.type = type;
+      propertyArea = new JPanel();
+      deleteButton = new JButton("Delete");
+      editButton = new JButton("Edit");
+      propertyArea.add(deleteButton);
+      propertyArea.add(editButton);
+      actions = new ButtonActions();
+      deleteButton.addActionListener(actions);
+      editButton.addActionListener(actions);
+    }
+
+    public JComponent getComponent() {
+      return propertyArea;
+    }
+
+    public void setEditable(boolean editable) {
+      deleteButton.setEnabled(editable);
+      if (editable) {
+        editButton.setText("Edit");
+      } else {
+        editButton.setText("View");
+      }
+    }
+
+    protected Object getValue() {
+      return (((copy != null) && copy.isModified()) ? copy : dataObject);
+    }
+
+    protected void setValue(Object value) {
+      dataObject = (DataObject) value;
+      copy = null;
+      deleteButton.setEnabled(dataObject != null);
+    }
+
+    /**
+     * Deletes the data object. The original object and all changes are lost.
+     */
+    void deleteObject() {
+      setValue(null);
+    }
+
+    /**
+     * Edits the data object. If the object does not exists it is created. The
+     * view associated with the data object type is used to display a dialog to
+     * edit the object.
+     */
+    void editObject() {
+      if (dataObject != null) {
+        if (copy == null) {
+          copy = dataObject.copy();
+        }
+      } else {
+        copy = type.createBoInstance();
+        deleteButton.setEnabled(true);
+      }
+      // TODO open the frame with the view of the data object type.
+    }
+
+    private class ButtonActions implements ActionListener {
+      public void actionPerformed(ActionEvent event) {
+        if (event.getSource() == editButton) {
+          editObject();
+        } else if (event.getSource() == deleteButton) {
+          deleteObject();
+        }
+      }
+    }
+  }
+
+  static class IndexedPropertyView extends PropertyView {
     JButton button;
 
     public IndexedPropertyView(String property, Class type, String label) {
       super(property, type, label);
       this.button = new JButton("Edit");
     }
+
+    public JComponent getComponent() {
+      return null;
+    }
+
+    public void setEditable(boolean editable) {
+
+    }
+
+    protected Object getValue() {
+      return null;
+    }
+
+    protected void setValue(Object value) {
+
+    }
   }
 
-  static class MappedPropertyView extends AbstractPropertyView {
+  static class MappedPropertyView extends PropertyView {
     JButton button;
 
     public MappedPropertyView(String property, Class type, String label) {
       super(property, type, label);
       this.button = new JButton("Edit");
+    }
+
+    public JComponent getComponent() {
+      return null;
+    }
+
+    public void setEditable(boolean editable) {
+
+    }
+
+    protected Object getValue() {
+      return null;
+    }
+
+    protected void setValue(Object value) {
+
     }
   }
 }

@@ -39,8 +39,15 @@ public class UiNodeTypeFactory {
 
   private Map nodePropertiesViews;
 
+  /**
+   * The node views map contains all the views of the registered node types. The
+   * node views is Map <UiNodeType, Map <UiNodeViewType, NodeView> >.
+   */
   private Map nodeViews;
 
+  /**
+   * The icon factory of the node type factory used to retrieve node icons.
+   */
   private IconFactory iconFactory;
 
   private PopupFactory popupFactory;
@@ -113,19 +120,20 @@ public class UiNodeTypeFactory {
    * Returns the properties view associated with the given node type. The
    * algorithm assumes that at most one properties view is displayed per
    * application.
-   * @param nodeType node type which properties view is requested.
+   * @param type node type which properties view is requested.
    * @return the requested properties view for the given node type.
+   * @pre type != null
    */
-  public NodePropertiesView getViewFor(UiNodeType nodeType) {
-    assert (nodeType != null);
+  public NodePropertiesView getViewFor(UiNodeType type) {
+    assert (type != null);
 
     NodePropertiesView view = (NodePropertiesView) nodePropertiesViews
-        .get(nodeType);
+        .get(type);
     if (view == null) {
       try {
-        Class clazz = nodeType.getPropertiesView();
+        Class clazz = type.getPropertiesView();
         view = (NodePropertiesView) clazz.newInstance();
-        nodePropertiesViews.put(nodeType, view);
+        nodePropertiesViews.put(type, view);
       } catch (InstantiationException ie) {
         ie.printStackTrace();
       } catch (IllegalAccessException iae) {
@@ -136,6 +144,10 @@ public class UiNodeTypeFactory {
     return view;
   }
 
+  /**
+   * Returns a free properties dialog.
+   * @return the node properties dialog.
+   */
   public NodePropertiesDialog getPropertiesDialog() {
     return new NodePropertiesDialog();
   }
@@ -149,13 +161,13 @@ public class UiNodeTypeFactory {
    */
   public NodeView getNodeViewFor(ExplorerNode node, UiNodeViewType type) {
     assert (node != null && type != null);
-    Class viewClass = type.getNodeView();
-    NodeView view = (NodeView) nodeViews.get(viewClass);
+    NodeView view = getViewFor(node.getNodeType(), type);
     if (view == null) {
+      Class viewClass = type.getNodeView();
       Object[] params = { node.getNodeType(), type.getParameters() };
       view = (NodeView) ReflectUtilities.createInstance(viewClass, types,
           params);
-      nodeViews.put(viewClass, view);
+      addView(node.getNodeType(), type, view);
     }
     if (view != null) {
       view.setModel(node);
@@ -163,5 +175,36 @@ public class UiNodeTypeFactory {
       log.error("view not available for node '" + node.getName() + "'");
     }
     return view;
+  }
+
+  /**
+   * Returns the view for the node type and type view.
+   * @param nodeType type of user interface node to display.
+   * @param viewType the requested view type.
+   * @return the requested view if found otherwise null.
+   */
+  private NodeView getViewFor(UiNodeType nodeType, UiNodeViewType viewType) {
+    NodeView view = null;
+    Map views = (Map) nodeViews.get(nodeType);
+    if (views != null) {
+      view = (NodeView) views.get(viewType);
+    }
+    return view;
+  }
+
+  /**
+   * Adds the view to the node views buffer structure.
+   * @param nodeType type of the user interface node displayed in the view.
+   * @param viewType the view type of the view.
+   * @param view the node view to add.
+   */
+  private void addView(UiNodeType nodeType, UiNodeViewType viewType,
+      NodeView view) {
+    Map views = (Map) nodeViews.get(nodeType);
+    if (views == null) {
+      views = new HashMap();
+      nodeViews.put(nodeType, views);
+    }
+    views.put(viewType, view);
   }
 }

@@ -10,6 +10,9 @@ import java.util.*;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
 
+import ch.bbv.dog.DataObject;
+import ch.bbv.dog.LightweightObject;
+
 /**
  * The explorer node defines a node displayed in the navigator pane of the tree
  * list user interface.
@@ -30,12 +33,12 @@ public class ExplorerNode implements MutableTreeNode {
   /**
    * The data object of this node if loaded otherwise null.
    */
-  private Object boObject;
+  private DataObject boObject;
 
   /**
    * The lightweight data object of this node.
    */
-  private Object lwObject;
+  private LightweightObject lwObject;
 
   /**
    * The node type describing the user interface aspect of the data object type
@@ -59,7 +62,7 @@ public class ExplorerNode implements MutableTreeNode {
    * @param boObject data object to display.
    * @pre (nodeType != null) && (lwObject != null)
    */
-  public ExplorerNode(UiNodeType nodeType, Object lwObject, Object boObject) {
+  public ExplorerNode(UiNodeType nodeType, LightweightObject lwObject, DataObject boObject) {
     this();
     this.nodeType = nodeType;
     setLightweightObject(lwObject);
@@ -86,41 +89,25 @@ public class ExplorerNode implements MutableTreeNode {
   /**
    * Returns the data object associated with the explorer node.
    * @return the data object of the explorer node.
-   * @see #setDataObject(Object)
+   * @see #setDataObject(DataObject)
    */
-  public Object getDataObject() {
+  public DataObject getDataObject() {
     return boObject;
   }
 
-  /**
-   * Returns all dataObjects of all children of this node
-   * @return List with dataObjects
-   */
-  public List getDataObjects() {
-    List children = getChildren();
-    ArrayList dataObjects = new ArrayList();
-    for(Iterator i=children.iterator(); i.hasNext();){
-      Object child = i.next();
-      if(child instanceof ExplorerNode){
-        dataObjects.add(((ExplorerNode)child).getDataObject());
-      }
-    }
-    return dataObjects;
-  }
-  
   /**
    * Sets the data object of the explorer node.
    * @param boObject data object of the explorer node.
    * @see #getDataObject()
    */
-  public void setDataObject(Object boObject) {
+  public void setDataObject(DataObject boObject) {
     this.boObject = boObject;
   }
-  
+
   /**
    * Returns the lightweight object associated with the explorer node.
    * @return the lightweight object of the explorer node.
-   * @see #setLightweightObject(Object)
+   * @see #setLightweightObject(LightweightObject)
    */
   public Object getLightweightObject() {
     return lwObject;
@@ -129,9 +116,9 @@ public class ExplorerNode implements MutableTreeNode {
   /**
    * Sets the lightweight object of the explorer node.
    * @param lwObject lightweight object of the explorer node.
-   * @see #setLightweightObject(Object)
+   * @see #getLightweightObject()
    */
-  public void setLightweightObject(Object lwObject) {
+  public void setLightweightObject(LightweightObject lwObject) {
     this.lwObject = lwObject;
   }
 
@@ -140,7 +127,7 @@ public class ExplorerNode implements MutableTreeNode {
   }
 
   public void setUserObject(Object lwObject) {
-    this.lwObject = lwObject;
+    this.lwObject = (LightweightObject) lwObject;
   }
 
   public void setParent(MutableTreeNode parent) {
