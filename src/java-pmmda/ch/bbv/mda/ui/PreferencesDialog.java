@@ -31,7 +31,6 @@ public class PreferencesDialog extends SimpleDialog {
     tabbedPane = new JTabbedPane();
     tabbedPane.addTab("Cartridges", new CartridgesPanel(CartridgeFactory
         .getInstance()));
-    tabbedPane.addTab("Cartridge", new CartridgePanel());
     tabbedPane.addTab("Properties", PropertiesPanel.createSystemPropertiesPanel());
     content.add(tabbedPane);
     setView(content);
