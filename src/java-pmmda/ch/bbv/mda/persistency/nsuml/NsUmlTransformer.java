@@ -269,6 +269,10 @@ public class NsUmlTransformer {
         .hasNext();) {
       extractProperty((MAttribute) i.next(), metaClass);
     }
+    for (Iterator i = new FilterIterator(mClass.getOwnedElements(), MAttribute.class); i
+        .hasNext();) {
+      extractProperty((MAttribute) i.next(), metaClass);
+    }
 
     for (Iterator i = new FilterIterator(mClass.getOwnedElements(),
         MClassifier.class); i.hasNext();) {
