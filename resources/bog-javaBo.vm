@@ -492,6 +492,7 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
       clone.${lName}.add(((DataObject)${lName}.get(i)).copy());
     }
 #end
+    clone.setModified(isModified());
     return clone;
   }
 

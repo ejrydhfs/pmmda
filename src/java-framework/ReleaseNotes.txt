@@ -1,4 +1,4 @@
-Version 0.2.1-RC2 (01 October 2004)
+Version 0.2.1-RC2 (15 October 2004)
 ---------------------------------
 The following new features were added.
 - The generic properties node dialog was enhanced to support edition of their
@@ -12,6 +12,10 @@ The following new features were added.
   status and progress information.
 
 The following errors were corrected.
+- The handling of node type in the UI node type factory had an error. The 
+  returned view was erroneous if the view class is a parametric one used in
+  multiple node type. The selection algorithm was modified to support such 
+  classes.
 - The Swing user interface creation pattern is now used to execute the explorer
   in the context of the AWT event processing thread.
 - The source code was refactored to support the for pattern when using an 
@@ -20,6 +24,10 @@ The following errors were corrected.
   to retrieve an explorer node based on the identifier of its lightweight or
   data object. Therefore the behavior of open view generated a null pointer
   exception the first time it was called.
+- The signature of the lightweight object interface was modified to allow an
+  object to implement data object and lightweight object interfaces. At least
+  one application we know displays the same object in the navigator and in the
+  right pane.
 
 Version 0.2.1-RC1 (30 September 2004)
 -------------------------------

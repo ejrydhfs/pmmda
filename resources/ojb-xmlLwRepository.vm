@@ -1,9 +1,11 @@
 #isLightweightDataObject($class $isLightweightDataObject)
 #if($isLightweightDataObject)
+#set($shouldGenerateFkIndex=${configuration.getProperty("ojb-cartridge.generate-fk-index").equalsIgnoreCase("true")})
 #set($schema=${package.valueOfTag("ojb-schema")})
 #if(${schema})#set($schema="${schema}.")#else#set($schema="")#end
+#set($table=${class.getAttribute("ojb-table-name")})
 <class-descriptor class="${package.getAttribute("bo-lw-package")}.${class.getAttribute("bo-lw-class")}"
-  table="${schema}${class.getAttribute("ojb-table-name")}">
+  table="${schema}${table}">
   <field-descriptor name="id" 
     column="ID" 
     jdbc-type="INTEGER" 
@@ -106,12 +108,67 @@
 #if($isDataObject && ${type.booleanValueOfTag("ojb-is-persistent")} && ${type.booleanValueOfAttribute("bo-lightweight")})
 #set($columnName=${aggregation.getAttribute("ojb-column-name")})
 #set($typePackage=${type.getContext()})
-  <collection-descriptor name="${aggregation.getName()}"
+  <collection-descriptor 
+	name="${aggregation.getName()}"
+    collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
     element-class-ref="${typePackage.getAttribute("bo-lw-package")}.${type.getAttribute("bo-lw-class")}"
     orderby="id"
     sort="ASC">
     <inverse-foreignkey field-ref="${class.nameFirstLower()}${aggregation.nameFirstUpper()}Handle"/>
   </collection-descriptor>
+#end
+#end
+#end
+  <index-descriptor name="${table}_IDX" unique="true">
+    <index-column name="id"/>
+  </index-descriptor>
+#if($shouldGenerateFkIndex)
+#foreach($property in $properties)
+#if(!${property.isTransient()})
+#getType($model $property $type)
+#if(${DATA_OBJECT.equalsIgnoreCase(${type.getStereotype()})} && ${type.booleanValueOfTag("ojb-is-persistent")})
+#set($name=${property.nameUpper()})
+  <index-descriptor 
+	name="${table}_${name}_IDX" 
+	unique="false">
+	<index-column name="${name}_FK"/>
+  </index-descriptor>
+#end
+#end
+#end
+#foreach($aggregation in $aggregations)
+#if(!${aggregation.isTransient()} && (${aggregation.getMultiplicity().getUpperBound()} == 1))
+#set($typeName=${aggregation.getTypeName()})
+#set($type=false)
+#set($type=${model.findClass(${typeName})})
+#if(${type} && ${DATA_OBJECT.equalsIgnoreCase(${type.getStereotype()})} && ${type.booleanValueOfTag("ojb-is-persistent")})
+#set($name=${aggregation.nameUpper()})
+  <index-descriptor 
+	name="${table}_${name}_IDX" 
+	unique="false">
+	<index-column name="${name}_FK"/>
+  </index-descriptor>
+#end
+#end
+#end
+#set($references=$model.getClassReferences($class))
+#foreach($reference in $references)
+#isDataObject($reference $isDataObject)
+#if($isDataObject && ${reference.booleanValueOfTag("ojb-is-persistent")})
+#set($relations=${reference.getIndexedProperties()})
+#foreach($relation in $relations)
+#getType($model $relation $type)	
+#if(${type} == ${class})
+#set($refTable=${reference.valueOfTag("ojb-table-name")})
+#set($relColumn=${relation.valueOfTag("ojb-column-name")})
+#set($name="${refTable}_${relColumn}")
+  <index-descriptor 
+	name="${table}_${name}_IDX" 
+	unique="false">
+	<index-column name="${name}_FK"/>
+  </index-descriptor>
+#end
+#end
 #end
 #end
 #end

@@ -1,5 +1,7 @@
 ## generate the table declaration
 #set($DATA_OBJECT="dataObject")
+#set($shouldGenerateFkIndex=${configuration.getProperty("ojb-cartridge.generate-fk-index").equalsIgnoreCase("true")})
+#set($database=${configuration.getProperty("ojb-cartridge.database")})
 #if(${database.equalsIgnoreCase("MySQL")})
 #set($postTable="TYPE=InnoDB")
 #end
@@ -73,6 +75,51 @@ CREATE TABLE ${schema}${table} (
 
 ## create index for the identifier of a data object.
 #if(${DATA_OBJECT.equalsIgnoreCase(${class.getStereotype()})})
-CREATE UNIQUE INDEX ${table}_IDX ON ${schema}${table} (ID);
+CREATE UNIQUE INDEX ${table}_IDX ON 
+  ${schema}${table} (ID);
 
+#end
+#if($shouldGenerateFkIndex)
+#foreach($property in $properties)
+#if(!${property.isTransient()})
+#getType($model $property $type)
+#if(${DATA_OBJECT.equalsIgnoreCase(${type.getStereotype()})} && ${type.booleanValueOfTag("ojb-is-persistent")})
+#set($name=${property.nameUpper()})
+CREATE INDEX ${table}_${name}_IDX ON 
+  ${schema}${table} (${name}_FK);
+
+#end
+#end
+#end
+#foreach($aggregation in $aggregations)
+#if(!${aggregation.isTransient()} && (${aggregation.getMultiplicity().getUpperBound()} == 1))
+#set($typeName=${aggregation.getTypeName()})
+#set($type=false)
+#set($type=${model.findClass(${typeName})})
+#if(${type} && ${DATA_OBJECT.equalsIgnoreCase(${type.getStereotype()})} && ${type.booleanValueOfTag("ojb-is-persistent")})
+#set($name=${aggregation.nameUpper()})
+CREATE INDEX ${table}_${name}_IDX ON 
+  ${schema}${table} (${name}_FK);
+
+#end
+#end
+#end
+#set($references=$model.getClassReferences($class))
+#foreach($reference in $references)
+#isDataObject($reference $isDataObject)
+#if($isDataObject && ${reference.booleanValueOfTag("ojb-is-persistent")})
+#set($relations=${reference.getIndexedProperties()})
+#foreach($relation in $relations)
+#getType($model $relation $type)	
+#if(${type} == ${class})
+#set($refTable=${reference.valueOfTag("ojb-table-name")})
+#set($relColumn=${relation.valueOfTag("ojb-column-name")})
+#set($name="${refTable}_${relColumn}")
+CREATE INDEX ${name}_IDX ON 
+  ${schema}${table} (${name}_FK);
+
+#end
+#end
+#end
+#end
 #end

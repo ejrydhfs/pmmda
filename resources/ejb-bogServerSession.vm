@@ -105,7 +105,7 @@ public class ${className} implements javax.ejb.SessionBean {
       }
       ${boLwClass}[] items = (${boLwClass}[])lws.toArray(new ${boLwClass}[lws.size()]);
       for (int i = 0; i < items.length; i++) {
-        items[i] = (${boLwClass})items[i].copy();
+        items[i] = (${boLwClass})items[i].deepCopy();
       }
       if (log.isTraceEnabled()) {
         log.trace("end retrieve${boLwClass}");

@@ -275,7 +275,7 @@ ${class.retrieveVisibilityText()} class ${className} implements LightweightObjec
    * properties containing keys are not cloned because they are immutable.
    * @return a deep copy of the instance.
    */
-  public LightweightObject copy() {
+  public LightweightObject deepCopy() {
     ${class.getAttribute("bo-lw-class")} clone = null;
     try {
       clone = (${class.getAttribute("bo-lw-class")})clone();
@@ -297,7 +297,7 @@ ${class.retrieveVisibilityText()} class ${className} implements LightweightObjec
 #set($lName = ${aggregation.nameFirstLower()})
     clone.${lName} = new ${aggregation.getStorageType()}();
     for (int i = 0; i < ${lName}.size(); i++) {
-      clone.${lName}.add(((LightweightObject)${lName}.get(i)).copy());
+      clone.${lName}.add(((LightweightObject)${lName}.get(i)).deepCopy());
     }
 #end
 #end
