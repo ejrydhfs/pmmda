@@ -5,48 +5,58 @@
  */
 package ch.bbv.mda;
 
+import java.io.Serializable;
 
 /**
- * The multiplicity class defines the multiplicity of a property or an
- * indexed property.
+ * The multiplicity class defines the multiplicity of a property or an indexed
+ * property.
  * @author MarcelBaumann
  * @version $Revision$
  */
-public class Multiplicity {
-	/** Constant for a standard multiplicity value.
-	 */
+public class Multiplicity implements Serializable {
+  /**
+   * Constant for a standard multiplicity value.
+   */
   public static final Multiplicity MULTIPLICITY_0_1;
 
-	/** Constant for a standard multiplicity value.
-	 */
+  /**
+   * Constant for a standard multiplicity value.
+   */
   public static final Multiplicity MULTIPLICITY_0_N;
 
-	/** Constant for a standard multiplicity value.
-	 */
+  /**
+   * Constant for a standard multiplicity value.
+   */
   public static final Multiplicity MULTIPLICITY_1_1;
 
-	/** Constant for a standard multiplicity value.
-	 */
+  /**
+   * Constant for a standard multiplicity value.
+   */
   public static final Multiplicity MULTIPLICITY_1_N;
 
-	/** Constant for a standard multiplicity value.
-	 */
+  /**
+   * Constant for a standard multiplicity value.
+   */
   public static final Multiplicity MULTIPLICITY_N_M;
 
-	/** Constant for a standard multiplicity bound value.
-	 */
+  /**
+   * Constant for a standard multiplicity bound value.
+   */
   public static final int N_MULTIPLICITY = -1;
 
-	/** UML representation of a standard multiplicity bound value.
-	 */
+  /**
+   * UML representation of a standard multiplicity bound value.
+   */
   private static final String MULTIPLICITY_N_STRING = "N";
 
-	/** UML representation of a standard multiplicity bound value.
-	 */
+  /**
+   * UML representation of a standard multiplicity bound value.
+   */
   private static final String MULTIPLICITY_0_STRING = "0";
 
-	/** UML representation of a standard multiplicity bound value.
-	 */
+  /**
+   * UML representation of a standard multiplicity bound value.
+   */
   private static final String MULTIPLICITY_1_STRING = "1";
 
   static {
@@ -57,18 +67,21 @@ public class Multiplicity {
     MULTIPLICITY_N_M = new Multiplicity(N_MULTIPLICITY, N_MULTIPLICITY);
   }
 
-	/** Lower bound of the multiplicity.
-	 */
+  /**
+   * Lower bound of the multiplicity.
+   */
   private int lowerBound;
 
-	/** Upper bound of the multiplicity.
-	 */
+  /**
+   * Upper bound of the multiplicity.
+   */
   private int upperBound;
 
-	/** Constructor of the class.
-	 * @param lowerBound lower bound value.
-	 * @param upperBound upper bound value.
-	 */
+  /**
+   * Constructor of the class.
+   * @param lowerBound lower bound value.
+   * @param upperBound upper bound value.
+   */
   public Multiplicity(int lowerBound, int upperBound) {
     this.lowerBound = lowerBound;
     this.upperBound = upperBound;
@@ -138,13 +151,13 @@ public class Multiplicity {
    * @return the integer value of the bound.
    * @see #stringValue(int)
    */
-  public static final int intValue(String bound) {
-  	int value = 0;
-  	if (MULTIPLICITY_0_STRING.equals(bound)) {
-  		value = N_MULTIPLICITY;
-  	} else {
-  		value = Integer.parseInt(bound);
-  	}
-  	return value;
+  public int intValue(String bound) {
+    int value = 0;
+    if (MULTIPLICITY_0_STRING.equals(bound)) {
+      value = N_MULTIPLICITY;
+    } else {
+      value = Integer.parseInt(bound);
+    }
+    return value;
   }
 }
