@@ -10,7 +10,9 @@ package ${package.getAttribute("ejb-server-package")};
 
 #set($imports=${model.createImportStatements(${package.getAttribute("ejb-server-package")})})
 #set($dummy=${imports.addPackageName(${package.getAttribute("bo-mo-package")})})
+#if(${package.booleanValueOfAttribute("bo-lightweight")})  
 #set($dummy=${imports.addPackageName(${package.getAttribute("bo-lw-package")})})
+#end
 #set($dummy=${imports.addPackageName("java.util")})
 #set($dummy=${imports.addClassName("java.util.ConcurrentModificationException")})
 #set($dummy=${imports.addClassName("java.rmi.RemoteException")})
@@ -49,7 +51,7 @@ public class ${className} implements javax.ejb.SessionBean {
   private SessionContext context;
   
 #foreach($class in $classes)
-#if(${class.booleanValueOfTag("bo-is-root")})
+#if(${class.booleanValueOfTag("bo-is-root")} && ${class.getStereotype().equalsIgnoreCase("dataObject")})
 #set($boMoClass=${class.getAttribute("bo-mo-class")})
 #set($boLwClass=${class.getAttribute("bo-lw-class")})
   public ${boMoClass}[] retrieve${boMoClass}(String datasource, Integer id, String constraints) 

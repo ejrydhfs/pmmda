@@ -11,7 +11,9 @@ package ${package.getAttribute("ejb-server-package")};
 #set($imports=${model.createImportStatements(${package.getAttribute("ejb-server-package")})})
 #set($dummy=${imports.addClassName("java.rmi.RemoteException")})
 #set($dummy=${imports.addPackageName(${package.getAttribute("bo-mo-package")})})
+#if(${package.booleanValueOfAttribute("bo-lightweight")})  
 #set($dummy=${imports.addPackageName(${package.getAttribute("bo-lw-package")})})
+#end
 #set($dummy=${imports.addClassName("ch.bbv.dog.DataObjectManager")})
 #set($dummy=${imports.addClassName("ch.bbv.dog.DataObjectHandler")})
 #set($dummy=${imports.addClassName("ch.bbv.dog.DataObject")})
@@ -31,7 +33,7 @@ import $importStatement;
  */
 public interface ${serverName}Session extends javax.ejb.EJBObject {
 #foreach($class in $classes)
-#if(${class.booleanValueOfTag("bo-is-root")})
+#if(${class.booleanValueOfTag("bo-is-root")} && ${class.getStereotype().equalsIgnoreCase("dataObject")})
 #set($boMoClass=${class.getAttribute("bo-mo-class")})
 #set($boLwClass=${class.getAttribute("bo-lw-class")})
   /** 

@@ -134,15 +134,21 @@ public class ${className} extends ComponentImpl
     // operation ignored because it is under control of the server.
   }
   
+#set($isEmpty=true)
+#foreach($class in $classes)
+#if(${class.booleanValueOfTag("bo-is-root")} && ${class.getStereotype().equalsIgnoreCase("dataObject")})
+#set($isEmpty=false)
+#end
+#end
   public DataObject retrieve(String datasource, Class clazz, Integer id) {
-    List objects;
+    List objects = null;
     DataObject object = null;
+#if(!$isEmpty)
     
-#if(${classes.size()} > 0)
     try {
 #set($firstCase=true)
 #foreach($class in $classes)
-#if(${class.booleanValueOfTag("bo-is-root")})
+#if(${class.booleanValueOfTag("bo-is-root")} && ${class.getStereotype().equalsIgnoreCase("dataObject")})
 #set($boMoClass=${class.getAttribute("bo-mo-class")})
 #if($firstCase)
 #set($firstCase=false)
@@ -164,17 +170,17 @@ public class ${className} extends ComponentImpl
       log.error(e);
     }
 #end
-	return object;
+    return object;
   }
   
   public List retrieve(String datasource, Class clazz, String constraints) {
     List objects = null;
     
-#if(${classes.size()} > 0)
+#if(!$isEmpty)
     try {
 #set($firstCase=true)
 #foreach($class in $classes)
-#if(${class.booleanValueOfTag("bo-is-root")})
+#if(${class.booleanValueOfTag("bo-is-root")} && ${class.getStereotype().equalsIgnoreCase("dataObject")})
 #set($boMoClass=${class.getAttribute("bo-mo-class")})
 #if($firstCase)
 #set($firstCase=false)
@@ -193,13 +199,19 @@ public class ${className} extends ComponentImpl
       log.error(e);
     }
 #end
-	return objects;
+    return objects;
   }
-#if(${package.booleanValueOfAttribute("bo-lightweight")})  
+#set($isEmpty=true)
+#foreach($class in $classes)
+#if(${class.booleanValueOfTag("bo-is-root")} && ${class.booleanValueOfAttribute("bo-lightweight")} && ${class.getStereotype().equalsIgnoreCase("dataObject")})
+#set($isEmpty=false)
+#end
+#end
 
   public LightweightObject retrieveLw(String datasource, Class clazz, Integer id) {
-    List objects;
+    List objects = null;
     LightweightObject object = null;
+#if(!$isEmpty)
     
     try {
 #set($firstCase=true)
@@ -225,12 +237,14 @@ public class ${className} extends ComponentImpl
     } catch(DogException e) {
       log.error(e);
     }
+#end
     return object;
   }
 
   public List retrieveLw(String datasource, Class clazz, String constraints) {
     List objects = null;
     
+#if(!$isEmpty)
     try {
 #set($firstCase=true)
 #foreach($class in $classes)
@@ -252,13 +266,20 @@ public class ${className} extends ComponentImpl
     } catch(DogException e) {
       log.error(e);
     }
+#end
     return objects;
   }
-#end  
   
+#set($isEmpty=true)
+#foreach($class in $classes)
+#if(${class.booleanValueOfTag("bo-is-root")} && ${class.getStereotype().equalsIgnoreCase("dataObject")})
+#set($isEmpty=false)
+#end
+#end
   public List store(String datasource, Class clazz, DataObject root) {
     List infos = null;
     
+#if(!$isEmpty)
     try {
 #set($firstCase=true)
 #foreach($class in $classes)
@@ -280,10 +301,12 @@ public class ${className} extends ComponentImpl
     } catch(DogException e) {
       log.error(e);
     }
+#end
     return infos;
   }
   
   public void remove(String datasource, Class clazz, DataObject root) {
+#if(!$isEmpty)
     try {
 #set($firstCase=true)
 #foreach($class in $classes)
@@ -305,9 +328,11 @@ public class ${className} extends ComponentImpl
     } catch(DogException e) {
       log.error(e);
     }
+#end
   }
   
   public void remove(String datasource, Class clazz, Integer id) {
+#if(!$isEmpty)
     try {
 #set($firstCase=true)
 #foreach($class in $classes)
@@ -329,6 +354,7 @@ public class ${className} extends ComponentImpl
     } catch(DogException e) {
       log.error(e);
     }
+#end
   }
   
   public DataObject deepCopy(Class clazz, DataObject object) {
@@ -345,7 +371,7 @@ public class ${className} extends ComponentImpl
   }
   
 #foreach($class in $classes)
-#if(${class.booleanValueOfTag("bo-is-root")})
+#if(${class.booleanValueOfTag("bo-is-root")} && ${class.getStereotype().equalsIgnoreCase("dataObject")})
 #set($boMoClass=${class.getAttribute("bo-mo-class")})
 #set($boLwClass=${class.getAttribute("bo-lw-class")})
 #set($ctoMoClass=${class.getAttribute("cto-mo-class")})
