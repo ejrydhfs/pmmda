@@ -85,7 +85,7 @@ public class UserExplorer extends Explorer {
     RealmLw realmLw = new RealmLw(DataObjectId.ILLEGAL_ID);
     realmLw.setName("Realm");
 
-    for (Iterator i = manager.getBoHandler().retrieveLw(getDatasource(),
+    for (Iterator i = manager.getDataObjectHandler().retrieveLw(getDatasource(),
         ProviderLw.class, (String) null).iterator(); i.hasNext();) {
       realmLw.addProvider((ProviderLw) i.next());
     }

@@ -1,5 +1,5 @@
 /* copyright 2000-2004 Marcel Baumann
- * Licensed under the Apache License, Version 2.0 (the "Licence);
+ * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
  */
@@ -58,7 +58,8 @@ public class Application extends Locator {
   private static String[] args;
 
   /**
-   * Constructor of the class.
+   * Constructor of the class. The data object handler instiates a cache
+   * handler with cache enabled and without copy cache.
    * @param mode mode of the application. The legal values are defined as
    *        constants (USE_DIRECT, USE_CORBA, USE_J2EE).
    * @throws ComponentException occured when building the application.
@@ -68,25 +69,25 @@ public class Application extends Locator {
     register(this);
     if (mode.equalsIgnoreCase(USE_DIRECT)) {
       log.info("Application started in direct mode");
-      manager = new DataObjectManager(new LocalHandler(new PersistenceHandler(
-          false)), new LightweightObjectHandlerImpl(), null);
+      manager = new DataObjectManager(new CacheHandler(new PersistenceHandler(
+          false), true, true), new LightweightObjectHandlerImpl(), null);
     } else if (mode.equalsIgnoreCase(USE_CORBA)) {
       log.info("Application started in CORBA mode");
       register(ORB.init(args, null), ORB_NAME);
-      manager = new DataObjectManager(
+      manager = new DataObjectManager(new CacheHandler(
           createHandler("ch.bbv.dnm.users.client.UsersServerCorbaWrapper"),
-          new LightweightObjectHandlerImpl(), null);
+          true, false), new LightweightObjectHandlerImpl(), null);
     } else if (mode.equalsIgnoreCase(USE_J2EE)) {
       log.info("Application started in J2EE mode");
-      manager = new DataObjectManager(
-          createHandler("ch.bbv.dnm.users.client.UsersServerWrapper"),
-          new LightweightObjectHandlerImpl(), null);
+      manager = new DataObjectManager(new CacheHandler(
+          createHandler("ch.bbv.dnm.users.client.UsersServerWrapper"), true,
+          false), new LightweightObjectHandlerImpl(), null);
     }
     register(manager);
     UserExplorer.registerNodeTypes();
     initialize();
     startup();
-    manager.getBoHandler().openDatasource(SCHEMA, false);
+    manager.getDataObjectHandler().openDatasource(SCHEMA, false);
     new UserExplorer("User Explorer", SCHEMA);
   }
 
