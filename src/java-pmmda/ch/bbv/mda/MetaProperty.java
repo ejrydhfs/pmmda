@@ -75,9 +75,20 @@ public class MetaProperty extends MetaMember {
    * Default constructor of the class.
    */
   public MetaProperty() {
+    init();
     multiplicity = Multiplicity.MULTIPLICITY_0_1;
     transients = false;
     volatiles = false;
+  }
+
+  /**
+   * Initializes member variables. Only complex types have to be initialized
+   * here. The init() method is called after deserializing and loading from xml
+   * with XStream. Transient members have to be initialized with this init()
+   * function.
+   */
+  public void init() {
+    super.init();
   }
 
   /**
@@ -255,5 +266,12 @@ public class MetaProperty extends MetaMember {
       referenceClass = findClass(reference);
     }
     return referenceClass;
+  }
+
+  /**
+   * Indicates whether this model element is a leaf (no children)
+   */
+  public boolean isLeaf() {
+    return true;
   }
 }
