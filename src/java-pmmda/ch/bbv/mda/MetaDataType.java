@@ -13,4 +13,8 @@ package ch.bbv.mda;
  */
 public class MetaDataType extends MetaElement {
   // defines a new type
+
+	public boolean isLeaf(){
+	  	return true;
+	  }
 }
