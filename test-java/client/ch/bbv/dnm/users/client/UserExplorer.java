@@ -55,6 +55,7 @@ public class UserExplorer extends Explorer {
       log.info("Start initializing user explorer");
     }
     initialize();
+    this.setTitle(title);
     display();
   }
 
