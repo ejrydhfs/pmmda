@@ -107,7 +107,7 @@ public class Explorer {
     frame = new JFrame("Explorer");
     rightPane = new JScrollPane(tree);
     leftPane = new JScrollPane();
-    splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, rightPane, leftPane);
+    splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPane, rightPane);
     splitPane.setDividerSize(5);
     frame.getContentPane().add(BorderLayout.CENTER, splitPane);
     frame.addWindowListener(new ExplorerWindowListener(this));
@@ -248,7 +248,7 @@ public class Explorer {
     tree.setCellRenderer(new ExplorerTreeCellRenderer());
     tree.addTreeSelectionListener(new ExplorerViewTreeSelectionListener());
     tree.addMouseListener(new ExplorerMouseListener());
-    rightPane.setViewportView(tree);
+    leftPane.setViewportView(tree);
   }
 
   /**
@@ -295,7 +295,7 @@ public class Explorer {
 
   public void displayView(UiNodeViewType type, ExplorerNode node) {
     nodeView = factory.getNodeViewFor(node, type);
-    leftPane.setViewportView((Component) nodeView);
+    rightPane.setViewportView((Component) nodeView);
   }
 
   /**
