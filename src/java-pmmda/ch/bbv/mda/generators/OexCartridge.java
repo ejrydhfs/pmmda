@@ -144,6 +144,15 @@ public class OexCartridge extends CartridgeImpl {
     return types;
   }
 
+  public List getObsoleteTaggedValueTypes(Class clazz) {
+    List types = null;
+    if (clazz == MetaClass.class) {
+      types = new ArrayList();
+      types.add(new TaggedValueType("oex-is-root", null, Boolean.class, this));
+    }
+    return types;
+  }
+
   public TaggedValue getTaggedValueWithElementDependentDefault(
       TaggedValueType taggedValueType, MetaElement element) {
     TaggedValue value = new TaggedValue(taggedValueType);

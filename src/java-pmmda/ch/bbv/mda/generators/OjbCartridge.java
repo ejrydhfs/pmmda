@@ -290,6 +290,20 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
     return types;
   }
 
+  public List getObsoleteTaggedValueTypes(Class clazz) {
+    List types = null;
+    if ((clazz == MetaProperty.class) || (clazz == MetaIndexedProperty.class)) {
+      types = new ArrayList();
+      types.add(new TaggedValueType("ojb-jdbc-type", null, String.class, this));
+      types.add(new TaggedValueType("ojb-jdbc-size", null, Integer.TYPE, this));
+      types.add(new TaggedValueType("ojb-jdbcType", null, String.class, this));
+      types.add(new TaggedValueType("ojb-jdbcSize", null, Integer.TYPE, this));
+      types.add(new TaggedValueType("ojb-orderBy", null, String.class, this));
+      types.add(new TaggedValueType("ojb-foreign-key", null, String.class, this));
+    }
+    return types;
+  }
+
   public TaggedValue getTaggedValueWithElementDependentDefault(
       TaggedValueType taggedValueType, MetaElement element) {
     TaggedValue value = new TaggedValue(taggedValueType);
