@@ -10,8 +10,11 @@
       <title>Latest News</title>
       <p>Latest news of the <em>pmMDA</em> for the community.</p>
       <ul>
-        <li>The development team is working on <em>pmMDA 0.2.9-RC-1</em> release.
-          The candidate date is 15 September 2004.</li>
+        <li>The development team has released <em>pmMDA 0.2.9-RC-1</em> release.
+          The candidate date is 15 September 2004. This release should be run
+          with JDK.1.5.0-RC. The test applications created with the provided
+          ArgoUML model can be build with the provided ant tasks and run with 
+          the available scripts located in scripts/tests.</li>
         <li><em>pmMDA</em> is now available on Sourceforge under <link 
           href="http://pmmda.sourceforge.net"><em>pmMDA</em></link>. The 
           published version should run without configuration on any workstation 

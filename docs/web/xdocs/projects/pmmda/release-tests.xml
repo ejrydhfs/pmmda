@@ -7,6 +7,52 @@
   </header> 
   <body>
     <section>
+      <title>Running Sanity Tests</title>
+      <p>Ant tasks and batch files are provided to generate and run the 
+        applications used in the sanity tests. Three application sets are
+        provided. The first set tests the framework as a rich client two tiers
+        application. The second set tests the framework as three tiers 
+        application using CORBA. The third set tests the framework as three 
+        tiers applicaiton using J2EE/RMI.</p>
+      <p>The application sets are build using ant targets executing against the
+        <code>build.xml</code> file.</p>
+      <ul>
+        <li>ant build-rich-client-tests</li>
+        <li>ant build-corba-tests</li>
+        <li>ant build-jboss-tests</li>
+      </ul>
+      <p>To run sucessfully the tests the used software packages for the database,
+        CORBA ORB, or J2EE container must be installed. Please refer to the 
+        installation notes of the used packages. The application sets are 
+        started using shell scripts located in the <code>scripts tests</code> 
+        directory.</p>
+      <ul>
+        <li>Rich client tests</li>
+        <ol>
+          <li>Starts the client application <code>test-rich-client</code>.</li>
+        </ol>
+        <li>CORBA three tiers tests</li>
+        <ol>
+          <li>Starts CORBA request broker <code>orb-start</code>.</li>
+          <li>Starts the CORBA server <code>test-corba-server</code></li>
+          <li>Starts the CORBA client <code>test-corba-client</code></li>
+        </ol>
+        <li>JBoss three tiers tests</li>
+        <ol>
+          <li>Starts the J2EE JBoss container using its start script. The
+            J2EE server was copied in the deployment directory when building it
+            and will start automatically.</li>
+          <li>Starts the J2EE client <code>test-j2ee-client</code>.</li>
+        </ol>
+      </ul>
+      <p>Please remember that CORBA and J2EE should not be run simultaneously or be
+        very careful to avoid port conflicts.</p>
+      <note>If the application does not start, verify first that the middleware
+        is running. If using J2EE verify that the server was correctly deployed
+        and started.</note>
+    </section>
+    
+    <section>
       <title>Sanity Tests</title>
       <p>A set of sanity tests is defined to verify the adequacy and 
         completness of the application. The following cases are defined.</p>
