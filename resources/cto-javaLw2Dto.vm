@@ -19,12 +19,14 @@ import $importStatement;
 #set($dogName=${class.getAttribute("bo-lw-class")})
 #set($dtoName=${class.getAttribute("cto-lw-class")}) 
 #set($classname=${class.getAttribute("cto-lw2dto-class")})
-/** Transformer helper class responsible for the transformation of data 
+/** 
+ * Transformer helper class responsible for the transformation of data 
  * objects between their data object and data transfer object 
  * representation.
  */
 public final class ${classname} {
-  /** Transforms a data object into a data transfer object. The children are
+  /** 
+   * Transforms a data object into a data transfer object. The children are
    * recursively transformed.
    * @param bo data object to transform.
    * @return the data transfer object representation.
@@ -69,7 +71,8 @@ public final class ${classname} {
     return dto;
   }
 
-  /** Transforms a data transfer object into a data object. The children are
+  /** 
+   * Transforms a data transfer object into a data object. The children are
    * recursively transformed.
    * @param dto data transfer object to transform.
    * @return the data object representation.
@@ -107,8 +110,9 @@ public final class ${classname} {
     return bo;
   }
 
-  /** Transforms an list of data objects into a list of corresponding data
-   * transfer objects.
+  /** 
+   * Transforms an list of data objects into a list of corresponding data transfer
+   * objects.
    * @param bos list of data objects.
    * @return the array of converted data transfer objects.
    */
@@ -121,8 +125,9 @@ public final class ${classname} {
     return dtos;
   }
 
-  /** Transforms an array of data transfer objects into a list of corresponding
-   * data objects.
+  /** 
+   * Transforms an array of data transfer objects into a list of corresponding data
+   * objects.
    * @param dtos array of data transfer objects.
    * @return the list of converted data objects.
    */

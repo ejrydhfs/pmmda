@@ -12,16 +12,19 @@ package ${package.getAttribute("bo-lw-package")};
 import ch.bbv.dog.AbstractVisitorFunctor;
 import ch.bbv.dog.LwFunctor;
 
-/** The visitor with functor class implements the visitor pattern for the graph 
+/** 
+ * The visitor with functor class implements the visitor pattern for the graph 
  * of all data object classes defined in the package. The list of all relevant
  * classes is generated from the MDA model.
  */
 public class LwVisitorFunctor implements LwVisitor, AbstractVisitorFunctor {  
-  /** Functor of the visitor.
+  /** 
+   * Functor of the visitor.
    */
   private LwFunctor functor; 
 
-  /** The current depth of the visitor when traversing a graph.
+  /** 
+   * The current depth of the visitor when traversing a graph.
    */
   private int depth;
 

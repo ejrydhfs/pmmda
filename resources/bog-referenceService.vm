@@ -24,27 +24,32 @@ public abstract class ${className} extends PORServiceDefault {
 #foreach ($codeClass in $classes) 
 #if(${codeClass.isCodeType()})
 
-  /** Constant identifying the code values for ${codeClass.getName()} type.
+  /** 
+   * Constant identifying the code values for ${codeClass.getName()} type.
    */
   public final static int ${codeClass.getNameUpper()} = ${velocityCount};
 #set($numberOfCodes=${velocityCount})  
 #end
 #end
 
-  /** Number of code groups handled in the reference service default 
+  /** 
+   * Number of code groups handled in the reference service default 
    * implementation.
    */
   public final static int NR_OF_CODES = ${numberOfCodes};
   
-  /** Identifier for a hierarchical code to indicate it has no parent.
+  /** 
+   * Identifier for a hierarchical code to indicate it has no parent.
    */
   public final static Integer ILLEGAL_ID = new Integer(0);
   
-  /** Cache containing all groups of codes, which are often accessed.
+  /** 
+   * Cache containing all groups of codes, which are often accessed.
    */
   protected HashMap[] codes;
   
-  /** Comparator used to sort the list of codes.
+  /** 
+   * Comparator used to sort the list of codes.
    */
   private static CodeComparator codeComparator;
   
@@ -56,7 +61,8 @@ public abstract class ${className} extends PORServiceDefault {
     }
   }
   
-  /** All preloaded codes are initialized when the method is called from the 
+  /** 
+   * All preloaded codes are initialized when the method is called from the 
    * framework.
    * @see ${classPrefix}Service${classPostfix}#startup
    */
@@ -76,7 +82,8 @@ public abstract class ${className} extends PORServiceDefault {
      return getAllCodes(codeType);
    }
    
-   /** Initializes all preloaded code groups available through the reference 
+   /** 
+    * Initializes all preloaded code groups available through the reference 
     * manager.
     */
    protected abstract void initializeCodes();
@@ -87,7 +94,8 @@ public abstract class ${className} extends PORServiceDefault {
     return (${codeClass.getName()})codes[${codeClass.getJavaUpper()}].get(key);
   }
   
-  /** Returns all active codes for the reference code type.
+  /** 
+   * Returns all active codes for the reference code type.
    * return list of all active codes of type ${codeClass.getName()}.
    */
   public List get${codeClass.getNameFirstUpperPlural()}() {
@@ -100,7 +108,8 @@ public abstract class ${className} extends PORServiceDefault {
 #end
 #end
 
-  /** Returns all active codes of the type as a list.
+  /** 
+   * Returns all active codes of the type as a list.
    * @param codeType type of the code group to retrieve.
    * @return list of all active regular reference codes.
    */
@@ -117,7 +126,8 @@ public abstract class ${className} extends PORServiceDefault {
   	return list;
   }
  
-  /** Returns all codes of the type as a list.
+  /** 
+   * Returns all codes of the type as a list.
    * @param codeType type of the code group to retrieve.
    * @return list of all regular reference codes.
    */
@@ -127,7 +137,8 @@ public abstract class ${className} extends PORServiceDefault {
     return list;
   }
   
-  /** Comparator used to sort regular code groups.
+  /** 
+   * Comparator used to sort regular code groups.
    */
   protected static class CodeComparator implements Comparator {
     /** Compares two regular reference code.
@@ -140,7 +151,8 @@ public abstract class ${className} extends PORServiceDefault {
     }
   }
   
-  /** Initializes the comparator object used to sort the codes. 
+  /** 
+   * Initializes the comparator object used to sort the codes. 
    */
   static {
     codeComparator = new CodeComparator();

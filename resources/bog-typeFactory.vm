@@ -36,18 +36,21 @@ public class TypeFactory {
 /* %% USER DEFINED DEFINITIONS START %% */
 /* %% USER DEFINED DEFINITIONS END   %% */
 
-  /** The data object manager responsible of the types defines in the package.
+  /** 
+   * The data object manager responsible of the types defines in the package.
    */
   private DataObjectManager manager;
   
-  /** Constructor of the class.
+  /** 
+   * Constructor of the class.
    * @param manager data object manager where the types should be created.
    */
   public TypeFactory(DataObjectManager manager) {
     this.manager = manager;
   }
 
-  /** Registers all data object types defined in the package.
+  /** 
+   * Registers all data object types defined in the package.
    */
   public void registerAllTypes() {
 #foreach($class in $classes)
@@ -67,7 +70,8 @@ public class TypeFactory {
 #set($ifClass=${class.getAttribute("bo-mo-class")})
 #end
 
-  /** Creates a new data object type for the data object graph framework.
+  /** 
+   * Creates a new data object type for the data object graph framework.
    */
   public void createNodeTypeFor${class.getName()}() {
     DataObjectType type = new DataObjectType(${lwClass}.class,
@@ -78,7 +82,8 @@ public class TypeFactory {
 #end  
 #end
 
-  /** Returns the list of the classnames of all reference code types defined in 
+  /** 
+   * Returns the list of the classnames of all reference code types defined in 
    * the package.
    * @return list of class names of all reference code types in the package.
    */

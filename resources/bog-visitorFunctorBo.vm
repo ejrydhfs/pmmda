@@ -17,16 +17,19 @@ package ${package.getAttribute("bo-mo-package")};
 import ch.bbv.dog.AbstractVisitorFunctor;
 import ch.bbv.dog.DoFunctor;
 
-/** The visitor with functor class implements the visitor pattern for the graph 
+/** 
+ * The visitor with functor class implements the visitor pattern for the graph 
  * of all data object classes defined in the package. The list of all relevant
  * classes is generated from the MDA model.
  */
 public class VisitorFunctor implements Visitor, AbstractVisitorFunctor {  
-  /** Functor of the visitor.
+  /** 
+   * Functor of the visitor.
    */
   private DoFunctor functor; 
 
-  /** The current depth of the visitor when traversing a graph.
+  /** 
+   * The current depth of the visitor when traversing a graph.
    */
   private int depth;
 
