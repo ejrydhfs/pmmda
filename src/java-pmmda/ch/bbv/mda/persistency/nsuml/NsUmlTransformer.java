@@ -1,5 +1,5 @@
 /* copyright 2000-2004 Marcel Baumann
- * Licensed under the Apache License, Version 2.0 (the "Licence);
+ * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
  */
@@ -349,9 +349,9 @@ public class NsUmlTransformer {
   }
 
   protected MTaggedValue getTag(MModelElement source, String tagName) {
+    assert ((source != null) && (tagName != null));
     MTaggedValue tag = null;
-    for (Iterator i = source.getTaggedValues().iterator(); i.hasNext()
-        && (tag != null);) {
+    for (Iterator i = source.getTaggedValues().iterator(); i.hasNext();) {
       tag = (MTaggedValue) i.next();
       if (tagName.equals(tag.getTag())) {
         break;
@@ -478,8 +478,10 @@ public class NsUmlTransformer {
    * Converts a NSUML multiplicity into a MDA multiplicity.
    * @param multiplicity NSUML multiplicity.
    * @return the equivalent MDA multiplicity of NSUML object.
+   * @pre multiplicity != null
    */
   protected Multiplicity convert(MMultiplicity multiplicity) {
+    assert (multiplicity != null);
     Multiplicity metaMultiplicity = null;
     int lower = multiplicity.getLower();
     int upper = multiplicity.getUpper();
@@ -494,7 +496,7 @@ public class NsUmlTransformer {
     } else if ((multiplicity == MMultiplicity.M1_N)
         || ((lower == 1) && (upper == Multiplicity.N_MULTIPLICITY))) {
       metaMultiplicity = Multiplicity.MULTIPLICITY_1_N;
-    } else if (multiplicity != null) {
+    } else {
       metaMultiplicity = new Multiplicity(lower, upper);
     }
     return metaMultiplicity;

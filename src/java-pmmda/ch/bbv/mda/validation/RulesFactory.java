@@ -7,15 +7,13 @@
 package ch.bbv.mda.validation;
 
 import ch.bbv.application.Locator;
-import ch.bbv.dog.validation.NotNullRule;
-import ch.bbv.dog.validation.UniqueRule;
-import ch.bbv.dog.validation.Validator;
+import ch.bbv.dog.validation.*;
 import ch.bbv.mda.*;
 
 /**
  * The rules factory defines the validation rules the application requires on
- * behalf of the MDA model. The rules are registered on the default validator
- * of the application.
+ * behalf of the MDA model. The rules are registered on the default validator of
+ * the application.
  * @author marcelbaumann
  * @version $Revision$
  */
@@ -40,7 +38,8 @@ public class RulesFactory {
   public void createRulesForMetaPackage() {
     Validator validator = getValidator();
     validator.registerRule(new NotNullRule(true), MetaPackage.class, "name");
-    validator.registerRule(new UniqueRule("name"), MetaPackage.class, "classes");
+    validator
+        .registerRule(new UniqueRule("name"), MetaPackage.class, "classes");
 
   }
 
@@ -56,7 +55,8 @@ public class RulesFactory {
   public void createRulesForMetaProperty() {
     Validator validator = getValidator();
     validator.registerRule(new NotNullRule(true), MetaProperty.class, "name");
-    validator.registerRule(new NotNullRule(true), MetaProperty.class, "typeName");
+    validator.registerRule(new NotNullRule(true), MetaProperty.class,
+        "typeName");
 
   }
 

@@ -1,22 +1,21 @@
 /* copyright 2000-2004 Marcel Baumann
- * Licensed under the Apache License, Version 2.0 (the "Licence);
+ * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
  */
 package ch.bbv.dnm.users.client;
+
+import java.util.Iterator;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import ch.bbv.dnm.users.Realm;
 import ch.bbv.dnm.users.lw.ProviderLw;
 import ch.bbv.dnm.users.lw.RealmLw;
 import ch.bbv.dog.DataObjectId;
 import ch.bbv.dog.DataObjectManager;
-
 import ch.bbv.explorer.*;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import java.util.Iterator;
 
 /**
  * The user explorer provides an explorer user interface to manipulate the users
@@ -45,22 +44,34 @@ public class UserExplorer extends Explorer {
   private static DataObjectManager manager;
 
   /**
-   * constructor of the class.
+   * Creates a new MDA explorer.
    * @param title title of the explorer frame.
-   * @param schema name of the database schema containing the persistent data. 
+   * @param schema name of the database schema containing the persistent data.
+   * @return the newly created user explorer.
+   */
+  public static UserExplorer create(String title, String schema) {
+    Class[] types = { String.class, String.class };
+    Object[] arguments = { title, schema };
+    UserExplorer explorer = (UserExplorer) Explorer.createAndShow(
+        UserExplorer.class, types, arguments);
+    return explorer;
+  }
+  
+  /**
+   * Constructor of the class.
+   * @param title title of the explorer frame.
+   * @param schema name of the database schema containing the persistent data.
    */
   public UserExplorer(String title, String schema) {
     super(factory, manager, schema);
+    this.setTitle(title);
     if (log.isInfoEnabled()) {
       log.info("Start initializing user explorer");
     }
-    initialize();
-    this.setTitle(title);
-    display();
   }
 
   /**
-   * register all the node types used the explorer.
+   * Registers all the node types used the explorer.
    */
   public static void registerNodeTypes() {
     manager = Application.getApplication().getDataObjectManager();
@@ -85,8 +96,9 @@ public class UserExplorer extends Explorer {
     RealmLw realmLw = new RealmLw(DataObjectId.ILLEGAL_ID);
     realmLw.setName("Realm");
 
-    for (Iterator i = manager.getDataObjectHandler().retrieveLw(getDatasource(),
-        ProviderLw.class, (String) null).iterator(); i.hasNext();) {
+    for (Iterator i = manager.getDataObjectHandler().retrieveLw(
+        getDatasource(), ProviderLw.class, (String) null).iterator(); i
+        .hasNext();) {
       realmLw.addProvider((ProviderLw) i.next());
     }
 

@@ -103,7 +103,7 @@ public class Application extends Locator {
     startup();
     manager.getDataObjectHandler().openDatasource(SCHEMA, false);
     if (!commandLineMode) {
-      new UserExplorer("User Explorer", SCHEMA);
+      UserExplorer.create("User Explorer", SCHEMA);
     }
   }
 

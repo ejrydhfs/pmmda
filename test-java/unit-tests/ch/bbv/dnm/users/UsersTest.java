@@ -7,7 +7,9 @@ package ch.bbv.dnm.users;
 
 import java.util.*;
 
+import junit.framework.Test;
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,10 +37,17 @@ public class UsersTest extends TestCase {
    */
   private static Log log = LogFactory.getLog(UsersTest.class);
 
+  /**
+   * The name of the datasource containing all data objects.
+   */
   private static final String DATASOURCE = "ojb-dnm";
 
   private static final String UPDATE = "update field";
 
+  public static Test suite() {
+    return new TestSuite(UsersTest.class);
+  }
+  
   public void setUp() throws Exception {
     if (Application.getApplication() == null) {
       new Application(Application.USE_DIRECT, true);
@@ -153,7 +162,8 @@ public class UsersTest extends TestCase {
     assertTrue(handler.isInCopiesCache(provider.getClass(), provider.getId()));
     assertTrue(handler
         .isInOriginalsCache(provider.getClass(), provider.getId()));
-    assertTrue(provider == handler.getCopy(provider.getClass(), provider.getId()));
+    assertTrue(provider == handler.getCopy(provider.getClass(), provider
+        .getId()));
     // do the caches clear operations work.
     handler.clearCopies();
     assertFalse(handler.isInCopiesCache(provider.getClass(), provider.getId()));
@@ -177,10 +187,10 @@ public class UsersTest extends TestCase {
   /**
    * Creates a provider graph with domains, units and users.
    * @param id identifier of the domain name.
-   * @param nrDomains
-   * @param nrUnits
-   * @param nrUsers
-   * @return
+   * @param nrDomains number of domains to create.
+   * @param nrUnits number of units to create.
+   * @param nrUsers number of users to create.
+   * @return the root provider of the provider graph.
    */
   private Provider createProviderGraph(int id, int nrDomains, int nrUnits,
       int nrUsers) {
