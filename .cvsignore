@@ -3,9 +3,9 @@ classes
 deploy
 dist
 gendir
-lib
 logs
 test-classes
 *.log
 todo.txt
 *.fb
+*.settings
