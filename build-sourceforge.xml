@@ -11,7 +11,7 @@
   </target>
 
   <target name="compile-dist"
-          depends="init"
+          depends="dist-init"
           description="compiles all java files of the projects dog, pmmda, documentor">
     <delete dir="${build.dir}" />
     <mkdir dir="${build.dir}" />
@@ -128,7 +128,8 @@
          update="true" />
   </target>
 
-  <target name="dog-dist" description="Generates DOG distribution">
+  <target name="dog-dist" description="Generates DOG distribution" 
+    depends="dist-init">
     <delete dir="${dog-dist.dir}" />
     <mkdir dir="${dog-dist.dir}" />
     <mkdir dir="${dog-lib.dir}" />
@@ -141,15 +142,14 @@
     <copy file="${lib.dir}/${commons-pool.lib}" todir="${dog-lib.dir}" />
     <copy file="${lib.dir}/${mysql-connector.lib}" todir="${dog-lib.dir}" />
     <copy file="${src.dog.dir}/ReleaseNotes.txt" todir="${dog-dist.dir}" />
-    <jar jarfile="${dog-lib.dir}/${dog.name}-${dog.version}.jar"
-         compress="true"
-         index="true">
-      <fileset dir="${build.dir}"
-               excludes="ch/bbv/mda/**,ch/bbv/documentor/**,**/*.properties,**/*.html,**/*.xml,**/*.sql" />
+    <jar jarfile="${dog-lib.dir}/${dog.name}-${dog.version}.jar" 
+      compress="true" index="true">
+      <fileset dir="${build.dir}" 
+        excludes="ch/bbv/mda/**,ch/bbv/documentor/**,**/*.properties,**/*.html,**/*.xml,**/*.sql" 
+        />
     </jar>
-    <jar destfile="${dist.dir}/${dog.name}-src-${dog.version}.jar"
-         compress="true"
-         index="true">
+    <jar destfile="${dist.dir}/${dog.name}-src-${dog.version}.jar" 
+      compress="true" index="true">
       <fileset dir="${src.dog.dir}" includes="*/**" />
     </jar>
   </target>

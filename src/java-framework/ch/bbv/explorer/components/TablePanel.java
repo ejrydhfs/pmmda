@@ -20,9 +20,9 @@ import javax.swing.table.TableModel;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.SortedList;
+import ca.odell.glazedlists.gui.WritableTableFormat;
 import ca.odell.glazedlists.swing.EventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
-import ca.odell.glazedlists.swing.WritableTableFormat;
 
 /**
  * The table panel provides a panel with a sortable table.

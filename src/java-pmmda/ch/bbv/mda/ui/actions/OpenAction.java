@@ -94,7 +94,7 @@ public class OpenAction extends ExplorerOpenAction {
     model.setFilename(file.toString());
     Explorer explorer = getExplorer();
     explorer.setRoot(constructor.getRoot());
-    explorer.getMenuBar().documentSaved();
+    explorer.getMenuBar().documentOpened();
   }
 
   /**

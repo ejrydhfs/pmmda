@@ -81,7 +81,7 @@
     <property name="commons-pool.lib" value="commons-pool-1.1.jar" />
     <property name="dog.lib" value="DoG-${dog.version}.jar" />
     <property name="forms.lib" value="forms-1.0.5.jar" />
-    <property name="glazedlists.lib" value="glazedlists-0.9.4.jar" />
+    <property name="glazedlists.lib" value="glazedlists-0.9.5.jar" />
     <property name="jgraph.lib" value="jgraph-5.3.jar" />
     <property name="jgraphaddons.lib" value="jgraphaddons-1.0.4.jar" />
     <property name="nsuml.lib" value="nsuml.jar" />

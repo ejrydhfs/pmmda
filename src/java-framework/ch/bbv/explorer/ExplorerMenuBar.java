@@ -158,7 +158,7 @@ public class ExplorerMenuBar extends JMenuBar {
    * Called when a document is saved.
    */
   public void documentSaved() {
-    setActionEnabled(saveAction, false);
+    setActionEnabled(saveAction, true);
     setActionEnabled(saveAsAction, true);
   }
 

@@ -12,7 +12,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ca.odell.glazedlists.swing.WritableTableFormat;
+import ca.odell.glazedlists.gui.WritableTableFormat;
 
 /**
  * A sortable table model containing a set of properties of Java beans. All
