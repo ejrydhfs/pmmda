@@ -9,6 +9,9 @@ import java.io.File;
 
 import javax.swing.JFileChooser;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import ch.bbv.explorer.Explorer;
 import ch.bbv.explorer.actions.ExplorerOpenAction;
 import ch.bbv.explorer.actions.SimpleFileFilter;
@@ -29,6 +32,11 @@ import ch.bbv.mda.ui.TreeConstructor;
  * @version $Revision$
  */
 public class OpenAction extends ExplorerOpenAction {
+  /**
+   * Logger for all instances of the class.
+   */
+  private static Log log = LogFactory.getLog(OpenAction.class);
+
   public void initialize() {
     JFileChooser fileChooser = getFileChooser();
     fileChooser.addChoosableFileFilter(new SimpleFileFilter(
@@ -48,8 +56,8 @@ public class OpenAction extends ExplorerOpenAction {
   public void execute() {
     try {
       openModel(getSelectedFile());
-    } catch (PersistencyException pe) {
-      System.out.println("File Not Found");
+    } catch (PersistencyException e) {
+      log.debug("File Not Found", e);
     }
   }
 

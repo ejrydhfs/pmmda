@@ -12,5 +12,15 @@
         and implementation details are available.</p>
       <p>Please consult the articles section of this site.</p>
     </section>
+    <section>
+      <title>Links</title>
+      <p>The data object graph framework and the associated explorer visualization
+        framework are influenced by the works of talented persons.</p>
+      <ul>
+        <li>The agile approach of <em>Scott Myers</em> reflect the approach the 
+          development group has. Valuable information can be found under 
+          <em>http://www.agiledata.org</em></li>
+      </ul>
+    </section>
   </body>
 </document>

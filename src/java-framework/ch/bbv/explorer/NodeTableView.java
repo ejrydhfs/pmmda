@@ -1,5 +1,5 @@
 /* copyright 2000-2004 Marcel Baumann
- * Licensed under the Apache License, Version 2.0 (the "Licence);
+ * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$ 
  */
@@ -48,20 +48,16 @@ public class NodeTableView extends TablePanel implements NodeView {
   }
 
   public void viewClosed() {
-    System.out.println("viewClosed");
   }
 
   public void nodeInserted(ExplorerNode node, int index) {
-    System.out.println("nodeInserted");
   }
 
   public void nodeRemoved(ExplorerNode parent, ExplorerNode node, int index) {
-    System.out.println("nodeRemoved");
     setModel(this.node);
   }
 
   public void nodeChanged(ExplorerNode node) {
-    System.out.println("nodeChanged");
     setModel(this.node);
   }
 

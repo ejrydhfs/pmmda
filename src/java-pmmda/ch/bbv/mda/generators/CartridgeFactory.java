@@ -1,8 +1,7 @@
-/*
- * copyright 2000-2004 Marcel Baumann Licensed under the Apache License, Version
- * 2.0 (the "Licence); you may not use this file except in compliance with the
- * License. $Id: CartridgeFactory.java,v 1.2 2004/08/12 08:51:09 adrianbachofen
- * Exp $
+/* copyright 2000-2004 Marcel Baumann
+ * Licensed under the Apache License, Version 2.0 (the "Licence");
+ * you may not use this file except in compliance with the License.
+ * $Id$
  */
 package ch.bbv.mda.generators;
 
@@ -27,7 +26,7 @@ import ch.bbv.mda.*;
  */
 public class CartridgeFactory {
   /**
-   * Logger for all instance of the class.
+   * Logger for all instances of the class.
    */
   private static Log log = LogFactory.getLog(CartridgeFactory.class);
 

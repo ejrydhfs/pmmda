@@ -208,38 +208,40 @@ public abstract class NodePropertiesView extends JPanel {
     }
     return object;
   }
+
   /**
-   * Customized Editor, which adds a FocusListener to editors being of type TextField
-   * The FocusListener will stop editting when focus is lost.
+   * Customized Editor, which adds a FocusListener to editors being of type
+   * TextField The FocusListener will stop editting when focus is lost.
    */
-  protected static class MyEditor extends DefaultCellEditor{
-    
-    public MyEditor(JCheckBox checkBox){
+  protected static class MyEditor extends DefaultCellEditor {
+
+    public MyEditor(JCheckBox checkBox) {
       super(checkBox);
     }
-    
-    public MyEditor(JComboBox comboBox){
+
+    public MyEditor(JComboBox comboBox) {
       super(comboBox);
     }
-    
-    public MyEditor(JTextField textField){
+
+    public MyEditor(JTextField textField) {
       super(textField);
       textField.addFocusListener(new MyFocusListener(this));
     }
+
     /**
      * Implements a focus adapter ending cell editing in case of focus lost.
      */
     private final class MyFocusListener extends FocusAdapter {
       MyEditor editor;
-      public MyFocusListener(MyEditor editor){
+
+      public MyFocusListener(MyEditor editor) {
         this.editor = editor;
       }
+
       public void focusGained(FocusEvent e) {
-        System.out.println("focus gained");
       }
 
       public void focusLost(FocusEvent e) {
-        System.out.println("focus lost");
         editor.stopCellEditing();
       }
     }

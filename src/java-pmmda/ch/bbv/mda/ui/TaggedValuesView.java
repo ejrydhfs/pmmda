@@ -51,7 +51,8 @@ public class TaggedValuesView extends NodePropertiesView {
     comboBox.setCaseSensitive(false);
     editors.put(Boolean.TYPE, new DefaultCellEditor(comboBox));
     editors.put(Boolean.class, new DefaultCellEditor(comboBox));
-    editors.put(String.class, new MyEditor(new JTextField())); // used to resolve issue of stop cell editing in case of focus lost.
+    editors.put(String.class, new MyEditor(new JTextField())); 
+    // used to resolve issue of stop cell editing in case of focus lost.
     registerReferenceCode(VisibilityCode.class, VisibilityCode.getCodes(),
         false);
     registerReferenceCode(PropertyModeCode.class, PropertyModeCode.getCodes(),

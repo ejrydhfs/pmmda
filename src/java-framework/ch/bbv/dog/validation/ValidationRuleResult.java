@@ -48,6 +48,8 @@ public class ValidationRuleResult implements Serializable {
    */
   private String text;
 
+  private transient Object object;
+
   /**
    * Returns the message key.
    * @return key of the validation rule result message.
@@ -110,5 +112,23 @@ public class ValidationRuleResult implements Serializable {
    */
   public void setText(String text, Object[] parameters) {
     this.text = MessageFormat.format(text, parameters);
+  }
+
+  /**
+   * Returns the object source of the validation rule.
+   * @return source of the validation rule result.
+   * @see #setObject(Object)
+   */
+  public Object getObject() {
+    return object;
+  }
+
+  /**
+   * Sets the object containing a validation rule result.
+   * @param object source object of the rule result.
+   * @see #getObject
+   */
+  public void setObject(Object object) {
+    this.object = object;
   }
 }

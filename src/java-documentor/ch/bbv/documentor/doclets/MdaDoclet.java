@@ -1,10 +1,13 @@
 /* copyright 2000-2004 Marcel Baumann
- * Licensed under the Apache License, Version 2.0 (the "Licence);
+ * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
  */
 
 package ch.bbv.documentor.doclets;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import com.sun.javadoc.*;
 
@@ -16,17 +19,24 @@ import com.sun.javadoc.*;
  */
 public class MdaDoclet extends Doclet {
   /**
-   * tag name to define the model to synchronize with the read source code.
+   * Tag name to define the model to synchronize with the read source code.
    */
   public static final String MODEL_TAG = "-model";
+
+  /**
+   * Logger for all instances of the class.
+   */
+  private static Log log = LogFactory.getLog(MdaDoclet.class);
 
   public MdaDoclet() {
   }
 
   public static boolean start(RootDoc root) {
     ClassDoc[] classes = root.classes();
-    for (int i = 0; i < classes.length; i++) {
-      System.out.println(classes[i]);
+    if (log.isDebugEnabled()) {
+      for (int i = 0; i < classes.length; i++) {
+        log.debug(classes[i]);
+      }
     }
     return true;
   }
