@@ -18,12 +18,18 @@ import ch.bbv.explorer.components.TablePanel;
  * @version $Revision$
  */
 public class NodeTableView extends TablePanel implements NodeView {
+
+  /**
+   * Node displayed by this view
+   */
+  private ExplorerNode node;
+  
   /**
    * Constructor of the class.
    * @param fields fields of the view.
    */
   public NodeTableView(List fields) {
-    super(Collections.EMPTY_LIST, new NodeTableCell(fields));
+    super(Collections.EMPTY_LIST, new NodeTableCell(fields)); 
   }
 
   /**
@@ -37,6 +43,7 @@ public class NodeTableView extends TablePanel implements NodeView {
   }
 
   public void setModel(ExplorerNode node) {
+    this.node = node;
     setModel(node.getChildren());
   }
 
@@ -50,10 +57,12 @@ public class NodeTableView extends TablePanel implements NodeView {
 
   public void nodeRemoved(ExplorerNode parent, ExplorerNode node, int index) {
     System.out.println("nodeRemoved");
+    setModel(this.node);
   }
 
   public void nodeChanged(ExplorerNode node) {
-    System.out.println("nodeChanged"); // TODO refresh table view because child has been added or modified
+    System.out.println("nodeChanged");
+    setModel(this.node);
   }
 
 }
