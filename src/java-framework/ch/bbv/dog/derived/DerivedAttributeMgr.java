@@ -1,5 +1,5 @@
 /* copyright 2000-2004 Marcel Baumann 
- * Licensed under the Apache License, Version 2.0 (the "Licence); 
+ * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$
  */
@@ -14,20 +14,16 @@ import ch.bbv.dog.DataObject;
 import ch.bbv.dog.DoFunctor;
 
 /**
- * <p>
  * The derived attribue manager is responsible to compute the new value of all
  * registered derived properties. Each time a property is modified it sends a
  * property change event. The manager is triggered and calls all functors
  * registered for the modified property. Registered functors on new derived
  * property are only applied to newly registered data objects to guarantee
  * consistency for the user working on them. Updated functors on already
- * observed properties are used upon next change of the property.
- * </p>
- * <p>
- * Services are provided to force the calculation of all derived attributes of a
- * single data object or a data object tree. The traversal of the tree is
- * realized with the help of the visitor pattern.
- * </p>
+ * observed properties are used upon next change of the property. Services are
+ * provided to force the calculation of all derived attributes of a single data
+ * object or a data object tree. The traversal of the tree is realized with the
+ * help of the visitor pattern.
  * @author MarcelBaumann
  * @version $Revision$
  */

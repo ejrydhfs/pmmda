@@ -1,5 +1,5 @@
 /* copyright 2000-2004 Marcel Baumann
- * Licensed under the Apache License, Version 2.0 (the "Licence);
+ * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
  */
@@ -11,71 +11,132 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
+import ch.bbv.utilities.ReflectUtilities;
+
 /**
  * The range rule insures a property value is inside a defined minimum and
- * maximum. The range is inclusive. All natural values are compared against
- * a long representation. All fraction values are compared agains a double
+ * maximum. The range is inclusive. All natural values are compared against a
+ * long representation. All fraction values are compared agains a double
  * representation.
  * @author MarcelBaumann
  * @version $Revision$
  */
 public class RangeRule implements ValidationRule {
-  private boolean isImmediate;
+  /**
+   * Indicates if the rule should be applied immediately or only
+   */
+  private boolean immediate;
+
+  /**
+   * Legal range of the property.
+   */
   private Range range;
 
-  public RangeRule(boolean isImmediate, long min, long max) {
-    this.isImmediate = isImmediate;
+  /**
+   * Constructor for a new range rule.
+   * @param immediate indicates if the rule should be checked immediately
+   * @param min lower bound of the interval. The value is part of the interval.
+   * @param max high bound of the interval. The value is part or the interval.
+   */
+  public RangeRule(boolean immediate, long min, long max) {
+    this.immediate = immediate;
     range = new NaturalRange(min, max);
   }
 
+  /**
+   * Constructor for a new range rule.
+   * @param isImmediate indicates if the rule should be checked immediately
+   * @param min lower bound of the interval. The value is part of the interval.
+   * @param max high bound of the interval. The value is part or the interval.
+   */
   public RangeRule(boolean isImmediate, double min, double max) {
-    this.isImmediate = isImmediate;
+    this.immediate = isImmediate;
     range = new FractionalRange(min, max);
   }
 
+  /**
+   * Constructor for a new range rule.
+   * @param isImmediate indicates if the rule should be checked immediately
+   * @param min lower bound of the interval. The value is part of the interval.
+   * @param max high bound of the interval. The value is part or the interval.
+   */
   public RangeRule(boolean isImmediate, Date min, Date max) {
-    this.isImmediate = isImmediate;
+    this.immediate = isImmediate;
     range = new DateRange(min, max);
   }
 
+  /**
+   * Constructor for a new range rule.
+   * @param isImmediate indicates if the rule should be checked immediately
+   * @param min lower bound of the interval. The value is part of the interval.
+   * @param max high bound of the interval. The value is part or the interval.
+   */
   public RangeRule(boolean isImmediate, BigInteger min, BigInteger max) {
-    this.isImmediate = isImmediate;
+    this.immediate = isImmediate;
     range = new BigNaturalRange(min, max);
   }
 
+  /**
+   * Constructor for a new range rule.
+   * @param isImmediate indicates if the rule should be checked immediately
+   * @param min lower bound of the interval. The value is part of the interval.
+   * @param max high bound of the interval. The value is part or the interval.
+   */
   public RangeRule(boolean isImmediate, BigDecimal min, BigDecimal max) {
-    this.isImmediate = isImmediate;
+    this.immediate = isImmediate;
     range = new BigFractionalRange(min, max);
   }
 
   public boolean execute(Object bean, String property, List results) {
-    Object value = null;
+    Object value = ReflectUtilities.getProperty(bean, property);
     return (value != null) && range.isInRange(value);
   }
 
   public boolean execute(Object bean, String property, Object oldValue,
-    Object newValue, List results) {
-    return false;
+      Object newValue, List results) {
+    Object value = ReflectUtilities.getProperty(bean, property);
+    return (value != null) && range.isInRange(value);
   }
 
+  /**
+   * Returns true if the rule is immediate otherwise false.
+   * @return value of the immediate flag.
+   */
   public boolean isImmediate() {
-    return isImmediate;
+    return immediate;
   }
 
   private static interface Range {
-    public boolean isInRange(Object value);
+    /**
+     * True if the value is in the range otherwise false.
+     * @param value value to check.
+     * @return result of the range evaluation.
+     */
+    boolean isInRange(Object value);
   }
 
+  /**
+   * The class defines a natural number range.
+   * @author MarcelBaumann
+   * @version $Revision$
+   */
   private static class NaturalRange implements Range {
-    /** Lower limit of the range to check.
+    /**
+     * Lower limit of the range to check.
      */
     private long min;
 
-    /** Higer limit of the range to check.
+    /**
+     * Higer limit of the range to check.
      */
     private long max;
 
-    public NaturalRange(long min, long max) {
+    /**
+     * Constructor of the class.
+     * @param min lower bound of the interval inclusive this value.
+     * @param max high bound of the interval inclusive this value.
+     */
+    NaturalRange(long min, long max) {
       this.min = min;
       this.max = max;
     }
@@ -90,16 +151,28 @@ public class RangeRule implements ValidationRule {
     }
   }
 
+  /**
+   * The class defines a fractional number range.
+   * @author MarcelBaumann
+   * @version $Revision$
+   */
   private static class FractionalRange implements Range {
-    /** Lower limit of the range to check.
+    /**
+     * Lower limit of the range to check.
      */
     private double min;
 
-    /** Higer limit of the range to check.
+    /**
+     * Higer limit of the range to check.
      */
     private double max;
 
-    public FractionalRange(double min, double max) {
+    /**
+     * Constructor of the class.
+     * @param min lower bound of the interval inclusive this value.
+     * @param max high bound of the interval inclusive this value.
+     */
+    FractionalRange(double min, double max) {
       this.min = min;
       this.max = max;
     }
@@ -114,16 +187,28 @@ public class RangeRule implements ValidationRule {
     }
   }
 
+  /**
+   * The class defines a date range.
+   * @author MarcelBaumann
+   * @version $Revision$
+   */
   private static class DateRange implements Range {
-    /** Lower limit of the range to check.
+    /**
+     * Lower limit of the range to check.
      */
     private Date min;
 
-    /** Higer limit of the range to check.
+    /**
+     * Higer limit of the range to check.
      */
     private Date max;
 
-    public DateRange(Date min, Date max) {
+    /**
+     * Constructor of the class.
+     * @param min lower bound of the interval inclusive this value.
+     * @param max high bound of the interval inclusive this value.
+     */
+    DateRange(Date min, Date max) {
       this.min = min;
       this.max = max;
     }
@@ -133,21 +218,34 @@ public class RangeRule implements ValidationRule {
     }
 
     public boolean isInRange(Date value) {
-      return (((min != null) ? (min.equals(value) || (min.before(value))) : true) &&
-      ((max != null) ? (max.equals(value) || (max.after(value))) : true));
+      return (((min != null) ? (min.equals(value) || (min.before(value)))
+          : true) && ((max != null) ? (max.equals(value) || (max.after(value)))
+          : true));
     }
   }
 
+  /**
+   * The class defines a big natural number range.
+   * @author MarcelBaumann
+   * @version $Revision$
+   */
   private static class BigNaturalRange implements Range {
-    /** Lower limit of the range to check.
+    /**
+     * Lower limit of the range to check.
      */
     private BigInteger min;
 
-    /** Higer limit of the range to check.
+    /**
+     * Higer limit of the range to check.
      */
     private BigInteger max;
 
-    public BigNaturalRange(BigInteger min, BigInteger max) {
+    /**
+     * Constructor of the class.
+     * @param min lower bound of the interval inclusive this value.
+     * @param max high bound of the interval inclusive this value.
+     */
+    BigNaturalRange(BigInteger min, BigInteger max) {
       this.min = min;
       this.max = max;
     }
@@ -161,16 +259,28 @@ public class RangeRule implements ValidationRule {
     }
   }
 
+  /**
+   * The class defines a big fractional number range.
+   * @author MarcelBaumann
+   * @version $Revision$
+   */
   private static class BigFractionalRange implements Range {
-    /** Lower limit of the range to check.
+    /**
+     * Lower limit of the range to check.
      */
     private BigDecimal min;
 
-    /** Higer limit of the range to check.
+    /**
+     * Higer limit of the range to check.
      */
     private BigDecimal max;
 
-    public BigFractionalRange(BigDecimal min, BigDecimal max) {
+    /**
+     * Constructor of the class.
+     * @param min lower bound of the interval inclusive this value.
+     * @param max high bound of the interval inclusive this value.
+     */
+    BigFractionalRange(BigDecimal min, BigDecimal max) {
       this.min = min;
       this.max = max;
     }

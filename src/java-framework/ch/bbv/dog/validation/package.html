@@ -24,6 +24,14 @@
     <dt>are not null</dt><dd>All the values of an indexed property are not 
       null.</dd>
   </dl>
+
+  <h2>Architecture</h2>
+  <p>The validation framework uses the bean standardpackages to store the 
+    validation rules. A rule is either stored in the bean information instance
+    of a class or in the property descriptor of a property. The list of valid
+    rules is added as a named attribute to the bean information object. The
+    list order defines the order of evaluation.</p>
+    
   <h2>Conventions</h2>
   <p>The values are identified through names. Conventions must be defined to
     find out where validation rules are stored in the descriptors.</p>

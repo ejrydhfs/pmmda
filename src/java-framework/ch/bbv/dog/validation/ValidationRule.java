@@ -1,5 +1,5 @@
 /* copyright 2000-2004 Marcel Baumann
- * Licensed under the Apache License, Version 2.0 (the "Licence);
+ * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
  */
@@ -14,28 +14,35 @@ import java.util.List;
  * @version $Revision$
  */
 public interface ValidationRule {
-  /** Flag indicating if the validation rule should be applied upon change of
-   * the property or can be applied later.
+  /**
+   * Flag indicating if the validation rule should be applied upon change of the
+   * property or can be applied later.
    * @return true if the rule is immediate otherwise false.
    */
   boolean isImmediate();
 
-  /** Executes the validation rule on a Java bean.
+  /**
+   * Executes the validation rule on a Java bean.
    * @param bean bean on which to process the rule.
    * @param property property to validate.
-   * @param results list where rule results can be added.
+   * @param results list where rule results can be added. The result is a
+   *        validation rule result.
    * @return true if the rule did not found any errors otherwise false.
+   * @pre (bean != null) && (property != null) && (results != null)
    */
   boolean execute(Object bean, String property, List results);
 
-  /** Executes the validation rule on a Java bean in an immediate mode.
+  /**
+   * Executes the validation rule on a Java bean in an immediate mode.
    * @param bean bean on which to process the rule.
-   * @param property name of the modified property. 
+   * @param property name of the modified property.
    * @param oldValue old value of the property if defined.
    * @param newValue new value of the property.
-   * @param results list where rule results can be added.
+   * @param results list where rule results can be added. The result is a
+   *        validation rule result.
    * @return true if the rule did not found any errors otherwise false.
+   * @pre (bean != null) && (property != null) && (results != null)
    */
   boolean execute(Object bean, String property, Object oldValue,
-    Object newValue, List results);
+      Object newValue, List results);
 }
