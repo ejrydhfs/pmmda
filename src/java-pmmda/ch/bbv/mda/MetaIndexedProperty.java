@@ -46,4 +46,11 @@ public class MetaIndexedProperty extends MetaProperty {
   public boolean canBeNull() {
     return getMultiplicity().getLowerBound() == 0;
   }
+
+  /**
+   * Indicates whether this model element is a leaf (no children)
+   */
+  public boolean isLeaf() {
+    return true;
+  }
 }
