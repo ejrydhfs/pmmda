@@ -44,7 +44,7 @@ public class PersistencyHandlerFactory {
       persistencyHandler = getSerializeHandler();
     } else if (filename.endsWith(".xml")) {
       persistencyHandler = getXmlHandler();
-    } else if (filename.endsWith(".zargo")) {
+    } else if (filename.endsWith(".xmi") || filename.endsWith(".zargo")) {
       persistencyHandler = getNsUmlHandler();
     } else if (filename.endsWith(".mdl")) {
       persistencyHandler = getRoseHandler();
@@ -65,7 +65,6 @@ public class PersistencyHandlerFactory {
     assert(file != null);
     String filename = file.getName().toLowerCase();
     PersistencyHandler persistencyHandler = null;
-    // TODO mb check why xml is matched to NSUML 
     if (filename.endsWith(".xmi") || filename.endsWith(".xml")) {
       persistencyHandler = getNsUmlHandler();
     }
