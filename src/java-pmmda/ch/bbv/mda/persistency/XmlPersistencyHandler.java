@@ -33,6 +33,7 @@ public class XmlPersistencyHandler implements PersistencyHandler {
       XStream stream = new XStream();
       model = (MetaModel) stream.fromXML(reader);
       reader.close();
+      model.accept(new InitVisitor());
     } catch (FileNotFoundException e) {
       log.error(e);
     } catch (IOException e) {
