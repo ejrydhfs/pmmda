@@ -17,8 +17,6 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import com.sun.rsasign.t;
-
 import ch.bbv.dog.*;
 
 /**
