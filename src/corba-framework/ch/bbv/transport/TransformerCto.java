@@ -202,7 +202,7 @@ public final class TransformerCto {
     DataObjectUpdateCto cto = new DataObjectUpdateCto();
     cto.classname = value.getClassname();
     cto.id = value.getId().intValue();
-    cto.timestamp = value.getTimestamp().toString();
+    cto.timestamp = create(value.getTimestamp());
     cto.updates = createUpdates(value.getUpdates());
     return cto;
   }
@@ -354,7 +354,7 @@ public final class TransformerCto {
     DataObjectUpdate update = new DataObjectUpdate();
     update.setClassname(cto.classname);
     update.setId(new Integer(cto.id));
-    update.setTimestamp(Timestamp.valueOf(cto.timestamp));
+    update.setTimestamp(extract(cto.timestamp));
     for (int i = 0; i < cto.updates.length; i++) {
       update.addUpdate(extract(cto.updates[i]));
     }

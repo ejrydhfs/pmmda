@@ -21,7 +21,7 @@ module ch {
       struct DataObjectUpdateCto {
       	string classname;
       	long id;
-      	Timestamp timestamp;
+      	NullTimestamp timestamp;
       	DataPropertyUpdateSequence updates;
       };
       
