@@ -10,8 +10,11 @@ import java.util.Properties;
 
 import ch.bbv.application.VersionId;
 import ch.bbv.mda.MetaClass;
+import ch.bbv.mda.MetaElement;
 import ch.bbv.mda.MetaModel;
 import ch.bbv.mda.MetaPackage;
+import ch.bbv.mda.TaggedValue;
+import ch.bbv.mda.TaggedValueType;
 
 /**
  * The cartridge defines the interface for all code generators defined in the
@@ -98,6 +101,14 @@ public interface Cartridge {
    * @pre (clazz != null)
    */
   List getTaggedValueTypes(Class clazz);
+  
+  /**
+   * Returns a tagged value initialized with a cartridge dependent default value.
+   * @param taggedValueType being the type for the tagged value to be initialized with a default value.
+   * @param element The MetaElement providing additional information to initialize the tagged value.
+   * @return TaggedValue the initialized tagged value.
+   */
+  TaggedValue getTaggedValueWithElementDependentDefault(TaggedValueType taggedValueType, MetaElement element);
 
   /**
    * Returns the list of obsolete tagged value types for the given class type.
