@@ -427,7 +427,9 @@ public class BogCartridge extends CartridgeImpl implements Cartridge {
 
   public List getTaggedValueTypes(Class clazz) {
     List types = new ArrayList();
-    if (clazz.equals(MetaPackage.class)) {
+    if (clazz.equals(MetaModel.class)) {
+      types.add(new TaggedValueType(GENERATE_TAG, "true", Boolean.TYPE));
+    } else if (clazz.equals(MetaPackage.class)) {
       types.add(new TaggedValueType(GENERATE_TAG, "false", Boolean.TYPE));
     } else if (clazz.equals(MetaClass.class)) {
       types.add(new TaggedValueType(IS_ROOT_TAG, "false", Boolean.TYPE));
@@ -583,6 +585,8 @@ public class BogCartridge extends CartridgeImpl implements Cartridge {
   }
 
   public void processClass(MetaClass clazz) {
+    if (clazz.isNestedClass())
+      return;
     String stereotype = clazz.getStereotype();
     if (!clazz.retrievePackage().booleanValueOfTag(GENERATE_TAG)
         || (!DATA_OBJECT_STEREOTYPE.equalsIgnoreCase(stereotype) && !REFERENCE_CODE_STEREOTYPE
