@@ -13,6 +13,9 @@ package ch.bbv.utilities;
  * @version $Revision$
  */
 public final class TextUtilities {
+  
+  private final static char[] specialCharacters = new char[] {' ', '-', '+', '=', ';', ':', ',', '~'};
+
   /**
    * Default constructor of a static class declared as private.
    */
@@ -20,6 +23,17 @@ public final class TextUtilities {
     // private constructor of static class
   }
 
+  public static String removeSpecialCharacters(String identifier){
+    String tmp = identifier.toLowerCase();
+    String result = "";
+    for(int idx=0; idx<tmp.length(); idx++){
+      if(tmp.charAt(idx) >= 'a' && tmp.charAt(idx) <= 'z') {
+        result += identifier.charAt(idx);
+      }
+    }
+    return result;
+  }
+  
   /**
    * Returns the identifier with its first letter in lowercase.
    * @param identifier identifier to manipulate.
@@ -79,8 +93,12 @@ public final class TextUtilities {
     String name;
     if (identifier.endsWith("ies")) {
       name = identifier.substring(0, identifier.length() - 3) + "y";
+    } else if (identifier.endsWith("ses")) {
+      name = identifier.substring(0, identifier.length() - 2);
     } else if (identifier.endsWith("es")) {
       name = identifier.substring(0, identifier.length() - 1);
+    } else if (identifier.endsWith("ss")) {
+      name = identifier;
     } else if (identifier.endsWith("s")) {
       name = identifier.substring(0, identifier.length() - 1);
     } else {
