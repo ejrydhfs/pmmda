@@ -281,6 +281,7 @@ public class UsersTest extends TestCase {
     item.setDescription("Provider description " + id2String(i));
     item.setEmail(item.getName() + "@bbv.ch");
     item.setName("Provider-longname-" + id2String(i));
+    item.setTrusted(0.0);
     return item;
   }
 
