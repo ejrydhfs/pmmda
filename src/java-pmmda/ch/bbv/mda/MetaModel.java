@@ -13,7 +13,7 @@ import java.util.*;
  * @author MarcelBaumann
  * @version $Revision$
  */
-public class MetaModel extends MetaElement {
+public class MetaModel extends MetaPackage {
   /**
    * The name of the file containing the meta model. The information is managed
    * within the application and is therefore transient.
@@ -34,8 +34,21 @@ public class MetaModel extends MetaElement {
    * Default constructor of the class.
    */
   public MetaModel() {
-    packages = new ArrayList();
-    dataTypes = new ArrayList();
+    init();
+  }
+
+  /**
+   * Initializes member variables. Only complex types have to be initialized
+   * here. The init() method is called after deserializing and loading from xml
+   * with XStream. Transient members have to be initialized with this init()
+   * function.
+   */
+  public void init() {
+    super.init();
+    if (packages == null)
+      packages = new ArrayList();
+    if (dataTypes == null)
+      dataTypes = new ArrayList();
   }
 
   /**
@@ -131,6 +144,18 @@ public class MetaModel extends MetaElement {
     for (Iterator i = packages.iterator(); i.hasNext();) {
       ((MetaPackage) i.next()).accept(visitor);
     }
+    for (Iterator i = getClasses().iterator(); i.hasNext();) {
+      ((MetaClass) i.next()).accept(visitor);
+    }
+  }
+
+  /**
+   * Indicates whether this model element is a leaf (no children)
+   */
+  public boolean isLeaf() {
+    if (packages == null || packages.isEmpty())
+      return true;
+    return false;
   }
 
   // %% BEGIN USER CODE
