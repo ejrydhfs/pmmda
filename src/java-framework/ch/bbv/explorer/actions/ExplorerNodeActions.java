@@ -196,7 +196,9 @@ public class ExplorerNodeActions extends ExplorerNodeActionImpl {
         UiRelation relation = type.getRelation(getName());
         relation.addProperty(parent.getLightweightObject(), node
             .getLightweightObject());
-        relation.addProperty(parent.getDataObject(), node.getDataObject());
+        if(parent.getLightweightObject() != parent.getDataObject()){
+          relation.addProperty(parent.getDataObject(), node.getDataObject());
+        }
         node.nodeChanged();
       }
       break;
@@ -210,8 +212,10 @@ public class ExplorerNodeActions extends ExplorerNodeActionImpl {
         UiRelation relation = type.getRelation(getName());
         relation.setProperty(parent.getLightweightObject(), index, node
             .getLightweightObject());
-        relation.setProperty(parent.getDataObject(), index, node
-            .getDataObject());
+        if(parent.getLightweightObject() != parent.getDataObject()){
+          relation.setProperty(parent.getDataObject(), index, node
+              .getDataObject());
+        }
         node.nodeChanged();
       }
       break;
