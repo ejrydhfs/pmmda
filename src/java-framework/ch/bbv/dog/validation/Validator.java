@@ -30,6 +30,11 @@ import ch.bbv.dog.DataObjectType;
  */
 public class Validator extends ComponentImpl {
   /**
+   * The default name of the validator compoenent.
+   */
+  public static final String NAME = "Validator";
+
+  /**
    * Logger for all instances of the class.
    */
   private static Log log = LogFactory.getLog(Validator.class);
