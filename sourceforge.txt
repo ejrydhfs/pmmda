@@ -30,4 +30,5 @@ The following steps are necessary to create and upload the site.
 - Upload the site
    pscp -r -C d:\data\projects\pmmda\build\site\* 
         marcelbaumann@shell.sourceforge.net:/home/groups/p/pm/pmmda/htdocs
+   upon request give password of developer account.
  
