@@ -22,12 +22,12 @@ import com.jgoodies.forms.layout.FormLayout;
  * @version $Revision$
  */
 public class MetaClassView extends NodePropertiesView {
-  /** 
+  /**
    * The size of a text field in the view.
    */
   private final static int TEXT_FIELD_SIZE = 20;
-  
-  /** 
+
+  /**
    * The size of a text area in the view.
    */
   private final static int TEXT_AREA_SIZE = 40;
@@ -102,8 +102,8 @@ public class MetaClassView extends NodePropertiesView {
   }
 
   public void commitChanges() {
-    ExplorerNode parentNode = (ExplorerNode) getModel().getParent();
-    if (parentNode != null) {
+    if (isNewObject()) {
+      ExplorerNode parentNode = (ExplorerNode) getModel().getParent();
       MetaPackage context = (MetaPackage) parentNode.getDataObject();
       context.addClass((MetaClass) getDataObject());
     }
@@ -117,10 +117,10 @@ public class MetaClassView extends NodePropertiesView {
       model.setDescription(text.trim());
     }
     model.setVisibility((VisibilityCode) visibility.getSelectedCode());
-    model.setAbstract(abstracts.isEnabled());
-    model.setFinal(finals.isEnabled());
-    model.setInterface(interfaces.isEnabled());
-    model.setStatic(statics.isEnabled());
+    model.setAbstract(abstracts.isSelected());
+    model.setFinal(finals.isSelected());
+    model.setInterface(interfaces.isSelected());
+    model.setStatic(statics.isSelected());
     tagsView.commitChanges();
     getModel().nodeChanged();
   }
@@ -141,7 +141,7 @@ public class MetaClassView extends NodePropertiesView {
     tagsView.cancelChanges();
   }
 
-  /** 
+  /**
    * Initialize the view component with the user interface elements.
    */
   protected void initialize() {

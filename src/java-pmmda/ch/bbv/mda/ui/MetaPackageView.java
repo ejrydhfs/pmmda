@@ -21,12 +21,12 @@ import com.jgoodies.forms.layout.FormLayout;
  * @version $Revision$
  */
 public class MetaPackageView extends NodePropertiesView {
-  /** 
+  /**
    * The size of a text field in the view.
    */
   private final static int TEXT_FIELD_SIZE = 20;
-  
-  /** 
+
+  /**
    * The size of a text area in the view.
    */
   private final static int TEXT_AREA_SIZE = 40;
@@ -90,8 +90,8 @@ public class MetaPackageView extends NodePropertiesView {
   }
 
   public void commitChanges() {
-    ExplorerNode parentNode = (ExplorerNode) getModel().getParent();
-    if (parentNode != null) {
+    if (isNewObject()) {
+      ExplorerNode parentNode = (ExplorerNode) getModel().getParent();
       Object dataObject = parentNode.getDataObject();
       if (dataObject instanceof MetaModel) {
         MetaModel context = (MetaModel) dataObject;

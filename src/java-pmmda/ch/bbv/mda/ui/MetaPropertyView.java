@@ -22,12 +22,12 @@ import com.jgoodies.forms.layout.FormLayout;
  * @version $Revision$
  */
 public class MetaPropertyView extends NodePropertiesView {
-  /** 
+  /**
    * The size of a text field in the view.
    */
   private final static int TEXT_FIELD_SIZE = 20;
-  
-  /** 
+
+  /**
    * The size of a text area in the view.
    */
   private final static int TEXT_AREA_SIZE = 40;
@@ -145,10 +145,10 @@ public class MetaPropertyView extends NodePropertiesView {
       model.setDescription(text.trim());
     }
     model.setVisibility((VisibilityCode) visibility.getSelectedCode());
-    model.setVolatile(volatiles.isEnabled());
-    model.setTransient(transients.isEnabled());
-    model.setFinal(finals.isEnabled());
-    model.setStatic(statics.isEnabled());
+    model.setVolatile(volatiles.isSelected());
+    model.setTransient(transients.isSelected());
+    model.setFinal(finals.isSelected());
+    model.setStatic(statics.isSelected());
     tagsView.commitChanges();
     getModel().nodeChanged();
   }
