@@ -149,6 +149,8 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
     java2idl.put("java.lang.Double", "NullableDouble");
     java2idl.put("Float", "NullFloat");
     java2idl.put("java.lang.Float", "NullFloat");
+    java2idl.put("Long", "NullLong");
+    java2idl.put("java.lang.Long", "NullLong");
     java2idl.put("Currency", "NullCurrency");
     java2idl.put("boolean", "boolean");
     java2idl.put("byte", "octet");
@@ -206,11 +208,15 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
   public List getTaggedValueTypes(Class clazz) {
     List types = new ArrayList();
     if (clazz.equals(MetaPackage.class)) {
-      types.add(new TaggedValueType(CTO_PACKAGE_IDL_TAG, "", String.class));
+      types.add(new TaggedValueType(CTO_PACKAGE_IDL_TAG, "", String.class, this));
     }
     return types;
   }
 
+  public TaggedValue getTaggedValueWithElementDependentDefault(TaggedValueType taggedValueType, MetaElement element){
+    return new TaggedValue(taggedValueType);
+  }
+  
   public void preProcessPackage(MetaPackage metaPackage) {
     assert (metaPackage != null);
 
