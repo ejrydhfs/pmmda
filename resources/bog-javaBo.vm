@@ -486,7 +486,7 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
 #set($typename=${property.getTypeName()})
 #set($type=false)
 #set($type=${model.findClass(${typename})})
-#if(${type} && ${type.getStereotype()} == "dataObject")
+#if(${type} && ${type.getStereotype().equalsIgnoreCase("dataObject")})
     if (${property.nameFirstLower()} != null) {
       visitor.visit(${property.nameFirstLower()}); 
     }
@@ -498,7 +498,7 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
 #set($typename=${aggregation.getTypeName()})
 #set($type=false)
 #set($type=${model.findClass(${typename})})
-#if(${type} && ${type.getStereotype()} == "dataObject")
+#if(${type} && ${type.getStereotype().equalsIgnoreCase("dataObject")})
 #set($itemType = ${aggregation.retrieveTypeClassName()})
     for (Iterator i = ${aggregation.nameFirstLower()}.iterator(); i.hasNext();) {
       ((${itemType})i.next()).accept(visitor);
@@ -522,8 +522,7 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
       return null;
     }
 #foreach ($property in $properties)
-#set($stereotype=${property.getStereotype()})
-#if($stereotype == "dataObject")
+#if(${property.getStereotype().equalsIgnoreCase("dataObject")})
 #set($lName=${property.nameFirstLower()})
     clone.${lName} = (${property.getReferenceClass().getAttribute("bo-mo-class")})${lName}.getClone();
 #end 
