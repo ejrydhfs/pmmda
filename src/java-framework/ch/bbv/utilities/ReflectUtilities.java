@@ -1,5 +1,5 @@
 /* copyright 2000-2004 Marcel Baumann
- * Licensed under the Apache License, Version 2.0 (the "Licence);
+ * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
  */
@@ -8,6 +8,7 @@ package ch.bbv.utilities;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -145,6 +146,52 @@ public final class ReflectUtilities {
       log.fatal(e);
     }
     return instance;
-    
+
+  }
+
+  /**
+   * Gets the property of a data object described in the node type.
+   * @param bean object which property should be retrieved.
+   * @param property name of the property to acess.
+   * @return the value of the requested property.
+   * @pre (bean != null) && (property != null)
+   * @see #setProperty(Object, String, Object)
+   */
+  public static Object getProperty(Object bean, String property) {
+    assert ((bean != null) && (property != null));
+
+    Object value = null;
+    try {
+      value = PropertyUtils.getProperty(bean, property);
+    } catch (InvocationTargetException ite) {
+      ite.printStackTrace();
+    } catch (NoSuchMethodException nsmi) {
+      nsmi.printStackTrace();
+    } catch (IllegalAccessException iae) {
+      iae.printStackTrace();
+    }
+
+    return value;
+  }
+
+  /**
+   * Sets the property of a data object described in the node type.
+   * @param bean object which property should be set.
+   * @param property name of the property to acess.
+   * @param value new value of the property.
+   * @pre (bean != null) && (property != null)
+   * @see #getProperty(Object, String)
+   */
+  public static void setProperty(Object bean, String property, Object value) {
+    assert ((bean != null) && (property != null));
+    try {
+      PropertyUtils.setProperty(bean, property, value);
+    } catch (InvocationTargetException ite) {
+      ite.printStackTrace();
+    } catch (NoSuchMethodException nsmi) {
+      nsmi.printStackTrace();
+    } catch (IllegalAccessException iae) {
+      iae.printStackTrace();
+    }
   }
 }

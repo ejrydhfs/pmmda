@@ -1,13 +1,11 @@
 /* copyright 2000-2004 Marcel Baumann
- * Licensed under the Apache License, Version 2.0 (the "Licence);
+ * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
  */
 package ch.bbv.explorer;
 
-import java.lang.reflect.InvocationTargetException;
-
-import org.apache.commons.beanutils.PropertyUtils;
+import ch.bbv.utilities.ReflectUtilities;
 
 /**
  * The class defines the user interface characteristics of a property containing
@@ -77,19 +75,7 @@ public class UiField {
    */
   public Object getProperty(Object object) {
     assert (object != null);
-
-    Object value = null;
-    try {
-      value = PropertyUtils.getProperty(object, property);
-    } catch (InvocationTargetException ite) {
-      ite.printStackTrace();
-    } catch (NoSuchMethodException nsmi) {
-      nsmi.printStackTrace();
-    } catch (IllegalAccessException iae) {
-      iae.printStackTrace();
-    }
-
-    return value;
+    return ReflectUtilities.getProperty(object, property);
   }
 
   /**
@@ -101,14 +87,6 @@ public class UiField {
    */
   public void setProperty(Object object, Object value) {
     assert (object != null);
-    try {
-      PropertyUtils.setProperty(object, property, value);
-    } catch (InvocationTargetException ite) {
-      ite.printStackTrace();
-    } catch (NoSuchMethodException nsmi) {
-      nsmi.printStackTrace();
-    } catch (IllegalAccessException iae) {
-      iae.printStackTrace();
-    }
+    ReflectUtilities.setProperty(object, property, value);
   }
-	}
+}
