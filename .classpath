@@ -19,7 +19,6 @@
 	<classpathentry kind="lib" path="lib/junit.jar"/>
 	<classpathentry kind="lib" path="lib/nsuml.jar"/>
 	<classpathentry kind="lib" path="lib/dnsns.jar"/>
-	<classpathentry kind="lib" path="C:/bin/jdk142/lib/tools.jar"/>
 	<classpathentry kind="lib" path="lib/jmi.jar"/>
 	<classpathentry kind="lib" path="lib/jmiutils.jar"/>
 	<classpathentry kind="lib" path="lib/mdrapi.jar"/>
@@ -48,5 +47,6 @@
 	<classpathentry kind="lib" path="lib/xpp3-1.1.3.jar"/>
 	<classpathentry kind="lib" path="lib/xstream-1.0.2.jar"/>
 	<classpathentry kind="lib" path="lib/jbossall-client.jar"/>
+	<classpathentry kind="var" path="JDK_TOOLS"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
