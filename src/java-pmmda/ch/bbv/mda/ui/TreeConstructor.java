@@ -74,6 +74,6 @@ public class TreeConstructor implements Visitor {
       log.debug("Not context found for " + element + " context " +
         element.getContext());
     }
-    context.addChild(node);
+    if(context != null) context.addChild(node);
   }
 }
