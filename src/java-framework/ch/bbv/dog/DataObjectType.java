@@ -1,5 +1,5 @@
 /* copyright 2000-2004 Marcel Baumann
- * Licensed under the Apache License, Version 2.0 (the "Licence);
+ * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
  */
@@ -192,7 +192,7 @@ public class DataObjectType {
   }
 
   /**
-   * Returns an instance of the requested class.
+   * Returns an instance of the data object visitor defined for this type.
    * @return the instance of the requested class.
    */
   public AbstractVisitorFunctor createVisitorInstance() {
@@ -201,7 +201,8 @@ public class DataObjectType {
   }
 
   /**
-   * Returns an instance of the requested class.
+   * Returns an instance of the lightweight data object visitor defined for this
+   * type.
    * @return the instance of the requested class.
    */
   public AbstractVisitorFunctor createLwVisitorInstance() {
@@ -304,7 +305,7 @@ public class DataObjectType {
       }
 
       Method method = clazz.getDeclaredMethod(ACCEPT_METHOD_NAME, types);
-      assert(method != null);
+      assert (method != null);
       Object[] params = { visitor };
       method.invoke(object, params);
     } catch (SecurityException e) {

@@ -19,7 +19,9 @@ import ch.bbv.dog.DataObjectManager;
 import ch.bbv.dog.EmptyHandler;
 import ch.bbv.dog.LightweightObjectHandlerImpl;
 import ch.bbv.dog.validation.Validator;
+import ch.bbv.explorer.components.MemoryMonitor;
 import ch.bbv.mda.generators.CartridgeFactory;
+import ch.bbv.mda.validation.RulesFactory;
 import ch.bbv.utilities.PropertyUtilities;
 
 /**
@@ -90,12 +92,14 @@ public class MdaApplication extends Locator {
   public void initialize() throws ComponentException {
     super.initialize();
     MdaExplorer.registerNodeTypes();
+    (new RulesFactory()).registerAllRules();
     CartridgeFactory.create(getProperties());
   }
 
   public void startup() throws ComponentException {
     super.startup();
-    MdaExplorer.createExplorer(args);
+    MdaExplorer explorer = MdaExplorer.createExplorer(args);
+    MemoryMonitor.create(explorer.getFrame());
   }
 
   /**

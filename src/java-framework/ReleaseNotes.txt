@@ -12,8 +12,26 @@ The following errors were corrected.
   to retrieve an explorer node based on the identifier of its lightweight or
   data object. Therefore the behavior of open view generated a null pointer
   exception the first time it was called.
+
+Version 0.2.1-RC1 (30 September 2004)
+-------------------------------
+The following new features were added.
+- Validation framework is completed and an initial test application uses it.
+- The minor release of glazed lists 0.9.2 is integrated. 
+- Caching for client explorer applications are supported.
+- The node actions expand all and collapse all were introduced.
+
+The following errors were corrected.
+- Refactoring of all node actions streamlined their implementation.
+- The persistent store operation now handles correctly newly created graph. In
+  this case the method should not try to retrieve the old graph from the 
+  persistent store.
+- The remove operation using an identifier now correctly flushes the cache in 
+  the cache handler.
+- The handling of identities in the collect functors was wrong when two 
+  copies were compared.
   
-Version 0.2.1 (01 August 2004)
+Version 0.2.1-RC1 (01 August 2004)
 ------------------------------
 The following new features were added.
 - The CVS repository was moved to the sourceforge pmmda account.

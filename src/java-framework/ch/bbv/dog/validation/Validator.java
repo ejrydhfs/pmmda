@@ -74,7 +74,8 @@ public class Validator extends ComponentImpl {
   }
 
   /**
-   * Validates the data object graph with all its simple and indexed properties.
+   * Validates the data object graph with all its nodes and their simple and
+   * indexed properties. The graph is traversed using the visitor pattern.
    * @param root root data object of the graph to visit.
    * @param visitor visitor used to traverse the graph.
    * @param results list to which validation rule results are added.

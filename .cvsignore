@@ -7,3 +7,4 @@ lib
 logs
 test-classes
 *.log
+todo.txt

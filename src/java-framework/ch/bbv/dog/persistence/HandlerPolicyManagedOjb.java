@@ -29,7 +29,8 @@ class HandlerPolicyManagedOjb extends HandlerPolicyOjb {
 
   void update(Database database, List originals, List copies,
       List deletedObjects, List insertedObjects, List updatedObjects) {
-    Transaction tx = getDatabaseMgr().currentTransaction(database);
+    TransactionExt tx = (TransactionExt) getDatabaseMgr().currentTransaction(
+        database);
     flushCache(tx, originals);
 
     for (Iterator i = deletedObjects.iterator(); i.hasNext();) {
@@ -39,7 +40,7 @@ class HandlerPolicyManagedOjb extends HandlerPolicyOjb {
       database.makePersistent(i.next());
     }
     for (Iterator i = updatedObjects.iterator(); i.hasNext();) {
-      ((TransactionExt) tx).markDirty(i.next());
+      tx.markDirty(i.next());
     }
     cache(tx, copies);
     // Insures that identifier and optimistic locking are synchronized

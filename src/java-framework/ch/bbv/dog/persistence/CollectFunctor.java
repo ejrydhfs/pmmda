@@ -7,9 +7,7 @@ package ch.bbv.dog.persistence;
 
 import java.util.*;
 
-import ch.bbv.dog.DataObject;
-import ch.bbv.dog.DataObjectUpdate;
-import ch.bbv.dog.DoFunctor;
+import ch.bbv.dog.*;
 
 /**
  * The collect functor collects all data objects in the graph.
@@ -107,9 +105,10 @@ public class CollectFunctor implements DoFunctor {
    */
   public List getMissingObjectsFrom(List dataObjects) {
     List deleted = new ArrayList();
+    Map ids = createIds(dataObjects);
     for (Iterator i = dataObjects.iterator(); i.hasNext();) {
       DataObject original = (DataObject) i.next();
-      if (!objects.contains(original)) {
+      if (!ids.containsKey(new DataObjectId(original))) {
         deleted.add(original);
       }
     }
@@ -127,10 +126,29 @@ public class CollectFunctor implements DoFunctor {
     }
   }
 
+  /**
+   * Creates a partial update object of a modified data object. The update is
+   * completed after the commit of the transaction.
+   * @param object object being updated.
+   */
   private void createUpdate(DataObject object) {
     DataObjectUpdate update = new DataObjectUpdate();
     update.setObject(object);
     update.setClassname(object.getClass().getName());
     updates.add(update);
+  }
+
+  /**
+   * Creates a map of the identifiers of the list of data objects.
+   * @param objects list of objects which identity should be computed.
+   * @return the map of all identities.
+   */
+  private Map createIds(List objects) {
+    Map ids = new HashMap();
+    for (Iterator i = objects.iterator(); i.hasNext();) {
+      DataObjectId id = new DataObjectId((HasId) i.next());
+      ids.put(id, id);
+    }
+    return ids;
   }
 }

@@ -2,9 +2,10 @@
    ------------------------------
 The binary and source distribution of all subprojects are published with a 
 version number in sourceforge.
+The following steps must be done before the release.
 - Update the build properties with the new release versions. Release candidates
   are marked with a RC postfix follow with a revision number.
-- Update the release notes.
+- Update the release notes of all components.
 - Generate the distributions (using the ant jobs defined in 
   build-sourceforge.xml).
 - Generate the zip file containing all librairies necessary for development.
@@ -15,7 +16,13 @@ version number in sourceforge.
 - Register them in the sourceforge project in the file list. If necessary remove
   the oldest ones to keep the number of versions reasonable.
 - Write the news entry on the site.
-- Send an email informing all developers of the update.
+- Send an email informing all developers of the update. The list is defined in
+  sourceforge "pmmda-developers@lists.sourceforge.net".
+
+The following steps must be done after the release
+- Update the build properties with the next version number and the postfix 
+  "-dev". Normally only the patch number should be incremented.
+- Update the version number in the pmmda application.
 
 1.1 pmmda distribution
     ------------------
@@ -36,3 +43,31 @@ The following steps are necessary to create and upload the site.
         marcelbaumann@shell.sourceforge.net:/home/groups/p/pm/pmmda/htdocs
    upon request give password of developer account.
  
+3. Mailing list management
+   -----------------------
+   
+You can configure your mailing list at the following web page:
+
+    https://lists.sourceforge.net/lists/admin/pmmda-developers
+
+The web page for users of your mailing list is: 
+
+    https://lists.sourceforge.net/lists/listinfo/pmmda-developers
+
+You can even customize these web pages from the list configuration page.  
+However, you do need to know HTML to be able to do this.
+
+There is also an email-based interface for users (not administrators) of your 
+list; you can get info about using it by sending a message with just the word 
+`help' as subject or in the body, to:
+
+    pmmda-developers-request@lists.sourceforge.net
+
+To unsubscribe a user: from the mailing list 'listinfo' web page, click on or 
+enter the user's email address as if you were that user. Where that user would 
+put in their password to unsubscribe, put in your admin password.  You can also 
+use your password to change member's options, including digestification, 
+delivery disabling, etc.
+
+Please address all questions to mailman-owner@lists.sourceforge.net.
+   

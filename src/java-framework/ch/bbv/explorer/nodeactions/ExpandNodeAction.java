@@ -7,6 +7,7 @@
 
 package ch.bbv.explorer.nodeactions;
 
+import javax.swing.JTree;
 import javax.swing.tree.TreePath;
 
 import ch.bbv.explorer.ExplorerNode;
@@ -29,6 +30,18 @@ public class ExpandNodeAction extends AbstractNodeAction {
   }
 
   public void execute(ExplorerNode node) {
-    node.getExplorer().getTree().expandPath(new TreePath(node.getPath()));
+    expand(node, node.getExplorer().getTree());
   }
+
+  private void expand(ExplorerNode node, JTree tree) {
+    int numberOfNodes = node.getChildCount();
+    for (int i = 0; i < numberOfNodes; i++) {
+      expand((ExplorerNode) node.getChildAt(i), tree);
+    }
+    TreePath treePath = new TreePath(node.getPath());
+    if (treePath.getParentPath() != null) {
+      tree.expandPath(treePath);
+    }
+  }
+
 }

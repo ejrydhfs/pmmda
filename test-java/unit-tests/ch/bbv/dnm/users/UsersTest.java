@@ -1,20 +1,20 @@
 /* copyright 2000-2004 Marcel Baumann
- * Licensed under the Apache License, Version 2.0 (the "Licence);
+ * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
  */
 package ch.bbv.dnm.users;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import junit.framework.TestCase;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ch.bbv.application.Locator;
+import ch.bbv.dnm.users.client.Application;
+import ch.bbv.dog.CacheHandler;
 import ch.bbv.dog.DataObject;
 import ch.bbv.dog.DataObjectManager;
 
@@ -24,33 +24,43 @@ import ch.bbv.dog.DataObjectManager;
  * @author MarcelBaumann
  * @version $Revision$
  */
-public abstract class UsersTest extends TestCase {
-  /** Offset for the string representation of the test identifier.
+public class UsersTest extends TestCase {
+  /**
+   * Offset for the string representation of the test identifier.
    */
-  private static final int OFFSET = 1000;
+  private static final int OFFSET = 100;
 
-  /** Logger of the class.
+  /**
+   * Logger of the class.
    */
   private static Log log = LogFactory.getLog(UsersTest.class);
+
   private static final String DATASOURCE = "ojb-dnm";
+
   private static final String UPDATE = "update field";
 
-  /** Test graph RCRURD operations. The database must be empty before starting
+  public void setUp() throws Exception {
+    if (Application.getApplication() == null) {
+      new Application(Application.USE_DIRECT, true);
+      log.info("Application singleton created");
+    }
+  }
+
+  /**
+   * Test graph RCRURD operations. The database must be empty before starting
    * the test. A graph of data objects are created and compared against the
    * stored version.
    */
   public void testCrudProvider() {
     DataObjectManager manager = getDataObjectManager();
     assertNotNull(manager);
-
-    Provider provider = createProviderGraph(1, 5, 5, 5);
     List providers = manager.getDataObjectHandler().retrieve(DATASOURCE,
         Provider.class, (String) null);
     assertEquals(providers.size(), 0);
+    Provider provider = createProviderGraph(1, 5, 5, 5);
     manager.getDataObjectHandler().store(DATASOURCE, Provider.class, provider);
-
-    Provider copy = (Provider) manager.getDataObjectHandler().retrieve(DATASOURCE,
-        Provider.class, provider.getId());
+    Provider copy = (Provider) manager.getDataObjectHandler().retrieve(
+        DATASOURCE, Provider.class, provider.getId());
     compareGraphs(provider, copy);
     provider.setName(UPDATE);
     manager.getDataObjectHandler().store(DATASOURCE, Provider.class, provider);
@@ -77,19 +87,21 @@ public abstract class UsersTest extends TestCase {
     }
     manager.getDataObjectHandler().remove(DATASOURCE, Provider.class, provider);
 
-    Provider copy = (Provider) manager.getDataObjectHandler().retrieve(DATASOURCE,
-        Provider.class, provider.getId());
+    Provider copy = (Provider) manager.getDataObjectHandler().retrieve(
+        DATASOURCE, Provider.class, provider.getId());
     assertNull(copy);
   }
 
-  public void testBigCRDProvider() {
+  public void testBigCrdProvider() {
     DataObjectManager manager = getDataObjectManager();
     assertNotNull(manager);
 
     Provider provider = createProviderGraph(1, 10, 10, 10);
     assertNull(provider.getId());
+    assertNull(provider.getTimestamp());
     manager.getDataObjectHandler().store(DATASOURCE, Provider.class, provider);
     assertNotNull(provider.getId());
+    assertNotNull(provider.getTimestamp());
 
     Integer id = provider.getId();
     manager.getDataObjectHandler().remove(DATASOURCE, Provider.class, id);
@@ -98,29 +110,80 @@ public abstract class UsersTest extends TestCase {
     assertNull(provider);
   }
 
-  public void testStressCRDProvider() {
+  public void testStressCrdProvider() {
     List providers = new ArrayList();
     DataObjectManager manager = getDataObjectManager();
     assertNotNull(manager);
     for (int i = 0; i < 10; i++) {
       Provider provider = createProviderGraph(1, 10, 10, 10);
       assertNull(provider.getId());
-      manager.getDataObjectHandler().store(DATASOURCE, Provider.class, provider);
+      manager.getDataObjectHandler()
+          .store(DATASOURCE, Provider.class, provider);
       assertNotNull(provider.getId());
       providers.add(provider);
     }
     for (Iterator i = providers.iterator(); i.hasNext();) {
-    	Provider provider = (Provider)i.next();
-			Integer id = provider.getId();
-			manager.getDataObjectHandler().remove(DATASOURCE, Provider.class, provider);
-			provider = (Provider) manager.getDataObjectHandler().retrieve(DATASOURCE,
-				Provider.class, id);
-			assertNull(provider);
+      Provider provider = (Provider) i.next();
+      Integer id = provider.getId();
+      manager.getDataObjectHandler().remove(DATASOURCE, Provider.class,
+          provider);
+      provider = (Provider) manager.getDataObjectHandler().retrieve(DATASOURCE,
+          Provider.class, id);
+      assertNull(provider);
     }
+    providers = manager.getDataObjectHandler().retrieve(DATASOURCE,
+        Provider.class, (String) null);
+    assertEquals(providers.size(), 0);
   }
 
+  /**
+   * Test the cache handling of data objects for a data object manager using a
+   * cache handler.
+   */
+  public void testCacheHandler() {
+    DataObjectManager manager = getDataObjectManager();
+    assertNotNull(manager);
+    CacheHandler handler = (CacheHandler) manager.getDataObjectHandler();
+    assertNotNull(handler);
+    assertTrue(handler.isCachedEnabled());
+    assertTrue(handler.isCopiedEnabled());
+    Provider provider = createProviderGraph(1, 2, 2, 2);
+    // do the caches contain the data objects.
+    manager.getDataObjectHandler().store(DATASOURCE, Provider.class, provider);
+    assertTrue(handler.isInCopiesCache(provider.getClass(), provider.getId()));
+    assertTrue(handler
+        .isInOriginalsCache(provider.getClass(), provider.getId()));
+    assertTrue(provider == handler.getCopy(provider.getClass(), provider.getId()));
+    // do the caches clear operations work.
+    handler.clearCopies();
+    assertFalse(handler.isInCopiesCache(provider.getClass(), provider.getId()));
+    handler.clearOriginals();
+    assertFalse(handler.isInOriginalsCache(provider.getClass(), provider
+        .getId()));
+    provider = (Provider) handler.retrieve(DATASOURCE, Provider.class, provider
+        .getId());
+    assertTrue(handler.isInCopiesCache(provider.getClass(), provider.getId()));
+    assertTrue(handler
+        .isInOriginalsCache(provider.getClass(), provider.getId()));
+    // do the reload operations work
+    Provider copy = (Provider) handler.reload(DATASOURCE, provider);
+    assertTrue((provider.getId().equals(copy.getId())) && (provider != copy));
+    handler.remove(DATASOURCE, Provider.class, provider);
+    copy = (Provider) manager.getDataObjectHandler().retrieve(DATASOURCE,
+        Provider.class, provider.getId());
+    assertNull(copy);
+  }
+
+  /**
+   * Creates a provider graph with domains, units and users.
+   * @param id identifier of the domain name.
+   * @param nrDomains
+   * @param nrUnits
+   * @param nrUsers
+   * @return
+   */
   private Provider createProviderGraph(int id, int nrDomains, int nrUnits,
-    int nrUsers) {
+      int nrUsers) {
     Provider provider = createProvider(createId(id, 0, 0, 0));
     for (int i = 1; i <= nrDomains; i++) {
       Domain domain = createDomainGraph(id, i, nrUnits, nrUsers);
@@ -149,7 +212,7 @@ public abstract class UsersTest extends TestCase {
     List domainsR = right.getDomains();
     assertEquals(domainsL.size(), domainsR.size());
     for (int i = 0; i < domainsL.size(); i++) {
-      compare((Domain)domainsL.get(i), (Domain)domainsR.get(i));
+      compare((Domain) domainsL.get(i), (Domain) domainsR.get(i));
 
       List unitsL = ((Domain) domainsL.get(i)).getUnits();
       List unitsR = ((Domain) domainsR.get(i)).getUnits();
@@ -161,7 +224,7 @@ public abstract class UsersTest extends TestCase {
         List usersR = ((Unit) unitsR.get(j)).getUsers();
         assertEquals(usersL.size(), usersR.size());
         for (int k = 0; k < usersL.size(); k++) {
-          compare((User)usersL.get(k), (User) usersR.get(k));
+          compare((User) usersL.get(k), (User) usersR.get(k));
         }
       }
     }
@@ -218,17 +281,18 @@ public abstract class UsersTest extends TestCase {
   }
 
   private long createId(long providerId, long domainId, long unitId, long userId) {
-    return (((((providerId * OFFSET) + domainId) * OFFSET) + unitId) * OFFSET) +
-    userId;
+    return (((((providerId * OFFSET) + domainId) * OFFSET) + unitId) * OFFSET)
+        + userId;
   }
 
   private String id2String(long id) {
     return Long.toString(id);
   }
 
-  /** Returns the data object manager of the application. The manager
-   * provides access the data object handler, lock manager and lightweight
-   * object handler.
+  /**
+   * Returns the data object manager of the application. The manager provides
+   * access the data object handler, lock manager and lightweight object
+   * handler.
    * @return the data object handler of the application.
    */
   private DataObjectManager getDataObjectManager() {

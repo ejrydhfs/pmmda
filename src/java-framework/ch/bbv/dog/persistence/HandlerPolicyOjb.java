@@ -5,21 +5,19 @@
  */
 package ch.bbv.dog.persistence;
 
-import ch.bbv.dog.DataObject;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.apache.ojb.broker.Identity;
 import org.apache.ojb.broker.PersistenceBroker;
 import org.apache.ojb.broker.cache.ObjectCache;
-
 import org.apache.ojb.odmg.HasBroker;
-
+import org.apache.ojb.odmg.TransactionExt;
 import org.odmg.*;
 
-import java.util.Iterator;
-import java.util.List;
+import ch.bbv.dog.DataObject;
 
 /**
  * The handler policy OJB implements the CRUD operations for the data object
@@ -94,7 +92,8 @@ class HandlerPolicyOjb {
    */
   void update(Database database, List originals, List copies,
       List deletedObjects, List insertedObjects, List updatedObjects) {
-    Transaction tx = databaseMgr.createTransaction(database);
+    TransactionExt tx = (TransactionExt) databaseMgr
+        .createTransaction(database);
     try {
       tx.begin();
       flushCache(tx, originals);
@@ -103,14 +102,14 @@ class HandlerPolicyOjb {
         database.deletePersistent(i.next());
       }
       for (Iterator i = insertedObjects.iterator(); i.hasNext();) {
-        DataObject object = (DataObject)i.next();
+        DataObject object = (DataObject) i.next();
         object.setModified(false);
         database.makePersistent(object);
       }
       for (Iterator i = updatedObjects.iterator(); i.hasNext();) {
-        DataObject object = (DataObject)i.next();
+        DataObject object = (DataObject) i.next();
         object.setModified(false);
-        tx.lock(object, Transaction.WRITE);
+        tx.markDirty(object);
       }
       cache(tx, copies);
       tx.commit();

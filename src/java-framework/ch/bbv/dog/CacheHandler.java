@@ -201,6 +201,8 @@ public class CacheHandler implements DataObjectHandler, CachesHandler {
 
   public void remove(String datasource, Class clazz, Integer id) {
     assert ((datasource != null) && (clazz != null) && (id != null));
+    removeFromCache(clazz, id, copiesCache);
+    removeFromCache(clazz, id, originalsCache);
     handler.remove(datasource, clazz, id);
   }
 

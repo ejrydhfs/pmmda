@@ -33,9 +33,9 @@ import ch.bbv.dog.*;
  */
 public class PersistenceHandler implements DataObjectHandler {
   /**
-   * Logger of the class.
+   * Logger of the instances of the class.
    */
-  protected static Log log = LogFactory.getLog(PersistenceHandler.class);
+  private static Log log = LogFactory.getLog(PersistenceHandler.class);
 
   /**
    * The database manager used in the handler to access the databases.
@@ -109,15 +109,15 @@ public class PersistenceHandler implements DataObjectHandler {
 
     Database database = getDatabase(datasource);
     CollectFunctor collect = new CollectFunctor();
-    DataObject originalRoot = retrieve(datasource, clazz, root.getId());
     AbstractVisitorFunctor visitor = getVisitor(clazz);
-    List originals;
+    List originals = Collections.EMPTY_LIST;
     visitor.setFunctor(collect);
-    if (originalRoot != null) {
-      DataObjectType.invokeVisitor(clazz, originalRoot, visitor);
-      originals = new ArrayList(collect.getObjects());
-    } else {
-      originals = Collections.EMPTY_LIST;
+    if (!root.isNew()) {
+      DataObject originalRoot = retrieve(datasource, clazz, root.getId());
+      if (originalRoot != null) {
+        DataObjectType.invokeVisitor(clazz, originalRoot, visitor);
+        originals = new ArrayList(collect.getObjects());
+      }
     }
     collect.reset();
     DataObjectType.invokeVisitor(clazz, root, visitor);
@@ -140,44 +140,15 @@ public class PersistenceHandler implements DataObjectHandler {
 
   public void remove(String datasource, Class clazz, DataObject root) {
     assert ((datasource != null) && (clazz != null) && (root != null));
-    if (log.isTraceEnabled()) {
-      StringBuffer text = new StringBuffer();
-      text.append("start remove operation in ").append(datasource).append(
-          " class:").append(clazz.getName()).append(" id: ").append(
-          root.getId());
-      log.trace(text.toString());
-    }
-
-    Database database = getDatabase(datasource);
-    CollectFunctor collect = new CollectFunctor();
     DataObject originalRoot = retrieve(datasource, clazz, root.getId());
-    AbstractVisitorFunctor visitor = getVisitor(clazz);
-    List originals;
-    visitor.setFunctor(collect);
-    if (originalRoot != null) {
-      DataObjectType.invokeVisitor(clazz, originalRoot, visitor);
-      originals = new ArrayList(collect.getObjects());
-    } else {
-      originals = Collections.EMPTY_LIST;
-    }
-    collect.reset();
-    DataObjectType.invokeVisitor(clazz, root, visitor);
-
-    List deleted = collect.getObjects();
-    policy.update(database, originals, deleted, deleted,
-        Collections.EMPTY_LIST, Collections.EMPTY_LIST);
-    if (log.isTraceEnabled()) {
-      StringBuffer text = new StringBuffer();
-      text.append("end remove operation ").append(deleted.size());
-      log.trace(text.toString());
-    }
+    remove(datasource, clazz, root, originalRoot);
   }
 
   public void remove(String datasource, Class clazz, Integer id) {
     assert ((datasource != null) && (clazz != null) && (id != null));
     DataObject object = retrieve(datasource, clazz, id);
     if (object != null) {
-      remove(datasource, clazz, object);
+      remove(datasource, clazz, null, object);
     }
   }
 
@@ -208,4 +179,29 @@ public class PersistenceHandler implements DataObjectHandler {
     }
     return database;
   }
+
+  public void remove(String datasource, Class clazz, DataObject root,
+      DataObject originalRoot) {
+    if (log.isTraceEnabled()) {
+      StringBuffer text = new StringBuffer();
+      text.append("start remove operation in ").append(datasource).append(
+          " class:").append(clazz.getName()).append(" id: ").append(
+          originalRoot.getId());
+      log.trace(text.toString());
+    }
+    Database database = getDatabase(datasource);
+    CollectFunctor collect = new CollectFunctor();
+    AbstractVisitorFunctor visitor = getVisitor(clazz);
+    visitor.setFunctor(collect);
+    DataObjectType.invokeVisitor(clazz, originalRoot, visitor);
+    List deleted = new ArrayList(collect.getObjects());
+    policy.update(database, deleted, deleted, deleted, Collections.EMPTY_LIST,
+        Collections.EMPTY_LIST);
+    if (log.isTraceEnabled()) {
+      StringBuffer text = new StringBuffer();
+      text.append("end remove operation ").append(deleted.size());
+      log.trace(text.toString());
+    }
+  }
+
 }

@@ -130,8 +130,8 @@ public class JdbcTypeCode extends ReferenceCodeImpl {
     codes.add(new JdbcTypeCode(BOOLEAN, 3, "Boolean", "BIT, BOOLEAN"));
     codes.add(new JdbcTypeCode(BYTE, 4, "Byte", "TINYINT"));
     codes.add(new JdbcTypeCode(SHORT, 5, "Short", "SMALLINT"));
-    codes.add(new JdbcTypeCode(INTEGER, 6, "Integer", "Integer"));
-    codes.add(new JdbcTypeCode(LONG, 7, "Long", "Long"));
+    codes.add(new JdbcTypeCode(INTEGER, 6, "Integer", "INTEGER"));
+    codes.add(new JdbcTypeCode(LONG, 7, "Long", "LONG"));
     codes.add(new JdbcTypeCode(FLOAT, 8, "Float", "REAL"));
     codes.add(new JdbcTypeCode(DOUBLE, 9, "Double", "FLOAT, DOUBLE"));
     codes.add(new JdbcTypeCode(DATE, 10, "Date", "DATE"));

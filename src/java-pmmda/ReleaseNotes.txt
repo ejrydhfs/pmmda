@@ -18,8 +18,23 @@ TODO
   classname, prefix, loaded, active, dependants
 - Have a self contained jar file running with java -jar pmMDA
 
+Version 0.2.9-RC2 (30 September 2004)
+-------------------------------------
+The following new features were added.
+- Macros for Velocity template are enabled. The templates were refactored to 
+  use macros. The code is now more error resilient. Various inconsistencies
+  were corrected.
+- Added a minimal memory usage meter available to the developers of the 
+  application or cartridges.
+- Build files based on Ant were refactored to support new version of forrest
+  and simplify the structure. All tasks can now be called from build.xml. The
+  minimal version of Ant is 1.6.
+
+The following errors were corrected.
+- Error in the generation of the DDL for MySQL for 1-1 relationships.
+ 
 Version 0.2.9-RC1 (15 September 2004)
-----------------------------
+-------------------------------------
 The following new features were added.
 - The CVS repository was moved to the sourceforge pmmda account.
 - The properties file of pmmda was renamed pmmda.properties. Please modify

@@ -326,6 +326,8 @@ public class UiNodeTypeImpl implements UiNodeType {
    */
   private JMenu createRootNodeActions() {
     JMenu actions = new JMenu("Actions...");
+    actions.add(new ExpandNodeAction(this, "Expand All"));
+    actions.add(new CollapseNodeAction(this, "Collapse All"));
     actions.add(new SaveNodeAction(this, "Save"));
     actions.add(new RevertNodeAction(this, "Revert"));
     actions.add(new ReloadNodeAction(this, "Reload"));

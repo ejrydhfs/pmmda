@@ -32,7 +32,7 @@ public class NotNullRule implements ValidationRule {
    * @param immediate flag indicating if the rule is immediate or not.
    * @return the requested validation rule.
    */
-  public NotNullRule create(boolean immediate) {
+  public static NotNullRule create(boolean immediate) {
     NotNullRule rule;
     if (immediate) {
       if (immediateRule == null) {

@@ -37,8 +37,8 @@ public final class ReflectUtilities {
   }
 
   /**
-   * Executes the method on the bean with the help of reflection. First it attempts directly declared methods
-   * then it attempts inherited metods.
+   * Executes the method on the bean with the help of reflection. First it
+   * attempts directly declared methods then it attempts inherited metods.
    * @param bean bean on which the method should be called.
    * @param name name of the method.
    * @param types types of the method signature.
@@ -67,8 +67,8 @@ public final class ReflectUtilities {
     return returns;
   }
 
-  private static Object executeInherited(Object bean, String name, Class[] types,
-      Object[] params){
+  private static Object executeInherited(Object bean, String name,
+      Class[] types, Object[] params) {
     assert ((bean != null) && (name != null));
     Object returns = null;
     try {
@@ -87,7 +87,7 @@ public final class ReflectUtilities {
     }
     return returns;
   }
-  
+
   /**
    * Creates a new instance of the class using the default constructor.
    * @param clazz class of the instance to create.
@@ -215,5 +215,15 @@ public final class ReflectUtilities {
     } catch (IllegalAccessException iae) {
       iae.printStackTrace();
     }
+  }
+
+  /** 
+   * Returns the path to the location from where the class was loaded. The 
+   * result is only valid for classes not loaded from the system class loader.
+   * @param clazz class which load location should be infered.
+   * @return the load location path of the class. 
+   */
+  public String getLoadpath(Class clazz) {
+    return clazz.getProtectionDomain().getCodeSource().getLocation().getPath();
   }
 }

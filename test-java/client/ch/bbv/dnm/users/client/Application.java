@@ -58,13 +58,27 @@ public class Application extends Locator {
   private static String[] args;
 
   /**
-   * Constructor of the class. The data object handler instiates a cache
-   * handler with cache enabled and without copy cache.
+   * Constructor of the class. The data object handler instiates a cache handler
+   * with cache enabled and without copy cache.
    * @param mode mode of the application. The legal values are defined as
    *        constants (USE_DIRECT, USE_CORBA, USE_J2EE).
    * @throws ComponentException occured when building the application.
    */
   public Application(String mode) throws ComponentException {
+    this(mode, false);
+  }
+
+  /**
+   * Constructor of the class. The data object handler instiates a cache handler
+   * with cache enabled and without copy cache.
+   * @param mode mode of the application. The legal values are defined as
+   *        constants (USE_DIRECT, USE_CORBA, USE_J2EE).
+   * @param commandLineMode flag indicating if the application is used in
+   *        command line mode or in user interface mode.
+   * @throws ComponentException occured when building the application.
+   */
+  public Application(String mode, boolean commandLineMode)
+      throws ComponentException {
     DataObjectManager manager = null;
     register(this);
     if (mode.equalsIgnoreCase(USE_DIRECT)) {
@@ -88,7 +102,9 @@ public class Application extends Locator {
     initialize();
     startup();
     manager.getDataObjectHandler().openDatasource(SCHEMA, false);
-    new UserExplorer("User Explorer", SCHEMA);
+    if (!commandLineMode) {
+      new UserExplorer("User Explorer", SCHEMA);
+    }
   }
 
   /**

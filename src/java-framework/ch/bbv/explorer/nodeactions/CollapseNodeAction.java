@@ -6,6 +6,7 @@
 
 package ch.bbv.explorer.nodeactions;
 
+import javax.swing.JTree;
 import javax.swing.tree.TreePath;
 
 import ch.bbv.explorer.ExplorerNode;
@@ -28,7 +29,17 @@ public class CollapseNodeAction extends AbstractNodeAction {
   }
 
   public void execute(ExplorerNode node) {
-    node.getExplorer().getTree().collapsePath(new TreePath(node.getPath()));
+    collapse(node, node.getExplorer().getTree());
   }
 
+  private void collapse(ExplorerNode node, JTree tree) {
+    int numberOfNodes = node.getChildCount();
+    for (int i = 0; i < numberOfNodes; i++) {
+      collapse((ExplorerNode) node.getChildAt(i), tree);
+    }
+    TreePath treePath = new TreePath(node.getPath());
+    if (treePath.getParentPath() != null) {
+      tree.collapsePath(treePath);
+    }
+  }
 }
