@@ -1,7 +1,7 @@
-/* copyright 2000-2004 Marcel Baumann 
- * Licensed under the Apache License, Version 2.0 (the "Licence); 
- * you may not use this file except in compliance with the License. 
- * $Id$
+/*
+ * copyright 2000-2004 Marcel Baumann Licensed under the Apache License, Version
+ * 2.0 (the "Licence); you may not use this file except in compliance with the
+ * License. $Id$
  */
 package ch.bbv.mda.ui.actions;
 
@@ -41,6 +41,8 @@ public class OpenAction extends ExplorerOpenAction {
         FileTypes.POSEIDON_EXT, FileTypes.POSEIDON_TEXT));
     fileChooser.addChoosableFileFilter(new SimpleFileFilter(FileTypes.XML_EXT,
         FileTypes.XML_TEXT));
+    fileChooser.addChoosableFileFilter(new SimpleFileFilter(FileTypes.XMI_EXT,
+        FileTypes.XMI_TEXT));
   }
 
   public void execute() {
