@@ -15,9 +15,8 @@ import javax.swing.JPopupMenu;
 import org.apache.commons.beanutils.PropertyUtils;
 
 import ch.bbv.dog.DataObjectType;
-import ch.bbv.explorer.actions.*;
+import ch.bbv.explorer.actions.RemoveNodeAction;
 import ch.bbv.explorer.nodeactions.*;
-import ch.bbv.utilities.ReflectUtilities;
 
 /**
  * The node type implementation provides a default implementation for the node
@@ -172,27 +171,6 @@ public class UiNodeTypeImpl implements UiNodeType {
     }
 
     return name;
-  }
-
-  public Object getProperty(Object object, UiField field) {
-    assert ((object != null) && (field != null));
-
-    Object value = null;
-    try {
-      value = PropertyUtils.getProperty(object, field.getProperty());
-    } catch (InvocationTargetException ite) {
-      ite.printStackTrace();
-    } catch (NoSuchMethodException nsmi) {
-      nsmi.printStackTrace();
-    } catch (IllegalAccessException iae) {
-      iae.printStackTrace();
-    }
-
-    return value;
-  }
-
-  public void setProperty(Object object, UiField field, Object value) {
-    ReflectUtilities.setProperty(object, field.getProperty(), value);
   }
 
   public Object getDataObjectFor(Object lwObject) {

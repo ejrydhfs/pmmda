@@ -1,5 +1,5 @@
 /* copyright 2000-2004 Marcel Baumann 
- * Licensed under the Apache License, Version 2.0 (the "Licence); 
+ * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$
  */
@@ -18,11 +18,11 @@ import ch.bbv.explorer.components.TableCell;
 import ch.bbv.explorer.components.TablePanel;
 
 /**
- * A frame that displays information about the application.
+ * A dialog that displays information about the application.
  * @author Marcel Baumann
  * @version $Revision$
  */
-public class AboutFrame extends JFrame {
+public class AboutFrame extends JDialog {
   /**
    * The name of the columns of the contributors table list.
    */
@@ -49,11 +49,13 @@ public class AboutFrame extends JFrame {
 
   /**
    * Constructs an about frame.
+   * @param owner the owner of the dialog.
    * @param title the frame title.
    * @param projectInfo information about the project.
    */
-  public AboutFrame(String title, ProjectInfo projectInfo) {
-    super(title);
+  public AboutFrame(JFrame owner, String title, ProjectInfo projectInfo) {
+    super(owner, title);
+
     this.projectInfo = projectInfo;
 
     JPanel content = new JPanel(new BorderLayout());

@@ -1,16 +1,17 @@
 /* copyright 2000-2004 Marcel Baumann
- * Licensed under the Apache License, Version 2.0 (the "Licence);
+ * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
  */
 package ch.bbv.explorer;
 
 import java.awt.Component;
-import java.awt.Dimension;
 
 import javax.swing.ImageIcon;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
+
+import ch.bbv.dog.DataObject;
 
 /**
  * The tree cell renderer implements how the icons of the explorer nodes are
@@ -19,6 +20,33 @@ import javax.swing.tree.DefaultTreeCellRenderer;
  * @version $Revision$
  */
 public class ExplorerTreeCellRenderer extends DefaultTreeCellRenderer {
+  /**
+   * Formats for the tree label: The first part is not-loaded, loaded, modified
+   * for editable nodes, the second part is for read-only nodes.
+   */
+  private static final String[][] formats = { { "<html><i>", "</i></html>" },
+      { "", "" }, { "<html><b>", "</b></html>" },
+      { "<html><i><font color=grey>", "</i></font></html>" },
+      { "<html><font color=grey>", "</font></html>" },
+      { "<html><b><font color=grey>", "</b></font></html>" } };
+
+  /**
+   * Offset in the formats structure to reach the read-only definitions.
+   */
+  private static final int READ_ONLY_OFFSET = 3;
+
+  /**
+   * buffer used to minimize the cost of string operations and of object
+   * creation.
+   */
+  private StringBuffer buffer;
+
+  /**
+   * Default constructor of the class.
+   */
+  public ExplorerTreeCellRenderer() {
+    buffer = new StringBuffer();
+  }
 
   /**
    * Returns the tree cell renderer component for this renderer.
@@ -43,9 +71,30 @@ public class ExplorerTreeCellRenderer extends DefaultTreeCellRenderer {
     if (icon != null) {
       setIcon(icon);
     }
-    Dimension dim = this.getMinimumSize();
-    setPreferredSize(dim);
-    updateUI();
+    setText(explorerNode);
     return this;
+  }
+
+  /**
+   * Sets the text of the label based on the status of the node.
+   * @param node node which text label should be computed.
+   */
+  private void setText(ExplorerNode node) {
+    DataObject object = (DataObject) node.getDataObject();
+    int index;
+    if (object == null) {
+      index = 0;
+    } else if (object.isModified()) {
+      index = 2;
+    } else {
+      index = 1;
+    }
+    if (!node.getNodeType().isEditable(node.getLightweightObject())) {
+      index += READ_ONLY_OFFSET;
+    }
+    buffer.setLength(0);
+    buffer.append(formats[index][0]).append(node.getName()).append(
+        formats[index][1]);
+    setText(buffer.toString());
   }
 }

@@ -9,7 +9,12 @@ package ch.bbv.explorer.nodeactions;
 import ch.bbv.explorer.ExplorerNode;
 import ch.bbv.explorer.UiNodeType;
 
-
+/**
+ * The node action displays the properties of the data object defined in the
+ * node. The view is the current selected one.
+ * @author MarcelBaumann
+ * @version $Revision$
+ */
 public class DisplayNodeAction extends AbstractNodeAction {
   /**
    * Constructor of the class.
@@ -23,9 +28,5 @@ public class DisplayNodeAction extends AbstractNodeAction {
 
   public void execute(ExplorerNode node) {
     displayView(node, false, false);
-  }
-
-  public void postExecute(ExplorerNode node, boolean shouldUndo) {
-
   }
 }

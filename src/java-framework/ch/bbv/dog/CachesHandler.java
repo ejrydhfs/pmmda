@@ -7,6 +7,14 @@
 package ch.bbv.dog;
 
 /**
+ * The caches handler interface defines the contract for caches. Two kinds of
+ * caches are foreseen. The first cache helds the data object graphs retrieved
+ * from the underlying layer to minimize costs when these graphs are requested
+ * again. This cache is efficient when the network latency or bandwith
+ * restrictions limit the speed to the underlying layer. The second cache
+ * simplifies the implementation of MVC paradigms in applications. All
+ * interested parties can retrieve the same copy of data object graph from the
+ * cache handler.
  * @author MarcelBaumann
  * @version $Revision$
  */

@@ -10,7 +10,11 @@ import ch.bbv.explorer.ExplorerNode;
 import ch.bbv.explorer.UiNodeType;
 import ch.bbv.explorer.UiRelation;
 
-
+/**
+ * The insert node action inserts a brother node before the selected node.
+ * @author MarcelBaumann
+ * @version $Revision$
+ */
 public class InsertNodeAction extends AbstractNodeAction {
   /**
    * Constructor of the class.

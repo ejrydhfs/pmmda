@@ -1,5 +1,5 @@
 /* copyright 2000-2004 Marcel Baumann
- * Licensed under the Apache License, Version 2.0 (the "Licence);
+ * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$ 
  */
@@ -15,7 +15,15 @@ import ch.bbv.explorer.about.AboutFrame;
  * @version $Revision$
  */
 public class ExplorerAboutAction extends ExplorerGlobalActionImpl {
+  /**
+   * The project description displayed in the about frame.
+   */
   private ProjectInfo projectInfo;
+
+  /**
+   * Buffer containing the about frame once lazy created.
+   */
+  private AboutFrame aboutFrame;
 
   /**
    * Default constructor of the class.
@@ -43,7 +51,9 @@ public class ExplorerAboutAction extends ExplorerGlobalActionImpl {
   }
 
   public void execute() {
-    AboutFrame aboutFrame = new AboutFrame("About", projectInfo);
+    if (aboutFrame == null) {
+      aboutFrame = new AboutFrame(getExplorer().getFrame(), "About", projectInfo);
+    }
     aboutFrame.setVisible(true);
   }
 }

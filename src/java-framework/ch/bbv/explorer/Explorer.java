@@ -194,7 +194,7 @@ public class Explorer {
 
   /**
    * Returns the tree of the explorer.
-   * @return the graphical tree component of the explorer. 
+   * @return the graphical tree component of the explorer.
    */
   public JTree getTree() {
     return tree;
@@ -232,7 +232,7 @@ public class Explorer {
   public void display() {
     frame.setLocation(100, 100);
     frame.pack();
-  	frame.setSize(750, 500);
+    frame.setSize(750, 500);
     splitPane.setDividerLocation(0.4);
     frame.setVisible(true);
   }
@@ -294,6 +294,11 @@ public class Explorer {
     }
   }
 
+  /**
+   * Displays the data object member of the node with the provided view type.
+   * @param type type of the node view to display.
+   * @param node node which data object should be displayed.
+   */
   public void displayView(UiNodeViewType type, ExplorerNode node) {
     nodeView = factory.getNodeViewFor(node, type);
     rightPane.setViewportView((Component) nodeView);
@@ -309,6 +314,10 @@ public class Explorer {
     return true;
   }
 
+  /**
+   * Displays the data object member of the node with the current view.
+   * @param node node which data object should be displayed.
+   */
   protected void displayCurrentView(ExplorerNode node) {
     if (node != null) {
       UiNodeViewType type = node.getNodeType().getCurrentView();
@@ -318,6 +327,11 @@ public class Explorer {
     }
   }
 
+  /**
+   * Creates the navigator tree representing the lightweight data object graph.
+   * @param root root of the data object graph.
+   * @return the root node of the navigator tree.
+   */
   protected ExplorerNode createTree(LightweightObject root) {
     DataObjectType type = manager.getType(root);
     AbstractVisitorFunctor visitor = type.createLwVisitorInstance();
@@ -341,7 +355,8 @@ public class Explorer {
      * @param event tree selection event sent by the JTree component.
      */
     public void valueChanged(TreeSelectionEvent event) {
-      ExplorerNode node = (ExplorerNode) getTree().getLastSelectedPathComponent();
+      ExplorerNode node = (ExplorerNode) getTree()
+          .getLastSelectedPathComponent();
       displayCurrentView(node);
     }
   }
@@ -384,7 +399,7 @@ public class Explorer {
       if (e.isPopupTrigger()) {
         TreePath path = getTree().getPathForLocation(e.getX(), e.getY());
         if (path != null) {
-  	      getTree().setSelectionPath(path);
+          getTree().setSelectionPath(path);
           ExplorerNode node = (ExplorerNode) path.getLastPathComponent();
           JPopupMenu menu = node.getNodeType().getPopupMenu(node);
           if (menu != null) {
