@@ -1,6 +1,6 @@
-/*
- * copyright 2000-2004 Marcel Baumann Licensed under the Apache License, Version
- * 2.0 (the "Licence); you may not use this file except in compliance with the
+/* copyright 2000-2004 Marcel Baumann
+ * Licensed under the Apache License, Version 2.0 (the "Licence");
+ * you may not use this file except in compliance with the License.
  * License. $Id: UiNodeTypeFactory.java,v 1.1 2004/08/10 17:36:00 marcelbaumann
  * Exp $
  */
@@ -43,6 +43,8 @@ public class UiNodeTypeFactory {
 
   private IconFactory iconFactory;
 
+  private PopupFactory popupFactory;
+
   /**
    * Default constructor of the class.
    */
@@ -52,6 +54,7 @@ public class UiNodeTypeFactory {
     nodePropertiesViews = new HashMap();
     nodeViews = new HashMap();
     iconFactory = new IconFactoryImpl();
+    popupFactory = new PopupFactoryImpl();
   }
 
   /**
@@ -62,6 +65,20 @@ public class UiNodeTypeFactory {
     return iconFactory;
   }
 
+  /**
+   * Returns the popup menu factory of the node type factory.
+   * @return the popup menu factory.
+   */
+  public PopupFactory getPopupFactory() {
+    return popupFactory;
+  }
+
+  /**
+   * Registers the node type in the factory. The node is configured to know its
+   * factory.
+   * @param type user interface type to register.
+   * @pre type != null
+   */
   public void register(UiNodeType type) {
     assert (type != null);
     ((UiNodeTypeImpl) type).setFactory(this);
@@ -69,11 +86,24 @@ public class UiNodeTypeFactory {
     nodeTypesForLw.put(type.getDataObjectType().getLwClass(), type);
   }
 
+  /**
+   * Returns the node type associated with the given lightweight data object
+   * class.
+   * @param clazz class of the lightweight data object.
+   * @return the user interface node type if found otherwise null.
+   * @pre clazz != null
+   */
   public UiNodeType getNodeTypeForLw(Class clazz) {
     assert (clazz != null);
     return (UiNodeType) nodeTypesForLw.get(clazz);
   }
 
+  /**
+   * Returns the node type associated with the given data object class.
+   * @param clazz class of the data object.
+   * @return the user interface node type if found otherwise null.
+   * @pre clazz != null
+   */
   public UiNodeType getNodeTypeForBo(Class clazz) {
     assert (clazz != null);
     return (UiNodeType) nodeTypesForBo.get(clazz);

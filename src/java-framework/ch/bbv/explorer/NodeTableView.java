@@ -23,13 +23,13 @@ public class NodeTableView extends TablePanel implements NodeView {
    * Node displayed by this view
    */
   private ExplorerNode node;
-  
+
   /**
    * Constructor of the class.
    * @param fields fields of the view.
    */
   public NodeTableView(List fields) {
-    super(Collections.EMPTY_LIST, new NodeTableCell(fields)); 
+    super(Collections.EMPTY_LIST, new NodeTableCell(fields));
   }
 
   /**

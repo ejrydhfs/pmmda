@@ -1,5 +1,5 @@
 /* copyright 2000-2004 Marcel Baumann
- * Licensed under the Apache License, Version 2.0 (the "Licence);
+ * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
  */
@@ -18,6 +18,7 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import ch.bbv.dog.*;
+import ch.bbv.utilities.ReflectUtilities;
 
 /**
  * The explorer view is responsible to visualize hierarchical data in an
@@ -34,12 +35,12 @@ import ch.bbv.dog.*;
  * the ancestors are called.</li>
  * <li>The initialize method is called starting from the leaf descendent. Each
  * subclass, which overwrites the method must call the parent method.</li>
- * <li>The display method shows the explorer on the scree.</li>
+ * <li>The display method shows the explorer on the screen.</li>
  * </ol>
  * @author Marcel Baumann
  * @version $Revision$
  */
-public class Explorer {
+public abstract class Explorer {
   /**
    * The selected node which popup menu could be display. Because a popup menu
    * is modal at most one such node exist for one application. The number of
@@ -70,12 +71,20 @@ public class Explorer {
   private JScrollPane leftPane;
 
   /**
-   * Swing component of the explorer view.
+   * Status bar of the explorer view.
+   */
+  private StatusBar statusBar;
+
+  /**
+   * Swing component of the explorer view used to display the tree model.
    */
   private JTree tree;
 
   private NodeView nodeView;
 
+  /**
+   * The tree model displayed in the explorer.
+   */
   private DefaultTreeModel treeModel;
 
   /**
@@ -94,6 +103,77 @@ public class Explorer {
   private ExplorerMenuBar menuBar;
 
   /**
+   * The task class implements the Swing pattern where graphical user interface
+   * should be executed in the AWT event processing thread.
+   * @author MarcelBaumann
+   * @version $Revision$
+   */
+  private static class GuiTask implements Runnable {
+    private Explorer explorer;
+
+    /**
+     * Constructor of the class. The constructor of the class with the given
+     * parameters is called.
+     * @param clazz class of the explorer to instantiate.
+     * @param types signature of the constructur to call.
+     * @param parameters parameters of the constructor to call.
+     */
+    public GuiTask(Class clazz, Class[] types, Object[] parameters) {
+      if (parameters == null) {
+        explorer = (Explorer) ReflectUtilities.newInstance(clazz);
+      } else {
+        explorer = (Explorer) ReflectUtilities.newInstance(clazz, types,
+            parameters);
+      }
+    }
+
+    public void run() {
+      explorer.initialize();
+      explorer.display();
+    }
+
+    /**
+     * Returns the instantiated explorer.
+     * @return the newly created explorer.
+     */
+    public Explorer getExplorer() {
+      return explorer;
+    }
+  }
+
+  /**
+   * Instantiates a new explorer and runs it in the context of the AWT event
+   * processing thread as requested in Swing best practices.
+   * @param clazz class of the explorer to create.
+   * @param types signature of the constructur to call.
+   * @param parameters parameters of the constructor to call.
+   * @return the newly created explorer.
+   */
+  public static Explorer createAndShow(Class clazz, Class[] types,
+      Object[] parameters) {
+    GuiTask task = new GuiTask(clazz, types, parameters);
+    SwingUtilities.invokeLater(task);
+    return task.getExplorer();
+  }
+
+  /**
+   * Resets the current selected node used to generate the popup menu. To reset
+   * the value, the node parameter can be set to null.
+   * @param node new selected node of the explorer.
+   */
+  public static void setSelectedNodeForPopup(ExplorerNode node) {
+    selectedNodeForPopup = node;
+  }
+
+  /**
+   * Returns the current selected node uded to generate the popup menu.
+   * @return selected node if existing otherwise null.
+   */
+  public static ExplorerNode getSelectedNodeForPopup() {
+    return selectedNodeForPopup;
+  }
+
+  /**
    * Constructor of the class.
    * @param factory node type factory of the explorer.
    * @param manager data object manager of the explorer.
@@ -110,6 +190,8 @@ public class Explorer {
     splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPane, rightPane);
     splitPane.setDividerSize(5);
     frame.getContentPane().add(BorderLayout.CENTER, splitPane);
+    statusBar = new StatusBar();
+    frame.getContentPane().add(BorderLayout.SOUTH, statusBar);
     frame.addWindowListener(new ExplorerWindowListener(this));
   }
 
@@ -139,23 +221,6 @@ public class Explorer {
   }
 
   /**
-   * Resets the current selected node used to generate the popup menu. To reset
-   * the value, the node parameter can be set to null.
-   * @param node new selected node of the explorer.
-   */
-  public static void setSelectedNodeForPopup(ExplorerNode node) {
-    selectedNodeForPopup = node;
-  }
-
-  /**
-   * Returns the current selected node uded to generate the popup menu.
-   * @return selected node if existing otherwise null.
-   */
-  public static ExplorerNode getSelectedNodeForPopup() {
-    return selectedNodeForPopup;
-  }
-
-  /**
    * Sets the title of the explorer frame.
    * @param title new title of the explorer.
    * @pre title != null
@@ -172,6 +237,14 @@ public class Explorer {
    */
   public ExplorerMenuBar getMenuBar() {
     return menuBar;
+  }
+
+  /**
+   * Returns the status bar of the explorer.
+   * @return the status bar of the explorer.
+   */
+  public StatusBar getStatusBar() {
+    return statusBar;
   }
 
   /**
@@ -229,7 +302,7 @@ public class Explorer {
   /**
    * Displays the explorer window.
    */
-  public void display() {
+  void display() {
     frame.setLocation(100, 100);
     frame.pack();
     frame.setSize(750, 500);
@@ -313,6 +386,12 @@ public class Explorer {
   public boolean shouldClose() {
     return true;
   }
+
+  /**
+   * The initialize method is called after the construction and before the
+   * explorer is displayed on the screen.
+   */
+  protected abstract void initialize();
 
   /**
    * Displays the data object member of the node with the current view.
@@ -401,7 +480,8 @@ public class Explorer {
         if (path != null) {
           getTree().setSelectionPath(path);
           ExplorerNode node = (ExplorerNode) path.getLastPathComponent();
-          JPopupMenu menu = node.getNodeType().getPopupMenu(node);
+          JPopupMenu menu = node.getNodeType().getFactory().getPopupFactory()
+              .getMenu(node);
           if (menu != null) {
             setSelectedNodeForPopup(node);
             menu.show(getTree(), e.getX(), e.getY());

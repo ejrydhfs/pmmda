@@ -1,5 +1,5 @@
 /* copyright 2000-2004 Marcel Baumann
- * Licensed under the Apache License, Version 2.0 (the "Licence);
+ * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$ 
  */
@@ -42,19 +42,22 @@ public class IconFactoryImpl implements IconFactory {
    */
   private Map icons;
 
-  private Map iconSelectors;
+  /** 
+   * List of all registered selectors.
+   */
+  private Map selectors;
 
   /**
    * Default constructor of the class.
    */
   public IconFactoryImpl() {
     icons = new HashMap();
-    iconSelectors = new HashMap();
+    selectors = new HashMap();
   }
 
   public void registerIconSelector(UiNodeType nodeType,
-      IconSelector iconSelector) {
-    iconSelectors.put(nodeType, iconSelector);
+      IconSelector selector) {
+    selectors.put(nodeType, selector);
   }
 
   public void flushIconsCache() {
@@ -63,7 +66,7 @@ public class IconFactoryImpl implements IconFactory {
 
   public ImageIcon getSmallIconFor(ExplorerNode node, boolean isExpanded) {
     ImageIcon icon = null;
-    IconSelector selector = (IconSelector) iconSelectors
+    IconSelector selector = (IconSelector) selectors
         .get(node.getNodeType());
     if (selector != null) {
       icon = selector.select(node, isExpanded);

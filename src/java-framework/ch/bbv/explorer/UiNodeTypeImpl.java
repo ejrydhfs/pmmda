@@ -8,15 +8,9 @@ package ch.bbv.explorer;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-import javax.swing.Icon;
-import javax.swing.JMenu;
-import javax.swing.JPopupMenu;
-
 import org.apache.commons.beanutils.PropertyUtils;
 
 import ch.bbv.dog.DataObjectType;
-import ch.bbv.explorer.actions.RemoveNodeAction;
-import ch.bbv.explorer.nodeactions.*;
 
 /**
  * The node type implementation provides a default implementation for the node
@@ -61,13 +55,16 @@ public class UiNodeTypeImpl implements UiNodeType {
    */
   private boolean structureEditable;
 
-  private JPopupMenu popupMenu;
-
   private List uiNodeViews;
 
   private UiNodeViewType currentView;
 
+  /**
+   * The user interface node type factory ownint the node type.
+   */
   private UiNodeTypeFactory factory;
+
+  private Map parameters;
 
   /**
    * Constructor of the class.
@@ -85,6 +82,7 @@ public class UiNodeTypeImpl implements UiNodeType {
     relations = new HashMap();
     this.nameProperty = nameProperty;
     this.nodePropertiesViewClass = nodePropertiesViewClass;
+    parameters = new HashMap();
     uiNodeViews = new ArrayList();
     editable = true;
     structureEditable = true;
@@ -93,6 +91,7 @@ public class UiNodeTypeImpl implements UiNodeType {
   /**
    * Sets the editable flag.
    * @param editable new value of the flag.
+   * @see #isEditable(Object)
    */
   public void setEditable(boolean editable) {
     this.editable = editable;
@@ -102,11 +101,17 @@ public class UiNodeTypeImpl implements UiNodeType {
    * Returns true if the lightweight object is editable.
    * @param lwObject lightweight object to check.
    * @return true if the object is editable otherwise false.
+   * @see #setEditable(boolean)
    */
   public boolean isEditable(Object lwObject) {
     return editable;
   }
 
+  /**
+   * Sets the structure editable flag.
+   * @param structureEditable new value of the flag.
+   * @see #isStructureEditable(Object)
+   */
   public void setStructureEditable(boolean structureEditable) {
     this.structureEditable = structureEditable;
   }
@@ -115,6 +120,7 @@ public class UiNodeTypeImpl implements UiNodeType {
    * Returns true if the lightweight object structure is editable.
    * @param lwObject lightweight object to check.
    * @return true if the object structure is editable otherwise false.
+   * @see #setStructureEditable(boolean)
    */
   public boolean isStructureEditable(Object lwObject) {
     return structureEditable;
@@ -128,6 +134,10 @@ public class UiNodeTypeImpl implements UiNodeType {
     uiNodeViews.add(uiNodeView);
   }
 
+  public List getViews() {
+    return Collections.unmodifiableList(uiNodeViews);
+  }
+
   public UiNodeViewType getCurrentView() {
     if ((currentView == null) && (uiNodeViews.size() > 0)) {
       currentView = (UiNodeViewType) uiNodeViews.get(0);
@@ -136,6 +146,7 @@ public class UiNodeTypeImpl implements UiNodeType {
   }
 
   public void setCurrentView(String name) {
+    assert (name != null);
     currentView = getView(name);
   }
 
@@ -152,10 +163,6 @@ public class UiNodeTypeImpl implements UiNodeType {
       }
     }
     return view;
-  }
-
-  public Icon getIconFor(Object lwObject) {
-    return null;
   }
 
   public String getNameFor(Object lwObject) {
@@ -175,51 +182,6 @@ public class UiNodeTypeImpl implements UiNodeType {
 
   public Object getDataObjectFor(Object lwObject) {
     return null;
-  }
-
-  public JPopupMenu getPopupMenu(ExplorerNode node) {
-    if (popupMenu == null) {
-      UiNodeType nodeType = node.getNodeType();
-      popupMenu = new JPopupMenu();
-      popupMenu.add(new DisplayNodeAction(this, "View"));
-      if (nodeType.isEditable(null)) {
-        popupMenu.add(new EditNodeAction(this, "Edit"));
-      }
-      if (uiNodeViews.size() > 0) {
-        JMenu viewMenu = new JMenu("Views...");
-        for (Iterator i = uiNodeViews.iterator(); i.hasNext();) {
-          UiNodeViewType view = (UiNodeViewType) i.next();
-          viewMenu.add(new DisplayNodeAction(this, view.getName()));
-        }
-        popupMenu.add(viewMenu);
-      }
-
-      Collection relations = getRelations();
-      if (relations.size() > 0) {
-        popupMenu.addSeparator();
-
-        UiNodeTypeFactory factory = nodeType.getFactory();
-        JMenu createMenu = new JMenu("Add...");
-        for (Iterator i = relations.iterator(); i.hasNext();) {
-          UiRelation relation = (UiRelation) i.next();
-          UiNodeType childType = factory
-              .getNodeTypeForLw(relation.getLwClass());
-          if (childType != null) {
-            createMenu
-                .add(new AddNodeAction(childType, relation.getProperty()));
-          }
-        }
-        popupMenu.add(createMenu);
-      }
-      if (nodeType.getDataObjectType().isRoot()) {
-        popupMenu.add(createRootNodeActions());
-      }
-      if (nodeType.isStructureEditable(null)) {
-        popupMenu.add(new RemoveNodeAction(this, "Remove"));
-      }
-    }
-
-    return popupMenu;
   }
 
   public Class getPropertiesView() {
@@ -316,21 +278,15 @@ public class UiNodeTypeImpl implements UiNodeType {
     return property;
   }
 
-  void setFactory(UiNodeTypeFactory factory) {
-    this.factory = factory;
+  public Object setParameter(String key, Object value) {
+    return parameters.put(key, value);
   }
 
-  /**
-   * Creates the menu of actions for a root node.
-   * @return the menu of actions available to a root node.
-   */
-  private JMenu createRootNodeActions() {
-    JMenu actions = new JMenu("Actions...");
-    actions.add(new ExpandNodeAction(this, "Expand All"));
-    actions.add(new CollapseNodeAction(this, "Collapse All"));
-    actions.add(new SaveNodeAction(this, "Save"));
-    actions.add(new RevertNodeAction(this, "Revert"));
-    actions.add(new ReloadNodeAction(this, "Reload"));
-    return actions;
+  public Object getParameter(String key) {
+    return parameters.get(key);
+  }
+
+  void setFactory(UiNodeTypeFactory factory) {
+    this.factory = factory;
   }
 }

@@ -1,5 +1,5 @@
 /* copyright 2000-2004 Marcel Baumann
- * Licensed under the Apache License, Version 2.0 (the "Licence);
+ * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
  */
@@ -7,9 +7,6 @@ package ch.bbv.explorer;
 
 import java.util.Collection;
 import java.util.List;
-
-import javax.swing.Icon;
-import javax.swing.JPopupMenu;
 
 import ch.bbv.dog.DataObjectType;
 
@@ -37,21 +34,14 @@ import ch.bbv.dog.DataObjectType;
  * At most one node type can be defined for a given Java class. The display
  * modes of the various view are configured in the associated views. The factory
  * is used to retrieve the node type associated with a given data object or
- * lightweight class.
+ * lightweight class. Extensions are available through hot spots or inheritance.
+ * The node type provides a property mechanism to store configuration
+ * parameters.
  * <p>
  * @author Marcel Baumann
  * @version $Revision$
  */
 public interface UiNodeType {
-  /**
-   * Returns the icon associated with the given object. The object is described
-   * in this node type.
-   * @param lwObject object, which icon is requested.
-   * @return the icon representing the object and its state.
-   * @pre lwObject != null
-   */
-  Icon getIconFor(Object lwObject);
-
   /**
    * Returns the name of the object as it should be displayed. The object is
    * described in this node type.
@@ -91,17 +81,6 @@ public interface UiNodeType {
   boolean isStructureEditable(Object lwObject);
 
   /**
-   * Returns the popup menu associated with node type. The popup menu contains
-   * all configured views to display the node and its children in the right
-   * pane, the manipulation actions for its relations, and specific actions
-   * associated with the node type.
-   * @param node node which popup menu should be displayed.
-   * @return the popup menu associated with the menu.
-   * @pre node != null
-   */
-  JPopupMenu getPopupMenu(ExplorerNode node);
-
-  /**
    * Returns the property panel used to edit an existing object or to initialize
    * a newly created object. A property panel is defined for a data object.
    * @return the properties view used to modify an object described in this node
@@ -109,6 +88,12 @@ public interface UiNodeType {
    * @see NodePropertiesView
    */
   Class getPropertiesView();
+
+  /**
+   * Returns the user interface node type views defined for the node type.
+   * @return the list of views.
+   */
+  List getViews();
 
   /**
    * Returns the class of the view associated with the given name.
@@ -196,4 +181,22 @@ public interface UiNodeType {
    * @return the name of the property implementing the aggregation.
    */
   String findProperty(Object parent, Object object);
+
+  /**
+   * Searches for the parameter with the specified key in this property list.
+   * @param key the parameter key.
+   * @return the value of the parameter if found otherwise null.
+   * @see #setParameter(String, Object)
+   */
+  Object getParameter(String key);
+
+  /**
+   * Sets the parameter with the specified key and the corresponding value
+   * @param key the property key.
+   * @param value the value of the parameter.
+   * @return the previous value of the specified key in this parameter list, or
+   *         null if it did not have one.
+   * @see #getParameter(String)
+   */
+  Object setParameter(String key, Object value);
 }

@@ -1,5 +1,5 @@
 /* copyright 2000-2004 Marcel Baumann
- * Licensed under the Apache License, Version 2.0 (the "Licence);
+ * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
  */
@@ -20,9 +20,9 @@ public interface IconFactory {
    * Register the selector responsible to return the icon for all instances of
    * the given node type.
    * @param nodeType node type handled by the given icon selector;
-   * @param iconSelector icon selector for the node type.
+   * @param selector icon selector for the node type.
    */
-  void registerIconSelector(UiNodeType nodeType, IconSelector iconSelector);
+  void registerIconSelector(UiNodeType nodeType, IconSelector selector);
 
   /**
    * Returns the icon associated with the given object. The object is described
@@ -46,5 +46,4 @@ public interface IconFactory {
    * fetched from the resources.
    */
   void flushIconsCache();
-
 }

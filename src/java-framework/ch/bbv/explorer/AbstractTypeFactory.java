@@ -8,6 +8,7 @@ package ch.bbv.explorer;
 import java.util.List;
 
 import ch.bbv.dog.DataObjectManager;
+import ch.bbv.dog.DataObjectType;
 
 /**
  * The abstract type factory provides an infrastructure to define a set of user
@@ -19,17 +20,12 @@ public abstract class AbstractTypeFactory {
   /**
    * The user interface node type factory used to register the created types.
    */
-  protected UiNodeTypeFactory factory;
+  private UiNodeTypeFactory factory;
 
   /**
    * The data object manager to retrieve data.
    */
   protected DataObjectManager manager;
-
-  /**
-   * The icon manager for the created types.
-   */
-  protected IconFactory iconFactory;
 
   /**
    * Constructor of the class.
@@ -40,10 +36,49 @@ public abstract class AbstractTypeFactory {
       DataObjectManager manager) {
     this.factory = factory;
     this.manager = manager;
-    iconFactory = factory.getIconFactory();
   }
 
-  /** 
+  /**
+   * Returns the user interface node type factory.
+   * @return the user interface node type factory.
+   */
+  protected UiNodeTypeFactory getFactory() {
+    return factory;
+  }
+
+  /**
+   * Returns the icon factory of the user interface node type factory as
+   * convenience method.
+   * @return the user interface node type factory.
+   */
+  protected IconFactory getIconFactory() {
+    return factory.getIconFactory();
+  }
+
+  /**
+   * Registers a data object type with its viewable description, icon and popup
+   * menu selectors.
+   * @param type data object type defining a business object.
+   * @param nodeType the user interface description of the data object type.
+   * @param popupSelector optional popup menu selector node type.
+   * @param iconSelector optional icon selector for the node type.
+   * @pre (type != null) && (nodeType != null)
+   */
+  protected void register(DataObjectType type, UiNodeType nodeType,
+      PopupSelector popupSelector, IconSelector iconSelector) {
+    manager.register(type);
+    getFactory().register(nodeType);
+    if (popupSelector != null) {
+      getFactory().getPopupFactory().registerPopupSelector(nodeType,
+          popupSelector);
+    }
+    if (iconSelector != null) {
+      getFactory().getIconFactory()
+          .registerIconSelector(nodeType, iconSelector);
+    }
+  }
+
+  /**
    * Creates and adds a user interface field to the list.
    * @param list list to which the field should be added.
    * @param property name of the property visualize through the field.
@@ -56,7 +91,7 @@ public abstract class AbstractTypeFactory {
     list.add(uiProperty);
   }
 
-  /** 
+  /**
    * Creates and adds a user interface relation to the list.
    * @param type list to which the field should be added.
    * @param property name of the property visualize through the field.
