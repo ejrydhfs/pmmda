@@ -131,6 +131,13 @@ public class MetaFactory {
     return type;
   }
 
+  public void initialize(MetaModel element) {
+    if (!element.isSystem()) {
+      initialize(element, MetaModel.class);
+      if(element instanceof MetaPackage) initialize((MetaPackage) element);
+    }
+  }
+
   /**
    * Initialize the element with the defined tagged value types. All missing
    * tagged values are added with their default value and all obsolete ones are
