@@ -1,7 +1,7 @@
-/*
- * copyright 2000-2004 Marcel Baumann Licensed under the Apache License, Version
- * 2.0 (the "Licence); you may not use this file except in compliance with the
- * License. $Id$
+/* copyright 2000-2004 Marcel Baumann 
+ * Licensed under the Apache License, Version 2.0 (the "Licence"); 
+ * you may not use this file except in compliance with the License. 
+ * $Id$
  */
 package ch.bbv.mda.generators;
 
@@ -20,10 +20,7 @@ import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
 
 import ch.bbv.application.VersionId;
-import ch.bbv.mda.MetaElement;
-import ch.bbv.mda.MetaPackage;
-import ch.bbv.mda.TaggedValue;
-import ch.bbv.mda.TaggedValueType;
+import ch.bbv.mda.*;
 
 /**
  * The EJB cartridge generates all the artifacts for the data object framework
@@ -204,13 +201,13 @@ public class EjbCartridge extends CartridgeImpl {
   public List getTaggedValueTypes(Class clazz) {
     List types = new ArrayList();
     if (clazz.equals(MetaPackage.class)) {
-      types.add(new TaggedValueType(SERVER_NAME_TAG, "", String.class, this));
+      types.add(new TagDefinition(SERVER_NAME_TAG, "", String.class, this));
     }
     return types;
   }
 
   public TaggedValue getTaggedValueWithElementDependentDefault(
-      TaggedValueType taggedValueType, MetaElement element) {
+      TagDefinition taggedValueType, MetaElement element) {
     TaggedValue value = new TaggedValue(taggedValueType);
     updateTaggedValueWithElementDependentDefault(value, element);
     return value;

@@ -209,13 +209,13 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
     List types = new ArrayList();
     if (clazz.equals(MetaPackage.class)) {
       types
-          .add(new TaggedValueType(CTO_PACKAGE_IDL_TAG, "", String.class, this));
+          .add(new TagDefinition(CTO_PACKAGE_IDL_TAG, "", String.class, this));
     }
     return types;
   }
 
   public TaggedValue getTaggedValueWithElementDependentDefault(
-      TaggedValueType taggedValueType, MetaElement element) {
+      TagDefinition taggedValueType, MetaElement element) {
     TaggedValue value = new TaggedValue(taggedValueType);
     updateTaggedValueWithElementDependentDefault(value, element);
     return value;

@@ -1,5 +1,5 @@
 /* copyright 2000-2004 Marcel Baumann
- * Licensed under the Apache License, Version 2.0 (the "Licence);
+ * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
  */
@@ -153,6 +153,11 @@ public class BogCartridge extends CartridgeImpl implements Cartridge {
    * Key for a property of the cartridge used to retrieve user values.
    */
   public static final String FIELD_POSTFIX_KEY = "bo-cartridge.class-field-postfix";
+
+  /**
+   * The UML standard persistence tag.
+   */
+  public static final String PERSISTENCE_TAG = "persistence";
 
   /**
    * The flag specifies if the package should be generated or not.
@@ -429,53 +434,53 @@ public class BogCartridge extends CartridgeImpl implements Cartridge {
   public List getTaggedValueTypes(Class clazz) {
     List types = new ArrayList();
     if (clazz.equals(MetaModel.class)) {
-      types.add(new TaggedValueType(GENERATE_TAG, "true", Boolean.TYPE, this));
+      types.add(new TagDefinition(GENERATE_TAG, "true", Boolean.TYPE, this));
     } else if (clazz.equals(MetaPackage.class)) {
-      types.add(new TaggedValueType(GENERATE_TAG, "false", Boolean.TYPE, this));
+      types.add(new TagDefinition(GENERATE_TAG, "false", Boolean.TYPE, this));
     } else if (clazz.equals(MetaClass.class)) {
-      types.add(new TaggedValueType(IS_ROOT_TAG, "false", Boolean.TYPE, this));
+      types
+          .add(new TagDefinition(PERSISTENCE_TAG, "false", Boolean.TYPE, this));
+      types.add(new TagDefinition(IS_ROOT_TAG, "false", Boolean.TYPE, this));
     } else if (clazz.equals(MetaProperty.class)) {
-      types.add(new TaggedValueType(MODE_TAG, "READ_WRITE",
+      types
+          .add(new TagDefinition(PERSISTENCE_TAG, "false", Boolean.TYPE, this));
+      types.add(new TagDefinition(MODE_TAG, "READ_WRITE",
           PropertyModeCode.class, this));
-      types.add(new TaggedValueType(CONSTRUCTOR_PARAM_TAG, "false",
-          Boolean.TYPE, this));
-      types.add(new TaggedValueType(CHANGE_EVENT_TAG, "false", Boolean.TYPE,
+      types.add(new TagDefinition(CONSTRUCTOR_PARAM_TAG, "false", Boolean.TYPE,
           this));
       types
-          .add(new TaggedValueType(VETO_EVENT_TAG, "false", Boolean.TYPE, this));
-      types.add(new TaggedValueType(BIDIRECTIONAL_RELATION_TAG, "false",
+          .add(new TagDefinition(CHANGE_EVENT_TAG, "false", Boolean.TYPE, this));
+      types.add(new TagDefinition(VETO_EVENT_TAG, "false", Boolean.TYPE, this));
+      types.add(new TagDefinition(BIDIRECTIONAL_RELATION_TAG, "false",
           Boolean.TYPE, this));
-      types.add(new TaggedValueType(LIGHTWEIGHT_TAG, "false", Boolean.TYPE,
-          this));
+      types
+          .add(new TagDefinition(LIGHTWEIGHT_TAG, "false", Boolean.TYPE, this));
     } else if (clazz.equals(MetaIndexedProperty.class)) {
       types
-          .add(new TaggedValueType(MODE_TAG, "READ_WRITE", String.class, this));
-      types
-          .add(new TaggedValueType(MODE_TAG, "READ_WRITE", String.class, this));
-      types.add(new TaggedValueType(CONSTRUCTOR_PARAM_TAG, "false",
-          Boolean.TYPE, this));
-      types.add(new TaggedValueType(CHANGE_EVENT_TAG, "false", Boolean.TYPE,
+          .add(new TagDefinition(PERSISTENCE_TAG, "false", Boolean.TYPE, this));
+      types.add(new TagDefinition(MODE_TAG, "READ_WRITE", String.class, this));
+      types.add(new TagDefinition(MODE_TAG, "READ_WRITE", String.class, this));
+      types.add(new TagDefinition(CONSTRUCTOR_PARAM_TAG, "false", Boolean.TYPE,
           this));
       types
-          .add(new TaggedValueType(VETO_EVENT_TAG, "false", Boolean.TYPE, this));
-      types.add(new TaggedValueType(BIDIRECTIONAL_RELATION_TAG, "false",
+          .add(new TagDefinition(CHANGE_EVENT_TAG, "false", Boolean.TYPE, this));
+      types.add(new TagDefinition(VETO_EVENT_TAG, "false", Boolean.TYPE, this));
+      types.add(new TagDefinition(BIDIRECTIONAL_RELATION_TAG, "false",
           Boolean.TYPE, this));
-      types.add(new TaggedValueType(CONTAINER_CLASS_TAG, "java.util.ArrayList",
+      types.add(new TagDefinition(CONTAINER_CLASS_TAG, "java.util.ArrayList",
           String.class, this));
-      types.add(new TaggedValueType(INTERFACE_CLASS_TAG, "java.util.List",
+      types.add(new TagDefinition(INTERFACE_CLASS_TAG, "java.util.List",
           String.class, this));
+      types.add(new TagDefinition(IS_ORDERED_TAG, "false", String.class, this));
+      types.add(new TagDefinition(KEY_CLASS_TAG, "String", String.class, this));
       types
-          .add(new TaggedValueType(IS_ORDERED_TAG, "false", String.class, this));
-      types
-          .add(new TaggedValueType(KEY_CLASS_TAG, "String", String.class, this));
-      types.add(new TaggedValueType(LIGHTWEIGHT_TAG, "false", String.class,
-          this));
+          .add(new TagDefinition(LIGHTWEIGHT_TAG, "false", String.class, this));
     }
     return types;
   }
 
   public TaggedValue getTaggedValueWithElementDependentDefault(
-      TaggedValueType taggedValueType, MetaElement element) {
+      TagDefinition taggedValueType, MetaElement element) {
     TaggedValue value = new TaggedValue(taggedValueType);
     updateTaggedValueWithElementDependentDefault(value, element);
     return value;

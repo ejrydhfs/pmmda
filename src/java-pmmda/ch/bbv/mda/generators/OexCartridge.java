@@ -1,7 +1,7 @@
-/*
- * copyright 2000-2004 Marcel Baumann Licensed under the Apache License, Version
- * 2.0 (the "Licence); you may not use this file except in compliance with the
- * License. $Id$
+/* copyright 2000-2004 Marcel Baumann 
+ * Licensed under the Apache License, Version 2.0 (the "Licence"); 
+ * you may not use this file except in compliance with the License. 
+ * $Id$
  */
 package ch.bbv.mda.generators;
 
@@ -133,13 +133,11 @@ public class OexCartridge extends CartridgeImpl {
   public List getTaggedValueTypes(Class clazz) {
     List types = new ArrayList();
     if (clazz.equals(MetaClass.class)) {
-      types.add(new TaggedValueType(VIEW_CLASS_TAG, "", String.class, this));
+      types.add(new TagDefinition(VIEW_CLASS_TAG, "", String.class, this));
     } else if (clazz.equals(MetaProperty.class)) {
-      types
-          .add(new TaggedValueType(IS_VISIBLE_TAG, "false", Boolean.TYPE, this));
+      types.add(new TagDefinition(IS_VISIBLE_TAG, "false", Boolean.TYPE, this));
     } else if (clazz.equals(MetaIndexedProperty.class)) {
-      types
-          .add(new TaggedValueType(IS_VISIBLE_TAG, "false", Boolean.TYPE, this));
+      types.add(new TagDefinition(IS_VISIBLE_TAG, "false", Boolean.TYPE, this));
     }
     return types;
   }
@@ -148,13 +146,13 @@ public class OexCartridge extends CartridgeImpl {
     List types = null;
     if (clazz == MetaClass.class) {
       types = new ArrayList();
-      types.add(new TaggedValueType("oex-is-root", null, Boolean.class, this));
+      types.add(new TagDefinition("oex-is-root", null, Boolean.class, this));
     }
     return types;
   }
 
   public TaggedValue getTaggedValueWithElementDependentDefault(
-      TaggedValueType taggedValueType, MetaElement element) {
+      TagDefinition taggedValueType, MetaElement element) {
     TaggedValue value = new TaggedValue(taggedValueType);
     updateTaggedValueWithElementDependentDefault(value, element);
     return value;

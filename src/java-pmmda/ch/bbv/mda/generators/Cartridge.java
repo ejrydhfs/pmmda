@@ -1,5 +1,5 @@
 /* copyright 2000-2004 Marcel Baumann 
- * Licensed under the Apache License, Version 2.0 (the "Licence); 
+ * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$
  */
@@ -104,7 +104,7 @@ public interface Cartridge {
    * @param element The MetaElement providing additional information to initialize the tagged value.
    * @return TaggedValue the initialized tagged value.
    */
-  TaggedValue getTaggedValueWithElementDependentDefault(TaggedValueType taggedValueType, MetaElement element);
+  TaggedValue getTaggedValueWithElementDependentDefault(TagDefinition taggedValueType, MetaElement element);
 
   /**
    * Updates tagged value with information from element

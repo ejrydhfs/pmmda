@@ -1,7 +1,7 @@
-/*
- * copyright 2000-2004 Marcel Baumann Licensed under the Apache License, Version
- * 2.0 (the "Licence); you may not use this file except in compliance with the
- * License. $Id$
+/* copyright 2000-2004 Marcel Baumann
+ * Licensed under the Apache License, Version 2.0 (the "Licence");
+ * you may not use this file except in compliance with the License.
+ * $Id$
  */
 package ch.bbv.mda.generators;
 
@@ -101,7 +101,7 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
   /**
    * The tag shows if the class is persistent or not.
    */
-  public static final String IS_PERSISTENT_TAG = "ojb-is-persistent";
+  public static final String IS_PERSISTENT_TAG = "persistence";
 
   /**
    * If the class is persistent, this tag contains the name of the table in
@@ -266,26 +266,26 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
     List types = new ArrayList();
     if (clazz.equals(MetaModel.class)) {
     } else if (clazz.equals(MetaPackage.class)) {
-      types.add(new TaggedValueType(SCHEMA_TAG, "", String.class, this));
+      types.add(new TagDefinition(SCHEMA_TAG, "", String.class, this));
     } else if (clazz.equals(MetaClass.class)) {
-      types.add(new TaggedValueType(IS_PERSISTENT_TAG, "false", Boolean.TYPE,
+      types.add(new TagDefinition(IS_PERSISTENT_TAG, "false", Boolean.TYPE,
           this));
-      types.add(new TaggedValueType(TABLE_NAME_TAG, null, String.class, this));
+      types.add(new TagDefinition(TABLE_NAME_TAG, null, String.class, this));
     } else if (clazz.equals(MetaProperty.class)) {
-      types.add(new TaggedValueType(COLUMN_NAME_TAG, null, String.class, this));
-      types.add(new TaggedValueType(COLUMN_TYPE_TAG, "String",
+      types.add(new TagDefinition(COLUMN_NAME_TAG, null, String.class, this));
+      types.add(new TagDefinition(COLUMN_TYPE_TAG, "String",
           JdbcTypeCode.class, this));
       types
-          .add(new TaggedValueType(COLUMN_SIZE_TAG, "255", Integer.TYPE, this));
-      types.add(new TaggedValueType(CAN_BE_NULL_TAG, "false", Boolean.TYPE,
+          .add(new TagDefinition(COLUMN_SIZE_TAG, "255", Integer.TYPE, this));
+      types.add(new TagDefinition(CAN_BE_NULL_TAG, "false", Boolean.TYPE,
           this));
       types
-          .add(new TaggedValueType(IS_PRIMARY_TAG, "false", Boolean.TYPE, this));
-      types.add(new TaggedValueType(OPTIMISTIC_LOCKING_TAG, "false",
+          .add(new TagDefinition(IS_PRIMARY_TAG, "false", Boolean.TYPE, this));
+      types.add(new TagDefinition(OPTIMISTIC_LOCKING_TAG, "false",
           Boolean.TYPE, this));
     } else if (clazz.equals(MetaIndexedProperty.class)) {
-      types.add(new TaggedValueType(COLUMN_NAME_TAG, null, String.class, this));
-      types.add(new TaggedValueType(ORDER_BY_TAG, null, String.class, this));
+      types.add(new TagDefinition(COLUMN_NAME_TAG, null, String.class, this));
+      types.add(new TagDefinition(ORDER_BY_TAG, null, String.class, this));
     } else {
       types = null;
     }
@@ -294,14 +294,20 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
 
   public List getObsoleteTaggedValueTypes(Class clazz) {
     List types = null;
-    if ((clazz == MetaProperty.class) || (clazz == MetaIndexedProperty.class)) {
+    if (clazz == MetaClass.class) {
       types = new ArrayList();
-      types.add(new TaggedValueType("ojb-jdbc-type", null, String.class, this));
-      types.add(new TaggedValueType("ojb-jdbc-size", null, Integer.TYPE, this));
-      types.add(new TaggedValueType("ojb-jdbcType", null, String.class, this));
-      types.add(new TaggedValueType("ojb-jdbcSize", null, Integer.TYPE, this));
-      types.add(new TaggedValueType("ojb-orderBy", null, String.class, this));
-      types.add(new TaggedValueType("ojb-foreign-key", null, String.class, this));
+      types.add(new TagDefinition("ojb-is-persistent", null, Boolean.TYPE,
+          this));
+    } else if ((clazz == MetaProperty.class)
+        || (clazz == MetaIndexedProperty.class)) {
+      types = new ArrayList();
+      types.add(new TagDefinition("ojb-jdbc-type", null, String.class, this));
+      types.add(new TagDefinition("ojb-jdbc-size", null, Integer.TYPE, this));
+      types.add(new TagDefinition("ojb-jdbcType", null, String.class, this));
+      types.add(new TagDefinition("ojb-jdbcSize", null, Integer.TYPE, this));
+      types.add(new TagDefinition("ojb-orderBy", null, String.class, this));
+      types
+          .add(new TagDefinition("ojb-foreign-key", null, String.class, this));
     }
     return types;
   }
@@ -310,9 +316,9 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
     TagRule tagRule = new OjbTagRule();
     tagRule.register(validator);
   }
-  
+
   public TaggedValue getTaggedValueWithElementDependentDefault(
-      TaggedValueType taggedValueType, MetaElement element) {
+      TagDefinition taggedValueType, MetaElement element) {
     TaggedValue value = new TaggedValue(taggedValueType);
     updateTaggedValueWithElementDependentDefault(value, element);
     return value;
