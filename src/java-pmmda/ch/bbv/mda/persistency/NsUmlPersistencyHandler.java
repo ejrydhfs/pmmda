@@ -10,6 +10,7 @@ import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import javax.swing.JOptionPane;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.logging.Log;
@@ -24,6 +25,7 @@ import ch.bbv.mda.MetaModel;
 import ch.bbv.mda.persistency.nsuml.MdaTransformer;
 import ch.bbv.mda.persistency.nsuml.NsUmlTransformer;
 import ch.bbv.mda.persistency.nsuml.ArgoWriter;
+import ch.bbv.utilities.ResourceUtility;
 
 /**
  * The NSUML handler manipulates XMI 1.0 / UML 1.3 based models. These models
@@ -56,6 +58,13 @@ public class NsUmlPersistencyHandler implements PersistencyHandler {
 
     try {
       MModel mModel = nsUmlTransformer.loadArgoModel(file);
+      if(mModel == null){
+        log.error("NsUmlPersistenceHandler#readModel: illegal file - "+file);
+        JOptionPane.showMessageDialog(null, ResourceUtility
+            .getString("mda.ui.sorryMsg.INVALID_FORMAT"), ResourceUtility
+            .getString("mda.ui.sorryMsg.SORRY"), JOptionPane.ERROR_MESSAGE);
+        return null;
+      }
       nsUmlTransformer.synchronize(mModel, metaModel);
     } catch (IOException ioe) {
       log.error(ioe);
