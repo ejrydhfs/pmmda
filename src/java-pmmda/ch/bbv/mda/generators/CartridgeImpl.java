@@ -388,6 +388,7 @@ public abstract class CartridgeImpl implements Cartridge {
     context.put("aggregations", indexedProperties);
     context.put("references", references);
     context.put("imports", clazz.getImports());
+    context.put("nestedClasses", clazz.getClasses());
     return context;
   }
 
