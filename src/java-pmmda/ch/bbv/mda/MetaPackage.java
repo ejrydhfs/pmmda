@@ -47,7 +47,19 @@ public class MetaPackage extends MetaElement {
    * Default constructor of the class.
    */
   public MetaPackage() {
-    classes = new ArrayList();
+    init();
+  }
+
+  /**
+   * Initializes member variables. Only complex types have to be initialized
+   * here. The init() method is called after deserializing and loading from xml
+   * with XStream. Transient members have to be initialized with this init()
+   * function.
+   */
+  public void init() {
+    super.init();
+    if (classes == null)
+      classes = new ArrayList();
   }
 
   /**
@@ -140,4 +152,14 @@ public class MetaPackage extends MetaElement {
   public MetaClass findClass(String name) {
     return (MetaClass) findElement(classes, name);
   }
+
+  /**
+   * Indicates whether this model element is a leaf (no children)
+   */
+  public boolean isLeaf() {
+    if (classes == null || classes.isEmpty())
+      return true;
+    return false;
+  }
+
 }
