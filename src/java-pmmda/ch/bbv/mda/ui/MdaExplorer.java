@@ -264,6 +264,8 @@ public class MdaExplorer extends Explorer {
   private void createGenerateMenu() {
     JMenu menu = new JMenu("Generate");
     menu.setName("Generate");
+    menu.add(new JMenuItem(generateAllAction));
+    menu.addSeparator();
 
     for (Iterator i = CartridgeFactory.getInstance().getCartridges().iterator(); i
         .hasNext();) {
