@@ -6,10 +6,18 @@
 package ch.bbv.mda.ui;
 
 import java.awt.BorderLayout;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableModel;
 
@@ -18,7 +26,11 @@ import ch.bbv.dog.ui.ReferenceCodeComboBox;
 import ch.bbv.explorer.NodePropertiesView;
 import ch.bbv.explorer.components.TableCell;
 import ch.bbv.explorer.components.TablePanel;
-import ch.bbv.mda.*;
+import ch.bbv.mda.MetaElement;
+import ch.bbv.mda.PropertyModeCode;
+import ch.bbv.mda.TaggedValue;
+import ch.bbv.mda.TaggedValueType;
+import ch.bbv.mda.VisibilityCode;
 
 /**
  * The tagged value view displays a set of tagged values in a table. The first
@@ -39,6 +51,7 @@ public class TaggedValuesView extends NodePropertiesView {
     comboBox.setCaseSensitive(false);
     editors.put(Boolean.TYPE, new DefaultCellEditor(comboBox));
     editors.put(Boolean.class, new DefaultCellEditor(comboBox));
+    editors.put(String.class, new MyEditor(new JTextField())); // used to resolve issue of stop cell editing in case of focus lost.
     registerReferenceCode(VisibilityCode.class, VisibilityCode.getCodes(),
         false);
     registerReferenceCode(PropertyModeCode.class, PropertyModeCode.getCodes(),
@@ -115,7 +128,7 @@ public class TaggedValuesView extends NodePropertiesView {
     }
     return copies;
   }
-
+  
   static class TaggedValuePanel extends TablePanel {
     public TaggedValuePanel(Collection objects, TableCell tableCell) {
       super(objects, tableCell, new TaggedValue.TaggedValueComparator());
@@ -132,6 +145,10 @@ public class TaggedValuesView extends NodePropertiesView {
     public TaggedValuesTable(TableModel model, TablePanel tablePanel) {
       super(model);
       this.tablePanel = tablePanel;
+      TableCellEditor tce = new MyEditor(new JTextField());
+      for(Enumeration i = this.defaultEditorsByColumnClass.keys(); i.hasMoreElements();){
+        this.setDefaultEditor(i.nextElement().getClass(), tce);
+      }
     }
 
     public TableCellEditor getCellEditor(int row, int column) {
