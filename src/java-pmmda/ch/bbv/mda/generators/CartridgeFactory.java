@@ -1,7 +1,8 @@
-/* copyright 2000-2004 Marcel Baumann
- * Licensed under the Apache License, Version 2.0 (the "Licence);
- * you may not use this file except in compliance with the License.
- * $Id$
+/*
+ * copyright 2000-2004 Marcel Baumann Licensed under the Apache License, Version
+ * 2.0 (the "Licence); you may not use this file except in compliance with the
+ * License. $Id: CartridgeFactory.java,v 1.2 2004/08/12 08:51:09 adrianbachofen
+ * Exp $
  */
 package ch.bbv.mda.generators;
 
@@ -242,8 +243,10 @@ public class CartridgeFactory {
     logProgressInfo(cartridge, model, "{0} Catridge processing model {1}");
     cartridge.processModel(model);
 
-    process(cartridge, (MetaPackage)model);
-    
+    if (!((MetaPackage) model).getClasses().isEmpty()) {
+      process(cartridge, (MetaPackage) model);
+    }
+
     for (Iterator i = model.getPackages().iterator(); i.hasNext();) {
       MetaPackage metaPackage = (MetaPackage) i.next();
       process(cartridge, metaPackage);
@@ -300,8 +303,10 @@ public class CartridgeFactory {
     }
     logProgressInfo(cartridge, model, "{0} Catridge pre-processing model {1}");
     cartridge.preProcessModel(model);
-    
-    preprocess(cartridge, (MetaPackage)model);
+
+    if (!((MetaPackage) model).getClasses().isEmpty()) {
+      preprocess(cartridge, (MetaPackage) model);
+    }
 
     for (Iterator i = model.getPackages().iterator(); i.hasNext();) {
       preprocess(cartridge, (MetaPackage) i.next());
