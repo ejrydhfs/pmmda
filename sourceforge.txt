@@ -6,7 +6,7 @@
   completness of the web site with its references to metrics and JavaDoc.
 - Run "build-all-tests" target to generate the test examples.
 - Run each test appliction with the provided shell scripts.
-- Execute the sanity test cases - once 2-tiers, CORBA, and J2EE -.
+- Execute the sanity test cases - 2-tiers, CORBA, and J2EE -.
 
 2. Binary and source distribution
    ------------------------------
@@ -54,6 +54,9 @@ The following steps are necessary to create and upload the site.
    pscp -r -C d:\data\projects\pmmda\build\site\* 
         marcelbaumann@shell.sourceforge.net:/home/groups/p/pm/pmmda/htdocs
    upon request give password of developer account.
+   The web site contains the complete JavaDoc documentation of the project
+   and sourceforge request SSH2 accesses therefore the upload time using 
+   an ADSL link is still about thirty minutes.
  
 4. Mailing list management
    -----------------------
@@ -82,4 +85,3 @@ use your password to change member's options, including digestification,
 delivery disabling, etc.
 
 Please address all questions to mailman-owner@lists.sourceforge.net.
-   
