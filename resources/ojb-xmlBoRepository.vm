@@ -1,5 +1,6 @@
 #if(${class.getStereotype().equalsIgnoreCase("dataObject")})
 #set($shouldGenerateFkIndex=${configuration.getProperty("ojb-cartridge.generate-fk-index").equalsIgnoreCase("true")})
+#set($inheritanceMode=${configuration.getProperty("ojb-cartridge.inheritance")
 #set($schema=${package.valueOfTag("ojb-schema")})
 #if(${schema})#set($schema="${schema}.")#else#set($schema="")#end
 #set($table=${class.getAttribute("ojb-table-name")})

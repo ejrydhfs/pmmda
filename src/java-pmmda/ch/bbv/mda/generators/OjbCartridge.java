@@ -69,6 +69,11 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
   public static final String GENERATE_FK_INDEX_KEY = "ojb-cartridge.generate-fk-index";
 
   /**
+   * Key for a property of the cartridge defining the inheritance mode.
+   */
+  public static final String INHERITANCE_KEY = "ojb-cartridge.inheritance";
+
+  /**
    * Key for a property of the cartridge used to retrieve user values.
    */
   public static final String DATABASE_KEY = "ojb-cartridge.database";
@@ -217,6 +222,7 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
     addCartridge(factory.getCartridge("dog"));
     addUndefinedProperty(properties, SOURCE_ROOT_FOLDER_KEY, "");
     addUndefinedProperty(properties, GENERATE_FK_INDEX_KEY, "false");
+    addUndefinedProperty(properties, INHERITANCE_KEY, "expand");
     addUndefinedProperty(properties, DATABASE_KEY, "MySQL");
     addUndefinedProperty(properties, TABLE_PREFIX_KEY, "");
     addUndefinedProperty(properties, TABLE_POSTFIX_KEY, "");
@@ -355,7 +361,6 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
 
   public void processModel(MetaModel metaModel) {
     rootDirectory = new File(getContext().getProperty(SOURCE_ROOT_FOLDER_KEY));
-
     String target = getContext().getProperty(DATABASE_KEY);
     try {
       ojbBoWriter = createPrintWriter(new File(rootDirectory,
@@ -379,7 +384,6 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
           clazz.getTaggedValue(TABLE_NAME_TAG).getValue()).append(
           context.get(TABLE_POSTFIX_KEY));
       clazz.addAttribute(TABLE_NAME, buffer.toString());
-
       String columnPrefix = (String) context.get(COLUMN_PREFIX_KEY);
       String columnPostfix = (String) context.get(COLUMN_POSTFIX_KEY);
       for (Iterator i = clazz.getProperties().iterator(); i.hasNext();) {
