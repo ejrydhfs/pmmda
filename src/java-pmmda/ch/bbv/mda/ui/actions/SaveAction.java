@@ -8,10 +8,13 @@ package ch.bbv.mda.ui.actions;
 import java.awt.event.ActionEvent;
 import java.io.File;
 
+import javax.swing.JOptionPane;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ch.bbv.explorer.actions.ExplorerGlobalActionImpl;
+import ch.bbv.utilities.ResourceUtility;
 import ch.bbv.mda.MetaModel;
 import ch.bbv.mda.persistency.PersistencyException;
 import ch.bbv.mda.persistency.PersistencyHandler;
@@ -47,11 +50,15 @@ public class SaveAction extends ExplorerGlobalActionImpl {
           handler.writeModel(project, file);
           getExplorer().getMenuBar().documentSaved();
         } else {
-          //TODO error dialog with text in property.
+        	JOptionPane.showMessageDialog(getExplorer().getFrame(), ResourceUtility.getString("mda.ui.errorMsg.NO_FILE_DEFINED_ERROR"), ResourceUtility.getString("mda.ui.errorMsg.ERROR"), JOptionPane.ERROR_MESSAGE);
         }
       }
     } catch (PersistencyException e) {
     	log.error(e);
+    	JOptionPane.showMessageDialog(getExplorer().getFrame(), ResourceUtility.getString("mda.ui.sorryMsg.UNSUPPORTED_FILE_TYPE_FOR_SAVE"), ResourceUtility.getString("mda.ui.sorryMsg.SORRY"), JOptionPane.ERROR_MESSAGE);
+    } catch (NullPointerException ne){
+    	log.error(ne);
+    	JOptionPane.showMessageDialog(getExplorer().getFrame(), ResourceUtility.getString("mda.ui.sorryMsg.UNSUPPORTED_FILE_TYPE_FOR_SAVE"), ResourceUtility.getString("mda.ui.sorryMsg.SORRY"), JOptionPane.ERROR_MESSAGE);
     }
   }
 
