@@ -44,22 +44,22 @@ public abstract class UsersTest extends TestCase {
     assertNotNull(manager);
 
     Provider provider = createProviderGraph(1, 5, 5, 5);
-    List providers = manager.getBoHandler().retrieve(DATASOURCE,
+    List providers = manager.getDataObjectHandler().retrieve(DATASOURCE,
         Provider.class, (String) null);
     assertEquals(providers.size(), 0);
-    manager.getBoHandler().store(DATASOURCE, Provider.class, provider);
+    manager.getDataObjectHandler().store(DATASOURCE, Provider.class, provider);
 
-    Provider copy = (Provider) manager.getBoHandler().retrieve(DATASOURCE,
+    Provider copy = (Provider) manager.getDataObjectHandler().retrieve(DATASOURCE,
         Provider.class, provider.getId());
     compareGraphs(provider, copy);
     provider.setName(UPDATE);
-    manager.getBoHandler().store(DATASOURCE, Provider.class, provider);
-    copy = (Provider) manager.getBoHandler().retrieve(DATASOURCE,
+    manager.getDataObjectHandler().store(DATASOURCE, Provider.class, provider);
+    copy = (Provider) manager.getDataObjectHandler().retrieve(DATASOURCE,
         Provider.class, provider.getId());
     assertNotNull(copy);
     assertEquals(copy.getName(), UPDATE);
-    manager.getBoHandler().remove(DATASOURCE, Provider.class, provider);
-    copy = (Provider) manager.getBoHandler().retrieve(DATASOURCE,
+    manager.getDataObjectHandler().remove(DATASOURCE, Provider.class, provider);
+    copy = (Provider) manager.getDataObjectHandler().retrieve(DATASOURCE,
         Provider.class, provider.getId());
     assertNull(copy);
   }
@@ -69,15 +69,15 @@ public abstract class UsersTest extends TestCase {
     assertNotNull(manager);
 
     Provider provider = createProviderGraph(2, 0, 0, 0);
-    manager.getBoHandler().store(DATASOURCE, Provider.class, provider);
+    manager.getDataObjectHandler().store(DATASOURCE, Provider.class, provider);
     for (int i = 1; i <= 5; i++) {
       Domain domain = createDomainGraph(2, 1, 5, 5);
       provider.addDomain(domain);
-      manager.getBoHandler().store(DATASOURCE, Domain.class, domain);
+      manager.getDataObjectHandler().store(DATASOURCE, Domain.class, domain);
     }
-    manager.getBoHandler().remove(DATASOURCE, Provider.class, provider);
+    manager.getDataObjectHandler().remove(DATASOURCE, Provider.class, provider);
 
-    Provider copy = (Provider) manager.getBoHandler().retrieve(DATASOURCE,
+    Provider copy = (Provider) manager.getDataObjectHandler().retrieve(DATASOURCE,
         Provider.class, provider.getId());
     assertNull(copy);
   }
@@ -88,12 +88,12 @@ public abstract class UsersTest extends TestCase {
 
     Provider provider = createProviderGraph(1, 10, 10, 10);
     assertNull(provider.getId());
-    manager.getBoHandler().store(DATASOURCE, Provider.class, provider);
+    manager.getDataObjectHandler().store(DATASOURCE, Provider.class, provider);
     assertNotNull(provider.getId());
 
     Integer id = provider.getId();
-    manager.getBoHandler().remove(DATASOURCE, Provider.class, id);
-    provider = (Provider) manager.getBoHandler().retrieve(DATASOURCE,
+    manager.getDataObjectHandler().remove(DATASOURCE, Provider.class, id);
+    provider = (Provider) manager.getDataObjectHandler().retrieve(DATASOURCE,
         Provider.class, id);
     assertNull(provider);
   }
@@ -105,15 +105,15 @@ public abstract class UsersTest extends TestCase {
     for (int i = 0; i < 10; i++) {
       Provider provider = createProviderGraph(1, 10, 10, 10);
       assertNull(provider.getId());
-      manager.getBoHandler().store(DATASOURCE, Provider.class, provider);
+      manager.getDataObjectHandler().store(DATASOURCE, Provider.class, provider);
       assertNotNull(provider.getId());
       providers.add(provider);
     }
     for (Iterator i = providers.iterator(); i.hasNext();) {
     	Provider provider = (Provider)i.next();
 			Integer id = provider.getId();
-			manager.getBoHandler().remove(DATASOURCE, Provider.class, provider);
-			provider = (Provider) manager.getBoHandler().retrieve(DATASOURCE,
+			manager.getDataObjectHandler().remove(DATASOURCE, Provider.class, provider);
+			provider = (Provider) manager.getDataObjectHandler().retrieve(DATASOURCE,
 				Provider.class, id);
 			assertNull(provider);
     }
