@@ -320,8 +320,8 @@ public class MdaExplorer extends Explorer {
         "BSD License", "http://xtream.codehaus.org"));
     librairies.add(new Library("forms", new VersionId(1, 0, 4), "Open Source",
         "www.jgoodies.com"));
-    librairies.add(new Library("glazedlists", new VersionId(0, 9, 1),
-        "Open Source", "www.publicobject.com/glazedlists"));
+    librairies.add(new Library("glazedlists", new VersionId(0, 9, 2), "LGPL",
+        "www.publicobject.com/glazedlists"));
     librairies.add(new Library("jcalendar", new VersionId(1, 2, 1), "LGPL",
         "www.toedter.com/jcalendar"));
     return librairies;
