@@ -168,8 +168,11 @@ public class MdaTransformer {
   protected void extractProperty(MetaProperty property, MClass context) {
     assert ((property != null) && (context != null));
     if (property.isAggregation()) {
-      MetaPackage metaPackage = (MetaPackage) property.getContext()
-          .getContext();
+      MetaElement mElement = property.getContext().getContext();
+      while (!(mElement instanceof MetaPackage)) {
+        mElement = mElement.getContext();
+      }
+      MetaPackage metaPackage = (MetaPackage)mElement; 
       MPackage mPackage = (MPackage) elements.get(metaPackage);
       MAssociation association = findAssociation(mPackage, context, property
           .getName());
