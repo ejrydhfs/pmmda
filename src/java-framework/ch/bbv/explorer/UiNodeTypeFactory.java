@@ -1,7 +1,8 @@
-/* copyright 2000-2004 Marcel Baumann
- * Licensed under the Apache License, Version 2.0 (the "Licence);
- * you may not use this file except in compliance with the License.
- * $Id$
+/*
+ * copyright 2000-2004 Marcel Baumann Licensed under the Apache License, Version
+ * 2.0 (the "Licence); you may not use this file except in compliance with the
+ * License. $Id: UiNodeTypeFactory.java,v 1.1 2004/08/10 17:36:00 marcelbaumann
+ * Exp $
  */
 package ch.bbv.explorer;
 
@@ -110,8 +111,8 @@ public class UiNodeTypeFactory {
   }
 
   /**
-   * Returns the node view defined in the node view type for the given
-   * explorer node.
+   * Returns the node view defined in the node view type for the given explorer
+   * node.
    * @param node explorer node to display in the view.
    * @param type user interface node view type describing the view.
    * @return instance of the expected type.
@@ -128,9 +129,8 @@ public class UiNodeTypeFactory {
     }
     if (view != null) {
       view.setModel(node);
-    }
-    if (log.isErrorEnabled()) {
-      log.error("view not available for type " + type.getName());
+    } else if (log.isErrorEnabled()) {
+      log.error("view not available for node '" + node.getName() + "'");
     }
     return view;
   }
