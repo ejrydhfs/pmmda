@@ -1,11 +1,11 @@
-/* copyright 2000-2004 Marcel Baumann
- * Licensed under the Apache License, Version 2.0 (the "Licence);
- * you may not use this file except in compliance with the License.
- * $Id$
+/*
+ * copyright 2000-2004 Marcel Baumann Licensed under the Apache License, Version
+ * 2.0 (the "Licence); you may not use this file except in compliance with the
+ * License. $Id: RemoveNodeAction.java,v 1.1 2004/08/10 17:36:18 marcelbaumann
+ * Exp $
  */
 package ch.bbv.explorer.actions;
 
-import ch.bbv.dog.LightweightObject;
 import ch.bbv.explorer.ExplorerNode;
 import ch.bbv.explorer.UiNodeType;
 import ch.bbv.explorer.UiRelation;
@@ -20,8 +20,8 @@ import ch.bbv.explorer.UiRelation;
 public class RemoveNodeAction extends ExplorerNodeActionImpl {
   /**
    * Constructor of the class.
-   * @param type user interface node type on which the operation will be 
-   * performed.
+   * @param type user interface node type on which the operation will be
+   *        performed.
    * @param name display name of the action.
    */
   public RemoveNodeAction(UiNodeType type, String name) {
@@ -40,7 +40,7 @@ public class RemoveNodeAction extends ExplorerNodeActionImpl {
           if (relation != null) {
             relation.removeProperty(parent.getLightweightObject(), node
                 .getLightweightObject());
-            if (parent.getDataObject() != null) {
+            if (parent.getDataObject() != null && parent.getLightweightObject() != parent.getDataObject()) {
               relation.removeProperty(parent.getDataObject(), node
                   .getDataObject());
             }
@@ -54,14 +54,18 @@ public class RemoveNodeAction extends ExplorerNodeActionImpl {
   public void postExecute(ExplorerNode node, boolean shouldUndo) {
   }
 
+  /**
+   * Retrieves the type identifier of the dataObject visualized by the ExplorerNode.
+   * The type identifier or property is then used to obtain the UiRelation between parent and child node to be deleted.
+   * @param node ExplorerNode to be obtained the dataObject type identifier (property)
+   * @return String property.
+   */
   private String findProperty(ExplorerNode node) {
-    ExplorerNode parent = (ExplorerNode) node.getParent();
-    LightweightObject lwObject = (LightweightObject) node
-        .getLightweightObject();
-    LightweightObject lwParent = (LightweightObject) parent
-        .getLightweightObject();
-    UiNodeType type = parent.getNodeType();
-    String property = type.findProperty(lwParent, lwObject);
+    ExplorerNode parentExplorerNode = (ExplorerNode) node.getParent();
+    UiNodeType type = parentExplorerNode.getNodeType();
+    Object object = node.getLightweightObject();
+    Object parent = parentExplorerNode.getLightweightObject();
+    String property = type.findProperty(parent, object);
     return property;
   }
 }
