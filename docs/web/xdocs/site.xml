@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <site label="pmMDA" href="" xmlns="http://apache.org/forrest/linkmap/1.0" tab="">
-
   <about label="About">
     <home label="Home" href="index.html" description="Home Page"/>
     <news label="News" href="news.html" description="Site News"/>
@@ -8,6 +7,8 @@
     <download label="Download" href="download.html" description="Downloads"/>
     <todo label="Todo" href="todo.html" description="Todo List"/>
     <support label="Support" href="support.html" description="Support"/>
+    <all_site label="Full HTML" href="wholesite.html"/>
+    <all_sitePDF label="Full PDF" href="wholesite.pdf"/>
   </about>
 
   <project label="Projects" href="projects/" tab="projects">
@@ -70,5 +71,8 @@
       <commons-pool href="commons/pool/"/>
       <velocity href="velocity/"/>
     </jakarta>
+    <db href="http://db.apache.org/">
+      <ojb href="ojb/"/>
+    </db>
   </external-refs>
 </site>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.2//EN" 
-  "http://forrest.apache.org/forrest/dtd/document-v12.dtd">
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" 
+  "http://forrest.apache.org/dtd/document-v13.dtd">
 <document>
   <header>
     <title>Welcome to <em>pmMDA</em> - poor man's Model Driven Architecture 
@@ -92,7 +92,7 @@
           </td>
           <td>Results of JDepend quality rules</td>
         </tr>
-      </table>
+      </table>      
       <p>
         <link href="http://www.sourceforge.net">
           <img 

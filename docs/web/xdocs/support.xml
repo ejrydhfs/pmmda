@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.2//EN" 
-  "http://forrest.apache.org/forrest/dtd/document-v12.dtd">
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" 
+  "http://forrest.apache.org/dtd/document-v13.dtd">
 <document>
   <header>
     <title>Support</title>
@@ -22,8 +22,8 @@
       <p>Commercial support is available for companies wishing extensive support,
         training and coaching activities. Commercial partners provide services in 
         Europe.</p>
-      <p>Please send an email to the <em>pmMDA group</em> at 
-        <em>marcel.baumann@sourceforge.net</em></p>
+      <p>Please send an email to the developers of <em>pmMDA group</em> at 
+        <em>marcelbaumann@users.sourceforge.net</em></p>
     </section>
     <section>
       <title>Sponsors</title>
