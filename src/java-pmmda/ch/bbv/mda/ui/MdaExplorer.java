@@ -221,10 +221,9 @@ public class MdaExplorer extends Explorer {
 		options.addOptionGroup(group);
 		options
 				.addOption(CmdLineBuilder.createArgOption("m", "model",
-						"loads the UML model from the given file", false,
+						"loads the UML model from the given file", "model", false,
 						String.class));
-    options.addOption(CmdLineBuilder.createArgOption("D", "D",
-        "Sun virtual machine parameters", false, String.class));
+    options.addOption(CmdLineBuilder.createJavaProperty());
 		Parser parser = new PosixParser();
 		try {
 			CommandLine line = parser.parse(options, arguments);
