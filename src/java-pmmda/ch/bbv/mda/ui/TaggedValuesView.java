@@ -118,7 +118,7 @@ public class TaggedValuesView extends NodePropertiesView {
 
   static class TaggedValuePanel extends TablePanel {
     public TaggedValuePanel(Collection objects, TableCell tableCell) {
-      super(objects, tableCell);
+      super(objects, tableCell, new TaggedValue.TaggedValueComparator());
     }
 
     protected JTable createTable(TableModel tableModel) {

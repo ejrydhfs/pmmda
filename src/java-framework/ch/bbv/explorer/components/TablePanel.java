@@ -9,6 +9,7 @@ package ch.bbv.explorer.components;
 import java.awt.BorderLayout;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -57,7 +58,28 @@ public class TablePanel extends JPanel {
    * @param tableCell table cell of the table.
    */
   public TablePanel(Collection objects, WritableTableFormat tableCell) {
-    initialize(objects, tableCell);
+    this(objects, tableCell, null);
+  }
+
+  /**
+   * Constructor of the class. The order of column names and properties names
+   * must be the same.
+   * @param objects objects to display in the panel.
+   * @param tableCell table cell of the table.
+   * @param comparator comparator used to sort the rows.
+   */
+  public TablePanel(Collection objects, WritableTableFormat tableCell,
+      Comparator comparator) {
+    setLayout(new BorderLayout());
+
+    BasicEventList list = new BasicEventList();
+    list.addAll(objects);
+    sortedList = new SortedList(list, comparator);
+    tableModel = new EventTableModel(sortedList, tableCell);
+    table = createTable(tableModel);
+    chooser = new TableComparatorChooser(table, sortedList, false);
+    scrollPane = new JScrollPane(table);
+    add(scrollPane);
   }
 
   /**
@@ -86,24 +108,6 @@ public class TablePanel extends JPanel {
   public void setModel(Collection objects) {
     sortedList.clear();
     sortedList.addAll(objects);
-  }
-
-  /**
-   * Initializes the table panel.
-   * @param objects the objects to be displayed.
-   * @param tableCell the table cell used to compute each cell of the table.
-   */
-  protected void initialize(Collection objects, WritableTableFormat tableCell) {
-    setLayout(new BorderLayout());
-
-    BasicEventList list = new BasicEventList();
-    list.addAll(objects);
-    sortedList = new SortedList(list, null);
-    tableModel = new EventTableModel(sortedList, tableCell);
-    table = createTable(tableModel);
-    chooser = new TableComparatorChooser(table, sortedList, false);
-    scrollPane = new JScrollPane(table);
-    add(scrollPane);
   }
 
   /**

@@ -1,11 +1,12 @@
 /* copyright 2000-2004 Marcel Baumann 
- * Licensed under the Apache License, Version 2.0 (the "Licence); 
+ * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$
  */
 package ch.bbv.mda;
 
 import java.io.Serializable;
+import java.util.Comparator;
 
 /**
  * The tagged value implements the UML concept of a tag. A tag is an extension
@@ -14,8 +15,15 @@ import java.io.Serializable;
  * @author Marcel Baumann
  * @version $Revision$
  */
-public class TaggedValue implements Serializable {
+public class TaggedValue implements Serializable, Comparable {
   // %% BEGIN USER DECLARATION
+  public static class TaggedValueComparator implements Comparator {
+
+    public int compare(Object left, Object right) {
+      return ((TaggedValue) left).compareTo(right);
+    }
+  }
+
   // %% END USER DECLARATION
 
   /**
@@ -141,5 +149,19 @@ public class TaggedValue implements Serializable {
   public void booleanValue(boolean value) {
     this.value = Boolean.toString(value);
   }
+
+  /**
+   * Compares to another tag value. The two tagged values are equivalent if both
+   * tags are the same.
+   * @param object tagged value to compare with.
+   * @return result of comparing both tag names.
+   */
+  public int compareTo(Object object) {
+    TaggedValue taggedValue = (TaggedValue) object;
+    int compare = tag.compareTo(taggedValue.getTag());
+    return (compare == 0 && value != null) ? value.compareTo(taggedValue
+        .getValue()) : compare;
+  }
+
   // %% END USER CODE
 }
