@@ -1,5 +1,5 @@
 /* copyright 2000-2004 Marcel Baumann
- * Licensed under the Apache License, Version 2.0 (the "Licence);
+ * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
  */
@@ -8,18 +8,27 @@ package ch.bbv.explorer.components;
 import java.lang.reflect.InvocationTargetException;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import ca.odell.glazedlists.swing.WritableTableFormat;
 
 /**
  * A sortable table model containing a set of properties of Java beans. All
- * beans in the table should contain the defined properties.
+ * beans in the table should contain the defined properties. The order of the
+ * column names, property names and editable column flags is relevant.
  * @author Marcel Baumann
  * @version $Revision$
  */
 public class TableCell implements WritableTableFormat {
   /**
-   * The name of the displayed columns.
+   * Logger for all instances of the class.
+   */
+  private static Log log = LogFactory.getLog(TableCell.class);
+
+  /**
+   * The name of the displayed columns. The order is the same as the order of
+   * the properties.
    */
   private String[] columnNames;
 
@@ -30,7 +39,7 @@ public class TableCell implements WritableTableFormat {
 
   /**
    * Flag list defining which columns are editable. If null no column is
-   * editable.
+   * editable. The order is the same as the order of the properties.
    */
   private boolean[] editableColumns;
 
@@ -97,18 +106,21 @@ public class TableCell implements WritableTableFormat {
    * Returns the name of the specified column.
    * @param column the column index.
    * @return the column name.
+   * @pre (0 <= column) && (column <= columnNames.length)
    */
   public String getColumnName(int column) {
     assert ((0 <= column) && (column <= columnNames.length));
     return columnNames[column];
   }
-  
+
   /**
    * Indicates if the column is editable or not.
    * @param column column to check.
    * @return true if the column is editable otherwise false.
+   * @pre (0 <= column) && (column <= columnNames.length)
    */
   public boolean isColumnEditable(int column) {
+    assert ((0 <= column) && (column <= columnNames.length));
     return editableColumns != null && editableColumns[column];
   }
 
@@ -117,10 +129,11 @@ public class TableCell implements WritableTableFormat {
    * @param bean the row index.
    * @param column the column index.
    * @return the requested value.
+   * @pre (0 <= column) && (column <= columnNames.length) && (bean != null)
    * @see #setColumnValue(Object, Object, int)
    */
   public Object getColumnValue(Object bean, int column) {
-    assert ((0 <= column) && (column <= propertyNames.length));
+    assert ((0 <= column) && (column <= propertyNames.length) && (bean != null));
 
     Object value = null;
     try {
@@ -142,20 +155,21 @@ public class TableCell implements WritableTableFormat {
    * @param value new value of the field displayed at the given column.
    * @param column column of the field to update.
    * @return the updated object if sucessful otherwise null.
+   * @pre (0 <= column) && (column <= columnNames.length) && (bean != null)
    * @see #getColumnValue(Object, int)
    */
   public Object setColumnValue(Object bean, Object value, int column) {
-    assert ((0 <= column) && (column <= propertyNames.length));
+    assert ((0 <= column) && (column <= propertyNames.length) && (bean != null));
 
     try {
       PropertyUtils.setProperty(bean, propertyNames[column], value);
       return bean;
     } catch (IllegalAccessException e) {
-      e.printStackTrace();
+      log.error(e);
     } catch (InvocationTargetException e) {
-      e.printStackTrace();
+      log.error(e);
     } catch (NoSuchMethodException e) {
-      e.printStackTrace();
+      log.error(e);
     }
     return null;
   }

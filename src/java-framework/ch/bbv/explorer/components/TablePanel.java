@@ -1,7 +1,8 @@
 /*
- * copyright 2000-2004 Marcel Baumann Licensed under the Apache License, Version
- * 2.0 (the "Licence); you may not use this file except in compliance with the
- * License. $Id$
+ /* copyright 2000-2004 Marcel Baumann
+ * Licensed under the Apache License, Version 2.0 (the "Licence");
+ * you may not use this file except in compliance with the License.
+ * $Id$
  */
 
 package ch.bbv.explorer.components;
@@ -23,8 +24,7 @@ import ca.odell.glazedlists.swing.TableComparatorChooser;
 import ca.odell.glazedlists.swing.WritableTableFormat;
 
 /**
- * The table panel provides a panel with a sortable table. The columns of the
- * table are specified as an array of strings.
+ * The table panel provides a panel with a sortable table.
  * @author MarcelBaumann
  * @version $Revision$
  */
@@ -37,7 +37,7 @@ public class TablePanel extends JPanel {
   private SortedList sortedList;
 
   /**
-   * table model of the collection of objects.
+   * Table model of the collection of objects.
    */
   private EventTableModel tableModel;
 

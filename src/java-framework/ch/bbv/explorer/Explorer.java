@@ -383,7 +383,7 @@ public class Explorer {
       if (e.isPopupTrigger()) {
         TreePath path = getTree().getPathForLocation(e.getX(), e.getY());
         if (path != null) {
-  	      tree.setSelectionPath(path);
+  	      getTree().setSelectionPath(path);
           ExplorerNode node = (ExplorerNode) path.getLastPathComponent();
           JPopupMenu menu = node.getNodeType().getPopupMenu(node);
           if (menu != null) {
