@@ -25,7 +25,7 @@ public class MetaModelView extends NodePropertiesView {
   /** 
    * The size of a text field in the view.
    */
-  private final static int TEXT_FIELD_SIZE = 20;
+  private final static int TEXT_FIELD_SIZE = 50;
 
   private JTextField nameText;
 
