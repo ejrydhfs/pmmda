@@ -211,10 +211,14 @@ public class EjbCartridge extends CartridgeImpl {
 
   public TaggedValue getTaggedValueWithElementDependentDefault(TaggedValueType taggedValueType, MetaElement element){
     TaggedValue value = new TaggedValue(taggedValueType);
-    if(taggedValueType.getTag().equals(SERVER_NAME_TAG)){
-      value.setValue(element.getName()+"Server");
-    }
+    updateTaggedValueWithElementDependentDefault(value, element);
     return value;
+  }
+  
+  public void updateTaggedValueWithElementDependentDefault(TaggedValue taggedValue, MetaElement element){
+    if(taggedValue.getType().getTag().equals(SERVER_NAME_TAG)){
+      taggedValue.setValue(element.getName()+"Server");
+    }
   }
   
   public void preProcessPackage(MetaPackage metaPackage) {

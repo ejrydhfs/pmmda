@@ -144,10 +144,14 @@ public class OexCartridge extends CartridgeImpl {
 
   public TaggedValue getTaggedValueWithElementDependentDefault(TaggedValueType taggedValueType, MetaElement element){
     TaggedValue value = new TaggedValue(taggedValueType);
-    if(taggedValueType.getTag().equals(VIEW_CLASS_TAG)){
-      value.setValue(element.getName()+"View");
-    }
+    updateTaggedValueWithElementDependentDefault(value, element);
     return value;
+  }
+  
+  public void updateTaggedValueWithElementDependentDefault(TaggedValue taggedValue, MetaElement element){
+    if(taggedValue.getType().getTag().equals(VIEW_CLASS_TAG)){
+      taggedValue.setValue(element.getName()+"View");
+    }
   }
   
   public void preProcessPackage(MetaPackage metaPackage) {

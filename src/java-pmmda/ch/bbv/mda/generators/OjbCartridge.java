@@ -287,13 +287,18 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
 
   public TaggedValue getTaggedValueWithElementDependentDefault(TaggedValueType taggedValueType, MetaElement element){
     TaggedValue value = new TaggedValue(taggedValueType);
-    if(taggedValueType.getTag().equals(TABLE_NAME_TAG)){
-      value.setValue(element.getName()+"Table");
-    } else if(taggedValueType.getTag().equals(SCHEMA_TAG)){
-      value.setValue(element.getName()+"Schema");
-    } else if(taggedValueType.getTag().equals(COLUMN_NAME_TAG)){
-      value.setValue(element.getName()+"Column");
-    } else if(element instanceof MetaProperty && taggedValueType.getTag().equals(COLUMN_TYPE_TAG)){
+    updateTaggedValueWithElementDependentDefault(value, element);
+    return value;
+  }
+  
+  public void updateTaggedValueWithElementDependentDefault(TaggedValue taggedValue, MetaElement element){
+    if(taggedValue.getType().getTag().equals(TABLE_NAME_TAG)){
+      taggedValue.setValue(element.getName()+"Table");
+    } else if(taggedValue.getType().getTag().equals(SCHEMA_TAG)){
+      taggedValue.setValue(element.getName()+"Schema");
+    } else if(taggedValue.getType().getTag().equals(COLUMN_NAME_TAG)){
+      taggedValue.setValue(element.getName()+"Column");
+    } else if(element instanceof MetaProperty && taggedValue.getType().getTag().equals(COLUMN_TYPE_TAG)){
       MetaProperty property = (MetaProperty)element;
       // remove package name
       String type = property.getTypeName();
@@ -306,12 +311,11 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
       for(Iterator i=codes.iterator(); i.hasNext();){
         JdbcTypeCode jdbcCode = (JdbcTypeCode)i.next();
         if(jdbcCode.getShortDescription().toLowerCase().equals(type.toLowerCase())){
-          value.setValue(jdbcCode.getShortDescription());
+          taggedValue.setValue(jdbcCode.getShortDescription());
           break;
         }
       }
     }
-    return value;
   }
   
   public void processPackage(MetaPackage metaPackage) {

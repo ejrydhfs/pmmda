@@ -464,9 +464,15 @@ public class BogCartridge extends CartridgeImpl implements Cartridge {
   }
 
   public TaggedValue getTaggedValueWithElementDependentDefault(TaggedValueType taggedValueType, MetaElement element){
-    return new TaggedValue(taggedValueType);
+    TaggedValue value = new TaggedValue(taggedValueType);
+    updateTaggedValueWithElementDependentDefault(value, element);
+    return value;
   }
   
+  public void updateTaggedValueWithElementDependentDefault(TaggedValue taggedValue, MetaElement element){
+    // intentionally left blank
+  }
+
   /**
    * Computes the data object cartridge relevant attributes for the meta
    * package. The following attributes are defined.

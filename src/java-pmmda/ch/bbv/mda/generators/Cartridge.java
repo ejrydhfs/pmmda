@@ -111,6 +111,13 @@ public interface Cartridge {
   TaggedValue getTaggedValueWithElementDependentDefault(TaggedValueType taggedValueType, MetaElement element);
 
   /**
+   * Updates tagged value with information from element
+   * @param taggedValue to be updated
+   * @param element to obtain information for the tagged value from
+   */
+  void updateTaggedValueWithElementDependentDefault(TaggedValue taggedValue, MetaElement element);
+  
+  /**
    * Returns the list of obsolete tagged value types for the given class type.
    * The class should be a descended of meta element.
    * @param clazz class, which tagged value types should be returned.

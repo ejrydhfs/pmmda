@@ -215,10 +215,14 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
 
   public TaggedValue getTaggedValueWithElementDependentDefault(TaggedValueType taggedValueType, MetaElement element){
     TaggedValue value = new TaggedValue(taggedValueType);
-    if(taggedValueType.getTag().equals(CTO_PACKAGE_IDL_TAG)){
-      value.setValue(element.getName()+"PackageIdl");
-    }
+    updateTaggedValueWithElementDependentDefault(value, element);
     return value;
+  }
+  
+  public void updateTaggedValueWithElementDependentDefault(TaggedValue taggedValue, MetaElement element){
+    if(taggedValue.getType().getTag().equals(CTO_PACKAGE_IDL_TAG)){
+      taggedValue.setValue(element.getName()+"PackageIdl");
+    }
   }
   
   public void preProcessPackage(MetaPackage metaPackage) {
