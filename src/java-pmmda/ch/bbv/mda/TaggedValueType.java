@@ -29,7 +29,7 @@ public class TaggedValueType extends AdornmentType implements Serializable{
   /**
    * Back link to the cartridge having defined this tagged value type
    */
-  private Cartridge cartridge;
+  private transient Cartridge cartridge;
 
   /**
    * Constructor of the class.
