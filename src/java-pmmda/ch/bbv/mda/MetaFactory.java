@@ -131,6 +131,12 @@ public class MetaFactory {
     return type;
   }
 
+  /**
+   * Initialize the element with the defined tagged value types. All missing
+   * tagged values are added with their default value and all obsolete ones are
+   * removed.
+   * @param element meta element to initialize.
+   */
   public void initialize(MetaModel element) {
     if (!element.isSystem()) {
       initialize(element, MetaModel.class);
