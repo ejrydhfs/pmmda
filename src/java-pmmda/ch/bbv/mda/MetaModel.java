@@ -181,13 +181,15 @@ public class MetaModel extends MetaPackage {
 
   public MetaClass findClass(String qualifiedName) {
     MetaClass metaClass = null;
-    String packageName = MetaClass.getPackageName(qualifiedName);
-    if (packageName != null) {
-      MetaPackage metaPackage = findPackage(packageName);
-      if (metaPackage != null) {
-        metaClass = metaPackage
-            .findClass(MetaClass.getClassName(qualifiedName));
-      }
+    if (qualifiedName != null) {
+	    String packageName = MetaClass.getPackageName(qualifiedName);
+	    if (packageName != null) {
+	      MetaPackage metaPackage = findPackage(packageName);
+	      if (metaPackage != null) {
+	        metaClass = metaPackage
+	            .findClass(MetaClass.getClassName(qualifiedName));
+	      }
+	    }
     }
     return metaClass;
   }
