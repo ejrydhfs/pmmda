@@ -130,7 +130,7 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
   /**
    * List of all primitive types of the Java language.
    */
-  public static final String[] PRIMITIVE_TYPES = { "boolean", "byte", "double",
+  public static final String[] PRIMITIVE_TYPES = { "boolean", "byte", "char", "double",
       "float", "integer", "long", "short" };
 
   private static Map<String, String> java2idl;
