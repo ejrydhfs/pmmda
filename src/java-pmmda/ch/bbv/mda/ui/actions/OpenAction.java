@@ -31,18 +31,21 @@ import ch.bbv.mda.ui.TreeConstructor;
 public class OpenAction extends ExplorerOpenAction {
   public void initialize() {
     JFileChooser fileChooser = getFileChooser();
+    String[] rose = { "mdl" };
     String[] mof1_3s = { "zargo" };
+	String[] serials = { "ser" };
     String[] mof1_4s = { "zuml", "ecore" };
-    String[] xmls = { "xml", "ser" };
-		String[] serials = { "ser" };
-		fileChooser.addChoosableFileFilter(new SimpleFileFilter(mof1_3s,
-				"MOF 1.3 models (*.zargo)"));
+    String[] xmls = { "xml", "xmi" };
+    fileChooser.addChoosableFileFilter(new SimpleFileFilter(rose,
+    	"Rational Rose models (*.mdl)"));
+	fileChooser.addChoosableFileFilter(new SimpleFileFilter(mof1_3s,
+		"MOF 1.3 models (*.zargo)"));
     fileChooser.addChoosableFileFilter(new SimpleFileFilter(serials,
         "Java serialized models (*.ser)"));
     fileChooser.addChoosableFileFilter(new SimpleFileFilter(mof1_4s,
         "MOF 1.4 models (*.zuml, *.ecore)"));
     fileChooser.addChoosableFileFilter(new SimpleFileFilter(xmls,
-        "XML models (*.xml, *.ser)"));
+    	"XML models (*.xml, *.xmi)"));
   }
 
   public void execute() {
@@ -59,15 +62,39 @@ public class OpenAction extends ExplorerOpenAction {
    * model.
    */ 
   public void openModel(File file) throws PersistencyException {
+		MetaModel model = null; 
 		PersistencyHandlerFactory factory = new PersistencyHandlerFactory();
 		PersistencyHandler handler = factory.getHandler(file);
-		MetaModel model = handler.readModel(file);
-		model.accept(new TreeChecker());
+		assert(handler == null);
+		try{
+			model = parseModel(handler, file);
+		}
+		catch(com.thoughtworks.xstream.alias.CannotResolveClassException e){
+			handler = factory.getAlternateHandler(file);
+			model = parseModel(handler, file);
+		}
+		if(model == null) return;
 		TreeConstructor constructor = new TreeConstructor(getExplorer().getNodeTypeFactory());
 		model.accept(constructor);
 		model.setFilename(file.toString());
 		Explorer explorer = getExplorer();
 		explorer.setRoot(constructor.getRoot());
 		explorer.getMenuBar().documentSaved();
+  }
+
+  /** Parses given file with given handler
+   * @param handler handler to parse the given file.
+   * @param file file containing the model to be parsed.
+   * @throws PersistencyException an exception was encountered when loading the 
+   * model.
+   * @return MetaModel containing parsed file
+   */ 
+  private MetaModel parseModel(PersistencyHandler handler, File file) throws PersistencyException {
+		MetaModel model = null; 
+		assert(handler == null);
+		model = handler.readModel(file);
+		if(model == null) return null;
+		model.accept(new TreeChecker());
+		return model;
   }
 }
