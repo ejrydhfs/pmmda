@@ -12,7 +12,6 @@ import javax.swing.Icon;
 import javax.swing.JPopupMenu;
 
 import ch.bbv.dog.DataObjectType;
-import ch.bbv.dog.LightweightObject;
 
 /**
  * The node type defines the characteristics of a class displayed in the tree
@@ -192,9 +191,9 @@ public interface UiNodeType {
 
   /**
    * Finds the property containing the given lightweight object.
-   * @param parent lightweight parent data object.
-   * @param object lightweight owned data object.
+   * @param parent parent data object.
+   * @param object owned data object.
    * @return the name of the property implementing the aggregation.
    */
-  String findProperty(LightweightObject parent, LightweightObject object);
+  String findProperty(Object parent, Object object);
 }
