@@ -114,12 +114,13 @@ public class TableCell implements WritableTableFormat {
   }
 
   /**
-   * Indicates if the column is editable or not.
+   * Indicates if the object in the column is editable or not.
+   * @param object object to test as editable or not.
    * @param column column to check.
    * @return true if the column is editable otherwise false.
    * @pre (0 <= column) && (column <= columnNames.length)
    */
-  public boolean isColumnEditable(int column) {
+  public boolean isEditable(Object object, int column) {
     assert ((0 <= column) && (column <= columnNames.length));
     return editableColumns != null && editableColumns[column];
   }
@@ -172,5 +173,5 @@ public class TableCell implements WritableTableFormat {
       log.error(e);
     }
     return null;
-  }
+  }  
 }
