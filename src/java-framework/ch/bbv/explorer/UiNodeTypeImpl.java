@@ -15,7 +15,6 @@ import javax.swing.JPopupMenu;
 import org.apache.commons.beanutils.PropertyUtils;
 
 import ch.bbv.dog.DataObjectType;
-import ch.bbv.dog.LightweightObject;
 import ch.bbv.explorer.actions.ExplorerNodeActions;
 
 /**
@@ -318,7 +317,7 @@ public class UiNodeTypeImpl implements UiNodeType {
     return factory;
   }
 
-  public String findProperty(LightweightObject parent, LightweightObject object) {
+  public String findProperty(Object parent, Object object) {
     assert ((parent != null) && (object != null));
 
     String property = null;
