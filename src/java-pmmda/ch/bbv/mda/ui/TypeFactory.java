@@ -38,6 +38,7 @@ public class TypeFactory extends AbstractTypeFactory {
     UiNodeTypeImpl nodeType = new UiNodeTypeImpl(type, "name",
         MetaModelView.class);
     addRelation(nodeType, "packages", ch.bbv.mda.MetaPackage.class, true, true);
+    addRelation(nodeType, "classes", MetaClass.class, true, true);
 
     List params = new ArrayList();
     addField(params, "name", String.class, true);
