@@ -7,6 +7,7 @@ package ch.bbv.mda.ui;
 
 import javax.swing.*;
 
+import ch.bbv.dog.ui.ReferenceCodeComboBox;
 import ch.bbv.explorer.ExplorerNode;
 import ch.bbv.explorer.NodePropertiesView;
 import ch.bbv.mda.*;
@@ -45,6 +46,8 @@ public class MetaPackageView extends NodePropertiesView {
 
   private TaggedValuesView tagsView;
 
+  private ReferenceCodeComboBox visibility;
+
   /**
    * Default constructor of the class.
    */
@@ -63,6 +66,8 @@ public class MetaPackageView extends NodePropertiesView {
     system.setEnabled(false);
     tagsView = new TaggedValuesView();
     addNodePropertiesSubView(tagsView);
+    visibility = new ReferenceCodeComboBox(VisibilityCode.class, VisibilityCode
+        .getCodes());
     initialize();
   }
 
@@ -71,6 +76,7 @@ public class MetaPackageView extends NodePropertiesView {
     stereotypeText.setEditable(editable);
     descriptionText.setEditable(editable);
     tagsView.setViewEditable(editable);
+    visibility.setEnabled(editable);
   }
 
   public void populateView() {
@@ -87,6 +93,7 @@ public class MetaPackageView extends NodePropertiesView {
     }
     descriptionText.setText(model.getDescription());
     system.setSelected(model.isSystem());
+    visibility.setSelectedCode(model.getVisibility());
   }
 
   public void commitChanges() {
@@ -108,6 +115,12 @@ public class MetaPackageView extends NodePropertiesView {
     if (text != null) {
       model.setDescription(text.trim());
     }
+    text = stereotypeText.getText();
+    if (text != null) {
+      model.setStereotype(text.trim());
+    }
+    model.setVisibility((VisibilityCode) visibility.getSelectedCode());
+
     tagsView.commitChanges();
     getModel().nodeChanged();
   }
@@ -138,7 +151,7 @@ public class MetaPackageView extends NodePropertiesView {
     builder.addLabel("Context", cc.xy(1, 5));
     builder.add(contextText, cc.xy(3, 5));
     builder.addLabel("Visibility", cc.xy(5, 5));
-    builder.addLabel("visibility Text", cc.xy(7, 5));
+    builder.add(visibility, cc.xy(7, 5));
     builder.addLabel("Description", cc.xy(1, 7));
     builder.add(descriptionPane, cc.xywh(3, 7, 5, 1));
     builder.addSeparator("Modifiers", cc.xywh(1, 9, 7, 1));
