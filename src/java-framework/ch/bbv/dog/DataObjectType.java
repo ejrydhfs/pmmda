@@ -180,7 +180,7 @@ public class DataObjectType {
    * @return the instance of the requested class.
    */
   public DataObject createBoInstance() {
-    return (DataObject) ReflectUtilities.createInstance(boClass);
+    return (DataObject) ReflectUtilities.newInstance(boClass);
   }
 
   /**
@@ -188,7 +188,7 @@ public class DataObjectType {
    * @return the instance of the requested class.
    */
   public LightweightObject createLwInstance() {
-    return (LightweightObject) ReflectUtilities.createInstance(lwClass);
+    return (LightweightObject) ReflectUtilities.newInstance(lwClass);
   }
 
   /**

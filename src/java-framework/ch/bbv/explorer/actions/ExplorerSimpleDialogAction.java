@@ -39,7 +39,7 @@ public class ExplorerSimpleDialogAction extends ExplorerGlobalActionImpl {
 
   public void execute() {
     if (dialog == null) {
-      dialog = (SimpleDialog) ReflectUtilities.createInstance(clazz);
+      dialog = (SimpleDialog) ReflectUtilities.newInstance(clazz);
     }
     dialog.setVisible(true);
   }

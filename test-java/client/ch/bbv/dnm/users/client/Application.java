@@ -161,8 +161,9 @@ public class Application extends Locator {
 
   /**
    * Creates the data object handler of the application. Reflection is used to
-   * insure the correct class is instantiated. The class is created through the
-   * MDA approach and is not know at compilation time of this class.
+   * insure the correct class is instantiated through factory creation pattern.
+   * The class is created through the MDA approach and is not know at
+   * compilation time of this class.
    * @param qualifiedName qualified name of the data object handler class to
    *        instantiated. The class must provide a static create method.
    * @return the requested instance if sucessful otherwise null
