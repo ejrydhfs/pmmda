@@ -20,8 +20,9 @@ import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
 
 import ch.bbv.application.VersionId;
-import ch.bbv.mda.MetaClass;
+import ch.bbv.mda.MetaElement;
 import ch.bbv.mda.MetaPackage;
+import ch.bbv.mda.TaggedValue;
 import ch.bbv.mda.TaggedValueType;
 
 /**
@@ -202,12 +203,20 @@ public class EjbCartridge extends CartridgeImpl {
 
   public List getTaggedValueTypes(Class clazz) {
     List types = new ArrayList();
-    if (clazz.equals(MetaClass.class)) {
-      types.add(new TaggedValueType(SERVER_NAME_TAG, "", String.class));
+    if (clazz.equals(MetaPackage.class)) {
+      types.add(new TaggedValueType(SERVER_NAME_TAG, "", String.class, this));
     }
     return types;
   }
 
+  public TaggedValue getTaggedValueWithElementDependentDefault(TaggedValueType taggedValueType, MetaElement element){
+    TaggedValue value = new TaggedValue(taggedValueType);
+    if(taggedValueType.getTag().equals(SERVER_NAME_TAG)){
+      value.setValue(element.getName()+"Server");
+    }
+    return value;
+  }
+  
   public void preProcessPackage(MetaPackage metaPackage) {
     Properties context = getContext();
     StringBuffer buffer = new StringBuffer();

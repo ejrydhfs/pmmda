@@ -133,15 +133,23 @@ public class OexCartridge extends CartridgeImpl {
   public List getTaggedValueTypes(Class clazz) {
     List types = new ArrayList();
     if (clazz.equals(MetaClass.class)) {
-      types.add(new TaggedValueType(VIEW_CLASS_TAG, "", String.class));
+      types.add(new TaggedValueType(VIEW_CLASS_TAG, "", String.class, this));
     } else if (clazz.equals(MetaProperty.class)) {
-      types.add(new TaggedValueType(IS_VISIBLE_TAG, "false", Boolean.TYPE));
+      types.add(new TaggedValueType(IS_VISIBLE_TAG, "false", Boolean.TYPE, this));
     } else if (clazz.equals(MetaIndexedProperty.class)) {
-      types.add(new TaggedValueType(IS_VISIBLE_TAG, "false", Boolean.TYPE));
+      types.add(new TaggedValueType(IS_VISIBLE_TAG, "false", Boolean.TYPE, this));
     }
     return types;
   }
 
+  public TaggedValue getTaggedValueWithElementDependentDefault(TaggedValueType taggedValueType, MetaElement element){
+    TaggedValue value = new TaggedValue(taggedValueType);
+    if(taggedValueType.getTag().equals(VIEW_CLASS_TAG)){
+      value.setValue(element.getName()+"View");
+    }
+    return value;
+  }
+  
   public void preProcessPackage(MetaPackage metaPackage) {
     Properties context = getContext();
     StringBuffer buffer = new StringBuffer();

@@ -263,28 +263,57 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
     List types = new ArrayList();
     if (clazz.equals(MetaModel.class)) {
     } else if (clazz.equals(MetaPackage.class)) {
-      types.add(new TaggedValueType(SCHEMA_TAG, "", String.class));
+      types.add(new TaggedValueType(SCHEMA_TAG, "", String.class, this));
     } else if (clazz.equals(MetaClass.class)) {
-      types.add(new TaggedValueType(IS_PERSISTENT_TAG, "false", Boolean.TYPE));
-      types.add(new TaggedValueType(TABLE_NAME_TAG, null, String.class));
+      types.add(new TaggedValueType(IS_PERSISTENT_TAG, "false", Boolean.TYPE, this));
+      types.add(new TaggedValueType(TABLE_NAME_TAG, null, String.class, this));
     } else if (clazz.equals(MetaProperty.class)) {
-      types.add(new TaggedValueType(COLUMN_NAME_TAG, null, String.class));
+      types.add(new TaggedValueType(COLUMN_NAME_TAG, null, String.class, this));
       types.add(new TaggedValueType(COLUMN_TYPE_TAG, "String",
-          JdbcTypeCode.class));
-      types.add(new TaggedValueType(COLUMN_SIZE_TAG, "0", Integer.TYPE));
-      types.add(new TaggedValueType(CAN_BE_NULL_TAG, "false", Boolean.TYPE));
-      types.add(new TaggedValueType(IS_PRIMARY_TAG, "false", Boolean.TYPE));
+          JdbcTypeCode.class, this));
+      types.add(new TaggedValueType(COLUMN_SIZE_TAG, "255", Integer.TYPE, this));
+      types.add(new TaggedValueType(CAN_BE_NULL_TAG, "false", Boolean.TYPE, this));
+      types.add(new TaggedValueType(IS_PRIMARY_TAG, "false", Boolean.TYPE, this));
       types.add(new TaggedValueType(OPTIMISTIC_LOCKING_TAG, "false",
-          Boolean.TYPE));
+          Boolean.TYPE, this));
     } else if (clazz.equals(MetaIndexedProperty.class)) {
-      types.add(new TaggedValueType(COLUMN_NAME_TAG, null, String.class));
-      types.add(new TaggedValueType(ORDER_BY_TAG, null, String.class));
+      types.add(new TaggedValueType(COLUMN_NAME_TAG, null, String.class, this));
+      types.add(new TaggedValueType(ORDER_BY_TAG, null, String.class, this));
     } else {
       types = null;
     }
     return types;
   }
 
+  public TaggedValue getTaggedValueWithElementDependentDefault(TaggedValueType taggedValueType, MetaElement element){
+    TaggedValue value = new TaggedValue(taggedValueType);
+    if(taggedValueType.getTag().equals(TABLE_NAME_TAG)){
+      value.setValue(element.getName()+"Table");
+    } else if(taggedValueType.getTag().equals(SCHEMA_TAG)){
+      value.setValue(element.getName()+"Schema");
+    } else if(taggedValueType.getTag().equals(COLUMN_NAME_TAG)){
+      value.setValue(element.getName()+"Column");
+    } else if(element instanceof MetaProperty && taggedValueType.getTag().equals(COLUMN_TYPE_TAG)){
+      MetaProperty property = (MetaProperty)element;
+      // remove package name
+      String type = property.getTypeName();
+      int idx = type.lastIndexOf(".");
+      if(idx != -1){
+        type = type.substring(idx+1);
+      }
+      // convert textual string representation into jdbc code
+      List codes = JdbcTypeCode.getCodes();
+      for(Iterator i=codes.iterator(); i.hasNext();){
+        JdbcTypeCode jdbcCode = (JdbcTypeCode)i.next();
+        if(jdbcCode.getShortDescription().toLowerCase().equals(type.toLowerCase())){
+          value.setValue(jdbcCode.getShortDescription());
+          break;
+        }
+      }
+    }
+    return value;
+  }
+  
   public void processPackage(MetaPackage metaPackage) {
     this.metaPackage = metaPackage;
     if (!metaPackage.booleanValueOfTag(BogCartridge.GENERATE_TAG)) {
