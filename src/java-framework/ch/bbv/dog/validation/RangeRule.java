@@ -7,7 +7,6 @@ package ch.bbv.dog.validation;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-
 import java.util.Date;
 import java.util.List;
 
@@ -45,45 +44,45 @@ public class RangeRule implements ValidationRule {
 
   /**
    * Constructor for a new range rule.
-   * @param isImmediate indicates if the rule should be checked immediately
+   * @param immediate indicates if the rule should be checked immediately
    * @param min lower bound of the interval. The value is part of the interval.
    * @param max high bound of the interval. The value is part or the interval.
    */
-  public RangeRule(boolean isImmediate, double min, double max) {
-    this.immediate = isImmediate;
+  public RangeRule(boolean immediate, double min, double max) {
+    this.immediate = immediate;
     range = new FractionalRange(min, max);
   }
 
   /**
    * Constructor for a new range rule.
-   * @param isImmediate indicates if the rule should be checked immediately
+   * @param immediate indicates if the rule should be checked immediately
    * @param min lower bound of the interval. The value is part of the interval.
    * @param max high bound of the interval. The value is part or the interval.
    */
-  public RangeRule(boolean isImmediate, Date min, Date max) {
-    this.immediate = isImmediate;
+  public RangeRule(boolean immediate, Date min, Date max) {
+    this.immediate = immediate;
     range = new DateRange(min, max);
   }
 
   /**
    * Constructor for a new range rule.
-   * @param isImmediate indicates if the rule should be checked immediately
+   * @param immediate indicates if the rule should be checked immediately
    * @param min lower bound of the interval. The value is part of the interval.
    * @param max high bound of the interval. The value is part or the interval.
    */
-  public RangeRule(boolean isImmediate, BigInteger min, BigInteger max) {
-    this.immediate = isImmediate;
+  public RangeRule(boolean immediate, BigInteger min, BigInteger max) {
+    this.immediate = immediate;
     range = new BigNaturalRange(min, max);
   }
 
   /**
    * Constructor for a new range rule.
-   * @param isImmediate indicates if the rule should be checked immediately
+   * @param immediate indicates if the rule should be checked immediately
    * @param min lower bound of the interval. The value is part of the interval.
    * @param max high bound of the interval. The value is part or the interval.
    */
-  public RangeRule(boolean isImmediate, BigDecimal min, BigDecimal max) {
-    this.immediate = isImmediate;
+  public RangeRule(boolean immediate, BigDecimal min, BigDecimal max) {
+    this.immediate = immediate;
     range = new BigFractionalRange(min, max);
   }
 
@@ -94,8 +93,7 @@ public class RangeRule implements ValidationRule {
 
   public boolean execute(Object bean, String property, Object oldValue,
       Object newValue, List results) {
-    Object value = ReflectUtilities.getProperty(bean, property);
-    return (value != null) && range.isInRange(value);
+    return (newValue != null) && range.isInRange(newValue);
   }
 
   /**

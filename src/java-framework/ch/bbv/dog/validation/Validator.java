@@ -14,7 +14,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ch.bbv.application.ComponentImpl;
+import ch.bbv.dog.AbstractVisitorFunctor;
 import ch.bbv.dog.DataObject;
+import ch.bbv.dog.DataObjectType;
 
 /**
  * The validator component is responsible to apply validation rules on business
@@ -53,11 +55,35 @@ public class Validator extends ComponentImpl {
    * @param results list to which validation rule results are added.
    */
   public void validate(DataObject object, List results) {
-
+    PropertyDescriptor[] descriptors = getBeanInfo(object.getClass())
+        .getPropertyDescriptors();
+    for (int i = 0; i < descriptors.length; i++) {
+      List rules = (List) descriptors[i].getValue(key);
+      if (rules != null) {
+        for (int j = 0, size = rules.size(); j < size;) {
+          ((ValidationRule) rules.get(j)).execute(object, descriptors[i]
+              .getName(), results);
+        }
+      }
+    }
   }
 
   /**
-   * Registers a validation rule. 
+   * Validates the data object graph with all its simple and indexed properties.
+   * @param root root data object of the graph to visit.
+   * @param visitor visitor used to traverse the graph.
+   * @param results list to which validation rule results are added.
+   */
+  public void validate(DataObject root, AbstractVisitorFunctor visitor,
+      List results) {
+    ValidateFunctor functor = new ValidateFunctor(this);
+    visitor.setFunctor(functor);
+    DataObjectType.invokeVisitor(root, visitor);
+    results.addAll(functor.getResults());
+  }
+
+  /**
+   * Registers a validation rule.
    * @param rule rule to register.
    * @param clazz class on which instances the rule will be applied.
    * @param property property on which the rule will be applied.
@@ -68,7 +94,7 @@ public class Validator extends ComponentImpl {
   }
 
   /**
-   * Registers a set of validation rules. 
+   * Registers a set of validation rules.
    * @param rules rules to register.
    * @param clazz class on which instances the rule will be applied.
    * @param property property on which the rule will be applied.
@@ -93,7 +119,7 @@ public class Validator extends ComponentImpl {
   }
 
   /**
-   * Rerturns the property descriptor associated with the property. 
+   * Returns the property descriptor associated with the property.
    * @param clazz class containing the requested property.
    * @param property name of the property.
    * @return the requested property descriptor.
@@ -112,8 +138,8 @@ public class Validator extends ComponentImpl {
   }
 
   /**
-   * Returns the list of rules associated with the property. If none exists, 
-   * a new one is created and returned.
+   * Returns the list of rules associated with the property. If none exists, a
+   * new one is created and returned.
    * @param clazz class containing the requested property.
    * @param property name of the property.
    * @return the list of rules of the property.
@@ -127,5 +153,4 @@ public class Validator extends ComponentImpl {
     }
     return availableRules;
   }
-
 }

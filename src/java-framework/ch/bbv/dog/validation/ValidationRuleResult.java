@@ -6,12 +6,14 @@
 package ch.bbv.dog.validation;
 
 import java.io.Serializable;
+import java.text.MessageFormat;
 
 /**
  * The validation rule result is the result of the execution of a validation
  * rule. Information and warnings are available to the user but does not hinder
  * the application. Errors should be corrected before the user can execute other
- * operations.
+ * operations. The localization of the message is available through the key
+ * property and the text conversion convenience methods.
  * @author MarcelBaumann
  * @version $Revision$
  */
@@ -107,6 +109,6 @@ public class ValidationRuleResult implements Serializable {
    * @see #getText()
    */
   public void setText(String text, Object[] parameters) {
-    this.text = text;
+    this.text = MessageFormat.format(text, parameters);
   }
 }

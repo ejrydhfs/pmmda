@@ -6,27 +6,30 @@
     rules. The rules are defined as validation rules. The business object
     types being Java beans, the rules are connected to the model through the
     bean descriptor meta-model. All feature descriptors support set and get
-    of named values.</p>
-    
+    of named values. All rules must implement the validation rule interface.
+    A set of standard rules are provides as examples. They are discribed
+    below.</p>
+        
   <h2>Validation Types</h2>
   
   <dl>
     <dt>Range Check</dt><dd>The property must be inside the defined range of
-      values. All primitive types and their wrappers are supported.</dd>
+      values. All primitive types and their wrappers, big decimals, big 
+      fractionals and dates are supported.</dd>
     <dt>Pattern Check</dt><dd>The string property value respects the defined
       regular expression. Minumum and maximum length of a text are also handled
       in this check.</dd>
-    <dt>is null</dt><dd>The property value is null.</dd>
-    <dt>is not null</dt><dd>The property value is not null.</dd>
-    <dt>are unique</dt><dd>All the values of an indexed property are 
-      unique.</dd>
-    <dt>are null</dt><dd>All the values of an indexed property are null.</dd>
-    <dt>are not null</dt><dd>All the values of an indexed property are not 
-      null.</dd>
+    <dt>Is null</dt><dd>The property value is null.</dd>
+    <dt>Is not null</dt><dd>The property value is not null.</dd>
+    <dt>Is unique in a collection </dt><dd>All the values of an indexed 
+      property are unique. A parameter controls if null values are relevant
+      or not.</dd>
+    <dt>Collection rule</dt><dd>A rule is applied on all the items of an 
+      indexed property. The rule can be freely configured.</dd>
   </dl>
 
   <h2>Architecture</h2>
-  <p>The validation framework uses the bean standardpackages to store the 
+  <p>The validation framework uses the bean standard packages to store the 
     validation rules. A rule is either stored in the bean information instance
     of a class or in the property descriptor of a property. The list of valid
     rules is added as a named attribute to the bean information object. The

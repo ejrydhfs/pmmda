@@ -33,6 +33,15 @@ public class UniqueRule implements ValidationRule {
   private String indexedProperty;
 
   /**
+   * Constructor of the class where null values are considered.
+   * @param indexedProperty property which should be unique for all items in the
+   *        indexed property to evaluate.
+   */
+  public UniqueRule(String indexedProperty) {
+    this(indexedProperty, false);
+  }
+
+  /**
    * Constructor of the class.
    * @param indexedProperty property which should be unique for all items in the
    *        indexed property to evaluate.
@@ -45,9 +54,22 @@ public class UniqueRule implements ValidationRule {
   }
 
   public boolean execute(Object bean, String property, List results) {
-    Set values = new HashSet();
     Collection objects = (Collection) ReflectUtilities.getProperty(bean,
         property);
+    return validate(objects, results);
+  }
+
+  public boolean execute(Object bean, String property, Object oldValue,
+      Object newValue, List results) {
+    return validate((Collection) newValue, results);
+  }
+
+  public boolean isImmediate() {
+    return immediate;
+  }
+
+  private boolean validate(Collection objects, List results) {
+    Set values = new HashSet();
     for (Iterator i = objects.iterator(); i.hasNext();) {
       Object value = ReflectUtilities.getProperty(i.next(), indexedProperty);
       if ((value == null) && !considerNull) {
@@ -59,14 +81,5 @@ public class UniqueRule implements ValidationRule {
       values.add(value);
     }
     return true;
-  }
-
-  public boolean execute(Object bean, String property, Object oldValue,
-      Object newValue, List results) {
-    return execute(bean, property, results);
-  }
-
-  public boolean isImmediate() {
-    return immediate;
   }
 }

@@ -40,6 +40,13 @@ public class ValidateFunctor implements DoFunctor {
   }
 
   /**
+   * Returns the validation results of the last graph traversal.
+   * @return list of validation rule results.
+   */
+  public List getResults() {
+    return results;
+  }
+  /**
    * Resets the results list. Once reseted the functor can be used for a new
    * traversal.
    */
@@ -50,5 +57,4 @@ public class ValidateFunctor implements DoFunctor {
   public void execute(DataObject object) {
     validator.validate(object, results);
   }
-
 }

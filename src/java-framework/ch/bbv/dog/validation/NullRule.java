@@ -16,19 +16,24 @@ import ch.bbv.utilities.ReflectUtilities;
  * @version $Revision$
  */
 public class NullRule implements ValidationRule {
-  /** 
-   * The instance of the immediate rule can be shared for all properties. 
+  /**
+   * The instance of the immediate rule can be shared for all properties.
    */
   private static NullRule immediateRule;
 
-  /** 
-   * The instance of the not immediate rule can be shared for all properties. 
+  /**
+   * The instance of the not immediate rule can be shared for all properties.
    */
   private static NullRule notImmediateRule;
 
-  /** 
+  /**
+   * Indicates if the rule should be applied immediately or only
+   */
+  private boolean immediate;
+
+  /**
    * Create the requested rule. The method returns always the same object for
-   * the associated configuration. 
+   * the associated configuration.
    * @param immediate flag indicating if the rule is immediate or not.
    * @return the requested validation rule.
    */
@@ -56,21 +61,30 @@ public class NullRule implements ValidationRule {
     this.immediate = immediate;
   }
 
-  /**
-   * Indicates if the rule should be applied immediately or only
-   */
-  private boolean immediate;
-
   public boolean execute(Object bean, String property, List results) {
-    return ReflectUtilities.getProperty(bean, property) == null;
+    return validate(ReflectUtilities.getProperty(bean, property), results);
   }
 
   public boolean execute(Object bean, String property, Object oldValue,
       Object newValue, List results) {
-    return ReflectUtilities.getProperty(bean, property) == null;
+    return validate(newValue, results);
   }
 
   public boolean isImmediate() {
     return immediate;
+  }
+
+  /**
+   * Validates the rule agains the data.
+   * @param value data to validate.
+   * @param results list of validation rule results.
+   * @return true if sucessful otherwise false.
+   */
+  private boolean validate(Object value, List results) {
+    if (value != null) {
+      // TODO add message
+      return false;
+    }
+    return true;
   }
 }

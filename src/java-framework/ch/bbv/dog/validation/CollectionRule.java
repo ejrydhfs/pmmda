@@ -23,13 +23,13 @@ public class CollectionRule implements ValidationRule {
   private boolean immediate;
 
   /**
-   * The property which value should be unique. Uniqueness is verified with the
-   * equals operator.
+   * The property on which the validation rule should be applied.
    */
   private String indexedProperty;
 
   /**
-   * Validation rule to apply to the property of all items in the collection.
+   * Validation rule to apply to the defined property of all items in the 
+   * collection.
    */
   private ValidationRule rule;
 
