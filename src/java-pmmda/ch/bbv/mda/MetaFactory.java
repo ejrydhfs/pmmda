@@ -202,7 +202,8 @@ public class MetaFactory {
         TaggedValueType type = (TaggedValueType) types.get(i);
         TaggedValue value = element.getTaggedValue(type.getTag());
         if (value == null) {
-          element.setTaggedValue(type.getTag(), new TaggedValue(type));
+          value = type.getCartridge().getTaggedValueWithElementDependentDefault(type, element);
+          element.setTaggedValue(type.getTag(), value);
         } else {
           value.setType(type);
         }
