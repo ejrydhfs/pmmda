@@ -537,6 +537,10 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
 #end
     return clone;
   }
+
+#foreach ($nestedClass in $nestedClasses)
+  // sorry nested classes not yet supported: ${nestedClass.nameFirstLower()}
+#end
 #if (!${hasAncestors})
 #if (${class.getAttribute("bo-changeable")} == "true")
 
