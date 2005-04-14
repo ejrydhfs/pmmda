@@ -2,7 +2,6 @@ build
 classes
 deploy
 dist
-gendir
 logs
 test-classes
 *.log
