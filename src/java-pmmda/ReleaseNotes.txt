@@ -6,7 +6,6 @@ classes. The classes are stored in the test tree of the project.
 
 TODO
 ----
-- Implements protected code zones for declaration and definition.
 - Handle reference codes in BOG framework
 - test insert at
 - implements 1-1 in OEX
@@ -16,11 +15,24 @@ TODO
   classname, prefix, loaded, active, dependants
 - Have a self contained jar file running with java -jar pmMDA
 
-Version 0.3.0-dev (15 February 2005)
+Version 0.3.0-dev (30 April 2005)
 ------------------------------------
 The following new features were added.
+- A document was introduced at the level of the MDA explorer to provide
+  an extension mechanism to store PIM or PSM information outside the XMI
+  model. This decision is due to the extensibility limitations of UML.
+- The initial version of reference code values definition application is 
+  integrated in the pmMDA application. The values are not stored in the UML
+  model because such usage are not foreseen in the OMG meta model.
+- Protected code zones for imports, constructors, declaration and definition
+  are available for Java source code artifacts either for business objects or
+  reference codes.
+- Upgraded jgraph and jgraph add ons librairies to the newest versions 5.4.5 
+  and 1.0.7. The upgrade eliminates errors in the jgraph packages.
+- Updated glazedlist libraries to the newest version.
 - First feedback from Technical University of Raperswil was added to the trunk.
 - The source code was refactored to support the features of JDK 5.0.
+- Inheritance support was added to the OJB cartridge and templates.
 - All Java templates were extended to support Java 1.4 and 5.0. The type
   checking is more stringent due to the generics features. The property file 
   is extended to support the new option.
@@ -29,6 +41,15 @@ The following new features were added.
   message and flexibility is increased.  
 
 The following errors were corrected.
+- The user interface global actions were refactored.
+- The javaDocComment was renamed to docComment and JavaDoc documentation 
+  conventions were removed to simplify support of over programming languages.
+  The algorithm was improved to support user defined formatting.
+- Added extended support for navigability in the data object graph cartridge.
+  Previously the concept was not supported in the cartridge templates.
+- If a class is a lightweight one when its descendants are also lightweight
+  because they inherit lightweight properties. This propagation rule was 
+  missing.
 - Generic properties view had an error when loading an empty object.
 - Version identifiers are now provided for all serializable classes to insure
   compatibility between minor versions of the application. This compatibility
@@ -37,9 +58,14 @@ The following errors were corrected.
   of singleton instances. The new XStream library uses the JDK foreseen hooks to
   implement them. The JavaDoc documentation was extended to support serial tag
   information.
+- Documentation errors in the description of attributes in the DOG cartridge are
+  corrected - the container and key classes in the attributes are component names
+  and not qualified names as in the corresponding tag values -.  
 
 The following errors and change requests are closed 
-  1021167, 1029885, 1085670, 1105202, 1105446, 1105974, 1105978, 1106795
+  Errors: 1021167, 1029885, 1085670, 1105202, 1105446, 1105974, 1105978, 
+  1106795, 119390
+  CR: 1197387, 1197388
   (see Sourceforge site RFE and Tracker for detailed description)
   
 Version 0.2.9-RC2 (30 October 2004)

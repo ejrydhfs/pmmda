@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import ch.bbv.utilities.TextUtilities;
+import ch.bbv.mda.operators.ModelOperators;
 
 /**
  * The meta class models a package object as defined in the UML standard. It
@@ -73,30 +73,32 @@ public class MetaClass extends MetaElement {
    */
   private boolean statics;
 
-  private List<MetaClass> ancestors;
-
-  private List<MetaProperty> properties;
-
-  private List<MetaIndexedProperty> indexedProperties;
-
-  private List<String> imports;
-
-  private List<String> declarations;
-
-  private List<String> definitions;
-
-  private List constructors;
-
-  /**
-   * List of nested classes of the class.
-   */
-  private List<MetaClass> classes;
-
   /**
    * Flag indicating if the element is a system element defined in the
    * environment.
    */
   private boolean system;
+
+  /**
+   * List of ancestors of the class. An ancestor is either a class or an
+   * interface.
+   */
+  private List<MetaClass> ancestors;
+
+  /**
+   * List of simple properties of the class.
+   */
+  private List<MetaProperty> properties;
+
+  /**
+   * List of indexed propreties of the class.
+   */
+  private List<MetaIndexedProperty> indexedProperties;
+
+  /**
+   * List of nested classes of the class.
+   */
+  private List<MetaClass> classes;
 
   /**
    * Default constructor of the class.
@@ -106,78 +108,6 @@ public class MetaClass extends MetaElement {
     properties = new ArrayList<MetaProperty>();
     indexedProperties = new ArrayList<MetaIndexedProperty>();
     classes = new ArrayList<MetaClass>();
-  }
-
-  /**
-   * Returns the list of user defined import statements.
-   * @return List of user defined import statements.
-   * @see #setImports
-   */
-  public List<String> getImports() {
-    return imports;
-  }
-
-  /**
-   * Sets the list of user defined import statements.
-   * @param imports new list of user defined import statements.
-   * @see #getImports
-   */
-  public void setImports(List<String> imports) {
-    this.imports = imports;
-  }
-
-  /**
-   * Returns the list of user defined declarations.
-   * @return List of user defined declarations.
-   * @see #setDeclarations
-   */
-  public List getDeclarations() {
-    return declarations;
-  }
-
-  /**
-   * Sets the list of user defined declarations.
-   * @param declarations new list of user defined declarations.
-   * @see #getDeclarations
-   */
-  public void setDeclarations(List<String> declarations) {
-    this.declarations = declarations;
-  }
-
-  /**
-   * Returns the constructors of the class.
-   * @return the constructors of the class.
-   * @see #setConstructors(List)
-   */
-  public List getConstructors() {
-    return constructors;
-  }
-
-  /**
-   * Sets the constructors of the class.
-   * @param constructors the new list of constructors of the class.
-   * @see #getConstructors()
-   */
-  public void setConstructors(List constructors) {
-    this.constructors = constructors;
-  }
-
-  /**
-   * Returns the definitions of the class.
-   * @return the definitions of the class.
-   * @see #setDefinitions(List)
-   */
-  public List<String> getDefinitions() {
-    return definitions;
-  }
-
-  /**
-   * Sets the definitions of the class.
-   * @param definitions hte new definitions of the class.
-   * @see #getDefinitions()
-   */
-  public void setDefinitions(List<String> definitions) {
-    this.definitions = definitions;
   }
 
   /**
@@ -497,14 +427,32 @@ public class MetaClass extends MetaElement {
    * @return true if one ancestor has the requested name otherwise false.
    */
   public boolean hasAncestor(String qualifiedName) {
-    assert (qualifiedName != null);
+    assert qualifiedName != null;
+    MetaModel model = (MetaModel) getRoot();
+    MetaClass ancestor = model.findClass(qualifiedName);
+    boolean hasAncestor = false;
+    if (ancestor != null) {
+      hasAncestor = hasAncestor(ancestor);
+    }
+    return hasAncestor;
+  }
 
-    List ancestors = retrieveAncestors();
-    boolean hasAncestor = MdaUtilities.containsElementNamed(ancestors,
-        qualifiedName);
+  /**
+   * Returns true if the class or one of its ancestors has the given class as
+   * ancestor.
+   * @param clazz ancestor class to infer.
+   * @return true if the given class is an ancestor otherwise false.
+   */
+  public boolean hasAncestor(MetaClass clazz) {
+    assert clazz != null;
+    List<MetaClass> ancestors = retrieveAncestors();
+    boolean hasAncestor = ancestors.contains(clazz);
     if (!hasAncestor) {
-      for (Iterator i = ancestors.iterator(); i.hasNext() && !hasAncestor;) {
-        hasAncestor = ((MetaClass) i.next()).hasAncestor(qualifiedName);
+      for (MetaClass ancestor : ancestors) {
+        hasAncestor = ancestor.hasAncestor(clazz);
+        if (hasAncestor) {
+          break;
+        }
       }
     }
     return hasAncestor;
@@ -517,15 +465,32 @@ public class MetaClass extends MetaElement {
    * @return true if one ancestor has the requested name otherwise false.
    */
   public boolean hasInterface(String qualifiedName) {
-    assert (qualifiedName != null);
+    assert qualifiedName != null;
+    MetaModel model = (MetaModel) getRoot();
+    MetaClass ancestor = model.findClass(qualifiedName);
+    boolean hasInterface = false;
+    if (ancestor != null) {
+      hasInterface = hasInterface(ancestor);
+    }
+    return hasInterface;
+  }
 
+  /**
+   * Returns true if the class or one of its ancestors has the given class as
+   * ancestor.
+   * @param clazz ancestor class to infer.
+   * @return true if the given class is an ancestor otherwise false.
+   */
+  public boolean hasInterface(MetaClass clazz) {
+    assert clazz != null;
     List<MetaClass> interfaces = retrieveInterfaces();
-    boolean hasInterface = MdaUtilities.containsElementNamed(interfaces,
-        qualifiedName);
+    boolean hasInterface = interfaces.contains(clazz);
     if (!hasInterface) {
-      for (Iterator<MetaClass> i = interfaces.iterator(); i.hasNext()
-          && !hasInterface;) {
-        hasInterface = i.next().hasInterface(qualifiedName);
+      for (MetaClass ancestor : interfaces) {
+        hasInterface = ancestor.hasInterface(clazz);
+        if (hasInterface) {
+          break;
+        }
       }
     }
     return hasInterface;
@@ -545,7 +510,7 @@ public class MetaClass extends MetaElement {
    * @return the package name.
    */
   public static String getPackageName(String qualifiedClassname) {
-    return TextUtilities.getContextName(qualifiedClassname);
+    return ModelOperators.getContextName(qualifiedClassname);
   }
 
   /**
@@ -554,6 +519,6 @@ public class MetaClass extends MetaElement {
    * @return the simple class name.
    */
   public static String getClassName(String qualifiedClassname) {
-    return TextUtilities.getComponentName(qualifiedClassname);
+    return ModelOperators.getComponentName(qualifiedClassname);
   }
 }

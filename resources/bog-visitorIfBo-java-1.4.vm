@@ -27,6 +27,7 @@ public interface Visitor {
    * Returns the current depth in the graph when traversing it with the 
    * visitor. The depth is a positive integer with a minimal value of 1.
    * @return the current depth of the visitor in the graph.
+   * @see ${sign}setDepth(int)
    */
   int getDepth();
 
@@ -34,6 +35,7 @@ public interface Visitor {
    * Sets the current depth in the graph when traversing it with the visitor. 
    * The depth is a positive integer with a minimal value of 1.	
    * @param depth current depth of the visitor in the traversed graph.
+   * @see ${sign}getDepth()
    */
   void setDepth(int depth);
   
@@ -41,6 +43,7 @@ public interface Visitor {
 #isDataObject($class $isDataObject)
 #if($isDataObject)
 #if($hasInterface)
+
 #set($name=${class.getAttribute("bo-if-class")})
 #else
 #set($name=${class.getAttribute("bo-mo-class")})

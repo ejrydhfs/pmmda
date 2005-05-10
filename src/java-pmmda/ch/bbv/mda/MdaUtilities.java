@@ -5,7 +5,6 @@
  */
 package ch.bbv.mda;
 
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -59,24 +58,16 @@ public final class MdaUtilities {
    * @param qualifiedName qualified name of the requested element.
    * @return the requested element if found otherwise null.
    */
-  public static boolean containsElementNamed(List elements, String qualifiedName) {
-    assert ((elements != null) && (qualifiedName != null));
-
+  public static boolean containsElementNamed(List<MetaElement> elements, String qualifiedName) {
+    assert (elements != null) && (qualifiedName != null);
     boolean containsElementNamed = false;
-    for (Iterator i = elements.iterator(); i.hasNext() && !containsElementNamed;) {
-      MetaElement element = (MetaElement) i.next();
+    for (MetaElement element : elements) {
       containsElementNamed = qualifiedName.equals(element.qualifiedName());
+      if (containsElementNamed) {
+        break;
+      }
     }
     return containsElementNamed;
-  }
-
-  /**
-   * Returns an identifier representation of the qualified name.
-   * @param qualifiedName qualified name to transform.
-   * @return the transformed qualified name.
-   */
-  public static String qualifiedNameToIdentifier(String qualifiedName) {
-    return qualifiedName.replaceAll(".", "_");
   }
 
   /**

@@ -20,7 +20,8 @@ import org.apache.velocity.exception.ResourceNotFoundException;
 
 import ch.bbv.application.VersionId;
 import ch.bbv.mda.*;
-import ch.bbv.utilities.TextUtilities;
+import ch.bbv.mda.operators.FileOperators;
+import ch.bbv.mda.operators.ModelOperators;
 
 /**
  * The data transfer object handler generates all DTO artifacts to make all data
@@ -130,8 +131,8 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
   /**
    * List of all primitive types of the Java language.
    */
-  public static final String[] PRIMITIVE_TYPES = { "boolean", "byte", "char", "double",
-      "float", "integer", "long", "short" };
+  public static final String[] PRIMITIVE_TYPES = { "boolean", "byte", "char",
+      "double", "float", "integer", "long", "short" };
 
   private static Map<String, String> java2idl;
 
@@ -218,26 +219,8 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
     return types;
   }
 
-  public TaggedValue getTaggedValueWithElementDependentDefault(
-      TagDefinition taggedValueType, MetaElement element) {
-    TaggedValue value = new TaggedValue(taggedValueType);
-    updateTaggedValueWithElementDependentDefault(value, element);
-    return value;
-  }
-
-  public void updateTaggedValueWithElementDependentDefault(
-      TaggedValue taggedValue, MetaElement element) {
-    if (taggedValue.getType().getTag().equals(CTO_PACKAGE_IDL_TAG)) {
-      String name = element.getName();
-      if (name != null) {
-        taggedValue.setValue(name + "PackageIdl");
-      }
-    }
-  }
-
   public void preProcessPackage(MetaPackage metaPackage) {
     assert (metaPackage != null);
-
     Properties context = getContext();
     StringBuilder buffer = new StringBuilder();
     buffer.append(metaPackage.qualifiedName()).append(
@@ -299,7 +282,7 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
       if (DogCartridge.DATA_OBJECT_STEREOTYPE.equals(clazz.getStereotype())) {
         MetaPackage metaPackage = (MetaPackage) clazz.getContext();
         VelocityContext context = createContext(clazz);
-        PrintWriter writer = createWriter(idlRoot, metaPackage
+        PrintWriter writer = FileOperators.createWriter(idlRoot, metaPackage
             .valueOfTag(CTO_PACKAGE_IDL_TAG), clazz.getAttribute(CTO_MO_CLASS)
             + IDL_EXTENSION);
         writer.print(processTemplate(idlDtoBoTemplate, context));
@@ -310,7 +293,7 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
         writer.print(processTemplate(javaBo2DtoTemplate, context));
         writer.close();
         if (clazz.booleanValueOfAttribute(DogCartridge.BO_LIGHTWEIGHT)) {
-          writer = createWriter(idlRoot, metaPackage
+          writer = FileOperators.createWriter(idlRoot, metaPackage
               .valueOfTag(CTO_PACKAGE_IDL_TAG), clazz
               .getAttribute(CTO_LW_CLASS)
               + IDL_EXTENSION);
@@ -337,7 +320,7 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
    */
   public String getBo2DtoConversion(MetaProperty property, String param) {
     StringBuilder buffer = new StringBuilder();
-    String uName = TextUtilities.identifierFirstUpper(property.getName());
+    String uName = ModelOperators.identifierFirstUpper(property.getName());
     String typeName = property.getTypeName();
     if (Arrays.binarySearch(NULLABLE_TYPES, typeName) >= 0) {
       buffer.append("TransformerCto.create(").append(param).append(".get")
@@ -410,7 +393,7 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
    * object type.
    * @param clazz class which import statements should be infered.
    * @param packageName name of the package containing the artifact associated
-   *        with the class.
+   *          with the class.
    * @return list of all import statements for the class.
    */
   public ImportStatements retrieveImportStatementsForBo(MetaClass clazz,
@@ -425,7 +408,7 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
    * object type.
    * @param clazz class which import statements should be infered.
    * @param packageName name of the package containing the artifact associated
-   *        with the class.
+   *          with the class.
    * @return list of all import statements for the class.
    */
   public ImportStatements retrieveImportStatementsForIf(MetaClass clazz,
@@ -440,7 +423,7 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
    * object type.
    * @param clazz class which import statements should be infered.
    * @param packageName name of the package containing the artifact associated
-   *        with the class.
+   *          with the class.
    * @return list of all import statements for the class.
    */
   public ImportStatements retrieveImportStatementsForLw(MetaClass clazz,

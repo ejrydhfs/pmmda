@@ -22,6 +22,11 @@ public final class TextUtilities {
     // private constructor of static class
   }
 
+  /**
+   * Removes all special characters from an identifier.
+   * @param identifier identifier to clean-up.
+   * @return legal identifiers after removal of special characters.
+   */
   public static String removeSpecialCharacters(String identifier) {
     String tmp = identifier.toLowerCase();
     String result = "";
@@ -34,19 +39,6 @@ public final class TextUtilities {
   }
 
   /**
-   * Returns the identifier with its first letter in lowercase.
-   * @param identifier identifier to manipulate.
-   * @return new representation of the identifier.
-   */
-  public static String identifierFirstLower(String identifier) {
-    assert ((identifier != null) && (identifier.length() > 0));
-
-    StringBuilder buffer = new StringBuilder(identifier);
-    buffer.setCharAt(0, Character.toLowerCase(buffer.charAt(0)));
-    return buffer.toString();
-  }
-
-  /**
    * Returns the identifier with its first letter in uppercase.
    * @param identifier identifier to manipulate.
    * @return new representation of the identifier.
@@ -56,28 +48,6 @@ public final class TextUtilities {
 
     StringBuilder buffer = new StringBuilder(identifier);
     buffer.setCharAt(0, Character.toUpperCase(buffer.charAt(0)));
-    return buffer.toString();
-  }
-
-  /**
-   * Returns the identifier with written uppercase and the seperation of words
-   * identified with a uppercase for the first letter is transformed to a
-   * underline.
-   * @param identifier identifier to manipulate.
-   * @return new representation of the identifier.
-   */
-  public static String identifierUpper(String identifier) {
-    assert ((identifier != null) && (identifier.length() > 0));
-
-    StringBuilder buffer = new StringBuilder();
-    buffer.append(Character.toUpperCase(identifier.charAt(0)));
-    for (int i = 1; i < identifier.length(); i++) {
-      char letter = identifier.charAt(i);
-      if (Character.isUpperCase(letter)) {
-        buffer.append("_");
-      }
-      buffer.append(Character.toUpperCase(letter));
-    }
     return buffer.toString();
   }
 
@@ -125,37 +95,4 @@ public final class TextUtilities {
     return name;
   }
 
-  /**
-   * Returns the context part of a qualified class name.
-   * @param qualifiedName qualified name to process.
-   * @return the context name.
-   */
-  public static String getContextName(String qualifiedName) {
-    assert (qualifiedName != null);
-
-    int index = qualifiedName.lastIndexOf(".");
-    String packageName;
-    if (index > 0) {
-      packageName = qualifiedName.substring(0, index);
-    } else {
-      packageName = null;
-    }
-    return packageName;
-  }
-
-  /**
-   * Returns the component name of a qualified class name.
-   * @param qualifiedName qualified name to process.
-   * @return the component name.
-   */
-  public static String getComponentName(String qualifiedName) {
-    assert (qualifiedName != null);
-
-    int index = qualifiedName.lastIndexOf(".");
-    String className = qualifiedName;
-    if (index > 0) {
-      className = qualifiedName.substring(index + 1);
-    }
-    return className;
-  }
 }

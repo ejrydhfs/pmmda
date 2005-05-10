@@ -35,7 +35,7 @@ public class NodeTableCell extends TableCell {
       cells = new Cell[fields.size()];
       for (int i = 0; i < cells.length; i++) {
         UiField field = (UiField) fields.get(i);
-        cells[i] = new Cell(field.getProperty(), field.getProperty(), field
+        cells[i] = new Cell(field.getPropertyName(), field.getPropertyName(), field
             .getType(), field.isEditable());
       }
     } else {

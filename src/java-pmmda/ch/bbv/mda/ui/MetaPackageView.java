@@ -9,10 +9,12 @@ import javax.swing.*;
 
 import ch.bbv.dog.ui.ReferenceCodeComboBox;
 import ch.bbv.explorer.NodePropertiesView;
-import ch.bbv.mda.*;
+import ch.bbv.mda.MetaElement;
+import ch.bbv.mda.MetaFactory;
+import ch.bbv.mda.MetaPackage;
+import ch.bbv.mda.VisibilityCode;
 
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
 
 /**
@@ -129,32 +131,20 @@ public class MetaPackageView extends NodePropertiesView {
    */
   protected void initialize() {
     FormLayout layout = new FormLayout(
-        "right:pref, 3dlu, pref, 7dlu, right:pref, 3dlu, pref",
-        "p, 3dlu, p, 3dlu, p, 3dlu, p, 6dlu, p, 3dlu, p, 6dlu, p, 3dlu, max(32dlu;pref)");
-    layout.setColumnGroups(new int[][] { { 1, 5 }, { 3, 7 } });
-
-    PanelBuilder builder = new PanelBuilder(layout);
+        "right:pref, 3dlu, pref, 7dlu, right:pref, 3dlu, pref", "");
+    DefaultFormBuilder builder = new DefaultFormBuilder(layout);
     builder.setDefaultDialogBorder();
-
-    CellConstraints cc = new CellConstraints();
-
-    builder.addSeparator("General", cc.xywh(1, 1, 7, 1));
-    builder.addLabel("Name", cc.xy(1, 3));
-    builder.add(nameText, cc.xy(3, 3));
-    builder.addLabel("Stereotype", cc.xy(5, 3));
-    builder.add(stereotypeText, cc.xy(7, 3));
-    builder.addLabel("Context", cc.xy(1, 5));
-    builder.add(contextText, cc.xy(3, 5));
-    builder.addLabel("Visibility", cc.xy(5, 5));
-    builder.add(visibility, cc.xy(7, 5));
-    builder.addLabel("Description", cc.xy(1, 7));
-    builder.add(descriptionPane, cc.xywh(3, 7, 5, 1));
-    builder.addSeparator("Modifiers", cc.xywh(1, 9, 7, 1));
-    builder.addLabel("Is system", cc.xy(1, 11));
-    builder.add(system, cc.xy(3, 11));
-    builder.addSeparator("Tagged Values", cc.xywh(1, 13, 7, 1));
-    builder.add(tagsView, cc.xywh(1, 15, 7, 1, "fill, fill"));
-
+    builder.appendSeparator("General");
+    builder.append("&Name", nameText);
+    builder.append("&Stereotype", stereotypeText);
+    builder.append("&Context", contextText);
+    builder.append("&Visibility", visibility);
+    builder.append("&Description", descriptionPane, 5);
+    builder.appendSeparator("Modifiers");
+    builder.append("&Is System", system);
+    builder.nextLine();
+    builder.appendSeparator("Tagged Values");
+    builder.append(tagsView, 7);
     JPanel panel = builder.getPanel();
     add(panel);
   }

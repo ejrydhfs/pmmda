@@ -18,7 +18,7 @@ public class UiField {
   /**
    * Name of the property.
    */
-  private String property;
+  private String propertyName;
 
   /**
    * Type of the property.
@@ -37,7 +37,7 @@ public class UiField {
    * @param isEditable indicates if the field is editable or not.
    */
   public UiField(String property, Class type, boolean isEditable) {
-    this.property = property;
+    this.propertyName = property;
     this.type = type;
     this.editable = isEditable;
   }
@@ -47,8 +47,8 @@ public class UiField {
    * @return name of the property.
    * @see #UiField(String, Class, boolean)
    */
-  public String getProperty() {
-    return property;
+  public String getPropertyName() {
+    return propertyName;
   }
 
   /**
@@ -76,7 +76,7 @@ public class UiField {
    */
   public Object getProperty(Object object) {
     assert (object != null);
-    return ReflectUtilities.getProperty(object, property);
+    return ReflectUtilities.getProperty(object, propertyName);
   }
 
   /**
@@ -88,6 +88,6 @@ public class UiField {
    */
   public void setProperty(Object object, Object value) {
     assert (object != null);
-    ReflectUtilities.setProperty(object, property, value);
+    ReflectUtilities.setProperty(object, propertyName, value);
   }
 }

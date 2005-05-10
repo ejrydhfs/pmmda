@@ -7,6 +7,7 @@
 package ch.bbv.mda.ui.actions;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Arrays;
 
@@ -18,10 +19,9 @@ import org.apache.commons.logging.LogFactory;
 
 import ch.bbv.explorer.actions.ExplorerSaveAsAction;
 import ch.bbv.explorer.actions.SimpleFileFilter;
-import ch.bbv.mda.MetaModel;
 import ch.bbv.mda.persistency.PersistencyException;
-import ch.bbv.mda.persistency.PersistencyHandler;
-import ch.bbv.mda.persistency.PersistencyHandlerFactory;
+import ch.bbv.mda.ui.MdaDocument;
+import ch.bbv.mda.ui.MdaExplorer;
 import ch.bbv.utilities.ResourceUtility;
 import ch.bbv.utilities.SystemUtilities;
 
@@ -75,86 +75,43 @@ public class SaveAsAction extends ExplorerSaveAsAction {
       if (no == 1)
         return;
     }
-    MetaModel model = (MetaModel) getExplorer().getRoot().getDataObject();
     File file = getSelectedFile();
     String extension = SystemUtilities.getFileExtension(file).toLowerCase();
-    if (Arrays.binarySearch(FileTypes.ARGOUML_EXT, extension) >= 0) {
-      writeArgoUmlFile(model, file);
-    } else if (Arrays.binarySearch(FileTypes.POSEIDON_EXT, extension) >= 0) {
-      writePoseidonFile(model, file);
-    } else if (Arrays.binarySearch(FileTypes.XML_EXT, extension) >= 0) {
-      writeXmlFile(model, file);
-    } else if (Arrays.binarySearch(FileTypes.SERIALIZE_EXT, extension) >= 0) {
-      writeSerializedFile(model, file);
-    } else if (Arrays.binarySearch(FileTypes.XMI_EXT, extension) >= 0) {
-      writeArgoUmlFile(model, file);
-    } else {
-      JOptionPane.showMessageDialog(getExplorer().getFrame(), ResourceUtility
-          .getString("mda.ui.sorryMsg.ILLEGAL_FILE_NAME_OR_TYPE"),
-          ResourceUtility.getString("mda.ui.sorryMsg.SORRY"),
-          JOptionPane.ERROR_MESSAGE);
+    try {
+      if (Arrays.binarySearch(FileTypes.ARGOUML_EXT, extension) >= 0) {
+        writeModel(file);
+      } else if (Arrays.binarySearch(FileTypes.POSEIDON_EXT, extension) >= 0) {
+        JOptionPane.showMessageDialog(null,
+            "Poseidon Save Option Not Supported", "Not Yet Implemented",
+            JOptionPane.ERROR_MESSAGE);
+      } else if (Arrays.binarySearch(FileTypes.XML_EXT, extension) >= 0) {
+        writeModel(file);
+      } else if (Arrays.binarySearch(FileTypes.SERIALIZE_EXT, extension) >= 0) {
+        writeModel(file);
+      } else if (Arrays.binarySearch(FileTypes.XMI_EXT, extension) >= 0) {
+        writeModel(file);
+      } else {
+        JOptionPane.showMessageDialog(getExplorer().getFrame(), ResourceUtility
+            .getString("mda.ui.sorryMsg.ILLEGAL_FILE_NAME_OR_TYPE"),
+            ResourceUtility.getString("mda.ui.sorryMsg.SORRY"),
+            JOptionPane.ERROR_MESSAGE);
+      }
+    } catch (IOException e) {
+      log.error(e);
     }
   }
 
   /**
    * Writes the model to a new ArgoUML file. The file is copied from a template
    * before writing the model into it.
-   * @param model model to write to the persistence file.
-   * @param file file in which the model is written.
+   * @param file new file for the model.
+   * @throws IOException if the model could not be saved.
    */
-  private void writeArgoUmlFile(MetaModel model, File file) {
+  private void writeModel(File file) throws IOException {
     try {
-      PersistencyHandlerFactory factory = new PersistencyHandlerFactory();
-      PersistencyHandler handler = factory.getHandler(getSelectedFile());
-      handler.writeModel(model, getSelectedFile());
-      model.setFilename(getSelectedFile().toString());
-      getExplorer().getMenuBar().documentSaved();
-    } catch (PersistencyException e) {
-      log.error(e);
-    }
-  }
-
-  /**
-   * Writes the model to a new Poseidon file. The file is copied from a template
-   * before writing the model into it.
-   * @param model model to write to the persistence file.
-   * @param file file in which the model is written.
-   */
-  private void writePoseidonFile(MetaModel model, File file) {
-    JOptionPane.showMessageDialog(null, "Poseidon Save Option Not Supported",
-        "Not Yet Implemented", JOptionPane.ERROR_MESSAGE);
-  }
-
-  /**
-   * Writes the model to a new XML file. The file is copied from a template
-   * before writing the model into it.
-   * @param model model to write to the persistence file.
-   * @param file file in which the model is written.
-   */
-  private void writeXmlFile(MetaModel model, File file) {
-    try {
-      PersistencyHandlerFactory factory = new PersistencyHandlerFactory();
-      PersistencyHandler handler = factory.getHandler(getSelectedFile());
-      handler.writeModel(model, getSelectedFile());
-      model.setFilename(getSelectedFile().toString());
-      getExplorer().getMenuBar().documentSaved();
-    } catch (PersistencyException e) {
-      log.error(e);
-    }
-  }
-
-  /**
-   * Writes the model to a new Poseidon file. The file is copied from a template
-   * before writing the model into it.
-   * @param model model to write to the persistence file.
-   * @param file file in which the model is written.
-   */
-  private void writeSerializedFile(MetaModel model, File file) {
-    try {
-      PersistencyHandlerFactory factory = new PersistencyHandlerFactory();
-      PersistencyHandler handler = factory.getHandler(getSelectedFile());
-      handler.writeModel(model, getSelectedFile());
-      model.setFilename(getSelectedFile().toString());
+      MdaExplorer explorer = (MdaExplorer) getExplorer();
+      MdaDocument document = explorer.getDocument();
+      document.saveAs(file);
       getExplorer().getMenuBar().documentSaved();
     } catch (PersistencyException e) {
       log.error(e);

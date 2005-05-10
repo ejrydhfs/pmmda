@@ -5,14 +5,15 @@
  */
 package ch.bbv.mda.ui;
 
+import java.io.File;
+
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import ch.bbv.explorer.NodePropertiesView;
 import ch.bbv.mda.MetaModel;
 
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
 
 /**
@@ -32,34 +33,49 @@ public class MetaModelView extends NodePropertiesView {
    */
   private final static int TEXT_FIELD_SIZE = 50;
 
-  private JTextField nameText;
+  /**
+   * Name of the model.
+   */
+  private JTextField name;
 
-  private JTextField filenameText;
+  /**
+   * Directory containing the model and associated information.
+   */
+  private JTextField root;
+
+  /**
+   * Name of the file containing the model.
+   */
+  private JTextField filename;
 
   /**
    * Default constructor of the class.
    */
   public MetaModelView() {
-    nameText = new JTextField();
-    filenameText = new JTextField(TEXT_FIELD_SIZE);
-    filenameText.setEditable(false);
+    name = new JTextField();
+    root = new JTextField(TEXT_FIELD_SIZE);
+    root.setEditable(false);
+    filename = new JTextField(TEXT_FIELD_SIZE);
+    filename.setEditable(false);
     initialize();
   }
 
   public void setViewEditable(boolean editable) {
-    nameText.setEditable(editable);
+    name.setEditable(editable);
   }
 
   public void populateView() {
     MetaModel model = (MetaModel) getDataObject();
-    nameText.setText(model.getName());
-    filenameText.setText(model.getFilename());
+    name.setText(model.getName());
+    File file = new File(model.getFilename());
+    root.setText(file.getParent());
+    filename.setText(file.getAbsolutePath());
   }
 
   public void commitChanges() {
     MetaModel model = (MetaModel) getDataObject();
-    model.setName(nameText.getText());
-    model.setFilename(filenameText.getText());
+    model.setName(name.getText());
+    model.setFilename(filename.getText());
     getModel().nodeChanged();
   }
 
@@ -70,19 +86,13 @@ public class MetaModelView extends NodePropertiesView {
    * Initialize the view component with the user interface elements.
    */
   protected void initialize() {
-    FormLayout layout = new FormLayout("right:pref, 3dlu, pref:grow",
-        "p, 3dlu, p, 3dlu, p, 3dlu");
-    PanelBuilder builder = new PanelBuilder(layout);
+    FormLayout layout = new FormLayout("right:pref, 3dlu, pref:grow", "");
+    DefaultFormBuilder builder = new DefaultFormBuilder(layout);
     builder.setDefaultDialogBorder();
-
-    CellConstraints cc = new CellConstraints();
-
-    builder.addSeparator("General", cc.xywh(1, 1, 3, 1));
-    builder.addLabel("Name", cc.xy(1, 3));
-    builder.add(nameText, cc.xy(3, 3));
-    builder.addLabel("Filename", cc.xy(1, 5));
-    builder.add(filenameText, cc.xy(3, 5));
-
+    builder.appendSeparator("General");
+    builder.append("&Name", name);
+    builder.append("&Filename", filename);
+    builder.append("&Root Directory", root);
     JPanel panel = builder.getPanel();
     add(panel);
   }

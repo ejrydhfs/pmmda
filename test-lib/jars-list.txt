@@ -9,9 +9,9 @@ commons-pool-1.1.jar
 db-ojb-1.0.1.jar
 dog-<x.x.x>.jar
 forms-1.0.5.jar
-glazedlists-0.9.4.jar
+glazedlists-0.9.6.jar
 hsgldb.jar
 jbossall.client.jar
-jcalendar-1.2.1.jar
+jcalendar-1.2.2.jar
 junit-3.8.1.jar
 mysql-connector-3.0.15.jar

@@ -70,27 +70,6 @@ public final class ReflectUtilities {
     return returns;
   }
 
-  private static Object executeInherited(Object bean, String name,
-      Class[] types, Object[] params) {
-    assert ((bean != null) && (name != null));
-    Object returns = null;
-    try {
-      Method method = bean.getClass().getMethod(name, types);
-      returns = method.invoke(bean, params);
-    } catch (SecurityException e) {
-      e.printStackTrace();
-    } catch (NoSuchMethodException e) {
-      e.printStackTrace();
-    } catch (IllegalArgumentException e) {
-      e.printStackTrace();
-    } catch (IllegalAccessException e) {
-      e.printStackTrace();
-    } catch (InvocationTargetException e) {
-      e.printStackTrace();
-    }
-    return returns;
-  }
-
   /**
    * Creates a new instance of the class using the default constructor.
    * @param clazz class of the instance to create.
@@ -214,13 +193,6 @@ public final class ReflectUtilities {
     return instance;
   }
 
-  public static boolean isDefined(Object bean, String property) {
-    assert ((bean != null) && (property != null));
-    boolean isDefined = false;
-    PropertyUtils.isReadable(bean, property);
-    return isDefined;
-  }
-  
   /**
    * Gets the property of a data object described in the node type.
    * @param bean object which property should be retrieved.
@@ -275,5 +247,26 @@ public final class ReflectUtilities {
    */
   public String getLoadpath(Class clazz) {
     return clazz.getProtectionDomain().getCodeSource().getLocation().getPath();
+  }
+
+  private static Object executeInherited(Object bean, String name,
+      Class[] types, Object[] params) {
+    assert ((bean != null) && (name != null));
+    Object returns = null;
+    try {
+      Method method = bean.getClass().getMethod(name, types);
+      returns = method.invoke(bean, params);
+    } catch (SecurityException e) {
+      e.printStackTrace();
+    } catch (NoSuchMethodException e) {
+      e.printStackTrace();
+    } catch (IllegalArgumentException e) {
+      e.printStackTrace();
+    } catch (IllegalAccessException e) {
+      e.printStackTrace();
+    } catch (InvocationTargetException e) {
+      e.printStackTrace();
+    }
+    return returns;
   }
 }

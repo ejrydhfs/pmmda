@@ -41,7 +41,7 @@ ${class.retrieveVisibilityText()} class ${className} implements LightweightObjec
 #foreach($aggregation in $aggregations) 
 #if(${aggregation.booleanValueOfTag("bo-lightweight")})
 #emitPropertyDescription($aggregation "  ")
-  private ${aggregation.getAttribute("bo-storage-interface")} ${aggregation.nameFirstLower()};
+  private ${aggregation.getAttribute("bo-interface-class")} ${aggregation.nameFirstLower()};
 #end
 #end
 #if (!${hasAncestors})
@@ -69,7 +69,7 @@ ${class.retrieveVisibilityText()} class ${className} implements LightweightObjec
     this.id = id;
 #foreach ($aggregation in $aggregations) 
 #if(${aggregation.booleanValueOfTag("bo-lightweight")})
-  	${aggregation.nameFirstLower()} = new ${aggregation.getAttribute("bo-storage-type")}();
+  	${aggregation.nameFirstLower()} = new ${aggregation.getAttribute("bo-container-class")}();
 #end
 #end
   }
@@ -129,8 +129,8 @@ ${class.retrieveVisibilityText()} class ${className} implements LightweightObjec
 #set($lName = ${aggregation.nameFirstLower()})
 #set($usName = ${aggregation.nameFirstUpperSingular()})
 #set($upName = ${aggregation.nameFirstUpperPlural()})
-#set($interface = ${aggregation.getAttribute("bo-storage-interface")}) 
-#set($storageType = ${aggregation.getAttribute("bo-storage-type")})
+#set($interface = ${aggregation.getAttribute("bo-interface-class")}) 
+#set($storageType = ${aggregation.getAttribute("bo-container-class")})
 #getType($model $aggregation $type)
 #set($itemType = ${type.getAttribute("bo-lw-class")})
 #set($keyType = ${aggregation.getKeyType()})
@@ -312,7 +312,7 @@ ${class.retrieveVisibilityText()} class ${className} implements LightweightObjec
 #foreach ($aggregation in $aggregations) 
 #if(${aggregation.booleanValueOfTag("bo-lightweight")})
 #set($lName = ${aggregation.nameFirstLower()})
-    clone.${lName} = new ${aggregation.getStorageType()}();
+    clone.${lName} = new ${aggregation.valueOfTag("bo-container-class")}();
     for (int i = 0; i < ${lName}.size(); i++) {
       clone.${lName}.add(((LightweightObject)${lName}.get(i)).deepCopy());
     }

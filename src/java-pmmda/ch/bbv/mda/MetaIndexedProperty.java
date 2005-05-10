@@ -13,8 +13,6 @@ package ch.bbv.mda;
  * @version $Revision$
  */
 public class MetaIndexedProperty extends MetaProperty {
-  public static final String DEFAULT_META_INDEX_TYPE = "ARRAY_LIST";
-
   /**
    * Serial version identifier coded as back compatibility date.
    */
@@ -24,37 +22,21 @@ public class MetaIndexedProperty extends MetaProperty {
    * Default constructor of the class.
    */
   public MetaIndexedProperty() {
-    multiplicity = Multiplicity.MULTIPLICITY_0_N;
-  }
-
-  public boolean isOrdered() {
-    return booleanValueOfTag("bo-is-ordered");
-  }
-
-  public void setOrdered(boolean ordered) {
-    setTaggedValue("bo-container-class", ordered);
+    setMultiplicity(Multiplicity.MULTIPLICITY_0_N);
   }
 
   public void accept(Visitor visitor) {
     visitor.visit(this);
   }
 
-  public String getStorageType() {
-    return getTaggedValue("bo-container-class").getValue();
-  }
-
   public String getStorageSize() {
     return "N";
   }
 
-  public String getStorageInterface() {
-    return getTaggedValue("bo-interface-class").getValue();
-  }
-
-  public String getKeyType() {
-    return getTaggedValue("bo-key-class").getValue();
-  }
-
+  /**
+   * Returns true if the lower bound if the multiplicity is zero.
+   * @return true if elements are optional otherwise false.
+   */
   public boolean canBeNull() {
     return getMultiplicity().getLowerBound() == 0;
   }

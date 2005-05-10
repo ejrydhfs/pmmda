@@ -45,18 +45,35 @@ public class StatusBar extends JPanel {
     add(BorderLayout.EAST, progressBar);
   }
 
-  public void setInfo(String info) {
-    textLabel.setText(info);
+  /**
+   * Sets an information message on the status bar.
+   * @param text text to set on the status bar.
+   */
+  public void setInfo(String text) {
+    textLabel.setText(text);
   }
 
+  /**
+   * Sets a warning message on the status bar.
+   * @param text text to set on the status bar.
+   */
   public void setWarning(String text) {
     textLabel.setText(format(WARNING_FORMATS, text));
   }
 
+  /**
+   * Sets an error message on the status bar.
+   * @param text text to set on the status bar.
+   */
   public void setError(String text) {
     textLabel.setText(format(ERROR_FORMATS, text));
   }
 
+  /** 
+   * Sets the progress bar of the status bar.
+   * @param progress relative progress value between 0 and 100.
+   * @pre (0 <= progress) && (progress <= 100)
+   */
   public void setProgress(int progress) {
     assert ((0 <= progress) && (progress <= 100));
     progressBar.setValue(progress);

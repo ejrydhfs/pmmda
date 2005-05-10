@@ -18,7 +18,7 @@ import ch.bbv.mda.MetaClass;
 import ch.bbv.mda.MetaIndexedProperty;
 import ch.bbv.mda.MetaPackage;
 import ch.bbv.mda.MetaProperty;
-import ch.bbv.utilities.TextUtilities;
+import ch.bbv.mda.operators.ModelOperators;
 
 /**
  * The tag rule implements mechanisms to validate tagged values in the validator
@@ -68,7 +68,7 @@ public abstract class TagRule extends ValidationRuleImpl implements
     this.prefix = prefix;
     StringBuilder buffer = new StringBuilder();
     buffer.append(MESSAGES_PACKAGAGE_NAME).append(
-        TextUtilities.identifierFirstUpper(prefix)).append("RulesMessages");
+        ModelOperators.identifierFirstUpper(prefix)).append("RulesMessages");
     resources = ResourceBundle.getBundle(buffer.toString());
   }
 

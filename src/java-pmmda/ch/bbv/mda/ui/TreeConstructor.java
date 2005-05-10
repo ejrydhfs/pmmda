@@ -15,14 +15,7 @@ import org.apache.commons.logging.LogFactory;
 import ch.bbv.explorer.ExplorerNode;
 import ch.bbv.explorer.UiNodeType;
 import ch.bbv.explorer.UiNodeTypeFactory;
-import ch.bbv.mda.MetaClass;
-import ch.bbv.mda.MetaElement;
-import ch.bbv.mda.MetaIndexedProperty;
-import ch.bbv.mda.MetaModel;
-import ch.bbv.mda.MetaPackage;
-import ch.bbv.mda.MetaProperty;
-import ch.bbv.mda.TaggedValue;
-import ch.bbv.mda.Visitor;
+import ch.bbv.mda.*;
 
 /**
  * The tree constructor constructs a navigation tree representation of a MDA
@@ -36,17 +29,34 @@ public class TreeConstructor implements Visitor {
    */
   private static Log log = LogFactory.getLog(TreeConstructor.class);
 
+  /**
+   * The root node of the tree.
+   */
   private ExplorerNode root;
 
+  /**
+   * The data object nodes of the graph to construct.
+   */
   private Map<MetaElement, ExplorerNode> nodes;
 
+  /**
+   * The UI node type factory used to create the explorer nodes.
+   */
   private UiNodeTypeFactory factory;
 
+  /**
+   * Constructor of the class.
+   * @param factory factory used to create the explorer nodes.
+   */
   public TreeConstructor(UiNodeTypeFactory factory) {
     nodes = new HashMap<MetaElement, ExplorerNode>();
     this.factory = factory;
   }
 
+  /**
+   * Returns the root of the explorer node graph.
+   * @return the root of the graph to display.
+   */
   public ExplorerNode getRoot() {
     return root;
   }
@@ -76,15 +86,19 @@ public class TreeConstructor implements Visitor {
   public void visit(TaggedValue taggedValue) {
   }
 
-  private void constructNode(MetaElement element) {
-    UiNodeType nodeType = factory.getNodeTypeForBo(element.getClass());
-    ExplorerNode node = new ExplorerNode(nodeType, element, element);
-    nodes.put(element, node);
+  /**
+   * Constructs an explorer node.
+   * @param item item which explorer node should be constructed.
+   */
+  private void constructNode(MetaElement item) {
+    UiNodeType nodeType = factory.getNodeTypeForBo(item.getClass());
+    ExplorerNode node = new ExplorerNode(nodeType, item, item);
+    nodes.put(item, node);
 
-    ExplorerNode context = nodes.get(element.getContext());
+    ExplorerNode context = nodes.get(item.getContext());
     if ((context == null) && log.isDebugEnabled()) {
-      log.debug("Not context found for " + element + " context "
-          + element.getContext());
+      log.debug("Not context found for " + item + " context "
+          + item.getContext());
     }
     if (context != null)
       context.addChild(node);

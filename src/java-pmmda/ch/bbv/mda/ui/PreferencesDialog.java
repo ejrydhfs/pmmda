@@ -29,8 +29,15 @@ public class PreferencesDialog extends SimpleDialog {
    */
   private static final long serialVersionUID = 20041201;
 
+  /**
+   * Tabbed pane of the preference dialog.
+   */
   private JTabbedPane tabbedPane;
 
+  /**
+   * Constructor of the class.
+   * @param owner the frame owning the dialog.
+   */
   public PreferencesDialog(JFrame owner) {
     super(owner);
     JPanel content = new JPanel(new BorderLayout());

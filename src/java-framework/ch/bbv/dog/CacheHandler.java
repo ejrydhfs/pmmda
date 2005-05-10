@@ -8,6 +8,7 @@ package ch.bbv.dog;
 import java.util.*;
 
 import ch.bbv.application.Locator;
+import ch.bbv.dog.functors.UpdateFunctor;
 
 /**
  * The cache handler defines a proxy object between the clients and the handler

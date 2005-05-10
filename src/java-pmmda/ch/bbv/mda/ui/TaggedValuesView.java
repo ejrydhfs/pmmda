@@ -7,13 +7,7 @@
 package ch.bbv.mda.ui;
 
 import java.awt.BorderLayout;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.swing.CellEditor;
 import javax.swing.DefaultCellEditor;
@@ -29,11 +23,7 @@ import ch.bbv.explorer.NodePropertiesView;
 import ch.bbv.explorer.components.FocusCellEditor;
 import ch.bbv.explorer.components.TableCell;
 import ch.bbv.explorer.components.TablePanel;
-import ch.bbv.mda.MetaElement;
-import ch.bbv.mda.PropertyModeCode;
-import ch.bbv.mda.TagDefinition;
-import ch.bbv.mda.TaggedValue;
-import ch.bbv.mda.VisibilityCode;
+import ch.bbv.mda.*;
 
 /**
  * The tagged value view displays a set of tagged values in a table. The first
@@ -49,6 +39,9 @@ public class TaggedValuesView extends NodePropertiesView {
    */
   private static final long serialVersionUID = 20041201;
 
+  /**
+   * Map of specialized cell editors with the classes they edit.
+   */
   private static Map<Class, CellEditor> editors;
 
   static {
@@ -71,6 +64,9 @@ public class TaggedValuesView extends NodePropertiesView {
 
   private TablePanel tablePanel;
 
+  /**
+   * Cells defining the columns displayed in the tagged value list.
+   */
   private static final TableCell.Cell[] CELLS;
 
   static {
@@ -93,6 +89,13 @@ public class TaggedValuesView extends NodePropertiesView {
     return (TableCellEditor) editors.get(clazz);
   }
 
+  /**
+   * Registers the reference code with its values so that a combo box is used.
+   * @param referenceCode reference code type to display.
+   * @param codes the code values of the reference code type.
+   * @param caseSensitive flag indicating if the combo box is case sensitive or
+   *          not.
+   */
   public static void registerReferenceCode(
       Class< ? extends ReferenceCode> referenceCode,
       List< ? extends ReferenceCode> codes, boolean caseSensitive) {
@@ -109,15 +112,26 @@ public class TaggedValuesView extends NodePropertiesView {
     MetaElement model = (MetaElement) getDataObject();
     for (TaggedValue newTag : (Collection<TaggedValue>) tablePanel.getModel()) {
       TaggedValue originalTag = model.getTaggedValue(newTag.getTag());
-      String value = originalTag.getValue();
-      if (value != null) {
-        if (!value.equals(newTag.getValue())) {
-          originalTag.setValue(newTag.getValue());
+      TagDefinition definition = originalTag.getType();
+      String oldValue = originalTag.getValue();
+      String newValue = newTag.getValue();
+      if (newValue != null) {
+        // trims the inputed value. If the value is an empty string and the
+        // default value of the tag is null transform the input value to null.
+        // Tagged values from over applications do not have a tag definition.
+        newValue = newValue.trim();
+        if ((definition != null) && (definition.getDefaultValue() == null)
+            && (newValue.length() == 0)) {
+          newValue = null;
+        }
+      }
+      if (oldValue != null) {
+        if (!oldValue.equals(newValue)) {
+          originalTag.setValue(newValue);
         }
       } else {
-        value = newTag.getValue();
-        if (value != null) {
-          originalTag.setValue(newTag.getValue());
+        if (newValue != null) {
+          originalTag.setValue(newValue);
         }
       }
     }

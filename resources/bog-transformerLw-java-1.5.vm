@@ -28,7 +28,8 @@ public class LwTransformer {
 #if($isTypeLightweigth)
     lw.set${property.nameFirstUpper()}(transform(item.get${property.nameFirstUpper()}()));
 #else
-    lw.set${property.nameFirstUpper()}(item.get${property.nameFirstUpper()}());
+#getterName($property $getter)
+    lw.set${property.nameFirstUpper()}(item.${getter}());
 #end
 #end
 #end

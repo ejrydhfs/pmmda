@@ -206,7 +206,15 @@ public class VersionId implements Comparable {
     return majorVersionId ^ minorVersionId ^ patchVersionId;
   }
 
+  /**
+   * Compare two version identifiers.
+   * @param right version identifier to compare with.
+   * @return <0 if smaller, 0 if equal, > 0 if higher.
+   * @pre right != null && right.instanceof(VersionId)
+   * @see Comparable
+   */
   public int compareTo(Object right) {
+    assert (right != null) && (right instanceof VersionId);
     VersionId id = (VersionId) right;
     int result = compareTo(getMajorVersionId(), id.getMajorVersionId());
     if (result == 0) {

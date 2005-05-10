@@ -5,8 +5,14 @@
  */
 package ch.bbv.mda.generators;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -19,6 +25,8 @@ import org.apache.velocity.exception.ResourceNotFoundException;
 import ch.bbv.application.VersionId;
 import ch.bbv.dog.validation.Validator;
 import ch.bbv.mda.*;
+import ch.bbv.mda.operators.FileOperators;
+import ch.bbv.mda.operators.ModelOperators;
 
 /**
  * The default cartridge implementation provides a set of utility methods to
@@ -122,8 +130,8 @@ public abstract class CartridgeImpl implements Cartridge {
    */
   private String abbreviation;
 
-  private Utilities utilities;
-  
+  private ModelOperators modelOperators;
+
   /**
    * Constructor fo the class.
    * @param name name of the cartridge.
@@ -135,7 +143,7 @@ public abstract class CartridgeImpl implements Cartridge {
     this.abbreviation = abbreviation;
     this.version = version;
     cartridges = new ArrayList<Cartridge>();
-    utilities = new Utilities();
+    modelOperators = new ModelOperators();
   }
 
   public String getName() {
@@ -213,6 +221,10 @@ public abstract class CartridgeImpl implements Cartridge {
     return properties;
   }
 
+  public ModelOperators getModelOperators() {
+    return modelOperators;
+  }
+  
   /**
    * Adds a cartridge being used in the cartridge to create the context.
    * @param cartridge cartridge being used.
@@ -250,7 +262,8 @@ public abstract class CartridgeImpl implements Cartridge {
   protected void processTemplate(File root, String packageName,
       String filename, Template template, VelocityContext context)
       throws IOException {
-    PrintWriter writer = createWriter(root, packageName, filename);
+    PrintWriter writer = FileOperators
+        .createWriter(root, packageName, filename);
     writer.print(processTemplate(template, context));
     writer.close();
   }
@@ -265,90 +278,8 @@ public abstract class CartridgeImpl implements Cartridge {
    */
   protected PrintWriter createJavaWriter(File root, String packageName,
       String classname) throws IOException {
-    return createWriter(root, packageName, classname + JAVA_EXTENSION);
-  }
-
-  /**
-   * Creates a print writer for an artifact.
-   * @param root root directory where the artifact should be stored.
-   * @param packageName qualified package name of the artifact.
-   * @param filename name of the file containing the artifact.
-   * @return the requested print writer.
-   * @throws IOException An exception occured when trying to create the file.
-   */
-  protected PrintWriter createWriter(File root, String packageName,
-      String filename) throws IOException {
-    File file = null;
-    try {
-      file = createFile(root, packageName, filename);
-      return new PrintWriter(new BufferedOutputStream(
-          new FileOutputStream(file)));
-    } catch (IOException e) {
-      log.debug("Could not open print writer with file " + file);
-      throw e;
-    }
-  }
-
-  /**
-   * Creates a file in the directory associated with the package. The root
-   * defines the start of source tree. The name of the file is the name of the
-   * class.
-   * @param root root directory of the source tree.
-   * @param packageName name of the package.
-   * @param filename name of the file.
-   * @return the created file if sucessfull otherwise null.
-   * @pre (root != null && root.isDirectory()) && (className != null &&
-   *      className.length() > 0)
-   */
-  protected File createFile(File root, String packageName, String filename) {
-    assert ((root != null) && root.isDirectory())
-        && ((filename != null) && (filename.length() > 0));
-
-    File file = null;
-    File directory;
-    if (packageName != null) {
-      directory = new File(root, packageName.replace('.', '/'));
-    } else {
-      directory = root;
-    }
-    if (directory.isDirectory() || directory.mkdirs()) {
-      file = new File(directory, filename);
-    }
-    if (file != null) {
-      if (log.isDebugEnabled()) {
-        log.debug("file created " + file.getAbsolutePath());
-      }
-    } else {
-      if (log.isErrorEnabled()) {
-        log.error("file not created " + root.getAbsolutePath() + "/"
-            + packageName + "/" + filename);
-      }
-    }
-    return file;
-  }
-
-  /**
-   * Creates a new print writer for the given file.
-   * @param file file for which a print writer should be created.
-   * @return the new print writer.
-   * @throws FileNotFoundException the creation of the print writer generated an
-   *         error.
-   * @pre file != null && file.canWrite()
-   */
-  protected PrintWriter createPrintWriter(File file)
-      throws FileNotFoundException {
-    assert (file != null) && file.canWrite();
-    return new PrintWriter(new BufferedOutputStream(new FileOutputStream(file)));
-  }
-
-  /**
-   * Closes the print writer if not null.
-   * @param writer print writer to close.
-   */
-  protected void closePrintWriter(PrintWriter writer) {
-    if (writer != null) {
-      writer.close();
-    }
+    return FileOperators.createWriter(root, packageName, classname
+        + JAVA_EXTENSION);
   }
 
   /**
@@ -388,7 +319,7 @@ public abstract class CartridgeImpl implements Cartridge {
    */
   protected VelocityContext createContext(MetaModel model) {
     VelocityContext context = new VelocityContext();
-    context.put(UTILITIES_KEY, utilities);
+    context.put(UTILITIES_KEY, modelOperators);
     context.put(CARTRIDGE_KEY, this);
     context.put(CONFIGURATION_KEY, getContext());
     context.put(MODEL_KEY, model);
@@ -402,7 +333,7 @@ public abstract class CartridgeImpl implements Cartridge {
    */
   protected VelocityContext createContext(MetaPackage metaPackage) {
     VelocityContext context = new VelocityContext();
-    context.put(UTILITIES_KEY, utilities);
+    context.put(UTILITIES_KEY, modelOperators);
     context.put(CARTRIDGE_KEY, this);
     context.put(CONFIGURATION_KEY, getContext());
     context.put(MODEL_KEY, metaPackage.getRoot());
@@ -419,60 +350,17 @@ public abstract class CartridgeImpl implements Cartridge {
    */
   protected VelocityContext createContext(MetaClass clazz) {
     VelocityContext context = new VelocityContext();
-    context.put(UTILITIES_KEY, utilities);
+    context.put(UTILITIES_KEY, modelOperators);
     context.put(CARTRIDGE_KEY, this);
     context.put(CONFIGURATION_KEY, getContext());
     context.put(MODEL_KEY, clazz.getRoot());
     context.put(PACKAGE_KEY, clazz.getContext());
     context.put(CLASS_KEY, clazz);
-    context.put(PROPERTIES_KEY, utilities.getTransitiveFieldsFor(clazz));
-    context.put(AGGREGATIONS_KEY, utilities.getTransitiveIndexedFieldsFor(clazz));
-    context.put("imports", clazz.getImports());
+    context.put(PROPERTIES_KEY, modelOperators.getTransitiveFieldsFor(clazz));
+    context.put(AGGREGATIONS_KEY, modelOperators
+        .getTransitiveIndexedFieldsFor(clazz));
     context.put("nestedClasses", clazz.getClasses());
     return context;
-  }
-
-  /**
-   * Processes the given file and extracts all user defined statements. These
-   * statements are grouped in import statements, declarations statements,
-   * custom constructors, and user defined methods. These code segments are
-   * protected with special comments.
-   * @param file file containing the source code of the meta class.
-   * @param clazz class owning the user defined statements.
-   * @pre file != null && clazz != null
-   */
-  protected void extractUserStatements(File file, MetaClass clazz) {
-    assert ((file != null) && (clazz != null));
-
-    List<String> statements;
-    if (file.exists() && file.canRead()) {
-      statements = extractBlock(file, USER_IMPORT_BEGIN, USER_IMPORT_END);
-      clazz.setImports(statements);
-      statements = extractBlock(file, USER_DECLARATION_BEGIN,
-          USER_DECLARATION_END);
-      clazz.setDeclarations(statements);
-      statements = extractBlock(file, USER_CONSTRUCTORS_BEGIN,
-          USER_CONSTRUCTORS_END);
-      clazz.setConstructors(statements);
-      statements = extractBlock(file, USER_CODE_BEGIN, USER_CODE_END);
-      clazz.setDefinitions(statements);
-    }
-  }
-
-  /**
-   * Reads the file to find the start comment, extract the user code until the
-   * end comment is reached. The start and end comments are not part of the list
-   * of statements.
-   * @param file file to process.
-   * @param startComment comment identifying the start of the user code block.
-   * @param endComment comment identifying the end of the user code block.
-   * @return list of read lines if found otherwise null.
-   * @pre file != null && startComment != null && endComment != null
-   */
-  protected List<String> extractBlock(File file, String startComment,
-      String endComment) {
-    assert (file != null) && (startComment != null) && (endComment != null);
-    return null;
   }
 
   /**
@@ -494,7 +382,7 @@ public abstract class CartridgeImpl implements Cartridge {
    * Returns the root file defined in the property with the given key.
    * @param key key of the property containing the root directory.
    * @param defaultKey default key of the property containing the root
-   *        directory.
+   *          directory.
    * @return The root file if defined otherwise null.
    */
   protected final File getRoot(String key, String defaultKey) {

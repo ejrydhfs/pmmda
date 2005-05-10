@@ -121,6 +121,8 @@ public class TypeFactory extends AbstractTypeFactory {
         NodeTableView.class, params, true));
     nodeType.registerView(new UiNodeViewType("class diagram", nodeType,
         ClassGraphView.class, null, false));
+    nodeType.registerView(new UiNodeViewType("code values", nodeType,
+        CodesView.class, null, false));
     register(type, nodeType, new PopupSelectorDefault(nodeType),
         new SimpleIconSelector("class-regular"));
   }

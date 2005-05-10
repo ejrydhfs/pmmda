@@ -8,7 +8,10 @@ package ch.bbv.mda.graphs;
 
 import java.awt.*;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
 
 import org.jgraph.JGraph;
 import org.jgraph.graph.CellView;
@@ -17,7 +20,7 @@ import org.jgraph.graph.VertexView;
 
 import ch.bbv.mda.MetaClass;
 import ch.bbv.mda.MetaProperty;
-import ch.bbv.utilities.TextUtilities;
+import ch.bbv.mda.operators.ModelOperators;
 
 /**
  * @author MarcelBaumann
@@ -50,7 +53,7 @@ public class ClassView extends VertexView {
     renderer.setView(this);
     return renderer;
   }
-  
+
   /**
    * The renderer of the class view used to display the view. The renderer is
    * used as a lightweight object for all class views.
@@ -186,10 +189,9 @@ public class ClassView extends VertexView {
     private String getAttributes(MetaClass clazz) {
       StringBuilder attributes = new StringBuilder();
       for (MetaProperty property : clazz.getProperties()) {
-
         attributes.append(
-            TextUtilities.getComponentName(property.getTypeName())).append(" ")
-            .append(property.getName()).append("\n");
+            ModelOperators.getComponentName(property.getTypeName()))
+            .append(" ").append(property.getName()).append("\n");
       }
       return attributes.toString();
     }

@@ -14,14 +14,25 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 
 /**
+ * The class provides user interface utilities for the explorer.
  * @author MarcelBaumann
  * @version $Revision$
  */
 public class ExplorerUtilities {
+  /**
+   * Centers the frame on the display.
+   * @param frame frame to center on the display.
+   */
   public static void centerOnScreen(JFrame frame) {
     positionOnScreen(frame, 0.5, 0.5);
   }
 
+  /**
+   * Positions the frame on the display.
+   * @param frame frame to position on the display.
+   * @param horizontal horizontal relative position between 0.0 and 1.0.
+   * @param vertical vertical relative position between 0.0 and 1.0.
+   */
   public static void positionOnScreen(JFrame frame, double horizontal,
       double vertical) {
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
@@ -32,10 +43,20 @@ public class ExplorerUtilities {
         window.width, window.height);
   }
 
+  /**
+   * Centers the frame on the parent windows.
+   * @param dialog dialog to center on the parent window.
+   */
   public static void centerOnParent(JDialog dialog) {
     positionOnParent(dialog, 0.5, 0.5);
   }
 
+  /**
+   * Positions the dialog on the parent window.
+   * @param dialog dialog to position on the parent window.
+   * @param horizontal horizontal relative position between 0.0 and 1.0.
+   * @param vertical vertical relative position between 0.0 and 1.0.
+   */
   public static void positionOnParent(JDialog dialog, double horizontal,
       double vertical) {
     Dimension window = dialog.getSize();
@@ -50,5 +71,4 @@ public class ExplorerUtilities {
     y = Math.max(Math.min(y, screen.height - window.height), 0);
     dialog.setBounds(x, y, window.width, window.height);
   }
-
 }

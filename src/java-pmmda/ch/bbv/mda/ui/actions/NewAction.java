@@ -5,10 +5,11 @@
  */
 package ch.bbv.mda.ui.actions;
 
-import ch.bbv.explorer.*;
-import ch.bbv.explorer.actions.ExplorerGlobalActionImpl;
+import ch.bbv.explorer.actions.ExplorerNewAction;
 import ch.bbv.mda.MetaFactory;
 import ch.bbv.mda.MetaModel;
+import ch.bbv.mda.ui.MdaDocument;
+import ch.bbv.mda.ui.MdaExplorer;
 
 /**
  * The new action creates a new MDA model in the user interface. No file is
@@ -16,30 +17,19 @@ import ch.bbv.mda.MetaModel;
  * @author marcelbaumann
  * @version $Revision$
  */
-public class NewAction extends ExplorerGlobalActionImpl {
+public class NewAction extends ExplorerNewAction {
   /**
    * Serial version identifier coded as back compatibility date.
    */
   private static final long serialVersionUID = 20041201;
 
-  /**
-   * Default constructor of the class.
-   */
-  public NewAction() {
-    super("New");
-  }
-
   public void execute() {
-    Explorer explorer = getExplorer();
-    UiNodeTypeFactory factory = explorer.getNodeTypeFactory();
-    explorer.getMenuBar().documentCreated();
-    UiNodeType nodeType = factory.getNodeTypeForBo(ch.bbv.mda.MetaModel.class);
-    MetaModel model = new MetaModel();
-    MetaFactory.getInstance().initialize(model);
+    MdaExplorer explorer = (MdaExplorer) getExplorer();
+    MdaDocument document = new MdaDocument();
+    MetaModel model = document.getModel();
     model.setName("default");
-    ExplorerNode root = new ExplorerNode(nodeType, model, model);
-    explorer.setRoot(root);
+    MetaFactory.getInstance().initialize(model);
+    explorer.setDocument(document);
     explorer.getMenuBar().documentCreated();
   }
-
 }

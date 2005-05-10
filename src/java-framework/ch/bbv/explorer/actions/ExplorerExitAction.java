@@ -29,8 +29,6 @@ public class ExplorerExitAction extends ExplorerGlobalActionImpl {
 
   public void execute() {
     Explorer explorer = getExplorer();
-    if (explorer.shouldClose()) {
-      explorer.close();
-    }
+    explorer.close();
   }
 }

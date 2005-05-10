@@ -33,54 +33,6 @@ import ch.bbv.mda.*;
  */
 public interface Cartridge {
   /**
-   * Comment in the generated code to detect a border of a user defined source
-   * code.
-   */
-  String USER_IMPORT_BEGIN = "/* %% USER DEFINED IMPORT START %% */";
-
-  /**
-   * Comment in the generated code to detect a border of a user defined source
-   * code.
-   */
-  String USER_IMPORT_END = "/* %% USER DEFINED IMPORT END %% */";
-
-  /**
-   * Comment in the generated code to detect a border of a user defined source
-   * code.
-   */
-  String USER_DECLARATION_BEGIN = "/* %% USER DEFINED DECLARATION START %% */";
-
-  /**
-   * Comment in the generated code to detect a border of a user defined source
-   * code.
-   */
-  String USER_DECLARATION_END = "/* %% USER DEFINED DECLARATION END %% */";
-
-  /**
-   * Comment in the generated code to detect a border of a user defined source
-   * code.
-   */
-  String USER_CONSTRUCTORS_BEGIN = "/* %% USER DEFINED CONSTRUCTORS START %% */";
-
-  /**
-   * Comment in the generated code to detect a border of a user defined source
-   * code.
-   */
-  String USER_CONSTRUCTORS_END = "/* %% USER DEFINED CONSTRUCTORS END %% */";
-
-  /**
-   * Comment in the generated code to detect a border of a user defined source
-   * code.
-   */
-  String USER_CODE_BEGIN = "/* %% USER DEFINED CODE START %% */";
-
-  /**
-   * Comment in the generated code to detect a border of a user defined source
-   * code.
-   */
-  String USER_CODE_END = "/* %% USER DEFINED CODE END %% */";
-
-  /**
    * Sets the cartridge context for the cartridge. The context contains all user
    * specific configuration values.
    * @param properties new cartridge context properties. All the properties

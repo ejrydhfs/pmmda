@@ -56,23 +56,6 @@ public class PersistencyHandlerFactory {
   }
 
   /**
-   * Returns the an alternate best match for the given file. The selection of
-   * the optimal persistency handler is based on the extension of the file.
-   * @param file file, which best persistency handler should be infered.
-   * @return the optimal handler if found otherwise null.
-   * @pre file != null
-   */
-  public PersistencyHandler getAlternateHandler(File file) {
-    assert(file != null);
-    String filename = file.getName().toLowerCase();
-    PersistencyHandler persistencyHandler = null;
-    if (filename.endsWith(".xmi") || filename.endsWith(".xml")) {
-      persistencyHandler = getNsUmlHandler();
-    }
-    return persistencyHandler;
-  }
-
-  /**
    * Returns the XML persistency format handler.
    * @return the XML persistency handler.
    */

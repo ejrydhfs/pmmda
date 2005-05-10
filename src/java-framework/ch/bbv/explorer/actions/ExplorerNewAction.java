@@ -33,6 +33,5 @@ public class ExplorerNewAction extends ExplorerGlobalActionImpl {
   }
 
   public void execute() {
-    getExplorer().shouldClose();
   }
 }

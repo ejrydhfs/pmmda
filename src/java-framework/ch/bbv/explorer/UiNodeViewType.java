@@ -36,8 +36,18 @@ public class UiNodeViewType {
    */
   private boolean preferred;
 
+  /**
+   * Constructor of the class.
+   * @param name name of the view as displayed in the popup menu.
+   * @param nodeType type of the node associated with the view.
+   * @param nodeView the view used to display information.
+   * @param parameters parameters of the constructor of the view.
+   * @param preferred flag indicating if the view is the preferred one.
+   * @pre (name != null) && (nodeType != null) && (nodeView != null)
+   */
   public UiNodeViewType(String name, UiNodeType nodeType, Class nodeView,
       Object parameters, boolean preferred) {
+    assert (name != null) && (nodeType != null) && (nodeView != null);
     this.name = name;
     this.nodeType = nodeType;
     this.nodeView = nodeView;

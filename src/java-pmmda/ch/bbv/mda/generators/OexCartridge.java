@@ -151,26 +151,9 @@ public class OexCartridge extends CartridgeImpl {
     List<TagDefinition> types = null;
     if (clazz == MetaClass.class) {
       types = new ArrayList<TagDefinition>();
-      types.add(new TagDefinition("oex-is-root", null, Boolean.class));
+      types.add(new TagDefinition("oex-is-root", Boolean.class));
     }
     return types;
-  }
-
-  public TaggedValue getTaggedValueWithElementDependentDefault(
-      TagDefinition taggedValueType, MetaElement element) {
-    TaggedValue value = new TaggedValue(taggedValueType);
-    updateTaggedValueWithElementDependentDefault(value, element);
-    return value;
-  }
-
-  public void updateTaggedValueWithElementDependentDefault(
-      TaggedValue taggedValue, MetaElement element) {
-    if (taggedValue.getType().getTag().equals(VIEW_CLASS_TAG)) {
-      String name = element.getName();
-      if (name != null) {
-        taggedValue.setValue(name + "View");
-      }
-    }
   }
 
   public void preProcessPackage(MetaPackage metaPackage) {

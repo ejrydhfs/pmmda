@@ -8,34 +8,11 @@ package ch.bbv.mda;
 import java.util.Arrays;
 
 /**
- * The property class is a conveniance class to simply access properties of a
- * meta property instance defined as an xml tree. The class uses services of the
- * JDOM package. A property has some central characteristics.
- * <ul>
- * <dt>mode</dt>
- * <dd>The mode specifies if the property can be read, written or both. The
- * mode determines which accessors will be available to access the property. The
- * mode is a reference code.
- * <dd>
- * <dt>visibility</dt>
- * <dd>The visibility of the property defines the visibility of the accesors
- * related to the property. The property data is always private. The visiblity
- * is a reference code.</dd>
- * <dt>class type kind</dt>
- * <dd>The type kind defines the kind of the type of the property. The property
- * can reference a primitive type, a Java class, a data object or a framework
- * class defined in the application or a reference code. The type kind is a
- * reference code.</dd>
- * </ul>
+ * The property class models a simple property of a class.
  * @author Marcel Baumann
  * @version $Revision$
  */
 public class MetaProperty extends MetaMember {
-  /**
-   * Serial version identifier coded as back compatibility date.
-   */
-  private static final long serialVersionUID = 20041201;
-
   /**
    * The list of primitive types in Java, C and C++.
    */
@@ -43,28 +20,33 @@ public class MetaProperty extends MetaMember {
       "double", "float", "int", "long", "short" };
 
   /**
+   * Serial version identifier coded as back compatibility date.
+   */
+  private static final long serialVersionUID = 20041201;
+
+  /**
    * Indicates if the property is transient or not.
    * @serial
    */
-  protected boolean transients;
+  private boolean transients;
 
   /**
    * Indicates if the property is volatile or not.
    * @serial
    */
-  protected boolean volatiles;
-
-  /**
-   * Multiplicity of the property.
-   * @serial
-   */
-  protected Multiplicity multiplicity;
+  private boolean volatiles;
 
   /**
    * The optional initial value of the property.
    * @serial
    */
-  protected String initialValue;
+  private String initialValue;
+
+  /**
+   * Multiplicity of the property.
+   * @serial
+   */
+  private Multiplicity multiplicity;
 
   /**
    * A binary association may be declared an aggregation. It is a whole part
@@ -72,7 +54,7 @@ public class MetaProperty extends MetaMember {
    * the items of the property are on the part end.
    * @serial
    */
-  protected boolean aggregation;
+  private boolean aggregation;
 
   /**
    * A composition is a form of aggregation association with strong ownership
@@ -80,7 +62,7 @@ public class MetaProperty extends MetaMember {
    * one composite.
    * @serial
    */
-  protected boolean composition;
+  private boolean composition;
 
   /**
    * Default constructor of the class.

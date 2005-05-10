@@ -11,8 +11,7 @@ import ch.bbv.dog.ui.ReferenceCodeComboBox;
 import ch.bbv.explorer.NodePropertiesView;
 import ch.bbv.mda.*;
 
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
 
 /**
@@ -176,51 +175,26 @@ public class MetaPropertyView extends NodePropertiesView {
    */
   protected void initialize() {
     FormLayout layout = new FormLayout(
-        "right:pref, 3dlu, pref, 7dlu, right:pref, 3dlu, pref",
-        "p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, p, 6dlu, p, 3dlu, p, 3dlu, p, 6dlu, p, 3dlu, max(32dlu;pref)");
-    layout.setColumnGroups(new int[][] { { 1, 5 }, { 3, 7 } });
-
-    PanelBuilder builder = new PanelBuilder(layout);
+        "right:pref, 3dlu, pref, 7dlu, right:pref, 3dlu, pref", "");
+    DefaultFormBuilder builder = new DefaultFormBuilder(layout);
     builder.setDefaultDialogBorder();
-
-    CellConstraints cc = new CellConstraints();
-
-    builder.addSeparator("General", cc.xywh(1, 1, 7, 1));
-    builder.addLabel("Name", cc.xy(1, 3));
-    builder.add(nameText, cc.xy(3, 3));
-    builder.addLabel("Type", cc.xy(5, 3));
-    builder.add(typeText, cc.xy(7, 3));
-
-    builder.addLabel("Context", cc.xy(1, 5));
-    builder.add(contextText, cc.xy(3, 5));
-    builder.addLabel("Visibility", cc.xy(5, 5));
-    builder.add(visibility, cc.xy(7, 5));
-
-    builder.addLabel("Lower Bound", cc.xy(1, 7));
-    builder.add(multiplicityLowerBoundText, cc.xy(3, 7));
-    builder.addLabel("Upper Bound", cc.xy(5, 7));
-    builder.add(multiplicityUpperBoundText, cc.xy(7, 7));
-
-    builder.addLabel("Initial Value", cc.xy(1, 9));
-    builder.add(initialValueText, cc.xy(3, 9));
-
-    builder.addLabel("Description", cc.xy(1, 11));
-    builder.add(descriptionPane, cc.xywh(3, 11, 5, 1));
-
-    builder.addSeparator("Modifiers", cc.xywh(1, 13, 7, 1));
-    builder.addLabel("volatile", cc.xy(1, 15));
-    builder.add(volatiles, cc.xy(3, 15));
-    builder.addLabel("transient", cc.xy(5, 15));
-    builder.add(transients, cc.xy(7, 15));
-
-    builder.addLabel("final", cc.xy(1, 17));
-    builder.add(finals, cc.xy(3, 17));
-    builder.addLabel("static", cc.xy(5, 17));
-    builder.add(statics, cc.xy(7, 17));
-
-    builder.addSeparator("Tagged Values", cc.xywh(1, 19, 7, 1));
-    builder.add(tagsView, cc.xywh(1, 21, 7, 1, "fill, fill"));
-
+    builder.appendSeparator("General");
+    builder.append("&Name", nameText);
+    builder.append("&Type", typeText);
+    builder.append("&Context", contextText);
+    builder.append("&Visibility", visibility);
+    builder.append("&Lower Bound", multiplicityLowerBoundText);
+    builder.append("&Upper Bound", multiplicityUpperBoundText);
+    builder.append("&Initial Value", initialValueText);
+    builder.nextLine();
+    builder.append("&Description", descriptionPane, 5);
+    builder.appendSeparator("Modifiers");
+    builder.append("&volatile", volatiles);
+    builder.append("&transient", transients);
+    builder.append("&final", finals);
+    builder.append("&static", statics);
+    builder.appendSeparator("Tagged Values");
+    builder.append(tagsView, 7);
     JPanel panel = builder.getPanel();
     add(panel);
   }

@@ -9,6 +9,7 @@ package ch.bbv.mda.graphs;
 import org.jgraph.graph.AttributeMap;
 import org.jgraph.graph.EdgeRenderer;
 import org.jgraph.graph.EdgeView;
+import org.jgraph.graph.GraphConstants;
 
 /**
  * @author MarcelBaumann
@@ -36,40 +37,40 @@ public class AssociationView extends EdgeView {
     AssociationEdge edge = (AssociationEdge) cell;
 
     if (edge.isInheritance()) {
-      UMLGraphConstants.setLineBegin(attributes, UMLGraphConstants.ARROW_NONE);
-      UMLGraphConstants.setLineEnd(attributes, UMLGraphConstants.ARROW_SIMPLE);
-      UMLGraphConstants.setEndSize(attributes, 10);
-      UMLGraphConstants.setDashPattern(attributes, new float[] { 3, 3 });
+      GraphConstants.setLineBegin(attributes, GraphConstants.ARROW_NONE);
+      GraphConstants.setLineEnd(attributes, GraphConstants.ARROW_SIMPLE);
+      GraphConstants.setEndSize(attributes, 10);
+      GraphConstants.setDashPattern(attributes, new float[] { 3, 3 });
     } else if (edge.isRealizes()) {
-      UMLGraphConstants.setLineBegin(attributes, UMLGraphConstants.ARROW_NONE);
-      UMLGraphConstants.setLineEnd(attributes, UMLGraphConstants.ARROW_SIMPLE);
-      UMLGraphConstants.setEndSize(attributes, 10);
-      UMLGraphConstants.setDashPattern(attributes, new float[] { 3, 3 });
+      GraphConstants.setLineBegin(attributes, GraphConstants.ARROW_NONE);
+      GraphConstants.setLineEnd(attributes, GraphConstants.ARROW_SIMPLE);
+      GraphConstants.setEndSize(attributes, 10);
+      GraphConstants.setDashPattern(attributes, new float[] { 3, 3 });
     } else {
       // aggregation, composition
       if (edge.isStartNavigable() && edge.isEndNavigable()) {
-        UMLGraphConstants.setLineEnd(attributes, UMLGraphConstants.ARROW_NONE);
-        UMLGraphConstants
-            .setLineBegin(attributes, UMLGraphConstants.ARROW_NONE);
+        GraphConstants.setLineEnd(attributes, GraphConstants.ARROW_NONE);
+        GraphConstants
+            .setLineBegin(attributes, GraphConstants.ARROW_NONE);
       } else if (edge.isStartNavigable()) {
-        UMLGraphConstants.setLineBegin(attributes,
-            UMLGraphConstants.ARROW_SIMPLE);
-        UMLGraphConstants.setBeginSize(attributes, 10);
+        GraphConstants.setLineBegin(attributes,
+            GraphConstants.ARROW_SIMPLE);
+        GraphConstants.setBeginSize(attributes, 10);
       } else {
-        UMLGraphConstants
-            .setLineEnd(attributes, UMLGraphConstants.ARROW_SIMPLE);
-        UMLGraphConstants.setEndSize(attributes, 10);
+        GraphConstants
+            .setLineEnd(attributes, GraphConstants.ARROW_SIMPLE);
+        GraphConstants.setEndSize(attributes, 10);
       }
 
       if (edge.isAggregate() || edge.isComposite()) {
-        UMLGraphConstants.setLineEnd(attributes,
-            UMLGraphConstants.ARROW_DIAMOND);
-        UMLGraphConstants.setEndSize(attributes, 16);
+        GraphConstants.setLineEnd(attributes,
+            GraphConstants.ARROW_DIAMOND);
+        GraphConstants.setEndSize(attributes, 16);
 
         if (edge.isAggregate()) {
-          UMLGraphConstants.setEndFill(attributes, true);
+          GraphConstants.setEndFill(attributes, true);
         } else {
-          UMLGraphConstants.setEndFill(attributes, false);
+          GraphConstants.setEndFill(attributes, false);
         }
       }
     }

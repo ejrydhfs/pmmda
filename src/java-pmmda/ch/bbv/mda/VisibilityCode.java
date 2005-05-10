@@ -7,8 +7,9 @@
 package ch.bbv.mda;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import ch.bbv.dog.reference.ReferenceCodeImpl;
 
@@ -48,21 +49,21 @@ public class VisibilityCode extends ReferenceCodeImpl {
   /**
    * List of all reference codes of this type.
    */
-  private static List<VisibilityCode> codes;
+  private static Map<Integer, VisibilityCode> codes;
 
   /**
    * Initializes the reference codes of this type.
    */
   static {
-    codes = new ArrayList<VisibilityCode>();
-    codes.add(new VisibilityCode(PUBLIC_VISIBILITY_CODE, 1, "public",
-        "public visibility"));
-    codes.add(new VisibilityCode(PROTECTED_VISIBILITY_CODE, 2, "protected",
-        "protected visibility"));
-    codes.add(new VisibilityCode(PACKAGE_VISIBILITY_CODE, 3, "package",
-        "package visibility"));
-    codes.add(new VisibilityCode(PRIVATE_VISIBILITY_CODE, 4, "private",
-        "private visibility"));
+    codes = new HashMap<Integer, VisibilityCode>();
+    codes.put(PUBLIC_VISIBILITY_CODE, new VisibilityCode(
+        PUBLIC_VISIBILITY_CODE, 1, "public", "public visibility"));
+    codes.put(PROTECTED_VISIBILITY_CODE, new VisibilityCode(
+        PROTECTED_VISIBILITY_CODE, 2, "protected", "protected visibility"));
+    codes.put(PACKAGE_VISIBILITY_CODE, new VisibilityCode(
+        PACKAGE_VISIBILITY_CODE, 3, "package", "package visibility"));
+    codes.put(PRIVATE_VISIBILITY_CODE, new VisibilityCode(
+        PRIVATE_VISIBILITY_CODE, 4, "private", "private visibility"));
   }
 
   /**
@@ -72,7 +73,7 @@ public class VisibilityCode extends ReferenceCodeImpl {
    * @param shortDescription short description of the code.
    * @param description description of the code.
    */
-  public VisibilityCode(int code, int sortOrder, String shortDescription,
+  private VisibilityCode(int code, int sortOrder, String shortDescription,
       String description) {
     super(code, sortOrder, shortDescription, description, true);
   }
@@ -82,7 +83,7 @@ public class VisibilityCode extends ReferenceCodeImpl {
    * @return list of all reference codes.
    */
   public static List<VisibilityCode> getCodes() {
-    return codes;
+    return new ArrayList<VisibilityCode>(codes.values());
   }
 
   /**
@@ -91,13 +92,6 @@ public class VisibilityCode extends ReferenceCodeImpl {
    * @return the requested reference code.
    */
   public static VisibilityCode getCode(int value) {
-    VisibilityCode visibility = null;
-    for (Iterator i = codes.iterator(); visibility == null && i.hasNext();) {
-      visibility = (VisibilityCode) i.next();
-      if (visibility.getCode() != value) {
-        visibility = null;
-      }
-    }
-    return visibility;
+    return codes.get(value);
   }
 }

@@ -57,6 +57,15 @@ public class TagDefinition extends AdornmentType implements Serializable {
   }
 
   /**
+   * Constructor of the class.
+   * @param tag tag name for the tagged values of this type.
+   * @param type type of the values for the tagged values of this type.
+   */
+  public TagDefinition(String tag, Class type) {
+    this(tag, null, type);
+  }
+  
+  /**
    * Returns the tag name of this type.
    * @return the tag name represented in this type.
    */

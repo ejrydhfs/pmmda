@@ -13,15 +13,11 @@ import javax.swing.JFileChooser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ch.bbv.explorer.Explorer;
 import ch.bbv.explorer.actions.ExplorerOpenAction;
 import ch.bbv.explorer.actions.SimpleFileFilter;
-import ch.bbv.mda.MetaModel;
-import ch.bbv.mda.TreeChecker;
 import ch.bbv.mda.persistency.PersistencyException;
-import ch.bbv.mda.persistency.PersistencyHandler;
-import ch.bbv.mda.persistency.PersistencyHandlerFactory;
-import ch.bbv.mda.ui.TreeConstructor;
+import ch.bbv.mda.ui.MdaDocument;
+import ch.bbv.mda.ui.MdaExplorer;
 
 /**
  * The open action implements the loading of a complete meta model. The model is
@@ -76,41 +72,10 @@ public class OpenAction extends ExplorerOpenAction {
    */
   public void openModel(File file) throws PersistencyException {
     assert (file != null);
-    MetaModel model = null;
-    PersistencyHandlerFactory factory = new PersistencyHandlerFactory();
-    PersistencyHandler handler = factory.getHandler(file);
-    assert (handler != null);
-    try {
-      model = parseModel(handler, file);
-    } catch (com.thoughtworks.xstream.alias.CannotResolveClassException e) {
-      handler = factory.getAlternateHandler(file);
-      model = parseModel(handler, file);
-    }
-    if (model == null)
-      return;
-    TreeConstructor constructor = new TreeConstructor(getExplorer()
-        .getNodeTypeFactory());
-    model.accept(constructor);
-    model.setFilename(file.toString());
-    Explorer explorer = getExplorer();
-    explorer.setRoot(constructor.getRoot());
-    explorer.getMenuBar().documentOpened();
-  }
-
-  /**
-   * Parses given file with given handler
-   * @param handler handler to parse the given file.
-   * @param file file containing the model to be parsed.
-   * @throws PersistencyException an exception was encountered when loading the
-   *           model.
-   * @return MetaModel containing parsed file
-   */
-  private MetaModel parseModel(PersistencyHandler handler, File file)
-      throws PersistencyException {
-    MetaModel model = handler.readModel(file);
-    if (model == null)
-      return null;
-    model.accept(new TreeChecker());
-    return model;
+    MdaExplorer explorer = (MdaExplorer) getExplorer();
+    MdaDocument document = new MdaDocument();
+    document.load(file);
+    explorer.setDocument(document);
+    getExplorer().getMenuBar().documentSaved();
   }
 }

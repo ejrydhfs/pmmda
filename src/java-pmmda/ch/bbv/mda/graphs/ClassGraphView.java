@@ -39,6 +39,9 @@ public class ClassGraphView extends JPanel implements NodeView {
    */
   private static final long serialVersionUID = 20041201;
 
+  /**
+   * Scrolling pane containing the view.
+   */
   private JScrollPane pane;
 
   private GraphModel model;

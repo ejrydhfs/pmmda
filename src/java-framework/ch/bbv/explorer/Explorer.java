@@ -6,8 +6,10 @@
 package ch.bbv.explorer;
 
 import java.awt.BorderLayout;
-import java.awt.Window;
-import java.awt.event.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.List;
 
 import javax.swing.*;
@@ -17,7 +19,10 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import ch.bbv.dog.*;
+import ch.bbv.dog.AbstractVisitorFunctor;
+import ch.bbv.dog.DataObjectManager;
+import ch.bbv.dog.DataObjectType;
+import ch.bbv.dog.LightweightObject;
 import ch.bbv.explorer.components.DockingArea;
 import ch.bbv.utilities.ReflectUtilities;
 
@@ -422,18 +427,12 @@ public abstract class Explorer {
   /**
    * The method is called when the user tries to close the window. The subclass
    * can redefine the method to perform house keeping activities or veto the
-   * close of the window.
-   * @return true if the window can be closed, otherwise false.
    */
-  public boolean shouldClose() {
-    return true;
-  }
-
   public void close() {
     frame.setVisible(false);
     frame.dispose();
   }
-  
+
   /**
    * The initialize method is called after the construction and before the
    * explorer is displayed on the screen.
@@ -558,11 +557,7 @@ public abstract class Explorer {
     }
 
     public void windowClosing(WindowEvent e) {
-      if (explorer.shouldClose()) {
-        Window window = e.getWindow();
-        window.setVisible(false);
-        window.dispose();
-      }
+      explorer.close();
     }
   }
 }

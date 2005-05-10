@@ -52,7 +52,7 @@ ${class.retrieveVisibilityText()} class ${className} implements LightweightObjec
 #set($itemType = ${type.getAttribute("bo-lw-class")})
 
 #emitPropertyDescription($aggregation "  ")
-  private ${aggregation.getAttribute("bo-storage-interface")}<$itemType> ${aggregation.nameFirstLower()};
+  private ${aggregation.getAttribute("bo-interface-class")}<$itemType> ${aggregation.nameFirstLower()};
 #end
 #end
 #if (!${hasAncestors})
@@ -82,7 +82,7 @@ ${class.retrieveVisibilityText()} class ${className} implements LightweightObjec
 #if(${aggregation.booleanValueOfTag("bo-lightweight")})
 #getType($model $aggregation $type)
 #set($itemType = ${type.getAttribute("bo-lw-class")})
-  	${aggregation.nameFirstLower()} = new ${aggregation.getAttribute("bo-storage-type")}<$itemType>();
+  	${aggregation.nameFirstLower()} = new ${aggregation.getAttribute("bo-container-class")}<$itemType>();
 #end
 #end
   }
@@ -142,8 +142,8 @@ ${class.retrieveVisibilityText()} class ${className} implements LightweightObjec
 #set($lName = ${aggregation.nameFirstLower()})
 #set($usName = ${aggregation.nameFirstUpperSingular()})
 #set($upName = ${aggregation.nameFirstUpperPlural()})
-#set($interface = ${aggregation.getAttribute("bo-storage-interface")}) 
-#set($storageType = ${aggregation.getAttribute("bo-storage-type")})
+#set($interface = ${aggregation.getAttribute("bo-interface-class")}) 
+#set($storageType = ${aggregation.getAttribute("bo-container-class")})
 #getType($model $aggregation $type)
 #set($itemType = ${type.getAttribute("bo-lw-class")})
 #set($keyType = ${aggregation.getKeyType()})
@@ -327,7 +327,7 @@ ${class.retrieveVisibilityText()} class ${className} implements LightweightObjec
 #getType($model $aggregation $type)
 #set($itemType = ${type.getAttribute("bo-lw-class")})
 #set($lName = ${aggregation.nameFirstLower()})
-    clone.${lName} = new ${aggregation.getStorageType()}<$itemType>();
+    clone.${lName} = new ${aggregation.valueOfTag("bo-container-class")}<$itemType>();
     for (int i = 0; i < ${lName}.size(); i++) {
       clone.${lName}.add((($itemType)(${lName}.get(i)).deepCopy()));
     }

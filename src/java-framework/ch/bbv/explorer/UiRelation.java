@@ -80,6 +80,13 @@ public class UiRelation {
    */
   private boolean isMultiple;
 
+  /**
+   * Constructor of the class.
+   * @param property name of the indexed property.
+   * @param lwClass lightweight class
+   * @param isEditable flag indicating if the relation is editable.
+   * @param isMultiple flag indicating if the relation has multiple targets.
+   */
   public UiRelation(String property, Class lwClass, boolean isEditable,
       boolean isMultiple) {
     this.property = property;
@@ -103,18 +110,34 @@ public class UiRelation {
                 .removeSpecialCharacters(property)));
   }
 
+  /**
+   * Returns the property name.
+   * @return the name of the property.
+   */
   public String getProperty() {
     return property;
   }
 
+  /**
+   * Returns the lightweight class.
+   * @return the lightweight class.
+   */
   public Class getLwClass() {
     return lwClass;
   }
 
+  /**
+   * Returns the value of the editable flag.
+   * @return value of the flag.
+   */
   public boolean isEditable() {
     return isEditable;
   }
 
+  /**
+   * Returns the value of the multiple flag.
+   * @return value of the flag.
+   */
   public boolean isMultiple() {
     return isMultiple;
   }
@@ -124,6 +147,7 @@ public class UiRelation {
    * @param bean object which property should be retrieved.
    * @param index index of the requested value.
    * @return the value of the requested property.
+   * @see #setProperty(Object, int, Object)
    * @pre bean != null
    */
   public Object getProperty(Object bean, int index) {
@@ -150,6 +174,7 @@ public class UiRelation {
    *          size of the collection when the value is inserted at the end. If
    *          the value is negative the value is inserted at the beginning.
    * @param value value to set.
+   * @see #setProperty(Object, int, Object)
    * @pre bean != null
    */
   public void setProperty(Object bean, int index, Object value) {
@@ -183,7 +208,7 @@ public class UiRelation {
    * Removes the item from the indexed property.
    * @param bean bean owning the indexed property.
    * @param value value to remove from the indexed property.
-   * @see #removeProperty(Object, Object)
+   * @see #addProperty(Object, Object)
    */
   public void removeProperty(Object bean, Object value) {
     assert ((bean != null) && (value != null));

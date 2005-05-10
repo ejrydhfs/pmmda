@@ -18,7 +18,8 @@ Installation Notes pmMDA
     - An optional development environment for your Java application is the 
       Eclipse environment. Eclipse is available from http://www.eclipse.org.
       Only users wanting to develop their own cartridges should download this
-      package.
+      package. The version must be 3.1 or higher because Java 5.0 features must
+      be supported.
       The product is open source and free of charge. 
       Follow the detailed installation procedure of Eclipse.
     
@@ -34,17 +35,14 @@ Installation Notes pmMDA
 	location. ZIP files can be opened using various open source tools.
 	The file structure of the binary distribution is:
 	  -- pmMDA
-	    -- bin
-	          pmMDA.bat
-	          pmMDA.ico
-	          pmMDA.sh
   	    -- docs
 	          (documentation of the pmMDA and the delivered cartridges)
 	          all documents are in pdf and html formats.
     	-- lib
 	          pmMDA.jar
 	          (support jar files)
-	    InstallationNotes.txt
+        pmMDA.bat
+        pmMDA.ico
 	    License.txt
 	    ReleaseNotes.txt
 
@@ -64,12 +62,14 @@ Installation Notes pmMDA
 3. Run pmMDA
    ---------
    The pmMDA application is started with the following command.
+   			 pmMDA.bat
+   or   			 
              java -jar pmMDA.jar
    Upon start, the graphical user interface of pmMDA is displayed. For more
    information how to work with pmMDA please consult the user manual and
    reference manual.
    
-   Developers desiring to run pmMDA inside eclispe can define a new target.
+   Developers desiring to run pmMDA inside eclipse can define a new target.
    The class containing the main method is
              ch.bbv.explorer.ExplorerTest
    

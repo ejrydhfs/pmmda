@@ -4,6 +4,15 @@ The following new features were added.
 - The views of a node are now displayed in a tabbed window. Therefore the
   selection entries in the popup menu were removed. This behavior is similar
   to the one found in environment such as Eclipse.
+
+Version 0.2.1 (30 April 2005)
+-----------------------------
+The following new features were added.
+- State machines are now realized with the help of the open source project
+  SMC. The internal state machine framework was discarded.
+
+The following errors were corrected.
+- Clean-up of the documentation and of the source code.
   
 Version 0.2.1-RC2 (30 October 2004)
 -----------------------------------

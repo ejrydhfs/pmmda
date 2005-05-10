@@ -1,7 +1,5 @@
 #set($__="")
 #set($____="")
-#set($sign="#")
-#set($dollar="$")
 
 ## emit file header for a Java source file artifact.
 #macro(emitFileHeader)
@@ -18,28 +16,29 @@
 ## @param $spaces leading spaces for the indentation of the comment.
 #macro(emitClassDescription $element $spaces)
 #set($dollar="$")
-#set($lines = ${element.javaDocComment()})
+#set($offset=${spaces.length()} + 3)
+#set($lines = ${element.docComment(${offset})})
 #if(${lines.size()} > 0)
 ${spaces}/**
 #foreach($line in $lines)
-${spaces} ${line}
+${spaces} * ${line}
 #end
 ${spaces} * @version ${dollar}Revision${dollar}
+${spaces} * @author ${element.valueOfTag("author")}
 ${spaces} */
 #end
 #end
 
 ## emit the description for a meta property for a Java source file artifact.
 #macro(emitPropertyDescription $element $spaces)
-#if(${element.getDescription()})
-#set($lines = ${element.javaDocComment()})
+#set($offset=${spaces.length()} + 3)
+#set($lines = ${element.docComment(${offset})})
 #if(${lines.size()} > 0)
 ${spaces}/**
 #foreach($line in $lines)
-${spaces} ${line}
+${spaces} * ${line}
 #end
 ${spaces} */
-#end
 #end
 #end
 
@@ -99,4 +98,27 @@ ${spaces} */
 #getType($model $element $type)
 #isPersistentDataObject($type $result)
 #end
-	
+
+#macro(containerCreation $relation)
+#set($containerType=${aggregation.getAttribute("bo-container-class")})
+#set($keyType=${aggregation.getAttribute("bo-key-class")})
+#set($itemType=${aggregation.retrieveTypeClassName()})
+#if($keyType && (${keyType.length()} != 0))
+new ${containerType}<${keyType}, ${itemType}>()##end
+#else
+new ${containerType}<${itemType}>()##end
+#end
+#end	
+
+#macro(getterName $property $result)
+#set($itemType = ${property.retrieveTypeClassName()})
+#if($itemType=="boolean")
+#set($result="is${property.nameFirstUpperSingular()}")	
+#else
+#set($result="get${property.nameFirstUpperSingular()}")	
+#end
+#end
+
+#macro(setterName $property $result)
+#set($result="set${property.nameFirstUpperSingular()}")
+#end

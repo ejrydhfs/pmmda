@@ -74,7 +74,7 @@ public class CartridgePanel extends JPanel {
   /**
    * the table displaying the tagged value types of the cartridge.
    */
-  private TablePanel taggedValueTypes;
+  private TablePanel tagDefinitions;
 
   /**
    * the table displaying the properties of the cartridge.
@@ -92,7 +92,7 @@ public class CartridgePanel extends JPanel {
   public CartridgePanel() {
     stereotypes = new TablePanel(Collections.EMPTY_LIST, new TableCell(
         STEREOTYPE_COLUMN_NAMES));
-    taggedValueTypes = new TablePanel(Collections.EMPTY_LIST, new TableCell(
+    tagDefinitions = new TablePanel(Collections.EMPTY_LIST, new TableCell(
         TAGGED_VALUE_TYPE_COLUMN_NAMES));
     properties = new TablePanel(Collections.EMPTY_LIST, new TableCell(
         PROPERTY_COLUMN_NAMES));

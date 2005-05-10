@@ -13,7 +13,7 @@ import java.util.*;
 import ch.bbv.dog.DataObject;
 import ch.bbv.dog.DataObjectImpl;
 import ch.bbv.dog.LightweightObject;
-import ch.bbv.utilities.TextUtilities;
+import ch.bbv.mda.operators.ModelOperators;
 
 /**
  * The meta element is the root of all meta element class of our MDA model. The
@@ -26,11 +26,13 @@ import ch.bbv.utilities.TextUtilities;
  */
 public abstract class MetaElement extends DataObjectImpl implements DataObject,
     LightweightObject {
-  // %% BEGIN USER DECLARATION
+
+  /* %% USER DEFINED DECLARATION START %% */
+
   /**
    * The length of a formatted JavaDoc comment line.
    */
-  public static final int JAVADOC_LINE_LENGTH = 75;
+  public static final int DOC_LINE_LENGTH = 80;
 
   /**
    * Defines a comparator for meta element based on their name as comparison
@@ -42,7 +44,20 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
     NAME_COMPARATOR = new MetaElementNameComparator();
   }
 
-  // %% END USER DECLARATION
+  /* %% USER DEFINED DECLARATION END %% */
+
+  /**
+   * Name of the UML/MDA element.
+   * @serial
+   */
+  private String name;
+
+  /**
+   * The description of the MDA/UML element. The description explains the role
+   * and responsibilities of the element to the human reader.
+   * @serial
+   */
+  private String description;
 
   /**
    * Context property of the class. The value is handled in related accessors
@@ -51,18 +66,6 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
    * @serial
    */
   private MetaElement context;
-
-  /**
-   * Name property of the class.
-   * @serial
-   */
-  private String name;
-
-  /**
-   * Description property of the class.
-   * @serial
-   */
-  private String description;
 
   /**
    * Visibility property of the class.
@@ -77,7 +80,7 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
   private String stereotype;
 
   /**
-   * Indexed property of the class.
+   * Tagged values of the element indexed with the tag.
    * @serial
    */
   private Map<String, TaggedValue> taggedValues;
@@ -299,11 +302,11 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
     return new ArrayList<TaggedValue>(taggedValues.values());
   }
 
-  // %% BEGIN USER CODE
-
   public LightweightObject deepCopy() {
     return null;
   }
+
+  // %% BEGIN USER CODE
 
   /**
    * Returns the root of the model.
@@ -323,7 +326,7 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
    * @return the name of the element formatted as requested.
    */
   public String nameFirstUpper() {
-    return TextUtilities.identifierFirstUpper(getName());
+    return ModelOperators.identifierFirstUpper(getName());
   }
 
   /**
@@ -332,7 +335,7 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
    * @return the name of the element formatted as requested.
    */
   public String nameFirstLower() {
-    return TextUtilities.identifierFirstLower(getName());
+    return ModelOperators.identifierFirstLower(getName());
   }
 
   /**
@@ -340,7 +343,7 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
    * @return the name of the element formatted as requested.
    */
   public String nameUpper() {
-    return TextUtilities.identifierUpper(getName());
+    return ModelOperators.identifierUpper(getName());
   }
 
   /**
@@ -348,7 +351,7 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
    * @return the name of the element formatted as requested.
    */
   public String nameSingular() {
-    return TextUtilities.identifierSingular(getName());
+    return ModelOperators.identifierSingular(getName());
   }
 
   /**
@@ -356,7 +359,7 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
    * @return the name of the element formatted as requested.
    */
   public String namePlural() {
-    return TextUtilities.identifierPlural(getName());
+    return ModelOperators.identifierPlural(getName());
   }
 
   /**
@@ -365,7 +368,7 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
    * @return the name of the element formatted as requested.
    */
   public String nameFirstUpperSingular() {
-    return TextUtilities.identifierFirstUpper(nameSingular());
+    return ModelOperators.identifierFirstUpper(nameSingular());
   }
 
   /**
@@ -374,7 +377,7 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
    * @return the name of the element formatted as requested.
    */
   public String nameFirstUpperPlural() {
-    return TextUtilities.identifierFirstUpper(namePlural());
+    return ModelOperators.identifierFirstUpper(namePlural());
   }
 
   /**
@@ -411,37 +414,48 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
   }
 
   /**
-   * Formats the comment of the element using the JavaDoc conventions.
+   * Formats the comment of the element using the JavaDoc conventions. The
+   * length of the line is computed and the text formated. New lines are
+   * inserted where needed; no existing new lines are removed.
+   * @param offset the offset in source code at the beginning of each line. It
+   *          is used to compute the effective maximum line length.
    * @return the comment of the element formatted as requested.
    */
-  public List javaDocComment() {
+  public List docComment(int offset) {
     List<String> lines = new ArrayList<String>();
     String text = getDescription();
     if ((text != null) && (text.length() > 0)) {
-      StringBuilder buffer = new StringBuilder();
+      int docLength = text.length();
+      int lineLength = DOC_LINE_LENGTH - offset;
       int start = 0;
-      int end = start + JAVADOC_LINE_LENGTH;
-      while (end < (text.length() - 1)) {
-        while ((end > start) && !Character.isWhitespace(text.charAt(end - 1))) {
-          end--;
+      while (start < docLength) {
+        int end = Math.min(start + lineLength, docLength);
+        int i = start;
+        while ((i < end) && text.charAt(i) != '\n') {
+          i++;
         }
-        buffer.append("* ");
-        if (end > start) {
-          buffer.append(text.substring(start, end));
+        if ((i < end) || (text.charAt(i - 1) == '\n')) {
+          lines.add(text.substring(start, i));
+          i++;
         } else {
-          end = start + JAVADOC_LINE_LENGTH;
-          buffer.append(text.substring(start, end));
-          buffer.append("-");
+          if (end != docLength) {
+            // detect previous whitespace used as a line terminator.
+            i = end - 1;
+            while ((i > start) && !Character.isWhitespace(text.charAt(i))) {
+              i--;
+            }
+            if (i != start) {
+              i++;
+              lines.add(text.substring(start, i));
+            } else {
+              i = end;
+              lines.add(text.substring(start, end) + '-');
+            }
+          } else {
+            lines.add(text.substring(start));
+          }
         }
-        lines.add(buffer.toString());
-        buffer.setLength(0);
-        start = end;
-        end = start + JAVADOC_LINE_LENGTH;
-      }
-      if (start < (text.length() - 1)) {
-        buffer.append("* ");
-        buffer.append(text.substring(start));
-        lines.add(buffer.toString());
+        start = i;
       }
     }
     return lines;
@@ -499,7 +513,7 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
     return ((value != null) && value.equals("true"));
   }
 
-  /** 
+  /**
    * Finds the first element with the given name if the list.
    * @param list list to search for.
    * @param name name of element to find.

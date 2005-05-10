@@ -20,7 +20,8 @@ import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
 
 import ch.bbv.application.VersionId;
-import ch.bbv.mda.*;
+import ch.bbv.mda.MetaPackage;
+import ch.bbv.mda.TagDefinition;
 
 /**
  * The EJB cartridge generates all the artifacts for the data object framework
@@ -209,23 +210,6 @@ public class EjbCartridge extends CartridgeImpl {
       types.add(new TagDefinition(SERVER_NAME_TAG, "", String.class));
     }
     return types;
-  }
-
-  public TaggedValue getTaggedValueWithElementDependentDefault(
-      TagDefinition taggedValueType, MetaElement element) {
-    TaggedValue value = new TaggedValue(taggedValueType);
-    updateTaggedValueWithElementDependentDefault(value, element);
-    return value;
-  }
-
-  public void updateTaggedValueWithElementDependentDefault(
-      TaggedValue taggedValue, MetaElement element) {
-    if (taggedValue.getType().getTag().equals(SERVER_NAME_TAG)) {
-      String name = element.getName();
-      if (name != null) {
-        taggedValue.setValue(name + "Server");
-      }
-    }
   }
 
   public void preProcessPackage(MetaPackage metaPackage) {

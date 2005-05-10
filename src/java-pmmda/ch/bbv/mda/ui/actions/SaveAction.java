@@ -7,18 +7,16 @@
 package ch.bbv.mda.ui.actions;
 
 import java.awt.event.ActionEvent;
-import java.io.File;
 
 import javax.swing.JOptionPane;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ch.bbv.explorer.actions.ExplorerGlobalActionImpl;
-import ch.bbv.mda.MetaModel;
+import ch.bbv.explorer.actions.ExplorerSaveAction;
 import ch.bbv.mda.persistency.PersistencyException;
-import ch.bbv.mda.persistency.PersistencyHandler;
-import ch.bbv.mda.persistency.PersistencyHandlerFactory;
+import ch.bbv.mda.ui.MdaDocument;
+import ch.bbv.mda.ui.MdaExplorer;
 import ch.bbv.utilities.ResourceUtility;
 
 /**
@@ -26,7 +24,7 @@ import ch.bbv.utilities.ResourceUtility;
  * @author MarcelBaumann
  * @version $Revision$
  */
-public class SaveAction extends ExplorerGlobalActionImpl {
+public class SaveAction extends ExplorerSaveAction {
   /**
    * Serial version identifier coded as back compatibility date.
    */
@@ -37,25 +35,15 @@ public class SaveAction extends ExplorerGlobalActionImpl {
    */
   private static Log log = LogFactory.getLog(SaveAction.class);
 
-  /**
-   * Default constructor.
-   */
-  public SaveAction() {
-    super("Save");
-    initialize();
-  }
-
   public void execute() {
     try {
-      MetaModel project = (MetaModel) getExplorer().getRoot().getDataObject();
-      PersistencyHandlerFactory factory = new PersistencyHandlerFactory();
-      String filename = project.getFilename();
+      MdaExplorer explorer = (MdaExplorer) getExplorer();
+      MdaDocument document = explorer.getDocument();
+      String filename = document.getModel().getFilename();
       if (filename != null) {
         filename = filename.trim();
         if (filename.length() > 0) {
-          File file = new File(project.getFilename());
-          PersistencyHandler handler = factory.getHandler(file);
-          handler.writeModel(project, file);
+          explorer.getDocument().save();
           getExplorer().getMenuBar().documentSaved();
         } else {
           JOptionPane.showMessageDialog(getExplorer().getFrame(),

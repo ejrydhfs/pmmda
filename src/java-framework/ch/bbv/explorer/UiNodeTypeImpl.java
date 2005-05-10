@@ -278,7 +278,7 @@ public class UiNodeTypeImpl implements UiNodeType {
       for (Iterator i = nodeType.getFields().iterator(); i.hasNext();) {
         UiField field = (UiField) i.next();
         if (object == field.getProperty(parent)) {
-          property = field.getProperty();
+          property = field.getPropertyName();
           break;
         }
       }

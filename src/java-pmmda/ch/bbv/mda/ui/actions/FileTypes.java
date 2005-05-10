@@ -12,65 +12,65 @@ package ch.bbv.mda.ui.actions;
  * @author MarcelBaumann
  * @version $Revision$
  */
-public interface FileTypes {
+public class FileTypes {
   /**
    * File extensions for models developed with ArgoUML.
    */
-  String[] ARGOUML_EXT = { "zargo" };
+  public static final String[] ARGOUML_EXT = { "zargo" };
 
   /**
    * Text for the associated extensions.
    */
-  String ARGOUML_TEXT = "ArgoUML, Poseidon 1.x (*.zargo)";
+  public static final String ARGOUML_TEXT = "ArgoUML, Poseidon 1.x (*.zargo)";
 
   /**
    * File extensions for models developed with ArgoUML.
    */
-  String[] POSEIDON_EXT = { "zuml" };
+  public static final String[] POSEIDON_EXT = { "zuml" };
 
   /**
    * Text for the associated extensions.
    */
-  String POSEIDON_TEXT = "Poseidon 2.x (*.zuml)";
+  public static final String POSEIDON_TEXT = "Poseidon 2.x (*.zuml)";
 
   /**
    * File extensions for models developed with Rational Rose.
    */
-  String[] RATIONAL_ROSE_EXT = { "mdl" };
+  public static final String[] RATIONAL_ROSE_EXT = { "mdl" };
 
   /**
    * Text for the associated extensions.
    */
-  String RATIONAL_ROSE_TEXT = "Rational Rose (*.mdl)";
+  public static final String RATIONAL_ROSE_TEXT = "Rational Rose (*.mdl)";
 
   /**
    * File extensions for models serialized to XML using the open source library
    * from CodeHaus.
    */
-  String[] XML_EXT = { "xml" };
+  public static final String[] XML_EXT = { "xml" };
 
   /**
    * Text for the associated extensions.
    */
-  String XML_TEXT = "XML models (*.xml)";
+  public static final String XML_TEXT = "XML models (*.xml)";
 
   /**
    * File extensions for models serialized with the Java serialization features.
    */
-  String[] SERIALIZE_EXT = { "ser" };
+  public static final String[] SERIALIZE_EXT = { "ser" };
 
   /**
    * Text for the associated extensions.
    */
-  String SERIALIZE_TEXT = "Java XML models (*.ser)";
+  public static final String SERIALIZE_TEXT = "Java XML models (*.ser)";
 
   /**
    * File extensions for models according to xmi standard.
    */
-  String[] XMI_EXT = { "xmi" };
+  public static final String[] XMI_EXT = { "xmi" };
 
   /**
    * Text for the associated extensions.
    */
-  String XMI_TEXT = "XMI models (*.xmi)";
+  public static final String XMI_TEXT = "XMI models (*.xmi)";
 }

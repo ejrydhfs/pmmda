@@ -5,10 +5,7 @@
  */
 package ch.bbv.mda;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * The meta project defines a MDA project composed of a set of packages. Overall
@@ -164,6 +161,7 @@ public class MetaModel extends MetaPackage {
   }
 
   // %% BEGIN USER CODE
+  
   public MetaPackage findPackage(String qualifiedName) {
     return (MetaPackage) findElement(packages, qualifiedName);
   }
@@ -172,19 +170,23 @@ public class MetaModel extends MetaPackage {
     return (MetaDataType) findElement(dataTypes, qualifiedName);
   }
 
+  /**
+   * Finds the class with the given qualified name.
+   * @param qualifiedName qualified name of the class to find.
+   * @return the requested class if found otherwise null.
+   */
   public MetaClass findClass(String qualifiedName) {
-    MetaClass metaClass = null;
+    MetaClass clazz = null;
     if (qualifiedName != null) {
       String packageName = MetaClass.getPackageName(qualifiedName);
       if (packageName != null) {
         MetaPackage metaPackage = findPackage(packageName);
         if (metaPackage != null) {
-          metaClass = metaPackage.findClass(MetaClass
-              .getClassName(qualifiedName));
+          clazz = metaPackage.findClass(MetaClass.getClassName(qualifiedName));
         }
       }
     }
-    return metaClass;
+    return clazz;
   }
 
   /**
@@ -193,11 +195,30 @@ public class MetaModel extends MetaPackage {
    * @return the list of classes referencing the given class.
    */
   public Collection getClassReferences(MetaClass clazz) {
-    assert (clazz != null);
+    assert clazz != null;
     VisitorCollectClassReferences visitor = new VisitorCollectClassReferences();
     visitor.setReferencedClass(clazz);
     accept(visitor);
     return visitor.getReferences();
+  }
+
+  /**
+   * Returns all classes being a subclass of the given class.
+   * @param clazz the class which subclasses are looked for.
+   * @return the list of classes derived from the given one.
+   * @pre clazz != null
+   */
+  public Set<MetaClass> findSubClasses(MetaClass clazz) {
+    assert clazz != null;
+    Set<MetaClass> classes = new HashSet<MetaClass>();
+    for (MetaPackage mPackage : getPackages()) {
+      for (MetaClass subClass : mPackage.getClasses()) {
+        if (subClass.hasAncestor(clazz)) {
+          classes.add(subClass);
+        }
+      }
+    }
+    return classes;
   }
 
   // %% END USER CODE

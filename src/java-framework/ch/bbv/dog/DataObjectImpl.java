@@ -16,6 +16,9 @@ import java.sql.Timestamp;
  * @version $Revision$
  */
 public class DataObjectImpl implements DataObject {
+  /**
+   * Serial version identifier coded as back compatibility date.
+   */
   private static final long serialVersionUID = 20041201;
 
   /**

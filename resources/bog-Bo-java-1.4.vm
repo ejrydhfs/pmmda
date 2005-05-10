@@ -23,11 +23,11 @@ package ${package.getAttribute("bo-mo-package")};
 #if (${class.getAttribute("bo-changeable")} == "true")
 #set($dummy=${imports.addClassName("java.beans.PropertyChangeSupport")})
 #end
-#if (${class.getAttribute("bo-vetoable")} == "true")
+#if (${class.booleanValueOfAttribute("bo-vetoable")})
 #set($dummy=${imports.addClassName("java.beans.VetoableChangeSupport")})
 #end
 #end
-#if (${class.getAttribute("bo-vetoable")} == "true")
+#if (${class.booleanValueOfAttribute("bo-vetoable")})
 #set($dummy=${imports.addClassName("java.beans.PropertyVetoException")})
 #end
 #set($importStatements=${imports.getImportStatements(4)})
@@ -36,7 +36,7 @@ import $importStatement;
 #end
 
 /* %% USER DEFINED IMPORT START %% */
-/* %% USER DEFINED IMPORT END   %% */
+/* %% USER DEFINED IMPORT END %% */
 
 #emitClassDescription($class "")
 #if(${hasAncestors})
@@ -80,7 +80,7 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
 #foreach ($aggregation in $aggregations) 
 
 #emitPropertyDescription($aggregation "  ")
-  private ${aggregation.getAttribute("bo-storage-interface")} ${aggregation.nameFirstLower()};
+  private ${aggregation.getAttribute("bo-interface-class")} ${aggregation.nameFirstLower()};
 #end
 ## emits foreign key attribute for 1:N relationships because anonymous fields
 ## do not work when copying data object graphs.
@@ -140,7 +140,7 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
    */
   public ${class.getAttribute("bo-mo-class")}() {
 #foreach ($aggregation in $aggregations) 
-  	${aggregation.nameFirstLower()} = new ${aggregation.getAttribute("bo-storage-type")}();
+  	${aggregation.nameFirstLower()} = new ${aggregation.getAttribute("bo-container-class")}();
 #end
 #if (${class.getAttribute("bo-changeable")} == "true")
     changeSupport = new PropertyChangeSupport(this);
@@ -228,16 +228,18 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
 #set($visibility = ${property.retrieveVisibilityText()})
 #set($vetoable=${property.booleanValueOfTag("bo-veto-event")})
 #set($changeable=${property.booleanValueOfTag("bo-change-event")})
+#getterName($property $getter)
+#setterName($property $setter)
 #if(${property.canBeRead()})
 
   /** 
    * Gets the current value of the simple property ${uName}.
    * @return the value of the simple property ${uName}.
 #if(${property.canBeWritten()})
-   * @see ${sign}set${uName}
+   * @see ${sign}${setter}
 #end    
    */
-  ${visibility} ${itemType} get${uName}() {
+  ${visibility} ${itemType} ${getter}() {
     return ${lName};
   }
 #end
@@ -250,13 +252,13 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
    * @throws PropertyVetoException if a listener refuses the change.
 #end
 #if(${property.canBeRead()})
-   * @see ${sign}get${uName}
+   * @see ${sign}${getter}
 #end    
    */    
 #if(${vetoable})
-  ${visibility} void set${uName}(${itemType} ${lName}) throws PropertyVetoException {
+  ${visibility} void ${setter}(${itemType} ${lName}) throws PropertyVetoException {
 #else
-  ${visibility} void set${uName}(${itemType} ${lName}) {
+  ${visibility} void ${setter}(${itemType} ${lName}) {
 #end	
 #if(${vetoable} || ${changeable})
 	${itemType} old${uName} = this.${lName};
@@ -347,20 +349,21 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
 #set($lName = ${aggregation.nameFirstLower()})
 #set($usName = ${aggregation.nameFirstUpperSingular()})
 #set($upName = ${aggregation.nameFirstUpperPlural()})
-#set($interface = ${aggregation.getAttribute("bo-storage-interface")}) 
-#set($storageType = ${aggregation.getAttribute("bo-storage-type")})
+#set($interface = ${aggregation.getAttribute("bo-interface-class")}) 
+#set($storageType = ${aggregation.getAttribute("bo-container-class")})
 #set($itemType = ${aggregation.retrieveTypeClassName()})
-#set($keyType = ${aggregation.getKeyType()})
+#set($keyType=false)
+#set($keyType=${aggregation.getAttribute("bo-key-class")})
 #set($visibility = ${aggregation.retrieveVisibilityText()})
 #set($type=false)
 #set($type=${model.findClass(${aggregation.getTypeName()})})
 #if(${aggregation.canBeRead()})
-#if(${aggregation.isOrdered()})
+#if(${cartridge.isOrdered(${aggregation})})
 
   /** 
    * Gets all elements of the ordered relation ${lName}.
    * @return non mutable list of all children.
-   * @see java.util.Map#values()
+   * @see java.util.Map${sign}values()
    */
   ${visibility} Collection get${upName}() {
     return ${lName}.values();
@@ -371,7 +374,7 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
    * property ${lName}.
    * @param key key of element to return. 
    * @return the element at the specified position in this list.
-   * @see java.util.Map#get(key)
+   * @see java.util.Map${sign}get(key)
    */
   ${visibility} ${itemType} get${usName}(${keyType} key) {
     return (${itemType})${lName}.get(key);  
@@ -391,7 +394,7 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
    * ${lName}.
    * @param index index of element to return. 
    * @return the element at the specified position in this list.
-   * @see java.util.List#get(int)
+   * @see java.util.List${sign}get(int)
    */
   ${visibility} ${itemType} get${usName}(int index) {
     return (${itemType})${lName}.get(index);  
@@ -399,16 +402,16 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
 #end  
 #end
 #if(${aggregation.canBeWritten()})
-#if(${aggregation.isOrdered()})
+#if(${cartridge.isOrdered(${aggregation})})
 
   /** 
    * Inserts the given child with the given key in the ordered indexed
    * property ${lName}.
    * @param key key at which the specified element is to be inserted.
    * @param value value to be inserted.
-   * @see java.util.Map#put(Object, Object)
+   * @see java.util.Map${sign}put(Object, Object)
    */
-  ${visibility} void put${usName}(${keyType} key, ${itemType} value) {
+  ${visibility} void set${usName}(${keyType} key, ${itemType} value) {
     setModified(true);
     ${lName}.put(key, value);
   }
@@ -417,7 +420,7 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
    * Removes the element with the specified key.
    * @param key key whose mappingis to be removed from the map. 
    * @return true if this list contained the specified element. 
-   * @see java.util.Map#remove(Object)
+   * @see java.util.Map${sign}remove(Object)
    */
   ${visibility} ${itemType} remove${usName}(${keyType} key) {
     setModified(true);
@@ -434,7 +437,7 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
    * the specified collection is modified while the operation is in progress. 
    * @param c collection whose elements are to be added to this list. 
    * @return true if this list changed as a result of the call. 
-   * @see java.util.List#addAll(Collection)
+   * @see java.util.List${sign}addAll(Collection)
    */
   ${visibility} boolean add${upName}(Collection c) {
     setModified(true);
@@ -450,7 +453,7 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
    * Inserts the given child at the select position in the relation ${lName}.
    * @param index index at which the specified element is to be inserted.
    * @param element element to be inserted.
-   * @see java.util.List#add(int, Object)
+   * @see java.util.List${sign}add(int, Object)
    */
   ${visibility} void set${usName}(int index, ${itemType} element) {
     setModified(true);
@@ -465,7 +468,7 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
    * ${lName}.
    * @param element to be appended to this list.
    * @return true (as per the general contract of the Collection.add method).   
-   * @see java.util.List#add(Object)
+   * @see java.util.List${sign}add(Object)
    * @pre element != null
    */
   ${visibility} boolean add${usName}(${itemType} element) {
@@ -483,7 +486,7 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
    * (o==null ? get(i)==null : o.equals(get(i))) (if such an element exists). 
    * @param element element to be removed from this list, if present. 
    * @return true if this list contained the specified element. 
-   * @see java.util.List#remove(Object)
+   * @see java.util.List${sign}remove(Object)
    */
   ${visibility} boolean remove${usName}(${itemType} element) {
     setModified(true);
@@ -553,7 +556,7 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
 #end
 #foreach ($aggregation in $aggregations) 
 #set($lName = ${aggregation.nameFirstLower()})
-    clone.${lName} = new ${aggregation.getStorageType()}();
+    clone.${lName} = new ${aggregation.valueOfTag("bo-container-class")}();
     for (int i = 0; i < ${lName}.size(); i++) {
       clone.${lName}.add(((DataObject)${lName}.get(i)).copy());
     }
@@ -566,7 +569,7 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
   // sorry nested classes not yet supported: ${nestedClass.nameFirstLower()}
 #end
 #if (!${hasAncestors})
-#if (${class.getAttribute("bo-changeable")} == "true")
+#if (${class.booleanValueOfAttribute("bo-changeable")})
 
   public void addPropertyChangeListener(PropertyChangeListener listener) {
     changeSupport.addPropertyChangeListener(listener);
@@ -601,7 +604,7 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
     throw new UnsupportedOperationException();
   }
 #end  
-#if (${class.getAttribute("bo-vetoable")} == "true")
+#if (${class.booleanValueOfAttribute("bo-vetoable")})
 
   public void addVetoableChangeListener(VetoableChangeListener listener) {
     vetoSupport.addVetoableChangeListener(listener);
@@ -659,4 +662,11 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
     }
   }
 #end
+
+/* %% USER DEFINED PROTECTED/PRIVATE CODE START %% */
+#set($lines=${blocks.get("private definitions")})
+#foreach($line in $lines)
+$line
+#end
+/* %% USER DEFINED PROTECTED/PRIVATE CODE END %% */
 }

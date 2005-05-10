@@ -23,6 +23,7 @@ import ch.bbv.dog.validation.Validator;
 import ch.bbv.mda.*;
 import ch.bbv.mda.generators.validation.OjbTagRule;
 import ch.bbv.mda.generators.validation.TagRule;
+import ch.bbv.mda.operators.FileOperators;
 import ch.bbv.mda.ui.TaggedValuesView;
 
 /**
@@ -313,64 +314,18 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
     tagRule.register(validator);
   }
 
-  public TaggedValue getTaggedValueWithElementDependentDefault(
-      TagDefinition taggedValueType, MetaElement element) {
-    TaggedValue value = new TaggedValue(taggedValueType);
-    updateTaggedValueWithElementDependentDefault(value, element);
-    return value;
-  }
-
-  public void updateTaggedValueWithElementDependentDefault(
-      TaggedValue taggedValue, MetaElement element) {
-    String name = element.getName();
-    if (taggedValue.getType().getTag().equals(TABLE_NAME_TAG)) {
-      if (name != null) {
-        taggedValue.setValue(name + "Table");
-      }
-    } else if (taggedValue.getType().getTag().equals(SCHEMA_TAG)) {
-      if (name != null) {
-        taggedValue.setValue(name + "Schema");
-      }
-    } else if (taggedValue.getType().getTag().equals(COLUMN_NAME_TAG)) {
-      if (name != null) {
-        taggedValue.setValue(name + "Column");
-      }
-    } else if (element instanceof MetaProperty
-        && taggedValue.getType().getTag().equals(COLUMN_TYPE_TAG)) {
-      MetaProperty property = (MetaProperty) element;
-      // remove package name
-      String type = property.getTypeName();
-      if (type != null) {
-        int idx = type.lastIndexOf(".");
-        if (idx != -1) {
-          type = type.substring(idx + 1);
-        }
-        // convert textual string representation into jdbc code
-        List codes = JdbcTypeCode.getCodes();
-        for (Iterator i = codes.iterator(); i.hasNext();) {
-          JdbcTypeCode jdbcCode = (JdbcTypeCode) i.next();
-          if (jdbcCode.getShortDescription().toLowerCase().equals(
-              type.toLowerCase())) {
-            taggedValue.setValue(jdbcCode.getShortDescription());
-            break;
-          }
-        }
-      }
-    }
-  }
-
   public void processModel(MetaModel metaModel) {
     rootDirectory = new File(getContext().getProperty(SOURCE_ROOT_FOLDER_KEY));
     String target = getContext().getProperty(DATABASE_KEY);
     try {
-      ojbBoWriter = createPrintWriter(new File(rootDirectory,
+      ojbBoWriter = FileOperators.createPrintWriter(new File(rootDirectory,
           "repository_bo_user.xml"));
-      ojbLwWriter = createPrintWriter(new File(rootDirectory,
+      ojbLwWriter = FileOperators.createPrintWriter(new File(rootDirectory,
           "repository_lw_user.xml"));
-      ddlWriter = createPrintWriter(new File(rootDirectory, "createTables"
-          + target + ".sql"));
-      ddlIntegrityWriter = createPrintWriter(new File(rootDirectory,
-          "createIntegrity" + target + ".sql"));
+      ddlWriter = FileOperators.createPrintWriter(new File(rootDirectory,
+          "createTables" + target + ".sql"));
+      ddlIntegrityWriter = FileOperators.createPrintWriter(new File(
+          rootDirectory, "createIntegrity" + target + ".sql"));
     } catch (IOException ioe) {
       ioe.printStackTrace();
     }
@@ -423,10 +378,10 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
   }
 
   public void postProcessModel(MetaModel metaModel) {
-    closePrintWriter(ojbBoWriter);
-    closePrintWriter(ojbLwWriter);
-    closePrintWriter(ddlWriter);
-    closePrintWriter(ddlIntegrityWriter);
+    FileOperators.closePrintWriter(ojbBoWriter);
+    FileOperators.closePrintWriter(ojbLwWriter);
+    FileOperators.closePrintWriter(ddlWriter);
+    FileOperators.closePrintWriter(ddlIntegrityWriter);
   }
 
   /**

@@ -102,6 +102,10 @@ public class ValidationRuleResult implements Serializable {
     this.severity = severity;
   }
 
+  /**
+   * Returns the text for the severity level.
+   * @return severity level as text.
+   */
   public String getSeverityText() {
     String text;
     switch (severity) {

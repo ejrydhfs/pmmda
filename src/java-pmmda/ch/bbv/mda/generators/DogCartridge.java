@@ -24,10 +24,11 @@ import ch.bbv.dog.validation.Validator;
 import ch.bbv.mda.*;
 import ch.bbv.mda.generators.validation.DogTagRule;
 import ch.bbv.mda.generators.validation.TagRule;
+import ch.bbv.mda.operators.FileOperators;
 
 /**
- * The data object handler is responsible for the generation of all data object
- * types and the associated helper classes. The code generator is able to
+ * The data object cartridge is responsible for the generation of all data
+ * object types and the associated helper classes. The code generator is able to
  * distinguish between simple properties, indexed properties and reference
  * codes. The generated code for each type of fields can be modified in the
  * velocity script without any source code changes. The following constructs are
@@ -46,13 +47,9 @@ import ch.bbv.mda.generators.validation.TagRule;
  * object instances. Typical usage is displaying a navigation tree in the user
  * interface. The getter and setter naming conventions are the same as the ones
  * of the data objects.</li>
- * <li>A reference service is generated for all the reference code defined in
- * one package. Convenience methods to access each type of code are provided.
- * Codes marked as preloaded are cached in the service. They are loaded at
- * startup time and are always locally available. The framework assumes that
- * preloaded codes are read-only. No restrictions are set on other kinds of
- * codes. If no reference code exists in the package no service will be
- * generated.</li>
+ * <li>A reference service is generated for all the reference codes defined in
+ * one package. Convenience methods to access each type of code are provided. If
+ * no reference code exists in the package no service will be generated.</li>
  * <li>Helper classes are generated to provide a complete implementation of the
  * visitor pattern on all data object classes defined in the package. The
  * generated visitor can visit data objects defined in other packages but do not
@@ -62,6 +59,96 @@ import ch.bbv.mda.generators.validation.TagRule;
  * @version $Revision$
  */
 public class DogCartridge extends CartridgeImpl implements Cartridge {
+  /**
+   * Key for all user defined blocks stored in the Velocity context.
+   */
+  public static final String CODE_BLOCKS = "blocks";
+
+  /**
+   * Key for user defined source code.
+   */
+  public static final String IMPORT_BLOCK = "imports";
+
+  /**
+   * Key for user defined source code.
+   */
+  public static final String DECLARATION_BLOCK = "declarations";
+
+  /**
+   * Key for user defined source code.
+   */
+  public static final String CONSTRUCTOR_BLOCK = "constructors";
+
+  /**
+   * Key for user defined source code.
+   */
+  public static final String DEFINITION_BLOCK = "definitions";
+
+  /**
+   * Key for user defined source code.
+   */
+  public static final String PRIVATE_DEFINITION_BLOCK = "private definitions";
+
+  /**
+   * Comment in the generated code to detect a border of a user defined source
+   * code.
+   */
+  public static final String USER_IMPORT_BEGIN = "/* %% USER DEFINED IMPORT START %% */";
+
+  /**
+   * Comment in the generated code to detect a border of a user defined source
+   * code.
+   */
+  public static final String USER_IMPORT_END = "/* %% USER DEFINED IMPORT END %% */";
+
+  /**
+   * Comment in the generated code to detect a border of a user defined source
+   * code.
+   */
+  public static final String USER_DECLARATION_BEGIN = "/* %% USER DEFINED DECLARATION START %% */";
+
+  /**
+   * Comment in the generated code to detect a border of a user defined source
+   * code.
+   */
+  public static final String USER_DECLARATION_END = "/* %% USER DEFINED DECLARATION END %% */";
+
+  /**
+   * Comment in the generated code to detect a border of a user defined source
+   * code.
+   */
+  public static final String USER_CONSTRUCTORS_BEGIN = "/* %% USER DEFINED CONSTRUCTORS START %% */";
+
+  /**
+   * Comment in the generated code to detect a border of a user defined source
+   * code.
+   */
+  public static final String USER_CONSTRUCTORS_END = "/* %% USER DEFINED CONSTRUCTORS END %% */";
+
+  /**
+   * Comment in the generated code to detect a border of a user defined source
+   * code.
+   */
+  public static final String USER_CODE_BEGIN = "/* %% USER DEFINED CODE START %% */";
+
+  /**
+   * Comment in the generated code to detect a border of a user defined source
+   * code.
+   */
+  public static final String USER_CODE_END = "/* %% USER DEFINED CODE END %% */";
+
+  /**
+   * Comment in the generated code to detect a border of a user defined source
+   * code for protected or private methods.
+   */
+  public static final String USER_PRIVATE_CODE_BEGIN = "/* %% USER DEFINED PROTECTED/PRIVATE CODE START %% */";
+
+  /**
+   * Comment in the generated code to detect a border of a user defined source
+   * code for protected or private methods.
+   */
+  public static final String USER_PRIVATE_CODE_END = "/* %% USER DEFINED PROTECTED/PRIVATE CODE END %% */";
+
   /**
    * The prefix of the cartridge.
    */
@@ -178,6 +265,12 @@ public class DogCartridge extends CartridgeImpl implements Cartridge {
   public static final String GENERATE_TAG = "bo-generate";
 
   /**
+   * The value is the logical root directory, meaning a variable defined in the
+   * properties where the Java code artifacts are created.
+   */
+  public static final String ROOT_TAG = "bo-root";
+
+  /**
    * The mode of the property either read, write or read-write.
    */
   public static final String MODE_TAG = "bo-mode";
@@ -195,13 +288,7 @@ public class DogCartridge extends CartridgeImpl implements Cartridge {
   /**
    * Indicates if owned data objects can navigate back to their owner.
    */
-  public static final String BIDIRECTIONAL_RELATION_TAG = "bo-bidirectional";
-
-  /**
-   * True if the simple property should be a parameter of the specialized
-   * constructor of the class.
-   */
-  public static final String CONSTRUCTOR_PARAM_TAG = "bo-constructor-parameter";
+  public static final String NAVIGABLE_RELATION_TAG = "bo-navigable";
 
   /**
    * Indicates if the property is member of the lightweight representation.
@@ -220,12 +307,6 @@ public class DogCartridge extends CartridgeImpl implements Cartridge {
    * guideline.
    */
   public static final String INTERFACE_CLASS_TAG = "bo-interface-class";
-
-  /**
-   * Flag indicating if an indexed property is ordered or not. If it is ordered
-   * the key class tag defines the type of the key used to order the items.
-   */
-  public static final String IS_ORDERED_TAG = "bo-is-ordered";
 
   /**
    * Flag indicating if a class is a root class in data object graph or not.
@@ -299,18 +380,6 @@ public class DogCartridge extends CartridgeImpl implements Cartridge {
   public static final String BO_HAS_INTERFACE = "bo-has-interface";
 
   /**
-   * Attribute defining the unqualified class name for the storage interface of
-   * an indexed property.
-   */
-  public static final String BO_STORAGE_INTERFACE = "bo-storage-interface";
-
-  /**
-   * Attribute defining the unqualified class name for the storage type of an
-   * indexed property.
-   */
-  public static final String BO_STORAGE_TYPE = "bo-storage-type";
-
-  /**
    * Log instance for the class.
    */
   private static Log log = LogFactory.getLog(DogCartridge.class);
@@ -321,7 +390,12 @@ public class DogCartridge extends CartridgeImpl implements Cartridge {
   private static List<StereotypeType> stereotypes;
 
   /**
-   * velocity template to generate data objects.
+   * Velocity template to generate data objects.
+   */
+  private Template javaClassTemplate;
+
+  /**
+   * Velocity template to generate data objects.
    */
   private Template javaBoTemplate;
 
@@ -380,14 +454,20 @@ public class DogCartridge extends CartridgeImpl implements Cartridge {
    */
   private MetaPackage metaPackage;
 
+  /**
+   * Flag indicating if the package contains reference code declarations.
+   */
   private boolean hasCodes;
 
+  /**
+   * Flag indicating if the package contains data object declarations.
+   */
   private boolean hasDataObjects;
 
   /**
    * Root directory of the generated source files.
    */
-  private File sourceRootDirectory;
+  private File rootDirectory;
 
   /**
    * Constructor of the class. All data object related code generator templates
@@ -424,6 +504,7 @@ public class DogCartridge extends CartridgeImpl implements Cartridge {
       String postfix = "-" + getContext().getProperty(LANGUAGE_KEY) + ".vm";
       javaLwTemplate = Velocity.getTemplate("bog-Lw" + postfix);
       javaBoTemplate = Velocity.getTemplate("bog-Bo" + postfix);
+      javaClassTemplate = Velocity.getTemplate("bog-Class" + postfix);
       referenceServiceTemplate = Velocity.getTemplate("bog-CodeService"
           + postfix);
       visitorIfBoTemplate = Velocity.getTemplate("bog-visitorIfBo" + postfix);
@@ -450,41 +531,34 @@ public class DogCartridge extends CartridgeImpl implements Cartridge {
 
   public List<TagDefinition> getTaggedValueTypes(Class clazz) {
     List<TagDefinition> types = new ArrayList<TagDefinition>();
-    if (clazz.equals(MetaModel.class)) {
-      types.add(new TagDefinition(GENERATE_TAG, "true", Boolean.TYPE));
-    } else if (clazz.equals(MetaPackage.class)) {
+    if (clazz.equals(MetaPackage.class)) {
       types.add(new TagDefinition(GENERATE_TAG, "false", Boolean.TYPE));
+      types.add(new TagDefinition(ROOT_TAG, String.class));
     } else if (clazz.equals(MetaClass.class)) {
+      types.add(new TagDefinition(GENERATE_TAG, "false", Boolean.TYPE));
       types.add(new TagDefinition(PERSISTENCE_TAG, "false", Boolean.TYPE));
       types.add(new TagDefinition(IS_ROOT_TAG, "false", Boolean.TYPE));
     } else if (clazz.equals(MetaProperty.class)) {
       types.add(new TagDefinition(PERSISTENCE_TAG, "false", Boolean.TYPE));
       types.add(new TagDefinition(MODE_TAG, "READ_WRITE",
           PropertyModeCode.class));
-      types
-          .add(new TagDefinition(CONSTRUCTOR_PARAM_TAG, "false", Boolean.TYPE));
       types.add(new TagDefinition(CHANGE_EVENT_TAG, "false", Boolean.TYPE));
       types.add(new TagDefinition(VETO_EVENT_TAG, "false", Boolean.TYPE));
-      types.add(new TagDefinition(BIDIRECTIONAL_RELATION_TAG, "false",
-          Boolean.TYPE));
+      types.add(new TagDefinition(NAVIGABLE_RELATION_TAG, String.class));
       types.add(new TagDefinition(LIGHTWEIGHT_TAG, "false", Boolean.TYPE));
     } else if (clazz.equals(MetaIndexedProperty.class)) {
       types.add(new TagDefinition(PERSISTENCE_TAG, "false", Boolean.TYPE));
-      types.add(new TagDefinition(MODE_TAG, "READ_WRITE", String.class));
-      types.add(new TagDefinition(MODE_TAG, "READ_WRITE", String.class));
-      types
-          .add(new TagDefinition(CONSTRUCTOR_PARAM_TAG, "false", Boolean.TYPE));
+      types.add(new TagDefinition(MODE_TAG, "READ_WRITE",
+          PropertyModeCode.class));
       types.add(new TagDefinition(CHANGE_EVENT_TAG, "false", Boolean.TYPE));
       types.add(new TagDefinition(VETO_EVENT_TAG, "false", Boolean.TYPE));
-      types.add(new TagDefinition(BIDIRECTIONAL_RELATION_TAG, "false",
-          Boolean.TYPE));
+      types.add(new TagDefinition(NAVIGABLE_RELATION_TAG, String.class));
       types.add(new TagDefinition(CONTAINER_CLASS_TAG, "java.util.ArrayList",
           String.class));
       types.add(new TagDefinition(INTERFACE_CLASS_TAG, "java.util.List",
           String.class));
-      types.add(new TagDefinition(IS_ORDERED_TAG, "false", String.class));
       types.add(new TagDefinition(KEY_CLASS_TAG, "String", String.class));
-      types.add(new TagDefinition(LIGHTWEIGHT_TAG, "false", String.class));
+      types.add(new TagDefinition(LIGHTWEIGHT_TAG, "false", Boolean.TYPE));
     }
     return types;
   }
@@ -493,26 +567,21 @@ public class DogCartridge extends CartridgeImpl implements Cartridge {
     List<TagDefinition> tags = null;
     if (MetaProperty.class.equals(clazz)) {
       tags = new ArrayList<TagDefinition>();
-      tags.add(new TagDefinition("bo-constructor-parameter", "false", Boolean.TYPE));
+      tags.add(new TagDefinition("bo-constructor-parameter", Boolean.TYPE));
+      tags.add(new TagDefinition("bo-bidirectional", Boolean.TYPE));
+    } else if (MetaIndexedProperty.class.equals(clazz)) {
+      tags = new ArrayList<TagDefinition>();
+      tags.add(new TagDefinition("bo-constructor-parameter", Boolean.TYPE));
+      tags.add(new TagDefinition("bo-bidirectional", Boolean.TYPE));
+      tags.add(new TagDefinition("bo-item-class", String.class));
+      tags.add(new TagDefinition("bo-is-ordered", Boolean.TYPE));
     }
     return tags;
   }
-  
+
   public void registerRules(Validator validator) {
     TagRule tagRule = new DogTagRule();
     tagRule.register(validator);
-  }
-
-  public TaggedValue getTaggedValueWithElementDependentDefault(
-      TagDefinition taggedValueType, MetaElement element) {
-    TaggedValue value = new TaggedValue(taggedValueType);
-    updateTaggedValueWithElementDependentDefault(value, element);
-    return value;
-  }
-
-  public void updateTaggedValueWithElementDependentDefault(
-      TaggedValue taggedValue, MetaElement element) {
-    // intentionally left blank
   }
 
   /**
@@ -533,27 +602,27 @@ public class DogCartridge extends CartridgeImpl implements Cartridge {
    * interface extension and the prefix and postfix for the lightweight
    * representation package.</dd>
    * </ul>
-   * @param metaPackage the package, which attributes should be computed.
-   * @pre metaPackage != null
+   * @param packages the package, which attributes should be computed.
+   * @pre packages != null
    */
-  public void preProcessPackage(MetaPackage metaPackage) {
+  public void preProcessPackage(MetaPackage packages) {
+    assert (packages != null);
     Properties context = getContext();
     StringBuilder buffer = new StringBuilder();
-    String qualifiedName = metaPackage.qualifiedName();
+    String qualifiedName = packages.qualifiedName();
     buffer.append(qualifiedName).append(
         context.getProperty(IF_PACKAGE_POSTFIX_KEY));
-    metaPackage.addAttribute(IF_PACKAGE, buffer.toString());
+    packages.addAttribute(IF_PACKAGE, buffer.toString());
     buffer.setLength(0);
     buffer.append(qualifiedName).append(
         context.getProperty(BO_PACKAGE_POSTFIX_KEY));
-    metaPackage.addAttribute(BO_PACKAGE, buffer.toString());
+    packages.addAttribute(BO_PACKAGE, buffer.toString());
     buffer.setLength(0);
     buffer.append(qualifiedName).append(
         context.getProperty(LW_PACKAGE_POSTFIX_KEY));
-    metaPackage.addAttribute(LW_PACKAGE, buffer.toString());
-    metaPackage.addAttribute(BO_LIGHTWEIGHT, Boolean
-        .toString(hasLightweight(metaPackage)));
-    super.preProcessPackage(metaPackage);
+    packages.addAttribute(LW_PACKAGE, buffer.toString());
+    packages.addAttribute(BO_LIGHTWEIGHT, Boolean
+        .toString(hasLightweight(packages)));
   }
 
   /**
@@ -576,6 +645,7 @@ public class DogCartridge extends CartridgeImpl implements Cartridge {
    * @pre clazz != null
    */
   public void preProcessClass(MetaClass clazz) {
+    assert (clazz != null);
     Properties context = getContext();
     String name = clazz.getName();
     StringBuilder buffer = new StringBuilder();
@@ -596,70 +666,80 @@ public class DogCartridge extends CartridgeImpl implements Cartridge {
 
     boolean isChangeable = false;
     boolean isVetoable = false;
-    for (Iterator i = clazz.getProperties().iterator(); i.hasNext();) {
-      MetaProperty property = (MetaProperty) i.next();
+    for (MetaProperty property : clazz.getProperties()) {
       isChangeable |= property.retrieveIsChangeable();
       isVetoable |= property.retrieveIsVetoable();
     }
-    for (Iterator i = clazz.getIndexedProperties().iterator(); i.hasNext();) {
-      MetaIndexedProperty property = (MetaIndexedProperty) i.next();
+    for (MetaIndexedProperty property : clazz.getIndexedProperties()) {
       isChangeable |= property.retrieveIsChangeable();
       isVetoable |= property.retrieveIsVetoable();
-      property.addAttribute(BO_STORAGE_INTERFACE, MetaClass
-          .getClassName(property.getStorageInterface()));
-      property.addAttribute(BO_STORAGE_TYPE, MetaClass.getClassName(property
-          .getStorageType()));
+      property.addAttribute(INTERFACE_CLASS_TAG, MetaClass
+          .getClassName(property.valueOfTag(INTERFACE_CLASS_TAG)));
+      property.addAttribute(CONTAINER_CLASS_TAG, MetaClass
+          .getClassName(property.valueOfTag(CONTAINER_CLASS_TAG)));
+      property.addAttribute(KEY_CLASS_TAG, MetaClass.getClassName(property
+          .valueOfTag(KEY_CLASS_TAG)));
     }
     clazz.addAttribute(BO_CHANGEABLE, Boolean.toString(isChangeable));
     clazz.addAttribute(BO_VETOABLE, Boolean.toString(isVetoable));
-    super.preProcessClass(clazz);
-  }
-
-  public void processModel(MetaModel model) {
-    sourceRootDirectory = new File(getContext().getProperty(
-        ROOT_COMMON_FOLDER_KEY));
   }
 
   public void processPackage(MetaPackage metaPackage) {
+    String root = metaPackage.valueOfTag(ROOT_TAG);
+    if (root != null) {
+      root = getContext().getProperty(root);
+      if (root == null) {
+        log.error(metaPackage.valueOfTag(ROOT_TAG)
+            + " logical root directory undefined");
+      }
+    }
+    if (root == null) {
+      root = getContext().getProperty(ROOT_COMMON_FOLDER_KEY);
+    }
+    rootDirectory = new File(root);
     this.metaPackage = metaPackage;
     hasDataObjects = false;
+    hasCodes = false;
     if (!metaPackage.booleanValueOfTag(GENERATE_TAG)) {
       return;
     }
-    hasCodes = false;
-
     for (MetaClass clazz : metaPackage.getClasses()) {
-      hasDataObjects = DATA_OBJECT_STEREOTYPE.equalsIgnoreCase(clazz
+      hasDataObjects |= DATA_OBJECT_STEREOTYPE.equalsIgnoreCase(clazz
           .getStereotype());
-      if (hasDataObjects) {
-        break;
-      }
+      hasCodes |= REFERENCE_CODE_STEREOTYPE.equalsIgnoreCase(clazz
+          .getStereotype());
     }
   }
 
   public void processClass(MetaClass clazz) {
     String stereotype = clazz.getStereotype();
-    // class is only emitted if the class is relevant and the package is
+    // class is only emitted if the class is relevant and the package should be
     // generated
-    if (!clazz.retrievePackage().booleanValueOfTag(GENERATE_TAG)
-        || (!DATA_OBJECT_STEREOTYPE.equalsIgnoreCase(stereotype) && !REFERENCE_CODE_STEREOTYPE
-            .equalsIgnoreCase(stereotype))) {
+    if (!clazz.retrievePackage().booleanValueOfTag(GENERATE_TAG)) {
       return;
     }
-
     VelocityContext context = createContext(clazz);
     super.processClass(clazz);
     try {
+      Map<String, List<String>> blocks = extractUserCode(metaPackage
+          .getAttribute(BO_PACKAGE), clazz.getAttribute(BO_CLASS));
+      context.put(CODE_BLOCKS, blocks);
       if (stereotype.equalsIgnoreCase(DATA_OBJECT_STEREOTYPE)) {
         generateJavaFile(metaPackage.getAttribute(BO_PACKAGE), clazz
             .getAttribute(BO_CLASS), javaBoTemplate, context);
         if (hasLightweight(clazz)) {
+          blocks = extractUserCode(metaPackage.getAttribute(LW_PACKAGE), clazz
+              .getAttribute(LW_CLASS));
+          context.put(CODE_BLOCKS, blocks);
           generateJavaFile(metaPackage.getAttribute(LW_PACKAGE), clazz
               .getAttribute(LW_CLASS), javaLwTemplate, context);
         }
       } else if (stereotype.equalsIgnoreCase(REFERENCE_CODE_STEREOTYPE)) {
         generateJavaFile(metaPackage.getAttribute(BO_PACKAGE), clazz
             .getAttribute(BO_CLASS), referenceCodeTemplate, context);
+      } else if (clazz.booleanValueOfTag(BO_GENERATE)) {
+        generateJavaFile(metaPackage.getAttribute(BO_PACKAGE), clazz
+            .getAttribute(BO_CLASS), javaClassTemplate, context);
       }
     } catch (IOException e) {
       log.error(e);
@@ -697,6 +777,11 @@ public class DogCartridge extends CartridgeImpl implements Cartridge {
     }
   }
 
+  /**
+   * Returns true if the property type is a reference code.
+   * @param property property to evaluate.
+   * @return true if the property type is a reference code otherwise false.
+   */
   public boolean isReferenceCode(MetaProperty property) {
     MetaModel model = (MetaModel) property.getRoot();
     MetaClass clazz = model.findClass(property.getTypeName());
@@ -707,11 +792,22 @@ public class DogCartridge extends CartridgeImpl implements Cartridge {
   }
 
   /**
+   * Returns true if the property is ordered. An indexed property is ordered if
+   * the "bo-key-class" is not null.
+   * @param property indexed property to evaluate.
+   * @return true if the property is ordered otherwise false.
+   */
+  public boolean isOrdered(MetaIndexedProperty property) {
+    String value = property.valueOfTag(KEY_CLASS_TAG);
+    return (value != null) && (value.trim().length() > 0);
+  }
+
+  /**
    * Generates the import statements necessary for the class defining the data
    * object type.
    * @param clazz class for which the import statements should be retrieved.
    * @param packageName qualified name of the package containing the generated
-   *        artifact.
+   *          artifact.
    * @return list of all import statements for the class.
    */
   public ImportStatements retrieveImportStatementsForBo(MetaClass clazz,
@@ -725,7 +821,7 @@ public class DogCartridge extends CartridgeImpl implements Cartridge {
    * object type.
    * @param clazz class for which the import statements should be retrieved.
    * @param packageName qualified name of the package containing the generated
-   *        artifact.
+   *          artifact.
    * @return list of all import statements for the class.
    */
   public ImportStatements retrieveImportStatementsForIf(MetaClass clazz,
@@ -739,7 +835,7 @@ public class DogCartridge extends CartridgeImpl implements Cartridge {
    * object type.
    * @param clazz class for which the import statements should be retrieved.
    * @param packageName qualified name of the package containing the generated
-   *        artifact.
+   *          artifact.
    * @return list of all import statements for the class.
    */
   public ImportStatements retrieveImportStatementsForLw(MetaClass clazz,
@@ -754,9 +850,9 @@ public class DogCartridge extends CartridgeImpl implements Cartridge {
    * @param imports imports statements where to add the new identified ones.
    * @param clazz class for which the import statements should be retrieved.
    * @param key key of the tag or attribute constraining the properties, which
-   *        dependencies should be imported.
+   *          dependencies should be imported.
    * @param kind kind of type to be retrieved from the data object type of the
-   *        property.
+   *          property.
    * @return list of all import statements for the class.
    */
   private ImportStatements retrieveImportStatements(ImportStatements imports,
@@ -764,11 +860,9 @@ public class DogCartridge extends CartridgeImpl implements Cartridge {
     for (MetaClass item : clazz.retrieveAncestors()) {
       imports.addClass(item);
     }
-
     for (MetaClass item : clazz.retrieveInterfaces()) {
       imports.addClass(item);
     }
-
     for (MetaProperty property : clazz.getProperties()) {
       if ((key == null)
           || (property.booleanValueOfAttribute(key) || property
@@ -793,10 +887,12 @@ public class DogCartridge extends CartridgeImpl implements Cartridge {
         }
         imports.addClassName("java.util.Collection");
         imports.addClassName("java.util.Iterator");
-        addImportStatement(imports, clazz, property.getStorageInterface());
-        addImportStatement(imports, clazz, property.getStorageType());
-        if (property.isOrdered()) {
-          type = clazz.findClass(property.getKeyType());
+        addImportStatement(imports, clazz, property
+            .valueOfTag(INTERFACE_CLASS_TAG));
+        addImportStatement(imports, clazz, property
+            .valueOfTag(CONTAINER_CLASS_TAG));
+        if (isOrdered(property)) {
+          type = clazz.findClass(property.valueOfTag(KEY_CLASS_TAG));
           if (type != null) {
             imports.addClass(type);
           }
@@ -826,9 +922,9 @@ public class DogCartridge extends CartridgeImpl implements Cartridge {
 
   /**
    * Adds the qualified type name to the import statements.
-   * @param statements
-   * @param clazz
-   * @param qualifiedName
+   * @param statements statements to add.
+   * @param clazz clazz to which the statements should be added.
+   * @param qualifiedName qualified name of the class to import.
    */
   private void addImportStatement(ImportStatements statements, MetaClass clazz,
       String qualifiedName) {
@@ -853,9 +949,11 @@ public class DogCartridge extends CartridgeImpl implements Cartridge {
 
   private boolean hasLightweight(MetaPackage metaPackage) {
     boolean hasLightweight = false;
-    for (Iterator i = metaPackage.getClasses().iterator(); i.hasNext()
-        && !hasLightweight;) {
-      hasLightweight = hasLightweight((MetaClass) i.next());
+    for (MetaClass clazz : metaPackage.getClasses()) {
+      hasLightweight = hasLightweight(clazz);
+      if (hasLightweight) {
+        break;
+      }
     }
     return hasLightweight;
   }
@@ -883,11 +981,41 @@ public class DogCartridge extends CartridgeImpl implements Cartridge {
         }
       }
     }
+    if (!hasLightweight) {
+      // TODO ancestor lightweight
+    }
     return hasLightweight;
   }
 
   /**
-   * Generate a Java class.
+   * Extracts all blocks of declarations defined by the developer. These blocks
+   * are stored in the class. The file containing the source code is inferred
+   * from the global properties.
+   * @param packageName name of the package containing the Java class.
+   * @param classname name of the Java class.
+   * @return the map of retrieved user code blocks indexed with the block name.
+   * @throws IOException if error was encountered when reading the file.
+   */
+  private Map<String, List<String>> extractUserCode(String packageName,
+      String classname) throws IOException {
+    Map<String, List<String>> blocks = new HashMap<String, List<String>>();
+    File source = FileOperators.createFile(rootDirectory, packageName,
+        classname + JAVA_EXTENSION);
+    blocks.put(IMPORT_BLOCK, FileOperators.extractSourceCode(source,
+        USER_IMPORT_BEGIN, USER_IMPORT_END));
+    blocks.put(DECLARATION_BLOCK, FileOperators.extractSourceCode(source,
+        USER_DECLARATION_BEGIN, USER_DECLARATION_END));
+    blocks.put(CONSTRUCTOR_BLOCK, FileOperators.extractSourceCode(source,
+        USER_CONSTRUCTORS_BEGIN, USER_CONSTRUCTORS_END));
+    blocks.put(DEFINITION_BLOCK, FileOperators.extractSourceCode(source,
+        USER_CODE_BEGIN, USER_CODE_END));
+    blocks.put(PRIVATE_DEFINITION_BLOCK, FileOperators.extractSourceCode(source,
+        USER_PRIVATE_CODE_BEGIN, USER_PRIVATE_CODE_END));
+    return blocks;
+  }
+
+  /**
+   * Generate a Java class in the associated source file.
    * @param packageName package name of the class to generate.
    * @param className class name of the class to generate.
    * @param template velocity template for the generation.
@@ -896,8 +1024,7 @@ public class DogCartridge extends CartridgeImpl implements Cartridge {
    */
   private void generateJavaFile(String packageName, String className,
       Template template, VelocityContext context) throws IOException {
-    PrintWriter writer = createJavaWriter(sourceRootDirectory, packageName,
-        className);
+    PrintWriter writer = createJavaWriter(rootDirectory, packageName, className);
     writer.print(processTemplate(template, context));
     writer.close();
   }
