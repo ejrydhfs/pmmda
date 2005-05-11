@@ -1,3 +1,12 @@
+0. Configuration
+   -------------
+   The ant tasks in the "build-sourceforge.xml" scripts require that the jar 
+   files stored in "./scripts/lib" are accessible to ant. The simpliest 
+   solution is to copy all jar files in the "lib" directory of your ant 
+   installation. The same operation should be done for the xslt files stored
+   in "./scripts/resources/xslt"; they should be copied in the "etc" directory
+   of your ant installation.	
+
 1. Prepare distribution
    --------------------
 - Verify that the version of all used components is the one of the
