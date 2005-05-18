@@ -81,7 +81,9 @@
 	  <project-site href="http://www.sourceforge.net/projects/pmmda"/>
 	</pmmda>
     <jakarta href="http://jakarta.apache.org/">
+      <commons href="commons/"/>
       <commons-beanutils href="commons/beanutils/"/>
+      <commons-cli href="commons/cli/"/>
       <commons-collections href="commons/collections/"/>
       <commons-dbcp href="commons/dbcp/"/>
       <commons-digester href="commons/digester/"/>
@@ -90,8 +92,5 @@
       <commons-pool href="commons/pool/"/>
       <velocity href="velocity/"/>
     </jakarta>
-    <db href="http://db.apache.org/">
-      <ojb href="ojb/"/>
-    </db>
   </external-refs>
 </site>

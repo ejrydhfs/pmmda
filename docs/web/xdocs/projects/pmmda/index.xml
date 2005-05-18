@@ -34,23 +34,23 @@
         </tr>
         <tr>
           <td>ArgoUML</td>
-          <td>argouml.tigris.org</td>
+          <td><a href="http://argouml.tigris.org">ArgoUML</a></td>
         </tr>
         <tr>
           <td>Jakarta</td>
-          <td>jakarta.apache.org</td>
+          <td><a href="ext:jakarta">Apache Jakarta</a></td>
         </tr>
         <tr>
           <td>JUnit</td>
-          <td>www.junit.org</td>
+          <td><a href="http://www.junit.org">JUnit</a></td>
         </tr>
         <tr>
           <td>NetBeans MDR</td>
-          <td>www.netbeans.org</td>
+          <td><a href="http://www.netbeans.org">Net Beans MDR</a></td>
         </tr>
         <tr>
           <td>Novosoft NSUML</td>
-          <td>argouml.tigris.org</td>
+          <td><a href="http://argouml.tigris.org">ArgoUML NSUML</a></td>
         </tr>
       </table>
     </section>
@@ -69,49 +69,49 @@
           <td>antlr</td>
           <td>2.7.2</td>
           <td>Open Source</td>
-          <td>http://www.antlr.org</td>
+          <td><a href="http://www.antlr.org">ANTLR</a></td>
         </tr>
         <tr>
           <td>beanshell</td>
           <td>2.0-b2</td>
           <td>LGPL</td>
-          <td>http://www.beanshell.org</td>
+          <td><a href="http://www.beanshell.org">Beanshell</a></td>
         </tr>
         <tr>
           <td>commons-beanutils</td>
           <td>1.6.1</td>
           <td>Apache License</td>
-          <td>jakarta commons</td>
+          <td><a href="ext:jakarta/commons-beanutils">Jakarta Commons Bean Utils</a></td>
         </tr>
         <tr>
           <td>commons-collections</td>
           <td>3.0</td>
           <td>Apache License</td>
-          <td>jakarta commons</td>
+          <td><a href="ext:jakarta/commons-collections">Jakarta Commons Collections</a></td>
         </tr>
         <tr>
           <td>commons-dbcp</td>
           <td>1.1</td>
           <th>Apache License</th>
-          <td>jakarta commons</td>
+          <td><a href="ext:jakarta/commons-dbcp">Jakarta Commons BBCP</a></td>
         </tr>
         <tr>
           <td>commons-lang</td>
           <td>2.0</td>
           <th>Apache License</th>
-          <td>jakarta commons</td>
+          <td><a href="ext:jakarta/commons-lang">Jakarta Commons Language</a></td>
         </tr>
         <tr>
           <td>commons-logging</td>
           <td>1.0.4</td>
           <th>Apache License</th>
-          <td>jakarta commons</td>
+          <td><a href="ext:jakarta/commons-logging">Jakarta Commons Logging</a></td>
         </tr>
         <tr>
           <td>commons-logging-api</td>
           <td>1.0.4</td>
           <th>Apache License</th>
-          <td>jakarta commons</td>
+          <td><a href="ext:jakarta/commons-logging">Jakarta Commons Logging</a></td>
         </tr>
       </table>
     </section>

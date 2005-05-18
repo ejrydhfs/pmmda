@@ -34,23 +34,23 @@
         </tr>
         <tr>
           <td>Jakarta</td>
-          <td>jakarta.apache.org</td>
+          <td><a href="ext:jakarta">Apache Jakarta</a></td>
         </tr>
         <tr>
           <td>JUnit</td>
-          <td>www.junit.org</td>
+          <td><a href="http://www.junit.org">JUnit</a></td>
         </tr>
         <tr>
           <td>JForms</td>
-          <td>www.jgoodies.com</td>
+          <td><a href="http://www.goodies.com">JGoodies Forms</a></td>
         </tr>
         <tr>
           <td>OJB Object Java Bridge</td>
-          <td>db.apache.org/ojb</td>
+          <td><a href="http://db.apache.org">OJB</a></td>
         </tr>
         <tr>
           <td>MySQL Database</td>
-          <td>www.mysql.com</td>
+          <td><a href="http://www.mysql.com">MySQL</a></td>
         </tr>
       </table>
     </section>
@@ -69,79 +69,82 @@
           <td>antlr</td>
           <td>2.7.3</td>
           <td>Open Source</td>
-          <td>antlr parser</td>
+          <td><a href="http://www.antlr.org">ANTLR</a></td>
         </tr>
         <tr>
           <td>commons-beanutils</td>
           <td>1.6.1</td>
           <td>Apache Licence</td>
-          <td>jakarta commons</td>
+          <td><a href="ext:jakarta/commons-beanutils">Bean Utils</a></td>
         </tr>
         <tr>
           <td>commons-cli</td>
           <td>1.0</td>
           <td>Apache Licence</td>
-          <td>jakarta commons</td>
+          <td><a href="ext:jakarta/commons-cli">Jakarta Commons</a></td>
         </tr>
         <tr>
           <td>commons-collections</td>
           <td>2.1.1</td>
           <td>Apache Licence</td>
-          <td>jakarta commons</td>
+          <td>
+            <a href="ext:jakarta/commons-collections">Jakarta Commons 
+              Collections</a>
+          </td>
         </tr>
         <tr>
           <td>commons-dbcp</td>
           <td>1.1</td>
           <td>Apache Licence</td>
-          <td>jakarta commons</td>
+          <td><a href="ext:jakarta/commons-dbcp">Jakarta Commons DBCP</a></td>
         </tr>
         <tr>
           <td>commons-lang</td>
           <td>2.0</td>
           <td>Apache Licence</td>
-          <td>jakarta commons</td>
+          <td><a href="ext:jakarta/commons-lang">Jakarta Commons Language</a></td>
         </tr>
         <tr>
           <td>commons-logging</td>
           <td>1.0.4</td>
           <td>Apache Licence</td>
-          <td>jakarta commons</td>
+          <td><a href="ext:jakarta/commons-logging">Jakarta Commons Logging</a></td>
         </tr>
         <tr>
           <td>commons-logging-api</td>
           <td>1.0.4</td>
           <td>Apache Licence</td>
-          <td>jakarta commons</td>
+          <td><a href="ext:jakarta/commons-logging">Jakarta Commons Logging</a></td>
         </tr>
         <tr>
           <td>commons-pool</td>
           <td>1.1</td>
           <td>Apache Licence</td>
-          <td>jakarta commons</td>
+          <td><a href="ext:jakarta/commons-pool">Jakarta Commons Pool</a></td>
         </tr>
         <tr>
           <td>db-ojb</td>
           <td>1.0.1</td>
           <td>Apache Licence</td>
-          <td>apache database</td>
+          <td><a href="http://db.apache.org/ojb">OJB Object Java Broker</a></td>
         </tr>
         <tr>
           <td>forms</td>
           <td>1.0.5</td>
           <td>LGPL</td>
-          <td>www.goodies.com</td>
+          <td><a href="http://www.goodies.com">JGoodies Forms</a></td>
         </tr>
         <tr>
           <td>glazedlist</td>
           <td>0.9.6</td>
           <td>LGPL</td>
-          <td>www.java.net</td>
+          <td><a href="http://www.java.net">Glazed Lists</a></td>
         </tr>
         <tr>
           <td>jcalendar</td>
           <td>1.2.2</td>
           <td>LGPL</td>
-          <td>www.toedter.com</td>
+          <td><a href="http://www.toedter.com">JCalendar</a></td>
         </tr>
       </table>
     </section>

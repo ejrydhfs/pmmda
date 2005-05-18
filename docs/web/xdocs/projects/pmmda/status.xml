@@ -23,17 +23,6 @@
   <body>
     <section>
       <title>Future Developments</title>
-      <p>The <em>pmMDA</em> has an incomplete implementation of some 
-        functions.</p>
-      <ul>
-        <li>The mechanism of protected area in the generated source code.</li>
-        <li>The load and save mechanisms for models works only for ArgoUML - 
-          using NSUML - and XML representation - using XStream from Codehause-. 
-          The MDR functionality is on hold until ArgoUML supports it.</li>
-      </ul>
-    </section>
-    <section>
-      <title>Future Developments</title>
       <p>Some <em>pmMDA</em> future directions are identified. Volonteers are 
         welcome to realize these developments or define new extensions.</p>
       <dl>
@@ -93,6 +82,18 @@
           <th>Comments</th>
         </tr>
       </table>
+    </section>
+    <section>
+      <title>Milestones</title>
+      <p>The following milestones are available.</p>
+      <ul>
+        <li>The mechanism of protected area in the generated source code. Round 
+          trip engineering is now available. The next step will be self-hosting 
+          of the project source code.</li>
+        <li>The load and save mechanisms for models works only for ArgoUML - 
+          using NSUML - and XML representation - using XStream from Codehause-. 
+          The MDR functionality is on hold until ArgoUML supports it.</li>
+      </ul>
     </section>
     <section>
       <title>History</title>

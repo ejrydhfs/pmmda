@@ -46,6 +46,9 @@
     </section>
     <section>
       <title><em>pmMDA</em> 0.2.x</title>
+      <p>These releases are used in technical university projects supported 
+        with grants of the Swiss transfer projects sponsored from the Swiss
+        governement.</p>
       <p>This releases serie is the first step from a working prototype used in 
         a handful projects to an application which can be used by developers to 
         generate the business model of their applications. The major 
