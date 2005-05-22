@@ -6,7 +6,6 @@
 
 package ch.bbv.dog.persistence;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -52,10 +51,10 @@ public class DbReferenceCodeRetriever implements ReferenceCodeRetriever {
     return null;
   }
 
-  public List retrieveReferenceCodes(List infos) {
+  public List<ReferenceCodeInfo> retrieveReferenceCodes(
+      List<ReferenceCodeInfo> infos) {
     Class clazz = null;
-    for (Iterator i = infos.iterator(); i.hasNext();) {
-      ReferenceCodeInfo descriptor = (ReferenceCodeInfo) i.next();
+    for (ReferenceCodeInfo descriptor : infos) {
       String classname = descriptor.getClassName();
       if (classname == null) {
         descriptor.setCodes(null);

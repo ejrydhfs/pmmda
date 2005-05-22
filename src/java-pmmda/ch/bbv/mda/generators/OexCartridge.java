@@ -104,8 +104,7 @@ public class OexCartridge extends CartridgeImpl {
   public Collection getVisibleFields(MetaClass clazz) {
     Map<String, MetaProperty> fields = new HashMap<String, MetaProperty>();
     MetaModel model = (MetaModel) clazz.getRoot();
-    for (Iterator i = clazz.getIndexedProperties().iterator(); i.hasNext();) {
-      MetaIndexedProperty object = (MetaIndexedProperty) i.next();
+    for (MetaIndexedProperty object : clazz.getIndexedProperties()) {
       String className = object.getTypeName();
       if (className == null) {
         continue;
@@ -118,15 +117,12 @@ public class OexCartridge extends CartridgeImpl {
         continue;
       }
 
-      for (Iterator j = objectClass.getProperties().iterator(); j.hasNext();) {
-        MetaProperty property = (MetaProperty) j.next();
+      for (MetaProperty property : objectClass.getProperties()) {
         if (property.booleanValueOfTag(IS_VISIBLE_TAG)) {
           fields.put(property.getName(), property);
         }
       }
-      for (Iterator j = objectClass.getIndexedProperties().iterator(); j
-          .hasNext();) {
-        MetaIndexedProperty property = (MetaIndexedProperty) j.next();
+      for (MetaIndexedProperty property :objectClass.getIndexedProperties()) {
         if (property.booleanValueOfTag(IS_VISIBLE_TAG)) {
           fields.put(property.getName(), property);
         }

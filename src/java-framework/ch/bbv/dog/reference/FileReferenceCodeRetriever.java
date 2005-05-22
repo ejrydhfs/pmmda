@@ -12,25 +12,27 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * The file reference code retriever provides mechanisms to save to and
- * retrieve reference code values of a type from a serialized file
- * representation.
+ * The file reference code retriever provides mechanisms to save to and retrieve
+ * reference code values of a type from a serialized file representation.
  * @author MarcelBaumann
  * @version $Revision$
  */
 public class FileReferenceCodeRetriever implements ReferenceCodeRetriever {
-  /** Logger of the class.
+  /**
+   * Logger of the class.
    */
   private static Log log = LogFactory.getLog(FileReferenceCodeRetriever.class);
 
-  /** name of the file containing the serialized representation of the
-   * reference codes.
+  /**
+   * name of the file containing the serialized representation of the reference
+   * codes.
    */
   private String filename;
 
-  /** Constructor of the class.
+  /**
+   * Constructor of the class.
    * @param filename name of the file containing the serialized representation
-   * of the codes.
+   *          of the codes.
    */
   public FileReferenceCodeRetriever(String filename) {
     this.filename = filename;
@@ -40,15 +42,15 @@ public class FileReferenceCodeRetriever implements ReferenceCodeRetriever {
     throw new UnsupportedOperationException();
   }
 
-  public List retrieveReferenceCodes(List infos) {
-    List codes = null;
+  public List<ReferenceCodeInfo> retrieveReferenceCodes(List infos) {
+    List<ReferenceCodeInfo> codes = null;
     if (canBeRead(filename)) {
       codes = retrieveCodesFromFile(new File(filename));
     }
     return codes;
   }
 
-  public void storeReferenceCodes(List infos) {
+  public void storeReferenceCodes(List<ReferenceCodeInfo> infos) {
     try {
       ObjectOutput out;
       out = new ObjectOutputStream(new FileOutputStream(new File(filename)));
@@ -61,12 +63,12 @@ public class FileReferenceCodeRetriever implements ReferenceCodeRetriever {
     }
   }
 
-  private List retrieveCodesFromFile(File file) {
-    List infos = null;
+  private List<ReferenceCodeInfo> retrieveCodesFromFile(File file) {
+    List<ReferenceCodeInfo> infos = null;
     try {
       ObjectInput in;
       in = new ObjectInputStream(new FileInputStream(file));
-      infos = (List) in.readObject();
+      infos = (List<ReferenceCodeInfo>) in.readObject();
       in.close();
     } catch (FileNotFoundException e) {
       e.printStackTrace();

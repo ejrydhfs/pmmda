@@ -7,7 +7,6 @@ package ch.bbv.mda.ui;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.prefs.Preferences;
@@ -265,10 +264,8 @@ public class MdaExplorer extends Explorer {
     menu.add(new JMenuItem(generateAllAction));
     menu.addSeparator();
 
-    for (Iterator i = CartridgeFactory.getInstance().getCartridges().iterator(); i
-        .hasNext();) {
-      menu
-          .add(new JMenuItem(new GenerateCartridgeAction((Cartridge) i.next())));
+    for (Cartridge cartridge : CartridgeFactory.getInstance().getCartridges()) {
+      menu.add(new JMenuItem(new GenerateCartridgeAction(cartridge)));
     }
     ExplorerMenuBar menuBar = getMenuBar();
     menuBar.add(menu, menuBar.getMenuCount() - 1);
@@ -289,7 +286,7 @@ public class MdaExplorer extends Explorer {
    * Returns a list of all contributors to the project.
    * @return list of all contributors.
    */
-  private List getContributors() {
+  private List<Contributor> getContributors() {
     List<Contributor> contributors = new ArrayList<Contributor>();
     contributors.add(new Contributor("Marcel Baumann",
         "marcel.baumann@computer.org", "System Architect"));
@@ -302,7 +299,7 @@ public class MdaExplorer extends Explorer {
    * Returns a list of all librairies used in the project.
    * @return list of used librairies.
    */
-  private List getLibrairies() {
+  private List<Library> getLibrairies() {
     List<Library> librairies = new ArrayList<Library>();
     librairies.add(new Library("commons-beanutils", new VersionId(1, 6, 1),
         "Apache License", "http://jakarta.apache.org/commons"));

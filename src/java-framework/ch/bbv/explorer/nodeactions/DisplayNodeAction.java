@@ -16,6 +16,9 @@ import ch.bbv.explorer.UiNodeType;
  * @version $Revision$
  */
 public class DisplayNodeAction extends AbstractNodeAction {
+  /**
+   * Serial version identifier coded as back compatibility date.
+   */
   private static final long serialVersionUID = 20041201;
   
   /**

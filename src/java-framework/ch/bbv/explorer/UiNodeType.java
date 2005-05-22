@@ -88,7 +88,7 @@ public interface UiNodeType {
    *         type.
    * @see NodePropertiesView
    */
-  Class getPropertiesView();
+  Class<NodePropertiesView> getPropertiesView();
 
   /**
    * Returns the user interface node type views defined for the node type.

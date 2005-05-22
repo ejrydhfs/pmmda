@@ -59,6 +59,9 @@ public abstract class Explorer {
    */
   private static ExplorerNode selectedNodeForPopup;
 
+  /**
+   * Root node of the displayed graph in the left pane.
+   */
   private ExplorerNode root;
 
   /**
@@ -468,6 +471,8 @@ public abstract class Explorer {
 
   /**
    * Implements the tree selection listener for the explorer view.
+   * @author Marcel Baumann
+   * @version $Revision$
    */
   private final class ExplorerViewTreeSelectionListener implements
       TreeSelectionListener {
@@ -488,41 +493,21 @@ public abstract class Explorer {
 
   /**
    * Implements the mouse listener for the explorer view.
+   * @author Marcel Baumann
+   * @version $Revision$
    */
   private final class ExplorerMouseListener extends MouseAdapter {
-
+    
     /**
-     * Handles the mouse clicked event.
-     * @param e mouse event to handle
+     * Checks if the mouse event should activate the display of the popup menu
+     * upon a mouse clicked. If yes displays the popup menu.
+     * @param event mouse event to handle.
      */
-    public void mouseClicked(MouseEvent e) {
-      displayPopup(e);
-    }
-
-    /**
-     * Handles the mouse pressed event.
-     * @param e mouse event to handle
-     */
-    public void mousePressed(MouseEvent e) {
-      displayPopup(e);
-    }
-
-    /**
-     * Handles the mouse released event.
-     * @param e mouse event to handle
-     */
-    public void mouseReleased(MouseEvent e) {
-      displayPopup(e);
-    }
-
-    /**
-     * Checks if the mouse event should activate the display of the popup menu.
-     * If yes displays the popup menu.
-     * @param e mouse event to handle
-     */
-    private void displayPopup(MouseEvent e) {
-      if (e.isPopupTrigger()) {
-        TreePath path = getTree().getPathForLocation(e.getX(), e.getY());
+    @Override
+    public void mouseReleased(MouseEvent event) {
+      if (event.isPopupTrigger()) {
+        TreePath path = getTree()
+            .getPathForLocation(event.getX(), event.getY());
         if (path != null) {
           getTree().setSelectionPath(path);
           ExplorerNode node = (ExplorerNode) path.getLastPathComponent();
@@ -530,15 +515,15 @@ public abstract class Explorer {
               .getMenu(node);
           if (menu != null) {
             setSelectedNodeForPopup(node);
-            menu.show(getTree(), e.getX(), e.getY());
+            menu.show(getTree(), event.getX(), event.getY());
           }
         }
-      }
-    }
+      }      
+    }    
   }
 
   /**
-   * The listener of the window.
+   * The listener of the window frame for global events.
    * @author marcelbaumann
    * @version $Revision$
    */

@@ -27,19 +27,22 @@ public class EmptyHandler implements DataObjectHandler {
     return null;
   }
 
-  public List retrieve(String datasource, Class clazz, String constraints) {
-    return Collections.EMPTY_LIST;
+  public List<DataObject> retrieve(String datasource, Class clazz,
+      String constraints) {
+    return Collections.emptyList();
   }
 
   public LightweightObject retrieveLw(String datasource, Class clazz, Integer id) {
     return null;
   }
 
-  public List retrieveLw(String datasource, Class clazz, String constraints) {
-    return Collections.EMPTY_LIST;
+  public List<LightweightObject> retrieveLw(String datasource, Class clazz,
+      String constraints) {
+    return Collections.emptyList();
   }
 
-  public List store(String datasource, Class clazz, DataObject root) {
+  public List<DataObjectUpdate> store(String datasource, Class clazz,
+      DataObject root) {
     throw new UnsupportedOperationException();
   }
 

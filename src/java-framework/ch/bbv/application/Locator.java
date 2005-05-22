@@ -8,7 +8,6 @@ package ch.bbv.application;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -147,7 +146,8 @@ public class Locator {
    * subclass is created and registered as locator.
    * @param classname qualified name of the subclass of locator to instantiate.
    * @param params parameters list of the create method. The type of the
-   *        parameters must correspond to the ones of the constructor signature.
+   *          parameters must correspond to the ones of the constructor
+   *          signature.
    */
   public static final void create(String classname, Object[] params) {
     if (getInstance() == null) {
@@ -155,17 +155,17 @@ public class Locator {
         if (getInstance() == null) {
           try {
             log.info("create locator with class " + classname);
-            Class clazz = Class.forName(classname);
+            Class<Locator> clazz = (Class<Locator>) Class.forName(classname);
             Locator locator = null;
             if (params == null) {
-              locator = (Locator) clazz.newInstance();
+              locator = clazz.newInstance();
             } else {
               Class[] types = new Class[params.length];
               for (int i = 0; i < types.length; i++) {
                 types[i] = params[i].getClass();
               }
-              Constructor constructor = clazz.getConstructor(types);
-              locator = (Locator) constructor.newInstance(params);
+              Constructor<Locator> constructor = clazz.getConstructor(types);
+              locator = constructor.newInstance(params);
             }
             register(locator);
           } catch (ClassNotFoundException e) {
@@ -194,7 +194,7 @@ public class Locator {
    * Register the unique instance of the application class. The application
    * class the singleton pattern.
    * @param locator locator to register. Subclass instances of locator can be
-   *        registered.
+   *          registered.
    * @pre theLocator == null
    */
   public static final void register(Locator locator) {
@@ -241,11 +241,9 @@ public class Locator {
   protected void initialize() throws ComponentException {
     assert isStopped();
     state = INITIALIZING;
-
-    for (Iterator i = components.values().iterator(); i.hasNext();) {
-      ((Component) i.next()).initialize();
+    for (Component component : components.values()) {
+      component.initialize();
     }
-
     state = INITIALIZED;
     assert isInitialized();
   }
@@ -259,9 +257,8 @@ public class Locator {
   protected void startup() throws ComponentException {
     assert isInitialized();
     state = STARTING_UP;
-
-    for (Iterator i = components.values().iterator(); i.hasNext();) {
-      ((Component) i.next()).startup();
+    for (Component component : components.values()) {
+      component.startup();
     }
 
     state = RUNNING;
@@ -278,9 +275,8 @@ public class Locator {
   protected void shutdownImmediate() throws ComponentException {
     assert isRunning();
     state = SHUTTING_DOWN_IMMEDIATELY;
-
-    for (Iterator i = components.values().iterator(); i.hasNext();) {
-      ((Component) i.next()).shutdownImmediate();
+    for (Component component : components.values()) {
+      component.shutdownImmediate();
     }
 
     state = STOPPED;
@@ -297,9 +293,8 @@ public class Locator {
   protected void shutdownNormal() throws ComponentException {
     assert isRunning();
     state = SHUTTING_DOWN_NORMALLY;
-
-    for (Iterator i = components.values().iterator(); i.hasNext();) {
-      ((Component) i.next()).shutdownNormal();
+    for (Component component : components.values()) {
+      component.shutdownNormal();
     }
 
     state = STOPPED;

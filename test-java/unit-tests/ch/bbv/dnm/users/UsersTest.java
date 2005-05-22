@@ -146,9 +146,9 @@ public class UsersTest extends TestCase {
           Provider.class, id);
       assertNull(provider);
     }
-    providers = manager.getDataObjectHandler().retrieve(DATASOURCE,
-        Provider.class, (String) null);
-    assertEquals(providers.size(), 0);
+    List<DataObject> objects = manager.getDataObjectHandler().retrieve(
+        DATASOURCE, Provider.class, (String) null);
+    assertEquals(objects.size(), 0);
   }
 
   /**
@@ -224,23 +224,23 @@ public class UsersTest extends TestCase {
   private void compareGraphs(Provider left, Provider right) {
     compare(left, right);
 
-    List domainsL = left.getDomains();
-    List domainsR = right.getDomains();
+    List<Domain> domainsL = left.getDomains();
+    List<Domain> domainsR = right.getDomains();
     assertEquals(domainsL.size(), domainsR.size());
     for (int i = 0; i < domainsL.size(); i++) {
-      compare((Domain) domainsL.get(i), (Domain) domainsR.get(i));
+      compare(domainsL.get(i), domainsR.get(i));
 
-      List unitsL = ((Domain) domainsL.get(i)).getUnits();
-      List unitsR = ((Domain) domainsR.get(i)).getUnits();
+      List<Unit> unitsL = (domainsL.get(i)).getUnits();
+      List<Unit> unitsR = (domainsR.get(i)).getUnits();
       assertEquals(unitsL.size(), unitsR.size());
       for (int j = 0; j < unitsL.size(); j++) {
-        compare((Unit) unitsL.get(j), (Unit) unitsR.get(j));
+        compare(unitsL.get(j), unitsR.get(j));
 
-        List usersL = ((Unit) unitsL.get(j)).getUsers();
-        List usersR = ((Unit) unitsR.get(j)).getUsers();
+        List<User> usersL = (unitsL.get(j)).getUsers();
+        List<User> usersR = (unitsR.get(j)).getUsers();
         assertEquals(usersL.size(), usersR.size());
         for (int k = 0; k < usersL.size(); k++) {
-          compare((User) usersL.get(k), (User) usersR.get(k));
+          compare(usersL.get(k), usersR.get(k));
         }
       }
     }

@@ -33,12 +33,12 @@ public interface ReferenceCodeRetriever {
    * @param infos list of descriptors of the requested reference codes.
    * @return udpated reference code descriptors.
    */
-  List retrieveReferenceCodes(List infos);
+  List<ReferenceCodeInfo> retrieveReferenceCodes(List<ReferenceCodeInfo> infos);
 
   /**
    * Stores the list of reference code descriptors if the retriever support
    * caching.
    * @param infos list of descriptors of the reference codes to store.
    */
-  void storeReferenceCodes(List infos);
+  void storeReferenceCodes(List<ReferenceCodeInfo> infos);
 }

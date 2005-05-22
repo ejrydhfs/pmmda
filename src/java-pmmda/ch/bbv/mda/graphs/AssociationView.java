@@ -25,7 +25,7 @@ public class AssociationView extends EdgeView {
 
   /**
    * Constructor of the class.
-   * @param edge
+   * @param edge edge of the association.
    */
   public AssociationView(AssociationEdge edge) {
     super(edge);

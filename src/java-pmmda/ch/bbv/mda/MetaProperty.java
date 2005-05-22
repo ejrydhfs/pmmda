@@ -13,11 +13,14 @@ import java.util.Arrays;
  * @version $Revision$
  */
 public class MetaProperty extends MetaMember {
+  /* %% USER DEFINED DECLARATION START %% */
   /**
    * The list of primitive types in Java, C and C++.
    */
   public static final String[] PRIMITIVES_TYPES = { "boolean", "byte", "char",
       "double", "float", "int", "long", "short" };
+
+  /* %% USER DEFINED DECLARATION END %% */
 
   /**
    * Serial version identifier coded as back compatibility date.
@@ -69,14 +72,12 @@ public class MetaProperty extends MetaMember {
    */
   public MetaProperty() {
     multiplicity = Multiplicity.MULTIPLICITY_0_1;
-    transients = false;
-    volatiles = false;
   }
 
   /**
    * Returns the multiplicity of the property.
    * @return multiplicity of the property.
-   * @see #setMultiplicity
+   * @see #setMultiplicity(Multiplicity)
    */
   public Multiplicity getMultiplicity() {
     return multiplicity;
@@ -85,7 +86,7 @@ public class MetaProperty extends MetaMember {
   /**
    * Sets the multiplicity of the property.
    * @param multiplicity new multiplicity of the property.
-   * @see #getMultiplicity
+   * @see #getMultiplicity()
    */
   public void setMultiplicity(Multiplicity multiplicity) {
     this.multiplicity = multiplicity;
@@ -112,7 +113,7 @@ public class MetaProperty extends MetaMember {
   /**
    * Returns true if the property is transient otherwise false.
    * @return the value of the transient flag.
-   * @see #setTransient
+   * @see #setTransient(boolean)
    */
   public boolean isTransient() {
     return transients;
@@ -121,7 +122,7 @@ public class MetaProperty extends MetaMember {
   /**
    * Sets the transient flag.
    * @param transients new value of the transient flag.
-   * @see #isTransient
+   * @see #isTransient()
    */
   public void setTransient(boolean transients) {
     this.transients = transients;
@@ -130,7 +131,7 @@ public class MetaProperty extends MetaMember {
   /**
    * Returns true if the property is volatile otherwise false.
    * @return the value of the volatile flag.
-   * @see #setVolatile
+   * @see #setVolatile(boolean)
    */
   public boolean isVolatile() {
     return volatiles;
@@ -139,7 +140,7 @@ public class MetaProperty extends MetaMember {
   /**
    * Sets the volatile flag.
    * @param volatiles new value of the volatile flag.
-   * @see #isVolatile
+   * @see #isVolatile()
    */
   public void setVolatile(boolean volatiles) {
     this.volatiles = volatiles;
@@ -190,6 +191,7 @@ public class MetaProperty extends MetaMember {
     visitor.visit(this);
   }
 
+  /* %% USER DEFINED CODE START %% */
   /**
    * Returns the value of the tagged value.
    * @return value of the requested tagged value.
@@ -231,4 +233,5 @@ public class MetaProperty extends MetaMember {
   public boolean isTypePrimitive() {
     return Arrays.binarySearch(PRIMITIVES_TYPES, getTypeName()) >= 0;
   }
+  /* %% USER DEFINED CODE END %% */
 }

@@ -6,7 +6,6 @@
 package ch.bbv.mda;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import ch.bbv.mda.operators.ModelOperators;
@@ -305,7 +304,7 @@ public class MetaClass extends MetaElement {
     metaClass.setContext(this);
   }
 
-  public List getClasses() {
+  public List<MetaClass> getClasses() {
     return classes;
   }
 
@@ -381,14 +380,14 @@ public class MetaClass extends MetaElement {
   public void accept(Visitor visitor) {
     visitor.visit(this);
 
-    for (Iterator i = properties.iterator(); i.hasNext();) {
-      ((MetaProperty) i.next()).accept(visitor);
+    for (MetaProperty item : properties) {
+      item.accept(visitor);
     }
-    for (Iterator i = indexedProperties.iterator(); i.hasNext();) {
-      ((MetaIndexedProperty) i.next()).accept(visitor);
+    for (MetaIndexedProperty item : indexedProperties) {
+      item.accept(visitor);
     }
-    for (Iterator i = classes.iterator(); i.hasNext();) {
-      ((MetaClass) i.next()).accept(visitor);
+    for (MetaClass item : classes) {
+      item.accept(visitor);
     }
   }
 

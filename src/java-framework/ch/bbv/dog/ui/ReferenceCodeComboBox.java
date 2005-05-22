@@ -5,7 +5,6 @@
  */
 package ch.bbv.dog.ui;
 
-import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.JComboBox;
@@ -177,8 +176,7 @@ public class ReferenceCodeComboBox extends JComboBox {
     if (hasEmptyValue) {
       addItem("");
     }
-    for (Iterator i = codes.iterator(); i.hasNext();) {
-      ReferenceCode code = (ReferenceCode) i.next();
+    for (ReferenceCode code : codes) {
       addItem(code.getShortDescription());
     }
   }

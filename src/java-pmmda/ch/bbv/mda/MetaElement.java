@@ -520,18 +520,14 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
    * @return the requested element if found otherwise null.
    * @pre (list != null) && (name != null)
    */
-  protected MetaElement findElement(List list, String name) {
+  protected MetaElement findElement(List<? extends MetaElement> list, String name) {
     assert ((list != null) && name != null);
-    MetaElement element = null;
-    for (Iterator i = list.iterator(); i.hasNext();) {
-      element = (MetaElement) i.next();
-      if (!name.equals(element.getName())) {
-        element = null;
-      } else {
-        break;
+    for (MetaElement element : list) {
+      if (name.equals(element.getName())) {
+        return element;
       }
     }
-    return element;
+    return null;
   }
 
   public ImportStatements createImportStatements() {

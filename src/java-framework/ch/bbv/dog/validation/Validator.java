@@ -82,11 +82,11 @@ public class Validator extends ComponentImpl {
     }
     PropertyDescriptor[] descriptors = beanInfo.getPropertyDescriptors();
     for (int i = 0; i < descriptors.length; i++) {
-      List rules = (List) descriptors[i].getValue(key);
+      List<ValidationRule> rules = (List<ValidationRule>) descriptors[i]
+          .getValue(key);
       if (rules != null) {
         for (int j = 0, size = rules.size(); j < size; j++) {
-          ((ValidationRule) rules.get(j)).execute(object, descriptors[i]
-              .getName(), results);
+          (rules.get(j)).execute(object, descriptors[i].getName(), results);
         }
       }
     }

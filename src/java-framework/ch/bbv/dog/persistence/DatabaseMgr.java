@@ -168,16 +168,12 @@ class DatabaseMgr {
    */
   protected LogicalDatabase findDb(Database database) {
     assert (database != null);
-    LogicalDatabase db = null;
-    for (Iterator i = databases.values().iterator(); i.hasNext();) {
-      db = (LogicalDatabase) i.next();
+    for (LogicalDatabase db : databases.values()) {
       if (db.database != database) {
-        db = null;
-      } else {
-        break;
+        return db;
       }
     }
-    return db;
+    return null;
   }
 
   /**

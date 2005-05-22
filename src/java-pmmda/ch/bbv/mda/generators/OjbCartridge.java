@@ -341,8 +341,7 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
       clazz.addAttribute(TABLE_NAME, buffer.toString());
       String columnPrefix = (String) context.get(COLUMN_PREFIX_KEY);
       String columnPostfix = (String) context.get(COLUMN_POSTFIX_KEY);
-      for (Iterator i = clazz.getProperties().iterator(); i.hasNext();) {
-        MetaProperty property = (MetaProperty) i.next();
+      for (MetaProperty property : clazz.getProperties()) {
         if (isPersistent(property)) {
           buffer.setLength(0);
           buffer.append(columnPrefix).append(
@@ -350,8 +349,7 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
           property.addAttribute(COLUMN_NAME, buffer.toString());
         }
       }
-      for (Iterator i = clazz.getIndexedProperties().iterator(); i.hasNext();) {
-        MetaProperty property = (MetaProperty) i.next();
+      for (MetaProperty property : clazz.getIndexedProperties()) {
         if (isPersistent(property)) {
           buffer.setLength(0);
           buffer.append(columnPrefix).append(
@@ -393,8 +391,7 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
     VelocityContext context = createContext(clazz);
     StringBuilder buffer = new StringBuilder();
     int nrOfPrimaryProperties = 0;
-    for (Iterator i = clazz.getProperties().iterator(); i.hasNext();) {
-      MetaProperty property = (MetaProperty) i.next();
+    for (MetaProperty property : clazz.getProperties()) {
       if (property.booleanValueOfTag(IS_PRIMARY_TAG)) {
         if (buffer.length() > 0) {
           buffer.append(", ");

@@ -7,7 +7,6 @@
 package ch.bbv.dog.validation;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import ch.bbv.utilities.ReflectUtilities;
@@ -36,7 +35,7 @@ public class CollectionRule extends ValidationRuleImpl implements
    * @param immediate flag indicating if the rule is immediate or not.
    * @param severity the severity level of the rule.
    * @param indexedProperty property which should be unique for all items in the
-   *        indexed property to evaluate.
+   *          indexed property to evaluate.
    * @param rule rule to apply.
    */
   public CollectionRule(boolean immediate, int severity,
@@ -51,8 +50,8 @@ public class CollectionRule extends ValidationRuleImpl implements
     boolean sucess = true;
     Collection objects = (Collection) ReflectUtilities.getProperty(bean,
         property);
-    for (Iterator i = objects.iterator(); i.hasNext();) {
-      sucess |= rule.execute(i.next(), indexedProperty, results);
+    for (Object object : objects) {
+      sucess |= rule.execute(object, indexedProperty, results);
     }
     return sucess;
   }

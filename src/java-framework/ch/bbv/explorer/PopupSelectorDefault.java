@@ -7,7 +7,6 @@
 package ch.bbv.explorer;
 
 import java.util.Collection;
-import java.util.Iterator;
 
 import javax.swing.JMenu;
 import javax.swing.JPopupMenu;
@@ -19,7 +18,7 @@ import ch.bbv.explorer.nodeactions.*;
 
 /**
  * The default popup selector provides standard popup menus for node types.
- * @author MarcelBaumann
+ * @author Marcel Baumann
  * @version $Revision$
  */
 public class PopupSelectorDefault implements PopupSelector {
@@ -36,7 +35,7 @@ public class PopupSelectorDefault implements PopupSelector {
   /**
    * Constructor of the class.
    * @param type user interface node type to which the selector is associated
-   *        to.
+   *          to.
    */
   public PopupSelectorDefault(UiNodeType type) {
     this.type = type;
@@ -51,14 +50,13 @@ public class PopupSelectorDefault implements PopupSelector {
       if (type.isEditable(null)) {
         menu.add(new EditNodeAction(type, "Edit"));
       }
-      Collection relations = type.getRelations();
+      Collection<UiRelation> relations = type.getRelations();
       if (relations.size() > 0) {
         menu.addSeparator();
 
         UiNodeTypeFactory factory = type.getFactory();
         JMenu createMenu = new JMenu("Add...");
-        for (Iterator i = relations.iterator(); i.hasNext();) {
-          UiRelation relation = (UiRelation) i.next();
+        for (UiRelation relation : relations) {
           UiNodeType childType = factory
               .getNodeTypeForLw(relation.getLwClass());
           if (childType != null) {

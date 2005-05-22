@@ -5,7 +5,6 @@
  */
 package ch.bbv.dog.reference;
 
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -81,19 +80,15 @@ public class ReferenceCodeInfo {
    * @param classname name of the class of the requested code.
    * @return The descriptor of the requested code if found otherwise null.
    */
-  public static ReferenceCodeInfo find(List infos, String classname) {
+  public static ReferenceCodeInfo find(List<ReferenceCodeInfo> infos,
+      String classname) {
     assert ((infos != null) && (classname != null));
-
-    ReferenceCodeInfo info = null;
-    for (Iterator i = infos.iterator(); i.hasNext();) {
-      info = (ReferenceCodeInfo) i.next();
-      if (!classname.equals(info.getClassName())) {
-        info = null;
-      } else {
-        break;
+    for (ReferenceCodeInfo info : infos) {
+      if (classname.equals(info.getClassName())) {
+        return info;
       }
     }
-    return info;
+    return null;
   }
 
   /**

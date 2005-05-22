@@ -5,7 +5,10 @@
  */
 package ch.bbv.dog;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import ch.bbv.application.Locator;
 import ch.bbv.dog.functors.UpdateFunctor;
@@ -65,7 +68,7 @@ public class CacheHandler implements DataObjectHandler, CachesHandler {
    * @param handler data object handler delegate.
    * @param cachedEnabled flag indicating if data object graphs are cached.
    * @param copiedEnabled flag indicating if one copy of graphs should be
-   *        cached.
+   *          cached.
    * @pre handler != null
    */
   public CacheHandler(DataObjectHandler handler, boolean cachedEnabled,
@@ -160,12 +163,12 @@ public class CacheHandler implements DataObjectHandler, CachesHandler {
     return root;
   }
 
-  public List retrieve(String datasource, Class clazz, String constraints) {
+  public List<DataObject> retrieve(String datasource, Class clazz,
+      String constraints) {
     assert ((datasource != null) && (clazz != null) && (constraints != null));
     List<DataObject> copies = new ArrayList<DataObject>();
-    List roots = handler.retrieve(datasource, clazz, constraints);
-    for (Iterator i = roots.iterator(); i.hasNext();) {
-      DataObject root = (DataObject) i.next();
+    List<DataObject> roots = handler.retrieve(datasource, clazz, constraints);
+    for (DataObject root : roots) {
       copies.add(updateCacheWithClientGraph(root));
     }
     return copies;
@@ -176,14 +179,16 @@ public class CacheHandler implements DataObjectHandler, CachesHandler {
     return handler.retrieveLw(datasource, clazz, id);
   }
 
-  public List retrieveLw(String datasource, Class clazz, String constraints) {
+  public List<LightweightObject> retrieveLw(String datasource, Class clazz,
+      String constraints) {
     assert ((datasource != null) && (clazz != null));
     return handler.retrieveLw(datasource, clazz, constraints);
   }
 
-  public List store(String datasource, Class clazz, DataObject root) {
+  public List<DataObjectUpdate> store(String datasource, Class clazz,
+      DataObject root) {
     assert ((datasource != null) && (clazz != null) && (root != null));
-    List infos = handler.store(datasource, clazz, root);
+    List<DataObjectUpdate> infos = handler.store(datasource, clazz, root);
     AbstractVisitorFunctor visitor = getVisitor(clazz);
     UpdateFunctor functor = new UpdateFunctor();
     functor.reset(infos);
@@ -248,8 +253,7 @@ public class CacheHandler implements DataObjectHandler, CachesHandler {
   private void addToCache(DataObject root, Map<DataObjectId, DataObject> cache) {
     DataObjectManager manager = (DataObjectManager) Locator.getInstance()
         .getComponent(DataObjectManager.NAME);
-    for (Iterator i = manager.getRoots(root).iterator(); i.hasNext();) {
-      DataObject object = (DataObject) i.next();
+    for (DataObject object : manager.getRoots(root)) {
       cache.put(new DataObjectId(object), object);
     }
   }
@@ -260,13 +264,13 @@ public class CacheHandler implements DataObjectHandler, CachesHandler {
    * @param id identifier of the root object.
    * @param cache cache containing the data objects to remove.
    */
-  private void removeFromCache(Class clazz, Integer id, Map cache) {
+  private void removeFromCache(Class clazz, Integer id,
+      Map<DataObjectId, DataObject> cache) {
     DataObjectManager manager = (DataObjectManager) Locator.getInstance()
         .getComponent(DataObjectManager.NAME);
-    DataObject root = (DataObject) cache.get(new DataObjectId(clazz, id));
+    DataObject root = cache.get(new DataObjectId(clazz, id));
     if (root != null) {
-      for (Iterator i = manager.getRoots(root).iterator(); i.hasNext();) {
-        DataObject object = (DataObject) i.next();
+      for (DataObject object : manager.getRoots(root)) {
         cache.remove(new DataObjectId(object));
       }
     }
@@ -300,7 +304,7 @@ public class CacheHandler implements DataObjectHandler, CachesHandler {
    * old root objects are removed from the cache, second the new ones are added
    * to the cache.
    * @param root root of the data object graph. The graph was retrieved from the
-   *        server.
+   *          server.
    * @return the data object to return.
    */
   private DataObject updateCacheWithServerGraph(DataObject root) {
@@ -326,7 +330,7 @@ public class CacheHandler implements DataObjectHandler, CachesHandler {
    * old root objects are removed from the cache, second the new ones are added
    * to the cache.
    * @param root root of the data object graph. The graph was retrieved from the
-   *        server.
+   *          server.
    * @return the data object to return.
    */
   private DataObject updateCacheWithClientGraph(DataObject root) {

@@ -5,7 +5,6 @@
  */
 package ch.bbv.dog.reference;
 
-import java.util.Iterator;
 import java.util.List;
 
 import ch.bbv.dog.persistence.PersistenceHandler;
@@ -13,10 +12,9 @@ import ch.bbv.dog.persistence.PersistenceHandler;
 /**
  * The reference code factory creates all the codes available in an application.
  * The codes can be stored in the application itself, in a serialized file, or
- * in a database. 
- * The reference code manager handles the code locally and is the first item
- * in the chain. The persistence handler has a persistent version of codes on
- * the database.
+ * in a database. The reference code manager handles the code locally and is the
+ * first item in the chain. The persistence handler has a persistent version of
+ * codes on the database.
  * @author MarcelBaumann
  * @version $Revision$
  */
@@ -61,8 +59,7 @@ public class ReferenceCodeFactory {
   }
 
   void addReferenceCodeInfos(ReferenceCodeMgr manager) {
-    for (Iterator i = manager.getReferenceCodeClasses().iterator(); i.hasNext();) {
-      Class clazz = (Class) i.next();
+    for (Class clazz : manager.getReferenceCodeClasses()) {
       ReferenceCodeInfo info = new ReferenceCodeInfo();
       info.setClassname(clazz.getName());
       info.setVersion(manager.getVersion(clazz));

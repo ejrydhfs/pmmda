@@ -29,6 +29,7 @@ public class MetaIndexedProperty extends MetaProperty {
     visitor.visit(this);
   }
 
+  /* %% USER DEFINED CODE START %% */
   public String getStorageSize() {
     return "N";
   }
@@ -40,4 +41,5 @@ public class MetaIndexedProperty extends MetaProperty {
   public boolean canBeNull() {
     return getMultiplicity().getLowerBound() == 0;
   }
+  /* %% USER DEFINED CODE END %% */
 }

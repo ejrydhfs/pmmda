@@ -5,7 +5,10 @@
  */
 package ch.bbv.mda.persistency.nsuml;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.StringTokenizer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -108,11 +111,11 @@ public class MdaTransformer {
 
     extractDataTypes(metaModel, model);
 
-    for (Iterator i = metaModel.getPackages().iterator(); i.hasNext();) {
-      extractPackage((MetaPackage) i.next(), model);
+    for (MetaPackage item : metaModel.getPackages()) {
+      extractPackage(item, model);
     }
-    for (Iterator i = metaModel.getClasses().iterator(); i.hasNext();) {
-      extractClass((MetaClass) i.next(), model);
+    for (MetaClass item : metaModel.getClasses()) {
+      extractClass(item, model);
     }
 
     processMissingAttributeTypes();
@@ -127,8 +130,8 @@ public class MdaTransformer {
     extractTags(metaPackage, mPackage);
     extractStereotypeAndVisibility(metaPackage, mPackage);
 
-    for (Iterator i = metaPackage.getClasses().iterator(); i.hasNext();) {
-      extractClass((MetaClass) i.next(), mPackage);
+    for (MetaClass item : metaPackage.getClasses()) {
+      extractClass(item, mPackage);
     }
   }
 
@@ -141,16 +144,14 @@ public class MdaTransformer {
     extractTags(clazz, mClass);
     extractStereotypeAndVisibility(clazz, mClass);
 
-    for (Iterator i = clazz.getProperties().iterator(); i.hasNext();) {
-      extractProperty((MetaProperty) i.next(), mClass);
+    for (MetaProperty item : clazz.getProperties()) {
+      extractProperty(item, mClass);
     }
-
-    for (Iterator i = clazz.getIndexedProperties().iterator(); i.hasNext();) {
-      extractIndexedProperty((MetaIndexedProperty) i.next(), mClass);
+    for (MetaIndexedProperty item : clazz.getIndexedProperties()) {
+      extractIndexedProperty(item, mClass);
     }
-
-    for (Iterator i = clazz.getClasses().iterator(); i.hasNext();) {
-      extractNestedClass((MetaClass) i.next(), mClass);
+    for (MetaClass item : clazz.getClasses()) {
+      extractNestedClass(item, mClass);
     }
   }
 
@@ -163,16 +164,14 @@ public class MdaTransformer {
     extractTags(clazz, mClass);
     extractStereotypeAndVisibility(clazz, mClass);
 
-    for (Iterator i = clazz.getProperties().iterator(); i.hasNext();) {
-      extractProperty((MetaProperty) i.next(), mClass);
+    for (MetaProperty item : clazz.getProperties()) {
+      extractProperty(item, mClass);
     }
-
-    for (Iterator i = clazz.getIndexedProperties().iterator(); i.hasNext();) {
-      extractIndexedProperty((MetaIndexedProperty) i.next(), mClass);
+    for (MetaIndexedProperty item : clazz.getIndexedProperties()) {
+      extractIndexedProperty(item, mClass);
     }
-
-    for (Iterator i = clazz.getClasses().iterator(); i.hasNext();) {
-      extractNestedClass((MetaClass) i.next(), mClass);
+    for (MetaClass item : clazz.getClasses()) {
+      extractNestedClass(item, mClass);
     }
   }
 
@@ -265,8 +264,7 @@ public class MdaTransformer {
       }
     }
 
-    for (Iterator i = source.getTags().iterator(); i.hasNext();) {
-      TaggedValue tag = (TaggedValue) i.next();
+    for (TaggedValue tag  : source.getTags()) {
       String tagName = tag.getTag();
       String tagValue = tag.getValue();
       if (tagValue != null) {
@@ -275,9 +273,8 @@ public class MdaTransformer {
       }
     }
 
-    for (Iterator i = MetaFactory.getInstance().getObsoleteTypes(
-        source.getClass()).iterator(); i.hasNext();) {
-      TagDefinition type = (TagDefinition) i.next();
+    for (TagDefinition type : MetaFactory.getInstance().getObsoleteTypes(
+        source.getClass())) {
       item.removeTaggedValue(type.getTag());
     }
   }

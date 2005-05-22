@@ -8,7 +8,10 @@ package ch.bbv.explorer;
 
 import java.awt.BorderLayout;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 
 /**
  * The status bar provides a status bar for the explorer framework. Status and
@@ -17,6 +20,9 @@ import javax.swing.*;
  * @version $Revision$
  */
 public class StatusBar extends JPanel {
+  /**
+   * Serial version identifier coded as back compatibility date.
+   */
   private static final long serialVersionUID = 20041201;
 
   private JLabel textLabel;
@@ -69,7 +75,7 @@ public class StatusBar extends JPanel {
     textLabel.setText(format(ERROR_FORMATS, text));
   }
 
-  /** 
+  /**
    * Sets the progress bar of the status bar.
    * @param progress relative progress value between 0 and 100.
    * @pre (0 <= progress) && (progress <= 100)

@@ -25,7 +25,7 @@ public class UpdateFunctor implements DoFunctor {
    * List of all update information. The type of the items is data object
    * property.
    */
-  private List infos;
+  private List<DataObjectUpdate> infos;
 
   /**
    * Index in the list.
@@ -36,7 +36,7 @@ public class UpdateFunctor implements DoFunctor {
    * Resets the functor and defines a new list of updates to execute.
    * @param infos list of data object updates to apply.
    */
-  public void reset(List infos) {
+  public void reset(List<DataObjectUpdate> infos) {
     this.infos = infos;
     index = 0;
   }
@@ -45,7 +45,7 @@ public class UpdateFunctor implements DoFunctor {
     DataObjectUpdate update = null;
     if (object.isModified()) {
       assert (index <= infos.size());
-      update = (DataObjectUpdate) infos.get(index);
+      update = infos.get(index);
       index++;
       assert ((object.getId() == null) || ((object.getId().equals(update
           .getId())) && (object.getClass().getName().equals(update

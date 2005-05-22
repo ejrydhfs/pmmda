@@ -7,6 +7,7 @@
 package ch.bbv.mda.ui.actions;
 
 import java.awt.event.ActionEvent;
+import java.io.IOException;
 
 import javax.swing.JOptionPane;
 
@@ -65,6 +66,8 @@ public class SaveAction extends ExplorerSaveAction {
           .getString("mda.ui.sorryMsg.UNSUPPORTED_FILE_TYPE_FOR_SAVE"),
           ResourceUtility.getString("mda.ui.sorryMsg.SORRY"),
           JOptionPane.ERROR_MESSAGE);
+    } catch (IOException e) {
+      log.error(e);
     }
   }
 

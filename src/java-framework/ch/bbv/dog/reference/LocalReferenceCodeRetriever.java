@@ -7,7 +7,6 @@
 package ch.bbv.dog.reference;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -42,10 +41,11 @@ public class LocalReferenceCodeRetriever implements ReferenceCodeRetriever {
     return null;
   }
 
-  public List retrieveReferenceCodes(List infos) {
+  public List<ReferenceCodeInfo> retrieveReferenceCodes(
+      List<ReferenceCodeInfo> infos) {
     for (int i = 0; i < infos.size(); i++) {
-      ReferenceCodeInfo info = (ReferenceCodeInfo) infos.get(i);
-      ReferenceCodeInfo descriptor = getInfo(info);
+      ReferenceCodeInfo info = infos.get(i);
+      ReferenceCodeInfo descriptor = getInfo(infos.get(i));
       if (descriptor != null) {
         info.setCodes(descriptor.getCodes());
       }
@@ -59,8 +59,7 @@ public class LocalReferenceCodeRetriever implements ReferenceCodeRetriever {
 
   private ReferenceCodeInfo getInfo(ReferenceCodeInfo info) {
     ReferenceCodeInfo descriptor = null;
-    for (Iterator i = infos.iterator(); i.hasNext();) {
-      ReferenceCodeInfo codeInfo = (ReferenceCodeInfo) i.next();
+    for (ReferenceCodeInfo codeInfo : infos) {
       if (codeInfo.isAvailable()
           && codeInfo.getClassName().equals(info.getClassName()))
         ;

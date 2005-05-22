@@ -6,7 +6,6 @@
 package ch.bbv.application;
 
 import java.awt.Image;
-import java.util.Iterator;
 import java.util.List;
 
 import ch.bbv.explorer.about.Contributor;
@@ -57,12 +56,12 @@ public class ProjectInfo {
   /**
    * A list of contributors.
    */
-  private List contributors;
+  private List<Contributor> contributors;
 
   /**
    * A list of libraries used by the project.
    */
-  private List libraries;
+  private List<Library> libraries;
 
   /**
    * Default constructor of the class.
@@ -204,7 +203,7 @@ public class ProjectInfo {
   /**
    * Returns the licence text.
    * @return the licence text.
-   * @see #setLicenceText
+   * @see #setLicenceText(String)
    */
   public String getLicenceText() {
     return this.licenceText;
@@ -213,7 +212,7 @@ public class ProjectInfo {
   /**
    * Sets the project licence text.
    * @param licenceText the licence text.
-   * @see #getLicenceText
+   * @see #getLicenceText()
    */
   public void setLicenceText(String licenceText) {
     this.licenceText = licenceText;
@@ -222,36 +221,36 @@ public class ProjectInfo {
   /**
    * Returns the list of contributors for the project.
    * @return the list of contributors.
-   * @see #setContributors
+   * @see #setContributors(List)
    */
-  public List getContributors() {
+  public List<Contributor> getContributors() {
     return this.contributors;
   }
 
   /**
    * Sets the list of contributors.
    * @param contributors the list of contributors.
-   * @see #getContributors
+   * @see #getContributors()
    */
-  public void setContributors(List contributors) {
+  public void setContributors(List<Contributor> contributors) {
     this.contributors = contributors;
   }
 
   /**
    * Returns a list of libraries used by the project.
    * @return the list of libraries.
-   * @see #setLibraries
+   * @see #setLibraries(List)
    */
-  public List getLibraries() {
+  public List<Library> getLibraries() {
     return this.libraries;
   }
 
   /**
    * Sets the list of libraries.
    * @param libraries the list of libraries.
-   * @see #getLibraries
+   * @see #getLibraries()
    */
-  public void setLibraries(List libraries) {
+  public void setLibraries(List<Library> libraries) {
     this.libraries = libraries;
   }
 
@@ -259,7 +258,7 @@ public class ProjectInfo {
    * Returns a string describing the project.
    * @return a string describing the project.
    */
-public String toString() {
+  public String toString() {
     String result = getName() + " version " + getVersion() + ".\n";
     result = result + getCopyright() + ".\n";
     result = result + "\n";
@@ -270,10 +269,9 @@ public String toString() {
     result = result + "\n";
     result = result + "CONTRIBUTORS:";
 
-    List contributors = getContributors();
+    List<Contributor> contributors = getContributors();
     if (contributors != null) {
-      for (Iterator i = getContributors().iterator(); i.hasNext();) {
-        Contributor contributor = (Contributor) i.next();
+      for (Contributor contributor : contributors) {
         result = result + contributor.getName() + " (" + contributor.getEmail()
             + ").";
       }
@@ -284,10 +282,9 @@ public String toString() {
     result = result + "\n";
     result = result + "OTHER LIBRARIES USED BY " + getName() + ":";
 
-    List libraries = getLibraries();
+    List<Library> libraries = getLibraries();
     if (libraries != null) {
-      for (Iterator i = getLibraries().iterator(); i.hasNext();) {
-        Library lib = (Library) i.next();
+      for (Library lib : libraries) {
         result = result + lib.getName() + " " + lib.getVersion() + " ("
             + lib.getInfo() + ").";
       }
@@ -300,4 +297,5 @@ public String toString() {
     result = result + getLicenceText();
 
     return result;
-  }}
+  }
+}

@@ -130,7 +130,6 @@ public class MetaModel extends MetaPackage {
   public void setDataTypes(List<MetaDataType> dataTypes) {
     removeAllDataTypes();
     dataTypes.addAll(dataTypes);
-
     for (MetaDataType dataType : dataTypes) {
       dataType.setContext(this);
     }

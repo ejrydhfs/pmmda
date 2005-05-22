@@ -5,7 +5,6 @@
  */
 package ch.bbv.dog.persistence;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -54,7 +53,7 @@ class HandlerPolicyOjb {
   Object retrieve(Database database, Class clazz, Integer id) {
     Object object = null;
     String query = createRetrieveQuery(clazz, id, null);
-    List objects = retrieve(database, query);
+    List<Object> objects = retrieve(database, query);
     if (objects.size() > 0) {
       object = objects.get(0);
     }
@@ -69,7 +68,7 @@ class HandlerPolicyOjb {
    * @param constraints constraints for the requested objects.
    * @return the list of objects fulfilling the constraints.
    */
-  List retrieve(Database database, Class clazz, String constraints) {
+  List<Object> retrieve(Database database, Class clazz, String constraints) {
     String query = createRetrieveQuery(clazz, null, constraints);
     return retrieve(database, query);
   }
@@ -90,26 +89,25 @@ class HandlerPolicyOjb {
    * @param insertedObjects objects to insert in the database.
    * @param updatedObjects objects to update in the database.
    */
-  void update(Database database, List originals, List copies,
-      List deletedObjects, List insertedObjects, List updatedObjects) {
+  void update(Database database, List<DataObject> originals,
+      List<DataObject> copies, List deletedObjects,
+      List<DataObject> insertedObjects, List<DataObject> updatedObjects) {
     TransactionExt tx = (TransactionExt) databaseMgr
         .createTransaction(database);
     try {
       tx.begin();
       flushCache(tx, originals);
 
-      for (Iterator i = deletedObjects.iterator(); i.hasNext();) {
-        database.deletePersistent(i.next());
+      for (Object item : deletedObjects) {
+        database.deletePersistent(item);
       }
-      for (Iterator i = insertedObjects.iterator(); i.hasNext();) {
-        DataObject object = (DataObject) i.next();
-        object.setModified(false);
-        database.makePersistent(object);
+      for (DataObject item : insertedObjects) {
+        item.setModified(false);
+        database.makePersistent(item);
       }
-      for (Iterator i = updatedObjects.iterator(); i.hasNext();) {
-        DataObject object = (DataObject) i.next();
-        object.setModified(false);
-        tx.markDirty(object);
+      for (DataObject item : updatedObjects) {
+        item.setModified(false);
+        tx.markDirty(item);
       }
       cache(tx, copies);
       tx.commit();
@@ -120,12 +118,11 @@ class HandlerPolicyOjb {
     }
   }
 
-  boolean areCached(Transaction tx, List objects) {
+  boolean areCached(Transaction tx, List<DataObject> objects) {
     boolean inCache = false;
     PersistenceBroker broker = getBroker(tx);
     ObjectCache cache = broker.serviceObjectCache();
-    for (Iterator i = objects.iterator(); i.hasNext();) {
-      DataObject object = (DataObject) i.next();
+    for (DataObject object : objects) {
       Identity identity = new Identity(object, broker);
       if (cache.lookup(identity) == null) {
         inCache = true;
@@ -142,7 +139,7 @@ class HandlerPolicyOjb {
    * @param clazz class of the requested objects.
    * @param id identifier of the searched object. The identifier can be null.
    * @param constraints constraints for the searched object. The constraints can
-   *        be null.
+   *          be null.
    * @return The OQL select statement.
    */
   protected final String createRetrieveQuery(Class clazz, Integer id,
@@ -166,10 +163,9 @@ class HandlerPolicyOjb {
    * @param tx transaction context which cache should be cleared.
    * @param objects objects to flush from the cache.
    */
-  protected final void flushCache(Transaction tx, List objects) {
+  protected final void flushCache(Transaction tx, List<DataObject> objects) {
     PersistenceBroker broker = getBroker(tx);
-    for (Iterator i = objects.iterator(); i.hasNext();) {
-      DataObject object = (DataObject) i.next();
+    for (DataObject object : objects) {
       broker.removeFromCache(object);
     }
   }
@@ -181,11 +177,10 @@ class HandlerPolicyOjb {
    * @param tx transaction context which cache should be cleared.
    * @param objects objects to cache in the broker's cache.
    */
-  protected final void cache(Transaction tx, List objects) {
+  protected final void cache(Transaction tx, List<DataObject> objects) {
     PersistenceBroker broker = getBroker(tx);
     ObjectCache cache = broker.serviceObjectCache();
-    for (Iterator i = objects.iterator(); i.hasNext();) {
-      DataObject object = (DataObject) i.next();
+    for (DataObject object : objects) {
       Identity identity = new Identity(object, broker);
       cache.cache(identity, object);
     }
@@ -200,7 +195,7 @@ class HandlerPolicyOjb {
    */
   protected List retrieve(Database database, String queryString) {
     Transaction tx = databaseMgr.createTransaction(database);
-    List items = null;
+    List<DataObject> items = null;
     try {
       tx.begin();
 

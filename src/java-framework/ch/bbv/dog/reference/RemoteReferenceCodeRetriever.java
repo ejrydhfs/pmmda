@@ -16,7 +16,7 @@ import ch.bbv.dog.DataObjectHandler;
  * @version $Revision$
  */
 public class RemoteReferenceCodeRetriever implements ReferenceCodeRetriever {
-  /** 
+  /**
    * The data objec handler used to retrieve the data.
    */
   private DataObjectHandler handler;
@@ -33,10 +33,11 @@ public class RemoteReferenceCodeRetriever implements ReferenceCodeRetriever {
     throw new UnsupportedOperationException();
   }
 
-  public List retrieveReferenceCodes(List infos) {
+  public List<ReferenceCodeInfo> retrieveReferenceCodes(
+      List<ReferenceCodeInfo> infos) {
     return null;
   }
 
-  public void storeReferenceCodes(List infos) {
+  public void storeReferenceCodes(List<ReferenceCodeInfo> infos) {
   }
 }

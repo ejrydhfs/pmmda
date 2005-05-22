@@ -53,7 +53,7 @@ public class MdaDocument {
   public MetaModel getModel() {
     return model;
   }
-  
+
   /**
    * Returns the code type manager of the document.
    * @return the code type manager property.
@@ -61,7 +61,7 @@ public class MdaDocument {
   public CodeTypeMgr getCodeTypeMgr() {
     return codeTypeMgr;
   }
-  
+
   /**
    * Loads the MDA model and initializes the associated resources.
    * @param file file containing the MDA model.
@@ -81,8 +81,9 @@ public class MdaDocument {
   /**
    * Saves the MDA model and the associated resources.
    * @throws PersistencyException if model could not be written.
+   * @throws IOException if code values could not be written.
    */
-  public void save() throws PersistencyException {
+  public void save() throws PersistencyException, IOException {
     PersistencyHandlerFactory factory = new PersistencyHandlerFactory();
     File file = new File(model.getFilename());
     PersistencyHandler handler = factory.getHandler(file);

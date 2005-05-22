@@ -144,7 +144,7 @@ public class DataObjectManager extends ComponentImpl implements Component {
    * @return list of all root objects in the tree.
    * @pre root != null
    */
-  public List getRoots(DataObject root) {
+  public List<? extends DataObject> getRoots(DataObject root) {
     assert (root != null);
     AbstractVisitorFunctor visitor = getType(root).createVisitorInstance();
     CollectRootFunctor functor = new CollectRootFunctor(this);

@@ -40,9 +40,15 @@ public class NsUmlPersistencyHandler implements PersistencyHandler {
    * Logger for all instances of the class.
    */
   private static Log log = LogFactory.getLog(NsUmlPersistencyHandler.class);
-
+  
+  /**
+   * Transformer from NSUML to MDA.
+   */
   private NsUmlTransformer nsUmlTransformer;
 
+  /**
+   * Transformer from MDA to NSUML.
+   */
   private MdaTransformer mdaTransformer;
 
   /**
@@ -59,8 +65,8 @@ public class NsUmlPersistencyHandler implements PersistencyHandler {
 
     try {
       MModel mModel = nsUmlTransformer.loadArgoModel(file);
-      if(mModel == null){
-        log.error("NsUmlPersistenceHandler#readModel: illegal file - "+file);
+      if (mModel == null) {
+        log.error("NsUmlPersistenceHandler#readModel: illegal file - " + file);
         JOptionPane.showMessageDialog(null, ResourceUtility
             .getString("mda.ui.sorryMsg.INVALID_FORMAT"), ResourceUtility
             .getString("mda.ui.sorryMsg.SORRY"), JOptionPane.ERROR_MESSAGE);
@@ -139,10 +145,10 @@ public class NsUmlPersistencyHandler implements PersistencyHandler {
   protected String getArgoModelFileName(File file)
       throws FileNotFoundException, IOException {
     ZipFile zipFile = new ZipFile(file);
-    Enumeration entries = zipFile.entries();
+    Enumeration< ? extends ZipEntry> entries = zipFile.entries();
     String modelFileName = null;
     while (entries.hasMoreElements()) {
-      ZipEntry entry = (ZipEntry) entries.nextElement();
+      ZipEntry entry = entries.nextElement();
       modelFileName = entry.getName();
       if (modelFileName.endsWith(".xmi")) {
         break;

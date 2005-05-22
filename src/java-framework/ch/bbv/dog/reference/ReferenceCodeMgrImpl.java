@@ -47,7 +47,7 @@ public class ReferenceCodeMgrImpl implements ReferenceCodeMgr {
   /**
    * List of reference code retrievers
    */
-  private List retrievers;
+  private List<ReferenceCodeRetriever> retrievers;
 
   /**
    * Constructor of the class.
@@ -56,7 +56,7 @@ public class ReferenceCodeMgrImpl implements ReferenceCodeMgr {
     referenceCodes = new HashMap<Class, List<ReferenceCode>>();
     codeVersions = new HashMap<Class, String>();
     referenceCodeMgrs = new HashMap<Class, ReferenceCodeMgr>();
-    retrievers = new ArrayList();
+    retrievers = new ArrayList<ReferenceCodeRetriever>();
   }
 
   public List<ReferenceCode> getAllRoots(Class clazz) {
@@ -116,25 +116,22 @@ public class ReferenceCodeMgrImpl implements ReferenceCodeMgr {
     return referenceCode;
   }
 
-  public List getReferenceCodeClasses() {
-    return new ArrayList(referenceCodes.values());
+  public List<Class> getReferenceCodeClasses() {
+    return new ArrayList<Class>(referenceCodes.keySet());
   }
 
-  public List getAllReferenceCodeClasses() {
-    List classes = getReferenceCodeClasses();
-    Iterator managers = referenceCodeMgrs.values().iterator();
-    while (managers.hasNext()) {
-      ReferenceCodeMgr manager = (ReferenceCodeMgr) managers.next();
+  public List<Class> getAllReferenceCodeClasses() {
+    List<Class> classes = getReferenceCodeClasses();
+    for (ReferenceCodeMgr manager : referenceCodeMgrs.values()) {
       classes.addAll(manager.getReferenceCodeClasses());
     }
     return classes;
   }
 
   public String getVersion(Class clazz) {
-    String version = (String) codeVersions.get(clazz);
+    String version = codeVersions.get(clazz);
     if (version == null) {
-      ReferenceCodeMgr manager = (ReferenceCodeMgr) referenceCodeMgrs
-          .get(clazz);
+      ReferenceCodeMgr manager = referenceCodeMgrs.get(clazz);
       if (manager != null) {
         version = manager.getVersion(clazz);
       }
@@ -150,9 +147,8 @@ public class ReferenceCodeMgrImpl implements ReferenceCodeMgr {
   public void registerReferenceCodes(ReferenceCodeMgr referenceCodeMgr) {
     assert (referenceCodeMgr != null);
 
-    Iterator classes = referenceCodeMgr.getReferenceCodeClasses().iterator();
-    while (classes.hasNext()) {
-      registerReferenceCode((Class) classes.next(), referenceCodeMgr);
+    for (Class clazz : referenceCodeMgr.getReferenceCodeClasses()) {
+      registerReferenceCode(clazz, referenceCodeMgr);
     }
   }
 
@@ -195,13 +191,11 @@ public class ReferenceCodeMgrImpl implements ReferenceCodeMgr {
    */
   protected ReferenceCodeMgr getReferenceCodeMgr(Class clazz) {
     assert (clazz != null);
-
     ReferenceCodeMgr referenceCodeMgr = (ReferenceCodeMgr) referenceCodes
         .get(clazz);
     if (referenceCodeMgr == null) {
-      referenceCodeMgr = (ReferenceCodeMgr) referenceCodeMgrs.get(clazz);
+      referenceCodeMgr = referenceCodeMgrs.get(clazz);
     }
-
     return referenceCodeMgr;
   }
 
@@ -272,7 +266,7 @@ public class ReferenceCodeMgrImpl implements ReferenceCodeMgr {
   /**
    * Comparator used to sort regular code groups.
    */
-  protected static class CodeComparator implements Comparator {
+  protected static class CodeComparator implements Comparator<ReferenceCode> {
     /**
      * Compares two regular reference code.
      * @param left left item to compare.
@@ -280,9 +274,8 @@ public class ReferenceCodeMgrImpl implements ReferenceCodeMgr {
      * @return value of the comparaison.
      * @see java.util.Comparator
      */
-    public int compare(Object left, Object right) {
-      return (((ReferenceCode) left).getSortOrder() - ((ReferenceCode) right)
-          .getSortOrder());
+    public int compare(ReferenceCode left, ReferenceCode right) {
+      return (left.getSortOrder() - right.getSortOrder());
     }
   }
 }

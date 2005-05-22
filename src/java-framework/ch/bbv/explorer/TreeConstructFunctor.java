@@ -10,13 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
-import ch.bbv.dog.AbstractVisitorFunctor;
-import ch.bbv.dog.DataObject;
-import ch.bbv.dog.DataObjectId;
-import ch.bbv.dog.DoFunctor;
-import ch.bbv.dog.HasId;
-import ch.bbv.dog.LightweightObject;
-import ch.bbv.dog.LwFunctor;
+import ch.bbv.dog.*;
 
 /**
  * The tree construct functor constructs the graph of explorer nodes
@@ -31,26 +25,26 @@ public class TreeConstructFunctor implements DoFunctor, LwFunctor {
    * data object tree. The key is the data object identifier of the data object,
    * the value is the explorer node containing it.
    */
-  private Map nodes;
+  private Map<DataObjectId, ExplorerNode> nodes;
 
   /**
    * Map containing all the explorer nodes created during the traversal of the
    * data object tree. The key is the data object, the value is the explorer
    * node containing it.
    */
-  private Map doNodes;
+  private Map<DataObject, ExplorerNode> doNodes;
 
   /**
    * Map containing all the explorer nodes created during the traversal of the
    * data object tree. The key is the lightweight data object, the value is the
    * explorer node containing it.
    */
-  private Map lwNodes;
+  private Map<LightweightObject, ExplorerNode> lwNodes;
 
   /**
    * Stack containing the ancestors of the currently visited data object.
    */
-  private Stack ancestors;
+  private Stack<LightweightObject> ancestors;
 
   /**
    * Depth of the tree traversal.
@@ -71,10 +65,10 @@ public class TreeConstructFunctor implements DoFunctor, LwFunctor {
    */
   public TreeConstructFunctor(UiNodeTypeFactory factory,
       AbstractVisitorFunctor visitor) {
-    nodes = new HashMap();
-    doNodes = new HashMap();
-    lwNodes = new HashMap();
-    ancestors = new Stack();
+    nodes = new HashMap<DataObjectId, ExplorerNode>();
+    doNodes = new HashMap<DataObject, ExplorerNode>();
+    lwNodes = new HashMap<LightweightObject, ExplorerNode>();
+    ancestors = new Stack<LightweightObject>();
     this.factory = factory;
     this.visitor = visitor;
     reset();
@@ -96,7 +90,7 @@ public class TreeConstructFunctor implements DoFunctor, LwFunctor {
    */
   public ExplorerNode retrieveNode(LightweightObject object) {
     assert (object != null);
-    return (ExplorerNode) lwNodes.get(object);
+    return lwNodes.get(object);
   }
 
   /**
@@ -107,7 +101,7 @@ public class TreeConstructFunctor implements DoFunctor, LwFunctor {
    */
   public ExplorerNode retrieveNode(DataObject object) {
     assert (object != null);
-    return (ExplorerNode) doNodes.get(object);
+    return doNodes.get(object);
   }
 
   /**
@@ -118,17 +112,19 @@ public class TreeConstructFunctor implements DoFunctor, LwFunctor {
    * @see DataObjectId
    */
   public ExplorerNode retrieveNodeById(HasId object) {
+    assert (object != null);
     DataObjectId id = new DataObjectId(object.getClass(), object.getId());
-    return (ExplorerNode) nodes.get(id);
+    return nodes.get(id);
   }
 
   public void execute(DataObject object) {
+    assert (object != null);
     UiNodeType nodeType = factory.getNodeTypeForBo(object.getClass());
     Class lwClass = nodeType.getDataObjectType().getLwClass();
 
     if (object.getId() != null) {
       DataObjectId id = new DataObjectId(lwClass, object.getId());
-      ExplorerNode node = (ExplorerNode) nodes.get(id);
+      ExplorerNode node = nodes.get(id);
       if (node != null) {
         doNodes.put(object, node);
         node.setDataObject(object);
@@ -137,6 +133,7 @@ public class TreeConstructFunctor implements DoFunctor, LwFunctor {
   }
 
   public void execute(LightweightObject object) {
+    assert (object != null);
     Class clazz = object.getClass();
     UiNodeType nodeType = factory.getNodeTypeForLw(clazz);
     ExplorerNode node = new ExplorerNode(nodeType, object, null);
@@ -145,7 +142,6 @@ public class TreeConstructFunctor implements DoFunctor, LwFunctor {
       DataObjectId id = new DataObjectId(clazz, object.getId());
       nodes.put(id, node);
     }
-
     int currentDepth = visitor.getDepth();
     if (ancestors.size() >= currentDepth) {
       while (ancestors.size() >= currentDepth) {
@@ -154,10 +150,9 @@ public class TreeConstructFunctor implements DoFunctor, LwFunctor {
       depth = ancestors.size();
     }
     if (visitor.getDepth() > 1) {
-      ExplorerNode context = retrieveNode((LightweightObject) ancestors.peek());
+      ExplorerNode context = retrieveNode(ancestors.peek());
       context.addChild(node);
     }
-
     if (currentDepth == (depth + 1)) {
       depth++;
       ancestors.push(object);

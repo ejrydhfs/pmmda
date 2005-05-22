@@ -58,7 +58,8 @@ public class SyncHandler implements DataObjectHandler {
     return object;
   }
 
-  public List retrieve(String datasource, Class clazz, String constraints) {
+  public List<DataObject> retrieve(String datasource, Class clazz,
+      String constraints) {
     return retrieve(datasource, clazz, constraints);
   }
 
@@ -66,14 +67,16 @@ public class SyncHandler implements DataObjectHandler {
     return retrieveLw(datasource, clazz, id);
   }
 
-  public List retrieveLw(String datasource, Class clazz, String constraints) {
+  public List<LightweightObject> retrieveLw(String datasource, Class clazz,
+      String constraints) {
     return delegate.retrieveLw(datasource, clazz, constraints);
   }
 
-  public List store(String datasource, Class clazz, DataObject root) {
+  public List<DataObjectUpdate> store(String datasource, Class clazz,
+      DataObject root) {
     DataObject oldRoot = delegate.retrieve(datasource, clazz, root.getId());
     List<DataObjectId> ids = lockHandler.lockGraph(oldRoot);
-    List updates = delegate.store(datasource, clazz, root);
+    List<DataObjectUpdate> updates = delegate.store(datasource, clazz, root);
     lockHandler.unlockGraphs(ids);
     return updates;
   }

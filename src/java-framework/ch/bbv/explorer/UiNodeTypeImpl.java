@@ -7,13 +7,7 @@
 package ch.bbv.explorer;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
@@ -159,17 +153,12 @@ public class UiNodeTypeImpl implements UiNodeType {
 
   public UiNodeViewType getView(String name) {
     assert (name != null);
-
-    UiNodeViewType view = null;
-    for (Iterator i = uiNodeViews.iterator(); i.hasNext();) {
-      view = (UiNodeViewType) i.next();
-      if (!name.equals(view.getName())) {
-        view = null;
-      } else {
-        break;
+    for (UiNodeViewType viewType : uiNodeViews) {
+      if (name.equals(viewType.getName())) {
+        return viewType;
       }
     }
-    return view;
+    return null;
   }
 
   public String getNameFor(Object lwObject) {
@@ -209,8 +198,7 @@ public class UiNodeTypeImpl implements UiNodeType {
 
   public int getRowCount(Object object) {
     int rowCount = 0;
-    for (Iterator i = getRelations().iterator(); i.hasNext();) {
-      UiRelation relation = (UiRelation) i.next();
+    for (UiRelation relation : getRelations()) {
       rowCount += getPropertySize(object, relation);
     }
 
@@ -263,8 +251,7 @@ public class UiNodeTypeImpl implements UiNodeType {
 
     String property = null;
     UiNodeType nodeType = factory.getNodeTypeForLw(parent.getClass());
-    for (Iterator i = nodeType.getRelations().iterator(); i.hasNext();) {
-      UiRelation relation = (UiRelation) i.next();
+    for (UiRelation relation : nodeType.getRelations()) {
       Class lwClass = relation.getLwClass();
       if ((lwClass != null) && (object.getClass() == lwClass)) {
         Collection values = relation.getValues(parent);
@@ -275,8 +262,7 @@ public class UiNodeTypeImpl implements UiNodeType {
       }
     }
     if (property == null) {
-      for (Iterator i = nodeType.getFields().iterator(); i.hasNext();) {
-        UiField field = (UiField) i.next();
+      for (UiField field : nodeType.getFields()) {
         if (object == field.getProperty(parent)) {
           property = field.getPropertyName();
           break;

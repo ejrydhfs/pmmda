@@ -142,8 +142,8 @@ public class UiNodeTypeFactory {
     NodePropertiesView view = nodePropertiesViews.get(type);
     if (view == null) {
       try {
-        Class clazz = type.getPropertiesView();
-        view = (NodePropertiesView) clazz.newInstance();
+        Class<NodePropertiesView> clazz = type.getPropertiesView();
+        view = clazz.newInstance();
         nodePropertiesViews.put(type, view);
       } catch (InstantiationException e) {
         log.error(e);

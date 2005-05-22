@@ -5,7 +5,10 @@
  */
 package ch.bbv.dog.persistence;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.MissingResourceException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -50,7 +53,7 @@ public class PersistenceHandler implements DataObjectHandler {
   /**
    * Default constructor of the class.
    * @param managed indicates if the managed is used in a managed context or
-   *        not.
+   *          not.
    */
   public PersistenceHandler(boolean managed) {
     databaseMgr = new DatabaseMgr();
@@ -79,10 +82,13 @@ public class PersistenceHandler implements DataObjectHandler {
     return (DataObject) policy.retrieve(database, clazz, id);
   }
 
-  public List retrieve(String datasource, Class clazz, String constraints) {
+  public List<DataObject> retrieve(String datasource, Class clazz,
+      String constraints) {
     assert ((datasource != null) && (clazz != null) && (constraints != null));
     Database database = getDatabase(datasource);
-    return policy.retrieve(database, clazz, constraints);
+    List objects = policy.retrieve(database, clazz, constraints);
+    List<DataObject> list = new ArrayList<DataObject>(objects);
+    return list;
   }
 
   public LightweightObject retrieveLw(String datasource, Class clazz, Integer id) {
@@ -91,13 +97,17 @@ public class PersistenceHandler implements DataObjectHandler {
     return (LightweightObject) policy.retrieve(database, clazz, id);
   }
 
-  public List retrieveLw(String datasource, Class clazz, String constraints) {
+  public List<LightweightObject> retrieveLw(String datasource, Class clazz,
+      String constraints) {
     assert ((datasource != null) && (clazz != null));
     Database database = getDatabase(datasource);
-    return policy.retrieve(database, clazz, constraints);
+    List objects = policy.retrieve(database, clazz, constraints);
+    List<LightweightObject> list = new ArrayList<LightweightObject>(objects);
+    return list;
   }
 
-  public List store(String datasource, Class clazz, DataObject root) {
+  public List<DataObjectUpdate> store(String datasource, Class clazz,
+      DataObject root) {
     assert ((datasource != null) && (clazz != null) && (root != null));
     if (log.isTraceEnabled()) {
       StringBuilder text = new StringBuilder();
@@ -122,10 +132,10 @@ public class PersistenceHandler implements DataObjectHandler {
     collect.reset();
     DataObjectType.invokeVisitor(clazz, root, visitor);
 
-    List objects = collect.getObjects();
+    List<DataObject> objects = collect.getObjects();
     List deleted = collect.getMissingObjectsFrom(originals);
-    List inserted = collect.getNewObjects();
-    List updated = collect.getUdpatedObjects();
+    List<DataObject> inserted = collect.getNewObjects();
+    List<DataObject> updated = collect.getUdpatedObjects();
     policy.update(database, originals, objects, deleted, inserted, updated);
 
     if (log.isTraceEnabled()) {
@@ -202,8 +212,9 @@ public class PersistenceHandler implements DataObjectHandler {
     visitor.setFunctor(collect);
     DataObjectType.invokeVisitor(clazz, originalRoot, visitor);
     List<DataObject> deleted = new ArrayList<DataObject>(collect.getObjects());
-    policy.update(database, deleted, deleted, deleted, Collections.emptyList(),
-        Collections.emptyList());
+    policy.update(database, deleted, deleted, deleted,
+        (List<DataObject>) Collections.emptyList(),
+        (List<DataObject>) Collections.emptyList());
     if (log.isTraceEnabled()) {
       StringBuilder text = new StringBuilder();
       text.append("end remove operation ").append(deleted.size());

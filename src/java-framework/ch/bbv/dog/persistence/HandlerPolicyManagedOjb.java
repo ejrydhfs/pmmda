@@ -5,12 +5,13 @@
  */
 package ch.bbv.dog.persistence;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.ojb.odmg.NarrowTransaction;
 import org.apache.ojb.odmg.TransactionExt;
 import org.odmg.*;
+
+import ch.bbv.dog.DataObject;
 
 /**
  * The handler policy OJB implements the CRUD operations for the data object
@@ -27,20 +28,21 @@ class HandlerPolicyManagedOjb extends HandlerPolicyOjb {
     super(databaseMgr);
   }
 
-  void update(Database database, List originals, List copies,
-      List deletedObjects, List insertedObjects, List updatedObjects) {
+  void update(Database database, List<DataObject> originals,
+      List<DataObject> copies, List deletedObjects,
+      List<DataObject> insertedObjects, List<DataObject> updatedObjects) {
     TransactionExt tx = (TransactionExt) getDatabaseMgr().currentTransaction(
         database);
     flushCache(tx, originals);
 
-    for (Iterator i = deletedObjects.iterator(); i.hasNext();) {
-      database.deletePersistent(i.next());
+    for (Object item : deletedObjects) {
+      database.deletePersistent(item);
     }
-    for (Iterator i = insertedObjects.iterator(); i.hasNext();) {
-      database.makePersistent(i.next());
+    for (DataObject item : insertedObjects) {
+      database.makePersistent(item);
     }
-    for (Iterator i = updatedObjects.iterator(); i.hasNext();) {
-      tx.markDirty(i.next());
+    for (DataObject item : updatedObjects) {
+      tx.markDirty(item);
     }
     cache(tx, copies);
     // Insures that identifier and optimistic locking are synchronized

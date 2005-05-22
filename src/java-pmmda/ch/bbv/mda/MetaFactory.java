@@ -97,7 +97,7 @@ public class MetaFactory {
    * @return the list of obsolete tagged value types or an empty list if none is
    *         defined.
    */
-  public List getObsoleteTypes(Class clazz) {
+  public List<TagDefinition> getObsoleteTypes(Class clazz) {
     List<TagDefinition> types = obsoleteTaggedValueTypes.get(clazz);
     if (types != null) {
       types = Collections.unmodifiableList(types);

@@ -26,10 +26,13 @@ import ca.odell.glazedlists.swing.TableComparatorChooser;
 
 /**
  * The table panel provides a panel with a sortable table.
- * @author MarcelBaumann
+ * @author Marcel Baumann
  * @version $Revision$
  */
 public class TablePanel extends JPanel {
+  /**
+   * Serial version identifier coded as back compatibility date.
+   */
   private static final long serialVersionUID = 20041201;
 
   private TableComparatorChooser chooser;
@@ -128,6 +131,18 @@ public class TablePanel extends JPanel {
     return table;
   }
 
+  /**
+   * Returns the table displayed in the pane.
+   * @return the table displayed in the pane.
+   */
+  protected JTable getTable() {
+    return table;
+  }
+  
+  protected JScrollPane getScrollPane() {
+    return scrollPane;
+  }
+  
   /**
    * Returns the comparator used to order the items of the table.
    * @return the default comparator to sort the table.

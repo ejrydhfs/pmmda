@@ -403,7 +403,6 @@ public class NsUmlTransformer {
         }
         continue;
       }
-
       MModelElement supplier = (MModelElement) ma.getSuppliers().iterator()
           .next();
       MModelElement client = (MModelElement) ma.getClients().iterator().next();

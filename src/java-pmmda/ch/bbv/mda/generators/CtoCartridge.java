@@ -253,15 +253,13 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
         "Transformer");
     clazz.addAttribute(CTO_LW2DTO_CLASS, buffer.toString());
 
-    for (Iterator i = clazz.getProperties().iterator(); i.hasNext();) {
-      MetaProperty property = (MetaProperty) i.next();
+    for (MetaProperty property : clazz.getProperties()) {
       String idlType = java2idl.get(property.getTypeName());
       if (idlType != null) {
         property.addAttribute(CTO_IDL_TYPE, idlType);
       }
     }
-    for (Iterator i = clazz.getIndexedProperties().iterator(); i.hasNext();) {
-      MetaProperty property = (MetaProperty) i.next();
+    for (MetaProperty property : clazz.getIndexedProperties()) {
       String idlType = java2idl.get(property.getTypeName());
       if (idlType != null) {
         property.addAttribute(CTO_IDL_TYPE, idlType);
