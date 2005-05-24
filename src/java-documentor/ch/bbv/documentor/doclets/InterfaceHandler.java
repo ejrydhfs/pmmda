@@ -99,13 +99,13 @@ public class InterfaceHandler {
 	VisibilityCode getVisibility(ProgramElementDoc element) {
 		VisibilityCode code = null;
 		if (element.isPublic()) {
-			code = VisibilityCode.getCode(VisibilityCode.PUBLIC_VISIBILITY_CODE);
+			code = VisibilityCode.getCode(VisibilityCode.PUBLIC_CODE);
 		} else if (element.isProtected()) {
-			code = VisibilityCode.getCode(VisibilityCode.PROTECTED_VISIBILITY_CODE);
+			code = VisibilityCode.getCode(VisibilityCode.PROTECTED_CODE);
 		} else if (element.isPackagePrivate()) {
-			code = VisibilityCode.getCode(VisibilityCode.PACKAGE_VISIBILITY_CODE);
+			code = VisibilityCode.getCode(VisibilityCode.PACKAGE_CODE);
 		} else if (element.isPrivate()) {
-			code = VisibilityCode.getCode(VisibilityCode.PRIVATE_VISIBILITY_CODE);
+			code = VisibilityCode.getCode(VisibilityCode.PRIVATE_CODE);
 		}
 		return code;
 	}

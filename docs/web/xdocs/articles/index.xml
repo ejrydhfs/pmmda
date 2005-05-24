@@ -9,7 +9,12 @@
     <section>
       <title>Introduction</title>
       <p>This area contains articles and presentations about the applications 
-        and frameworks hosted on this site.</p>
+        and frameworks hosted on this site. These articles provides background
+        information and in depth discussions.</p>
+      <p>The first set of documents describe the capabilities and design of the
+        <em>pmMDA</em> application. The second set of articles explains the 
+        concepts and trade-offs of the distributed frameworks. The third set
+        of stories shows war stories and lessons learned.</p>
       <dl>
         <dt><link href="site:articles/pmda-design">pmMDA Design</link></dt>
         <dd>describes the architecture and design decisions of the 
@@ -21,18 +26,18 @@
         <dd> describes the architecture and design decision of the data object 
           graph framework.</dd>
         <dt>
+          <link href="site:articles/oex-design">Data Object Graph 
+            Explorer</link>
+        </dt>
+        <dd>describes the architecture and design decisions of the explorer
+          framework.</dd>
+        <dt>
           <link href="site:articles/dog-transactions">Data Object Graph Lessons 
             Learned</link>
         </dt>
         <dd>documents the lesson learned using the DOG framework in 
           mission-critical entreprise applications. The programs were 
           developed and deployed between 2002 and 2004.</dd>
-        <dt>
-          <link href="site:articles/oex-design">Data Object Graph 
-            Explorer</link>
-        </dt>
-        <dd>describes the architecture and design decisons of the explorer
-          framework.</dd>
       </dl>
     </section>
   </body>

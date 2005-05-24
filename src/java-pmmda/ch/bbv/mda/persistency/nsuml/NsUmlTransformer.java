@@ -504,16 +504,16 @@ public class NsUmlTransformer {
 
   protected VisibilityCode convert(MVisibilityKind visibilityKind) {
     VisibilityCode visibility = VisibilityCode
-        .getCode(VisibilityCode.PUBLIC_VISIBILITY_CODE);
+        .getCode(VisibilityCode.PUBLIC_CODE);
     if (MVisibilityKind.PUBLIC.equals(visibilityKind)) {
       visibility = VisibilityCode
-          .getCode(VisibilityCode.PUBLIC_VISIBILITY_CODE);
+          .getCode(VisibilityCode.PUBLIC_CODE);
     } else if (MVisibilityKind.PROTECTED.equals(visibilityKind)) {
       visibility = VisibilityCode
-          .getCode(VisibilityCode.PROTECTED_VISIBILITY_CODE);
+          .getCode(VisibilityCode.PROTECTED_CODE);
     } else if (MVisibilityKind.PRIVATE.equals(visibilityKind)) {
       visibility = VisibilityCode
-          .getCode(VisibilityCode.PRIVATE_VISIBILITY_CODE);
+          .getCode(VisibilityCode.PRIVATE_CODE);
     }
     return visibility;
   }

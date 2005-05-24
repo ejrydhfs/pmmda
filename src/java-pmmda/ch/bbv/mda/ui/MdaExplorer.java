@@ -190,7 +190,6 @@ public class MdaExplorer extends Explorer {
     menu.add(new JMenuItem(exitAction));
     menuBar.registerDocumentFunctions(newAction, openAction, null, saveAction,
         saveAsAction, exitAction);
-
     createGenerateMenu();
     createToolsMenu();
     menuBar.setExplorer(this);

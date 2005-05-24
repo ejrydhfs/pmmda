@@ -144,6 +144,14 @@ public class TablePanel extends JPanel {
   }
   
   /**
+   * Returns the sorted list of the panel.
+   * @return the sorted list of elements.
+   */
+  protected SortedList getList() {
+    return sortedList;
+  }
+  
+  /**
    * Returns the comparator used to order the items of the table.
    * @return the default comparator to sort the table.
    */

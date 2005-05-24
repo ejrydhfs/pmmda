@@ -21,22 +21,22 @@ public class NodeTableCell extends TableCell {
   /**
    * List of fields to display for each object member of the table model.
    */
-  private List fields;
+  private List<UiField> fields;
 
   /**
    * Creates the cell representation of a list of user interface fields.
    * @param fields user interface list to transform. if field list is null or
-   *        empty an empty table is created.
+   *          empty an empty table is created.
    * @return the cell based representation of the list.
    */
-  public static TableCell.Cell[] create(List fields) {
+  public static TableCell.Cell[] create(List<UiField> fields) {
     Cell[] cells;
     if ((fields != null) && (fields.size() > 0)) {
       cells = new Cell[fields.size()];
       for (int i = 0; i < cells.length; i++) {
-        UiField field = (UiField) fields.get(i);
-        cells[i] = new Cell(field.getPropertyName(), field.getPropertyName(), field
-            .getType(), field.isEditable());
+        UiField field = fields.get(i);
+        cells[i] = new Cell(field.getPropertyName(), field.getPropertyName(),
+            field.getType(), field.isEditable());
       }
     } else {
       cells = new Cell[0];
@@ -50,7 +50,7 @@ public class NodeTableCell extends TableCell {
    * @param fields fields to display of type UiField.
    * @pre (fields != null) && (fields.size() > 0)
    */
-  public NodeTableCell(List fields) {
+  public NodeTableCell(List<UiField> fields) {
     super(create(fields));
     this.fields = fields;
   }
@@ -61,7 +61,7 @@ public class NodeTableCell extends TableCell {
    * @return true if the column is editable otherwise false.
    */
   public boolean isColumnEditable(int column) {
-    return getField(column).isEditable();
+    return fields.get(column).isEditable();
   }
 
   /**
@@ -70,7 +70,7 @@ public class NodeTableCell extends TableCell {
    * @return class of the items in the column.
    */
   public Class getColumnClass(int column) {
-    return ((UiField) fields.get(column)).getType();
+    return fields.get(column).getType();
   }
 
   /**
@@ -80,7 +80,7 @@ public class NodeTableCell extends TableCell {
    * @return true if the column is editable otherwise false.
    */
   public boolean isEditable(Object object, int column) {
-    return ((UiField) fields.get(column)).isEditable();
+    return fields.get(column).isEditable();
   }
 
   /**
@@ -94,10 +94,10 @@ public class NodeTableCell extends TableCell {
   public Object getColumnValue(Object bean, int column) {
     assert ((0 <= column) && (column <= fields.size()));
     if (!(bean instanceof ExplorerNode)) {
-      return getField(column).getProperty(bean);
+      return fields.get(column).getProperty(bean);
     }
     ExplorerNode node = (ExplorerNode) bean;
-    return getField(column).getProperty(node.getLightweightObject());
+    return fields.get(column).getProperty(node.getLightweightObject());
   }
 
   /**
@@ -112,22 +112,14 @@ public class NodeTableCell extends TableCell {
   public Object setColumnValue(Object bean, Object value, int column) {
     assert ((0 <= column) && (column <= fields.size()));
     if (!(bean instanceof ExplorerNode)) {
-      getField(column).setProperty(bean, value);
+      fields.get(column).setProperty(bean, value);
       return bean;
     }
     ExplorerNode node = (ExplorerNode) bean;
     node.getExplorer().nodeChanged(node);
     Object object = node.getDataObject();
-    getField(column).setProperty(object, value);
+    fields.get(column).setProperty(object, value);
     return object;
   }
 
-  /**
-   * Returns the user interface field at the given column.
-   * @param column column of the field.
-   * @return the requested user interface field.
-   */
-  private UiField getField(int column) {
-    return (UiField) fields.get(column);
-  }
 }

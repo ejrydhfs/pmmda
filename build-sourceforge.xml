@@ -62,6 +62,7 @@
 
     <echo message="copy pmMDA needed library files" />
     <copy file="${lib.dir}/${commons-beanutils.lib}" todir="${pmmda-lib.dir}" />
+    <copy file="${lib.dir}/${commons-cli.lib}" todir="${pmmda-lib.dir}" />
     <copy file="${lib.dir}/${commons-collections.lib}"
           todir="${pmmda-lib.dir}" />
     <copy file="${lib.dir}/${commons-logging.lib}" todir="${pmmda-lib.dir}" />
@@ -86,7 +87,7 @@
       </fileset>
     </copy>
     <property name="jars.list"
-              value="${commons-beanutils.lib} ${commons-collections.lib} ${commons-logging.lib} ${commons-logging-api.lib} ${forms.lib} ${glazedlists.lib} ${nsuml.lib} ${velocity.lib} ${velocity-dep.lib} ${xpp3.lib} ${xstream.lib}" />
+              value="${commons-beanutils.lib} ${commons-cli.lib} ${commons-collections.lib} ${commons-logging.lib} ${commons-logging-api.lib} ${forms.lib} ${glazedlists.lib} ${nsuml.lib} ${velocity.lib} ${velocity-dep.lib} ${xpp3.lib} ${xstream.lib}" />
     <manifest file="${pmmda-lib.dir}/Manifest.mf">
       <attribute name="Main-Class" value="ch.bbv.mda.ui.MdaApplication" />
       <attribute name="Class-Path" value="${jars.list}" />

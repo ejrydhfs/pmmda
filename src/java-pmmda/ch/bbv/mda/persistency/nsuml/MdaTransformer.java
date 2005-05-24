@@ -651,13 +651,13 @@ public class MdaTransformer {
   }
 
   protected void convert(VisibilityCode visibility, MModelElement item) {
-    if (VisibilityCode.PUBLIC_VISIBILITY_CODE == visibility.getCode()) {
+    if (VisibilityCode.PUBLIC_CODE == visibility.getCode()) {
       item.setVisibility(MVisibilityKind.PUBLIC);
-    } else if (VisibilityCode.PROTECTED_VISIBILITY_CODE == visibility.getCode()) {
+    } else if (VisibilityCode.PROTECTED_CODE == visibility.getCode()) {
       item.setVisibility(MVisibilityKind.PROTECTED);
-    } else if (VisibilityCode.PRIVATE_VISIBILITY_CODE == visibility.getCode()) {
+    } else if (VisibilityCode.PRIVATE_CODE == visibility.getCode()) {
       item.setVisibility(MVisibilityKind.PRIVATE);
-    } else if (VisibilityCode.PACKAGE_VISIBILITY_CODE == visibility.getCode()) {
+    } else if (VisibilityCode.PACKAGE_CODE == visibility.getCode()) {
       item.setVisibility(MVisibilityKind.PUBLIC);
     }
   }

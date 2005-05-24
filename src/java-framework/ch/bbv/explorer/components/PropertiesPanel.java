@@ -39,7 +39,7 @@ public class PropertiesPanel extends TablePanel {
    * Default constructor of the class.
    * @param properties property list to display.
    */
-  public PropertiesPanel(List properties) {
+  public PropertiesPanel(List<Property> properties) {
     super(properties, new TableCell(CELLS));
   }
 
@@ -55,13 +55,11 @@ public class PropertiesPanel extends TablePanel {
    * Returns a list of all system properties defined in the virtual machine.
    * @return the list of system properties.
    */
-  public static List getSystemPropertyList() {
-    List properties = new ArrayList();
+  public static List<Property> getSystemPropertyList() {
+    List<Property> properties = new ArrayList<Property>();
     for (Iterator i = System.getProperties().keySet().iterator(); i.hasNext();) {
       String name = (String) i.next();
-      String value = System.getProperty(name);
-      Property property = new Property(name, value);
-      properties.add(property);
+      properties.add(new Property(name, System.getProperty(name)));
     }
     return properties;
   }

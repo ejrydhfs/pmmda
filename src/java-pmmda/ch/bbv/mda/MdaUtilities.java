@@ -78,16 +78,16 @@ public final class MdaUtilities {
   public static String visibilityToString(int visibility) {
     String text = "";
     switch (visibility) {
-    case VisibilityCode.PUBLIC_VISIBILITY_CODE:
+    case VisibilityCode.PUBLIC_CODE:
       text = PUBLIC_TEXT;
       break;
-    case VisibilityCode.PROTECTED_VISIBILITY_CODE:
+    case VisibilityCode.PROTECTED_CODE:
       text = PROTECTED_TEXT;
       break;
-    case VisibilityCode.PACKAGE_VISIBILITY_CODE:
+    case VisibilityCode.PACKAGE_CODE:
       text = PACKAGE_TEXT;
       break;
-    case VisibilityCode.PRIVATE_VISIBILITY_CODE:
+    case VisibilityCode.PRIVATE_CODE:
       text = PRIVATE_TEXT;
       break;
     }

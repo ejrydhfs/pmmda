@@ -29,22 +29,22 @@ public class VisibilityCode extends ReferenceCodeImpl {
   /**
    * The code for the public visibility.
    */
-  public static final int PUBLIC_VISIBILITY_CODE = 1;
+  public static final int PUBLIC_CODE = 1;
 
   /**
    * The code for the protected visibility.
    */
-  public static final int PROTECTED_VISIBILITY_CODE = 2;
+  public static final int PROTECTED_CODE = 2;
 
   /**
    * The code for the package visibility.
    */
-  public static final int PACKAGE_VISIBILITY_CODE = 3;
+  public static final int PACKAGE_CODE = 3;
 
   /**
    * The code for the private visibility.
    */
-  public static final int PRIVATE_VISIBILITY_CODE = 4;
+  public static final int PRIVATE_CODE = 4;
 
   /**
    * List of all reference codes of this type.
@@ -56,14 +56,14 @@ public class VisibilityCode extends ReferenceCodeImpl {
    */
   static {
     codes = new HashMap<Integer, VisibilityCode>();
-    codes.put(PUBLIC_VISIBILITY_CODE, new VisibilityCode(
-        PUBLIC_VISIBILITY_CODE, 1, "public", "public visibility"));
-    codes.put(PROTECTED_VISIBILITY_CODE, new VisibilityCode(
-        PROTECTED_VISIBILITY_CODE, 2, "protected", "protected visibility"));
-    codes.put(PACKAGE_VISIBILITY_CODE, new VisibilityCode(
-        PACKAGE_VISIBILITY_CODE, 3, "package", "package visibility"));
-    codes.put(PRIVATE_VISIBILITY_CODE, new VisibilityCode(
-        PRIVATE_VISIBILITY_CODE, 4, "private", "private visibility"));
+    codes.put(PUBLIC_CODE, new VisibilityCode(
+        PUBLIC_CODE, 1, "public", "public visibility"));
+    codes.put(PROTECTED_CODE, new VisibilityCode(
+        PROTECTED_CODE, 2, "protected", "protected visibility"));
+    codes.put(PACKAGE_CODE, new VisibilityCode(
+        PACKAGE_CODE, 3, "package", "package visibility"));
+    codes.put(PRIVATE_CODE, new VisibilityCode(
+        PRIVATE_CODE, 4, "private", "private visibility"));
   }
 
   /**

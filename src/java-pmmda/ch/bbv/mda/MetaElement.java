@@ -102,7 +102,7 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
   public MetaElement() {
     taggedValues = new HashMap<String, TaggedValue>();
     attributes = new HashMap<String, String>();
-    visibility = VisibilityCode.getCode(VisibilityCode.PUBLIC_VISIBILITY_CODE);
+    visibility = VisibilityCode.getCode(VisibilityCode.PUBLIC_CODE);
     changeSupport = new PropertyChangeSupport(this);
   }
 

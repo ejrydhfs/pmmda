@@ -7,12 +7,7 @@
 
 package ch.bbv.application.events;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * The event manager is the local responsible for all registered source channels
@@ -66,7 +61,7 @@ public class EventManager {
   public List<EventListener> getListeners(Channel channel) {
     List<EventListener> listeners = listenerChannels.get(channel);
     if (listeners == null) {
-      listeners = Collections.EMPTY_LIST;
+      listeners = Collections.emptyList();
     } else {
       listeners = Collections.unmodifiableList(listeners);
     }
@@ -82,9 +77,9 @@ public class EventManager {
 
   public void send(EventSource source, Event event) {
     if (sourceChannels.containsKey(source)) {
-      Iterator channels = ((List) sourceChannels.get(source)).iterator();
-      Channel channel = (Channel) channels.next();
-      channel.sendEvent(event);
+      for (Channel channel : sourceChannels.get(source)) {
+        channel.sendEvent(event);
+      }
     }
   }
 }

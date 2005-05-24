@@ -88,7 +88,7 @@ public class CodeTypeMgr {
       if (type == null) {
         type = new CodeType();
       }
-      type.setQualifiedName(clazz.getName());
+      synchronize(clazz, type);
       types.put(clazz, type);
     }
     return types.get(clazz);
@@ -101,6 +101,7 @@ public class CodeTypeMgr {
    */
   public void save(MetaClass clazz) throws IOException {
     CodeType type = types.get(clazz);
+    synchronize(clazz, type);
     ModifiedFlagFunctor functor = new ModifiedFlagFunctor();
     VisitorFunctor visitor = new VisitorFunctor(functor);
     functor.setModified(false);
@@ -109,6 +110,7 @@ public class CodeTypeMgr {
         .qualifiedName(), clazz.getName() + ".xml");
     BufferedWriter writer = new BufferedWriter(new FileWriter(file));
     xstream.toXML(type, writer);
+    writer.close();
   }
 
   /**
@@ -217,6 +219,11 @@ public class CodeTypeMgr {
       type = (CodeType) xstream.fromXML(reader);
     }
     return type;
+  }
+  
+  private void synchronize(MetaClass clazz, CodeType type) {
+    type.setQualifiedName(clazz.qualifiedName());
+    // TODO set hierarchical or not
   }
   /* %% USER DEFINED PROTECTED/PRIVATE CODE END %% */
 }

@@ -75,7 +75,7 @@ public class MdaDocument {
     model = parseModel(handler, file);
     model.setFilename(file.toString());
     File directory = new File(model.getFilename()).getParentFile();
-    codeTypeMgr.reset(directory);
+    codeTypeMgr.reset(new File(directory, CODES_DIRECTORY));
   }
 
   /**
@@ -106,7 +106,7 @@ public class MdaDocument {
       File target = new File(newRoot, CODES_DIRECTORY);
       FileOperators.copyDirectory(source, target);
     }
-    codeTypeMgr.setRoot(newRoot);
+    codeTypeMgr.setRoot(new File(newRoot, CODES_DIRECTORY));
     codeTypeMgr.saveAll();
     model.setFilename(file.getAbsolutePath());
     PersistencyHandler handler = factory.getHandler(file);

@@ -58,10 +58,20 @@ public class CodesView extends TablePanel implements NodeView {
    */
   private static final TableCell.Cell[] CELLS;
 
+  /**
+   * Actions available through the popup menu of the view.
+   * @author marcelbaumann
+   * @version $Revision$
+   */
   private enum Actions {
     ADD, REMOVE, RELOAD, STORE
   };
 
+  /**
+   * Popup menu action of the view.
+   * @author marcelbaumann
+   * @version $Revision$
+   */
   private static class CodesViewAction extends AbstractAction {
     /**
      * Serial version identifier coded as back compatibility date.
@@ -70,8 +80,16 @@ public class CodesView extends TablePanel implements NodeView {
 
     private static final String ACTION_KEY = "ch.bbv.mda.ui.CodesView.Actions";
 
+    /**
+     * The view the action should process.
+     */
     private CodesView codeView;
 
+    /**
+     * Constructor of the class.
+     * @param action action kind of the action.
+     * @param codeView the code view on which the action will work on.
+     */
     public CodesViewAction(Actions action, CodesView codeView) {
       super(action.toString());
       putValue(ACTION_KEY, action);
@@ -131,15 +149,15 @@ public class CodesView extends TablePanel implements NodeView {
 
   static {
     CELLS = new TableCell.Cell[7];
-    CELLS[0] = new TableCell.Cell("name", "name", String.class, true);
-    CELLS[1] = new TableCell.Cell("id", "id", String.class, true);
-    CELLS[2] = new TableCell.Cell("order", "order", String.class, true);
-    CELLS[3] = new TableCell.Cell("short description", "shortDescription",
+    CELLS[0] = new TableCell.Cell("codeId", "id", Integer.TYPE, true);
+    CELLS[1] = new TableCell.Cell("name", "name", String.class, true);
+    CELLS[2] = new TableCell.Cell("sortOrder", "order", Integer.TYPE, true);
+    CELLS[3] = new TableCell.Cell("shortDescription", "short description",
         String.class, true);
     CELLS[4] = new TableCell.Cell("description", "description", String.class,
         true);
-    CELLS[5] = new TableCell.Cell("start date", "startDate", Date.class, true);
-    CELLS[6] = new TableCell.Cell("end date", "endDate", Date.class, true);
+    CELLS[5] = new TableCell.Cell("start", "start date", Date.class, true);
+    CELLS[6] = new TableCell.Cell("end", "end date", Date.class, true);
   }
 
   /**
@@ -147,7 +165,17 @@ public class CodesView extends TablePanel implements NodeView {
    */
   private ExplorerNode node;
 
+  /**
+   * The code type associated with the MDA class having a stereotype identifying
+   * it as reference code.
+   */
   private CodeType type;
+
+  /**
+   * Popup menu of the view. The menu contains the actions available in the
+   * view.
+   */
+  private JPopupMenu menu;
 
   /**
    * Creates an instance of the class.
@@ -165,14 +193,17 @@ public class CodesView extends TablePanel implements NodeView {
    */
   public CodesView() {
     super(Collections.EMPTY_LIST, new TableCell(CELLS));
-    getScrollPane().addMouseListener(new PopupListener(create()));
+    initialize();
+    getScrollPane().addMouseListener(new PopupListener(menu));
   }
 
   /**
    * Adds a new code value in the list of codes.
    */
   public void add() {
-    type.addValue(new CodeValue());
+    CodeValue value = new CodeValue();
+    type.addValue(value);
+    getList().add(value);
   }
 
   /**
@@ -230,26 +261,46 @@ public class CodesView extends TablePanel implements NodeView {
     this.node = node;
     MetaClass clazz = (MetaClass) node.getDataObject();
     if (DogCartridge.REFERENCE_CODE_STEREOTYPE.equals(clazz.getStereotype())) {
-       load();
-       // TODO synchronize tagged values with code values
-       setModel(type.getValues());
+      load();
+      setMenuEnabled(true);
+      // TODO synchronize tagged values with code values
+      setModel(type.getValues());
+    } else {
+      setMenuEnabled(false);
     }
   }
 
   public void viewClosed() {
   }
 
+  /**
+   * Returns the code type manager of the MDA model.
+   * @return the code type manager of the MDA model.
+   */
   private CodeTypeMgr getCodeTypeMgr() {
     return ((MdaExplorer) node.getExplorer()).getDocument().getCodeTypeMgr();
   }
 
-  private JPopupMenu create() {
-    JPopupMenu menu = new JPopupMenu();
+  /**
+   * Enables the popup menu of the view.
+   * @param enabled flag indicating if the menu is enabled or not.
+   */
+  private void setMenuEnabled(boolean enabled) {
+    menu.setEnabled(enabled);
+    for (Component component : menu.getComponents()) {
+      component.setEnabled(enabled);
+    }
+  }
+
+  /**
+   * Initializes the fields of the class.
+   */
+  private void initialize() {
+    menu = new JPopupMenu();
     menu.add(new CodesViewAction(Actions.ADD, this));
     menu.add(new CodesViewAction(Actions.REMOVE, this));
     menu.addSeparator();
     menu.add(new CodesViewAction(Actions.RELOAD, this));
     menu.add(new CodesViewAction(Actions.STORE, this));
-    return menu;
   }
 }

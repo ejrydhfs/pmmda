@@ -7,11 +7,17 @@
 package ch.bbv.explorer.components;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import ca.odell.glazedlists.GlazedLists;
+import ca.odell.glazedlists.gui.AdvancedTableFormat;
+import ca.odell.glazedlists.gui.TableFormat;
 import ca.odell.glazedlists.gui.WritableTableFormat;
 
 /**
@@ -21,13 +27,29 @@ import ca.odell.glazedlists.gui.WritableTableFormat;
  * @author Marcel Baumann
  * @version $Revision$
  */
-public class TableCell implements WritableTableFormat {
+public class TableCell implements TableFormat, WritableTableFormat,
+    AdvancedTableFormat {
   /**
    * The cell class defines the characteristic of a table column.
    * @author MarcelBaumann
    * @version $Revision$
    */
   public static class Cell {
+    /** primitive class to object class conversion map */
+    private static Map<Class, Class> primitiveToType;
+
+    static {
+      primitiveToType = new HashMap<Class, Class>();
+      primitiveToType.put(boolean.class, Boolean.class);
+      primitiveToType.put(char.class, Character.class);
+      primitiveToType.put(byte.class, Byte.class);
+      primitiveToType.put(short.class, Short.class);
+      primitiveToType.put(int.class, Integer.class);
+      primitiveToType.put(long.class, Long.class);
+      primitiveToType.put(float.class, Float.class);
+      primitiveToType.put(double.class, Double.class);
+    }
+
     /**
      * The name of the property displayed in the column.
      */
@@ -49,17 +71,26 @@ public class TableCell implements WritableTableFormat {
     boolean editable;
 
     /**
+     * Comparator for the items in the column.
+     */
+    Comparator comparator;
+
+    /**
      * Constructor of the class.
      * @param property name of the property displayed in the column.
-     * @param column name of the column.
+     * @param column name of the column as displayed in the header.
      * @param type type of the values displayed in the column.
      * @param editable flag indicating if the values are editable.
      */
     public Cell(String property, String column, Class type, boolean editable) {
       this.property = property;
       this.column = column;
-      this.type = type;
+      this.type = primitiveToType.containsKey(type) ? primitiveToType.get(type)
+          : type;
       this.editable = editable;
+      if (Comparable.class.isAssignableFrom(this.type)) {
+        comparator = GlazedLists.comparableComparator();
+      }
     }
 
     /**
@@ -79,7 +110,9 @@ public class TableCell implements WritableTableFormat {
     }
 
     /**
-     * Returns the type of the column.
+     * Returns the type of the column. The type is the Java class of the items
+     * displayed in a column. If the type is primitive one the class of the
+     * associated wrapper is returned.
      * @return the type of the column.
      */
     public Class getType() {
@@ -197,16 +230,15 @@ public class TableCell implements WritableTableFormat {
    */
   public Object getColumnValue(Object bean, int column) {
     assert ((0 <= column) && (column <= cells.length) && (bean != null));
-
     Object value = null;
     try {
       return PropertyUtils.getProperty(bean, cells[column].property);
     } catch (IllegalAccessException e) {
-      e.printStackTrace();
+      log.error(e);
     } catch (InvocationTargetException e) {
-      e.printStackTrace();
+      log.error(e);
     } catch (NoSuchMethodException e) {
-      e.printStackTrace();
+      log.error(e);
     }
     return value;
   }
@@ -235,6 +267,14 @@ public class TableCell implements WritableTableFormat {
       log.error(e);
     }
     return null;
+  }
+
+  public Class getColumnClass(int column) {
+    return cells[column].type;
+  }
+
+  public Comparator getColumnComparator(int column) {
+    return cells[column].comparator;
   }
 
   /**
