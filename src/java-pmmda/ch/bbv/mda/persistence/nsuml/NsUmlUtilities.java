@@ -4,7 +4,7 @@
  * $Id$
  */
 
-package ch.bbv.mda.persistency.nsuml;
+package ch.bbv.mda.persistence.nsuml;
 
 import ru.novosoft.uml.foundation.core.MModelElement;
 

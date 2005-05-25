@@ -4,7 +4,7 @@
  * you may not use this file except in compliance with the License. 
  * $Id$
  */
-package ch.bbv.mda.persistency;
+package ch.bbv.mda.persistence;
 
 import java.io.*;
 import java.util.Enumeration;
@@ -23,9 +23,9 @@ import ru.novosoft.uml.model_management.MModel;
 import ru.novosoft.uml.xmi.IncompleteXMIException;
 import ch.bbv.mda.MetaFactory;
 import ch.bbv.mda.MetaModel;
-import ch.bbv.mda.persistency.nsuml.ArgoWriter;
-import ch.bbv.mda.persistency.nsuml.MdaTransformer;
-import ch.bbv.mda.persistency.nsuml.NsUmlTransformer;
+import ch.bbv.mda.persistence.nsuml.ArgoWriter;
+import ch.bbv.mda.persistence.nsuml.MdaTransformer;
+import ch.bbv.mda.persistence.nsuml.NsUmlTransformer;
 import ch.bbv.utilities.ResourceUtility;
 
 /**
@@ -35,12 +35,12 @@ import ch.bbv.utilities.ResourceUtility;
  * @author MarcelBaumann
  * @version $Revision$
  */
-public class NsUmlPersistencyHandler implements PersistencyHandler {
+public class NsUmlPersistenceHandler implements PersistenceHandler {
   /**
    * Logger for all instances of the class.
    */
-  private static Log log = LogFactory.getLog(NsUmlPersistencyHandler.class);
-  
+  private static Log log = LogFactory.getLog(NsUmlPersistenceHandler.class);
+
   /**
    * Transformer from NSUML to MDA.
    */
@@ -54,12 +54,12 @@ public class NsUmlPersistencyHandler implements PersistencyHandler {
   /**
    * Default constructor of the class.
    */
-  public NsUmlPersistencyHandler() {
+  public NsUmlPersistenceHandler() {
     nsUmlTransformer = new NsUmlTransformer();
     mdaTransformer = new MdaTransformer();
   }
 
-  public MetaModel readModel(File file) throws PersistencyException {
+  public MetaModel readModel(File file) throws PersistenceException {
     MetaModel metaModel = new MetaModel();
     MetaFactory.getInstance().initialize(metaModel);
 
@@ -84,7 +84,7 @@ public class NsUmlPersistencyHandler implements PersistencyHandler {
   }
 
   public void writeModel(MetaModel model, File file)
-      throws PersistencyException {
+      throws PersistenceException {
     if (file.exists()) {
       updateModel(model, file);
     } else if (file.getName().endsWith(".xmi")
@@ -110,12 +110,8 @@ public class NsUmlPersistencyHandler implements PersistencyHandler {
     }
   }
 
-  public void importPackage(MetaModel targetProject, File file,
-      String packageName) {
-  }
-
   public void updateModel(MetaModel model, File file)
-      throws PersistencyException {
+      throws PersistenceException {
     try {
       MModel mModel = nsUmlTransformer.loadArgoModel(file);
       mdaTransformer.synchronize(model, mModel);
@@ -142,6 +138,15 @@ public class NsUmlPersistencyHandler implements PersistencyHandler {
     }
   }
 
+  /**
+   * Returns the ArgoUML file name of the file containing the XMI UML model.
+   * The file is part of the set of files stored in a zip file and is recognized
+   * through its extension. 
+   * @param file Zip file containing all artifacts of a ArgoUML project.
+   * @return The name of the file containing the XMI UML model.
+   * @throws FileNotFoundException if the requested file was not found.
+   * @throws IOException if an IO error occured when reading the zip file.
+   */
   protected String getArgoModelFileName(File file)
       throws FileNotFoundException, IOException {
     ZipFile zipFile = new ZipFile(file);

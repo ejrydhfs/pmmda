@@ -3,7 +3,7 @@
  * you may not use this file except in compliance with the License. 
  * $Id$
  */
-package ch.bbv.mda.persistency.nsuml;
+package ch.bbv.mda.persistence.nsuml;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -35,9 +35,9 @@ public class FilterIterator implements Iterator {
    * Constructor of the class.
    * @param collection collection on which the iterator will be applied.
    * @param filter the filter criterium.
-   * @pre collection != null && filter != null
+   * @pre (collection != null) && (filter != null)
    */
-  public FilterIterator(Collection collection, Class filter) {
+  public FilterIterator(Collection<Object> collection, Class filter) {
     assert (collection != null) && (filter != null);
     iterator = collection.iterator();
     this.filter = filter;
@@ -46,7 +46,7 @@ public class FilterIterator implements Iterator {
 
   /**
    * Unsupported operation for filter iterator.
-   * @see java.util.Iterator#remove
+   * @see java.util.Iterator#remove()
    */
   public void remove() {
     throw new UnsupportedOperationException();
@@ -55,7 +55,7 @@ public class FilterIterator implements Iterator {
   /**
    * Returns true if the iterator has a next item.
    * @return true if a next item exists otherwise false.
-   * @see java.util.Iterator#hasNext
+   * @see java.util.Iterator#hasNext()
    */
   public boolean hasNext() {
     return data != null;
@@ -64,7 +64,7 @@ public class FilterIterator implements Iterator {
   /**
    * Returns the next object of the iterator.
    * @return the next object of the iterator if defined otherwise null.
-   * @see java.util.Iterator#next
+   * @see java.util.Iterator#next()
    */
   public Object next() {
     Object value = data;

@@ -26,11 +26,23 @@
       <p>The binary distribution of <em>pmMDA</em> is delivered as a compressed 
         file. Unzip the file at your preferred location. ZIP files can be 
         opened using various open source tools. All required libraries are 
-        contained in the archive file.</p>
-      <p>The installation does not need any additional steps. No environment 
-        variables or registry modifications are required.</p>
+        contained in the archive file. The installation does not need any 
+        additional steps. No environment variables or registry modifications 
+        are required. Here the steps in details.</p>
+      <ol>
+        <li>Download the <em>pmMDA</em> distribution. The file has a name with
+          the structure <em>pmMDA-&lt;version&gt;.tar.gz</em>. Follow the download
+          link of this site to the location of the distribution.</li>
+        <li>Extract the distribution and store the files into a directory. To
+          extract the files you can use free tools such as <em>7-zip</em> or
+          <em>winzip</em>.</li>
+        <li>In the directory where you stored the file you will find a batch file
+          to start the application. Simply execute the <em>pmMDA.bat</em> 
+          batch file by double clicking it under Windows.</li>
+      </ol>
       <p>If you want to uninstall <em>pmMDA</em> distribution simply delete the 
-        directory containing the files.</p>
+        directory containing the files. The installation process does not insert
+        any data in the registry or in system directories.</p>
     </section>
     <section>
       <title>Run pmMDA</title>

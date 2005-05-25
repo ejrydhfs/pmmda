@@ -38,7 +38,7 @@ import ch.bbv.explorer.components.ValidationPanel;
 import ch.bbv.mda.MetaModel;
 import ch.bbv.mda.generators.Cartridge;
 import ch.bbv.mda.generators.CartridgeFactory;
-import ch.bbv.mda.persistency.PersistencyException;
+import ch.bbv.mda.persistence.PersistenceException;
 import ch.bbv.mda.ui.actions.*;
 import ch.bbv.utilities.ResourceUtility;
 
@@ -248,7 +248,7 @@ public class MdaExplorer extends Explorer {
       } else {
         newAction.execute();
       }
-    } catch (PersistencyException e) {
+    } catch (PersistenceException e) {
       log.error("parse arguments exception", e);
       newAction.execute();
     } catch (ParseException e) {

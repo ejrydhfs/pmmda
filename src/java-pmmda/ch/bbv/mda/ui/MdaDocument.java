@@ -11,9 +11,9 @@ import java.io.IOException;
 import ch.bbv.mda.MetaModel;
 import ch.bbv.mda.TreeChecker;
 import ch.bbv.mda.operators.FileOperators;
-import ch.bbv.mda.persistency.PersistencyException;
-import ch.bbv.mda.persistency.PersistencyHandler;
-import ch.bbv.mda.persistency.PersistencyHandlerFactory;
+import ch.bbv.mda.persistence.PersistenceException;
+import ch.bbv.mda.persistence.PersistenceHandler;
+import ch.bbv.mda.persistence.PersistenceHandlerFactory;
 import ch.bbv.mda.pim.CodeTypeMgr;
 
 /**
@@ -65,12 +65,12 @@ public class MdaDocument {
   /**
    * Loads the MDA model and initializes the associated resources.
    * @param file file containing the MDA model.
-   * @throws PersistencyException if model could not be written.
+   * @throws PersistenceException if model could not be written.
    */
-  public void load(File file) throws PersistencyException {
+  public void load(File file) throws PersistenceException {
     assert (file != null);
-    PersistencyHandlerFactory factory = new PersistencyHandlerFactory();
-    PersistencyHandler handler = factory.getHandler(file);
+    PersistenceHandlerFactory factory = new PersistenceHandlerFactory();
+    PersistenceHandler handler = factory.getHandler(file);
     assert (handler != null);
     model = parseModel(handler, file);
     model.setFilename(file.toString());
@@ -80,13 +80,13 @@ public class MdaDocument {
 
   /**
    * Saves the MDA model and the associated resources.
-   * @throws PersistencyException if model could not be written.
+   * @throws PersistenceException if model could not be written.
    * @throws IOException if code values could not be written.
    */
-  public void save() throws PersistencyException, IOException {
-    PersistencyHandlerFactory factory = new PersistencyHandlerFactory();
+  public void save() throws PersistenceException, IOException {
+    PersistenceHandlerFactory factory = new PersistenceHandlerFactory();
     File file = new File(model.getFilename());
-    PersistencyHandler handler = factory.getHandler(file);
+    PersistenceHandler handler = factory.getHandler(file);
     handler.writeModel(model, file);
     codeTypeMgr.saveAll();
   }
@@ -94,11 +94,11 @@ public class MdaDocument {
   /**
    * Saves the MDA model and the associated resources in the new file.
    * @param file file in which the model should be saved.
-   * @throws PersistencyException if model could not be written.
+   * @throws PersistenceException if model could not be written.
    * @throws IOException if code values could not be written.
    */
-  public void saveAs(File file) throws PersistencyException, IOException {
-    PersistencyHandlerFactory factory = new PersistencyHandlerFactory();
+  public void saveAs(File file) throws PersistenceException, IOException {
+    PersistenceHandlerFactory factory = new PersistenceHandlerFactory();
     File root = codeTypeMgr.getRoot();
     File newRoot = file.getParentFile();
     if (root != null) {
@@ -109,7 +109,7 @@ public class MdaDocument {
     codeTypeMgr.setRoot(new File(newRoot, CODES_DIRECTORY));
     codeTypeMgr.saveAll();
     model.setFilename(file.getAbsolutePath());
-    PersistencyHandler handler = factory.getHandler(file);
+    PersistenceHandler handler = factory.getHandler(file);
     handler.writeModel(model, file);
   }
 
@@ -117,12 +117,12 @@ public class MdaDocument {
    * Parses given file with given handler
    * @param handler handler to parse the given file.
    * @param file file containing the model to be parsed.
-   * @throws PersistencyException an exception was encountered when loading the
+   * @throws PersistenceException an exception was encountered when loading the
    *           model.
    * @return MetaModel containing parsed file
    */
-  private MetaModel parseModel(PersistencyHandler handler, File file)
-      throws PersistencyException {
+  private MetaModel parseModel(PersistenceHandler handler, File file)
+      throws PersistenceException {
     MetaModel model = handler.readModel(file);
     if (model == null)
       return null;

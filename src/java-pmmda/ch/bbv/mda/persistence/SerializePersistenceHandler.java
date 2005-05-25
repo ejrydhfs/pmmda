@@ -4,7 +4,7 @@
  * you may not use this file except in compliance with the License. 
  * $Id$
  */
-package ch.bbv.mda.persistency;
+package ch.bbv.mda.persistence;
 
 import java.io.*;
 
@@ -27,11 +27,11 @@ import ch.bbv.utilities.ResourceUtility;
  * @author MarcelBaumann
  * @version $Revision$
  */
-public class SerializePersistencyHandler implements PersistencyHandler {
+public class SerializePersistenceHandler implements PersistenceHandler {
   /**
    * Logger interface of the class (see Logging framework).
    */
-  private static Log log = LogFactory.getLog(SerializePersistencyHandler.class);
+  private static Log log = LogFactory.getLog(SerializePersistenceHandler.class);
 
   public MetaModel readModel(File file) {
     MetaModel project = null;
@@ -50,10 +50,6 @@ public class SerializePersistencyHandler implements PersistencyHandler {
       log.error(cnfe);
     }
     return project;
-  }
-
-  public void importPackage(MetaModel targetProject, File file,
-      String packageName) {
   }
 
   public void writeModel(MetaModel project, File file) {

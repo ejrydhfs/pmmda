@@ -100,8 +100,9 @@
           directory. They are not part of the version management.</li>
         <li>All documentation artifacts are stored under the <em>docs</em> 
           directory. All documents are either XML based on written using the 
-          <em>Open Office Tools</em>. The final documentation is generated with 
-          Forrest.</li>
+          <a href="http://www.openoffice.org">Open Office Tools</a>. The final 
+          documentation is generated with <a href="http://forrest.apache.org">
+          Forrest</a>.</li>
         <li>The analysis and design are stored under the <em>model</em> 
           directory.</li>
         <li>The compiled classes of the projects are written to 

@@ -4,7 +4,7 @@
  * $Id$
  */
 
-package ch.bbv.mda.persistency.mdr;
+package ch.bbv.mda.persistence.mdr;
 
 import java.io.File;
 import java.io.FileNotFoundException;

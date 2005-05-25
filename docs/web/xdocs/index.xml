@@ -64,6 +64,8 @@
       <p>The delivered example provides a complete ArgoUML UML model, the 
         <em>pmMDA</em> properties file to generate the code artifacts and an 
         ant script to compile it.</p>
+      <p>A two minutes tutorial is available under
+         <a href="site:pmmda/tutorial">Two minutes <em>pmMDA</em> tutorial</a>.</p>
     </section>
     <section>
       <title>Resources</title>

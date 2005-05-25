@@ -9,7 +9,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.IndexedPropertyDescriptor;
 import java.beans.PropertyDescriptor;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 import javax.swing.*;
 
@@ -22,8 +25,7 @@ import ch.bbv.dog.DataObject;
 import ch.bbv.dog.DataObjectType;
 import ch.bbv.utilities.ReflectUtilities;
 
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
 import com.toedter.calendar.JDateChooser;
 
@@ -97,12 +99,12 @@ public class GenericNodePropertiesView extends NodePropertiesView {
     if (type == null) {
       // first time the dialog is populated, the visible fields are infered
       // and the associated user interface items are created.
-	    type = bean.getClass();
-	    if (log.isDebugEnabled()) {
-	      log.debug("Creating generic node properties view " + type.getName());
-	    }
-	    retrieveProperties(bean);
-	    initialize();
+      type = bean.getClass();
+      if (log.isDebugEnabled()) {
+        log.debug("Creating generic node properties view " + type.getName());
+      }
+      retrieveProperties(bean);
+      initialize();
     }
     for (PropertyView view : primitivePropertyViews) {
       view.setModel(bean);
@@ -141,7 +143,7 @@ public class GenericNodePropertiesView extends NodePropertiesView {
     FormLayout layout = new FormLayout("right:pref, 3dlu, pref, 12dlu, pref",
         buffer.toString());
 
-    PanelBuilder builder = new PanelBuilder(layout);
+    DefaultFormBuilder builder = new DefaultFormBuilder(layout);
     builder.setDefaultDialogBorder();
 
     int row = generateRows(builder, "Simple Properties",
@@ -174,18 +176,16 @@ public class GenericNodePropertiesView extends NodePropertiesView {
     }
   }
 
-  protected int generateRows(PanelBuilder builder, String seperator,
-      List properties, int row) {
+  protected int generateRows(DefaultFormBuilder builder, String seperator,
+      List< ? extends PropertyView> properties, int row) {
     int size = properties.size();
     int currentRow = row;
     if (size > 0) {
-      CellConstraints cc = new CellConstraints();
-      builder.addSeparator(seperator, cc.xywh(1, currentRow, 5, 1));
+      builder.appendSeparator(seperator);
       currentRow += 2;
       for (int i = 0; i < size; i++) {
-        PropertyView view = (PropertyView) properties.get(i);
-        builder.addLabel(view.label, cc.xy(1, currentRow));
-        builder.add(view.getComponent(), cc.xy(3, currentRow));
+        PropertyView view = properties.get(i);
+        builder.append(view.label, view.getComponent());
         currentRow += 2;
       }
     }
@@ -255,15 +255,19 @@ public class GenericNodePropertiesView extends NodePropertiesView {
     }
   }
 
+  /**
+   * Returns true if the given class is contained in the interface list.
+   * @param interfaces list of interfaces to check.
+   * @param clazz search interface class definition.
+   * @return true if the interface was found otherwise false.
+   */
   protected boolean containsInterface(Class[] interfaces, Class clazz) {
-    boolean containsInterface = false;
     for (int i = 0; i < interfaces.length; i++) {
       if (clazz == interfaces[i]) {
-        containsInterface = true;
-        break;
+        return true;
       }
     }
-    return containsInterface;
+    return false;
   }
 
   /**

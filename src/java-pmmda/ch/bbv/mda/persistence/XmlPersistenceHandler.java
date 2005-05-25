@@ -4,7 +4,7 @@
  * you may not use this file except in compliance with the License. 
  * $Id$
  */
-package ch.bbv.mda.persistency;
+package ch.bbv.mda.persistence;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -29,13 +29,13 @@ import com.thoughtworks.xstream.converters.ConversionException;
  * @author MarcelBaumann
  * @version $Revision$
  */
-public class XmlPersistencyHandler implements PersistencyHandler {
+public class XmlPersistenceHandler implements PersistenceHandler {
   /**
    * Logger interface of the class (see Logging framework).
    */
-  private static Log log = LogFactory.getLog(XmlPersistencyHandler.class);
+  private static Log log = LogFactory.getLog(XmlPersistenceHandler.class);
 
-  public MetaModel readModel(File file) throws PersistencyException {
+  public MetaModel readModel(File file) throws PersistenceException {
     MetaModel model = null;
     try {
       FileReader reader = new FileReader(file);
@@ -69,7 +69,7 @@ public class XmlPersistencyHandler implements PersistencyHandler {
   }
 
   public void updateModel(MetaModel project, File file)
-      throws PersistencyException {
+      throws PersistenceException {
     // TODO Auto-generated method stub
   }
 }

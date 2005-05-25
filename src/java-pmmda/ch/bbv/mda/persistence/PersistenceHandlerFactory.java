@@ -4,7 +4,7 @@
  * you may not use this file except in compliance with the License. 
  * $Id$
  */
-package ch.bbv.mda.persistency;
+package ch.bbv.mda.persistence;
 
 import java.io.File;
 
@@ -14,21 +14,21 @@ import java.io.File;
  * @author MarcelBaumann
  * @version $Revision$
  */
-public class PersistencyHandlerFactory {
+public class PersistenceHandlerFactory {
   /**
    * The handler responsible for the serialized representation of a model.
    */
-  private SerializePersistencyHandler serialHandler;
+  private SerializePersistenceHandler serialHandler;
 
   /**
    * The handler responsible for the XML representation of a model.
    */
-  private XmlPersistencyHandler xmlHandler;
+  private XmlPersistenceHandler xmlHandler;
 
   /**
    * The handler responsible for the MOF NSUML representation of a model.
    */
-  private NsUmlPersistencyHandler nsUmlHandler;
+  private NsUmlPersistenceHandler nsUmlHandler;
 
   /**
    * Returns the best match for the given file. The selection of the optimal
@@ -37,18 +37,16 @@ public class PersistencyHandlerFactory {
    * @return the optimal handler if found otherwise null.
    * @pre file != null
    */
-  public PersistencyHandler getHandler(File file) {
-    assert(file != null);
+  public PersistenceHandler getHandler(File file) {
+    assert (file != null);
     String filename = file.getName().toLowerCase();
-    PersistencyHandler persistencyHandler = null;
+    PersistenceHandler persistencyHandler = null;
     if (filename.endsWith(".ser")) {
       persistencyHandler = getSerializeHandler();
     } else if (filename.endsWith(".xml")) {
       persistencyHandler = getXmlHandler();
     } else if (filename.endsWith(".xmi") || filename.endsWith(".zargo")) {
       persistencyHandler = getNsUmlHandler();
-    } else if (filename.endsWith(".mdl")) {
-      persistencyHandler = getRoseHandler();
     } else if (filename.endsWith(".ecore")) {
       persistencyHandler = getEcoreHandler();
     }
@@ -59,9 +57,9 @@ public class PersistencyHandlerFactory {
    * Returns the XML persistency format handler.
    * @return the XML persistency handler.
    */
-  public PersistencyHandler getXmlHandler() {
+  public PersistenceHandler getXmlHandler() {
     if (xmlHandler == null) {
-      xmlHandler = new XmlPersistencyHandler();
+      xmlHandler = new XmlPersistenceHandler();
     }
     return xmlHandler;
   }
@@ -70,9 +68,9 @@ public class PersistencyHandlerFactory {
    * Returns the serialize persistency format handler.
    * @return the serialize persistency format handler.
    */
-  public PersistencyHandler getSerializeHandler() {
+  public PersistenceHandler getSerializeHandler() {
     if (serialHandler == null) {
-      serialHandler = new SerializePersistencyHandler();
+      serialHandler = new SerializePersistenceHandler();
     }
     return serialHandler;
   }
@@ -81,9 +79,9 @@ public class PersistencyHandlerFactory {
    * Returns the XMI 1.0 / UML 1.3 persistency format handler.
    * @return the serialize persistency format handler.
    */
-  public PersistencyHandler getNsUmlHandler() {
+  public PersistenceHandler getNsUmlHandler() {
     if (nsUmlHandler == null) {
-      nsUmlHandler = new NsUmlPersistencyHandler();
+      nsUmlHandler = new NsUmlPersistenceHandler();
     }
     return nsUmlHandler;
   }
@@ -92,22 +90,23 @@ public class PersistencyHandlerFactory {
    * Returns the XMI 1.1 / UML 1.4 persistency format handler.
    * @return the serialize persistency format handler.
    */
-  public PersistencyHandler getMdrHandler() {
-    return new XmlPersistencyHandler();
+  public PersistenceHandler getMdrHandler() {
+    return new XmlPersistenceHandler();
   }
 
-  public PersistencyHandler getEcoreHandler() {
-    //return new EcorePersistencyHandler();
+  /**
+   * Returns the Ecore persistency format handler.
+   * @return the requested persistency handler.
+   */
+  public PersistenceHandler getEcoreHandler() {
     return null; // TODO
   }
 
-  public PersistencyHandler getJavaDocHandler() {
-    return new XmlPersistencyHandler();
+  /**
+   * Returns the Javadoc handler persistency format handler.
+   * @return the requested persistency handler.
+   */
+  public PersistenceHandler getJavaDocHandler() {
+    return new XmlPersistenceHandler();
   }
-
-  public PersistencyHandler getRoseHandler() {
-    //return new RosePersistencyHandler();
-    return null; // TODO
-  }
-
 }

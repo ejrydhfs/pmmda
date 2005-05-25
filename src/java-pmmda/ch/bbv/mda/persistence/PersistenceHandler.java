@@ -4,7 +4,7 @@
  * you may not use this file except in compliance with the License. 
  * $Id$ 
  */
-package ch.bbv.mda.persistency;
+package ch.bbv.mda.persistence;
 
 import java.io.File;
 
@@ -19,33 +19,33 @@ import ch.bbv.mda.MetaModel;
  * @author MarcelBaumann
  * @version $Revision$
  */
-public interface PersistencyHandler {
+public interface PersistenceHandler {
   /**
    * Reads a file, extracts the information and return the meta model stored in
    * the file.
    * @param file file containing the MDA model to extract.
    * @return the read meta model graph.
-   * @throws PersistencyException A input/output error occured. The exception
+   * @throws PersistenceException A input/output error occured. The exception
    *         contains the original thrown exception.
    */
-  MetaModel readModel(File file) throws PersistencyException;
+  MetaModel readModel(File file) throws PersistenceException;
 
   /**
    * Writes a model to a file. The previous content of the file is discarded.
    * @param model mode to persist in the file.
    * @param file file which should contain the persistent representation of the
    *        model.
-   * @throws PersistencyException A input/output error occured. The exception
+   * @throws PersistenceException A input/output error occured. The exception
    *         contains the original thrown exception.
    */
-  void writeModel(MetaModel model, File file) throws PersistencyException;
+  void writeModel(MetaModel model, File file) throws PersistenceException;
 
   /**
    * Updates the model stored in the given file.
    * @param model meta model used to update the UML model stored in the file.
    * @param file file containing the model to update.
-   * @throws PersistencyException A input/output error occured. The exception
+   * @throws PersistenceException A input/output error occured. The exception
    *         contains the original thrown exception.
    */
-  void updateModel(MetaModel model, File file) throws PersistencyException;
+  void updateModel(MetaModel model, File file) throws PersistenceException;
 }

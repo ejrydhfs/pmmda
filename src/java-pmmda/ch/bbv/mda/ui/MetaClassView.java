@@ -38,24 +38,54 @@ public class MetaClassView extends NodePropertiesView {
    */
   private final static int TEXT_AREA_SIZE = 40;
 
+  /**
+   * Swing component to display the associated property.
+   */
   private JTextField nameText;
 
+  /**
+   * Swing component to display the associated property.
+   */
   private JTextField stereotypeText;
 
+  /**
+   * Swing component to display the associated property.
+   */
   private JTextField contextText;
 
+  /**
+   * Swing component to display the associated property.
+   */
   private ReferenceCodeComboBox visibility;
 
+  /**
+   * Swing component to display the associated property.
+   */
   private JTextArea descriptionText;
 
+  /**
+   * Swing component to display the associated property.
+   */
   private JScrollPane descriptionPane;
 
+  /**
+   * Swing component to display the associated property.
+   */
   private JCheckBox abstracts;
 
+  /**
+   * Swing component to display the associated property.
+   */
   private JCheckBox finals;
 
+  /**
+   * Swing component to display the associated property.
+   */
   private JCheckBox interfaces;
 
+  /**
+   * Swing component to display the associated property.
+   */
   private JCheckBox statics;
 
   private TaggedValuesView tagsView;

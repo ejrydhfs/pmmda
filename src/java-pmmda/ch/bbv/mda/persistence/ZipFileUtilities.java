@@ -4,14 +4,9 @@
  * you may not use this file except in compliance with the License. 
  * $Id$
  */
-package ch.bbv.mda.persistency;
+package ch.bbv.mda.persistence;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -41,10 +36,10 @@ public class ZipFileUtilities {
    * @param file zip file containing the entry.
    * @param entryName name of the entry to be replaced.
    * @param stream new content of the entry to update.
-   * @throws PersistencyException an I/O error occurred during processing.
+   * @throws PersistenceException an I/O error occurred during processing.
    */
   public void replaceEntry(File file, String entryName, InputStream stream)
-      throws PersistencyException {
+      throws PersistenceException {
     try {
       File temporaryFile = File.createTempFile("pmMDA_zargo", ".zargo");
       temporaryFile.deleteOnExit();
@@ -69,20 +64,14 @@ public class ZipFileUtilities {
       output.close();
       boolean isSuccess = file.delete();
       if (!isSuccess) {
-        throw new PersistencyException();
+        throw new PersistenceException();
       }
       isSuccess = temporaryFile.renameTo(file);
       if (!isSuccess) {
-        throw new PersistencyException();
+        throw new PersistenceException();
       }
     } catch (IOException ioe) {
-      throw new PersistencyException(ioe);
+      throw new PersistenceException(ioe);
     }
-  }
-
-  public void copy(String source, OutputStream target) throws IOException {
-    byte[] buffer;
-    buffer = source.getBytes();
-    target.write(buffer);
   }
 }

@@ -4,7 +4,7 @@
  * $Id$
  */
 
-package ch.bbv.mda.persistency.mdr;
+package ch.bbv.mda.persistence.mdr;
 
 /**
  * The MDA transformer is responsible to transform a <em>pmMDA</em> model into

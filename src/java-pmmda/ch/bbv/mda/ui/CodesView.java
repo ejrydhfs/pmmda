@@ -42,7 +42,7 @@ import ch.bbv.mda.pim.CodeValue;
  * <dt>Load</dt>
  * <dd>Loads the code values from the persistent store. All in memory changes
  * are lost.</dd>
- * </ul>
+ * </dl>
  * The actions of the menu have a reference to the code view.
  * @author MarcelBaumann
  * @version $Revision$

@@ -3,7 +3,7 @@
  * you may not use this file except in compliance with the License.
  * $Id$
  */
-package ch.bbv.mda.persistency.nsuml;
+package ch.bbv.mda.persistence.nsuml;
 
 import java.io.*;
 import java.util.HashMap;
@@ -121,6 +121,11 @@ public class NsUmlTransformer {
     xmiWriter.close();
   }
 
+  /**
+   * Synchronize the MDA model with the NSUML model.
+   * @param source NSUML model used as source of the synchronization.
+   * @param target MDA model to synchronize.
+   */
   public void synchronize(MModel source, MetaModel target) {
     target.setName(source.getName());
 
@@ -129,16 +134,13 @@ public class NsUmlTransformer {
       MPackage mSubPackage = (MPackage) i.next();
       extractPackage(mSubPackage, target);
     }
-
     extractRelations(source, target);
-
     for (Iterator i = new FilterIterator(source.getOwnedElements(),
         MClassifier.class); i.hasNext();) {
       MClassifier mClass = (MClassifier) i.next();
       extractDataType(mClass, target);
     }
     flagSystemPackages(target);
-
     for (Iterator i = new FilterIterator(source.getOwnedElements(),
         MClass.class); i.hasNext();) {
       MClass mClass = (MClass) i.next();
@@ -146,158 +148,130 @@ public class NsUmlTransformer {
     }
   }
 
-  public void synchronize(MetaPackage metaPackage, MPackage item) {
-    synchronize(metaPackage, item);
-  }
 
-  public void synchronize(MetaClass metaClass, MClass item) {
-    synchronize(metaClass, item);
-  }
-
-  public void synchronize(MetaProperty metaProperty, MAttribute item) {
-    synchronize(metaProperty, item);
-  }
-
-  public void extractStereotypeAndTags(MModelElement source, MetaElement item) {
-    MStereotype stereotype = source.getStereotype();
-    if (stereotype != null) {
-      item.setStereotype(stereotype.getName());
-    }
-
-    item.setVisibility(convert(source.getVisibility()));
-
-    for (Iterator i = source.getTaggedValues().iterator(); i.hasNext();) {
-      MTaggedValue tag = (MTaggedValue) i.next();
-      String tagName = tag.getTag();
-      if (item instanceof MetaProperty) {
-        if ("transient".equals(tagName)) {
-          ((MetaProperty) item).setTransient(booleanValue(tag.getValue()));
-        } else if ("volatile".equals(tagName)) {
-          ((MetaProperty) item).setVolatile(booleanValue(tag.getValue()));
-        }
-      }
-      if (DOCUMENTATION_TAG.equals(tagName)) {
-        item.setDescription(tag.getValue());
-      } else {
-        TaggedValue taggedValue = item.getTaggedValue(tagName);
-        if (taggedValue == null) {
-          taggedValue = new TaggedValue(tag.getTag(), tag.getValue());
-          item.addTaggedValue(taggedValue);
-        } else {
-          taggedValue.setValue(tag.getValue());
-        }
-      }
-    }
-  }
-
-  protected void extractPackage(MPackage mPackage, MetaModel model) {
-    String qualifiedName = NsUmlUtilities.getQualifiedName(mPackage);
-    MetaPackage metaPackage = model.findPackage(qualifiedName);
+  /**
+   * Extracts the information from the NSUML package and overwrites the ones of
+   * the MDA package defined in the given context.
+   * @param source NSUML package used as source of the synchronization.
+   * @param context MDA context containing the package to synchronize.
+   */
+  protected void extractPackage(MPackage source, MetaModel context) {
+    String qualifiedName = NsUmlUtilities.getQualifiedName(source);
+    MetaPackage metaPackage = context.findPackage(qualifiedName);
     if (metaPackage == null) {
       metaPackage = new MetaPackage();
       metaPackage.setName(qualifiedName);
-      model.addPackage(metaPackage);
+      context.addPackage(metaPackage);
       factory.initialize(metaPackage);
     }
-    extractStereotypeAndTags(mPackage, metaPackage);
+    extractStereotypeAndTags(source, metaPackage);
 
-    for (Iterator i = new FilterIterator(mPackage.getOwnedElements(),
+    for (Iterator i = new FilterIterator(source.getOwnedElements(),
         MClassifier.class); i.hasNext();) {
       MClassifier mClass = (MClassifier) i.next();
       extractClass(mClass, metaPackage);
     }
 
-    for (Iterator i = new FilterIterator(mPackage.getOwnedElements(),
+    for (Iterator i = new FilterIterator(source.getOwnedElements(),
         MPackage.class); i.hasNext();) {
       MPackage mSubPackage = (MPackage) i.next();
-      extractPackage(mSubPackage, model);
+      extractPackage(mSubPackage, context);
     }
   }
 
-  protected void extractClass(MClassifier mClass, MetaPackage metaPackage) {
-    assert ((mClass != null) && (metaPackage != null));
+  /**
+   * Extracts the information from the NSUML class and overwrites the ones of the
+   * MDA class defined in the given context.
+   * @param source NSUML class used as source of the synchronization.
+   * @param context MDA context containing the class to synchronize.
+   */
+  protected void extractClass(MClassifier source, MetaPackage context) {
+    assert ((source != null) && (context != null));
 
-    String name = mClass.getName();
+    String name = source.getName();
     if (name == null) {
       if (log.isErrorEnabled()) {
         log.error("Parsed class without name in package "
-            + metaPackage.getName());
+            + context.getName());
       }
       return;
     }
 
-    MetaClass metaClass = metaPackage.findClass(name);
+    MetaClass metaClass = context.findClass(name);
     if (metaClass == null) {
       metaClass = new MetaClass();
       metaClass.setName(name);
-      metaPackage.addClass(metaClass);
+      context.addClass(metaClass);
       factory.initialize(metaClass);
     }
-    elements.put(mClass, metaClass);
-    metaClass.setAbstract(mClass.isAbstract());
-    extractStereotypeAndTags(mClass, metaClass);
+    elements.put(source, metaClass);
+    metaClass.setAbstract(source.isAbstract());
+    extractStereotypeAndTags(source, metaClass);
 
-    if (mClass instanceof MInterface) {
+    if (source instanceof MInterface) {
       metaClass.setInterface(true);
     }
 
-    for (Iterator i = new FilterIterator(mClass.getFeatures(), MAttribute.class); i
+    for (Iterator i = new FilterIterator(source.getFeatures(), MAttribute.class); i
         .hasNext();) {
       extractProperty((MAttribute) i.next(), metaClass);
     }
-    for (Iterator i = new FilterIterator(mClass.getOwnedElements(),
+    for (Iterator i = new FilterIterator(source.getOwnedElements(),
         MAttribute.class); i.hasNext();) {
       extractProperty((MAttribute) i.next(), metaClass);
     }
 
-    for (Iterator i = new FilterIterator(mClass.getOwnedElements(),
+    for (Iterator i = new FilterIterator(source.getOwnedElements(),
         MClassifier.class); i.hasNext();) {
       MClassifier mNestedClass = (MClassifier) i.next();
-      extractClass(mNestedClass, metaClass);
+      extractNestedClass(mNestedClass, metaClass);
     }
   }
 
-  protected void extractClass(MClassifier mNestedClass, MetaClass clazz) {
-    assert (mNestedClass != null) && (clazz != null);
+  /**
+   * Extracts the information from the NSUML class and overwrites the ones of the
+   * MDA nested classes defined in the given context.
+   * @param source NSUML class used as source of the synchronization.
+   * @param context MDA context containing the class to synchronize.
+   */
+  protected void extractNestedClass(MClassifier source, MetaClass context) {
+    assert (source != null) && (context != null);
 
-    String name = mNestedClass.getName();
+    String name = source.getName();
     if (name == null) {
       if (log.isErrorEnabled()) {
         log.error("Parsed nested class without name in class "
-            + clazz.getName());
+            + context.getName());
       }
       return;
     }
 
-    MetaClass metaNestedClass = clazz.findClass(name);
+    MetaClass metaNestedClass = context.findClass(name);
     if (metaNestedClass == null) {
       metaNestedClass = new MetaClass();
       metaNestedClass.setName(name);
       factory.initialize(metaNestedClass);
-      clazz.addClass(metaNestedClass);
-      CartridgeFactory.getInstance().initialize(clazz);
+      context.addClass(metaNestedClass);
+      CartridgeFactory.getInstance().initialize(context);
     }
-    elements.put(mNestedClass, metaNestedClass);
-    metaNestedClass.setAbstract(mNestedClass.isAbstract());
-    extractStereotypeAndTags(mNestedClass, metaNestedClass);
-
-    if (mNestedClass instanceof MInterface) {
+    elements.put(source, metaNestedClass);
+    metaNestedClass.setAbstract(source.isAbstract());
+    extractStereotypeAndTags(source, metaNestedClass);
+    if (source instanceof MInterface) {
       metaNestedClass.setInterface(true);
     }
-
-    for (Iterator i = new FilterIterator(mNestedClass.getFeatures(),
+    for (Iterator i = new FilterIterator(source.getFeatures(),
         MAttribute.class); i.hasNext();) {
       extractProperty((MAttribute) i.next(), metaNestedClass);
     }
-
-    for (Iterator i = new FilterIterator(mNestedClass.getOwnedElements(),
+    for (Iterator i = new FilterIterator(source.getOwnedElements(),
         MClassifier.class); i.hasNext();) {
       MClassifier mNestedNestedClass = (MClassifier) i.next();
-      extractClass(mNestedNestedClass, metaNestedClass);
+      extractNestedClass(mNestedNestedClass, metaNestedClass);
     }
   }
 
-  protected void extractDataType(MClassifier mClass, MetaModel metaModel) {
+  private void extractDataType(MClassifier mClass, MetaModel metaModel) {
     assert ((mClass != null) && (metaModel != null));
 
     String name = mClass.getName();
@@ -349,7 +323,39 @@ public class NsUmlTransformer {
     extractStereotypeAndTags(attribute, property);
   }
 
-  protected MTaggedValue getTag(MModelElement source, String tagName) {
+  private void extractStereotypeAndTags(MModelElement source, MetaElement item) {
+    MStereotype stereotype = source.getStereotype();
+    if (stereotype != null) {
+      item.setStereotype(stereotype.getName());
+    }
+
+    item.setVisibility(convert(source.getVisibility()));
+
+    for (Iterator i = source.getTaggedValues().iterator(); i.hasNext();) {
+      MTaggedValue tag = (MTaggedValue) i.next();
+      String tagName = tag.getTag();
+      if (item instanceof MetaProperty) {
+        if ("transient".equals(tagName)) {
+          ((MetaProperty) item).setTransient(booleanValue(tag.getValue()));
+        } else if ("volatile".equals(tagName)) {
+          ((MetaProperty) item).setVolatile(booleanValue(tag.getValue()));
+        }
+      }
+      if (DOCUMENTATION_TAG.equals(tagName)) {
+        item.setDescription(tag.getValue());
+      } else {
+        TaggedValue taggedValue = item.getTaggedValue(tagName);
+        if (taggedValue == null) {
+          taggedValue = new TaggedValue(tag.getTag(), tag.getValue());
+          item.addTaggedValue(taggedValue);
+        } else {
+          taggedValue.setValue(tag.getValue());
+        }
+      }
+    }
+  }
+  
+  private MTaggedValue getTag(MModelElement source, String tagName) {
     assert ((source != null) && (tagName != null));
     MTaggedValue tag = null;
     for (Iterator i = source.getTaggedValues().iterator(); i.hasNext();) {
@@ -362,7 +368,7 @@ public class NsUmlTransformer {
     return tag;
   }
 
-  protected void extractRelations(MModel source, MetaModel target) {
+  private void extractRelations(MModel source, MetaModel target) {
     for (Iterator i = new FilterIterator(source.getOwnedElements(),
         MPackage.class); i.hasNext();) {
       extractRelations(target, (MPackage) i.next());
@@ -506,14 +512,11 @@ public class NsUmlTransformer {
     VisibilityCode visibility = VisibilityCode
         .getCode(VisibilityCode.PUBLIC_CODE);
     if (MVisibilityKind.PUBLIC.equals(visibilityKind)) {
-      visibility = VisibilityCode
-          .getCode(VisibilityCode.PUBLIC_CODE);
+      visibility = VisibilityCode.getCode(VisibilityCode.PUBLIC_CODE);
     } else if (MVisibilityKind.PROTECTED.equals(visibilityKind)) {
-      visibility = VisibilityCode
-          .getCode(VisibilityCode.PROTECTED_CODE);
+      visibility = VisibilityCode.getCode(VisibilityCode.PROTECTED_CODE);
     } else if (MVisibilityKind.PRIVATE.equals(visibilityKind)) {
-      visibility = VisibilityCode
-          .getCode(VisibilityCode.PRIVATE_CODE);
+      visibility = VisibilityCode.getCode(VisibilityCode.PRIVATE_CODE);
     }
     return visibility;
   }
@@ -540,13 +543,18 @@ public class NsUmlTransformer {
    * @param metaPackage package to check.
    * @return true if the package belongs to the Java system otherwise false.
    */
-  protected boolean isSystemPackage(MetaPackage metaPackage) {
+  private boolean isSystemPackage(MetaPackage metaPackage) {
     String name = metaPackage.getName();
     return ((name != null) && (name.startsWith("java.")
         || name.startsWith("javax.") || name.equals("java") || name
         .equals("javax")));
   }
 
+  /**
+   * Return the boolean value of the string as used in NSUML models.
+   * @param value string value to convert.
+   * @return the boolean value of the string representation.
+   */
   protected boolean booleanValue(String value) {
     return (value != null && value.equalsIgnoreCase("true"));
   }

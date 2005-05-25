@@ -3,7 +3,7 @@
  * you may not use this file except in compliance with the License.
  * $Id$
  */
-package ch.bbv.mda.persistency.nsuml;
+package ch.bbv.mda.persistence.nsuml;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -104,144 +104,163 @@ public class MdaTransformer {
     missingAttributeTypes = new HashMap();
   }
 
-  public void synchronize(MetaModel metaModel, MModel model) {
-    mModel = model;
-    model.setName(metaModel.getName());
-    this.metaModel = metaModel;
-
-    extractDataTypes(metaModel, model);
-
-    for (MetaPackage item : metaModel.getPackages()) {
-      extractPackage(item, model);
+  /**
+   * Synchronize the NSUML model with the MDA model.
+   * @param source MDA model used as source of the synchronization.
+   * @param target NSUML model to synchronize.
+   */
+  public void synchronize(MetaModel source, MModel target) {
+    mModel = target;
+    target.setName(source.getName());
+    this.metaModel = source;
+    extractDataTypes(source, target);
+    for (MetaPackage item : source.getPackages()) {
+      extractPackage(item, target);
     }
-    for (MetaClass item : metaModel.getClasses()) {
-      extractClass(item, model);
+    for (MetaClass item : source.getClasses()) {
+      extractClass(item, target);
     }
-
     processMissingAttributeTypes();
   }
 
-  protected void extractPackage(MetaPackage metaPackage, MModel context) {
-    assert ((metaPackage != null) && (context != null));
-
-    String qualifiedName = metaPackage.getName();
+  /**
+   * Extracts the information from the MDA package and overwrites the ones of
+   * the NSUML package defined in the given context.
+   * @param source MDA package used as source of the synchronization.
+   * @param context NSUML context containing the package to synchronize.
+   */
+  protected void extractPackage(MetaPackage source, MModel context) {
+    assert ((source != null) && (context != null));
+    String qualifiedName = source.getName();
     MPackage mPackage = createPackage(context, qualifiedName);
-    elements.put(metaPackage, mPackage);
-    extractTags(metaPackage, mPackage);
-    extractStereotypeAndVisibility(metaPackage, mPackage);
-
-    for (MetaClass item : metaPackage.getClasses()) {
+    elements.put(source, mPackage);
+    extractTags(source, mPackage);
+    extractStereotypeAndVisibility(source, mPackage);
+    for (MetaClass item : source.getClasses()) {
       extractClass(item, mPackage);
     }
   }
 
-  protected void extractClass(MetaClass clazz, MPackage context) {
-    assert ((clazz != null) && (context != null));
-
-    MClass mClass = createClass(context, clazz.getName());
-    elements.put(clazz, mClass);
-    mClass.setAbstract(clazz.isAbstract());
-    extractTags(clazz, mClass);
-    extractStereotypeAndVisibility(clazz, mClass);
-
-    for (MetaProperty item : clazz.getProperties()) {
+  /**
+   * Extracts the information from the MDA class and overwrites the ones of the
+   * NSUML class defined in the given context.
+   * @param source MDA class used as source of the synchronization.
+   * @param context NSUML context containing the class to synchronize.
+   */
+  protected void extractClass(MetaClass source, MPackage context) {
+    assert ((source != null) && (context != null));
+    MClass mClass = createClass(context, source.getName());
+    elements.put(source, mClass);
+    mClass.setAbstract(source.isAbstract());
+    extractTags(source, mClass);
+    extractStereotypeAndVisibility(source, mClass);
+    for (MetaProperty item : source.getProperties()) {
       extractProperty(item, mClass);
     }
-    for (MetaIndexedProperty item : clazz.getIndexedProperties()) {
+    for (MetaIndexedProperty item : source.getIndexedProperties()) {
       extractIndexedProperty(item, mClass);
     }
-    for (MetaClass item : clazz.getClasses()) {
-      extractNestedClass(item, mClass);
-    }
-  }
-
-  protected void extractNestedClass(MetaClass clazz, MClass context) {
-    assert ((clazz != null) && (context != null));
-
-    MClass mClass = createClass(context, clazz.getName());
-    elements.put(clazz, mClass);
-    mClass.setAbstract(clazz.isAbstract());
-    extractTags(clazz, mClass);
-    extractStereotypeAndVisibility(clazz, mClass);
-
-    for (MetaProperty item : clazz.getProperties()) {
-      extractProperty(item, mClass);
-    }
-    for (MetaIndexedProperty item : clazz.getIndexedProperties()) {
-      extractIndexedProperty(item, mClass);
-    }
-    for (MetaClass item : clazz.getClasses()) {
+    for (MetaClass item : source.getClasses()) {
       extractNestedClass(item, mClass);
     }
   }
 
   /**
-   * Extracts the property from the meta model and updates the NS UML class.
-   * @param property
-   * @param context
+   * Extracts the information from the MDA class and overwrites the ones of the
+   * NSUML nested classes defined in the given context.
+   * @param source MDA class used as source of the synchronization.
+   * @param context NSUML context containing the class to synchronize.
    */
-  protected void extractProperty(MetaProperty property, MClass context) {
-    assert ((property != null) && (context != null));
-    if (property.isAggregation()) {
-      MetaElement mElement = property.getContext().getContext();
+  protected void extractNestedClass(MetaClass source, MClass context) {
+    assert ((source != null) && (context != null));
+    MClass mClass = createClass(context, source.getName());
+    elements.put(source, mClass);
+    mClass.setAbstract(source.isAbstract());
+    extractTags(source, mClass);
+    extractStereotypeAndVisibility(source, mClass);
+    for (MetaProperty item : source.getProperties()) {
+      extractProperty(item, mClass);
+    }
+    for (MetaIndexedProperty item : source.getIndexedProperties()) {
+      extractIndexedProperty(item, mClass);
+    }
+    for (MetaClass item : source.getClasses()) {
+      extractNestedClass(item, mClass);
+    }
+  }
+
+  /**
+   * Extracts the information from the MDA property and overwrites the ones of
+   * the NSUML class defined in the given context.
+   * @param source MDA property used as source of the synchronization.
+   * @param context NSUML context containing the property to synchronize.
+   */
+  protected void extractProperty(MetaProperty source, MClass context) {
+    assert ((source != null) && (context != null));
+    if (source.isAggregation()) {
+      MetaElement mElement = source.getContext().getContext();
       while (!(mElement instanceof MetaPackage)) {
         mElement = mElement.getContext();
       }
       MetaPackage metaPackage = (MetaPackage) mElement;
       MPackage mPackage = (MPackage) elements.get(metaPackage);
-      MAssociation association = findAssociation(mPackage, context, property
+      MAssociation association = findAssociation(mPackage, context, source
           .getName());
       if (association != null) {
-        updatePropertyFlags(property, association);
-        extractTags(property, association);
-        extractStereotypeAndVisibility(property, association);
+        updatePropertyFlags(source, association);
+        extractTags(source, association);
+        extractStereotypeAndVisibility(source, association);
       }
     } else {
-      MAttribute mAttribute = createAttribute(context, property.getName());
+      MAttribute mAttribute = createAttribute(context, source.getName());
       MClassifier mClassifier = mAttribute.getType();
       if (mClassifier == null
           || !NsUmlUtilities.getQualifiedName(mClassifier).equals(
-              property.getTypeName())) {
-        mClassifier = createClassifier(property.getTypeName(), mAttribute);
+              source.getTypeName())) {
+        mClassifier = createClassifier(source.getTypeName(), mAttribute);
         mAttribute.setType(mClassifier);
       }
-
       MMultiplicity mMultiplicity = mAttribute.getMultiplicity();
-      MMultiplicity newMultiplicity = convert(property.getMultiplicity());
+      MMultiplicity newMultiplicity = convert(source.getMultiplicity());
       if ((newMultiplicity != null) && (mMultiplicity != newMultiplicity)) {
         mAttribute.setMultiplicity(newMultiplicity);
       }
-      updateInitialValue(property, mAttribute);
-      updatePropertyFlags(property, mAttribute);
-      extractTags(property, mAttribute);
-      extractStereotypeAndVisibility(property, mAttribute);
+      updateInitialValue(source, mAttribute);
+      updatePropertyFlags(source, mAttribute);
+      extractTags(source, mAttribute);
+      extractStereotypeAndVisibility(source, mAttribute);
     }
   }
 
-  protected void extractIndexedProperty(MetaIndexedProperty property,
+  /**
+   * Extracts the information from the MDA indexed roperty and overwrites the
+   * ones of the NSUML class defined in the given context.
+   * @param source MDA property used as source of the synchronization.
+   * @param context NSUML context containing the property to synchronize.
+   */
+  protected void extractIndexedProperty(MetaIndexedProperty source,
       MClass context) {
-    assert ((property != null) && (context != null));
-    if (property.isAggregation()) {
-      MetaPackage metaPackage = (MetaPackage) property.getContext()
-          .getContext();
+    assert ((source != null) && (context != null));
+    if (source.isAggregation()) {
+      MetaPackage metaPackage = (MetaPackage) source.getContext().getContext();
       MPackage mPackage = (MPackage) elements.get(metaPackage);
-      MAssociation association = findAssociation(mPackage, context, property
+      MAssociation association = findAssociation(mPackage, context, source
           .getName());
       if (association != null) {
-        updatePropertyFlags(property, association);
-        extractTags(property, association);
-        extractStereotypeAndVisibility(property, association);
+        updatePropertyFlags(source, association);
+        extractTags(source, association);
+        extractStereotypeAndVisibility(source, association);
       }
     } else {
-      MAttribute attribute = createAttribute(context, property.getName());
+      MAttribute attribute = createAttribute(context, source.getName());
       MMultiplicity multiplicity = attribute.getMultiplicity();
-      MMultiplicity newMultiplicity = convert(property.getMultiplicity());
+      MMultiplicity newMultiplicity = convert(source.getMultiplicity());
       if ((newMultiplicity != null) && (multiplicity != newMultiplicity)) {
         attribute.setMultiplicity(newMultiplicity);
       }
-      updatePropertyFlags(property, attribute);
-      extractTags(property, attribute);
-      extractStereotypeAndVisibility(property, attribute);
+      updatePropertyFlags(source, attribute);
+      extractTags(source, attribute);
+      extractStereotypeAndVisibility(source, attribute);
     }
   }
 
@@ -252,7 +271,7 @@ public class MdaTransformer {
    * @param source MDA source item containing the tags to synchronize.
    * @param item target item to synchronize.
    */
-  public void extractTags(MetaElement source, MModelElement item) {
+  private void extractTags(MetaElement source, MModelElement item) {
     String description = source.getDescription();
     if ((description != null) && (description.length() > 0)) {
       MTaggedValue taggedValue = createTag(item, DOCUMENTATION_TAG);
@@ -263,8 +282,7 @@ public class MdaTransformer {
         taggedValue.setValue("");
       }
     }
-
-    for (TaggedValue tag  : source.getTags()) {
+    for (TaggedValue tag : source.getTags()) {
       String tagName = tag.getTag();
       String tagValue = tag.getValue();
       if (tagValue != null) {
@@ -272,14 +290,13 @@ public class MdaTransformer {
         taggedValue.setValue(tag.getValue());
       }
     }
-
     for (TagDefinition type : MetaFactory.getInstance().getObsoleteTypes(
         source.getClass())) {
       item.removeTaggedValue(type.getTag());
     }
   }
 
-  public void extractDataTypes(MetaModel metaModel, MModel model) {
+  private void extractDataTypes(MetaModel metaModel, MModel model) {
     MDataType mDataType;
     for (MetaDataType metaDataType : metaModel.getDataTypes()) {
       boolean found = false;
@@ -300,23 +317,19 @@ public class MdaTransformer {
     }
   }
 
-  public MTaggedValue findTag(MModelElement item, String tagName) {
+  private MTaggedValue findTag(MModelElement item, String tagName) {
     assert ((item != null) && (tagName != null));
-
-    MTaggedValue tag = null;
     for (Iterator i = item.getTaggedValues().iterator(); i.hasNext();) {
-      tag = (MTaggedValue) i.next();
+      MTaggedValue tag = (MTaggedValue) i.next();
       if (tagName.equals(tag.getTag())) {
-        break;
+        return tag;
       }
-      tag = null;
     }
-    return tag;
+    return null;
   }
 
-  public MTaggedValue createTag(MModelElement item, String tagName) {
+  private MTaggedValue createTag(MModelElement item, String tagName) {
     assert (item != null) && (tagName != null);
-
     MTaggedValue taggedValue = findTag(item, tagName);
     if (taggedValue == null) {
       taggedValue = new MTaggedValueImpl();
@@ -334,9 +347,8 @@ public class MdaTransformer {
    * @param qualifiedName qualified name of the package to create.
    * @return the requested package either found or newly created.
    */
-  public MPackage createPackage(MModel model, String qualifiedName) {
+  private MPackage createPackage(MModel model, String qualifiedName) {
     assert (model != null) && (qualifiedName != null);
-
     MPackage mPackage = null;
     StringTokenizer tokenizer = new StringTokenizer(qualifiedName, ".");
     MPackage context = model;
@@ -359,7 +371,7 @@ public class MdaTransformer {
    * @param model model containing the package.
    * @return the requested package if found otherwise null.
    */
-  public MPackage findPackage(MModel model, String qualifiedName) {
+  private MPackage findPackage(MModel model, String qualifiedName) {
     assert (model != null) && (qualifiedName != null);
 
     MPackage mPackage = null;
@@ -395,7 +407,7 @@ public class MdaTransformer {
     return mPackage;
   }
 
-  public MClass findClass(MPackage context, String name) {
+  private MClass findClass(MPackage context, String name) {
     assert (context != null) && (name != null);
 
     MClass mClass = null;
@@ -410,7 +422,7 @@ public class MdaTransformer {
     return mClass;
   }
 
-  public MClass findClass(MClass context, String name) {
+  private MClass findClass(MClass context, String name) {
     assert ((context != null) && (name != null));
 
     MClass mClass = null;
@@ -425,7 +437,7 @@ public class MdaTransformer {
     return mClass;
   }
 
-  public MClass createClass(MPackage context, String name) {
+  private MClass createClass(MPackage context, String name) {
     assert (context != null) && (name != null);
 
     MClass item = findClass(context, name);
@@ -437,7 +449,7 @@ public class MdaTransformer {
     return item;
   }
 
-  public MClass createClass(MClass context, String name) {
+  private MClass createClass(MClass context, String name) {
     assert (context != null) && (name != null);
 
     MClass item = findClass(context, name);
@@ -449,7 +461,7 @@ public class MdaTransformer {
     return item;
   }
 
-  public MAttribute findAttribute(MClass context, String name) {
+  private MAttribute findAttribute(MClass context, String name) {
     assert (context != null) && (name != null);
 
     MAttribute mAttribute = null;
@@ -474,9 +486,15 @@ public class MdaTransformer {
     return mAttribute;
   }
 
-  public MAttribute createAttribute(MClass context, String name) {
+  /**
+   * Finds an attribute with the given name. If not found creates an attribute
+   * in the given class.
+   * @param context class in which the attribute should be created.
+   * @param name name of the attribute to create.
+   * @return the requested attribute.
+   */
+  private MAttribute createAttribute(MClass context, String name) {
     assert (context != null) && (name != null);
-
     MAttribute item = findAttribute(context, name);
     if (item == null) {
       item = new MAttributeImpl();
@@ -486,7 +504,7 @@ public class MdaTransformer {
     return item;
   }
 
-  public MClassifier findDataType(String name) {
+  private MClassifier findDataType(String name) {
     for (Iterator i = new FilterIterator(mModel.getOwnedElements(),
         MDataType.class); i.hasNext();) {
       MDataType mDataType = (MDataType) i.next();
@@ -647,10 +665,15 @@ public class MdaTransformer {
       mStereotype.setName("");
     }
 
-    convert(source.getVisibility(), item);
+    setVisibility(item, source.getVisibility());
   }
 
-  protected void convert(VisibilityCode visibility, MModelElement item) {
+  /**
+   * Sets the visibility of the item.
+   * @param item item which visibility should be set.
+   * @param visibility new visibility of the item.
+   */
+  private void setVisibility(MModelElement item, VisibilityCode visibility) {
     if (VisibilityCode.PUBLIC_CODE == visibility.getCode()) {
       item.setVisibility(MVisibilityKind.PUBLIC);
     } else if (VisibilityCode.PROTECTED_CODE == visibility.getCode()) {

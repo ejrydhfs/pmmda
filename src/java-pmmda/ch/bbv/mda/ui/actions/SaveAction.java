@@ -15,7 +15,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ch.bbv.explorer.actions.ExplorerSaveAction;
-import ch.bbv.mda.persistency.PersistencyException;
+import ch.bbv.mda.persistence.PersistenceException;
 import ch.bbv.mda.ui.MdaDocument;
 import ch.bbv.mda.ui.MdaExplorer;
 import ch.bbv.utilities.ResourceUtility;
@@ -54,7 +54,7 @@ public class SaveAction extends ExplorerSaveAction {
               JOptionPane.ERROR_MESSAGE);
         }
       }
-    } catch (PersistencyException e) {
+    } catch (PersistenceException e) {
       log.error(e);
       JOptionPane.showMessageDialog(getExplorer().getFrame(), ResourceUtility
           .getString("mda.ui.sorryMsg.UNSUPPORTED_FILE_TYPE_FOR_SAVE"),

@@ -3,7 +3,7 @@
  * you may not use this file except in compliance with the License. 
  * $Id$ 
  */
-package ch.bbv.mda.persistency;
+package ch.bbv.mda.persistence;
 
 /**
  * The exception class for all exceptions thrown when reading or writing a UML
@@ -11,16 +11,23 @@ package ch.bbv.mda.persistency;
  * @author marcelbaumann
  * @version $Revision$
  */
-public class PersistencyException extends Exception {
+public class PersistenceException extends Exception {
   /**
    * Serial version identifier coded as back compatibility date.
    */
   private static final long serialVersionUID = 20041201;
 
-  public PersistencyException() {
+  /**
+   * Default constructor of the classs.
+   */
+  public PersistenceException() {
   }
 
-  public PersistencyException(Exception exception) {
+  /**
+   * Constructor of the class.
+   * @param exception the exception cause of the persistence exception.
+   */
+  public PersistenceException(Exception exception) {
     super(exception);
   }
 }

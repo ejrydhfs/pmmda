@@ -15,7 +15,7 @@ import org.apache.commons.logging.LogFactory;
 
 import ch.bbv.explorer.actions.ExplorerOpenAction;
 import ch.bbv.explorer.actions.SimpleFileFilter;
-import ch.bbv.mda.persistency.PersistencyException;
+import ch.bbv.mda.persistence.PersistenceException;
 import ch.bbv.mda.ui.MdaDocument;
 import ch.bbv.mda.ui.MdaExplorer;
 
@@ -58,7 +58,7 @@ public class OpenAction extends ExplorerOpenAction {
   public void execute() {
     try {
       openModel(getSelectedFile());
-    } catch (PersistencyException e) {
+    } catch (PersistenceException e) {
       log.debug("File Not Found", e);
     }
   }
@@ -66,11 +66,11 @@ public class OpenAction extends ExplorerOpenAction {
   /**
    * Opens the model in the given file programatically.
    * @param file file containing the model to open.
-   * @throws PersistencyException an exception was encountered when loading the
+   * @throws PersistenceException an exception was encountered when loading the
    *           model.
    * @pre file != null
    */
-  public void openModel(File file) throws PersistencyException {
+  public void openModel(File file) throws PersistenceException {
     assert (file != null);
     MdaExplorer explorer = (MdaExplorer) getExplorer();
     MdaDocument document = new MdaDocument();

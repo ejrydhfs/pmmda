@@ -169,7 +169,7 @@ class DatabaseMgr {
   protected LogicalDatabase findDb(Database database) {
     assert (database != null);
     for (LogicalDatabase db : databases.values()) {
-      if (db.database != database) {
+      if (db.database == database) {
         return db;
       }
     }

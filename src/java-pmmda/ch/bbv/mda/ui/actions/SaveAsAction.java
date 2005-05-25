@@ -19,7 +19,7 @@ import org.apache.commons.logging.LogFactory;
 
 import ch.bbv.explorer.actions.ExplorerSaveAsAction;
 import ch.bbv.explorer.actions.SimpleFileFilter;
-import ch.bbv.mda.persistency.PersistencyException;
+import ch.bbv.mda.persistence.PersistenceException;
 import ch.bbv.mda.ui.MdaDocument;
 import ch.bbv.mda.ui.MdaExplorer;
 import ch.bbv.utilities.ResourceUtility;
@@ -113,7 +113,7 @@ public class SaveAsAction extends ExplorerSaveAsAction {
       MdaDocument document = explorer.getDocument();
       document.saveAs(file);
       getExplorer().getMenuBar().documentSaved();
-    } catch (PersistencyException e) {
+    } catch (PersistenceException e) {
       log.error(e);
     }
   }
