@@ -263,8 +263,10 @@ public class CodeType implements DataObject {
    * method dispatches the visitor to all its relevant children. A relevant
    * child is always another data object.
    * @param visitor visitor to act on the data object.
+   * @pre visitor != null
    */  
   public void accept(Visitor visitor) {
+    assert(visitor != null);
   	visitor.setDepth(visitor.getDepth() + 1);
     visitor.visit(this);
     traverse(visitor);
@@ -276,7 +278,7 @@ public class CodeType implements DataObject {
    * properties containing keys are not cloned because they are immutable.
    * @return a deep copy of the instance.
    */
-  public DataObject copy() {
+  public CodeType copy() {
     CodeType clone = null;
     try {
       clone = (CodeType)clone();
@@ -330,9 +332,11 @@ public class CodeType implements DataObject {
    * @param bean object which property should be set.
    * @param property property to be set.
    * @param key key identifier to set.
+   * @pre (bean != null) && (property != null) && (key != null)
    */
   final protected void setForeignKey(DataObject bean, String property,
       Integer key) {
+	assert((bean != null) && (property != null) && (key != null));
     try {
       Field field = bean.getClass().getDeclaredField(property);
       if (field != null) {
@@ -355,7 +359,7 @@ public class CodeType implements DataObject {
   protected void copy(CodeType clone) {
     clone.values = new ArrayList<CodeValue>();
     for (int i = 0; i < values.size(); i++) {
-      clone.values.add(((CodeValue)(values.get(i)).copy()));
+      clone.values.add(values.get(i).copy());
     }
   }
 

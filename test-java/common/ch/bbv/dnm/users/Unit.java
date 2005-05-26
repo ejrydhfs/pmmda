@@ -1,10 +1,9 @@
-	
 /* This code was generated automatically with the pmMDA generator. Please do 
    NOT add code outside the marked zones. All changes outside the marked areas 
    will be discarded during the next execution of the MDA generator. 
    $Id$
 */
-   
+
 package ch.bbv.dnm.users;
 
 import ch.bbv.dog.DataObject;
@@ -23,6 +22,7 @@ import java.util.*;
  * terminology it is a sub address modeling e.g. a subsudiary of a company. A 
  * unit can have sub units.
  * @version $Revision$
+ * @author MarcelBaumann
  */
 public class Unit implements DataObject {
 
@@ -34,6 +34,10 @@ public class Unit implements DataObject {
    */
   private static final long serialVersionUID = 99990101;
 
+  /**
+   * The human readable name of the entity. The name should be unique in the 
+   * context it is used to simplify navigation for users.
+   */
   private String name;
 
   private String description;
@@ -45,12 +49,12 @@ public class Unit implements DataObject {
   /**
    * Mapping for 1: N relationship units as reverse foreign key.
    */
-  private Integer unitUnitsHandle;
+  private Integer domainUnitsHandle;
 
   /**
    * Mapping for 1: N relationship units as reverse foreign key.
    */
-  private Integer domainUnitsHandle;
+  private Integer unitUnitsHandle;
 
   /** 
    * Unique identifier of the data object instance distinguishing it from all
@@ -168,7 +172,7 @@ public class Unit implements DataObject {
 	String oldName = this.name;
     if (((this.name != null) && !this.name.equals(name)) || 
    	    ((this.name == null) && (name != null)))  {    
-	  this.name = name;
+      this.name = name;
       changeSupport.firePropertyChange("name", oldName, name);
       setModified(true);
     }
@@ -190,7 +194,7 @@ public class Unit implements DataObject {
   public void setDescription(String description) {
     if (((this.description != null) && !this.description.equals(description)) || 
    	    ((this.description == null) && (description != null)))  {    
-	  this.description = description;
+      this.description = description;
       setModified(true);
     }
   }    
@@ -208,6 +212,7 @@ public class Unit implements DataObject {
    * users.
    * @param index index of element to return. 
    * @return the element at the specified position in this list.
+   * @see #setUser(int, User)
    * @see java.util.List#get(int)
    */
   public User getUser(int index) {
@@ -235,6 +240,7 @@ public class Unit implements DataObject {
    * Inserts the given child at the select position in the relation users.
    * @param index index at which the specified element is to be inserted.
    * @param element element to be inserted.
+   * @see #getUser(int)
    * @see java.util.List#add(int, Object)
    */
   public void setUser(int index, User element) {
@@ -267,12 +273,12 @@ public class Unit implements DataObject {
    * @see java.util.List#remove(Object)
    */
   public boolean removeUser(User element) {
-    setModified(true);
-	boolean removed = users.remove(element);
-	if (removed) {
-	  setForeignKey(element, "unitUsersHandle", getId());
-	}
-	return removed;
+    boolean removed = users.remove(element);
+    if (removed) {
+      setModified(true);
+      setForeignKey(element, "unitUsersHandle", getId());
+    }
+    return removed;
   }
 
   /** 
@@ -288,6 +294,7 @@ public class Unit implements DataObject {
    * units.
    * @param index index of element to return. 
    * @return the element at the specified position in this list.
+   * @see #setUnit(int, Unit)
    * @see java.util.List#get(int)
    */
   public Unit getUnit(int index) {
@@ -315,6 +322,7 @@ public class Unit implements DataObject {
    * Inserts the given child at the select position in the relation units.
    * @param index index at which the specified element is to be inserted.
    * @param element element to be inserted.
+   * @see #getUnit(int)
    * @see java.util.List#add(int, Object)
    */
   public void setUnit(int index, Unit element) {
@@ -347,12 +355,12 @@ public class Unit implements DataObject {
    * @see java.util.List#remove(Object)
    */
   public boolean removeUnit(Unit element) {
-    setModified(true);
-	boolean removed = units.remove(element);
-	if (removed) {
-	  setForeignKey(element, "unitUnitsHandle", getId());
-	}
-	return removed;
+    boolean removed = units.remove(element);
+    if (removed) {
+      setModified(true);
+      setForeignKey(element, "unitUnitsHandle", getId());
+    }
+    return removed;
   }
 
   /** 
@@ -360,8 +368,10 @@ public class Unit implements DataObject {
    * method dispatches the visitor to all its relevant children. A relevant
    * child is always another data object.
    * @param visitor visitor to act on the data object.
+   * @pre visitor != null
    */  
   public void accept(Visitor visitor) {
+    assert(visitor != null);
   	visitor.setDepth(visitor.getDepth() + 1);
     visitor.visit(this);
     traverse(visitor);
@@ -373,7 +383,7 @@ public class Unit implements DataObject {
    * properties containing keys are not cloned because they are immutable.
    * @return a deep copy of the instance.
    */
-  public DataObject copy() {
+  public Unit copy() {
     Unit clone = null;
     try {
       clone = (Unit)clone();
@@ -390,7 +400,8 @@ public class Unit implements DataObject {
     changeSupport.addPropertyChangeListener(listener);
   }
   
-  public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+  public void addPropertyChangeListener(String propertyName, 
+      PropertyChangeListener listener) {
     changeSupport.addPropertyChangeListener(propertyName, listener);
   }
   
@@ -398,7 +409,8 @@ public class Unit implements DataObject {
     changeSupport.removePropertyChangeListener(listener);
   }
   
-  public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+  public void removePropertyChangeListener(String propertyName, 
+      PropertyChangeListener listener) {
     changeSupport.removePropertyChangeListener(propertyName, listener);
   }
   
@@ -406,7 +418,8 @@ public class Unit implements DataObject {
     throw new UnsupportedOperationException();
   }
   
-  public void addVetoableChangeListener(String propertyName, VetoableChangeListener listener) {
+  public void addVetoableChangeListener(String propertyName,
+      VetoableChangeListener listener) {
     throw new UnsupportedOperationException();
   }
   
@@ -414,7 +427,8 @@ public class Unit implements DataObject {
     throw new UnsupportedOperationException();
   }
   
-  public void removeVetoableChangeListener(String propertyName, VetoableChangeListener listener) {
+  public void removeVetoableChangeListener(String propertyName,
+      VetoableChangeListener listener) {
     throw new UnsupportedOperationException();
   }
 
@@ -423,8 +437,11 @@ public class Unit implements DataObject {
    * @param bean object which property should be set.
    * @param property property to be set.
    * @param key key identifier to set.
+   * @pre (bean != null) && (property != null) && (key != null)
    */
-  protected void setForeignKey(DataObject bean, String property, Integer key) {
+  final protected void setForeignKey(DataObject bean, String property,
+      Integer key) {
+	assert((bean != null) && (property != null) && (key != null));
     try {
       Field field = bean.getClass().getDeclaredField(property);
       if (field != null) {
@@ -447,11 +464,11 @@ public class Unit implements DataObject {
   protected void copy(Unit clone) {
     clone.users = new ArrayList<User>();
     for (int i = 0; i < users.size(); i++) {
-      clone.users.add(((User)(users.get(i)).copy()));
+      clone.users.add(users.get(i).copy());
     }
     clone.units = new ArrayList<Unit>();
     for (int i = 0; i < units.size(); i++) {
-      clone.units.add(((Unit)(units.get(i)).copy()));
+      clone.units.add(units.get(i).copy());
     }
   }
 
@@ -469,4 +486,7 @@ public class Unit implements DataObject {
       item.accept(visitor);
     }
   }  
+
+/* %% USER DEFINED PROTECTED/PRIVATE CODE START %% */
+/* %% USER DEFINED PROTECTED/PRIVATE CODE END %% */
 }

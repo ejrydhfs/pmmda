@@ -8,7 +8,10 @@ package ch.bbv.mda.generators;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.MissingResourceException;
+import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -188,20 +191,44 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
    */
   private static Log log = LogFactory.getLog(OjbCartridge.class);
 
+  /**
+   * Velocity template used to generate the associated artifact.
+   */
   private Template ojbXmlBoRepositoryTemplate;
 
+  /**
+   * Velocity template used to generate the associated artifact.
+   */
   private Template ojbXmlLwRepositoryTemplate;
 
+  /**
+   * Velocity template used to generate the associated artifact.
+   */
   private Template ddlDbTemplate;
 
+  /**
+   * Velocity template used to generate the associated artifact.
+   */
   private Template ddlDbIntegrityTemplate;
 
+  /**
+   * Velocity template used to generate the associated artifact.
+   */
   private PrintWriter ddlWriter;
 
+  /**
+   * Velocity template used to generate the associated artifact.
+   */
   private PrintWriter ddlIntegrityWriter;
 
+  /**
+   * Velocity template used to generate the associated artifact.
+   */
   private PrintWriter ojbBoWriter;
 
+  /**
+   * Velocity template used to generate the associated artifact.
+   */
   private PrintWriter ojbLwWriter;
 
   /**
@@ -218,7 +245,6 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
 
   public void initialize(Properties properties) {
     super.initialize(properties);
-
     CartridgeFactory factory = CartridgeFactory.getInstance();
     addCartridge(factory.getCartridge("dog"));
     addUndefinedProperty(properties, SOURCE_ROOT_FOLDER_KEY, "");
@@ -414,7 +440,6 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
    * @return true if the element should be generated otherwise false.
    */
   private boolean isPersistent(MetaProperty metaProperty) {
-    TaggedValue value = metaProperty.getTaggedValue(COLUMN_NAME_TAG);
-    return (value != null);
+    return (metaProperty.getTaggedValue(COLUMN_NAME_TAG) != null);
   }
 }

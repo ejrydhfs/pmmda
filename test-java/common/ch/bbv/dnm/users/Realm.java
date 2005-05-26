@@ -1,10 +1,9 @@
-	
 /* This code was generated automatically with the pmMDA generator. Please do 
    NOT add code outside the marked zones. All changes outside the marked areas 
    will be discarded during the next execution of the MDA generator. 
    $Id$
 */
-   
+
 package ch.bbv.dnm.users;
 
 import ch.bbv.dog.DataObject;
@@ -21,6 +20,7 @@ import java.util.*;
  * The realm manages providers, their domains and users. This approach allows 
  * the definition of indenpendant business units with their own rules.
  * @version $Revision$
+ * @author MarcelBaumann
  */
 public class Realm implements DataObject {
 
@@ -32,8 +32,14 @@ public class Realm implements DataObject {
    */
   private static final long serialVersionUID = 99990101;
 
+  /**
+   * Name of the realm as shown to the users.
+   */
   private String name;
 
+  /**
+   * The providers defined in the realm.
+   */
   private List<Provider> providers;
 
   /** 
@@ -144,7 +150,7 @@ public class Realm implements DataObject {
   public void setName(String name) {
     if (((this.name != null) && !this.name.equals(name)) || 
    	    ((this.name == null) && (name != null)))  {    
-	  this.name = name;
+      this.name = name;
       setModified(true);
     }
   }    
@@ -162,6 +168,7 @@ public class Realm implements DataObject {
    * providers.
    * @param index index of element to return. 
    * @return the element at the specified position in this list.
+   * @see #setProvider(int, Provider)
    * @see java.util.List#get(int)
    */
   public Provider getProvider(int index) {
@@ -186,6 +193,7 @@ public class Realm implements DataObject {
    * Inserts the given child at the select position in the relation providers.
    * @param index index at which the specified element is to be inserted.
    * @param element element to be inserted.
+   * @see #getProvider(int)
    * @see java.util.List#add(int, Object)
    */
   public void setProvider(int index, Provider element) {
@@ -216,8 +224,11 @@ public class Realm implements DataObject {
    * @see java.util.List#remove(Object)
    */
   public boolean removeProvider(Provider element) {
-    setModified(true);
-    return providers.remove(element);
+    boolean removed = providers.remove(element);
+    if (removed) {
+      setModified(true);
+    }
+    return removed;
   }
 
   /** 
@@ -225,8 +236,10 @@ public class Realm implements DataObject {
    * method dispatches the visitor to all its relevant children. A relevant
    * child is always another data object.
    * @param visitor visitor to act on the data object.
+   * @pre visitor != null
    */  
   public void accept(Visitor visitor) {
+    assert(visitor != null);
   	visitor.setDepth(visitor.getDepth() + 1);
     visitor.visit(this);
     traverse(visitor);
@@ -238,7 +251,7 @@ public class Realm implements DataObject {
    * properties containing keys are not cloned because they are immutable.
    * @return a deep copy of the instance.
    */
-  public DataObject copy() {
+  public Realm copy() {
     Realm clone = null;
     try {
       clone = (Realm)clone();
@@ -255,7 +268,8 @@ public class Realm implements DataObject {
     throw new UnsupportedOperationException();
   }
   
-  public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+  public void addPropertyChangeListener(String propertyName, 
+      PropertyChangeListener listener) {
     throw new UnsupportedOperationException();
   }
   
@@ -263,7 +277,8 @@ public class Realm implements DataObject {
     throw new UnsupportedOperationException();
   }
   
-  public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+  public void removePropertyChangeListener(String propertyName, 
+      PropertyChangeListener listener) {
     throw new UnsupportedOperationException();
   }
   
@@ -271,7 +286,8 @@ public class Realm implements DataObject {
     throw new UnsupportedOperationException();
   }
   
-  public void addVetoableChangeListener(String propertyName, VetoableChangeListener listener) {
+  public void addVetoableChangeListener(String propertyName,
+      VetoableChangeListener listener) {
     throw new UnsupportedOperationException();
   }
   
@@ -279,7 +295,8 @@ public class Realm implements DataObject {
     throw new UnsupportedOperationException();
   }
   
-  public void removeVetoableChangeListener(String propertyName, VetoableChangeListener listener) {
+  public void removeVetoableChangeListener(String propertyName,
+      VetoableChangeListener listener) {
     throw new UnsupportedOperationException();
   }
 
@@ -288,8 +305,11 @@ public class Realm implements DataObject {
    * @param bean object which property should be set.
    * @param property property to be set.
    * @param key key identifier to set.
+   * @pre (bean != null) && (property != null) && (key != null)
    */
-  protected void setForeignKey(DataObject bean, String property, Integer key) {
+  final protected void setForeignKey(DataObject bean, String property,
+      Integer key) {
+	assert((bean != null) && (property != null) && (key != null));
     try {
       Field field = bean.getClass().getDeclaredField(property);
       if (field != null) {
@@ -312,7 +332,7 @@ public class Realm implements DataObject {
   protected void copy(Realm clone) {
     clone.providers = new ArrayList<Provider>();
     for (int i = 0; i < providers.size(); i++) {
-      clone.providers.add(((Provider)(providers.get(i)).copy()));
+      clone.providers.add(providers.get(i).copy());
     }
   }
 
@@ -327,4 +347,7 @@ public class Realm implements DataObject {
       item.accept(visitor);
     }
   }  
+
+/* %% USER DEFINED PROTECTED/PRIVATE CODE START %% */
+/* %% USER DEFINED PROTECTED/PRIVATE CODE END %% */
 }

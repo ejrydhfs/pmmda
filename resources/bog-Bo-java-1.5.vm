@@ -45,6 +45,7 @@ $line
 /* %% USER DEFINED IMPORT END %% */
 
 #emitClassDescription($class "")
+#set($className=${class.getAttribute("bo-mo-class")})
 #if(${hasAncestors})
 #set($extends=" extends ${ancestors.get(0).getName()}")
 #else
@@ -55,7 +56,7 @@ $line
 #set($implements="${implements}${interface.getName()}, ")
 #end
 #set($implements="${implements}DataObject")
-${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$extends$implements {
+${class.retrieveVisibilityText()} class ${className}${extends}${implements} {
 
 /* %% USER DEFINED DECLARATION START %% */
 #set($lines=${blocks.get("declarations")})
@@ -155,7 +156,7 @@ $line
    * Default constructor of the class necessary for Java bean convention. The 
    * object identifier is set to null to indicate it is a new object.
    */
-  public ${class.getAttribute("bo-mo-class")}() {
+  public ${className}() {
 #foreach ($aggregation in $aggregations) 
 #set($itemType=${aggregation.retrieveTypeClassName()})
   	${aggregation.nameFirstLower()} = #containerCreation($aggregation);
@@ -602,10 +603,10 @@ $line
    * properties containing keys are not cloned because they are immutable.
    * @return a deep copy of the instance.
    */
-  public DataObject copy() {
-    ${class.getAttribute("bo-mo-class")} clone = null;
+  public ${className} copy() {
+    ${className} clone = null;
     try {
-      clone = (${class.getAttribute("bo-mo-class")})clone();
+      clone = (${className})clone();
     } catch (CloneNotSupportedException e) {
       // impossible exception because data object is cloneable.
       return null;
@@ -724,7 +725,7 @@ $line
    * Copies deeply all the attributes of the class and its ancestors.
    * @param clone the copy which deep copy should be generated.
    */
-  protected void copy(${class.getAttribute("bo-mo-class")} clone) {
+  protected void copy(${className} clone) {
 #if($hasAncestors)
     super.copy(clone);
 #end	
@@ -748,7 +749,7 @@ $line
 	}
 #else
     for (int i = 0; i < ${lName}.size(); i++) {
-      clone.${lName}.add(((${itemType})(${lName}.get(i)).copy()));
+      clone.${lName}.add(${lName}.get(i).copy());
     }
 #end
 #end

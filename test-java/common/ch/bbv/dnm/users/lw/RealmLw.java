@@ -16,6 +16,7 @@ import java.util.*;
  * The realm manages providers, their domains and users. This approach allows 
  * the definition of indenpendant business units with their own rules.
  * @version $Revision$
+ * @author MarcelBaumann
  */
 public class RealmLw implements LightweightObject {
 
@@ -28,14 +29,12 @@ public class RealmLw implements LightweightObject {
   private static final long serialVersionUID = 99990101;
 
   /**
-   * The realm manages providers, their domains and users. This approach allows 
-   * the definition of indenpendant business units with their own rules.
+   * Name of the realm as shown to the users.
    */
   private String name;
 
   /**
-   * The realm manages providers, their domains and users. This approach allows 
-   * the definition of indenpendant business units with their own rules.
+   * The providers defined in the realm.
    */
   private List<ProviderLw> providers;
 
@@ -174,7 +173,7 @@ public class RealmLw implements LightweightObject {
    * properties containing keys are not cloned because they are immutable.
    * @return a deep copy of the instance.
    */
-  public LightweightObject deepCopy() {
+  public RealmLw deepCopy() {
     RealmLw clone = null;
     try {
       clone = (RealmLw)clone();
@@ -184,7 +183,7 @@ public class RealmLw implements LightweightObject {
     }
     clone.providers = new java.util.ArrayList<ProviderLw>();
     for (int i = 0; i < providers.size(); i++) {
-      clone.providers.add(((ProviderLw)(providers.get(i)).deepCopy()));
+      clone.providers.add(providers.get(i).deepCopy());
     }
 	return clone;
   }

@@ -1,44 +1,46 @@
 /* This code was generated automatically with the pmMDA generator. Please do 
- NOT add code outside the marked zones. All changes outside the marked areas 
- will be discarded during the next execution of the MDA generator. 
- $Id$
- */
-
+   NOT add code outside the marked zones. All changes outside the marked areas 
+   will be discarded during the next execution of the MDA generator. 
+   $Id$
+*/
+   
 package ch.bbv.mda.pim;
 
-import java.io.*;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import ch.bbv.mda.MetaClass;
+import java.io.File;
+import java.util.*;
 
+/* %% USER DEFINED IMPORT START %% */
+import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import com.thoughtworks.xstream.XStream;
 import ch.bbv.dog.functors.IsModifiedFlagFunctor;
 import ch.bbv.dog.functors.ModifiedFlagFunctor;
-import ch.bbv.mda.MetaClass;
 import ch.bbv.mda.operators.FileOperators;
-
-import com.thoughtworks.xstream.XStream;
-
 /* %% USER DEFINED IMPORT END %% */
 
 /**
- * The code type manager handles all code types and their values defined in the
- * model. Due to the limitations of the UML meta model, reference code values
+ * The code type manager handles all code types and their values defined in the 
+ * model. Due to the limitations of the UML meta model, reference code values 
  * are stored outside the XMI representation of the model.
  * @version $Revision$
  * @author Marcel Baumann
  */
 public class CodeTypeMgr {
 
-  /* %% USER DEFINED DECLARATION START %% */
+/* %% USER DEFINED DECLARATION START %% */
   /**
    * XStream library to serialize/deserialize the code values to xml files.
    */
   private XStream xstream;
 
-  /* %% USER DEFINED DECLARATION END %% */
+/* %% USER DEFINED DECLARATION END %% */
 
   /**
-   * The root directory where the code values of a code type are stored. The
+   * The root directory where the code values of a code type are stored. The 
    * package structure is mapped to a directory hierarchy.
    */
   private File root;
@@ -48,7 +50,7 @@ public class CodeTypeMgr {
    */
   private Map<MetaClass, CodeType> types;
 
-  /* %% USER DEFINED CONSTRUCTORS START %% */
+/* %% USER DEFINED CONSTRUCTORS START %% */
   /**
    * Default constructor of the class necessary for Java bean convention. The
    * object identifier is set to null to indicate it is a new object.
@@ -60,9 +62,9 @@ public class CodeTypeMgr {
     xstream.alias("code", CodeValue.class);
   }
 
-  /* %% USER DEFINED CONSTRUCTORS END %% */
+/* %% USER DEFINED CONSTRUCTORS END %% */
 
-  /* %% USER DEFINED CODE START %% */
+/* %% USER DEFINED CODE START %% */
 
   /**
    * Reset the type manager with a new root. All stored code values are
@@ -130,9 +132,9 @@ public class CodeTypeMgr {
     }
   }
 
-  /* %% USER DEFINED CODE END %% */
+/* %% USER DEFINED CODE END %% */
 
-  /**
+  /** 
    * Returns the current value of the simple property root.
    * @return the value of the simple property root.
    * @see #setRoot(File)
@@ -141,19 +143,19 @@ public class CodeTypeMgr {
     return root;
   }
 
-  /**
+  /** 
    * Sets the new value of the simple property root.
    * @param root new value of the property.
    * @see #getRoot()
-   */
+   */    
   public void setRoot(File root) {
-    if (((this.root != null) && !this.root.equals(root))
-        || ((this.root == null) && (root != null))) {
+    if (((this.root != null) && !this.root.equals(root)) || 
+   	    ((this.root == null) && (root != null)))  {    
       this.root = root;
     }
-  }
+  }    
 
-  /**
+  /** 
    * Gets all elements of the ordered relation types.
    * @return non mutable list of all children.
    * @see java.util.Map#values()
@@ -162,21 +164,21 @@ public class CodeTypeMgr {
     return types.values();
   }
 
-  /**
-   * Returns the element with the specified key in the ordered indexed property
-   * types.
-   * @param key key of element to return.
+  /** 
+   * Returns the element with the specified key in the ordered indexed  
+   * property types.
+   * @param key key of element to return. 
    * @return the element at the specified position in this list.
    * @see #setType(MetaClass, CodeType)
    * @see java.util.Map#get(Object)
    */
   public CodeType getType(MetaClass key) {
-    return types.get(key);
-  }
+    return types.get(key);  
+   }
 
-  /**
-   * Inserts the given child with the given key in the ordered indexed property
-   * types.
+  /** 
+   * Inserts the given child with the given key in the ordered indexed
+   * property types.
    * @param key key at which the specified element is to be inserted.
    * @param value value to be inserted.
    * @see #getType(MetaClass)
@@ -184,25 +186,25 @@ public class CodeTypeMgr {
   public void setType(MetaClass key, CodeType value) {
     types.put(key, value);
   }
-
-  /**
+  
+  /** 
    * Removes the element with the specified key.
-   * @param key key whose mappingis to be removed from the map.
-   * @return true if this list contained the specified element.
+   * @param key key whose mappingis to be removed from the map. 
+   * @return true if this list contained the specified element. 
    * @see java.util.Map#remove(Object)
    */
   public CodeType removeType(MetaClass key) {
     return types.remove(key);
   }
 
-  /**
+  /** 
    * Initializes the attributes generated through the MDA tool.
    */
   private void initialize() {
-    types = new HashMap<MetaClass, CodeType>();
+  	types = new HashMap<MetaClass, CodeType>();
   }
 
-  /* %% USER DEFINED PROTECTED/PRIVATE CODE START %% */
+/* %% USER DEFINED PROTECTED/PRIVATE CODE START %% */
   /**
    * Loads the reference code values associated with the class.
    * @param clazz claxx wich reference coes should be loaded.
@@ -220,10 +222,10 @@ public class CodeTypeMgr {
     }
     return type;
   }
-  
+
   private void synchronize(MetaClass clazz, CodeType type) {
     type.setQualifiedName(clazz.qualifiedName());
     // TODO set hierarchical or not
   }
-  /* %% USER DEFINED PROTECTED/PRIVATE CODE END %% */
+/* %% USER DEFINED PROTECTED/PRIVATE CODE END %% */
 }

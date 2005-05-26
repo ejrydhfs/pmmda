@@ -1,10 +1,9 @@
-	
 /* This code was generated automatically with the pmMDA generator. Please do 
    NOT add code outside the marked zones. All changes outside the marked areas 
    will be discarded during the next execution of the MDA generator. 
    $Id$
 */
-   
+
 package ch.bbv.dnm.users;
 
 import ch.bbv.dog.DataObject;
@@ -22,6 +21,7 @@ import java.util.*;
  * Internet terminology a domain is a Internet domain identified through its 
  * name.
  * @version $Revision$
+ * @author MarcelBaumann
  */
 public class Domain implements DataObject {
 
@@ -33,12 +33,20 @@ public class Domain implements DataObject {
    */
   private static final long serialVersionUID = 99990101;
 
+  /**
+   * The human readable name of the entity. The name should be unique in the 
+   * context it is used to simplify navigation for users.
+   */
   private String name;
 
   private String description;
 
   private String longname;
 
+  /**
+   * The administrator of a domain is the user responsible for it and 
+   * optionally some of its subdomains.
+   */
   private User administrator;
 
   /**
@@ -161,7 +169,7 @@ public class Domain implements DataObject {
   public void setName(String name) {
     if (((this.name != null) && !this.name.equals(name)) || 
    	    ((this.name == null) && (name != null)))  {    
-	  this.name = name;
+      this.name = name;
       setModified(true);
     }
   }    
@@ -182,7 +190,7 @@ public class Domain implements DataObject {
   public void setDescription(String description) {
     if (((this.description != null) && !this.description.equals(description)) || 
    	    ((this.description == null) && (description != null)))  {    
-	  this.description = description;
+      this.description = description;
       setModified(true);
     }
   }    
@@ -203,7 +211,7 @@ public class Domain implements DataObject {
   public void setLongname(String longname) {
     if (((this.longname != null) && !this.longname.equals(longname)) || 
    	    ((this.longname == null) && (longname != null)))  {    
-	  this.longname = longname;
+      this.longname = longname;
       setModified(true);
     }
   }    
@@ -224,7 +232,7 @@ public class Domain implements DataObject {
   public void setAdministrator(User administrator) {
     if (((this.administrator != null) && !this.administrator.equals(administrator)) || 
    	    ((this.administrator == null) && (administrator != null)))  {    
-	  this.administrator = administrator;
+      this.administrator = administrator;
       administratorHandle = (administrator != null ? administrator.getId() : null);
       setModified(true);
     }
@@ -243,6 +251,7 @@ public class Domain implements DataObject {
    * units.
    * @param index index of element to return. 
    * @return the element at the specified position in this list.
+   * @see #setUnit(int, Unit)
    * @see java.util.List#get(int)
    */
   public Unit getUnit(int index) {
@@ -270,6 +279,7 @@ public class Domain implements DataObject {
    * Inserts the given child at the select position in the relation units.
    * @param index index at which the specified element is to be inserted.
    * @param element element to be inserted.
+   * @see #getUnit(int)
    * @see java.util.List#add(int, Object)
    */
   public void setUnit(int index, Unit element) {
@@ -302,12 +312,12 @@ public class Domain implements DataObject {
    * @see java.util.List#remove(Object)
    */
   public boolean removeUnit(Unit element) {
-    setModified(true);
-	boolean removed = units.remove(element);
-	if (removed) {
-	  setForeignKey(element, "domainUnitsHandle", getId());
-	}
-	return removed;
+    boolean removed = units.remove(element);
+    if (removed) {
+      setModified(true);
+      setForeignKey(element, "domainUnitsHandle", getId());
+    }
+    return removed;
   }
 
   /** 
@@ -315,8 +325,10 @@ public class Domain implements DataObject {
    * method dispatches the visitor to all its relevant children. A relevant
    * child is always another data object.
    * @param visitor visitor to act on the data object.
+   * @pre visitor != null
    */  
   public void accept(Visitor visitor) {
+    assert(visitor != null);
   	visitor.setDepth(visitor.getDepth() + 1);
     visitor.visit(this);
     traverse(visitor);
@@ -328,7 +340,7 @@ public class Domain implements DataObject {
    * properties containing keys are not cloned because they are immutable.
    * @return a deep copy of the instance.
    */
-  public DataObject copy() {
+  public Domain copy() {
     Domain clone = null;
     try {
       clone = (Domain)clone();
@@ -345,7 +357,8 @@ public class Domain implements DataObject {
     throw new UnsupportedOperationException();
   }
   
-  public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+  public void addPropertyChangeListener(String propertyName, 
+      PropertyChangeListener listener) {
     throw new UnsupportedOperationException();
   }
   
@@ -353,7 +366,8 @@ public class Domain implements DataObject {
     throw new UnsupportedOperationException();
   }
   
-  public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+  public void removePropertyChangeListener(String propertyName, 
+      PropertyChangeListener listener) {
     throw new UnsupportedOperationException();
   }
   
@@ -361,7 +375,8 @@ public class Domain implements DataObject {
     throw new UnsupportedOperationException();
   }
   
-  public void addVetoableChangeListener(String propertyName, VetoableChangeListener listener) {
+  public void addVetoableChangeListener(String propertyName,
+      VetoableChangeListener listener) {
     throw new UnsupportedOperationException();
   }
   
@@ -369,7 +384,8 @@ public class Domain implements DataObject {
     throw new UnsupportedOperationException();
   }
   
-  public void removeVetoableChangeListener(String propertyName, VetoableChangeListener listener) {
+  public void removeVetoableChangeListener(String propertyName,
+      VetoableChangeListener listener) {
     throw new UnsupportedOperationException();
   }
 
@@ -378,8 +394,11 @@ public class Domain implements DataObject {
    * @param bean object which property should be set.
    * @param property property to be set.
    * @param key key identifier to set.
+   * @pre (bean != null) && (property != null) && (key != null)
    */
-  protected void setForeignKey(DataObject bean, String property, Integer key) {
+  final protected void setForeignKey(DataObject bean, String property,
+      Integer key) {
+	assert((bean != null) && (property != null) && (key != null));
     try {
       Field field = bean.getClass().getDeclaredField(property);
       if (field != null) {
@@ -405,7 +424,7 @@ public class Domain implements DataObject {
 	}
     clone.units = new ArrayList<Unit>();
     for (int i = 0; i < units.size(); i++) {
-      clone.units.add(((Unit)(units.get(i)).copy()));
+      clone.units.add(units.get(i).copy());
     }
   }
 
@@ -423,4 +442,7 @@ public class Domain implements DataObject {
       item.accept(visitor);
     }
   }  
+
+/* %% USER DEFINED PROTECTED/PRIVATE CODE START %% */
+/* %% USER DEFINED PROTECTED/PRIVATE CODE END %% */
 }

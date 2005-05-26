@@ -296,11 +296,17 @@ public class MdaTransformer {
     }
   }
 
-  private void extractDataTypes(MetaModel metaModel, MModel model) {
+  /**
+   * Extracts all data types from the source model and add them to the target
+   * model if not already existing.
+   * @param source source MDA model containing the data types.
+   * @param target target NSUML model to synchronize.
+   */
+  private void extractDataTypes(MetaModel source, MModel target) {
     MDataType mDataType;
-    for (MetaDataType metaDataType : metaModel.getDataTypes()) {
+    for (MetaDataType metaDataType : source.getDataTypes()) {
       boolean found = false;
-      Iterator mDatatypes = new FilterIterator(model.getOwnedElements(),
+      Iterator mDatatypes = new FilterIterator(target.getOwnedElements(),
           MDataType.class);
       while (mDatatypes.hasNext()) {
         mDataType = (MDataType) mDatatypes.next();
@@ -312,11 +318,18 @@ public class MdaTransformer {
       if (!found) {
         mDataType = MFactory.getDefaultFactory().createDataType();
         mDataType.setName(metaDataType.getName());
-        model.addOwnedElement(mDataType);
+        target.addOwnedElement(mDataType);
       }
     }
   }
 
+  /**
+   * Finds the tag with the given name.
+   * @param item item to look for the tag.
+   * @param tagName name of the tag to find.
+   * @return the requested tag if found otherwise null
+   * @pre (item != null) && (tagName != null)
+   */
   private MTaggedValue findTag(MModelElement item, String tagName) {
     assert ((item != null) && (tagName != null));
     for (Iterator i = item.getTaggedValues().iterator(); i.hasNext();) {
@@ -328,6 +341,13 @@ public class MdaTransformer {
     return null;
   }
 
+  /**
+   * Creates a tag with the given name in the item.
+   * @param item item in which the tag should be created.
+   * @param tagName the name of the tag.
+   * @return the newly created tag.
+   * @pre (item != null) && (tagName != null)
+   */
   private MTaggedValue createTag(MModelElement item, String tagName) {
     assert (item != null) && (tagName != null);
     MTaggedValue taggedValue = findTag(item, tagName);
@@ -388,23 +408,26 @@ public class MdaTransformer {
     return mPackage;
   }
 
+  /**
+   * Returns the package with the given name member of the context.
+   * @param context context in which to search the package.
+   * @param name name of the requested package.
+   * @return the requested package if found otherwise null.
+   */
   public MPackage findPackage(MPackage context, String name) {
     assert (context != null) && (name != null);
 
-    MPackage mPackage = null;
     if (name.equals(context.getName())) {
-      mPackage = context;
-    } else {
-      for (Iterator i = new FilterIterator(context.getOwnedElements(),
-          MPackage.class); i.hasNext();) {
-        mPackage = (MPackage) i.next();
-        if (name.equals(mPackage.getName())) {
-          break;
-        }
-        mPackage = null;
+      return context;
+    }
+    for (Iterator i = new FilterIterator(context.getOwnedElements(),
+        MPackage.class); i.hasNext();) {
+      MPackage mPackage = (MPackage) i.next();
+      if (name.equals(mPackage.getName())) {
+        return mPackage;
       }
     }
-    return mPackage;
+    return null;
   }
 
   private MClass findClass(MPackage context, String name) {
@@ -576,7 +599,7 @@ public class MdaTransformer {
     return association;
   }
 
-  protected void updatePropertyFlags(MetaProperty property, MModelElement item) {
+  private void updatePropertyFlags(MetaProperty property, MModelElement item) {
     assert (property != null) && (item != null);
     if (property.isVolatile()) {
       MTaggedValue taggedValue = createTag(item, VOLATILE_TAG);
@@ -598,7 +621,7 @@ public class MdaTransformer {
     }
   }
 
-  protected void updateInitialValue(MetaProperty property, MAttribute attribute) {
+  private void updateInitialValue(MetaProperty property, MAttribute attribute) {
     String initialValue = property.getInitialValue();
     MExpression expression = attribute.getInitialValue();
     if (expression == null) {
@@ -612,22 +635,15 @@ public class MdaTransformer {
     }
   }
 
-  protected boolean isEqual(Multiplicity metaMultiplicity,
-      MMultiplicity mMultiplicity) {
-    assert ((metaMultiplicity != null) && (mMultiplicity != null));
-
-    boolean isEqual = false;
-    if ((metaMultiplicity != null) && (mMultiplicity != null)) {
-      isEqual = (metaMultiplicity.getLowerBound() == mMultiplicity.getLower())
-          && (metaMultiplicity.getUpperBound() == mMultiplicity.getUpper());
-    }
-    return isEqual;
-  }
-
-  protected MMultiplicity convert(Multiplicity metaMultiplicity) {
+  /**
+   * Converts a MDA multiplicity into a NSUML multiplicity
+   * @param multiplicity MDA multiplicity to convert.
+   * @return the requested NSUML multiplicity
+   */
+  private MMultiplicity convert(Multiplicity multiplicity) {
     MMultiplicity mMultiplicity = null;
-    int lowerBound = metaMultiplicity.getLowerBound();
-    int upperBound = metaMultiplicity.getUpperBound();
+    int lowerBound = multiplicity.getLowerBound();
+    int upperBound = multiplicity.getUpperBound();
     if (lowerBound == 0) {
       if (upperBound == 1) {
         mMultiplicity = MMultiplicity.M0_1;
@@ -644,28 +660,34 @@ public class MdaTransformer {
     return mMultiplicity;
   }
 
-  public void extractStereotypeAndVisibility(MetaElement source,
-      MModelElement item) {
+  /**
+   * Extracts the information from the MDA element and overwrites the ones of
+   * the NSUML element defined in the given context.
+   * @param source MDA element used as source of the synchronization.
+   * @param context NSUML context containing the class to synchronize.
+   */
+  private void extractStereotypeAndVisibility(MetaElement source,
+      MModelElement context) {
     String stereotype = source.getStereotype();
-    MStereotype mStereotype = item.getStereotype();
+    MStereotype mStereotype = context.getStereotype();
     if (stereotype != null) {
       if (mStereotype == null)
         mStereotype = MFactory.getDefaultFactory().createStereotype();
       mStereotype.setName(stereotype);
-      item.setStereotype(mStereotype);
-      if (item instanceof MClassifier) {
-        ((MClassifier) item).addOwnedElement(mStereotype);
-      } else if (item instanceof MPackage) {
-        ((MPackage) item).addOwnedElement(mStereotype);
+      context.setStereotype(mStereotype);
+      if (context instanceof MClassifier) {
+        ((MClassifier) context).addOwnedElement(mStereotype);
+      } else if (context instanceof MPackage) {
+        ((MPackage) context).addOwnedElement(mStereotype);
       } else {
         log.info("Cannot associate stereotype '" + stereotype + "' to "
-            + item.getName() + " : " + item.getClass());
+            + context.getName() + " : " + context.getClass());
       }
     } else if (mStereotype != null) {
       mStereotype.setName("");
     }
 
-    setVisibility(item, source.getVisibility());
+    setVisibility(context, source.getVisibility());
   }
 
   /**

@@ -17,6 +17,7 @@ import java.util.*;
  * terminology it is a sub address modeling e.g. a subsudiary of a company. A 
  * unit can have sub units.
  * @version $Revision$
+ * @author MarcelBaumann
  */
 public class UnitLw implements LightweightObject {
 
@@ -29,9 +30,8 @@ public class UnitLw implements LightweightObject {
   private static final long serialVersionUID = 99990101;
 
   /**
-   * A unit is a logical group of resources inside a domain. In Internet 
-   * terminology it is a sub address modeling e.g. a subsudiary of a company. A 
-   * unit can have sub units.
+   * The human readable name of the entity. The name should be unique in the 
+   * context it is used to simplify navigation for users.
    */
   private String name;
 
@@ -244,7 +244,7 @@ public class UnitLw implements LightweightObject {
    * properties containing keys are not cloned because they are immutable.
    * @return a deep copy of the instance.
    */
-  public LightweightObject deepCopy() {
+  public UnitLw deepCopy() {
     UnitLw clone = null;
     try {
       clone = (UnitLw)clone();
@@ -254,11 +254,11 @@ public class UnitLw implements LightweightObject {
     }
     clone.users = new java.util.ArrayList<UserLw>();
     for (int i = 0; i < users.size(); i++) {
-      clone.users.add(((UserLw)(users.get(i)).deepCopy()));
+      clone.users.add(users.get(i).deepCopy());
     }
     clone.units = new java.util.ArrayList<UnitLw>();
     for (int i = 0; i < units.size(); i++) {
-      clone.units.add(((UnitLw)(units.get(i)).deepCopy()));
+      clone.units.add(units.get(i).deepCopy());
     }
 	return clone;
   }

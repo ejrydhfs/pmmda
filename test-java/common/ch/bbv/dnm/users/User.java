@@ -1,10 +1,9 @@
-	
 /* This code was generated automatically with the pmMDA generator. Please do 
    NOT add code outside the marked zones. All changes outside the marked areas 
    will be discarded during the next execution of the MDA generator. 
    $Id$
 */
-   
+
 package ch.bbv.dnm.users;
 
 import ch.bbv.dog.DataObject;
@@ -22,6 +21,7 @@ import java.util.*;
  * A user is an entity who can connect to the system. All operations he 
  * performs can be logged.
  * @version $Revision$
+ * @author MarcelBaumann
  */
 public class User implements DataObject {
 
@@ -33,6 +33,10 @@ public class User implements DataObject {
    */
   private static final long serialVersionUID = 99990101;
 
+  /**
+   * The human readable name of the entity. The name should be unique in the 
+   * context it is used to simplify navigation for users.
+   */
   private String login;
 
   private boolean active;
@@ -169,7 +173,7 @@ public class User implements DataObject {
 	String oldLogin = this.login;
     if (((this.login != null) && !this.login.equals(login)) || 
    	    ((this.login == null) && (login != null)))  {    
-	  this.login = login;
+      this.login = login;
       changeSupport.firePropertyChange("login", oldLogin, login);
       setModified(true);
     }
@@ -212,7 +216,7 @@ public class User implements DataObject {
 	String oldEmail = this.email;
     if (((this.email != null) && !this.email.equals(email)) || 
    	    ((this.email == null) && (email != null)))  {    
-	  this.email = email;
+      this.email = email;
       changeSupport.firePropertyChange("email", oldEmail, email);
       setModified(true);
     }
@@ -234,7 +238,7 @@ public class User implements DataObject {
   public void setPassword(String password) {
     if (((this.password != null) && !this.password.equals(password)) || 
    	    ((this.password == null) && (password != null)))  {    
-	  this.password = password;
+      this.password = password;
       setModified(true);
     }
   }    
@@ -255,7 +259,7 @@ public class User implements DataObject {
   public void setValidTo(Date validTo) {
     if (((this.validTo != null) && !this.validTo.equals(validTo)) || 
    	    ((this.validTo == null) && (validTo != null)))  {    
-	  this.validTo = validTo;
+      this.validTo = validTo;
       setModified(true);
     }
   }    
@@ -276,7 +280,7 @@ public class User implements DataObject {
   public void setValidFrom(Date validFrom) {
     if (((this.validFrom != null) && !this.validFrom.equals(validFrom)) || 
    	    ((this.validFrom == null) && (validFrom != null)))  {    
-	  this.validFrom = validFrom;
+      this.validFrom = validFrom;
       setModified(true);
     }
   }    
@@ -297,7 +301,7 @@ public class User implements DataObject {
   public void setName(String name) {
     if (((this.name != null) && !this.name.equals(name)) || 
    	    ((this.name == null) && (name != null)))  {    
-	  this.name = name;
+      this.name = name;
       setModified(true);
     }
   }    
@@ -315,6 +319,7 @@ public class User implements DataObject {
    * roles.
    * @param index index of element to return. 
    * @return the element at the specified position in this list.
+   * @see #setRole(int, UserRole)
    * @see java.util.List#get(int)
    */
   public UserRole getRole(int index) {
@@ -339,6 +344,7 @@ public class User implements DataObject {
    * Inserts the given child at the select position in the relation roles.
    * @param index index at which the specified element is to be inserted.
    * @param element element to be inserted.
+   * @see #getRole(int)
    * @see java.util.List#add(int, Object)
    */
   public void setRole(int index, UserRole element) {
@@ -369,8 +375,11 @@ public class User implements DataObject {
    * @see java.util.List#remove(Object)
    */
   public boolean removeRole(UserRole element) {
-    setModified(true);
-    return roles.remove(element);
+    boolean removed = roles.remove(element);
+    if (removed) {
+      setModified(true);
+    }
+    return removed;
   }
 
   /** 
@@ -378,8 +387,10 @@ public class User implements DataObject {
    * method dispatches the visitor to all its relevant children. A relevant
    * child is always another data object.
    * @param visitor visitor to act on the data object.
+   * @pre visitor != null
    */  
   public void accept(Visitor visitor) {
+    assert(visitor != null);
   	visitor.setDepth(visitor.getDepth() + 1);
     visitor.visit(this);
     traverse(visitor);
@@ -391,7 +402,7 @@ public class User implements DataObject {
    * properties containing keys are not cloned because they are immutable.
    * @return a deep copy of the instance.
    */
-  public DataObject copy() {
+  public User copy() {
     User clone = null;
     try {
       clone = (User)clone();
@@ -408,7 +419,8 @@ public class User implements DataObject {
     changeSupport.addPropertyChangeListener(listener);
   }
   
-  public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+  public void addPropertyChangeListener(String propertyName, 
+      PropertyChangeListener listener) {
     changeSupport.addPropertyChangeListener(propertyName, listener);
   }
   
@@ -416,7 +428,8 @@ public class User implements DataObject {
     changeSupport.removePropertyChangeListener(listener);
   }
   
-  public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+  public void removePropertyChangeListener(String propertyName, 
+      PropertyChangeListener listener) {
     changeSupport.removePropertyChangeListener(propertyName, listener);
   }
   
@@ -424,7 +437,8 @@ public class User implements DataObject {
     throw new UnsupportedOperationException();
   }
   
-  public void addVetoableChangeListener(String propertyName, VetoableChangeListener listener) {
+  public void addVetoableChangeListener(String propertyName,
+      VetoableChangeListener listener) {
     throw new UnsupportedOperationException();
   }
   
@@ -432,7 +446,8 @@ public class User implements DataObject {
     throw new UnsupportedOperationException();
   }
   
-  public void removeVetoableChangeListener(String propertyName, VetoableChangeListener listener) {
+  public void removeVetoableChangeListener(String propertyName,
+      VetoableChangeListener listener) {
     throw new UnsupportedOperationException();
   }
 
@@ -441,8 +456,11 @@ public class User implements DataObject {
    * @param bean object which property should be set.
    * @param property property to be set.
    * @param key key identifier to set.
+   * @pre (bean != null) && (property != null) && (key != null)
    */
-  protected void setForeignKey(DataObject bean, String property, Integer key) {
+  final protected void setForeignKey(DataObject bean, String property,
+      Integer key) {
+	assert((bean != null) && (property != null) && (key != null));
     try {
       Field field = bean.getClass().getDeclaredField(property);
       if (field != null) {
@@ -465,7 +483,7 @@ public class User implements DataObject {
   protected void copy(User clone) {
     clone.roles = new ArrayList<UserRole>();
     for (int i = 0; i < roles.size(); i++) {
-      clone.roles.add(((UserRole)(roles.get(i)).copy()));
+      clone.roles.add(roles.get(i).copy());
     }
   }
 
@@ -480,4 +498,7 @@ public class User implements DataObject {
       item.accept(visitor);
     }
   }  
+
+/* %% USER DEFINED PROTECTED/PRIVATE CODE START %% */
+/* %% USER DEFINED PROTECTED/PRIVATE CODE END %% */
 }

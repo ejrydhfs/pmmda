@@ -117,6 +117,71 @@
         </dl>
       </answer>
     </faq>
+    <faq>
+      <question>Which Eclipse plugin do you use in the project?</question>
+      <answer>
+				<p>Modern IDE simplify a lot the development activities. We recommend using
+				  such environments and plugins to augment the efficiency of developers. A
+  				fundamental rule in our project is that all artifacts generated with the
+	  			help of interactive tools can also be generated with command line tools.
+		  		This approach guarantees batch generation of the deliverables and are the
+			  	conerstome of a continuous deployment process such as nightly builds.</p>
+				<p>The project uses the <em>Eclipse</em> environment as development platform
+				 for all artifacts. The following features are configured.</p>
+				<dl>
+					<dt>JDT</dt><dd>Java development environment for all Java related source
+						code development.</dd>
+					<dt>CDT</dt><dd>C/C++ development environment for all C++ related source
+						code development.</dd>
+					<dt>CVS</dt><dd>The integrated CVS client is used to communicate with the
+						version management system CVS. The check-in uses the SSH2 mode to
+						authenticate the comitters. The read access uses anonymous login.</dd>
+					<dt>JUnit</dt><dd>The integrated JUnit test client is used to create all
+						units tests.</dd>
+					<dt>Veloeclipse</dt><dd>The velocity plugin is used to edit all Velocity
+						plugin</dd>
+					<dt>XML Buddy</dt><dd>The velocity plugin is used to edit XML files part of
+						the home page of the project. The home page is generated using forest.</dd>
+					<dt>PMD</dt><dd>The PMD plugin is used to generate quality code
+						metrics.</dd>
+					<dt>JDepend</dt><dd>The PMD plugin is used to generate quality code
+						metrics.</dd>
+					<dt>FindBugs</dt><dd>The Find Bugs plugin is used to generate quality code
+						metrics.</dd>
+				</dl>
+				<p>Here some tips how to install these plugins.</p>
+				<dl>
+					<dt>Veloedit</dt>
+          <dd>Online updates are available on <a 
+            href="http://propsorter.sourceforge.net/veloeclipse">VeloEclipse</a>. 
+            Define a site bookmark in Eclipse's Update Manager view, navigate 
+            to the update site via this bookmark and install the Velocity UI 
+            feature.</dd>
+					<dt>XML Buddy</dt>
+					<dd>Download the plugin from <a href="http://www.xmlbuddy.com"> and copy
+					the file in the plugin directory of eclipse. Restart eclipse with the
+					clean option. The web site contains step by step guide.</dd>
+					<dt>PMD Plugin</dt>
+					<dd>Download from <a href="http://sourceforge.net/projects/pmd">PMD</a>. 
+					Install it in the Eclipse plugin directory.</dd>
+					<dt>JDepend Plugin</dt>
+					<dd>Download from <a href="http://andrei.gmxhome.de/jdepend4eclipse">JDepend</a>. 
+					All what you need to install JDepend4Eclipse plugin is to unzip JDepend4Eclipse 
+					zip to you Eclipse plugin directory and restart Eclipse with the clean option. 
+					You don't need to do anymore to install JDepend4Eclipse.</dd>
+					<dt>JDepend Plugin</dt>
+					<dd>Download from <a href="http://sourceforge.net/projects/findbugs">FindBugs</>. 
+					Install it in the Eclipse plugin directory and restart Eclipse with the clean
+					option.</dd>
+					<dt>Eclipse Colorer</dt>
+					<dd>Download from <a href="http://sourceforge.net/projects/eclipsecolorer">EclipseColorer</a>. 
+					Copy ProfilerDLL.dll from root plugin folder into bin folder of your JRE
+					installation. You can skip this step, plugin will ask you and copy DLL into
+					your JRE\BIN when you will start profiling local application inside of
+					Eclipse first time. It will also check, that you have in JRE\BIN same DLL as
+					in plugin directory.</dd>
+				</dl>
+      </answer>
   </part>
   <part id="building">
     <title>Building <em>pmMDA</em> Project</title>

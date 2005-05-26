@@ -1,10 +1,9 @@
-	
 /* This code was generated automatically with the pmMDA generator. Please do 
    NOT add code outside the marked zones. All changes outside the marked areas 
    will be discarded during the next execution of the MDA generator. 
    $Id$
 */
-   
+
 package ch.bbv.dnm.users;
 
 import ch.bbv.dog.DataObject;
@@ -23,6 +22,7 @@ import java.util.*;
  * commercial entities selling domains to various customers. In the Internet 
  * terminology a provider is often called ISP.
  * @version $Revision$
+ * @author MarcelBaumann
  */
 public class Provider implements DataObject {
 
@@ -34,6 +34,10 @@ public class Provider implements DataObject {
    */
   private static final long serialVersionUID = 99990101;
 
+  /**
+   * The human readable name of the entity. The name should be unique in the 
+   * context it is used to simplify navigation for users.
+   */
   private String name;
 
   private String email;
@@ -42,6 +46,10 @@ public class Provider implements DataObject {
 
   private String longname;
 
+  /**
+   * Defines the level of trust the application has to the provider instance. 
+   * Values range between 0 and 1.
+   */
   private Double trusted;
 
   private List<Domain> domains;
@@ -154,7 +162,7 @@ public class Provider implements DataObject {
   public void setName(String name) {
     if (((this.name != null) && !this.name.equals(name)) || 
    	    ((this.name == null) && (name != null)))  {    
-	  this.name = name;
+      this.name = name;
       setModified(true);
     }
   }    
@@ -175,7 +183,7 @@ public class Provider implements DataObject {
   public void setEmail(String email) {
     if (((this.email != null) && !this.email.equals(email)) || 
    	    ((this.email == null) && (email != null)))  {    
-	  this.email = email;
+      this.email = email;
       setModified(true);
     }
   }    
@@ -196,7 +204,7 @@ public class Provider implements DataObject {
   public void setDescription(String description) {
     if (((this.description != null) && !this.description.equals(description)) || 
    	    ((this.description == null) && (description != null)))  {    
-	  this.description = description;
+      this.description = description;
       setModified(true);
     }
   }    
@@ -217,7 +225,7 @@ public class Provider implements DataObject {
   public void setLongname(String longname) {
     if (((this.longname != null) && !this.longname.equals(longname)) || 
    	    ((this.longname == null) && (longname != null)))  {    
-	  this.longname = longname;
+      this.longname = longname;
       setModified(true);
     }
   }    
@@ -238,7 +246,7 @@ public class Provider implements DataObject {
   public void setTrusted(Double trusted) {
     if (((this.trusted != null) && !this.trusted.equals(trusted)) || 
    	    ((this.trusted == null) && (trusted != null)))  {    
-	  this.trusted = trusted;
+      this.trusted = trusted;
       setModified(true);
     }
   }    
@@ -256,6 +264,7 @@ public class Provider implements DataObject {
    * domains.
    * @param index index of element to return. 
    * @return the element at the specified position in this list.
+   * @see #setDomain(int, Domain)
    * @see java.util.List#get(int)
    */
   public Domain getDomain(int index) {
@@ -283,6 +292,7 @@ public class Provider implements DataObject {
    * Inserts the given child at the select position in the relation domains.
    * @param index index at which the specified element is to be inserted.
    * @param element element to be inserted.
+   * @see #getDomain(int)
    * @see java.util.List#add(int, Object)
    */
   public void setDomain(int index, Domain element) {
@@ -315,12 +325,12 @@ public class Provider implements DataObject {
    * @see java.util.List#remove(Object)
    */
   public boolean removeDomain(Domain element) {
-    setModified(true);
-	boolean removed = domains.remove(element);
-	if (removed) {
-	  setForeignKey(element, "providerDomainsHandle", getId());
-	}
-	return removed;
+    boolean removed = domains.remove(element);
+    if (removed) {
+      setModified(true);
+      setForeignKey(element, "providerDomainsHandle", getId());
+    }
+    return removed;
   }
 
   /** 
@@ -328,8 +338,10 @@ public class Provider implements DataObject {
    * method dispatches the visitor to all its relevant children. A relevant
    * child is always another data object.
    * @param visitor visitor to act on the data object.
+   * @pre visitor != null
    */  
   public void accept(Visitor visitor) {
+    assert(visitor != null);
   	visitor.setDepth(visitor.getDepth() + 1);
     visitor.visit(this);
     traverse(visitor);
@@ -341,7 +353,7 @@ public class Provider implements DataObject {
    * properties containing keys are not cloned because they are immutable.
    * @return a deep copy of the instance.
    */
-  public DataObject copy() {
+  public Provider copy() {
     Provider clone = null;
     try {
       clone = (Provider)clone();
@@ -358,7 +370,8 @@ public class Provider implements DataObject {
     throw new UnsupportedOperationException();
   }
   
-  public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+  public void addPropertyChangeListener(String propertyName, 
+      PropertyChangeListener listener) {
     throw new UnsupportedOperationException();
   }
   
@@ -366,7 +379,8 @@ public class Provider implements DataObject {
     throw new UnsupportedOperationException();
   }
   
-  public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+  public void removePropertyChangeListener(String propertyName, 
+      PropertyChangeListener listener) {
     throw new UnsupportedOperationException();
   }
   
@@ -374,7 +388,8 @@ public class Provider implements DataObject {
     throw new UnsupportedOperationException();
   }
   
-  public void addVetoableChangeListener(String propertyName, VetoableChangeListener listener) {
+  public void addVetoableChangeListener(String propertyName,
+      VetoableChangeListener listener) {
     throw new UnsupportedOperationException();
   }
   
@@ -382,7 +397,8 @@ public class Provider implements DataObject {
     throw new UnsupportedOperationException();
   }
   
-  public void removeVetoableChangeListener(String propertyName, VetoableChangeListener listener) {
+  public void removeVetoableChangeListener(String propertyName,
+      VetoableChangeListener listener) {
     throw new UnsupportedOperationException();
   }
 
@@ -391,8 +407,11 @@ public class Provider implements DataObject {
    * @param bean object which property should be set.
    * @param property property to be set.
    * @param key key identifier to set.
+   * @pre (bean != null) && (property != null) && (key != null)
    */
-  protected void setForeignKey(DataObject bean, String property, Integer key) {
+  final protected void setForeignKey(DataObject bean, String property,
+      Integer key) {
+	assert((bean != null) && (property != null) && (key != null));
     try {
       Field field = bean.getClass().getDeclaredField(property);
       if (field != null) {
@@ -415,7 +434,7 @@ public class Provider implements DataObject {
   protected void copy(Provider clone) {
     clone.domains = new ArrayList<Domain>();
     for (int i = 0; i < domains.size(); i++) {
-      clone.domains.add(((Domain)(domains.get(i)).copy()));
+      clone.domains.add(domains.get(i).copy());
     }
   }
 
@@ -430,4 +449,7 @@ public class Provider implements DataObject {
       item.accept(visitor);
     }
   }  
+
+/* %% USER DEFINED PROTECTED/PRIVATE CODE START %% */
+/* %% USER DEFINED PROTECTED/PRIVATE CODE END %% */
 }

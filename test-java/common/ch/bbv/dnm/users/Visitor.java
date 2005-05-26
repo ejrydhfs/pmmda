@@ -23,6 +23,7 @@ public interface Visitor {
    * Returns the current depth in the graph when traversing it with the 
    * visitor. The depth is a positive integer with a minimal value of 1.
    * @return the current depth of the visitor in the graph.
+   * @see #setDepth(int)
    */
   int getDepth();
 
@@ -30,6 +31,7 @@ public interface Visitor {
    * Sets the current depth in the graph when traversing it with the visitor. 
    * The depth is a positive integer with a minimal value of 1.	
    * @param depth current depth of the visitor in the traversed graph.
+   * @see #getDepth()
    */
   void setDepth(int depth);
   

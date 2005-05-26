@@ -167,6 +167,9 @@ public class ExplorerNode implements MutableTreeNode {
     }
   }
 
+  /**
+   * Handles the event that the node has changed.
+   */
   public void nodeChanged() {
     Explorer explorer = getExplorer();
     if (explorer != null) {
@@ -208,11 +211,19 @@ public class ExplorerNode implements MutableTreeNode {
     return children.size() == 0;
   }
 
+  /**
+   * Returns the list of children of the node as enumeration.
+   * @return the list of children as enumeration.
+   */
   public Enumeration children() {
     return Collections.enumeration(children);
   }
 
-  public List getChildren() {
+  /**
+   * Returns the list of children of the node as unmodifiable list.
+   * @return the list of children.
+   */
+  public List<ExplorerNode> getChildren() {
     return Collections.unmodifiableList(children);
   }
 

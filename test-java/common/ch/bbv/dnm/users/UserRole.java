@@ -1,10 +1,9 @@
-	
 /* This code was generated automatically with the pmMDA generator. Please do 
    NOT add code outside the marked zones. All changes outside the marked areas 
    will be discarded during the next execution of the MDA generator. 
    $Id$
 */
-   
+
 package ch.bbv.dnm.users;
 
 import ch.bbv.dog.DataObject;
@@ -19,9 +18,10 @@ import java.sql.Timestamp;
 /**
  * Ther user role implements the correlation table of N..M relation between 
  * user and role. The user name and role name are copied as correlation 
- * attributes because the MySQL does not support view. The above attributes 
- * are required for the Realm component of the Tomcat application.
+ * attributes because the MySQL does not support view. The above attributes are 
+ * required for the Realm component of the Tomcat application.
  * @version $Revision$
+ * @author ${element.valueOfTag("author")}
  */
 public class UserRole implements DataObject {
 
@@ -156,7 +156,7 @@ public class UserRole implements DataObject {
   public void setUsername(String username) {
     if (((this.username != null) && !this.username.equals(username)) || 
    	    ((this.username == null) && (username != null)))  {    
-	  this.username = username;
+      this.username = username;
       setModified(true);
     }
   }    
@@ -177,7 +177,7 @@ public class UserRole implements DataObject {
   public void setRolename(String rolename) {
     if (((this.rolename != null) && !this.rolename.equals(rolename)) || 
    	    ((this.rolename == null) && (rolename != null)))  {    
-	  this.rolename = rolename;
+      this.rolename = rolename;
       setModified(true);
     }
   }    
@@ -198,7 +198,7 @@ public class UserRole implements DataObject {
   public void setRole(Role role) {
     if (((this.role != null) && !this.role.equals(role)) || 
    	    ((this.role == null) && (role != null)))  {    
-	  this.role = role;
+      this.role = role;
       roleHandle = (role != null ? role.getId() : null);
       setModified(true);
     }
@@ -209,8 +209,10 @@ public class UserRole implements DataObject {
    * method dispatches the visitor to all its relevant children. A relevant
    * child is always another data object.
    * @param visitor visitor to act on the data object.
+   * @pre visitor != null
    */  
   public void accept(Visitor visitor) {
+    assert(visitor != null);
   	visitor.setDepth(visitor.getDepth() + 1);
     visitor.visit(this);
     traverse(visitor);
@@ -222,7 +224,7 @@ public class UserRole implements DataObject {
    * properties containing keys are not cloned because they are immutable.
    * @return a deep copy of the instance.
    */
-  public DataObject copy() {
+  public UserRole copy() {
     UserRole clone = null;
     try {
       clone = (UserRole)clone();
@@ -239,7 +241,8 @@ public class UserRole implements DataObject {
     throw new UnsupportedOperationException();
   }
   
-  public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+  public void addPropertyChangeListener(String propertyName, 
+      PropertyChangeListener listener) {
     throw new UnsupportedOperationException();
   }
   
@@ -247,7 +250,8 @@ public class UserRole implements DataObject {
     throw new UnsupportedOperationException();
   }
   
-  public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+  public void removePropertyChangeListener(String propertyName, 
+      PropertyChangeListener listener) {
     throw new UnsupportedOperationException();
   }
   
@@ -255,7 +259,8 @@ public class UserRole implements DataObject {
     throw new UnsupportedOperationException();
   }
   
-  public void addVetoableChangeListener(String propertyName, VetoableChangeListener listener) {
+  public void addVetoableChangeListener(String propertyName,
+      VetoableChangeListener listener) {
     throw new UnsupportedOperationException();
   }
   
@@ -263,7 +268,8 @@ public class UserRole implements DataObject {
     throw new UnsupportedOperationException();
   }
   
-  public void removeVetoableChangeListener(String propertyName, VetoableChangeListener listener) {
+  public void removeVetoableChangeListener(String propertyName,
+      VetoableChangeListener listener) {
     throw new UnsupportedOperationException();
   }
 
@@ -272,8 +278,11 @@ public class UserRole implements DataObject {
    * @param bean object which property should be set.
    * @param property property to be set.
    * @param key key identifier to set.
+   * @pre (bean != null) && (property != null) && (key != null)
    */
-  protected void setForeignKey(DataObject bean, String property, Integer key) {
+  final protected void setForeignKey(DataObject bean, String property,
+      Integer key) {
+	assert((bean != null) && (property != null) && (key != null));
     try {
       Field field = bean.getClass().getDeclaredField(property);
       if (field != null) {
@@ -310,4 +319,7 @@ public class UserRole implements DataObject {
       role.accept(visitor);
     }
   }  
+
+/* %% USER DEFINED PROTECTED/PRIVATE CODE START %% */
+/* %% USER DEFINED PROTECTED/PRIVATE CODE END %% */
 }

@@ -20,6 +20,20 @@ public class VisitorFunctor implements Visitor, AbstractVisitorFunctor {
    */
   private DoFunctor functor; 
 
+  /**
+   * Default constructor of the class.
+   */
+  public VisitorFunctor() {
+  }
+  
+  /**
+   * Constructor of the class, which initializes the functor.
+   * @param functor functor of the visitor.
+   */
+  public VisitorFunctor(DoFunctor functor) {
+    this.functor = functor;
+  }
+	
   /** 
    * The current depth of the visitor when traversing a graph.
    */

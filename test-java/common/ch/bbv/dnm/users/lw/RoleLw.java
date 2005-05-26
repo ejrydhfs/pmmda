@@ -15,6 +15,7 @@ import ch.bbv.dog.LightweightObject;
  * A role defines a group of functions a user can perform. A user can have 
  * multiple roles.
  * @version $Revision$
+ * @author MarcelBaumann
  */
 public class RoleLw implements LightweightObject {
 
@@ -27,8 +28,8 @@ public class RoleLw implements LightweightObject {
   private static final long serialVersionUID = 99990101;
 
   /**
-   * A role defines a group of functions a user can perform. A user can have 
-   * multiple roles.
+   * The human readable name of the entity. The name should be unique in the 
+   * context it is used to simplify navigation for users.
    */
   private String name;
 
@@ -97,7 +98,7 @@ public class RoleLw implements LightweightObject {
    * properties containing keys are not cloned because they are immutable.
    * @return a deep copy of the instance.
    */
-  public LightweightObject deepCopy() {
+  public RoleLw deepCopy() {
     RoleLw clone = null;
     try {
       clone = (RoleLw)clone();

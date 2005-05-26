@@ -724,7 +724,7 @@ public class DogCartridge extends CartridgeImpl implements Cartridge {
       Map<String, List<String>> blocks = extractUserCode(metaPackage
           .getAttribute(BO_PACKAGE), clazz.getAttribute(BO_CLASS));
       context.put(CODE_BLOCKS, blocks);
-      if (stereotype.equalsIgnoreCase(DATA_OBJECT_STEREOTYPE)) {
+      if (DATA_OBJECT_STEREOTYPE.equalsIgnoreCase(stereotype)) {
         generateJavaFile(metaPackage.getAttribute(BO_PACKAGE), clazz
             .getAttribute(BO_CLASS), javaBoTemplate, context);
         if (hasLightweight(clazz)) {
@@ -734,7 +734,7 @@ public class DogCartridge extends CartridgeImpl implements Cartridge {
           generateJavaFile(metaPackage.getAttribute(LW_PACKAGE), clazz
               .getAttribute(LW_CLASS), javaLwTemplate, context);
         }
-      } else if (stereotype.equalsIgnoreCase(REFERENCE_CODE_STEREOTYPE)) {
+      } else if (REFERENCE_CODE_STEREOTYPE.equalsIgnoreCase(stereotype)) {
         generateJavaFile(metaPackage.getAttribute(BO_PACKAGE), clazz
             .getAttribute(BO_CLASS), referenceCodeTemplate, context);
       } else if (clazz.booleanValueOfTag(BO_GENERATE)) {
@@ -1009,8 +1009,8 @@ public class DogCartridge extends CartridgeImpl implements Cartridge {
         USER_CONSTRUCTORS_BEGIN, USER_CONSTRUCTORS_END));
     blocks.put(DEFINITION_BLOCK, FileOperators.extractSourceCode(source,
         USER_CODE_BEGIN, USER_CODE_END));
-    blocks.put(PRIVATE_DEFINITION_BLOCK, FileOperators.extractSourceCode(source,
-        USER_PRIVATE_CODE_BEGIN, USER_PRIVATE_CODE_END));
+    blocks.put(PRIVATE_DEFINITION_BLOCK, FileOperators.extractSourceCode(
+        source, USER_PRIVATE_CODE_BEGIN, USER_PRIVATE_CODE_END));
     return blocks;
   }
 

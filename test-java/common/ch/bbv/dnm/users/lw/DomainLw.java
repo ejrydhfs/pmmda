@@ -17,6 +17,7 @@ import java.util.*;
  * Internet terminology a domain is a Internet domain identified through its 
  * name.
  * @version $Revision$
+ * @author MarcelBaumann
  */
 public class DomainLw implements LightweightObject {
 
@@ -29,9 +30,8 @@ public class DomainLw implements LightweightObject {
   private static final long serialVersionUID = 99990101;
 
   /**
-   * A domain is a set of resources independant from all other domains. In 
-   * Internet terminology a domain is a Internet domain identified through its 
-   * name.
+   * The human readable name of the entity. The name should be unique in the 
+   * context it is used to simplify navigation for users.
    */
   private String name;
 
@@ -172,7 +172,7 @@ public class DomainLw implements LightweightObject {
    * properties containing keys are not cloned because they are immutable.
    * @return a deep copy of the instance.
    */
-  public LightweightObject deepCopy() {
+  public DomainLw deepCopy() {
     DomainLw clone = null;
     try {
       clone = (DomainLw)clone();
@@ -182,7 +182,7 @@ public class DomainLw implements LightweightObject {
     }
     clone.units = new java.util.ArrayList<UnitLw>();
     for (int i = 0; i < units.size(); i++) {
-      clone.units.add(((UnitLw)(units.get(i)).deepCopy()));
+      clone.units.add(units.get(i).deepCopy());
     }
 	return clone;
   }

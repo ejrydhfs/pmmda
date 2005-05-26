@@ -18,6 +18,7 @@ import java.util.*;
  * commercial entities selling domains to various customers. In the Internet 
  * terminology a provider is often called ISP.
  * @version $Revision$
+ * @author MarcelBaumann
  */
 public class ProviderLw implements LightweightObject {
 
@@ -30,10 +31,8 @@ public class ProviderLw implements LightweightObject {
   private static final long serialVersionUID = 99990101;
 
   /**
-   * The provider is the owner of a set of domains. It defines the policies and 
-   * capabilities available in his domains. In our systems the provider is the 
-   * commercial entities selling domains to various customers. In the Internet 
-   * terminology a provider is often called ISP.
+   * The human readable name of the entity. The name should be unique in the 
+   * context it is used to simplify navigation for users.
    */
   private String name;
 
@@ -174,7 +173,7 @@ public class ProviderLw implements LightweightObject {
    * properties containing keys are not cloned because they are immutable.
    * @return a deep copy of the instance.
    */
-  public LightweightObject deepCopy() {
+  public ProviderLw deepCopy() {
     ProviderLw clone = null;
     try {
       clone = (ProviderLw)clone();
@@ -184,7 +183,7 @@ public class ProviderLw implements LightweightObject {
     }
     clone.domains = new java.util.ArrayList<DomainLw>();
     for (int i = 0; i < domains.size(); i++) {
-      clone.domains.add(((DomainLw)(domains.get(i)).deepCopy()));
+      clone.domains.add(domains.get(i).deepCopy());
     }
 	return clone;
   }

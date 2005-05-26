@@ -96,7 +96,6 @@ public class NsUmlTransformer {
       while (!name.endsWith(".xmi")) {
         name = input.getNextEntry().getName();
       }
-
       source = new InputSource(new BufferedInputStream(input));
     } else {
       source = new InputSource(new FileInputStream(file));
@@ -112,6 +111,14 @@ public class NsUmlTransformer {
     return model;
   }
 
+  /**
+   * Writes the NSUML model into the file.
+   * @param mModel NSUML model to write.
+   * @param file file in which the model should be written.
+   * @throws FileNotFoundException if the file could not be found.
+   * @throws IOException if an error occured during the write operation.
+   * @throws IncompleteXMIException if the XMI model has an error.
+   */
   public void writeArgoModel(MModel mModel, File file)
       throws FileNotFoundException, IOException, IncompleteXMIException {
     Writer writer = new BufferedWriter(new OutputStreamWriter(
@@ -148,7 +155,6 @@ public class NsUmlTransformer {
     }
   }
 
-
   /**
    * Extracts the information from the NSUML package and overwrites the ones of
    * the MDA package defined in the given context.
@@ -180,8 +186,8 @@ public class NsUmlTransformer {
   }
 
   /**
-   * Extracts the information from the NSUML class and overwrites the ones of the
-   * MDA class defined in the given context.
+   * Extracts the information from the NSUML class and overwrites the ones of
+   * the MDA class defined in the given context.
    * @param source NSUML class used as source of the synchronization.
    * @param context MDA context containing the class to synchronize.
    */
@@ -191,8 +197,7 @@ public class NsUmlTransformer {
     String name = source.getName();
     if (name == null) {
       if (log.isErrorEnabled()) {
-        log.error("Parsed class without name in package "
-            + context.getName());
+        log.error("Parsed class without name in package " + context.getName());
       }
       return;
     }
@@ -229,8 +234,8 @@ public class NsUmlTransformer {
   }
 
   /**
-   * Extracts the information from the NSUML class and overwrites the ones of the
-   * MDA nested classes defined in the given context.
+   * Extracts the information from the NSUML class and overwrites the ones of
+   * the MDA nested classes defined in the given context.
    * @param source NSUML class used as source of the synchronization.
    * @param context MDA context containing the class to synchronize.
    */
@@ -260,8 +265,8 @@ public class NsUmlTransformer {
     if (source instanceof MInterface) {
       metaNestedClass.setInterface(true);
     }
-    for (Iterator i = new FilterIterator(source.getFeatures(),
-        MAttribute.class); i.hasNext();) {
+    for (Iterator i = new FilterIterator(source.getFeatures(), MAttribute.class); i
+        .hasNext();) {
       extractProperty((MAttribute) i.next(), metaNestedClass);
     }
     for (Iterator i = new FilterIterator(source.getOwnedElements(),
@@ -289,17 +294,22 @@ public class NsUmlTransformer {
     }
   }
 
-  protected void extractProperty(MAttribute attribute, MetaClass metaClass) {
+  /**
+   * Extracts the property from the attribute and synchronizes the target.
+   * @param attribute attribute containing the data.
+   * @param context context in which the property will be updated.
+   */
+  private void extractProperty(MAttribute attribute, MetaClass context) {
     String name = attribute.getName();
     MMultiplicity mMultiplicity = attribute.getMultiplicity();
     MetaProperty property;
     if (mMultiplicity.getUpper() == 1) {
       property = new MetaProperty();
-      metaClass.addProperty(property);
+      context.addProperty(property);
     } else {
       MetaIndexedProperty metaIndexedProperty = new MetaIndexedProperty();
       property = metaIndexedProperty;
-      metaClass.addIndexedProperty(metaIndexedProperty);
+      context.addIndexedProperty(metaIndexedProperty);
     }
     property.setName(name);
     MExpression initialValue = attribute.getInitialValue();
@@ -312,7 +322,7 @@ public class NsUmlTransformer {
           .setTypeName(NsUmlUtilities.getQualifiedName(attribute.getType()));
     } else {
       log.info("Attribute '" + attribute.getName() + "' of class '"
-          + metaClass.getName() + " has no type associated (set to Integer)");
+          + context.getName() + " has no type associated (set to Integer)");
       property.setTypeName("java.lang.Integer");
     }
 
@@ -354,7 +364,7 @@ public class NsUmlTransformer {
       }
     }
   }
-  
+
   private MTaggedValue getTag(MModelElement source, String tagName) {
     assert ((source != null) && (tagName != null));
     MTaggedValue tag = null;
@@ -386,7 +396,7 @@ public class NsUmlTransformer {
    * @param mPackage package, which relations should be extracted.
    * @pre (target != null) && (mPackage != null)
    */
-  protected void extractRelations(MetaModel target, MPackage mPackage) {
+  private void extractRelations(MetaModel target, MPackage mPackage) {
     assert (target != null) && (mPackage != null);
     for (Iterator i = new FilterIterator(mPackage.getOwnedElements(),
         MGeneralization.class); i.hasNext();) {
@@ -486,7 +496,7 @@ public class NsUmlTransformer {
    * @return the equivalent MDA multiplicity of NSUML object.
    * @pre multiplicity != null
    */
-  protected Multiplicity convert(MMultiplicity multiplicity) {
+  private Multiplicity convert(MMultiplicity multiplicity) {
     assert (multiplicity != null);
     Multiplicity metaMultiplicity = null;
     int lower = multiplicity.getLower();
@@ -508,7 +518,13 @@ public class NsUmlTransformer {
     return metaMultiplicity;
   }
 
-  protected VisibilityCode convert(MVisibilityKind visibilityKind) {
+  /**
+   * Converts a NSUML visibility into a MDA visibility. If visibility kind is
+   * null public visibility is returned.
+   * @param visibilityKind NSUML visibility.
+   * @return the equivalent MDA visibility of NSUML object.
+   */
+  private VisibilityCode convert(MVisibilityKind visibilityKind) {
     VisibilityCode visibility = VisibilityCode
         .getCode(VisibilityCode.PUBLIC_CODE);
     if (MVisibilityKind.PUBLIC.equals(visibilityKind)) {
@@ -527,7 +543,7 @@ public class NsUmlTransformer {
    * conventions for a detailed discussion.
    * @param model model to flag.
    */
-  protected void flagSystemPackages(MetaModel model) {
+  private void flagSystemPackages(MetaModel model) {
     for (MetaPackage metaPackage : model.getPackages()) {
       if (isSystemPackage(metaPackage)) {
         metaPackage.setSystem(true);
@@ -555,7 +571,7 @@ public class NsUmlTransformer {
    * @param value string value to convert.
    * @return the boolean value of the string representation.
    */
-  protected boolean booleanValue(String value) {
+  private boolean booleanValue(String value) {
     return (value != null && value.equalsIgnoreCase("true"));
   }
 }

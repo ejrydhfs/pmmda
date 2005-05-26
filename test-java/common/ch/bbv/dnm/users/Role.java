@@ -1,10 +1,9 @@
-	
 /* This code was generated automatically with the pmMDA generator. Please do 
    NOT add code outside the marked zones. All changes outside the marked areas 
    will be discarded during the next execution of the MDA generator. 
    $Id$
 */
-   
+
 package ch.bbv.dnm.users;
 
 import ch.bbv.dog.DataObject;
@@ -21,6 +20,7 @@ import java.sql.Timestamp;
  * A role defines a group of functions a user can perform. A user can have 
  * multiple roles.
  * @version $Revision$
+ * @author MarcelBaumann
  */
 public class Role implements DataObject {
 
@@ -32,6 +32,10 @@ public class Role implements DataObject {
    */
   private static final long serialVersionUID = 99990101;
 
+  /**
+   * The human readable name of the entity. The name should be unique in the 
+   * context it is used to simplify navigation for users.
+   */
   private String name;
 
   private String description;
@@ -150,7 +154,7 @@ public class Role implements DataObject {
 	String oldName = this.name;
     if (((this.name != null) && !this.name.equals(name)) || 
    	    ((this.name == null) && (name != null)))  {    
-	  this.name = name;
+      this.name = name;
       changeSupport.firePropertyChange("name", oldName, name);
       setModified(true);
     }
@@ -172,7 +176,7 @@ public class Role implements DataObject {
   public void setDescription(String description) {
     if (((this.description != null) && !this.description.equals(description)) || 
    	    ((this.description == null) && (description != null)))  {    
-	  this.description = description;
+      this.description = description;
       setModified(true);
     }
   }    
@@ -182,8 +186,10 @@ public class Role implements DataObject {
    * method dispatches the visitor to all its relevant children. A relevant
    * child is always another data object.
    * @param visitor visitor to act on the data object.
+   * @pre visitor != null
    */  
   public void accept(Visitor visitor) {
+    assert(visitor != null);
   	visitor.setDepth(visitor.getDepth() + 1);
     visitor.visit(this);
     traverse(visitor);
@@ -195,7 +201,7 @@ public class Role implements DataObject {
    * properties containing keys are not cloned because they are immutable.
    * @return a deep copy of the instance.
    */
-  public DataObject copy() {
+  public Role copy() {
     Role clone = null;
     try {
       clone = (Role)clone();
@@ -212,7 +218,8 @@ public class Role implements DataObject {
     changeSupport.addPropertyChangeListener(listener);
   }
   
-  public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+  public void addPropertyChangeListener(String propertyName, 
+      PropertyChangeListener listener) {
     changeSupport.addPropertyChangeListener(propertyName, listener);
   }
   
@@ -220,7 +227,8 @@ public class Role implements DataObject {
     changeSupport.removePropertyChangeListener(listener);
   }
   
-  public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+  public void removePropertyChangeListener(String propertyName, 
+      PropertyChangeListener listener) {
     changeSupport.removePropertyChangeListener(propertyName, listener);
   }
   
@@ -228,7 +236,8 @@ public class Role implements DataObject {
     throw new UnsupportedOperationException();
   }
   
-  public void addVetoableChangeListener(String propertyName, VetoableChangeListener listener) {
+  public void addVetoableChangeListener(String propertyName,
+      VetoableChangeListener listener) {
     throw new UnsupportedOperationException();
   }
   
@@ -236,7 +245,8 @@ public class Role implements DataObject {
     throw new UnsupportedOperationException();
   }
   
-  public void removeVetoableChangeListener(String propertyName, VetoableChangeListener listener) {
+  public void removeVetoableChangeListener(String propertyName,
+      VetoableChangeListener listener) {
     throw new UnsupportedOperationException();
   }
 
@@ -245,8 +255,11 @@ public class Role implements DataObject {
    * @param bean object which property should be set.
    * @param property property to be set.
    * @param key key identifier to set.
+   * @pre (bean != null) && (property != null) && (key != null)
    */
-  protected void setForeignKey(DataObject bean, String property, Integer key) {
+  final protected void setForeignKey(DataObject bean, String property,
+      Integer key) {
+	assert((bean != null) && (property != null) && (key != null));
     try {
       Field field = bean.getClass().getDeclaredField(property);
       if (field != null) {
@@ -277,4 +290,7 @@ public class Role implements DataObject {
    */  
   protected void traverse(Visitor visitor) {
   }  
+
+/* %% USER DEFINED PROTECTED/PRIVATE CODE START %% */
+/* %% USER DEFINED PROTECTED/PRIVATE CODE END %% */
 }

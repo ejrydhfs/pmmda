@@ -16,6 +16,7 @@ import java.util.Date;
  * A user is an entity who can connect to the system. All operations he 
  * performs can be logged.
  * @version $Revision$
+ * @author MarcelBaumann
  */
 public class UserLw implements LightweightObject {
 
@@ -28,8 +29,8 @@ public class UserLw implements LightweightObject {
   private static final long serialVersionUID = 99990101;
 
   /**
-   * A user is an entity who can connect to the system. All operations he 
-   * performs can be logged.
+   * The human readable name of the entity. The name should be unique in the 
+   * context it is used to simplify navigation for users.
    */
   private String login;
 
@@ -178,7 +179,7 @@ public class UserLw implements LightweightObject {
    * properties containing keys are not cloned because they are immutable.
    * @return a deep copy of the instance.
    */
-  public LightweightObject deepCopy() {
+  public UserLw deepCopy() {
     UserLw clone = null;
     try {
       clone = (UserLw)clone();
