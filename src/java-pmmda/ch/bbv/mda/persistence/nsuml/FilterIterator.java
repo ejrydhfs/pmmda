@@ -14,7 +14,7 @@ import java.util.Iterator;
  * @author MarcelBaumann
  * @version $Revision$
  */
-public class FilterIterator implements Iterator {
+public class FilterIterator<T> implements Iterator<T> {
   /**
    * Iterator used to iterate over the collection.
    */
@@ -23,13 +23,13 @@ public class FilterIterator implements Iterator {
   /**
    * Class used to filter the items of the collection.
    */
-  private Class filter;
+  private Class<T> filter;
 
   /**
    * The next element of the iterator. This buffer is necessary to implement the
    * has next method.
    */
-  private Object data;
+  private T data;
 
   /**
    * Constructor of the class.
@@ -37,7 +37,7 @@ public class FilterIterator implements Iterator {
    * @param filter the filter criterium.
    * @pre (collection != null) && (filter != null)
    */
-  public FilterIterator(Collection<Object> collection, Class filter) {
+  public FilterIterator(Collection collection, Class<T> filter) {
     assert (collection != null) && (filter != null);
     iterator = collection.iterator();
     this.filter = filter;
@@ -66,11 +66,11 @@ public class FilterIterator implements Iterator {
    * @return the next object of the iterator if defined otherwise null.
    * @see java.util.Iterator#next()
    */
-  public Object next() {
-    Object value = data;
+  public T next() {
+    T value = data;
     data = null;
     while (iterator.hasNext()) {
-      data = iterator.next();
+      data = (T)iterator.next();
       if (filter.isAssignableFrom(data.getClass())) {
         break;
       }

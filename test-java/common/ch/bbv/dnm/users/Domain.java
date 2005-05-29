@@ -420,7 +420,7 @@ public class Domain implements DataObject {
    */
   protected void copy(Domain clone) {
     if (administrator != null) {
-      clone.administrator = (User)administrator.copy();
+      clone.administrator = administrator.copy();
 	}
     clone.units = new ArrayList<Unit>();
     for (int i = 0; i < units.size(); i++) {

@@ -80,11 +80,10 @@ public class MdaTransformer {
   private Map<Object, Object> elements;
 
   /**
-   * Stores MAttributes with associated MetaClasses denoting the type. This map
-   * is needed because type references to MClasses not created at the time we
-   * look it up have to be post processed.
+   * This map is needed because type references to MClasses not created at the
+   * time we look it up have to be post processed.
    */
-  private Map missingAttributeTypes;
+  private Map<MAttribute, MetaClass> missingAttributeTypes;
 
   /**
    * NSUML model read from a XMI file.
@@ -101,7 +100,7 @@ public class MdaTransformer {
    */
   public MdaTransformer() {
     elements = new HashMap<Object, Object>();
-    missingAttributeTypes = new HashMap();
+    missingAttributeTypes = new HashMap<MAttribute, MetaClass>();
   }
 
   /**
@@ -306,10 +305,10 @@ public class MdaTransformer {
     MDataType mDataType;
     for (MetaDataType metaDataType : source.getDataTypes()) {
       boolean found = false;
-      Iterator mDatatypes = new FilterIterator(target.getOwnedElements(),
-          MDataType.class);
+      Iterator<MDataType> mDatatypes = new FilterIterator<MDataType>(target
+          .getOwnedElements(), MDataType.class);
       while (mDatatypes.hasNext()) {
-        mDataType = (MDataType) mDatatypes.next();
+        mDataType = mDatatypes.next();
         if (mDataType.getName().equals(metaDataType.getName())) {
           found = true;
           break;
@@ -386,29 +385,6 @@ public class MdaTransformer {
   }
 
   /**
-   * Returns the package with the given qualified name.
-   * @param qualifiedName qualified name of the package.
-   * @param model model containing the package.
-   * @return the requested package if found otherwise null.
-   */
-  private MPackage findPackage(MModel model, String qualifiedName) {
-    assert (model != null) && (qualifiedName != null);
-
-    MPackage mPackage = null;
-    StringTokenizer tokenizer = new StringTokenizer(qualifiedName, ".");
-    MPackage context = model;
-    while (tokenizer.hasMoreTokens()) {
-      String name = tokenizer.nextToken();
-      mPackage = findPackage(context, name);
-      if (mPackage == null) {
-        break;
-      }
-      context = mPackage;
-    }
-    return mPackage;
-  }
-
-  /**
    * Returns the package with the given name member of the context.
    * @param context context in which to search the package.
    * @param name name of the requested package.
@@ -420,9 +396,9 @@ public class MdaTransformer {
     if (name.equals(context.getName())) {
       return context;
     }
-    for (Iterator i = new FilterIterator(context.getOwnedElements(),
-        MPackage.class); i.hasNext();) {
-      MPackage mPackage = (MPackage) i.next();
+    for (Iterator<MPackage> i = new FilterIterator<MPackage>(context
+        .getOwnedElements(), MPackage.class); i.hasNext();) {
+      MPackage mPackage = i.next();
       if (name.equals(mPackage.getName())) {
         return mPackage;
       }
@@ -434,9 +410,9 @@ public class MdaTransformer {
     assert (context != null) && (name != null);
 
     MClass mClass = null;
-    for (Iterator i = new FilterIterator(context.getOwnedElements(),
-        MClass.class); i.hasNext();) {
-      mClass = (MClass) i.next();
+    for (Iterator<MClass> i = new FilterIterator<MClass>(context
+        .getOwnedElements(), MClass.class); i.hasNext();) {
+      mClass = i.next();
       if (name.equals(mClass.getName())) {
         break;
       }
@@ -449,9 +425,9 @@ public class MdaTransformer {
     assert ((context != null) && (name != null));
 
     MClass mClass = null;
-    for (Iterator i = new FilterIterator(context.getOwnedElements(),
-        MClass.class); i.hasNext();) {
-      mClass = (MClass) i.next();
+    for (Iterator<MClass> i = new FilterIterator<MClass>(context
+        .getOwnedElements(), MClass.class); i.hasNext();) {
+      mClass = i.next();
       if (name.equals(mClass.getName())) {
         break;
       }
@@ -488,18 +464,18 @@ public class MdaTransformer {
     assert (context != null) && (name != null);
 
     MAttribute mAttribute = null;
-    for (Iterator i = new FilterIterator(context.getFeatures(),
-        MAttribute.class); i.hasNext();) {
-      mAttribute = (MAttribute) i.next();
+    for (Iterator<MAttribute> i = new FilterIterator<MAttribute>(context
+        .getFeatures(), MAttribute.class); i.hasNext();) {
+      mAttribute = i.next();
       if (name.equals(mAttribute.getName())) {
         break;
       }
       mAttribute = null;
     }
     if (mAttribute == null) {
-      for (Iterator i = new FilterIterator(context.getOwnedElements(),
-          MAttribute.class); i.hasNext();) {
-        mAttribute = (MAttribute) i.next();
+      for (Iterator<MAttribute> i = new FilterIterator<MAttribute>(context
+          .getOwnedElements(), MAttribute.class); i.hasNext();) {
+        mAttribute = i.next();
         if (name.equals(mAttribute.getName())) {
           break;
         }
@@ -528,9 +504,9 @@ public class MdaTransformer {
   }
 
   private MClassifier findDataType(String name) {
-    for (Iterator i = new FilterIterator(mModel.getOwnedElements(),
-        MDataType.class); i.hasNext();) {
-      MDataType mDataType = (MDataType) i.next();
+    for (Iterator<MDataType> i = new FilterIterator<MDataType>(mModel
+        .getOwnedElements(), MDataType.class); i.hasNext();) {
+      MDataType mDataType = i.next();
       if (mDataType.getName().equals(name)) {
         return mDataType;
       }
@@ -562,12 +538,10 @@ public class MdaTransformer {
   }
 
   private void processMissingAttributeTypes() {
-    MAttribute mAttribute;
     MClass mClass;
     MetaClass metaClass;
-    for (Iterator i = missingAttributeTypes.keySet().iterator(); i.hasNext();) {
-      mAttribute = (MAttribute) i.next();
-      metaClass = (MetaClass) missingAttributeTypes.get(mAttribute);
+    for (MAttribute mAttribute : missingAttributeTypes.keySet()) {
+      metaClass = missingAttributeTypes.get(mAttribute);
       mClass = (MClass) elements.get(metaClass);
       mAttribute.setType(mClass);
     }
@@ -578,9 +552,9 @@ public class MdaTransformer {
     assert (context != null) && (clazz != null) && (name != null);
 
     MAssociation association = null;
-    for (Iterator i = new FilterIterator(context.getOwnedElements(),
-        MAssociation.class); i.hasNext();) {
-      association = (MAssociation) i.next();
+    for (Iterator<MAssociation> i = new FilterIterator<MAssociation>(context
+        .getOwnedElements(), MAssociation.class); i.hasNext();) {
+      association = i.next();
 
       MAssociationEnd e1 = association.getConnection(0);
       MAssociationEnd e2 = association.getConnection(1);

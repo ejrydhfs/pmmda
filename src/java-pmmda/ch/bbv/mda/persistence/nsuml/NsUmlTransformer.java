@@ -136,21 +136,21 @@ public class NsUmlTransformer {
   public void synchronize(MModel source, MetaModel target) {
     target.setName(source.getName());
 
-    for (Iterator i = new FilterIterator(source.getOwnedElements(),
-        MPackage.class); i.hasNext();) {
-      MPackage mSubPackage = (MPackage) i.next();
+    for (Iterator<MPackage> i = new FilterIterator<MPackage>(source
+        .getOwnedElements(), MPackage.class); i.hasNext();) {
+      MPackage mSubPackage = i.next();
       extractPackage(mSubPackage, target);
     }
     extractRelations(source, target);
-    for (Iterator i = new FilterIterator(source.getOwnedElements(),
-        MClassifier.class); i.hasNext();) {
-      MClassifier mClass = (MClassifier) i.next();
+    for (Iterator<MClassifier> i = new FilterIterator<MClassifier>(source
+        .getOwnedElements(), MClassifier.class); i.hasNext();) {
+      MClassifier mClass = i.next();
       extractDataType(mClass, target);
     }
     flagSystemPackages(target);
-    for (Iterator i = new FilterIterator(source.getOwnedElements(),
-        MClass.class); i.hasNext();) {
-      MClass mClass = (MClass) i.next();
+    for (Iterator<MClass> i = new FilterIterator<MClass>(source
+        .getOwnedElements(), MClass.class); i.hasNext();) {
+      MClass mClass = i.next();
       extractClass(mClass, target);
     }
   }
@@ -172,15 +172,15 @@ public class NsUmlTransformer {
     }
     extractStereotypeAndTags(source, metaPackage);
 
-    for (Iterator i = new FilterIterator(source.getOwnedElements(),
-        MClassifier.class); i.hasNext();) {
-      MClassifier mClass = (MClassifier) i.next();
+    for (Iterator<MClassifier> i = new FilterIterator<MClassifier>(source
+        .getOwnedElements(), MClassifier.class); i.hasNext();) {
+      MClassifier mClass = i.next();
       extractClass(mClass, metaPackage);
     }
 
-    for (Iterator i = new FilterIterator(source.getOwnedElements(),
-        MPackage.class); i.hasNext();) {
-      MPackage mSubPackage = (MPackage) i.next();
+    for (Iterator<MPackage> i = new FilterIterator<MPackage>(source
+        .getOwnedElements(), MPackage.class); i.hasNext();) {
+      MPackage mSubPackage = i.next();
       extractPackage(mSubPackage, context);
     }
   }
@@ -217,18 +217,18 @@ public class NsUmlTransformer {
       metaClass.setInterface(true);
     }
 
-    for (Iterator i = new FilterIterator(source.getFeatures(), MAttribute.class); i
-        .hasNext();) {
-      extractProperty((MAttribute) i.next(), metaClass);
+    for (Iterator<MAttribute> i = new FilterIterator<MAttribute>(source
+        .getFeatures(), MAttribute.class); i.hasNext();) {
+      extractProperty(i.next(), metaClass);
     }
-    for (Iterator i = new FilterIterator(source.getOwnedElements(),
-        MAttribute.class); i.hasNext();) {
-      extractProperty((MAttribute) i.next(), metaClass);
+    for (Iterator<MAttribute> i = new FilterIterator<MAttribute>(source
+        .getOwnedElements(), MAttribute.class); i.hasNext();) {
+      extractProperty(i.next(), metaClass);
     }
 
-    for (Iterator i = new FilterIterator(source.getOwnedElements(),
-        MClassifier.class); i.hasNext();) {
-      MClassifier mNestedClass = (MClassifier) i.next();
+    for (Iterator<MClassifier> i = new FilterIterator<MClassifier>(source
+        .getOwnedElements(), MClassifier.class); i.hasNext();) {
+      MClassifier mNestedClass = i.next();
       extractNestedClass(mNestedClass, metaClass);
     }
   }
@@ -265,13 +265,13 @@ public class NsUmlTransformer {
     if (source instanceof MInterface) {
       metaNestedClass.setInterface(true);
     }
-    for (Iterator i = new FilterIterator(source.getFeatures(), MAttribute.class); i
-        .hasNext();) {
-      extractProperty((MAttribute) i.next(), metaNestedClass);
+    for (Iterator<MAttribute> i = new FilterIterator<MAttribute>(source
+        .getFeatures(), MAttribute.class); i.hasNext();) {
+      extractProperty(i.next(), metaNestedClass);
     }
-    for (Iterator i = new FilterIterator(source.getOwnedElements(),
-        MClassifier.class); i.hasNext();) {
-      MClassifier mNestedNestedClass = (MClassifier) i.next();
+    for (Iterator<MClassifier> i = new FilterIterator<MClassifier>(source
+        .getOwnedElements(), MClassifier.class); i.hasNext();) {
+      MClassifier mNestedNestedClass = i.next();
       extractNestedClass(mNestedNestedClass, metaNestedClass);
     }
   }
@@ -379,9 +379,9 @@ public class NsUmlTransformer {
   }
 
   private void extractRelations(MModel source, MetaModel target) {
-    for (Iterator i = new FilterIterator(source.getOwnedElements(),
-        MPackage.class); i.hasNext();) {
-      extractRelations(target, (MPackage) i.next());
+    for (Iterator<MPackage> i = new FilterIterator<MPackage>(source
+        .getOwnedElements(), MPackage.class); i.hasNext();) {
+      extractRelations(target, i.next());
     }
   }
 
@@ -398,9 +398,9 @@ public class NsUmlTransformer {
    */
   private void extractRelations(MetaModel target, MPackage mPackage) {
     assert (target != null) && (mPackage != null);
-    for (Iterator i = new FilterIterator(mPackage.getOwnedElements(),
-        MGeneralization.class); i.hasNext();) {
-      MGeneralization generalization = (MGeneralization) i.next();
+    for (Iterator<MGeneralization> i = new FilterIterator<MGeneralization>(
+        mPackage.getOwnedElements(), MGeneralization.class); i.hasNext();) {
+      MGeneralization generalization = i.next();
       MetaClass superClass = (MetaClass) elements.get(generalization
           .getParent());
       MetaClass metaClass = (MetaClass) elements.get(generalization.getChild());
@@ -409,9 +409,9 @@ public class NsUmlTransformer {
       }
     }
 
-    for (Iterator i = new FilterIterator(mPackage.getOwnedElements(),
-        MAbstraction.class); i.hasNext();) {
-      MAbstraction ma = (MAbstraction) i.next();
+    for (Iterator<MAbstraction> i = new FilterIterator<MAbstraction>(mPackage
+        .getOwnedElements(), MAbstraction.class); i.hasNext();) {
+      MAbstraction ma = i.next();
       if ((ma.getSuppliers().size() == 0) || (ma.getClients().size() == 0)) {
         if (log.isErrorEnabled()) {
           log.error("Association (MAbstraction) without end " + ma.getName()
@@ -429,10 +429,10 @@ public class NsUmlTransformer {
       }
     }
 
-    Iterator associations = new FilterIterator(mPackage.getOwnedElements(),
-        MAssociation.class);
+    Iterator<MAssociation> associations = new FilterIterator<MAssociation>(
+        mPackage.getOwnedElements(), MAssociation.class);
     while (associations.hasNext()) {
-      MAssociation association = (MAssociation) associations.next();
+      MAssociation association = associations.next();
       MAssociationEnd e1 = association.getConnection(0);
       MAssociationEnd e2 = association.getConnection(1);
       if ((e1 == null) || (e2 == null)) {
@@ -484,9 +484,9 @@ public class NsUmlTransformer {
       }
     }
 
-    for (Iterator i = new FilterIterator(mPackage.getOwnedElements(),
-        MPackage.class); i.hasNext();) {
-      extractRelations(target, (MPackage) i.next());
+    for (Iterator<MPackage> i = new FilterIterator<MPackage>(mPackage
+        .getOwnedElements(), MPackage.class); i.hasNext();) {
+      extractRelations(target, i.next());
     }
   }
 

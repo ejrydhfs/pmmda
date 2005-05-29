@@ -29,60 +29,108 @@
         documenting, answering questions, reporting bugs, etc.) or by resource 
         donations (money, time, publicity, hardware, conference presentations, 
         speeches, etc.).</p>
-		<p>To begin with, we suggest you to subscribe to the news and forums of 
-			the project (follow the link for information on how to subscribe 
-			and to access the forums) <a 
-			href="http://www.sourceforge.net/projects/pmmda">forums</a>.</p>
-		<p>This document provides information how to set up the Eclipse 
-			environment and the <em>pmMDA</em> project. Upon these steps you 
-			will be able to develop your own cartridges or extend the MDA 
-			kernel.</p>
+      <p>To begin with, we suggest you to subscribe to the news and forums of 
+        the project (follow the link for information on how to subscribe and to 
+        access the forums) <a 
+        href="http://www.sourceforge.net/projects/pmmda">forums</a>.</p>
+      <p>This document provides information how to set up the Eclipse 
+        environment and the <em>pmMDA</em> project. Upon these steps you will 
+        be able to develop your own cartridges or extend the MDA kernel.</p>
     </section>
     <section>
-      <title>Install Project</title>
-      <p>Developers interested to participate to the project must have an 
-        account in Sourceforge and install Eclipse 3.x on their development 
-        machine. The next steps install the <em>pmMDA</em> project.</p>
-      <ol>
-        <li>Define a JDK installation named <em>jdk1.5</em> and another named 
-          <em>jdk1.4</em> in Eclipse (Windows/Preferences/Java/Installed JRE) 
-          and mapped them to your local installation of JDK 1.4.x and JDK 
-          1.5.x.</li>
-		<li>Define a classpath variable named <em>JDK_TOOLS</em> and mapped it 
-			to the location of the <code>tools.jar</code> file located in the 
-			<code>lib</code> directory of your JDK installation in Eclipse 
-			(Windows/Preferences/Java/Build Path/Classpath Variables). Please 
-			consult the JDK documentation to see what is the role of 
-			<code>tools.jar</code>.</li>
-        <li>Check-out the <em>pmMDA</em> project from Sourceforge using the the 
-          anonymous method or the SSH2 method if you are a registered 
-          developer. Directives how to set up such a CVS repository can be 
-          found in the Eclipse help. You should check out the project as a Java 
-          project in Eclipse CVS view. You must publish your changes as patches 
-          and send them to the Sourceforge project responsible.</li>
-        <li>Retrieve the development library package available under the 
-          download files of the project. Create a directory <em>lib</em> in the 
-          project, unzip the downloaded file and copy all the libraries files 
-          to the <em>lib</em> directory. A subset of these libraries is used to 
-          execute the provided tests. The list of required libraries stored in 
-          the <em>test-lib</em> directory is available in CVS.</li>
-        <li>You should now be able to compile the project. Some errors can 
-          still remain in the test folders. Start the <em>pmMDA</em> 
-          application with the provided model and configuration file, generate 
-          the artifacts with all the loaded cartridges. Rebuild the project. 
-          Now no errors should remain.</li>
-        <li>If you want to generate the project metrics you must download the 
-          metrics library package containing the libraries of the used quality 
-          tools. Unzip this file and copy all the libraries in the directory 
-          <em>scripts/lib</em>.</li>
-      </ol>
-      <p>Detailed instructions how to work with sourceforge project can be 
-        found on their <a href="http://www.sourceforge.net/docman/?group_id=1"> 
-        home page </a>.</p>
-      <p>If you have the status of registered developer, you can directly 
-        commit your enhancements in CVS. Ask the technical project leader to 
-        become a registered developer and receive write access to CVS 
-        repository.</p>
+      <title>Install Development Environment</title>
+      <p>If you are interesting to work on the <em>pmMDA</em> project you must 
+        download the project and configure Eclipse IDE. Tips are also provided 
+        for the Eclipse plugins used in the project.</p>
+      <section>
+        <title>Configure Project</title>
+        <p>Developers interested to participate to the project must have an 
+          account in Sourceforge and install Eclipse 3.x on their development 
+          machine. The next steps install the <em>pmMDA</em> project.</p>
+        <ol>
+          <li>Define a JDK installation named <em>jdk1.5</em> and another named 
+            <em>jdk1.4</em> in Eclipse (Windows/Preferences/Java/Installed JRE) 
+            and mapped them to your local installation of JDK 1.4.x and JDK 
+            1.5.x.</li>
+          <li>Define a classpath variable named <em>JDK_TOOLS</em> and mapped 
+            it to the location of the <code>tools.jar</code> file located in 
+            the <code>lib</code> directory of your JDK installation in Eclipse 
+            (Windows/Preferences/Java/Build Path/Classpath Variables). Please 
+            consult the JDK documentation to see what is the role of 
+            <code>tools.jar</code>.</li>
+          <li>Check-out the <em>pmMDA</em> project from Sourceforge using the 
+            the anonymous method or the SSH2 method if you are a registered 
+            developer. Directives how to set up such a CVS repository can be 
+            found in the Eclipse help. You should check out the project as a 
+            Java project in Eclipse CVS view. You must publish your changes as 
+            patches and send them to the Sourceforge project responsible.</li>
+          <li>Retrieve the development library package available under the 
+            download files of the project. Create a directory <em>lib</em> in 
+            the project, unzip the downloaded file and copy all the libraries 
+            files to the <em>lib</em> directory. A subset of these libraries is 
+            used to execute the provided tests. The list of required libraries 
+            stored in the <em>test-lib</em> directory is available in CVS.</li>
+          <li>You should now be able to compile the project. Some errors can 
+            still remain in the test folders. Start the <em>pmMDA</em> 
+            application with the provided model and configuration file, 
+            generate the artifacts with all the loaded cartridges. Rebuild the 
+            project. Now no errors should remain.</li>
+          <li>If you want to generate the project metrics you must download the 
+            metrics library package containing the libraries of the used 
+            quality tools. Unzip this file and copy all the libraries in the 
+            directory <em>scripts/lib</em>.</li>
+        </ol>
+        <p>Detailed instructions how to work with sourceforge project can be 
+          found on their <a 
+          href="http://www.sourceforge.net/docman/?group_id=1"> home page 
+          </a>.</p>
+        <p>If you have the status of registered developer, you can directly 
+          commit your enhancements in CVS. Ask the technical project leader to 
+          become a registered developer and receive write access to CVS 
+          repository.</p>
+      </section>
+      <section>
+        <title>Used Eclipse Plugins</title>
+        <p>Here some tips how to install the plugins often used in the 
+          project..</p>
+        <dl>
+          <dt>Veloedit</dt>
+          <dd>Online updates are available on <a 
+            href="http://propsorter.sourceforge.net/veloeclipse">VeloEclipse</a>. 
+            Define a site bookmark in Eclipse's Update Manager view, navigate 
+            to the update site via this bookmark and install the Velocity UI 
+            feature.</dd>
+          <dt>XML Buddy</dt>
+          <dd>Download the plugin from <a 
+            href="http://www.xmlbuddy.com">xmlbuddy</a> and copy the file in 
+            the plugin directory of eclipse. Restart eclipse with the clean 
+            option. The web site contains step by step guide.</dd>
+          <dt>PMD Plugin</dt>
+          <dd>Download from <a 
+            href="http://sourceforge.net/projects/pmd">PMD</a>. Install it in 
+            the Eclipse plugin directory.</dd>
+          <dt>JDepend Plugin</dt>
+          <dd>Download from <a 
+            href="http://andrei.gmxhome.de/jdepend4eclipse">JDepend</a>. All 
+            what you need to install JDepend4Eclipse plugin is to unzip 
+            JDepend4Eclipse zip to you Eclipse plugin directory and restart 
+            Eclipse with the clean option. You don't need to do anymore to 
+            install JDepend4Eclipse.</dd>
+          <dt>JDepend Plugin</dt>
+          <dd>Download from <a 
+            href="http://sourceforge.net/projects/findbugs">FindBugs</a>. 
+            Install it in the Eclipse plugin directory and restart Eclipse with 
+            the clean option.</dd>
+          <dt>Eclipse Colorer</dt>
+          <dd>Download from <a 
+            href="http://sourceforge.net/projects/eclipsecolorer">EclipseColorer</a>. 
+            Copy ProfilerDLL.dll from root plugin folder into bin folder of 
+            your JRE installation. You can skip this step, plugin will ask you 
+            and copy DLL into your JRE\BIN when you will start profiling local 
+            application inside of Eclipse first time. It will also check, that 
+            you have in JRE\BIN same DLL as in plugin directory.</dd>
+        </dl>
+      </section>
     </section>
     <section>
       <title>Project Structure</title>
@@ -99,9 +147,9 @@
         <li>All generated artifacts are stored under the <em>gendir</em> 
           directory. They are not part of the version management.</li>
         <li>All documentation artifacts are stored under the <em>docs</em> 
-          directory. All documents are either XML based on written using the 
-          <a href="http://www.openoffice.org">Open Office Tools</a>. The final 
-          documentation is generated with <a href="http://forrest.apache.org">
+          directory. All documents are either XML based on written using the <a 
+          href="http://www.openoffice.org">Open Office Tools</a>. The final 
+          documentation is generated with <a href="http://forrest.apache.org"> 
           Forrest</a>.</li>
         <li>The analysis and design are stored under the <em>model</em> 
           directory.</li>

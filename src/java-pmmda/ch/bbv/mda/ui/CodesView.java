@@ -15,6 +15,9 @@ import java.util.Date;
 
 import javax.swing.AbstractAction;
 import javax.swing.JPopupMenu;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import ch.bbv.explorer.ExplorerNode;
 import ch.bbv.explorer.NodeView;
@@ -147,6 +150,46 @@ public class CodesView extends TablePanel implements NodeView {
     }
   }
 
+  /**
+   * Handles table selections of the users for various operations.
+   * @author MarcelBaumann
+   * @version $Revision$
+   */
+  private static class CodesListener implements ListSelectionListener {
+    /**
+     * The currently selected row.
+     */
+    private int selectedRow;
+
+    /**
+     * Default constructor of the class.
+     */
+    public CodesListener() {
+      selectedRow = -1;
+    }
+
+    /**
+     * Returns the selected row in the table.
+     * @return the selected row if defined otherwise -1.
+     */
+    public int getSelectedRow() {
+      return selectedRow;
+    }
+
+    public void valueChanged(ListSelectionEvent event) {
+      if (event.getValueIsAdjusting()) {
+        return;
+      }
+      ListSelectionModel model = (ListSelectionModel) event.getSource();
+      if (model.isSelectionEmpty()) {
+        selectedRow = -1;
+      } else {
+        selectedRow = model.getMinSelectionIndex();
+        // TODO selected row
+      }
+    }
+  }
+
   static {
     CELLS = new TableCell.Cell[7];
     CELLS[0] = new TableCell.Cell("codeId", "id", Integer.TYPE, true);
@@ -189,12 +232,16 @@ public class CodesView extends TablePanel implements NodeView {
   }
 
   /**
-   * Constructor of the class.
+   * Constructor of the class. All listeners are hooked on the visual
+   * components.
    */
   public CodesView() {
     super(Collections.EMPTY_LIST, new TableCell(CELLS));
     initialize();
     getScrollPane().addMouseListener(new PopupListener(menu));
+    getTable().setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+    getTable().getSelectionModel()
+        .addListSelectionListener(new CodesListener());
   }
 
   /**

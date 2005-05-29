@@ -734,7 +734,7 @@ $line
 #if($isTypeModel)
 #set($lName=${property.nameFirstLower()})
     if (${lName} != null) {
-      clone.${lName} = (${property.retrieveTypeClassName()})${lName}.copy();
+      clone.${lName} = ${lName}.copy();
 	}
 #end 
 #end

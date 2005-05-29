@@ -57,6 +57,9 @@ public class TablePanel extends JPanel {
    */
   private JScrollPane scrollPane;
 
+  /**
+   * Description of the table structure.
+   */
   private WritableTableFormat tableCell;
 
   /**
@@ -132,17 +135,23 @@ public class TablePanel extends JPanel {
   }
 
   /**
-   * Returns the table displayed in the pane.
+   * Returns the table displayed in the pane. The method is available to hook
+   * listeners for example.
    * @return the table displayed in the pane.
    */
   protected JTable getTable() {
     return table;
   }
-  
+
+  /**
+   * Retursn the scroll pane in which the table is displayed. The method is
+   * available to hook listeners for example.
+   * @return the scroll table displayed in the pane.
+   */
   protected JScrollPane getScrollPane() {
     return scrollPane;
   }
-  
+
   /**
    * Returns the sorted list of the panel.
    * @return the sorted list of elements.
@@ -150,7 +159,7 @@ public class TablePanel extends JPanel {
   protected SortedList getList() {
     return sortedList;
   }
-  
+
   /**
    * Returns the comparator used to order the items of the table.
    * @return the default comparator to sort the table.

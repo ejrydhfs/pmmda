@@ -304,7 +304,7 @@ public class UserRole implements DataObject {
    */
   protected void copy(UserRole clone) {
     if (role != null) {
-      clone.role = (Role)role.copy();
+      clone.role = role.copy();
 	}
   }
 

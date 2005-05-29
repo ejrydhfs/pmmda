@@ -7,6 +7,8 @@
 package ch.bbv.mda.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Point;
+import java.awt.event.MouseEvent;
 import java.util.*;
 
 import javax.swing.CellEditor;
@@ -177,8 +179,17 @@ public class TaggedValuesView extends NodePropertiesView {
      */
     private static final long serialVersionUID = 20041201;
 
+    /**
+     * Table panel used to sort and filter the elements of the table.
+     */
     private TablePanel tablePanel;
 
+    /**
+     * Constructor of the class.
+     * @param model model to display in the table.
+     * @param tablePanel the table panel providing sorting and filtering of
+     *          rows.
+     */
     public TaggedValuesTable(TableModel model, TablePanel tablePanel) {
       super(model);
       this.tablePanel = tablePanel;
@@ -189,6 +200,12 @@ public class TaggedValuesView extends NodePropertiesView {
       }
     }
 
+    /**
+     * Returns the cell editor of the cell located at the given position.
+     * @param row row of the cell to edit.
+     * @param column column of the cell to edit.
+     * @return the requested table cell editor.
+     */
     public TableCellEditor getCellEditor(int row, int column) {
       TaggedValue taggedValue = (TaggedValue) tablePanel.getRow(row);
       TableCellEditor editor = null;
@@ -202,6 +219,27 @@ public class TaggedValuesView extends NodePropertiesView {
         editor = super.getCellEditor(row, column);
       }
       return editor;
+    }
+
+    /**
+     * Returns the tool tip assocatied with a tagged value handled in a cartridge.
+     * @param event mouse event triggering the tool tip request.
+     * @return the requested tool tip text.
+     */
+    public String getToolTipText(MouseEvent event) {
+      String tip = null;
+      Point point = event.getPoint();
+      int row = rowAtPoint(point);
+      int column = convertColumnIndexToModel(columnAtPoint(point));
+      if (column == 0) {
+        TagDefinition type = ((TaggedValue) tablePanel.getRow(row)).getType();
+        if (type != null) {
+          tip = type.getTag();
+        }
+      } else {
+        tip = super.getToolTipText(event);
+      }
+      return tip;
     }
   }
 }
