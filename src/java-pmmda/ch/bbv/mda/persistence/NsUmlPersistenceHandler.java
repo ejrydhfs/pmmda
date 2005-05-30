@@ -62,7 +62,6 @@ public class NsUmlPersistenceHandler implements PersistenceHandler {
   public MetaModel readModel(File file) throws PersistenceException {
     MetaModel metaModel = new MetaModel();
     MetaFactory.getInstance().initialize(metaModel);
-
     try {
       MModel mModel = nsUmlTransformer.loadArgoModel(file);
       if (mModel == null) {
@@ -147,7 +146,7 @@ public class NsUmlPersistenceHandler implements PersistenceHandler {
    * @throws FileNotFoundException if the requested file was not found.
    * @throws IOException if an IO error occured when reading the zip file.
    */
-  protected String getArgoModelFileName(File file)
+  private String getArgoModelFileName(File file)
       throws FileNotFoundException, IOException {
     ZipFile zipFile = new ZipFile(file);
     Enumeration< ? extends ZipEntry> entries = zipFile.entries();

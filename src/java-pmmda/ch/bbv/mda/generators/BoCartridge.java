@@ -58,7 +58,7 @@ import ch.bbv.mda.operators.FileOperators;
  * @author Marcel Baumann
  * @version $Revision$
  */
-public class DogCartridge extends CartridgeImpl implements Cartridge {
+public class BoCartridge extends CartridgeImpl implements Cartridge {
   /**
    * Key for all user defined blocks stored in the Velocity context.
    */
@@ -152,7 +152,7 @@ public class DogCartridge extends CartridgeImpl implements Cartridge {
   /**
    * The prefix of the cartridge.
    */
-  public static final String PREFIX = "dog";
+  public static final String PREFIX = "bo";
 
   /**
    * Stereotype name for the data object stereotype.
@@ -382,7 +382,7 @@ public class DogCartridge extends CartridgeImpl implements Cartridge {
   /**
    * Log instance for the class.
    */
-  private static Log log = LogFactory.getLog(DogCartridge.class);
+  private static Log log = LogFactory.getLog(BoCartridge.class);
 
   /**
    * List of stereotypes managed in the cartride.
@@ -473,7 +473,7 @@ public class DogCartridge extends CartridgeImpl implements Cartridge {
    * Constructor of the class. All data object related code generator templates
    * are loaded.
    */
-  public DogCartridge() {
+  public BoCartridge() {
     super("Data Object Graph Cartridge", PREFIX, new VersionId(0, 3, 0));
     stereotypes = new ArrayList<StereotypeType>();
     stereotypes.add(new StereotypeType(DATA_OBJECT_STEREOTYPE));
@@ -564,19 +564,21 @@ public class DogCartridge extends CartridgeImpl implements Cartridge {
   }
 
   public List<TagDefinition> getObsoleteTaggedValueTypes(Class clazz) {
-    List<TagDefinition> tags = null;
+    List<TagDefinition> types = null;
     if (MetaProperty.class.equals(clazz)) {
-      tags = new ArrayList<TagDefinition>();
-      tags.add(new TagDefinition("bo-constructor-parameter", Boolean.TYPE));
-      tags.add(new TagDefinition("bo-bidirectional", Boolean.TYPE));
+      types = new ArrayList<TagDefinition>();
+      types.add(new TagDefinition("bo-constructor-parameter", Boolean.TYPE));
+      types.add(new TagDefinition("bo-bidirectional", Boolean.TYPE));
+      types.add(new TagDefinition("bo-key-class", String.class));
+      types.add(new TagDefinition("bo-is-ordered", Boolean.TYPE));
+      types.add(new TagDefinition("bo-item-class", String.class));
     } else if (MetaIndexedProperty.class.equals(clazz)) {
-      tags = new ArrayList<TagDefinition>();
-      tags.add(new TagDefinition("bo-constructor-parameter", Boolean.TYPE));
-      tags.add(new TagDefinition("bo-bidirectional", Boolean.TYPE));
-      tags.add(new TagDefinition("bo-item-class", String.class));
-      tags.add(new TagDefinition("bo-is-ordered", Boolean.TYPE));
+      types = new ArrayList<TagDefinition>();
+      types.add(new TagDefinition("bo-constructor-parameter", Boolean.TYPE));
+      types.add(new TagDefinition("bo-bidirectional", Boolean.TYPE));
+      types.add(new TagDefinition("bo-item-class", String.class));
     }
-    return tags;
+    return types;
   }
 
   public void registerRules(Validator validator) {

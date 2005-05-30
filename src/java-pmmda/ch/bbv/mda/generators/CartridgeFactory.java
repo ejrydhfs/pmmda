@@ -65,6 +65,28 @@ public class CartridgeFactory implements ElementInitialize {
   private NumberFormat format;
 
   /**
+   * Creates the factory singleton instance.
+   * @param properties properties containing user specific values.
+   */
+  public static void create(Properties properties) {
+    assert factory == null;
+    synchronized (CartridgeFactory.class) {
+      if (factory == null) {
+        factory = new CartridgeFactory(properties);
+      }
+    }
+    factory.initialize();
+  }
+
+  /**
+   * Returns the singleton instance of the class.
+   * @return singleton instance of the class.
+   */
+  public static CartridgeFactory getInstance() {
+    return factory;
+  }
+
+  /**
    * Constructor of the class.
    * @param properties properties used to configure the factory.
    */
@@ -138,28 +160,6 @@ public class CartridgeFactory implements ElementInitialize {
   }
 
   /**
-   * Creates the factory singleton instance.
-   * @param properties properties containing user specific values.
-   */
-  public static void create(Properties properties) {
-    assert factory == null;
-    synchronized (CartridgeFactory.class) {
-      if (factory == null) {
-        factory = new CartridgeFactory(properties);
-      }
-    }
-    factory.initialize();
-  }
-
-  /**
-   * Returns the singleton instance of the class.
-   * @return singleton instance of the class.
-   */
-  public static CartridgeFactory getInstance() {
-    return factory;
-  }
-
-  /**
    * Returns the list of loaded and instantiated cartridges.
    * @return list of instantiated cartridges.
    */
@@ -179,10 +179,8 @@ public class CartridgeFactory implements ElementInitialize {
    * Returns the cartridge with the given abbreviation.
    * @param abbreviation abbreviation of the requested cartridge.
    * @return the requested cartridge if found otherwise null.
-   * @pre abbreviation != null
    */
   public Cartridge getCartridge(String abbreviation) {
-    assert abbreviation != null;
     return cartridges.get(abbreviation);
   }
 

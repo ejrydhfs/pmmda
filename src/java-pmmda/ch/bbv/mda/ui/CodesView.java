@@ -19,13 +19,16 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import ch.bbv.explorer.ExplorerNode;
 import ch.bbv.explorer.NodeView;
 import ch.bbv.explorer.UiNodeType;
 import ch.bbv.explorer.components.TableCell;
 import ch.bbv.explorer.components.TablePanel;
 import ch.bbv.mda.MetaClass;
-import ch.bbv.mda.generators.DogCartridge;
+import ch.bbv.mda.generators.BoCartridge;
 import ch.bbv.mda.pim.CodeType;
 import ch.bbv.mda.pim.CodeTypeMgr;
 import ch.bbv.mda.pim.CodeValue;
@@ -204,6 +207,11 @@ public class CodesView extends TablePanel implements NodeView {
   }
 
   /**
+   * Logger for all instances of the class.
+   */
+  private static Log log = LogFactory.getLog(CodesView.class);
+
+  /**
    * Node which reference code are displayed.
    */
   private ExplorerNode node;
@@ -219,6 +227,11 @@ public class CodesView extends TablePanel implements NodeView {
    * view.
    */
   private JPopupMenu menu;
+
+  /**
+   * Listener handling table row selections.
+   */
+  private CodesListener codesListener;
 
   /**
    * Creates an instance of the class.
@@ -240,8 +253,8 @@ public class CodesView extends TablePanel implements NodeView {
     initialize();
     getScrollPane().addMouseListener(new PopupListener(menu));
     getTable().setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-    getTable().getSelectionModel()
-        .addListSelectionListener(new CodesListener());
+    codesListener = new CodesListener();
+    getTable().getSelectionModel().addListSelectionListener(codesListener);
   }
 
   /**
@@ -257,6 +270,12 @@ public class CodesView extends TablePanel implements NodeView {
    * Removes the selected code values in the list of codes.
    */
   public void remove() {
+    int selectedRow = codesListener.getSelectedRow();
+    if (selectedRow != -1) {
+      CodeValue value = type.getValue(selectedRow);
+      type.removeValue(value);
+      getList().remove(value);
+    }
   }
 
   /**
@@ -267,7 +286,7 @@ public class CodesView extends TablePanel implements NodeView {
     try {
       getCodeTypeMgr().save(clazz);
     } catch (IOException e) {
-      // TODO
+      log.error(e);
     }
   }
 
@@ -277,11 +296,11 @@ public class CodesView extends TablePanel implements NodeView {
   public void load() {
     MetaClass clazz = (MetaClass) node.getDataObject();
     CodeTypeMgr mgr = getCodeTypeMgr();
-    mgr.removeType(clazz);
     try {
       type = mgr.retrieve(clazz);
+      setModel(type.getValues());
     } catch (IOException e) {
-      // TODO
+      log.error(e);
     }
   }
 
@@ -293,6 +312,7 @@ public class CodesView extends TablePanel implements NodeView {
     CodeTypeMgr mgr = getCodeTypeMgr();
     mgr.removeType(clazz);
     load();
+    setModel(type.getValues());
   }
 
   public void nodeChanged(ExplorerNode node) {
@@ -307,11 +327,10 @@ public class CodesView extends TablePanel implements NodeView {
   public void setModel(ExplorerNode node) {
     this.node = node;
     MetaClass clazz = (MetaClass) node.getDataObject();
-    if (DogCartridge.REFERENCE_CODE_STEREOTYPE.equals(clazz.getStereotype())) {
+    if (BoCartridge.REFERENCE_CODE_STEREOTYPE.equals(clazz.getStereotype())) {
       load();
       setMenuEnabled(true);
       // TODO synchronize tagged values with code values
-      setModel(type.getValues());
     } else {
       setMenuEnabled(false);
     }

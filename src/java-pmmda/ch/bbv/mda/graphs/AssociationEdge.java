@@ -25,7 +25,7 @@ public class AssociationEdge extends DefaultEdge {
   private static final long serialVersionUID = 20041201;
 
   /**
-   * defines the different types of edges supported in the view.
+   * Defines the different types of edges supported in the view.
    * @author MarcelBaumann
    * @version $Revision$
    */
@@ -38,31 +38,60 @@ public class AssociationEdge extends DefaultEdge {
    */
   private Type type;
 
+  /**
+   * Constructor of the class.
+   * @param type type of the association.
+   * @param name name of the association as displayed.
+   */
   public AssociationEdge(Type type, String name) {
     super(name);
     this.type = type;
   }
 
+  /**
+   * Returns true if the association represents inheritance.
+   * @return True if the check is sucessful otherwise false.
+   */
   public boolean isInheritance() {
     return Type.inheritance == type;
   }
 
+  /**
+   * Returns true if the association represents realization.
+   * @return True if the check is sucessful otherwise false.
+   */
   public boolean isRealizes() {
     return Type.realizes == type;
   }
 
+  /**
+   * Returns true if the association represents aggregation.
+   * @return True if the check is sucessful otherwise false.
+   */
   public boolean isAggregate() {
     return Type.aggregation == type;
   }
 
+  /**
+   * Returns true if the association represents composition.
+   * @return True if the check is sucessful otherwise false.
+   */
   public boolean isComposite() {
     return Type.composition == type;
   }
   
+  /**
+   * Returns true if the association is navigable from the start node.
+   * @return True if the check is sucessful otherwise false.
+   */
   public boolean isStartNavigable() {
     return false;
   }
 
+  /**
+   * Returns true if the association is navigable from the end node.
+   * @return True if the check is sucessful otherwise false.
+   */
   public boolean isEndNavigable() {
     return true;
   }

@@ -19,6 +19,7 @@ import ch.bbv.dog.DataObjectManager;
 import ch.bbv.dog.EmptyHandler;
 import ch.bbv.dog.LightweightObjectHandlerImpl;
 import ch.bbv.dog.validation.Validator;
+import ch.bbv.mda.generators.Cartridge;
 import ch.bbv.mda.generators.CartridgeFactory;
 import ch.bbv.mda.validation.RulesFactory;
 import ch.bbv.utilities.PropertyUtilities;
@@ -85,6 +86,7 @@ public class MdaApplication extends Locator {
     register(new DataObjectManager(new EmptyHandler(),
         new LightweightObjectHandlerImpl(), null));
     register(new Validator(Validator.NAME));
+    register(new ResourcesManager(ResourcesManager.NAME));
     initialize();
     startup();
   }
@@ -98,6 +100,10 @@ public class MdaApplication extends Locator {
 
   public void startup() throws ComponentException {
     super.startup();
+    ResourcesManager resourcesManager = getResourcesManager();
+    for (Cartridge cartridge : CartridgeFactory.getInstance().getCartridges()) {
+      resourcesManager.registerResources(cartridge);
+    }
     MdaExplorer.create(args);
   }
 
@@ -110,6 +116,15 @@ public class MdaApplication extends Locator {
   public DataObjectManager getDataObjectManager() {
     Locator locator = Locator.getInstance();
     return (DataObjectManager) locator.getComponent(DataObjectManager.NAME);
+  }
+
+  /**
+   * Returns the resources manager of the application. 
+   * @return the resources manager of the application.
+   */
+  public ResourcesManager getResourcesManager() {
+    Locator locator = Locator.getInstance();
+    return (ResourcesManager) locator.getComponent(ResourcesManager.NAME);
   }
 
   /**

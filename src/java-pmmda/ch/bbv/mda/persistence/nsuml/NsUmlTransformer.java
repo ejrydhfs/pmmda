@@ -338,9 +338,7 @@ public class NsUmlTransformer {
     if (stereotype != null) {
       item.setStereotype(stereotype.getName());
     }
-
     item.setVisibility(convert(source.getVisibility()));
-
     for (Iterator i = source.getTaggedValues().iterator(); i.hasNext();) {
       MTaggedValue tag = (MTaggedValue) i.next();
       String tagName = tag.getTag();

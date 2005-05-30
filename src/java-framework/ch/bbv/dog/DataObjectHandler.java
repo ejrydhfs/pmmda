@@ -52,8 +52,7 @@ public interface DataObjectHandler {
    * @return the list of found data objects.
    * @pre (datasource != null) && (clazz != null)
    */
-  List<DataObject> retrieve(String datasource, Class clazz,
-      String constraints);
+  List<DataObject> retrieve(String datasource, Class clazz, String constraints);
 
   /**
    * Retrieves the data lightweight object tree where the root object has the

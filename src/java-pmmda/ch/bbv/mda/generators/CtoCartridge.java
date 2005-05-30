@@ -204,7 +204,7 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
     super.initialize(properties);
 
     CartridgeFactory factory = CartridgeFactory.getInstance();
-    addCartridge(factory.getCartridge(DogCartridge.PREFIX));
+    addCartridge(factory.getCartridge(BoCartridge.PREFIX));
     addUndefinedProperty(properties, ROOT_IDL_KEY, "");
     addUndefinedProperty(properties, TRANSFORM_PACKAGE_POSTFIX, "");
     addUndefinedProperty(properties, IDL_PREFIX_KEY, "");
@@ -236,20 +236,20 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
     String name = clazz.getName();
     StringBuilder buffer = new StringBuilder();
     buffer.append(context.getProperty(IDL_PREFIX_KEY)).append(name).append(
-        context.getProperty(DogCartridge.BO_CLASS_POSTFIX_KEY)).append(
+        context.getProperty(BoCartridge.BO_CLASS_POSTFIX_KEY)).append(
         context.getProperty(IDL_POSTFIX_KEY));
     clazz.addAttribute(CTO_MO_CLASS, buffer.toString());
     buffer.setLength(0);
     buffer.append(context.getProperty(IDL_PREFIX_KEY)).append(name).append(
-        context.getProperty(DogCartridge.LW_CLASS_POSTFIX_KEY)).append(
+        context.getProperty(BoCartridge.LW_CLASS_POSTFIX_KEY)).append(
         context.getProperty(IDL_POSTFIX_KEY));
     clazz.addAttribute(CTO_LW_CLASS, buffer.toString());
     buffer.setLength(0);
-    buffer.append(clazz.getAttribute(DogCartridge.BO_CLASS)).append(
+    buffer.append(clazz.getAttribute(BoCartridge.BO_CLASS)).append(
         "Transformer");
     clazz.addAttribute(CTO_BO2DTO_CLASS, buffer.toString());
     buffer.setLength(0);
-    buffer.append(clazz.getAttribute(DogCartridge.LW_CLASS)).append(
+    buffer.append(clazz.getAttribute(BoCartridge.LW_CLASS)).append(
         "Transformer");
     clazz.addAttribute(CTO_LW2DTO_CLASS, buffer.toString());
 
@@ -271,13 +271,13 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
   }
 
   public void processClass(MetaClass clazz) {
-    File javaRoot = getRoot(ROOT_JAVA_KEY, DogCartridge.ROOT_COMMON_FOLDER_KEY);
+    File javaRoot = getRoot(ROOT_JAVA_KEY, BoCartridge.ROOT_COMMON_FOLDER_KEY);
     File idlRoot = new File(getContext().getProperty(ROOT_IDL_KEY));
-    if (!clazz.retrievePackage().booleanValueOfTag(DogCartridge.GENERATE_TAG)) {
+    if (!clazz.retrievePackage().booleanValueOfTag(BoCartridge.GENERATE_TAG)) {
       return;
     }
     try {
-      if (DogCartridge.DATA_OBJECT_STEREOTYPE.equals(clazz.getStereotype())) {
+      if (BoCartridge.DATA_OBJECT_STEREOTYPE.equals(clazz.getStereotype())) {
         MetaPackage metaPackage = (MetaPackage) clazz.getContext();
         VelocityContext context = createContext(clazz);
         PrintWriter writer = FileOperators.createWriter(idlRoot, metaPackage
@@ -290,7 +290,7 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
             .getAttribute(CTO_BO2DTO_CLASS));
         writer.print(processTemplate(javaBo2DtoTemplate, context));
         writer.close();
-        if (clazz.booleanValueOfAttribute(DogCartridge.BO_LIGHTWEIGHT)) {
+        if (clazz.booleanValueOfAttribute(BoCartridge.BO_LIGHTWEIGHT)) {
           writer = FileOperators.createWriter(idlRoot, metaPackage
               .valueOfTag(CTO_PACKAGE_IDL_TAG), clazz
               .getAttribute(CTO_LW_CLASS)
@@ -396,8 +396,8 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
    */
   public ImportStatements retrieveImportStatementsForBo(MetaClass clazz,
       String packageName) {
-    DogCartridge cartridge = (DogCartridge) CartridgeFactory.getInstance()
-        .getCartridge(DogCartridge.PREFIX);
+    BoCartridge cartridge = (BoCartridge) CartridgeFactory.getInstance()
+        .getCartridge(BoCartridge.PREFIX);
     return cartridge.retrieveImportStatementsForBo(clazz, packageName);
   }
 
@@ -411,8 +411,8 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
    */
   public ImportStatements retrieveImportStatementsForIf(MetaClass clazz,
       String packageName) {
-    DogCartridge cartridge = (DogCartridge) CartridgeFactory.getInstance()
-        .getCartridge(DogCartridge.PREFIX);
+    BoCartridge cartridge = (BoCartridge) CartridgeFactory.getInstance()
+        .getCartridge(BoCartridge.PREFIX);
     return cartridge.retrieveImportStatementsForIf(clazz, packageName);
   }
 
@@ -426,8 +426,8 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
    */
   public ImportStatements retrieveImportStatementsForLw(MetaClass clazz,
       String packageName) {
-    DogCartridge cartridge = (DogCartridge) CartridgeFactory.getInstance()
-        .getCartridge(DogCartridge.PREFIX);
+    BoCartridge cartridge = (BoCartridge) CartridgeFactory.getInstance()
+        .getCartridge(BoCartridge.PREFIX);
     return cartridge.retrieveImportStatementsForLw(clazz, packageName);
   }
 

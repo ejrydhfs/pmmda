@@ -10,7 +10,7 @@ import java.util.List;
 
 import ch.bbv.dog.validation.ValidationRuleResult;
 import ch.bbv.mda.*;
-import ch.bbv.mda.generators.DogCartridge;
+import ch.bbv.mda.generators.BoCartridge;
 
 /**
  * The DOG tag rule implements all validation rules for the tag values defined
@@ -48,7 +48,7 @@ public class DogTagRule extends TagRule {
    * Default constructor of the class.
    */
   public DogTagRule() {
-    super(DogCartridge.PREFIX);
+    super(BoCartridge.PREFIX);
   }
 
   protected boolean validate(MetaPackage packages, List results) {
@@ -74,17 +74,17 @@ public class DogTagRule extends TagRule {
   protected boolean validate(MetaProperty property,
       List<ValidationRuleResult> results) {
     boolean success = true;
-    if (property.booleanValueOfTag(DogCartridge.PERSISTENCE_TAG)
+    if (property.booleanValueOfTag(BoCartridge.PERSISTENCE_TAG)
         && property.isTransient()) {
       success = false;
       addErrorMessage(results, ERROR_INCONSISTENT_TAG,
-          DogCartridge.PERSISTENCE_TAG, property.qualifiedName());
+          BoCartridge.PERSISTENCE_TAG, property.qualifiedName());
     }
     String name = property.getName();
     if (name.equalsIgnoreCase(IDENTIFIER) || name.equalsIgnoreCase(TIMESTAMP)
         || name.equalsIgnoreCase(MODIFIED)) {
       success = false;
-      addErrorMessage(results, ERROR_RESERVED_IDENTIFIER, DogCartridge.PREFIX,
+      addErrorMessage(results, ERROR_RESERVED_IDENTIFIER, BoCartridge.PREFIX,
           property.qualifiedName());
     }
     return success;

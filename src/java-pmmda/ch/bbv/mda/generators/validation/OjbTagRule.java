@@ -10,7 +10,7 @@ import java.util.List;
 
 import ch.bbv.dog.validation.ValidationRuleResult;
 import ch.bbv.mda.*;
-import ch.bbv.mda.generators.DogCartridge;
+import ch.bbv.mda.generators.BoCartridge;
 import ch.bbv.mda.generators.JdbcTypeCode;
 import ch.bbv.mda.generators.OjbCartridge;
 
@@ -69,11 +69,11 @@ public class OjbTagRule extends TagRule {
    */
   protected boolean validate(MetaClass clazz, List<ValidationRuleResult> results) {
     boolean sucess = true;
-    if (clazz.booleanValueOfTag(DogCartridge.PERSISTENCE_TAG)) {
+    if (clazz.booleanValueOfTag(BoCartridge.PERSISTENCE_TAG)) {
       if (!exists(clazz, OjbCartridge.TABLE_NAME_TAG)) {
         sucess = false;
         addErrorMessage(results, ERROR_MISSING_TABLE,
-            DogCartridge.PERSISTENCE_TAG, clazz.qualifiedName());
+            BoCartridge.PERSISTENCE_TAG, clazz.qualifiedName());
       }
     }
     return sucess;
@@ -99,7 +99,7 @@ public class OjbTagRule extends TagRule {
 
     if (!property.isTransient()
         && property.getContext()
-            .booleanValueOfTag(DogCartridge.PERSISTENCE_TAG)) {
+            .booleanValueOfTag(BoCartridge.PERSISTENCE_TAG)) {
       if (!exists(property, OjbCartridge.COLUMN_NAME_TAG)) {
         sucess = false;
         addErrorMessage(results, ERROR_MISSING_COLUMN,
@@ -144,7 +144,7 @@ public class OjbTagRule extends TagRule {
     boolean sucess = true;
     if (!property.isTransient()
         && property.getContext()
-            .booleanValueOfTag(DogCartridge.PERSISTENCE_TAG)) {
+            .booleanValueOfTag(BoCartridge.PERSISTENCE_TAG)) {
       if (!exists(property, OjbCartridge.COLUMN_NAME_TAG)) {
         sucess = false;
         addErrorMessage(results, ERROR_MISSING_COLUMN,

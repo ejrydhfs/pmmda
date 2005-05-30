@@ -25,7 +25,7 @@ import ch.bbv.explorer.ExplorerNode;
 import ch.bbv.explorer.NodeView;
 import ch.bbv.explorer.UiNodeType;
 import ch.bbv.mda.*;
-import ch.bbv.mda.generators.DogCartridge;
+import ch.bbv.mda.generators.BoCartridge;
 
 /**
  * The class graph view displays a UML class diagram of the package or of the
@@ -141,8 +141,8 @@ public class ClassGraphView extends JPanel implements NodeView {
       String qualifiedName = property.getTypeName();
       MetaClass type = model.findClass(qualifiedName);
       if ((type != null)
-          && (DogCartridge.DATA_OBJECT_STEREOTYPE.equalsIgnoreCase(type
-              .getStereotype()) || DogCartridge.REFERENCE_CODE_STEREOTYPE
+          && (BoCartridge.DATA_OBJECT_STEREOTYPE.equalsIgnoreCase(type
+              .getStereotype()) || BoCartridge.REFERENCE_CODE_STEREOTYPE
               .equalsIgnoreCase(type.getStereotype()))) {
         GraphCell target = createVertex(type);
         createEdge(source, target, property, AssociationEdge.Type.aggregation);
@@ -152,8 +152,8 @@ public class ClassGraphView extends JPanel implements NodeView {
       String qualifiedName = property.getTypeName();
       MetaClass type = model.findClass(qualifiedName);
       if ((type != null)
-          && (DogCartridge.DATA_OBJECT_STEREOTYPE.equalsIgnoreCase(type
-              .getStereotype()) || DogCartridge.REFERENCE_CODE_STEREOTYPE
+          && (BoCartridge.DATA_OBJECT_STEREOTYPE.equalsIgnoreCase(type
+              .getStereotype()) || BoCartridge.REFERENCE_CODE_STEREOTYPE
               .equalsIgnoreCase(type.getStereotype()))) {
         GraphCell target = createVertex(type);
         createEdge(source, target, property, AssociationEdge.Type.aggregation);

@@ -296,7 +296,7 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
     } else if (clazz.equals(MetaPackage.class)) {
       types.add(new TagDefinition(SCHEMA_TAG, "", String.class));
     } else if (clazz.equals(MetaClass.class)) {
-      types.add(new TagDefinition(DogCartridge.PERSISTENCE_TAG, "false",
+      types.add(new TagDefinition(BoCartridge.PERSISTENCE_TAG, "false",
           Boolean.TYPE));
       types.add(new TagDefinition(TABLE_NAME_TAG, null, String.class));
     } else if (clazz.equals(MetaProperty.class)) {
@@ -321,16 +321,32 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
     List<TagDefinition> types = null;
     if (clazz == MetaClass.class) {
       types = new ArrayList<TagDefinition>();
-      types.add(new TagDefinition("ojb-is-persistent", null, Boolean.TYPE));
-    } else if ((clazz == MetaProperty.class)
-        || (clazz == MetaIndexedProperty.class)) {
+      types.add(new TagDefinition("ojb-is-persistent", Boolean.TYPE));
+      types.add(new TagDefinition("ojb-isPersistent", Boolean.TYPE));
+    } else if (clazz == MetaProperty.class) {
       types = new ArrayList<TagDefinition>();
-      types.add(new TagDefinition("ojb-jdbc-type", null, String.class));
-      types.add(new TagDefinition("ojb-jdbc-size", null, Integer.TYPE));
-      types.add(new TagDefinition("ojb-jdbcType", null, String.class));
-      types.add(new TagDefinition("ojb-jdbcSize", null, Integer.TYPE));
-      types.add(new TagDefinition("ojb-orderBy", null, String.class));
-      types.add(new TagDefinition("ojb-foreign-key", null, String.class));
+      types.add(new TagDefinition("ojb-jdbc-type", String.class));
+      types.add(new TagDefinition("ojb-jdbc-size", Integer.TYPE));
+      types.add(new TagDefinition("ojb-jdbcType", String.class));
+      types.add(new TagDefinition("ojb-jdbcSize", Integer.TYPE));
+      types.add(new TagDefinition("ojb-orderBy", String.class));
+      types.add(new TagDefinition("ojb-foreign-key", String.class));
+      types.add(new TagDefinition("ojb-canBeNull", Boolean.TYPE));
+      types.add(new TagDefinition("ojb-isPrimary", Boolean.TYPE));
+    } else if (clazz == MetaIndexedProperty.class) {
+      types = new ArrayList<TagDefinition>();
+      types.add(new TagDefinition("ojb-jdbc-type", String.class));
+      types.add(new TagDefinition("ojb-jdbc-size", Integer.TYPE));
+      types.add(new TagDefinition("ojb-jdbcType", String.class));
+      types.add(new TagDefinition("ojb-jdbcSize", Integer.TYPE));
+      types.add(new TagDefinition("ojb-orderBy", String.class));
+      types.add(new TagDefinition("ojb-foreign-key", String.class));
+      types.add(new TagDefinition("ojb-canBeNull", Boolean.TYPE));
+      types.add(new TagDefinition("ojb-isPrimary", Boolean.TYPE));
+      types.add(new TagDefinition(COLUMN_NAME_TAG, String.class));
+      types.add(new TagDefinition(COLUMN_TYPE_TAG, JdbcTypeCode.class));
+      types.add(new TagDefinition(COLUMN_SIZE_TAG, Integer.TYPE));
+      types.add(new TagDefinition(OPTIMISTIC_LOCKING_TAG, Boolean.TYPE));
     }
     return types;
   }
@@ -358,7 +374,7 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
   }
 
   public void preProcessClass(MetaClass clazz) {
-    if (clazz.booleanValueOfTag(DogCartridge.PERSISTENCE_TAG)) {
+    if (clazz.booleanValueOfTag(BoCartridge.PERSISTENCE_TAG)) {
       Properties context = getContext();
       StringBuilder buffer = new StringBuilder();
       buffer.append(context.get(TABLE_PREFIX_KEY)).append(
@@ -387,10 +403,10 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
   }
 
   public void processClass(MetaClass clazz) {
-    if (!clazz.retrievePackage().booleanValueOfTag(DogCartridge.GENERATE_TAG)
-        || !DogCartridge.DATA_OBJECT_STEREOTYPE.equalsIgnoreCase(clazz
+    if (!clazz.retrievePackage().booleanValueOfTag(BoCartridge.GENERATE_TAG)
+        || !BoCartridge.DATA_OBJECT_STEREOTYPE.equalsIgnoreCase(clazz
             .getStereotype())
-        || !clazz.booleanValueOfTag(DogCartridge.PERSISTENCE_TAG)) {
+        || !clazz.booleanValueOfTag(BoCartridge.PERSISTENCE_TAG)) {
       return;
     }
 

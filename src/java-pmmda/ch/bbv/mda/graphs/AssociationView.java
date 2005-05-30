@@ -32,6 +32,10 @@ public class AssociationView extends EdgeView {
     setAttributes(createAttributes());
   }
 
+  /** 
+   * Creates the graphical attributes of the associaton.
+   * @return the map of graphical attributes discribing the association.
+   */
   private AttributeMap createAttributes() {
     AttributeMap attributes = getAttributes();
     AssociationEdge edge = (AssociationEdge) cell;

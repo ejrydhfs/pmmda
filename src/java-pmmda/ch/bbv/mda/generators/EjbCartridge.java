@@ -20,6 +20,7 @@ import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
 
 import ch.bbv.application.VersionId;
+import ch.bbv.mda.MetaClass;
 import ch.bbv.mda.MetaPackage;
 import ch.bbv.mda.TagDefinition;
 
@@ -207,7 +208,17 @@ public class EjbCartridge extends CartridgeImpl {
   public List<TagDefinition> getTaggedValueTypes(Class clazz) {
     List<TagDefinition> types = new ArrayList<TagDefinition>();
     if (clazz.equals(MetaPackage.class)) {
-      types.add(new TagDefinition(SERVER_NAME_TAG, "", String.class));
+      types.add(new TagDefinition(SERVER_NAME_TAG, null, String.class));
+    }
+    return types;
+  }
+
+  public List<TagDefinition> getObsoleteTaggedValueTypes(Class clazz) {
+    List<TagDefinition> types = null;
+    if (MetaClass.class.equals(clazz)) {
+      types = new ArrayList<TagDefinition>();
+      types.add(new TagDefinition("ejb-is-root", Boolean.TYPE));
+      types.add(new TagDefinition(SERVER_NAME_TAG, String.class));
     }
     return types;
   }
@@ -226,7 +237,7 @@ public class EjbCartridge extends CartridgeImpl {
   }
 
   public void processPackage(MetaPackage metaPackage) {
-    if (!metaPackage.booleanValueOfTag(DogCartridge.GENERATE_TAG)) {
+    if (!metaPackage.booleanValueOfTag(BoCartridge.GENERATE_TAG)) {
       return;
     }
 
@@ -234,9 +245,9 @@ public class EjbCartridge extends CartridgeImpl {
     try {
       if (getContext().getProperty(GENERATE_CORBA_KEY).equals("true")) {
         File serverRoot = getRoot(ROOT_SERVER_CORBA_KEY,
-            DogCartridge.ROOT_SERVER_FOLDER_KEY);
+            BoCartridge.ROOT_SERVER_FOLDER_KEY);
         File clientRoot = getRoot(ROOT_CLIENT_CORBA_KEY,
-            DogCartridge.ROOT_CLIENT_FOLDER_KEY);
+            BoCartridge.ROOT_CLIENT_FOLDER_KEY);
         File IdlRoot = new File(getContext().getProperty(
             CtoCartridge.ROOT_IDL_KEY));
         processTemplate(IdlRoot, metaPackage
@@ -254,11 +265,11 @@ public class EjbCartridge extends CartridgeImpl {
       }
       if (getContext().getProperty(GENERATE_BEAN_KEY).equals("true")) {
         File serverRoot = getRoot(ROOT_SERVER_J2EE_KEY,
-            DogCartridge.ROOT_SERVER_FOLDER_KEY);
+            BoCartridge.ROOT_SERVER_FOLDER_KEY);
         File clientRoot = getRoot(ROOT_CLIENT_J2EE_KEY,
-            DogCartridge.ROOT_CLIENT_FOLDER_KEY);
+            BoCartridge.ROOT_CLIENT_FOLDER_KEY);
         File commonRoot = getRoot(ROOT_COMMON_J2EE_KEY,
-            DogCartridge.ROOT_COMMON_FOLDER_KEY);
+            BoCartridge.ROOT_COMMON_FOLDER_KEY);
         processJavaTemplate(commonRoot, metaPackage
             .getAttribute(SERVER_PACKAGE), metaPackage
             .valueOfTag(SERVER_NAME_TAG)

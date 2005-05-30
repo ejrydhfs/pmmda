@@ -31,7 +31,7 @@ public class OexCartridge extends CartridgeImpl {
   /**
    * The prefix of the cartridge.
    */
-  public static final String PREFIX = "bog";
+  public static final String PREFIX = "oex";
 
   /**
    * Key for a property of the cartridge used to retrieve user values.
@@ -82,7 +82,7 @@ public class OexCartridge extends CartridgeImpl {
     super.initialize(properties);
     addUndefinedProperty(properties, RICH_CLIENT_PACKAGE_POSTFIX_KEY, "");
     try {
-      String postfix = "-" + getContext().getProperty(DogCartridge.LANGUAGE_KEY)
+      String postfix = "-" + getContext().getProperty(BoCartridge.LANGUAGE_KEY)
           + ".vm";
       javaRichClientTypeTemplate = Velocity.getTemplate("oex-typeFactory"
           + postfix);
@@ -112,7 +112,7 @@ public class OexCartridge extends CartridgeImpl {
 
       MetaClass objectClass = model.findClass(className);
       if ((objectClass == null)
-          || !DogCartridge.DATA_OBJECT_STEREOTYPE.equals(objectClass
+          || !BoCartridge.DATA_OBJECT_STEREOTYPE.equals(objectClass
               .getStereotype())) {
         continue;
       }
@@ -167,8 +167,8 @@ public class OexCartridge extends CartridgeImpl {
 
   public void postProcessPackage(MetaPackage metaPackage) {
     File sourceRoot = getRoot(ROOT_RICH_CLIENT_KEY,
-        DogCartridge.ROOT_CLIENT_FOLDER_KEY);
-    if (metaPackage.booleanValueOfTag(DogCartridge.GENERATE_TAG)) {
+        BoCartridge.ROOT_CLIENT_FOLDER_KEY);
+    if (metaPackage.booleanValueOfTag(BoCartridge.GENERATE_TAG)) {
       VelocityContext context = createContext(metaPackage);
       log
           .info("OEX Catridge processing package "

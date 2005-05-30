@@ -87,7 +87,14 @@ public class TaggedValuesView extends NodePropertiesView {
     add(tablePanel);
   }
 
+  /**
+   * Returns the editor associated with the class of items.
+   * @param clazz class which editor should be retrieved.
+   * @return the requested table cell editor.
+   * @pre clazz != null
+   */
   static TableCellEditor getEditor(Class clazz) {
+    assert (clazz != null);
     return (TableCellEditor) editors.get(clazz);
   }
 
@@ -97,10 +104,12 @@ public class TaggedValuesView extends NodePropertiesView {
    * @param codes the code values of the reference code type.
    * @param caseSensitive flag indicating if the combo box is case sensitive or
    *          not.
+   * @pre (referenceCode != null) && (codes != null)
    */
   public static void registerReferenceCode(
       Class< ? extends ReferenceCode> referenceCode,
       List< ? extends ReferenceCode> codes, boolean caseSensitive) {
+    assert ((referenceCode != null) && (codes != null));
     ReferenceCodeComboBox comboBox = new ReferenceCodeComboBox(referenceCode,
         codes);
     comboBox.setCaseSensitive(caseSensitive);
@@ -150,9 +159,14 @@ public class TaggedValuesView extends NodePropertiesView {
     tableCell.setEditableColumns(editableColumns);
   }
 
-  private List<TaggedValue> cloneTaggedValues(List<TaggedValue> taggedValues) {
+  /**
+   * Clones the list of tagged values.
+   * @param values tagged values to clones.
+   * @return the list of cloned tagged values.
+   */
+  private List<TaggedValue> cloneTaggedValues(List<TaggedValue> values) {
     List<TaggedValue> copies = new ArrayList<TaggedValue>();
-    for (TaggedValue value : taggedValues) {
+    for (TaggedValue value : values) {
       copies.add(new TaggedValue(value));
     }
     return copies;
@@ -222,7 +236,8 @@ public class TaggedValuesView extends NodePropertiesView {
     }
 
     /**
-     * Returns the tool tip assocatied with a tagged value handled in a cartridge.
+     * Returns the tool tip assocatied with a tagged value handled in a
+     * cartridge.
      * @param event mouse event triggering the tool tip request.
      * @return the requested tool tip text.
      */
@@ -234,7 +249,9 @@ public class TaggedValuesView extends NodePropertiesView {
       if (column == 0) {
         TagDefinition type = ((TaggedValue) tablePanel.getRow(row)).getType();
         if (type != null) {
-          tip = type.getTag();
+          ResourcesManager manager = MdaApplication.getApplication()
+              .getResourcesManager();
+          tip = manager.getResource(type.getTag());
         }
       } else {
         tip = super.getToolTipText(event);
