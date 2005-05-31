@@ -35,7 +35,10 @@ public class TableCell implements TableFormat, WritableTableFormat,
    * @version $Revision$
    */
   public static class Cell {
-    /** primitive class to object class conversion map */
+    /**
+     * Primitive class to object class conversion map, not specified type
+     * defaults to string type.
+     */
     private static Map<Class, Class> primitiveToType;
 
     static {
@@ -48,6 +51,7 @@ public class TableCell implements TableFormat, WritableTableFormat,
       primitiveToType.put(long.class, Long.class);
       primitiveToType.put(float.class, Float.class);
       primitiveToType.put(double.class, Double.class);
+      primitiveToType.put(null, String.class);
     }
 
     /**

@@ -5,27 +5,32 @@
  */
 package ch.bbv.explorer.about;
 
-
 /**
- * <p>The contributor class describes a contributor to a software project.
- * The class implements the Java bean convention.</p>
+ * <p>
+ * The contributor class describes a contributor to a software project. The
+ * class implements the Java bean convention.
+ * </p>
  * @author Marcel Baumann
  * @version $Revision$
  */
 public class Contributor {
-  /** The name of the contributor as displayed.
+  /**
+   * The name of the contributor as displayed.
    */
   private String name;
 
-  /** The e-mail address of the contributor as displayed.
+  /**
+   * The e-mail address of the contributor as displayed.
    */
   private String email;
 
-	/** The role of the contributor in the project.
-	 */
-	private String role;
-	
-  /** Creates a new contributor.
+  /**
+   * The role of the contributor in the project.
+   */
+  private String role;
+
+  /**
+   * Creates a new contributor.
    * @param name the displayed name.
    * @param email the displayed e-mail address.
    * @param role the role of the contributor in the project.
@@ -36,24 +41,27 @@ public class Contributor {
     this.role = role;
   }
 
-  /** Returns the contributor's name.
+  /**
+   * Returns the contributor's name.
    * @return the contributor's name.
    */
   public String getName() {
     return name;
   }
 
-  /** Returns the contributor's e-mail address.
+  /**
+   * Returns the contributor's e-mail address.
    * @return the contributor's e-mail address.
    */
   public String getEmail() {
     return email;
   }
-  
-  /** Returns the role of the contributor in the project.
+
+  /**
+   * Returns the role of the contributor in the project.
    * @return role of the contributor.
    */
   public String getRole() {
-  	return role;
+    return role;
   }
 }

@@ -112,7 +112,7 @@ public class AboutFrame extends JDialog {
     JPanel details = new AboutPanel(projectInfo);
     boolean includetabs = false;
     JTabbedPane tabs = new JTabbedPane();
-    List contributors = projectInfo.getContributors();
+    List<Contributor> contributors = projectInfo.getContributors();
     if (contributors != null) {
       JPanel contributorsPane = new TablePanel(contributors, new TableCell(
           CONTRIBUTORS_COLUMN_NAMES));
