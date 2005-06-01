@@ -104,13 +104,13 @@
         <tr>
           <td>commons-logging</td>
           <td>1.0.4</td>
-          <th>Apache License</th>
+          <td>Apache License</td>
           <td><a href="ext:jakarta/commons-logging">Jakarta Commons Logging</a></td>
         </tr>
         <tr>
           <td>commons-logging-api</td>
           <td>1.0.4</td>
-          <th>Apache License</th>
+          <td>Apache License</td>
           <td><a href="ext:jakarta/commons-logging">Jakarta Commons Logging</a></td>
         </tr>
       </table>
