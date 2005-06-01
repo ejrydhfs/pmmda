@@ -25,7 +25,7 @@ public interface ReferenceCodeMgr {
    * @return The list of all active root hierarchical reference codes.
    * @pre clazz != null
    */
-  List<ReferenceCode> getRoots(Class clazz);
+  List<HierarchicalReferenceCode> getRoots(Class clazz);
 
   /**
    * Returns all roots of a hierarchical reference code list.
@@ -33,7 +33,7 @@ public interface ReferenceCodeMgr {
    * @return The list of all root hierarchical reference codes.
    * @pre clazz != null
    */
-  List<ReferenceCode> getAllRoots(Class clazz);
+  List<HierarchicalReferenceCode> getAllRoots(Class clazz);
 
   /**
    * Returns the list of all reference codes of the given class.

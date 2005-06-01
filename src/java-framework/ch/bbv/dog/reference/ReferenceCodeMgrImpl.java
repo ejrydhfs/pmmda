@@ -59,14 +59,14 @@ public class ReferenceCodeMgrImpl implements ReferenceCodeMgr {
     retrievers = new ArrayList<ReferenceCodeRetriever>();
   }
 
-  public List<ReferenceCode> getAllRoots(Class clazz) {
+  public List<HierarchicalReferenceCode> getAllRoots(Class clazz) {
     assert (clazz != null);
-    return getRootsFor(getAllReferenceCodes(clazz));
+    return getRootsFor(transform(getAllReferenceCodes(clazz)));
   }
 
-  public List<ReferenceCode> getRoots(Class clazz) {
+  public List<HierarchicalReferenceCode> getRoots(Class clazz) {
     assert (clazz != null);
-    return getRootsFor(getReferenceCodes(clazz));
+    return getRootsFor(transform(getReferenceCodes(clazz)));
   }
 
   public List<ReferenceCode> getAllReferenceCodes(Class clazz) {
@@ -230,17 +230,15 @@ public class ReferenceCodeMgrImpl implements ReferenceCodeMgr {
    * @param codes list of codes which roots are searched.
    * @return the list of root hierarchical reference codes.
    */
-  protected List getRootsFor(List codes) {
+  protected List<HierarchicalReferenceCode> getRootsFor(
+      List<HierarchicalReferenceCode> codes) {
     assert (codes != null);
-
-    List roots = null;
-    for (Iterator i = codes.iterator(); i.hasNext();) {
-      HierarchicalReferenceCode code = (HierarchicalReferenceCode) i.next();
+    List<HierarchicalReferenceCode> roots = null;
+    for (HierarchicalReferenceCode code : codes) {
       if (code.getParentCode() != null) {
         roots.add(code);
       }
     }
-
     return roots;
   }
 
@@ -263,10 +261,22 @@ public class ReferenceCodeMgrImpl implements ReferenceCodeMgr {
     return list;
   }
 
+  private List<HierarchicalReferenceCode> transform(List<ReferenceCode> codes) {
+    List<HierarchicalReferenceCode> list = new ArrayList<HierarchicalReferenceCode>();
+    for (ReferenceCode code : codes) {
+      if (code instanceof HierarchicalReferenceCode) {
+        list.add((HierarchicalReferenceCode) code);
+      }
+    }
+    return list;
+  }
+
   /**
    * Comparator used to sort regular code groups.
+   * @author Marcel Baumann
+   * @version $Revision$
    */
-  protected static class CodeComparator implements Comparator<ReferenceCode> {
+  private static class CodeComparator implements Comparator<ReferenceCode> {
     /**
      * Compares two regular reference code.
      * @param left left item to compare.

@@ -92,13 +92,13 @@
         <tr>
           <td>commons-dbcp</td>
           <td>1.1</td>
-          <th>Apache License</th>
+          <td>Apache License</td>
           <td><a href="ext:jakarta/commons-dbcp">Jakarta Commons BBCP</a></td>
         </tr>
         <tr>
           <td>commons-lang</td>
           <td>2.0</td>
-          <th>Apache License</th>
+          <td>Apache License</td>
           <td><a href="ext:jakarta/commons-lang">Jakarta Commons Language</a></td>
         </tr>
         <tr>

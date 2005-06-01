@@ -25,12 +25,15 @@
       <title>Latest News</title>
       <p>Latest news of the <em>pmMDA</em> for the community.</p>
       <ul>
-        <li>Trunk has moved to 0.3.x.</li>
+        <li>Trunk has moved to 0.3.x. The first official release of this trunk is scheduled
+          for June 2005. The goal is to deliver the new version shortly after the project
+          is one year old.</li>
       </ul>
     </section>
     <section>
       <title><em>pmMDA</em> 0.3.x</title>
-      <p>Current development trunk and not released.</p>
+      <p>Current development trunk and not released. Effort is put in enhancing 
+        the documentation, the usability and smoothing rough edges.</p>
       <ul>
         <li>Effort was put in the serie to use only actual versions of external 
           components and document all dependencies. The web site was updated to

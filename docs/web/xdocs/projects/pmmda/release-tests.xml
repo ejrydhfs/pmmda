@@ -16,114 +16,259 @@
 -->
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" 
   "http://forrest.apache.org/dtd/document-v20.dtd">
-<document> 
-  <header> 
-    <title>pmMDA Release Tests</title> 
-  </header> 
+<document>
+  <header>
+    <title>pmMDA Release Tests</title>
+  </header>
   <body>
     <section>
       <title>Running Sanity Tests</title>
       <p>Ant tasks and batch files are provided to generate and run the 
-        applications used in the sanity tests. Three application sets are
-        provided. The first set tests the framework as a rich client two tiers
+        applications used in the sanity tests. Three application sets are 
+        provided. The first set tests the framework as a rich client two tiers 
         application. The second set tests the framework as three tiers 
         application using CORBA. The third set tests the framework as three 
         tiers applicaiton using J2EE/RMI.</p>
-      <p>The application sets are build using ant targets executing against the
+      <p>The application sets are build using ant targets executing against the 
         <code>build.xml</code> file.</p>
       <ul>
         <li>ant build-rich-client-tests</li>
         <li>ant build-corba-tests</li>
         <li>ant build-jboss-tests</li>
       </ul>
-      <note>
-        The build scripts assumes that JDK 1.4.2 and 1.5.0 are installed on the
-        build machine.
-      </note>
-      <note>
-        The EJB ant task is an extension and needs additional librairies. The 
-        BCEL jar file must be installed. Please consult the Ant manual for 
-        detailed instructions.
-      </note>
-      <p>To run sucessfully the tests the used software packages for the database,
-        CORBA ORB, or J2EE container must be installed. Please refer to the 
-        installation notes of the used packages. The application sets are 
-        started using shell scripts located in the <code>scripts tests</code> 
-        directory.</p>
+      <note> The build scripts assumes that JDK 1.4.2 and 1.5.0 are installed 
+        on the build machine. </note>
+      <note> The EJB ant task is an extension and needs additional librairies. 
+        The BCEL jar file must be installed. Please consult the Ant manual for 
+        detailed instructions. </note>
+      <p>To run sucessfully the tests the used software packages for the 
+        database, CORBA ORB, or J2EE container must be installed. Please refer 
+        to the installation notes of the used packages. The application sets 
+        are started using shell scripts located in the <code>scripts 
+        tests</code> directory.</p>
       <ul>
-        <li>Rich client tests
-        <ol>
-          <li>Starts the client application <code>test-rich-client</code>.</li>
-        </ol></li>
-        <li>CORBA three tiers tests
-        <ol>
-          <li>Starts CORBA request broker <code>orb-start</code>.</li>
-          <li>Starts the CORBA server <code>test-corba-server</code></li>
-          <li>Starts the CORBA client <code>test-corba-client</code></li>
-        </ol></li>
-        <li>JBoss three tiers tests
-        <ol>
-          <li>Starts the J2EE JBoss container using its start script. The
-            J2EE server was copied in the deployment directory when building it
-            and will start automatically.</li>
-          <li>Starts the J2EE client <code>test-j2ee-client</code>.</li>
-        </ol></li>
+        <li>Rich client tests <ol> <li>Starts the client application 
+          <code>test-rich-client</code>.</li> </ol></li>
+        <li>CORBA three tiers tests <ol> <li>Starts CORBA request broker 
+          <code>orb-start</code>.</li> <li>Starts the CORBA server 
+          <code>test-corba-server</code></li> <li>Starts the CORBA client 
+          <code>test-corba-client</code></li> </ol></li>
+        <li>JBoss three tiers tests <ol> <li>Starts the J2EE JBoss container 
+          using its start script. The J2EE server was copied in the deployment 
+          directory when building it and will start automatically.</li> 
+          <li>Starts the J2EE client <code>test-j2ee-client</code>.</li> 
+          </ol></li>
       </ul>
-      <p>Please remember that CORBA and J2EE should not be run simultaneously or be
-        very careful to avoid port conflicts.</p>
-      <note>If the application does not start, verify first that the middleware
-        is running. If using J2EE verify that the server was correctly deployed
+      <p>Please remember that CORBA and J2EE should not be run simultaneously 
+        or be very careful to avoid port conflicts.</p>
+      <note>If the application does not start, verify first that the middleware 
+        is running. If using J2EE verify that the server was correctly deployed 
         and started.</note>
     </section>
-    
     <section>
       <title>Sanity Tests</title>
       <p>A set of sanity tests is defined to verify the adequacy and 
         completness of the application. The following cases are defined.</p>
       <p>The set of scenarios checks the user interface of the application.</p>
-      <ol>
-        <li>Verify that the menu bar is populated with the expected menu items 
-          and that a model can be displayed in the explorer window.</li>
-        <li>Verify the information in the about dialog. The list of librairies, 
-          the license, the contributors and the system properties should be 
-          visible and up to date.</li>
-        <li>Verify the information in the preferences dialog. The list of 
-          configured cartridges and their configuration should be visible and 
-          up to date.</li>
-      </ol>
-      <p>This set of scenarios checks that the reading and writing of models in 
-        all supported formats are working.</p>
-      <ol>
-        <li>Load the provided model in the application. Checks that packages, 
-          classes, properties and indexed properties are displayed.</li>
-        <li>Save the model as another ArgoUML model. Load the saved model and 
-          verify that packages, classes, properties and indexed properties are 
-          displayed.</li>
-        <li>Save the model as a XML model. Load the saved model and verify that 
-          packages, classes, properties and indexed properties are 
-          displayed.</li>
-        <li>Save the model as a serialized model. Load the saved model and 
-          verify that packages, classes, properties and indexed properties are 
-          displayed.</li>
-      </ol>
-      <p>This set of scenarios verifies that the provided code generators are 
-        working.</p>
-      <ol>
-        <li>Load the provided model in the application. Generates all artifacts 
-          for all loaded cartridges.</li>
-      </ol>
-      <p>The generated source code artifacts must now be verified. Build the 
-        test applications with the help of the provided ant scritps.</p>
-      <ol>
-        <li>Execute the rich client test application. Test it by adding some 
-          data objects. Modify the saved objects, and delete some of them.</li>
-        <li>Execute the CORBA client server test application. Test it by adding 
-          some data objects. Modify the saved objects, and delete some of 
-          them.</li>
-        <li>Execute the J2EE JBoss client server test application. Test it by 
-          adding some data objects. Modify the saved objects, and delete some 
-          of them.</li>
-      </ol>
+      <section>
+        <title>Distribution</title>
+        <p>This set of scenarios verifies that the binary distribution is 
+          working.</p>
+        <table>
+          <tr>
+            <th>Tests</th>
+          </tr>
+          <tr>
+            <td>Download the pmMDA distribution from sourceforge; unzip it and 
+              install it in a directory.</td>
+          </tr>
+          <tr>
+            <td>Start the application and load the provided model. Packages, 
+              classes, properties and indexed properties are displayed.</td>
+          </tr>
+          <tr>
+            <td>Generate all artefacts.</td>
+          </tr>
+        </table>
+        <p>This set of scenarios verifies that the source distribution is 
+          working for developers.</p>
+        <table>
+          <tr>
+            <th>Tests</th>
+          </tr>
+          <tr>
+            <td>Download the pmMDA developer distribution form sourceforge 
+              unzip it and install it in a project.</td>
+          </tr>
+          <tr>
+            <td>Connect through CVS and download the source files with the 
+              official label.</td>
+          </tr>
+          <tr>
+            <td>Compile the project.</td>
+          </tr>
+        </table>
+      </section>
+      <section>
+        <title>Menu Operations</title>
+        <p>This set of scenarios checks all the menu operations. The reading 
+          and writing of models in all supported formats are verified.</p>
+        <table>
+          <tr>
+            <th>Tests</th>
+          </tr>
+          <tr>
+            <td>Verify that the menu bar is populated with the expected menu 
+              items.</td>
+          </tr>
+          <tr>
+            <td>Verify the information in the about dialog. The list of 
+              librairies, the license, the contributors and the system 
+              properties should be visible and up to date.</td>
+          </tr>
+          <tr>
+            <td>Verify the information in the cartridge preferences dialog. The 
+              list of configured cartridges and their configuration should be 
+              visible and up to date.</td>
+          </tr>
+          <tr>
+            <td>Load a model from the persistent storage. All extensions should 
+              be tested - zargo, ser, xml -.</td>
+          </tr>
+          <tr>
+            <td>Save a model to the persistent storage. All extensions should 
+              be tested - zargo, ser, xml -. Verify that all defined 
+              stereotypes in ArgoUML are still available after a save 
+              operation.</td>
+          </tr>
+          <tr>
+            <td>Save as a model to the persistent storage. All extensions 
+              should be tested - zargo, ser, xml -.</td>
+          </tr>
+          <tr>
+            <td>Create a new a model and verify that an empty model is 
+              displayed.</td>
+          </tr>
+          <tr>
+            <td>Close a model and verify that an empty model is displayed.</td>
+          </tr>
+        </table>
+      </section>
+      <section>
+        <title>Edit Operations</title>
+        <p>This set of scenarios verifies that the edit operations are 
+          working.</p>
+          <table>
+            <tr>
+              <th>Tests</th>
+            </tr>
+            <tr>
+              <td>Add a package to the model.</td>
+            </tr>
+            <tr>
+              <td>Remove a package from the model.</td>
+            </tr>
+            <tr>
+              <td>Change the name of a package and verify that the name is 
+                updated in the tree view.</td>
+            </tr>
+            <tr>
+              <td>Check that the correct icon is displaye in the tree.</td>
+            </tr>
+            <tr>
+              <td>Check that the popup menu content reflects the package node 
+                type.</td>
+            </tr>
+            <tr>
+              <td>Add a class to a package.</td>
+            </tr>
+            <tr>
+              <td>Remove a class from a package.</td>
+            </tr>
+            <tr>
+              <td>Change the name of a class and verify that the name is 
+                updated in the tree view.</td>
+            </tr>
+            <tr>
+              <td>Check that the correct icon is displayed in the tree.</td>
+            </tr>
+            <tr>
+              <td>Check that the popup menu content reflects the class node 
+                type.</td>
+            </tr>
+            <tr>
+              <td>Add a property to a class.</td>
+            </tr>
+            <tr>
+              <td>Remove a property from a class.</td>
+            </tr>
+            <tr>
+              <td>Change the name of a property and verify that the name is 
+                updated in the tree view.</td>
+            </tr>
+            <tr>
+              <td>Check that the correct icon is displayed in the tree.</td>
+            </tr>
+            <tr>
+              <td>Check that the popup menu content reflects the property node 
+                type.</td>
+            </tr>
+            <tr>
+              <td>Add an indexed property to a class.</td>
+            </tr>
+            <tr>
+              <td>Remove an indexed property from a class.</td>
+            </tr>
+            <tr>
+              <td>Change the name of an indexed property and verify that the 
+                name is updated in the tree view.</td>
+            </tr>
+            <tr>
+              <td>Check that the correct icon is displayed in the tree.</td>
+            </tr>
+            <tr>
+              <td>Check that the popup menu content reflects the indexed 
+                property node type.</td>
+            </tr>
+          </table>
+      </section>
+      <section>
+        <title>Generators</title>
+        <p>This set of scenarios verifies that the provided code generators are 
+          working.The generated source code artifacts must now be verified. 
+          Build the test applications with the help of the provided ant 
+          scripts.</p>
+        <table>
+          <tr>
+            <th>Tests</th>
+          </tr>
+          <tr>
+            <td>Load the provided model in the application. Generates all 
+              artifacts for all loaded cartridges.</td>
+          </tr>
+          <tr>
+            <td>Generate all with mode Java 1.5 and with mode Java 1.4.</td>
+          </tr>
+          <tr>
+            <td>For each available cartridge generate model</td>
+          </tr>
+          <tr>
+            <td>Execute the rich client test application. Test it by adding 
+              some data objects. Modify the saved objects, and delete some of 
+              them.</td>
+          </tr>
+          <tr>
+            <td>Execute the CORBA client server test application. Test it by 
+              adding some data objects. Modify the saved objects, and delete 
+              some of them.</td>
+          </tr>
+          <tr>
+            <td>Execute the J2EE JBoss client server test application. Test it 
+              by adding some data objects. Modify the saved objects, and delete 
+              some of them.</td>
+          </tr>
+        </table>
+      </section>
     </section>
     <section>
       <title>Integration Tests</title>

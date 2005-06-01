@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" 
-  "http://forrest.apache.org/dtd/document-v13.dtd">
+<!--
+  Copyright 2000-2005 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" 
+  "http://forrest.apache.org/dtd/document-v20.dtd">
 <document>
   <header>
     <title>Articles, Presentations and background Information</title>
@@ -16,24 +31,23 @@
         concepts and trade-offs of the distributed frameworks. The third set
         of stories shows war stories and lessons learned.</p>
       <dl>
-        <dt><link href="site:articles/pmda-design">pmMDA Design</link></dt>
+        <dt><a href="site:articles/pmda-design">pmMDA Design</a></dt>
         <dd>describes the architecture and design decisions of the 
           <em>pmMDA</em> application.</dd>
-        <dt><link href="site:articles/pmda-ui">pmMDA User Interface</link></dt>
+        <dt><a href="site:articles/pmda-ui">pmMDA User Interface</a></dt>
         <dd>describes the graphical user interface and the command line 
           interface of the <em>pmMDA</em> application.</dd>
-        <dt><link href="site:articles/dog-design">Data Object Graph Design</link></dt>
+        <dt><a href="site:articles/dog-design">Data Object Graph Design</a></dt>
         <dd> describes the architecture and design decision of the data object 
           graph framework.</dd>
         <dt>
-          <link href="site:articles/oex-design">Data Object Graph 
-            Explorer</link>
+          <a href="site:articles/oex-design">Data Object Graph Explorer</a>
         </dt>
         <dd>describes the architecture and design decisions of the explorer
           framework.</dd>
         <dt>
-          <link href="site:articles/dog-transactions">Data Object Graph Lessons 
-            Learned</link>
+          <a href="site:articles/dog-transactions">Data Object Graph Lessons 
+            Learned</a>
         </dt>
         <dd>documents the lesson learned using the DOG framework in 
           mission-critical entreprise applications. The programs were 

@@ -15,17 +15,17 @@
   limitations under the License.
 -->
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" 
-                          "http://apache.org/forrest/dtd/document-v20.dtd">
-<document> 
-  <header> 
-    <title>Hosted Projects</title> 
-  </header> 
-  <body> 
+  "http://apache.org/forrest/dtd/document-v20.dtd">
+<document>
+  <header>
+    <title>Hosted Projects</title>
+  </header>
+  <body>
     <section>
       <title>pmMDA</title>
-      <p>The <em>pmMDA - poor man Model Driven Architecture -</em> is a framework
-        to generate source code artifacts and the associated documentation following
-        the MDA approach.</p>
+      <p>The <em>pmMDA - poor man Model Driven Architecture -</em> is a 
+        framework to generate source code artifacts and the associated 
+        documentation following the MDA approach.</p>
       <p>The development method is agile USDP using UML. The programming 
         language is Java JDK-5.0. The license of the project is Apache 
         Foundation License 2.0.</p>

@@ -24,14 +24,13 @@
   </developers>
   <todo>
     <actions priority="high">
-      <action context="source" type="add" dev="MB" due-to="pmMDA Group"> 
-        Complete, test and publish release 0.2.9-RC2. </action>
     </actions>
     <actions priority="medium">
-      <action context="infrastructure" type="update" dev="MB">
-        Migrate to Eclipse 3.0.1. Migrate the J2EE personality to JBoss 4.0.
-        to allow JDK1.5 on container site.
-      </action>
+      <action context="extension" type="add" dev="MB" due-to="pmMDA Group"> 
+        Complete implementation of reference code code generators.</action>
+      <action context="extension" type="add" dev="MB" due-to="pmMDA Group"> 
+        Advertise the pmMDA project to gain more support and increase 
+        download.</action>
     </actions>
     <actions priority="low">
       <action context="extension" type="update" dev="MB" due-to="pmMDA Group"> 
@@ -42,7 +41,18 @@
     </actions>
   </todo>
   <changes>
+    <release version="0.3.x" date="2005">
+      <action context="source" type="add" dev="MB" due-to="pmMDA Group"> 
+        Provide tooltips support for tagged values defined in cartriges. 
+        </action>
+    </release>
     <release version="0.2.x" date="2004">
+      <action context="source" type="add" dev="MB" due-to="pmMDA Group"> 
+        Complete, test and publish release 0.2.9-RC2. </action>
+      <action context="infrastructure" type="update" dev="MB">
+        Migrate to Eclipse 3.0.1. Migrate the J2EE personality to JBoss 4.0.
+        to allow JDK1.5 on container site.
+      </action>
       <action dev="mb" type="update" context="docs"> Create an initial version 
         of the Forrest site and upload it to the source forge site. The 
         <em>pmMDA group</em> should review the site and provide feedback. 
