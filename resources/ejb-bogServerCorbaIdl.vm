@@ -22,26 +22,27 @@ module ch {
 #if(${class.booleanValueOfTag("bo-is-root")})
 #set($boMoClass=${class.getAttribute("bo-mo-class")})
 #set($boLwClass=${class.getAttribute("bo-lw-class")})
-	    ${class.getAttribute("cto-mo-class")}Sequence retrieve${boMoClass}(in string datasource, in long id, in string constraints) 
-	      raises (DogExceptionCto);
+	    ${class.getAttribute("cto-mo-class")}Sequence retrieve${boMoClass}(in string datasource, in long id, in string constraints)
+          raises (CtoExceptionCto);
 #if(${class.booleanValueOfAttribute("bo-lightweight")})  
 	  
-	    ${class.getAttribute("cto-lw-class")}Sequence retrieveLw${boLwClass}(in string datasource, in long id, in string constraints) 
-	      raises (DogExceptionCto);
+	    ${class.getAttribute("cto-lw-class")}Sequence retrieveLw${boLwClass}(in string datasource, in long id, in string constraints)
+          raises (CtoExceptionCto);
 #end
 	  
 	    DataObjectUpdateSequence store${boMoClass}(in string datasource, in ${class.getAttribute("cto-mo-class")} bo)
-	      raises (DogExceptionCto);
+          raises (CtoExceptionCto);
 	
-	    void remove${boMoClass}(in string datasource, in long id) raises (DogExceptionCto);
+	    void remove${boMoClass}(in string datasource, in long id)
+          raises (CtoExceptionCto);
 	  	  
 #end
 #end
 
-        ReferenceCodeInfoSequence retrieveCodes(in ReferenceCodeInfoSequence descriptors) 
-          raises (DogExceptionCto); 
+        ReferenceCodeInfoSequence retrieveCodes(in ReferenceCodeInfoSequence descriptors)
+          raises (CtoExceptionCto);
           
-        void heartbeat() raises (DogExceptionCto);
+        void heartbeat() raises (CtoExceptionCto);
 	  };
     };
   };

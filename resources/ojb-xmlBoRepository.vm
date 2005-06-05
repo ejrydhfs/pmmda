@@ -64,7 +64,7 @@
 #if(${type} == ${class})
   <field-descriptor 
     name="${reference.nameFirstLower()}${relation.nameFirstUpper()}Handle" 
-    column="${reference.valueOfTag("ojb-table-name")}_${relation.valueOfTag("ojb-column-name")}_FK"
+    column="${reference.valueOfTag("ojb-table-name")}_${reference.nameUpper()}_FK"
     jdbc-type="INTEGER"
     nullable="${relation.canBeNull()}"/>
 #end

@@ -41,6 +41,12 @@ public class PersistenceHandler implements DataObjectHandler {
   private static Log log = LogFactory.getLog(PersistenceHandler.class);
 
   /**
+   * Hack due to compiler differences between JDK 1.5 and eclipse. This constant
+   * is used instead of Collections.emptyList()
+   */
+  private static final List<DataObject> EMPTY_LIST = new ArrayList<DataObject>();
+
+  /**
    * The database manager used in the handler to access the databases.
    */
   private DatabaseMgr databaseMgr;
@@ -212,9 +218,7 @@ public class PersistenceHandler implements DataObjectHandler {
     visitor.setFunctor(collect);
     DataObjectType.invokeVisitor(clazz, originalRoot, visitor);
     List<DataObject> deleted = new ArrayList<DataObject>(collect.getObjects());
-    policy.update(database, deleted, deleted, deleted,
-        (List<DataObject>) Collections.emptyList(),
-        (List<DataObject>) Collections.emptyList());
+    policy.update(database, deleted, deleted, deleted, EMPTY_LIST, EMPTY_LIST);
     if (log.isTraceEnabled()) {
       StringBuilder text = new StringBuilder();
       text.append("end remove operation ").append(deleted.size());

@@ -22,7 +22,6 @@ package ${package.getAttribute("ejb-client-package")};
 #set($dummy=${imports.addClassName("ch.bbv.dog.DataObject")})
 #set($dummy=${imports.addClassName("ch.bbv.dog.DataObjectId")})
 #set($dummy=${imports.addClassName("ch.bbv.dog.LightweightObject")})
-#set($dummy=${imports.addClassName("ch.bbv.dog.DogException")})
 #set($dummy=${imports.addPackageName("ch.bbv.transport")})
 #set($importStatements=${imports.getImportStatements(4)})
 #foreach($importStatement in $importStatements) 
@@ -165,7 +164,7 @@ public class ${className} extends ComponentImpl
       if (objects.size() > 0) {
         object = (DataObject)objects.get(0);
       }
-    } catch(DogException e) {
+    } catch(CtoException e) {
       log.error(e);
     }
 #end
@@ -195,7 +194,7 @@ public class ${className} extends ComponentImpl
       } else {
         throw new UnsupportedOperationException();
       }
-    } catch(DogException e) {
+    } catch(CtoException e) {
       log.error(e);
     }
 #end
@@ -235,7 +234,7 @@ public class ${className} extends ComponentImpl
       if (objects.size() > 0) {
         object = (LightweightObject)objects.get(0);
       }
-    } catch(DogException e) {
+    } catch(CtoException e) {
       log.error(e);
     }
 #end
@@ -265,7 +264,7 @@ public class ${className} extends ComponentImpl
       } else {
         throw new UnsupportedOperationException();
       }
-    } catch(DogException e) {
+    } catch(CtoException e) {
       log.error(e);
     }
 #end
@@ -301,7 +300,7 @@ public class ${className} extends ComponentImpl
       } else {
         throw new UnsupportedOperationException();
       }
-    } catch(DogException e) {
+    } catch(CtoException e) {
       log.error(e);
     }
 #end
@@ -329,7 +328,7 @@ public class ${className} extends ComponentImpl
       } else {
         throw new UnsupportedOperationException();
       }
-    } catch(DogException e) {
+    } catch(CtoException e) {
       log.error(e);
     }
 #end
@@ -356,7 +355,7 @@ public class ${className} extends ComponentImpl
       } else {
         throw new UnsupportedOperationException();
       }
-    } catch(DogException e) {
+    } catch(CtoException e) {
       log.error(e);
     }
 #end
@@ -373,10 +372,10 @@ public class ${className} extends ComponentImpl
    * @param datasource datasource containing the persistent objects.
    * @param id identifier of the root object.
    * @param constraints constraints to select the set of requested graphs.
-   * @throws DogException the remote server encountered an error.
+   * @throws CtoException the remote server encountered an error.
    */  
   private List retrieve${boMoClass}(String datasource, Integer id, String constraints) 
-    throws DogException {
+    throws CtoException {
     try {
       int idValue = (id == null) ? ILLEGAL_ID : id.intValue();
       String constraintsValue = (constraints == null) ? "" : constraints;
@@ -384,7 +383,7 @@ public class ${className} extends ComponentImpl
         constraintsValue);
 	  List bos = ${boMoClass}Transformer.transform(ctos);
 	  return bos;
-	} catch (DogExceptionCto e) {
+	} catch (CtoExceptionCto e) {
 	  throw TransformerCto.extract(e);
 	}
   }
@@ -395,10 +394,10 @@ public class ${className} extends ComponentImpl
    * @param datasource datasource containing the persistent objects.
    * @param id identifier of the root object.
    * @param constraints constraints to select the set of requested graphs.
-   * @throws DogException the remote server encountered an error.
+   * @throws CtoException the remote server encountered an error.
    */  
   private List retrieveLw${boLwClass}(String datasource, Integer id, String constraints) 
-    throws DogException {
+    throws CtoException {
     assert(datasource != null);
     try {
       int idValue = (id == null) ? ILLEGAL_ID : id.intValue();
@@ -407,7 +406,7 @@ public class ${className} extends ComponentImpl
 	    constraintsValue);
       List lws = ${boLwClass}Transformer.transform(ctos);
       return lws;
-	} catch (DogExceptionCto e) {
+	} catch (CtoExceptionCto e) {
 	  throw TransformerCto.extract(e);
 	}
   }
@@ -415,17 +414,17 @@ public class ${className} extends ComponentImpl
   /** Stores the data object graph with the given root identifier.
    * @param datasource datasource containing the persistent objects.
    * @param id identifier of the root object.
-   * @throws DogException the remote server encountered an error.
+   * @throws CtoException the remote server encountered an error.
    */
   private List store${boMoClass}(String datasource, ${boMoClass} root)
-	throws DogException {
+	throws CtoException {
     assert((datasource != null) && (root != null));
 	try {
       ${ctoMoClass} cto = ${boMoClass}Transformer.transform(root);
       DataObjectUpdateCto[] ctos = server.store${boMoClass}(datasource, cto);
       List infos = TransformerCto.extractInfos(ctos);
       return infos;    
-	} catch (DogExceptionCto e) {
+	} catch (CtoExceptionCto e) {
 	  throw TransformerCto.extract(e);
 	}
   }
@@ -433,13 +432,13 @@ public class ${className} extends ComponentImpl
   /** Removes the data object graph with the given root identifier.
    * @param datasource datasource containing the persistent objects.
    * @param id identifier of the root object.
-   * @throws DogException the remote server encountered an error.
+   * @throws CtoException the remote server encountered an error.
    */
-  private void remove${boMoClass}(String datasource, Integer id) throws DogException {
+  private void remove${boMoClass}(String datasource, Integer id) throws CtoException {
     assert((datasource != null) && (id != null));
     try {
       server.remove${boMoClass}(datasource, id.intValue());
-	} catch (DogExceptionCto e) {
+	} catch (CtoExceptionCto e) {
 	  throw TransformerCto.extract(e);
 	}
   }
@@ -451,17 +450,17 @@ public class ${className} extends ComponentImpl
    * requested reference codes.
    * @return the list of requested reference codes with their values.
    */
-  public List retrieveCodes(List descriptors) throws DogException {
+  public List retrieveCodes(List descriptors) throws CtoException {
     return descriptors;
   }
 
   /** Heartbeat function to verify that the server is available.
-   * @throws DogException the remote server encountered an error.
+   * @throws CtoException the remote server encountered an error.
    */  
-  public void heartbeat() throws DogException {
+  public void heartbeat() throws CtoException {
     try {
       server.heartbeat();
-	} catch (DogExceptionCto e) {
+	} catch (CtoExceptionCto e) {
 	  throw TransformerCto.extract(e);
 	}
   }

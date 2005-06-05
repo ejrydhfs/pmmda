@@ -15,7 +15,6 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ch.bbv.dog.DogException;
 import ch.bbv.dog.DataObjectUpdate;
 import ch.bbv.dog.DataPropertyUpdate;
 
@@ -207,20 +206,24 @@ public final class TransformerCto {
     return cto;
   }
 
+  /**
+   * Creates a CTO representation of the CTO exception.
+   * @param value value to transform.
+   * @return the CTO representation of the instance.
+   */
+  public static final CtoExceptionCto create(CtoException value) {
+    CtoExceptionCto cto = new CtoExceptionCto();
+    cto.text = create(value.getMessage());
+    cto.reason = create(value.getReason());
+    return cto;
+  }
+  
   public static final DataObjectUpdateCto[] createInfos(List infos) {
     DataObjectUpdateCto[] ctos = new DataObjectUpdateCto[infos.size()];
     for (int i = 0; i < ctos.length; i++) {
       ctos[i] = create((DataObjectUpdate) infos.get(i));
     }
     return ctos;
-  }
-
-  public static final DogExceptionCto create(DogException value) {
-    DogExceptionCto cto = new DogExceptionCto();
-    cto.code = value.getCode();
-    cto.origin = create(value.getOrigin());
-    cto.text = create(value.getText());
-    return cto;
   }
 
   /**
@@ -324,7 +327,6 @@ public final class TransformerCto {
    */
   public static final Date extractDate(String value) {
     Date date = null;
-
     try {
       date = new Date(dateFormat.parse(value).getTime());
     } catch (ParseException e) {
@@ -334,6 +336,10 @@ public final class TransformerCto {
     return date;
   }
 
+  public static final CtoException extract(CtoExceptionCto cto) {
+    return new CtoException(extract(cto.text), extract(cto.reason));
+  }
+  
   /**
    * Transforms the CTO representation of a data property update into its Java
    * representation.
@@ -373,11 +379,5 @@ public final class TransformerCto {
       updates.add(extract(ctos[i]));
     }
     return updates;
-  }
-
-  public static final DogException extract(DogExceptionCto cto) {
-    DogException bo = new DogException(cto.code, extract(cto.origin),
-        extract(cto.text));
-    return bo;
   }
 }

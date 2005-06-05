@@ -133,6 +133,7 @@ public class Realm implements DataObject {
    public void setTimestamp(Timestamp timestamp) {
      this.timestamp = timestamp;
    }
+
   /** 
    * Returns the current value of the simple property name.
    * @return the value of the simple property name.
@@ -145,7 +146,7 @@ public class Realm implements DataObject {
   /** 
    * Sets the new value of the simple property name.
    * @param name new value of the property.
-   * @see #getName
+   * @see #getName()
    */    
   public void setName(String name) {
     if (((this.name != null) && !this.name.equals(name)) || 

@@ -7,6 +7,8 @@ package ch.bbv.mda;
 
 import java.util.*;
 
+import ch.bbv.mda.operators.ModelOperators;
+
 /**
  * The meta project defines a MDA project composed of a set of packages. Overall
  * administrative properties are defined in the class. The class is a Java bean.
@@ -160,7 +162,7 @@ public class MetaModel extends MetaPackage {
   }
 
   // %% BEGIN USER CODE
-  
+
   public MetaPackage findPackage(String qualifiedName) {
     return (MetaPackage) findElement(packages, qualifiedName);
   }
@@ -177,11 +179,12 @@ public class MetaModel extends MetaPackage {
   public MetaClass findClass(String qualifiedName) {
     MetaClass clazz = null;
     if (qualifiedName != null) {
-      String packageName = MetaClass.getPackageName(qualifiedName);
+      String packageName = ModelOperators.getContextName(qualifiedName);
       if (packageName != null) {
         MetaPackage metaPackage = findPackage(packageName);
         if (metaPackage != null) {
-          clazz = metaPackage.findClass(MetaClass.getClassName(qualifiedName));
+          clazz = metaPackage.findClass(ModelOperators
+              .getComponentName(qualifiedName));
         }
       }
     }

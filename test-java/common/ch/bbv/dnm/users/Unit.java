@@ -154,6 +154,7 @@ public class Unit implements DataObject {
    public void setTimestamp(Timestamp timestamp) {
      this.timestamp = timestamp;
    }
+
   /** 
    * Returns the current value of the simple property name.
    * @return the value of the simple property name.
@@ -166,7 +167,7 @@ public class Unit implements DataObject {
   /** 
    * Sets the new value of the simple property name.
    * @param name new value of the property.
-   * @see #getName
+   * @see #getName()
    */    
   public void setName(String name) {
 	String oldName = this.name;
@@ -177,6 +178,7 @@ public class Unit implements DataObject {
       setModified(true);
     }
   }    
+
   /** 
    * Returns the current value of the simple property description.
    * @return the value of the simple property description.
@@ -189,7 +191,7 @@ public class Unit implements DataObject {
   /** 
    * Sets the new value of the simple property description.
    * @param description new value of the property.
-   * @see #getDescription
+   * @see #getDescription()
    */    
   public void setDescription(String description) {
     if (((this.description != null) && !this.description.equals(description)) || 

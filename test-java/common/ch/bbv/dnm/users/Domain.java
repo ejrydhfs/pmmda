@@ -152,6 +152,7 @@ public class Domain implements DataObject {
    public void setTimestamp(Timestamp timestamp) {
      this.timestamp = timestamp;
    }
+
   /** 
    * Returns the current value of the simple property name.
    * @return the value of the simple property name.
@@ -164,7 +165,7 @@ public class Domain implements DataObject {
   /** 
    * Sets the new value of the simple property name.
    * @param name new value of the property.
-   * @see #getName
+   * @see #getName()
    */    
   public void setName(String name) {
     if (((this.name != null) && !this.name.equals(name)) || 
@@ -173,6 +174,7 @@ public class Domain implements DataObject {
       setModified(true);
     }
   }    
+
   /** 
    * Returns the current value of the simple property description.
    * @return the value of the simple property description.
@@ -185,7 +187,7 @@ public class Domain implements DataObject {
   /** 
    * Sets the new value of the simple property description.
    * @param description new value of the property.
-   * @see #getDescription
+   * @see #getDescription()
    */    
   public void setDescription(String description) {
     if (((this.description != null) && !this.description.equals(description)) || 
@@ -194,6 +196,7 @@ public class Domain implements DataObject {
       setModified(true);
     }
   }    
+
   /** 
    * Returns the current value of the simple property longname.
    * @return the value of the simple property longname.
@@ -206,7 +209,7 @@ public class Domain implements DataObject {
   /** 
    * Sets the new value of the simple property longname.
    * @param longname new value of the property.
-   * @see #getLongname
+   * @see #getLongname()
    */    
   public void setLongname(String longname) {
     if (((this.longname != null) && !this.longname.equals(longname)) || 
@@ -215,6 +218,7 @@ public class Domain implements DataObject {
       setModified(true);
     }
   }    
+
   /** 
    * Returns the current value of the simple property administrator.
    * @return the value of the simple property administrator.
@@ -227,7 +231,7 @@ public class Domain implements DataObject {
   /** 
    * Sets the new value of the simple property administrator.
    * @param administrator new value of the property.
-   * @see #getAdministrator
+   * @see #getAdministrator()
    */    
   public void setAdministrator(User administrator) {
     if (((this.administrator != null) && !this.administrator.equals(administrator)) || 

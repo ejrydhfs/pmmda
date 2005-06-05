@@ -28,7 +28,7 @@ public class NotNullRule extends ValidationRuleImpl implements ValidationRule {
   private static ResourceBundle resources;
 
   static {
-    resources = ResourceBundle.getBundle("ch.bbv.dog.validation.RulesMessages");
+    resources = ResourceBundle.getBundle("ch.bbv.mda.validation.RulesMessages");
 
   }
 

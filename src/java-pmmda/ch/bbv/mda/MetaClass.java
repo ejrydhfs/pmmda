@@ -8,8 +8,6 @@ package ch.bbv.mda;
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.bbv.mda.operators.ModelOperators;
-
 /**
  * The meta class models a package object as defined in the UML standard. It
  * provides additional services to retrieve tagged values associated with it.
@@ -501,23 +499,5 @@ public class MetaClass extends MetaElement {
    */
   public boolean isNestedClass() {
     return getContext() instanceof MetaClass;
-  }
-
-  /**
-   * Returns the package name of a qualified class name.
-   * @param qualifiedClassname class name which package name is requested.
-   * @return the package name.
-   */
-  public static String getPackageName(String qualifiedClassname) {
-    return ModelOperators.getContextName(qualifiedClassname);
-  }
-
-  /**
-   * Returns the class name of a qualified class name.
-   * @param qualifiedClassname qualified class name to process.
-   * @return the simple class name.
-   */
-  public static String getClassName(String qualifiedClassname) {
-    return ModelOperators.getComponentName(qualifiedClassname);
   }
 }

@@ -246,7 +246,7 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
   public void initialize(Properties properties) {
     super.initialize(properties);
     CartridgeFactory factory = CartridgeFactory.getInstance();
-    addCartridge(factory.getCartridge("dog"));
+    addCartridge(factory.getCartridge(BoCartridge.PREFIX));
     addUndefinedProperty(properties, SOURCE_ROOT_FOLDER_KEY, "");
     addUndefinedProperty(properties, GENERATE_FK_INDEX_KEY, "false");
     addUndefinedProperty(properties, INHERITANCE_KEY, "expand");
@@ -281,12 +281,12 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
           .getTemplate("ojb-xmlBoRepository.vm");
       ojbXmlLwRepositoryTemplate = Velocity
           .getTemplate("ojb-xmlLwRepository.vm");
-    } catch (ParseErrorException pee) {
-      pee.printStackTrace();
-    } catch (ResourceNotFoundException rnfe) {
-      rnfe.printStackTrace();
+    } catch (ParseErrorException e) {
+      log.error(e);
+    } catch (ResourceNotFoundException e) {
+      log.error(e);
     } catch (Exception e) {
-      e.printStackTrace();
+      log.error(e);
     }
   }
 

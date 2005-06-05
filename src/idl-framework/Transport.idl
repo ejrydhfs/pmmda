@@ -6,9 +6,9 @@
 module ch {
   module bbv {
     module transport {
-      exception DogExceptionCto {
+      exception CtoExceptionCto {
         long code;
-        NullString origin;
+        NullString reason;
         NullString text;
       };
 

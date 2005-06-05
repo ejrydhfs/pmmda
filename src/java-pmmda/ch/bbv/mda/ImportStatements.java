@@ -7,6 +7,8 @@ package ch.bbv.mda;
 
 import java.util.*;
 
+import ch.bbv.mda.operators.ModelOperators;
+
 /**
  * The import statement contains all classes imported in a class file to realize
  * the services of the class. The imported classes are infered from the
@@ -52,7 +54,7 @@ public class ImportStatements {
   /**
    * Constructor of the class.
    * @param context name of the package containing the class which import
-   *        statements are computed.
+   *          statements are computed.
    * @pre context != null
    */
   public ImportStatements(String context) {
@@ -64,7 +66,7 @@ public class ImportStatements {
   /**
    * Set the package context of the item defining the import statements.
    * @param context name of the package containing the class which import
-   *        statements are computed.
+   *          statements are computed.
    * @pre context != null
    */
   public void setPackageContext(String context) {
@@ -86,14 +88,14 @@ public class ImportStatements {
    * @return list of all imported classes.
    * @pre packageName != null
    */
-  public Collection getClassNames(String packageName) {
+  public Collection<String> getClassNames(String packageName) {
     assert packageName != null;
     Map<String, String> classes = packageNames.get(packageName);
-    Collection classNames;
+    Collection<String> classNames;
     if (classes != null) {
       classNames = classes.values();
     } else {
-      classNames = Collections.EMPTY_LIST;
+      classNames = Collections.emptyList();
     }
     return classNames;
   }
@@ -130,14 +132,14 @@ public class ImportStatements {
   }
 
   /**
-   * Adds a class to the list of imported classes. The package of the
-   * class is added if not already defined.
+   * Adds a class to the list of imported classes. The package of the class is
+   * added if not already defined.
    * @param qualifiedName not qualified name of the classs.
    * @pre (qualifiedName != null) && (qualifiedName.length() > 0)
    */
   public void addClassName(String qualifiedName) {
     assert (qualifiedName != null) && (qualifiedName.length() > 0);
-    String name = MetaClass.getPackageName(qualifiedName);
+    String name = ModelOperators.getContextName(qualifiedName);
     if (!isRelevant(name)) {
       return;
     }
@@ -147,7 +149,7 @@ public class ImportStatements {
       classes = new HashMap<String, String>();
       packageNames.put(name, classes);
     }
-    name = MetaClass.getClassName(qualifiedName);
+    name = ModelOperators.getComponentName(qualifiedName);
     classes.put(name, name);
   }
 
@@ -169,11 +171,11 @@ public class ImportStatements {
   /**
    * Returns the list of import statements lexicographically sorted.
    * @param limit the limit value specifies the threshold when wildcard should
-   *        be used. If the value is -1 no check is performed
+   *          be used. If the value is -1 no check is performed
    * @return the list of import statements.
    * @pre (limit > 0) || (limit == -1)
    */
-  public List getImportStatements(int limit) {
+  public List<String> getImportStatements(int limit) {
     assert (limit > 0) || (limit == -1);
     List<String> imports = new ArrayList<String>();
     StringBuilder buffer = new StringBuilder();
@@ -182,7 +184,8 @@ public class ImportStatements {
       buffer.append(name).append(".");
       int length = buffer.length();
       Set<String> classes = packageNames.get(name).keySet();
-      if ((limit != -1) && (classes.size() >= limit)) {
+      if (((limit != -1) && (classes.size() >= limit))
+          || classes.contains(ALL_CLASSES)) {
         buffer.append("*");
         imports.add(buffer.toString());
       } else {

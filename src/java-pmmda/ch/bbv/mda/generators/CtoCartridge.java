@@ -173,12 +173,24 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
    */
   private static Log log = LogFactory.getLog(CtoCartridge.class);
 
+  /**
+   * Velocity template for the CORBA transfer interface generation.
+   */
   private Template idlDtoBoTemplate;
 
+  /**
+   * Velocity template for the CORBA transfer interface generation.
+   */
   private Template idlDtoLwTemplate;
 
+  /**
+   * Velocity template for the CORBA transfer interface generation.
+   */
   private Template javaBo2DtoTemplate;
 
+  /**
+   * Velocity template for the CORBA transfer interface generation.
+   */
   private Template javaLw2DtoTemplate;
 
   /**
@@ -324,7 +336,8 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
       buffer.append("TransformerCto.create(").append(param).append(".get")
           .append(uName).append("())");
     } else {
-      buffer.append(param).append(".get").append(uName).append("()");
+      String getter = ("boolean".equals(typeName)) ? ".is" : ".get";
+      buffer.append(param).append(getter).append(uName).append("()");
       if (!(Arrays.binarySearch(PRIMITIVE_TYPES, typeName) >= 0)) {
         if ("Boolean".equals(typeName)) {
           buffer.append(".booleanValue()");

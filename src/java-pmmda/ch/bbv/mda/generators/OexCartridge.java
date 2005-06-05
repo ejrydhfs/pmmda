@@ -75,7 +75,7 @@ public class OexCartridge extends CartridgeImpl {
     super("Object Explorer Cartridge", PREFIX, new VersionId(0, 3, 0));
 
     CartridgeFactory factory = CartridgeFactory.getInstance();
-    addCartridge(factory.getCartridge("dog"));
+    addCartridge(factory.getCartridge(BoCartridge.PREFIX));
   }
 
   public void initialize(Properties properties) {
@@ -122,7 +122,7 @@ public class OexCartridge extends CartridgeImpl {
           fields.put(property.getName(), property);
         }
       }
-      for (MetaIndexedProperty property :objectClass.getIndexedProperties()) {
+      for (MetaIndexedProperty property : objectClass.getIndexedProperties()) {
         if (property.booleanValueOfTag(IS_VISIBLE_TAG)) {
           fields.put(property.getName(), property);
         }

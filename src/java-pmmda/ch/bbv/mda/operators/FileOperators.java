@@ -52,7 +52,7 @@ public class FileOperators {
     in.close();
     out.close();
   }
-  
+
   /**
    * Extracts the source code defined between the given line patterns from the
    * file.
@@ -138,11 +138,11 @@ public class FileOperators {
    * @return the new print writer.
    * @throws FileNotFoundException the creation of the print writer generated an
    *           error.
-   * @pre file != null && file.canWrite()
+   * @pre file != null
    */
   public static PrintWriter createPrintWriter(File file)
       throws FileNotFoundException {
-    assert (file != null) && file.canWrite();
+    assert (file != null);
     return new PrintWriter(new BufferedOutputStream(new FileOutputStream(file)));
   }
 

@@ -193,8 +193,8 @@ public class EjbCartridge extends CartridgeImpl {
     super.initialize(properties);
 
     CartridgeFactory factory = CartridgeFactory.getInstance();
-    addCartridge(factory.getCartridge("dog"));
-    addCartridge(factory.getCartridge("cto"));
+    addCartridge(factory.getCartridge(BoCartridge.PREFIX));
+    addCartridge(factory.getCartridge(CtoCartridge.PREFIX));
     addUndefinedProperty(properties, GENERATE_CORBA_KEY, "false");
     addUndefinedProperty(properties, GENERATE_BEAN_KEY, "false");
     addUndefinedProperty(properties, SERVER_PACKAGE_EXTENSION_KEY, "");
@@ -237,7 +237,8 @@ public class EjbCartridge extends CartridgeImpl {
   }
 
   public void processPackage(MetaPackage metaPackage) {
-    if (!metaPackage.booleanValueOfTag(BoCartridge.GENERATE_TAG)) {
+    if (!metaPackage.booleanValueOfTag(BoCartridge.GENERATE_TAG)
+        || !shouldCreateServer(metaPackage)) {
       return;
     }
 
@@ -299,5 +300,20 @@ public class EjbCartridge extends CartridgeImpl {
     } catch (IOException e) {
       log.error("ejb write template generation failed", e);
     }
+  }
+
+  /**
+   * Returns true if a EJB or CORBA server should be generated for the package.
+   * @param packages package to check.
+   * @return true if a server should be generated otherwise false.
+   */
+  private boolean shouldCreateServer(MetaPackage packages) {
+    for (MetaClass clazz : packages.getClasses()) {
+      if (BoCartridge.DATA_OBJECT_STEREOTYPE.equals(clazz.getStereotype())
+          && clazz.booleanValueOfTag(BoCartridge.IS_ROOT_TAG)) {
+        return true;
+      }
+    }
+    return false;
   }
 }

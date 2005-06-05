@@ -139,6 +139,7 @@ public class UserRole implements DataObject {
    public void setTimestamp(Timestamp timestamp) {
      this.timestamp = timestamp;
    }
+
   /** 
    * Returns the current value of the simple property username.
    * @return the value of the simple property username.
@@ -151,7 +152,7 @@ public class UserRole implements DataObject {
   /** 
    * Sets the new value of the simple property username.
    * @param username new value of the property.
-   * @see #getUsername
+   * @see #getUsername()
    */    
   public void setUsername(String username) {
     if (((this.username != null) && !this.username.equals(username)) || 
@@ -160,6 +161,7 @@ public class UserRole implements DataObject {
       setModified(true);
     }
   }    
+
   /** 
    * Returns the current value of the simple property rolename.
    * @return the value of the simple property rolename.
@@ -172,7 +174,7 @@ public class UserRole implements DataObject {
   /** 
    * Sets the new value of the simple property rolename.
    * @param rolename new value of the property.
-   * @see #getRolename
+   * @see #getRolename()
    */    
   public void setRolename(String rolename) {
     if (((this.rolename != null) && !this.rolename.equals(rolename)) || 
@@ -181,6 +183,7 @@ public class UserRole implements DataObject {
       setModified(true);
     }
   }    
+
   /** 
    * Returns the current value of the simple property role.
    * @return the value of the simple property role.
@@ -193,7 +196,7 @@ public class UserRole implements DataObject {
   /** 
    * Sets the new value of the simple property role.
    * @param role new value of the property.
-   * @see #getRole
+   * @see #getRole()
    */    
   public void setRole(Role role) {
     if (((this.role != null) && !this.role.equals(role)) || 

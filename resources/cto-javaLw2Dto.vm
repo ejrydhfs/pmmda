@@ -1,5 +1,4 @@
 #emitFileHeader()
-
 package ${package.getAttribute("cto-bo2dto-package")};
 
 #set($imports=${cartridge.retrieveImportStatementsForLw(${class}, ${package.getAttribute("cto-bo2dto-package")})})

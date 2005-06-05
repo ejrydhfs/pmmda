@@ -33,7 +33,7 @@ public class NodeTableView extends TablePanel implements NodeView {
    * Constructor of the class.
    * @param fields fields of the view.
    */
-  public NodeTableView(List fields) {
+  public NodeTableView(List<UiField> fields) {
     super(Collections.EMPTY_LIST, new NodeTableCell(fields));
   }
 
@@ -44,7 +44,7 @@ public class NodeTableView extends TablePanel implements NodeView {
    * @return a new instance of the class.
    */
   public static NodeTableView create(UiNodeType type, Object object) {
-    return new NodeTableView((List) object);
+    return new NodeTableView((List<UiField>) object);
   }
 
   public void setModel(ExplorerNode node) {

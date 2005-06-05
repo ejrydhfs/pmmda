@@ -6,7 +6,6 @@
 package ch.bbv.explorer;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.JPanel;
@@ -103,9 +102,8 @@ public abstract class NodePropertiesView extends JPanel {
   public void setNewObject(boolean newObject) {
     if (this.newObject != newObject) {
       this.newObject = newObject;
-
-      for (Iterator i = nodePropertiesSubViews.iterator(); i.hasNext();) {
-        ((NodePropertiesView) i.next()).setNewObject(newObject);
+      for (NodePropertiesView view : nodePropertiesSubViews) {
+        view.setNewObject(newObject);
       }
     }
   }
@@ -131,10 +129,9 @@ public abstract class NodePropertiesView extends JPanel {
     this.editable = editable;
     setViewEditable(editable);
 
-    for (Iterator i = nodePropertiesSubViews.iterator(); i.hasNext();) {
-      NodePropertiesView child = (NodePropertiesView) i.next();
-      child.setEditable(editable);
-      child.setViewEditable(editable);
+    for (NodePropertiesView view : nodePropertiesSubViews) {
+      view.setEditable(editable);
+      view.setViewEditable(editable);
     }
   }
 
@@ -181,9 +178,8 @@ public abstract class NodePropertiesView extends JPanel {
    */
   protected void propagateModel(ExplorerNode node) {
     this.node = node;
-
-    for (Iterator i = nodePropertiesSubViews.iterator(); i.hasNext();) {
-      ((NodePropertiesView) i.next()).propagateModel(node);
+    for (NodePropertiesView view : nodePropertiesSubViews) {
+      view.propagateModel(node);
     }
   }
 
@@ -193,9 +189,8 @@ public abstract class NodePropertiesView extends JPanel {
    */
   protected void populateSubViews() {
     populateView();
-
-    for (Iterator i = nodePropertiesSubViews.iterator(); i.hasNext();) {
-      ((NodePropertiesView) i.next()).populateView();
+    for (NodePropertiesView view : nodePropertiesSubViews) {
+      view.populateView();
     }
   }
 

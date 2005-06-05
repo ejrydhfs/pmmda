@@ -31,6 +31,7 @@
           depends="init-tests"
           description="generate the CORBA variant of the tests">
     <delete dir="${test.corba-common.dir}/ch/bbv/transport" />
+    <echo level="info" message="Generating IDL related Java files"></echo>
     <apply executable="${idl.compiler}"
            failonerror="true"
            description="generates all server java files from the IDL files"

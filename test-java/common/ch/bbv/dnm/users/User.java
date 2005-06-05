@@ -155,6 +155,7 @@ public class User implements DataObject {
    public void setTimestamp(Timestamp timestamp) {
      this.timestamp = timestamp;
    }
+
   /** 
    * Returns the current value of the simple property login.
    * @return the value of the simple property login.
@@ -167,7 +168,7 @@ public class User implements DataObject {
   /** 
    * Sets the new value of the simple property login.
    * @param login new value of the property.
-   * @see #getLogin
+   * @see #getLogin()
    */    
   public void setLogin(String login) {
 	String oldLogin = this.login;
@@ -178,6 +179,7 @@ public class User implements DataObject {
       setModified(true);
     }
   }    
+
   /** 
    * Returns the current value of the simple property active.
    * @return the value of the simple property active.
@@ -190,7 +192,7 @@ public class User implements DataObject {
   /** 
    * Sets the new value of the simple property active.
    * @param active new value of the property.
-   * @see #isActive
+   * @see #isActive()
    */    
   public void setActive(boolean active) {
     if (this.active != active) {  
@@ -198,6 +200,7 @@ public class User implements DataObject {
       setModified(true);
     }
   }
+
   /** 
    * Returns the current value of the simple property email.
    * @return the value of the simple property email.
@@ -210,7 +213,7 @@ public class User implements DataObject {
   /** 
    * Sets the new value of the simple property email.
    * @param email new value of the property.
-   * @see #getEmail
+   * @see #getEmail()
    */    
   public void setEmail(String email) {
 	String oldEmail = this.email;
@@ -221,6 +224,7 @@ public class User implements DataObject {
       setModified(true);
     }
   }    
+
   /** 
    * Returns the current value of the simple property password.
    * @return the value of the simple property password.
@@ -233,7 +237,7 @@ public class User implements DataObject {
   /** 
    * Sets the new value of the simple property password.
    * @param password new value of the property.
-   * @see #getPassword
+   * @see #getPassword()
    */    
   public void setPassword(String password) {
     if (((this.password != null) && !this.password.equals(password)) || 
@@ -242,6 +246,7 @@ public class User implements DataObject {
       setModified(true);
     }
   }    
+
   /** 
    * Returns the current value of the simple property validTo.
    * @return the value of the simple property validTo.
@@ -254,7 +259,7 @@ public class User implements DataObject {
   /** 
    * Sets the new value of the simple property validTo.
    * @param validTo new value of the property.
-   * @see #getValidTo
+   * @see #getValidTo()
    */    
   public void setValidTo(Date validTo) {
     if (((this.validTo != null) && !this.validTo.equals(validTo)) || 
@@ -263,6 +268,7 @@ public class User implements DataObject {
       setModified(true);
     }
   }    
+
   /** 
    * Returns the current value of the simple property validFrom.
    * @return the value of the simple property validFrom.
@@ -275,7 +281,7 @@ public class User implements DataObject {
   /** 
    * Sets the new value of the simple property validFrom.
    * @param validFrom new value of the property.
-   * @see #getValidFrom
+   * @see #getValidFrom()
    */    
   public void setValidFrom(Date validFrom) {
     if (((this.validFrom != null) && !this.validFrom.equals(validFrom)) || 
@@ -284,6 +290,7 @@ public class User implements DataObject {
       setModified(true);
     }
   }    
+
   /** 
    * Returns the current value of the simple property name.
    * @return the value of the simple property name.
@@ -296,7 +303,7 @@ public class User implements DataObject {
   /** 
    * Sets the new value of the simple property name.
    * @param name new value of the property.
-   * @see #getName
+   * @see #getName()
    */    
   public void setName(String name) {
     if (((this.name != null) && !this.name.equals(name)) || 

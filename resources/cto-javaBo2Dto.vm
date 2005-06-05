@@ -1,8 +1,7 @@
 #emitFileHeader()
-
-#set($sign="#")
 package ${package.getAttribute("cto-bo2dto-package")};
 
+#set($sign="#")
 #set($imports=${cartridge.retrieveImportStatementsForBo(${class}, ${package.getAttribute("cto-bo2dto-package")})})
 #set($dummy=${imports.addPackageName(${package.getAttribute("bo-mo-package")})})
 #set($dummy=${imports.addPackageName("ch.bbv.transport")})

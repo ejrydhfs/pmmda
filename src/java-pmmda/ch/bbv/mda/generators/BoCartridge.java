@@ -25,6 +25,7 @@ import ch.bbv.mda.*;
 import ch.bbv.mda.generators.validation.DogTagRule;
 import ch.bbv.mda.generators.validation.TagRule;
 import ch.bbv.mda.operators.FileOperators;
+import ch.bbv.mda.operators.ModelOperators;
 
 /**
  * The data object cartridge is responsible for the generation of all data
@@ -675,12 +676,12 @@ public class BoCartridge extends CartridgeImpl implements Cartridge {
     for (MetaIndexedProperty property : clazz.getIndexedProperties()) {
       isChangeable |= property.retrieveIsChangeable();
       isVetoable |= property.retrieveIsVetoable();
-      property.addAttribute(INTERFACE_CLASS_TAG, MetaClass
-          .getClassName(property.valueOfTag(INTERFACE_CLASS_TAG)));
-      property.addAttribute(CONTAINER_CLASS_TAG, MetaClass
-          .getClassName(property.valueOfTag(CONTAINER_CLASS_TAG)));
-      property.addAttribute(KEY_CLASS_TAG, MetaClass.getClassName(property
-          .valueOfTag(KEY_CLASS_TAG)));
+      property.addAttribute(INTERFACE_CLASS_TAG, ModelOperators
+          .getComponentName(property.valueOfTag(INTERFACE_CLASS_TAG)));
+      property.addAttribute(CONTAINER_CLASS_TAG, ModelOperators
+          .getComponentName(property.valueOfTag(CONTAINER_CLASS_TAG)));
+      property.addAttribute(KEY_CLASS_TAG, ModelOperators
+          .getComponentName(property.valueOfTag(KEY_CLASS_TAG)));
     }
     clazz.addAttribute(BO_CHANGEABLE, Boolean.toString(isChangeable));
     clazz.addAttribute(BO_VETOABLE, Boolean.toString(isVetoable));

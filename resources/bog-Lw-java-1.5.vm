@@ -99,17 +99,21 @@ ${class.retrieveVisibilityText()} class ${className} implements LightweightObjec
 #set($itemType = ${property.retrieveTypeClassName()})
 #end
 #set($visibility = ${property.retrieveVisibilityText()})
+#getterName($property $getter)
+#setterName($property $setter)
+#if(${property.canBeRead()})
 
   /** 
    * Gets the current value of the attribute ${uName}.
    * @return the value of the attribute ${uName}.
 #if(${property.canBeWritten()})
-   * @see ${sign}set${uName}
+   * @see ${sign}${setter}(${itemType})
 #end    
    */
-  ${visibility} ${itemType} get${uName}() {
+  ${visibility} ${itemType} ${getter}() {
     return ${lName};
   }
+#end
 #end
 #if(${property.canBeWritten()})
 
@@ -117,10 +121,10 @@ ${class.retrieveVisibilityText()} class ${className} implements LightweightObjec
    * Sets the new value of the simple property ${uName}.
    * @param ${lName} new value of the property.
 #if(${property.canBeRead()})
-   * @see ${sign}get${uName}
+   * @see ${sign}${getter}()
 #end    
    */    
-  ${visibility} void set${uName}(${itemType} ${lName}) {
+  ${visibility} void ${setter}(${itemType} ${lName}) {
     this.${lName} = ${lName};
   }
 #end

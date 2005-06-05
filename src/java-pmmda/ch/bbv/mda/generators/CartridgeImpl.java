@@ -224,7 +224,7 @@ public abstract class CartridgeImpl implements Cartridge {
   public ModelOperators getModelOperators() {
     return modelOperators;
   }
-  
+
   /**
    * Adds a cartridge being used in the cartridge to create the context.
    * @param cartridge cartridge being used.
@@ -368,6 +368,7 @@ public abstract class CartridgeImpl implements Cartridge {
    * @param properties properties set to complete.
    * @param property property name to add if not defined.
    * @param value value of the property to add if not defined.
+   * @pre (properties != null) && (property != null)
    * @post properties.getProperty(property) != null
    */
   protected void addUndefinedProperty(Properties properties, String property,

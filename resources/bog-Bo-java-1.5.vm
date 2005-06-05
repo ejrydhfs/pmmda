@@ -258,6 +258,7 @@ $line
 #getterName($property $getter)
 #setterName($property $setter)
 #if(${property.canBeRead()})
+
   /** 
    * Returns the current value of the simple property ${lName}.
    * @return the value of the simple property ${lName}.
@@ -280,7 +281,7 @@ $line
    * @throws PropertyVetoException if a listener refuses the change.
 #end
 #if(${property.canBeRead()})
-   * @see ${sign}${getter}
+   * @see ${sign}${getter}()
 #end    
    */    
 #if(${vetoable})

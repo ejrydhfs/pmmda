@@ -1,7 +1,6 @@
 #set($sign="#")
 #set($dollar="$")
 #emitFileHeader()
-
 package ${package.getAttribute("ejb-server-package")};
 
 #set($imports=${model.createImportStatements(${package.getAttribute("ejb-server-package")})})
@@ -36,7 +35,7 @@ import $importStatement;
 #set($classname="${serverName}Corba")
 /** 
  * The class implements the data object graph CORBA server and implements all
- * the functions defined in the BOG framework.
+ * the functions defined in the data object graph framework.
  * ${dollar}Revision${dollar}
  */
 public class $classname extends ${serverName}POA  {
@@ -102,8 +101,8 @@ public class $classname extends ${serverName}POA  {
 #set($boLwClass=${class.getAttribute("bo-lw-class")})
 #set($ctoMoClass=${class.getAttribute("cto-mo-class")})
 #set($ctoLwClass=${class.getAttribute("cto-lw-class")})
-  public ${ctoMoClass}[] retrieve${boMoClass}(String datasource, int id, String constraints) 
-    throws DogExceptionCto {
+  public ${ctoMoClass}[] retrieve${boMoClass}(String datasource, int id, String constraints)  
+    throws CtoExceptionCto {
     try {
       List bos;
       DataObjectHandler handler = getHandler();
@@ -129,13 +128,13 @@ public class $classname extends ${serverName}POA  {
       throw create(e, "concurrent access in retrieve${boMoClass}");
     } catch (Exception e) {
       log.error(e);
-      throw new DogExceptionCto();
+	  throw create(e, null);
     }
   }
 #if(${class.booleanValueOfAttribute("bo-lightweight")})  
 
   public ${ctoLwClass}[] retrieveLw${boLwClass}(String datasource, int id, String constraints) 
-    throws DogExceptionCto {
+    throws CtoExceptionCto {
     try {
       List lws;
       DataObjectHandler handler = getHandler();
@@ -159,13 +158,13 @@ public class $classname extends ${serverName}POA  {
       return ctos;
     } catch (Exception e) {
       log.error(e);
-      throw new DogExceptionCto();
+	  throw create(e, null);
     }
   }
 #end  
   
   public DataObjectUpdateCto[] store${boMoClass}(String datasource, ${ctoMoClass} cto)
-	throws DogExceptionCto {
+    throws CtoExceptionCto {
 	try {
       DataObjectHandler handler = getHandler();
       if (log.isTraceEnabled()) {
@@ -182,11 +181,12 @@ public class $classname extends ${serverName}POA  {
       throw create(e, "concurrent access in store${boMoClass}");
     } catch (Exception e) {
       log.error(e);
-      throw new DogExceptionCto();
-    }    
+	  throw create(e, null);
+	}    
   }
   
-  public void remove${boMoClass}(String datasource, int id) throws DogExceptionCto {
+  public void remove${boMoClass}(String datasource, int id)
+    throws CtoExceptionCto {
     try {
       DataObjectHandler handler = getHandler();
       if (log.isTraceEnabled()) {
@@ -199,45 +199,47 @@ public class $classname extends ${serverName}POA  {
     } catch (ConcurrentModificationException e) {
       create(e, "concurrent access in remove${boMoClass}");
     } catch (Exception e) {
-      log.error(e);
-      throw new DogExceptionCto();
+	  throw create(e, null);
     }
   }
 
 #end
 #end
-  /** Retrieves the values of the reference codes described in the given list.
+  /** 
+   * Retrieves the values of the reference codes described in the given list.
    * @param descriptors list of reference code types to retrieve.
    * @return list of requested reference code types with their values.
-   * @throws DogExceptionCto an error occured when processing the request.
    */
-  public ReferenceCodeInfoCto[] retrieveCodes(ReferenceCodeInfoCto[] descriptors) 
-    throws DogExceptionCto {
+  public ReferenceCodeInfoCto[] retrieveCodes(ReferenceCodeInfoCto[] descriptors) {
     return descriptors;
   }
 
-  /** Heartbeat tests for the server. Calls an empty method on the server to 
+  /** 
+   * Heartbeat tests for the server. Calls an empty method on the server to 
    * test if it is still available.
-   * @throws DogExceptionCto an error occured when processing the request.
+   * @throws CtoExceptionCto the server encountered a problem.
    */
-  public void heartbeat() throws DogExceptionCto {
+  public void heartbeat() throws CtoExceptionCto {
   }
   
+  /**
+   * Creates the CTO representation of a Java exception.
+   * @param exception to represent.
+   * @param reason text describing the reason of the exception. The value can be null.
+   * @return the CTO representatio of the exception.
+   */
+  private CtoExceptionCto create(Exception exception, String reason) {
+	CtoException cto = new CtoException(exception.getMessage(), reason);
+ 	return TransformerCto.create(cto);
+  }
+  
+  /**
+   * Returns the data object handler of the server.
+   * @return the data object handler.
+   */
   private DataObjectHandler getHandler() {
     DataObjectManager manager = (DataObjectManager) Locator.getInstance()
                                     .getComponent(DataObjectManager.NAME);
     return manager.getDataObjectHandler();
-  }
-  
-  /** Creates the IDL representation of a concurrent modification exception.
-   * @param e concurrent modification exception to transform.
-   * @param text text of the IDL data object graph exception.
-   * @return the IDL representtation of a concurrent modification exception.
-   */
-  private DogExceptionCto create(ConcurrentModificationException e, String text) {
-    log.warn(e);
-    DogException doge = new DogException(DogException.CONCURRENT_ACCESS_ERROR, 
-                                         "${classname}", text);
-    return TransformerCto.create(doge);
   }
 }

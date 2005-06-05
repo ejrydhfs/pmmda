@@ -36,7 +36,7 @@
   </target>
 
   <target name="pmmda-dist"
-          depends="dist-init, init-libs"
+          depends="dist-init, compile-dist, init-libs"
           description="Generates pmMDA distribution">
     <echo message="generate pmMDA binary and source distribution" />
     <delete dir="${pmmda-dist.dir}" />
@@ -49,8 +49,9 @@
     <mkdir dir="${pmmda-resources.dir}" />
 
     <copy todir="${pmmda-model.dir}">
-      <fileset dir="${model.dir}">
+      <fileset dir="${model.dir}/test-model">
         <include name="**/*.zargo" />
+				<include name="**/*.xml"/>
       </fileset>
     </copy>
     <copy todir="${pmmda-src-dog-corba.dir}">
@@ -198,7 +199,7 @@
     <mkdir dir="${pmmda-ex-classes.dir}/j2ee-server" />
     <mkdir dir="${pmmda-ex-classes.dir}/corba-server" />
 
-    <copy file="${basedir}/model/mda-model.zargo"
+    <copy file="${model.dir}/test-model/test-model.zargo"
           todir="${pmmda-ex-model.dir}" />
     <copy todir="${pmmda-ex-src.dir}/client">
       <fileset dir="${test.client.dir}">

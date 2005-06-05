@@ -77,24 +77,37 @@
         <table>
           <tr>
             <th>Tests</th>
+            <th>Remarks</th>
           </tr>
           <tr>
-            <td>Download the pmMDA distribution from sourceforge; unzip it and 
-              install it in a directory.</td>
+            <td>Download the <em>pmMDA</em> distribution from sourceforge; 
+              unzip it - gnuzip and tar - and install it in an empty directory. 
+              Verify that the correct version - defined in the readme file and 
+              the name of the <em>pmMDA</em> jar file - was selected.</td>
           </tr>
           <tr>
-            <td>Start the application and load the provided model. Packages, 
-              classes, properties and indexed properties are displayed.</td>
+            <td>Start the application with the command line option for help 
+              either -h or --help and verify that the options help messages are 
+              displayed.</td>
+          </tr>
+          <tr>
+            <td>Start the application and load the provided model. The script 
+              located in the root directory of the distribution should be used 
+              to launch <em>pmMDA</em>. No error messages should be visible in 
+              the console. Packages, classes, properties and indexed properties 
+              are displayed.</td>
           </tr>
           <tr>
             <td>Generate all artefacts.</td>
           </tr>
         </table>
         <p>This set of scenarios verifies that the source distribution is 
-          working for developers.</p>
+          working for developers. This set is not part of the binary 
+          distribution sanity checks.</p>
         <table>
           <tr>
             <th>Tests</th>
+            <th>Remarks</th>
           </tr>
           <tr>
             <td>Download the pmMDA developer distribution form sourceforge 
@@ -116,6 +129,7 @@
         <table>
           <tr>
             <th>Tests</th>
+            <th>Remarks</th>
           </tr>
           <tr>
             <td>Verify that the menu bar is populated with the expected menu 
@@ -158,79 +172,85 @@
         <title>Edit Operations</title>
         <p>This set of scenarios verifies that the edit operations are 
           working.</p>
-          <table>
-            <tr>
-              <th>Tests</th>
-            </tr>
-            <tr>
-              <td>Add a package to the model.</td>
-            </tr>
-            <tr>
-              <td>Remove a package from the model.</td>
-            </tr>
-            <tr>
-              <td>Change the name of a package and verify that the name is 
-                updated in the tree view.</td>
-            </tr>
-            <tr>
-              <td>Check that the correct icon is displaye in the tree.</td>
-            </tr>
-            <tr>
-              <td>Check that the popup menu content reflects the package node 
-                type.</td>
-            </tr>
-            <tr>
-              <td>Add a class to a package.</td>
-            </tr>
-            <tr>
-              <td>Remove a class from a package.</td>
-            </tr>
-            <tr>
-              <td>Change the name of a class and verify that the name is 
-                updated in the tree view.</td>
-            </tr>
-            <tr>
-              <td>Check that the correct icon is displayed in the tree.</td>
-            </tr>
-            <tr>
-              <td>Check that the popup menu content reflects the class node 
-                type.</td>
-            </tr>
-            <tr>
-              <td>Add a property to a class.</td>
-            </tr>
-            <tr>
-              <td>Remove a property from a class.</td>
-            </tr>
-            <tr>
-              <td>Change the name of a property and verify that the name is 
-                updated in the tree view.</td>
-            </tr>
-            <tr>
-              <td>Check that the correct icon is displayed in the tree.</td>
-            </tr>
-            <tr>
-              <td>Check that the popup menu content reflects the property node 
-                type.</td>
-            </tr>
-            <tr>
-              <td>Add an indexed property to a class.</td>
-            </tr>
-            <tr>
-              <td>Remove an indexed property from a class.</td>
-            </tr>
-            <tr>
-              <td>Change the name of an indexed property and verify that the 
-                name is updated in the tree view.</td>
-            </tr>
-            <tr>
-              <td>Check that the correct icon is displayed in the tree.</td>
-            </tr>
-            <tr>
-              <td>Check that the popup menu content reflects the indexed 
-                property node type.</td>
-            </tr>
-          </table>
+        <table>
+          <tr>
+            <th>Tests</th>
+            <th>Remarks</th>
+          </tr>
+          <tr>
+            <td>Add a package to the model.</td>
+          </tr>
+          <tr>
+            <td>Remove a package from the model.</td>
+          </tr>
+          <tr>
+            <td>Change the name of a package and verify that the name is 
+              updated in the tree view.</td>
+          </tr>
+          <tr>
+            <td>Check that the correct icon is displaye in the tree.</td>
+          </tr>
+          <tr>
+            <td>Check that the popup menu content reflects the package node 
+              type.</td>
+          </tr>
+          <tr>
+            <td>Add a class to a package.</td>
+          </tr>
+          <tr>
+            <td>Remove a class from a package.</td>
+          </tr>
+          <tr>
+            <td>Change the name of a class and verify that the name is updated 
+              in the tree view.</td>
+          </tr>
+          <tr>
+            <td>Check that the correct icon is displayed in the tree.</td>
+          </tr>
+          <tr>
+            <td>Check that the popup menu content reflects the class node 
+              type.</td>
+          </tr>
+          <tr>
+            <td>Add a property to a class.</td>
+          </tr>
+          <tr>
+            <td>Remove a property from a class.</td>
+          </tr>
+          <tr>
+            <td>Change the name of a property and verify that the name is 
+              updated in the tree view.</td>
+          </tr>
+          <tr>
+            <td>Check that the correct icon is displayed in the tree.</td>
+          </tr>
+          <tr>
+            <td>Check that the popup menu content reflects the property node 
+              type.</td>
+          </tr>
+          <tr>
+            <td>Add an indexed property to a class.</td>
+          </tr>
+          <tr>
+            <td>Remove an indexed property from a class.</td>
+          </tr>
+          <tr>
+            <td>Change the name of an indexed property and verify that the name 
+              is updated in the tree view.</td>
+          </tr>
+          <tr>
+            <td>Check that the correct icon is displayed in the tree.</td>
+          </tr>
+          <tr>
+            <td>Check that the popup menu content reflects the indexed property 
+              node type.</td>
+          </tr>
+          <tr>
+            <td>Check taht all tagged values defined in a cartridge have a 
+              tooltip. The tooltip must be displayed when navigating in the 
+              tagged view either in the view or edit mode.</td>
+          </tr>
+        </table>
       </section>
       <section>
         <title>Generators</title>
@@ -241,6 +261,7 @@
         <table>
           <tr>
             <th>Tests</th>
+            <th>Remarks</th>
           </tr>
           <tr>
             <td>Load the provided model in the application. Generates all 

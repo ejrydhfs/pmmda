@@ -5,6 +5,8 @@
  */
 package ch.bbv.mda;
 
+import ch.bbv.mda.operators.ModelOperators;
+
 /**
  * Represents a member of a java class such as a field, a constructor, or a
  * method. This is an abstract class dealing with information common to method,
@@ -87,18 +89,10 @@ public abstract class MetaMember extends MetaElement {
   }
 
   /**
-   * Retrieves the package name of the type of the element.
-   * @return the package name of the type.
-   */
-  public String retrieveTypePackageName() {
-    return MetaClass.getPackageName(getTypeName());
-  }
-
-  /**
    * Returns the class n ame of the type of the element.
    * @return the class name of the type.
    */
   public String retrieveTypeClassName() {
-    return MetaClass.getClassName(getTypeName());
+    return ModelOperators.getComponentName(getTypeName());
   }
 }

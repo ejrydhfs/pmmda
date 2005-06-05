@@ -55,6 +55,31 @@ public class GenericNodePropertiesView extends NodePropertiesView {
   private static final long serialVersionUID = 20041201;
 
   /**
+   * Default value for the primitive type.
+   */
+  static final Short SHORT_0 = new Short((short) 0);
+
+  /**
+   * Default value for the primitive type.
+   */
+  static final Integer INTEGER_0 = new Integer(0);
+
+  /**
+   * Default value for the primitive type.
+   */
+  static final Long LONG_0 = new Long(0);
+
+  /**
+   * Default value for the primitive type.
+   */
+  static final Float FLOAT_0 = new Float(0);
+
+  /**
+   * Default value for the primitive type.
+   */
+  static final Double DOUBLE_0 = new Double(0);
+
+  /**
    * Logger for all instances of the class.
    */
   private static Log log = LogFactory.getLog(GenericNodePropertiesView.class);
@@ -134,62 +159,28 @@ public class GenericNodePropertiesView extends NodePropertiesView {
   }
 
   protected void initialize() {
-    StringBuilder buffer = new StringBuilder();
-    generateRowsLayout(buffer, primitivePropertyViews);
-    generateRowsLayout(buffer, dataPropertyViews);
-    generateRowsLayout(buffer, indexedPropertyViews);
-    generateRowsLayout(buffer, mappedPropertyViews);
-
-    FormLayout layout = new FormLayout("right:pref, 3dlu, pref, 12dlu, pref",
-        buffer.toString());
-
+    FormLayout layout = new FormLayout("right:pref, 3dlu, pref",
+        "");
     DefaultFormBuilder builder = new DefaultFormBuilder(layout);
     builder.setDefaultDialogBorder();
-
-    int row = generateRows(builder, "Simple Properties",
-        primitivePropertyViews, 1);
-    row = generateRows(builder, "Data Objects", dataPropertyViews, row);
-    row = generateRows(builder, "Indexed Properties", indexedPropertyViews, row);
-    row = generateRows(builder, "Mapped Properties", mappedPropertyViews, row);
-
+    generateRows(builder, "Simple Properties", primitivePropertyViews);
+    generateRows(builder, "Data Objects", dataPropertyViews);
+    generateRows(builder, "Indexed Properties", indexedPropertyViews);
+    generateRows(builder, "Mapped Properties", mappedPropertyViews);
     JPanel panel = builder.getPanel();
     add(panel);
   }
 
-  /**
-   * Generates the row layout for the list of properties.
-   * @param buffer buffer in which the layout is written.
-   * @param properties the properties which layout should be generated.
-   */
-  protected void generateRowsLayout(StringBuilder buffer, List properties) {
+  protected void generateRows(DefaultFormBuilder builder, String seperator,
+      List< ? extends PropertyView> properties) {
     int size = properties.size();
-    if (size > 0) {
-      if (buffer.length() > 0) {
-        buffer.append(", 6dlu, p, 3dlu");
-      } else {
-        buffer.append("p, 3dlu");
-      }
-      for (int i = 0; i < (size - 1); i++) {
-        buffer.append(", p, 3dlu");
-      }
-      buffer.append(", p");
-    }
-  }
-
-  protected int generateRows(DefaultFormBuilder builder, String seperator,
-      List< ? extends PropertyView> properties, int row) {
-    int size = properties.size();
-    int currentRow = row;
     if (size > 0) {
       builder.appendSeparator(seperator);
-      currentRow += 2;
       for (int i = 0; i < size; i++) {
         PropertyView view = properties.get(i);
         builder.append(view.label, view.getComponent());
-        currentRow += 2;
       }
     }
-    return currentRow;
   }
 
   /**
@@ -373,6 +364,7 @@ public class GenericNodePropertiesView extends NodePropertiesView {
    * @version $Revision$
    */
   class PrimitivePropertyView extends PropertyView {
+
     private JTextField text;
 
     private JFormattedTextField formattedText;
@@ -428,16 +420,32 @@ public class GenericNodePropertiesView extends NodePropertiesView {
         value = new Boolean(checkBox.isSelected());
       } else if (Date.class.equals(type)) {
         value = dateChooser.getDate();
-      } else if (Short.TYPE.equals(type) || Short.class.equals(type)) {
-        value = Short.decode(formattedText.getText());
-      } else if (Integer.TYPE.equals(type) || Integer.class.equals(type)) {
-        value = Integer.decode(formattedText.getText());
-      } else if (Long.TYPE.equals(type) || Long.class.equals(type)) {
-        value = Long.decode(formattedText.getText());
-      } else if (Float.TYPE.equals(type) || Float.class.equals(type)) {
-        value = Float.valueOf(formattedText.getText());
-      } else if (Double.TYPE.equals(type) || Double.class.equals(type)) {
-        value = Double.valueOf(formattedText.getText());
+      } else {
+        String text = formattedText.getText();
+        if (text != null && text.trim().length() == 0) {
+          text = null;
+        }
+        if (Short.TYPE.equals(type)) {
+          value = (text != null) ? Short.decode(text) : SHORT_0;
+        } else if (Short.class.equals(type)) {
+          value = (text != null) ? Short.decode(text) : null;
+        } else if (Integer.TYPE.equals(type)) {
+          value = (text != null) ? Integer.decode(text) : INTEGER_0;
+        } else if (Integer.class.equals(type)) {
+          value = (text != null) ? Integer.decode(text) : null;
+        } else if (Long.TYPE.equals(type)) {
+          value = (text != null) ? Long.decode(text) : LONG_0;
+        } else if (Long.class.equals(type)) {
+          value = (text != null) ? Long.decode(text) : null;
+        } else if (Float.TYPE.equals(type)) {
+          value = (text != null) ? Float.valueOf(text) : FLOAT_0;
+        } else if (Float.class.equals(type)) {
+          value = (text != null) ? Float.valueOf(text) : null;
+        } else if (Double.TYPE.equals(type)) {
+          value = (text != null) ? Double.valueOf(text) : DOUBLE_0;
+        } else if (Double.class.equals(type)) {
+          value = (text != null) ? Double.valueOf(text) : null;
+        }
       }
       return value;
     }

@@ -64,7 +64,7 @@ public class ProviderLw implements LightweightObject {
   /** 
    * Gets the current value of the attribute Name.
    * @return the value of the attribute Name.
-   * @see #setName
+   * @see #setName(String)
    */
   public String getName() {
     return name;
@@ -73,7 +73,7 @@ public class ProviderLw implements LightweightObject {
   /** 
    * Sets the new value of the simple property Name.
    * @param name new value of the property.
-   * @see #getName
+   * @see #getName()
    */    
   public void setName(String name) {
     this.name = name;

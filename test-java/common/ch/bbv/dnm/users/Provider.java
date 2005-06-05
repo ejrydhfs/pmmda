@@ -145,6 +145,7 @@ public class Provider implements DataObject {
    public void setTimestamp(Timestamp timestamp) {
      this.timestamp = timestamp;
    }
+
   /** 
    * Returns the current value of the simple property name.
    * @return the value of the simple property name.
@@ -157,7 +158,7 @@ public class Provider implements DataObject {
   /** 
    * Sets the new value of the simple property name.
    * @param name new value of the property.
-   * @see #getName
+   * @see #getName()
    */    
   public void setName(String name) {
     if (((this.name != null) && !this.name.equals(name)) || 
@@ -166,6 +167,7 @@ public class Provider implements DataObject {
       setModified(true);
     }
   }    
+
   /** 
    * Returns the current value of the simple property email.
    * @return the value of the simple property email.
@@ -178,7 +180,7 @@ public class Provider implements DataObject {
   /** 
    * Sets the new value of the simple property email.
    * @param email new value of the property.
-   * @see #getEmail
+   * @see #getEmail()
    */    
   public void setEmail(String email) {
     if (((this.email != null) && !this.email.equals(email)) || 
@@ -187,6 +189,7 @@ public class Provider implements DataObject {
       setModified(true);
     }
   }    
+
   /** 
    * Returns the current value of the simple property description.
    * @return the value of the simple property description.
@@ -199,7 +202,7 @@ public class Provider implements DataObject {
   /** 
    * Sets the new value of the simple property description.
    * @param description new value of the property.
-   * @see #getDescription
+   * @see #getDescription()
    */    
   public void setDescription(String description) {
     if (((this.description != null) && !this.description.equals(description)) || 
@@ -208,6 +211,7 @@ public class Provider implements DataObject {
       setModified(true);
     }
   }    
+
   /** 
    * Returns the current value of the simple property longname.
    * @return the value of the simple property longname.
@@ -220,7 +224,7 @@ public class Provider implements DataObject {
   /** 
    * Sets the new value of the simple property longname.
    * @param longname new value of the property.
-   * @see #getLongname
+   * @see #getLongname()
    */    
   public void setLongname(String longname) {
     if (((this.longname != null) && !this.longname.equals(longname)) || 
@@ -229,6 +233,7 @@ public class Provider implements DataObject {
       setModified(true);
     }
   }    
+
   /** 
    * Returns the current value of the simple property trusted.
    * @return the value of the simple property trusted.
@@ -241,7 +246,7 @@ public class Provider implements DataObject {
   /** 
    * Sets the new value of the simple property trusted.
    * @param trusted new value of the property.
-   * @see #getTrusted
+   * @see #getTrusted()
    */    
   public void setTrusted(Double trusted) {
     if (((this.trusted != null) && !this.trusted.equals(trusted)) || 

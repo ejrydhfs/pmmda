@@ -67,7 +67,7 @@ public class UserLw implements LightweightObject {
   /** 
    * Gets the current value of the attribute Login.
    * @return the value of the attribute Login.
-   * @see #setLogin
+   * @see #setLogin(String)
    */
   public String getLogin() {
     return login;
@@ -76,7 +76,7 @@ public class UserLw implements LightweightObject {
   /** 
    * Sets the new value of the simple property Login.
    * @param login new value of the property.
-   * @see #getLogin
+   * @see #getLogin()
    */    
   public void setLogin(String login) {
     this.login = login;
@@ -85,16 +85,16 @@ public class UserLw implements LightweightObject {
   /** 
    * Gets the current value of the attribute Active.
    * @return the value of the attribute Active.
-   * @see #setActive
+   * @see #setActive(boolean)
    */
-  public boolean getActive() {
+  public boolean isActive() {
     return active;
   }
 
   /** 
    * Sets the new value of the simple property Active.
    * @param active new value of the property.
-   * @see #getActive
+   * @see #isActive()
    */    
   public void setActive(boolean active) {
     this.active = active;
@@ -103,7 +103,7 @@ public class UserLw implements LightweightObject {
   /** 
    * Gets the current value of the attribute ValidTo.
    * @return the value of the attribute ValidTo.
-   * @see #setValidTo
+   * @see #setValidTo(Date)
    */
   public Date getValidTo() {
     return validTo;
@@ -112,7 +112,7 @@ public class UserLw implements LightweightObject {
   /** 
    * Sets the new value of the simple property ValidTo.
    * @param validTo new value of the property.
-   * @see #getValidTo
+   * @see #getValidTo()
    */    
   public void setValidTo(Date validTo) {
     this.validTo = validTo;
@@ -121,7 +121,7 @@ public class UserLw implements LightweightObject {
   /** 
    * Gets the current value of the attribute ValidFrom.
    * @return the value of the attribute ValidFrom.
-   * @see #setValidFrom
+   * @see #setValidFrom(Date)
    */
   public Date getValidFrom() {
     return validFrom;
@@ -130,7 +130,7 @@ public class UserLw implements LightweightObject {
   /** 
    * Sets the new value of the simple property ValidFrom.
    * @param validFrom new value of the property.
-   * @see #getValidFrom
+   * @see #getValidFrom()
    */    
   public void setValidFrom(Date validFrom) {
     this.validFrom = validFrom;
@@ -139,7 +139,7 @@ public class UserLw implements LightweightObject {
   /** 
    * Gets the current value of the attribute Name.
    * @return the value of the attribute Name.
-   * @see #setName
+   * @see #setName(String)
    */
   public String getName() {
     return name;
@@ -148,7 +148,7 @@ public class UserLw implements LightweightObject {
   /** 
    * Sets the new value of the simple property Name.
    * @param name new value of the property.
-   * @see #getName
+   * @see #getName()
    */    
   public void setName(String name) {
     this.name = name;
