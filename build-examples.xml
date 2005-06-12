@@ -71,6 +71,7 @@
       <src path="${src.corba-framework.dir}" />
       <src path="${test.corba-common.dir}" />
       <src path="${test.corba-client.dir}" />
+      <src path="${test.rich-client.dir}" />
       <src path="${test.client.dir}" />
       <src path="${test.common.dir}" />
       <classpath refid="tests.classpath" />

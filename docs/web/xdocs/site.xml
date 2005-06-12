@@ -35,7 +35,7 @@
 	   <tutorial label="Tutorials" href="tutorial.html" description="Tutorials"/>
 	   <release-tests label="Release Tests" href="release-tests.html" description="Release Tests"/>
 	 </pmmda>
-    <dog label="DOG" href="bog/" description="dog - Data Object Graphs -">
+    <dog label="DOG" href="dog/" description="dog - Data Object Graphs -">
 	   <overview label="Overview" href="index.html" description="Overview"/>
 	   <status label="Status" href="status.html" description="Status and News"/>
 	   <download label="Download" href="http://www.sourceforge.net/projects/pmmda"/>

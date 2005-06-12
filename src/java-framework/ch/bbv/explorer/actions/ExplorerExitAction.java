@@ -20,15 +20,16 @@ public class ExplorerExitAction extends ExplorerGlobalActionImpl {
   private static final long serialVersionUID = 20041201;
 
   /**
-   * Default constructor.
+   * Constructor of the instances of the class.
+   * @param explorer explorer owning the global action.
    */
-  public ExplorerExitAction() {
-    super("Exit");
-    initialize();
+  public ExplorerExitAction(Explorer explorer) {
+    super("Exit", explorer);
   }
 
-  public void execute() {
+  public boolean execute() {
     Explorer explorer = getExplorer();
     explorer.close();
+    return true;
   }
 }

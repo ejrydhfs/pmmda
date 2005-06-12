@@ -7,31 +7,33 @@ package ch.bbv.explorer.actions;
 
 import java.awt.event.ActionEvent;
 
+import ch.bbv.explorer.Explorer;
+import ch.bbv.explorer.ExplorerDocument;
+
 /**
- * <p>
- * The save action for the user interface of <strong>pmMDA </strong>
- * application.
+ * The save action for the user interface of the application.
  * @author MarcelBaumann
  * @version $Revision$
  */
-public class ExplorerNewAction extends ExplorerGlobalActionImpl {
+public abstract class ExplorerNewAction extends ExplorerGlobalActionImpl {
   /**
    * Serial version identifier coded as back compatibility date.
    */
   private static final long serialVersionUID = 20041201;
 
   /**
-   * Default constructor.
+   * Constructor of the instances of the class.
+   * @param explorer explorer owning the global action.
    */
-  public ExplorerNewAction() {
-    super("New");
-    initialize();
+  public ExplorerNewAction(Explorer explorer) {
+    super("New", explorer);
   }
 
   public void actionPerformed(ActionEvent action) {
-    execute();
-  }
-
-  public void execute() {
+    if (saveChangesAndProceed()) {
+      execute();
+      getExplorer().getMenuBar()
+          .documentChanged(ExplorerDocument.State.CREATED);
+    }
   }
 }

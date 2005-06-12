@@ -21,7 +21,8 @@ CREATE TABLE ${schema}${table} (
 #if(!${property.booleanValueOfTag("ojb-can-be-null")} || ${property.isPrimaryKey()})#set($nullInfo=" NOT NULL")#else#set($nullInfo="")#end
 #isPersistentDataObject($type $isPersistentDataObject)
 #if($isPersistentDataObject)
-  ${property.nameUpper()}_FK INTEGER${nullInfo},
+#getForwardFk($property $column)	
+  ${column} INTEGER${nullInfo},
 #else
 ## support MySQL version < 4.1. Boolean was introduced as alias only in version 4.1
 #if(${columnType.equalsIgnoreCase("BOOLEAN")})
@@ -37,15 +38,14 @@ CREATE TABLE ${schema}${table} (
 ## This situation should never arise because this is a simple property.
 #foreach($aggregation in $aggregations)
 #if(${aggregation.getMultiplicity().getUpperBound()} == 1)
-#set($columnType=${property.valueOfTag("ojb-column-type")})
-#set($columnName=${aggregation.getAttribute("ojb-column-name")})
 #set($typeName=${aggregation.getTypeName()})
 #set($type=false)
 #set($type=${model.findClass(${typeName})})
 #if(!${aggregation.canBeNull()})#set($nullInfo=" NOT NULL")#else#set($nullInfo="")#end
 #isPersistentDataObject($type $isPersistentDataObject)
 #if($isPersistentDataObject)
-  ${columnName}_FK INTEGER${nullInfo},
+#getForwardFk($aggregation $column)	
+  $column INTEGER${nullInfo},
 #end
 #end
 #end
@@ -61,7 +61,8 @@ CREATE TABLE ${schema}${table} (
 #getType($model $relation $type)	
 #if(${type} == ${class})
 #if(!${relation.canBeNull()})#set($nullInfo=" NOT NULL")#else#set($nullInfo="")#end
-  ${reference.valueOfTag("ojb-table-name")}_${relation.valueOfTag("ojb-column-name")}_FK INTEGER${nullInfo},
+#getReverseFk($reference $relation $result)
+  $result INTEGER${nullInfo},
 #end
 #end
 #end
@@ -77,7 +78,7 @@ CREATE TABLE ${schema}${table} (
 ## create index for the identifier of a data object.
 #if(${DATA_OBJECT.equalsIgnoreCase(${class.getStereotype()})})
 CREATE UNIQUE INDEX ${table}_IDX ON 
-  ${schema}${table} (ID);
+  ${schema}${table}(ID);
 
 #end
 #if($shouldGenerateFkIndex)
@@ -86,9 +87,9 @@ CREATE UNIQUE INDEX ${table}_IDX ON
 #getType($model $property $type)
 #isPersistentDataObject($type $isPersistentDataObject)
 #if($isPersistentDataObject)
-#set($name=${property.nameUpper()})
-CREATE INDEX ${table}_${name}_IDX ON 
-  ${schema}${table} (${name}_FK);
+#getForwardFk($property $column)	
+CREATE INDEX ${table}_${column}_IDX ON 
+  ${schema}${table}(${column});
 
 #end
 #end
@@ -100,9 +101,9 @@ CREATE INDEX ${table}_${name}_IDX ON
 #set($type=${model.findClass(${typeName})})
 #isPersistentDataObject($type $isPersistentDataObject)
 #if($isPersistentDataObject)
-#set($name=${aggregation.nameUpper()})
-CREATE INDEX ${table}_${name}_IDX ON 
-  ${schema}${table} (${name}_FK);
+#getForwardFk($aggregation $column)	
+CREATE INDEX ${table}_${column}_IDX ON 
+  ${schema}${table}(${column});
 
 #end
 #end
@@ -117,11 +118,9 @@ CREATE INDEX ${table}_${name}_IDX ON
 #foreach($relation in $relations)
 #getType($model $relation $type)	
 #if(${type} == ${class})
-#set($refTable=${reference.valueOfTag("ojb-table-name")})
-#set($relColumn=${relation.valueOfTag("ojb-column-name")})
-#set($name="${refTable}_${relColumn}")
-CREATE INDEX ${name}_IDX ON 
-  ${schema}${table} (${name}_FK);
+#getReverseFk($reference $relation $column)	
+CREATE INDEX ${column}_IDX ON 
+  ${schema}${table}(${column});
 
 #end
 #end

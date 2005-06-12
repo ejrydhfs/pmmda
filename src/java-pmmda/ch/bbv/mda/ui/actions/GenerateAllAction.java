@@ -8,6 +8,7 @@ package ch.bbv.mda.ui.actions;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.bbv.explorer.Explorer;
 import ch.bbv.explorer.StatusBar;
 import ch.bbv.explorer.actions.ExplorerGlobalActionImpl;
 import ch.bbv.mda.MetaModel;
@@ -28,17 +29,17 @@ public class GenerateAllAction extends ExplorerGlobalActionImpl {
 
   /**
    * Default constructor.
+   * @param explorer explorer owning the global action.
    */
-  public GenerateAllAction() {
-    super("Generate All");
-    initialize();
+  public GenerateAllAction(Explorer explorer) {
+    super("Generate All", explorer);
   }
 
   /**
    * Executes all cartridges available in a row. Sort order as found.
    * @see ch.bbv.explorer.actions.ExplorerGlobalAction#execute()
    */
-  public void execute() {
+  public boolean execute() {
     MetaModel model = (MetaModel) getExplorer().getRoot().getDataObject();
     CartridgeFactory factory = CartridgeFactory.getInstance();
     if (model != null) {
@@ -55,5 +56,6 @@ public class GenerateAllAction extends ExplorerGlobalActionImpl {
       statusBar.setInfo("Generate All done");
       statusBar.setProgress(0);
     }
+    return true;
   }
 }

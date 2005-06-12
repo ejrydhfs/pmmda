@@ -6,6 +6,10 @@
 
 package ch.bbv.mda.ui.actions;
 
+import javax.swing.JFileChooser;
+
+import ch.bbv.explorer.actions.SimpleFileFilter;
+
 /**
  * The interface defines all the file extensions and descriptive text for the
  * file types supported in the application.
@@ -62,7 +66,7 @@ public class FileTypes {
   /**
    * Text for the associated extensions.
    */
-  public static final String SERIALIZE_TEXT = "Java XML models (*.ser)";
+  public static final String SERIALIZE_TEXT = "Java serialized models (*.ser)";
 
   /**
    * File extensions for models according to xmi standard.
@@ -73,4 +77,24 @@ public class FileTypes {
    * Text for the associated extensions.
    */
   public static final String XMI_TEXT = "XMI models (*.xmi)";
+
+  /**
+   * Adds all file filters defined for the MDA application.
+   * @param chooser file chooser to which the file filters must be added.
+   */
+  public static void addFileFilters(JFileChooser chooser) {
+    chooser.addChoosableFileFilter(new SimpleFileFilter(
+        FileTypes.RATIONAL_ROSE_EXT, FileTypes.RATIONAL_ROSE_TEXT));
+    chooser.addChoosableFileFilter(new SimpleFileFilter(FileTypes.POSEIDON_EXT,
+        FileTypes.POSEIDON_TEXT));
+    chooser.addChoosableFileFilter(new SimpleFileFilter(
+        FileTypes.SERIALIZE_EXT, FileTypes.SERIALIZE_TEXT));
+    chooser.addChoosableFileFilter(new SimpleFileFilter(FileTypes.XMI_EXT,
+        FileTypes.XMI_TEXT));
+    chooser.addChoosableFileFilter(new SimpleFileFilter(FileTypes.XML_EXT,
+        FileTypes.XML_TEXT));
+    chooser.addChoosableFileFilter(new SimpleFileFilter(FileTypes.ARGOUML_EXT,
+        FileTypes.ARGOUML_TEXT));
+
+  }
 }

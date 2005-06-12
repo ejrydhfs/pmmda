@@ -23,6 +23,7 @@ import ch.bbv.dog.AbstractVisitorFunctor;
 import ch.bbv.dog.DataObjectManager;
 import ch.bbv.dog.DataObjectType;
 import ch.bbv.dog.LightweightObject;
+import ch.bbv.explorer.ExplorerDocument.State;
 import ch.bbv.explorer.components.DockingArea;
 import ch.bbv.utilities.ReflectUtilities;
 
@@ -234,6 +235,12 @@ public abstract class Explorer {
   }
 
   /**
+   * Returns the document displayed in the explorer.
+   * @return the document displayed in the explorer if defined otherwise null.
+   */
+  public abstract ExplorerDocument getDocument();
+
+  /**
    * Returns the user interface node type factory of the explorer.
    * @return the factory of the explorer.
    */
@@ -403,10 +410,12 @@ public abstract class Explorer {
   }
 
   /**
-   * Called each type this node has changed.
+   * Called each type this node has changed. The menu bar is updated to handle
+   * the modification of the displayed model.
    * @param node the modified node.
    */
   public void nodeChanged(ExplorerNode node) {
+    getMenuBar().documentChanged(State.MODIFIED);
     treeModel.nodeChanged(node);
     if (nodeView != null) {
       nodeView.nodeChanged(node);
@@ -497,7 +506,7 @@ public abstract class Explorer {
    * @version $Revision$
    */
   private final class ExplorerMouseListener extends MouseAdapter {
-    
+
     /**
      * Checks if the mouse event should activate the display of the popup menu
      * upon a mouse clicked. If yes displays the popup menu.
@@ -518,8 +527,8 @@ public abstract class Explorer {
             menu.show(getTree(), event.getX(), event.getY());
           }
         }
-      }      
-    }    
+      }
+    }
   }
 
   /**

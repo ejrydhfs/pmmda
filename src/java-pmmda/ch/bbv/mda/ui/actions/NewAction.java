@@ -5,6 +5,7 @@
  */
 package ch.bbv.mda.ui.actions;
 
+import ch.bbv.explorer.Explorer;
 import ch.bbv.explorer.actions.ExplorerNewAction;
 import ch.bbv.mda.MetaFactory;
 import ch.bbv.mda.MetaModel;
@@ -23,13 +24,21 @@ public class NewAction extends ExplorerNewAction {
    */
   private static final long serialVersionUID = 20041201;
 
-  public void execute() {
+  /**
+   * Default constructor.
+   * @param explorer explorer owning the global action.
+   */
+  public NewAction(Explorer explorer) {
+    super(explorer);
+  }
+
+  public boolean execute() {
     MdaExplorer explorer = (MdaExplorer) getExplorer();
     MdaDocument document = new MdaDocument();
     MetaModel model = document.getModel();
     model.setName("default");
     MetaFactory.getInstance().initialize(model);
     explorer.setDocument(document);
-    explorer.getMenuBar().documentCreated();
+    return true;
   }
 }

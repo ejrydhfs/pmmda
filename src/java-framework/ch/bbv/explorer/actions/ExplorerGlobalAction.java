@@ -24,14 +24,14 @@ public interface ExplorerGlobalAction extends Action {
   String getName();
 
   /**
-   * Returns the the explorer owning the global action.
+   * Returns the explorer owning the global action.
    * @return the owning explorer.
    * @see #setExplorer(Explorer)
    */
   Explorer getExplorer();
 
   /**
-   * Sets the the explorer owning the global action.
+   * Sets the explorer owning the global action.
    * @param explorer the owning explorer.
    * @see #getExplorer()
    */
@@ -39,19 +39,7 @@ public interface ExplorerGlobalAction extends Action {
 
   /**
    * Executes the action.
+   * @return true if sucessful otherwise false.
    */
-  void execute();
-
-  /**
-   * Flag indicating if the action is active for the given node.
-   * @return true if the action is active otherwise false.
-   */
-  boolean isEnabled();
-
-  /**
-   * Initializes the global action. The method is based on the two phases
-   * initialization to avoid constructor troubles.
-   */
-  void initialize();
-
+  boolean execute();
 }

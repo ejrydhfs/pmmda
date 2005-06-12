@@ -27,18 +27,15 @@ import ch.bbv.explorer.Explorer;
 import ch.bbv.explorer.ExplorerMenuBar;
 import ch.bbv.explorer.ExplorerUtilities;
 import ch.bbv.explorer.UiNodeTypeFactory;
+import ch.bbv.explorer.ExplorerMenuBar.Names;
 import ch.bbv.explorer.about.Contributor;
 import ch.bbv.explorer.about.Licences;
-import ch.bbv.explorer.actions.ExplorerAboutAction;
-import ch.bbv.explorer.actions.ExplorerExitAction;
-import ch.bbv.explorer.actions.ExplorerGlobalAction;
-import ch.bbv.explorer.actions.ExplorerSimpleDialogAction;
+import ch.bbv.explorer.actions.*;
 import ch.bbv.explorer.components.DockingArea;
 import ch.bbv.explorer.components.ValidationPanel;
 import ch.bbv.mda.MetaModel;
 import ch.bbv.mda.generators.Cartridge;
 import ch.bbv.mda.generators.CartridgeFactory;
-import ch.bbv.mda.persistence.PersistenceException;
 import ch.bbv.mda.ui.actions.*;
 import ch.bbv.utilities.ResourceUtility;
 
@@ -71,16 +68,6 @@ public class MdaExplorer extends Explorer {
   private MdaDocument document;
 
   private String[] arguments;
-
-  private ExplorerGlobalAction newAction;
-
-  private ExplorerGlobalAction saveAction;
-
-  private ExplorerGlobalAction saveAsAction;
-
-  private ExplorerGlobalAction exitAction;
-
-  private OpenAction openAction;
 
   private ExplorerGlobalAction generateAllAction;
 
@@ -150,7 +137,7 @@ public class MdaExplorer extends Explorer {
    */
   protected void initialize() {
     new ResourceUtility("ch.bbv.mda.ui.Messages", Locale.US);
-    ExplorerMenuBar menuBar = new ExplorerMenuBar();
+    ExplorerMenuBar menuBar = new ExplorerMenuBar(this);
     setMenuBar(menuBar);
 
     ProjectInfo projectInfo = new ProjectInfo();
@@ -169,31 +156,35 @@ public class MdaExplorer extends Explorer {
     dockingArea.addTab("Validator", new ValidationPanel());
 
     JMenu menu = menuBar.getMenu(ExplorerMenuBar.HELP_MENU);
-    ExplorerAboutAction aboutAction = new ExplorerAboutAction();
+    ExplorerAboutAction aboutAction = new ExplorerAboutAction(this);
     aboutAction.setProjectInfo(projectInfo);
     menu.add(new JMenuItem(aboutAction));
 
     menu = menuBar.getMenu(ExplorerMenuBar.FILE_MENU);
-    newAction = new NewAction();
-    saveAction = new SaveAction();
-    saveAsAction = new SaveAsAction();
-    openAction = new OpenAction();
-    exitAction = new ExplorerExitAction();
-    generateAllAction = new GenerateAllAction();
-
-    menu.add(new JMenuItem(newAction));
+    addAction(menuBar, menu, Names.NEW, new NewAction(this));
     menu.addSeparator();
-    menu.add(new JMenuItem(openAction));
+    addAction(menuBar, menu, Names.OPEN, new OpenAction(this));
     menu.addSeparator();
-    menu.add(new JMenuItem(saveAction));
-    menu.add(new JMenuItem(saveAsAction));
-    menu.add(new JMenuItem(exitAction));
-    menuBar.registerDocumentFunctions(newAction, openAction, null, saveAction,
-        saveAsAction, exitAction);
+    addAction(menuBar, menu, Names.SAVE, new SaveAction(this));
+    addAction(menuBar, menu, Names.SAVE_AS, new SaveAsAction(this));
+    addAction(menuBar, menu, Names.EXIT, new ExplorerExitAction(this));
+    generateAllAction = new GenerateAllAction(this);
     createGenerateMenu();
     createToolsMenu();
-    menuBar.setExplorer(this);
     processCommandLine();
+  }
+
+  /**
+   * Adds an action to the given menu.
+   * @param menuBar menu bar owning the menu.
+   * @param menu menu to which the action should be added.
+   * @param name name of the action as defined in the menu bar.
+   * @param action action to add.
+   */
+  protected void addAction(ExplorerMenuBar menuBar, JMenu menu, Names name,
+      ExplorerGlobalAction action) {
+    menu.add(new JMenuItem(action));
+    menuBar.putStandardAction(name, action);
   }
 
   /**
@@ -224,6 +215,7 @@ public class MdaExplorer extends Explorer {
             "loads the UML model from the given file", "model", false,
             String.class));
     options.addOption(CmdLineBuilder.createJavaProperty());
+    ExplorerMenuBar menuBar = getMenuBar();
     Parser parser = new PosixParser();
     try {
       CommandLine line = parser.parse(options, arguments);
@@ -237,23 +229,24 @@ public class MdaExplorer extends Explorer {
       if (line.hasOption("q")) {
         log.info("logging level set to quiet");
       }
+      boolean success = false;
       if (line.hasOption("m")) {
         String filename = line.getOptionValue("m");
         if (filename != null) {
-          File file = new File(filename);
-          openAction.openModel(file);
+          ExplorerFileAction action = (ExplorerFileAction) menuBar
+              .getStandardAction(Names.OPEN);
+          action.setSelectedFile(new File(filename));
+          success = action.execute();
         } else {
-          newAction.execute();
+          success = menuBar.getStandardAction(Names.NEW).execute();
         }
-      } else {
-        newAction.execute();
       }
-    } catch (PersistenceException e) {
-      log.error("parse arguments exception", e);
-      newAction.execute();
+      if (!success) {
+        menuBar.getStandardAction(Names.NEW).execute();
+      }
     } catch (ParseException e) {
       log.error("parse arguments exception", e);
-      newAction.execute();
+      menuBar.getStandardAction(Names.NEW).execute();
     }
   }
 
@@ -264,21 +257,19 @@ public class MdaExplorer extends Explorer {
     menu.addSeparator();
 
     for (Cartridge cartridge : CartridgeFactory.getInstance().getCartridges()) {
-      menu.add(new JMenuItem(new GenerateCartridgeAction(cartridge)));
+      menu.add(new JMenuItem(new GenerateCartridgeAction(cartridge, this)));
     }
     ExplorerMenuBar menuBar = getMenuBar();
     menuBar.add(menu, menuBar.getMenuCount() - 1);
-    menuBar.setExplorer(this);
   }
 
   private void createToolsMenu() {
     JMenu menu = new JMenu("Tools");
     menu.setName("Tools");
     menu.add(new ExplorerSimpleDialogAction("Preferences",
-        PreferencesDialog.class));
+        PreferencesDialog.class, this));
     ExplorerMenuBar menuBar = getMenuBar();
     menuBar.add(menu, menuBar.getMenuCount() - 1);
-    menuBar.setExplorer(this);
   }
 
   /**

@@ -128,7 +128,7 @@ public class MetaClass extends MetaElement {
   /**
    * Returns true if the class is an interface.
    * @return interface flag value.
-   * @see #setInterface
+   * @see #setInterface(boolean)
    */
   public boolean isInterface() {
     return interfaces;
@@ -137,7 +137,7 @@ public class MetaClass extends MetaElement {
   /**
    * Sets the system flag indicating if the class is an interface.
    * @param interfaces new value of the flag.
-   * @see #isInterface
+   * @see #isInterface()
    */
   public void setInterface(boolean interfaces) {
     this.interfaces = interfaces;
@@ -146,7 +146,7 @@ public class MetaClass extends MetaElement {
   /**
    * Returns true if the class is abstract.
    * @return abstract flag value.
-   * @see #setAbstract
+   * @see #setAbstract(boolean)
    */
   public boolean isAbstract() {
     return abstracts;
@@ -155,7 +155,7 @@ public class MetaClass extends MetaElement {
   /**
    * Sets the abstract flag indicating if the class is abstract.
    * @param abstracts new value of the flag.
-   * @see #isAbstract
+   * @see #isAbstract()
    */
   public void setAbstract(boolean abstracts) {
     this.abstracts = abstracts;
@@ -164,7 +164,7 @@ public class MetaClass extends MetaElement {
   /**
    * Returns true if the class is static.
    * @return static flag value.
-   * @see #setStatic
+   * @see #setStatic(boolean)
    */
   public boolean isStatic() {
     return statics;
@@ -174,7 +174,7 @@ public class MetaClass extends MetaElement {
    * Sets the abstract flag indicating if the class is static. Only nested
    * classes can be static.
    * @param statics new value of the flag.
-   * @see #isStatic
+   * @see #isStatic()
    */
   public void setStatic(boolean statics) {
     this.statics = statics;
@@ -183,7 +183,7 @@ public class MetaClass extends MetaElement {
   /**
    * Returns true if the class is final.
    * @return final flag value.
-   * @see #setFinal
+   * @see #setFinal(boolean)
    */
   public boolean isFinal() {
     return finals;
@@ -192,34 +192,63 @@ public class MetaClass extends MetaElement {
   /**
    * Sets the final flag indicating if the class is final.
    * @param finals new value of the flag.
-   * @see #isFinal
+   * @see #isFinal()
    */
   public void setFinal(boolean finals) {
     this.finals = finals;
   }
 
+  /**
+   * Adds an ancestor to the class.
+   * @param ancestor ancestor to add.
+   */
+  public void addAncestor(MetaClass ancestor) {
+    ancestors.add(ancestor);
+  }
+
+  /**
+   * Gets the property located at the given index.
+   * @param index index of the property to retrieve.
+   * @return the requested property.
+   * @see #addProperty(int, MetaProperty)
+   */
   public MetaProperty getProperty(int index) {
     return properties.get(index);
   }
 
-  public void addProperty(MetaProperty metaProperty) {
-    properties.add(metaProperty);
-    metaProperty.setContext(this);
+  /**
+   * Adds a property to the list of property.
+   * @param property property to add.
+   */
+  public void addProperty(MetaProperty property) {
+    properties.add(property);
+    property.setContext(this);
   }
 
-  public void addAncestor(MetaClass metaClass) {
-    ancestors.add(metaClass);
+  /**
+   * Adds a property to the list of property.
+   * @param index index of the property to add.
+   * @param property property to add.
+   */
+  public void addProperty(int index, MetaProperty property) {
+    properties.add(index, property);
+    property.setContext(this);
   }
 
-  public void addProperty(int index, MetaProperty metaProperty) {
-    properties.add(index, metaProperty);
-    metaProperty.setContext(this);
-  }
-
+  /**
+   * Returns all properties.
+   * @return list of properties.
+   * @see #setProperties(List)
+   */
   public List<MetaProperty> getProperties() {
     return properties;
   }
 
+  /**
+   * Sets the list of properties.
+   * @param properties new list of properties.
+   * @see #getProperties()
+   */
   public void setProperties(List<MetaProperty> properties) {
     removeAllProperties();
     properties.addAll(properties);
@@ -228,6 +257,9 @@ public class MetaClass extends MetaElement {
     }
   }
 
+  /**
+   * Removes all properties.
+   */
   public void removeAllProperties() {
     for (MetaProperty property : properties) {
       property.setContext(null);
@@ -236,40 +268,67 @@ public class MetaClass extends MetaElement {
   }
 
   /**
-   * Removes a property from this class
-   * @param metaProperty to be removed.
+   * Removes a property from this class.
+   * @param property to be removed.
    */
-  public void removeProperty(MetaProperty metaProperty) {
-    properties.remove(metaProperty);
+  public void removeProperty(MetaProperty property) {
+    properties.remove(property);
   }
 
+  /**
+   * Gets the property located at the given index.
+   * @param index index of the property to retrieve.
+   * @return the requested property.
+   * @see #addIndexedProperty(int, MetaIndexedProperty)
+   */
   public MetaIndexedProperty getIndexedProperty(int index) {
     return indexedProperties.get(index);
   }
 
-  public void addIndexedProperty(MetaIndexedProperty metaIndexedProperty) {
-    indexedProperties.add(metaIndexedProperty);
-    metaIndexedProperty.setContext(this);
+  /**
+   * Adds a property to the list of property.
+   * @param property property to add.
+   */
+  public void addIndexedProperty(MetaIndexedProperty property) {
+    indexedProperties.add(property);
+    property.setContext(this);
   }
 
+  /**
+   * Adds a property to the list of property.
+   * @param index index of the property to add.
+   * @param property property to add.
+   */
   public void addIndexedProperty(int index, MetaIndexedProperty property) {
     indexedProperties.add(index, property);
     property.setContext(this);
   }
 
+  /**
+   * Returns all properties.
+   * @return list of properties.
+   * @see #setIndexedProperties(List)
+   */
   public List<MetaIndexedProperty> getIndexedProperties() {
     return indexedProperties;
   }
 
-  public void setIndexedProperties(List<MetaIndexedProperty> indexedProperties) {
+  /**
+   * Sets the list of properties.
+   * @param properties new list of properties.
+   * @see #getIndexedProperties()
+   */
+  public void setIndexedProperties(List<MetaIndexedProperty> properties) {
     removeAllIndexedProperties();
-    this.indexedProperties.addAll(indexedProperties);
-
-    for (MetaIndexedProperty property : indexedProperties) {
+    this.indexedProperties.addAll(properties);
+    for (MetaIndexedProperty property : properties) {
       property.setContext(this);
     }
   }
 
+  /**
+   * Removes all properties.
+   */
   public void removeAllIndexedProperties() {
     for (MetaIndexedProperty property : indexedProperties) {
       property.setContext(null);

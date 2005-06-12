@@ -24,6 +24,9 @@ import ch.bbv.explorer.components.SimpleDialog;
  * @version $Revision$
  */
 public class NodePropertiesDialog extends SimpleDialog {
+  /**
+   * Serial version identifier coded as back compatibility date.
+   */
   private static final long serialVersionUID = 20041201;
 
   /**
@@ -71,7 +74,6 @@ public class NodePropertiesDialog extends SimpleDialog {
   protected void processOk() {
     if (view.isEditable()) {
       view.commitChanges();
-
       ExplorerNode node = view.getModel();
       LightweightObjectHandler handler = node.getExplorer().getManager()
           .getLwHandler();
@@ -91,6 +93,5 @@ public class NodePropertiesDialog extends SimpleDialog {
       action.postExecute(view.getModel(), true);
     }
     view.setModel(null);
-
   }
 }

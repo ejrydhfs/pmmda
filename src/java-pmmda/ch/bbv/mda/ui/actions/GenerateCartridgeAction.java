@@ -4,6 +4,7 @@
  */
 package ch.bbv.mda.ui.actions;
 
+import ch.bbv.explorer.Explorer;
 import ch.bbv.explorer.actions.ExplorerGlobalActionImpl;
 import ch.bbv.mda.MetaModel;
 import ch.bbv.mda.generators.Cartridge;
@@ -36,18 +37,20 @@ public class GenerateCartridgeAction extends ExplorerGlobalActionImpl {
   /**
    * Constructor of the class.
    * @param cartridge cartridge which should be called.
+   * @param explorer explorer owning the global action.
    */
-  public GenerateCartridgeAction(Cartridge cartridge) {
-    super(createActionName(cartridge));
+  public GenerateCartridgeAction(Cartridge cartridge, Explorer explorer) {
+    super(createActionName(cartridge), explorer);
     this.cartridge = cartridge;
   }
 
-  public void execute() {
+  public boolean execute() {
     MetaModel model = (MetaModel) getExplorer().getRoot().getDataObject();
     CartridgeFactory factory = CartridgeFactory.getInstance();
     if (model != null) {
       factory.execute(cartridge, model);
     }
+    return true;
   }
 
   /**

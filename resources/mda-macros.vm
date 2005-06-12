@@ -122,3 +122,15 @@ new ${containerType}<${itemType}>()##end
 #macro(setterName $property $result)
 #set($result="set${property.nameFirstUpperSingular()}")
 #end
+
+## Generates a forward foreign key for the given property.
+#macro(getForwardFk $property $result)
+#set($result="${property.nameUpper()}_FK")
+#end
+
+## Generates a reverse foreign key for the given property referencing
+## the given reference class.
+#macro(getReverseFk $reference $property $result)
+#set($refTable=${reference.valueOfTag("ojb-table-name")})	
+#set($result="${refTable}_${property.nameUpper()}_FK")
+#end

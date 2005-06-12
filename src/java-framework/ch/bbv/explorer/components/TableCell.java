@@ -273,10 +273,20 @@ public class TableCell implements TableFormat, WritableTableFormat,
     return null;
   }
 
+  /**
+   * Returns the class of the requested column.
+   * @param column index of the requested column.
+   * @return the class of the items displayed in the column.
+   */
   public Class getColumnClass(int column) {
     return cells[column].type;
   }
 
+  /**
+   * Returns the comparator of the requested column.
+   * @param column index of the requested column.
+   * @return the comparator of the items displayed in the column.
+   */
   public Comparator getColumnComparator(int column) {
     return cells[column].comparator;
   }

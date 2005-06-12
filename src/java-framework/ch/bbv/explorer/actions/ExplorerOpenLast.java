@@ -5,23 +5,19 @@
  */
 package ch.bbv.explorer.actions;
 
-import java.awt.event.ActionEvent;
+import ch.bbv.explorer.Explorer;
 
 /**
- * <p>The save action for the user interface of <strong>pmMDA</strong> 
- * application.
+ * The save action for the user interface of application.
  * @author MarcelBaumann
  * @version $Revision$
  */
 public abstract class ExplorerOpenLast extends ExplorerGlobalActionImpl {
-	/** Default constructor.
-	 */
-  public ExplorerOpenLast() {
-    super("Save");
-    initialize();
-  }
-
-  public void actionPerformed(ActionEvent action) {
-    execute();
+  /**
+   * Constructor of the instances of the class.
+   * @param explorer explorer owning the global action.
+   */
+  public ExplorerOpenLast(Explorer explorer) {
+    super("Save", explorer);
   }
 }

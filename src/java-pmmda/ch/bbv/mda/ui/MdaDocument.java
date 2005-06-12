@@ -8,6 +8,7 @@ package ch.bbv.mda.ui;
 import java.io.File;
 import java.io.IOException;
 
+import ch.bbv.explorer.ExplorerDocument;
 import ch.bbv.mda.MetaModel;
 import ch.bbv.mda.TreeChecker;
 import ch.bbv.mda.operators.FileOperators;
@@ -22,11 +23,21 @@ import ch.bbv.mda.pim.CodeTypeMgr;
  * @author MarcelBaumann
  * @version $Revision$
  */
-public class MdaDocument {
+public class MdaDocument implements ExplorerDocument {
   /**
    * The directory name containing all reference code values of the model.
    */
   public static final String CODES_DIRECTORY = "codes";
+
+  /**
+   * State of the document.
+   */
+  private State state;
+
+  /**
+   * File in which the model is stored.
+   */
+  private File file;
 
   /**
    * The MDA model of an application.
@@ -42,8 +53,21 @@ public class MdaDocument {
    * Default constructor of the class.
    */
   public MdaDocument() {
-    this.codeTypeMgr = new CodeTypeMgr();
-    this.model = new MetaModel();
+    state = State.CREATED;
+    codeTypeMgr = new CodeTypeMgr();
+    model = new MetaModel();
+  }
+
+  public State getState() {
+    return state;
+  }
+
+  public void setState(State state) {
+    this.state = state;
+  }
+
+  public File getFile() {
+    return file;
   }
 
   /**
@@ -76,6 +100,8 @@ public class MdaDocument {
     model.setFilename(file.toString());
     File directory = new File(model.getFilename()).getParentFile();
     codeTypeMgr.reset(new File(directory, CODES_DIRECTORY));
+    state = State.CLEAN;
+    this.file = file;
   }
 
   /**
@@ -85,7 +111,6 @@ public class MdaDocument {
    */
   public void save() throws PersistenceException, IOException {
     PersistenceHandlerFactory factory = new PersistenceHandlerFactory();
-    File file = new File(model.getFilename());
     PersistenceHandler handler = factory.getHandler(file);
     handler.writeModel(model, file);
     codeTypeMgr.saveAll();
@@ -111,6 +136,8 @@ public class MdaDocument {
     model.setFilename(file.getAbsolutePath());
     PersistenceHandler handler = factory.getHandler(file);
     handler.writeModel(model, file);
+    state = State.CLEAN;
+    this.file = file;
   }
 
   /**

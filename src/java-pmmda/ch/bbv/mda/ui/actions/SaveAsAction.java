@@ -8,17 +8,15 @@ package ch.bbv.mda.ui.actions;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.MessageFormat;
 import java.util.Arrays;
 
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ch.bbv.explorer.actions.ExplorerSaveAsAction;
-import ch.bbv.explorer.actions.SimpleFileFilter;
+import ch.bbv.explorer.Explorer;
+import ch.bbv.explorer.actions.ExplorerFileAction;
 import ch.bbv.mda.persistence.PersistenceException;
 import ch.bbv.mda.ui.MdaDocument;
 import ch.bbv.mda.ui.MdaExplorer;
@@ -39,7 +37,7 @@ import ch.bbv.utilities.SystemUtilities;
  * @author MarcelBaumann
  * @version $Revision$
  */
-public class SaveAsAction extends ExplorerSaveAsAction {
+public class SaveAsAction extends ExplorerFileAction {
   /**
    * Serial version identifier coded as back compatibility date.
    */
@@ -50,30 +48,18 @@ public class SaveAsAction extends ExplorerSaveAsAction {
    */
   private static Log log = LogFactory.getLog(SaveAsAction.class);
 
-  public void initialize() {
-    JFileChooser fileChooser = getFileChooser();
-    fileChooser.addChoosableFileFilter(new SimpleFileFilter(
-        FileTypes.ARGOUML_EXT, FileTypes.ARGOUML_TEXT));
-    fileChooser.addChoosableFileFilter(new SimpleFileFilter(
-        FileTypes.POSEIDON_EXT, FileTypes.POSEIDON_TEXT));
-    fileChooser.addChoosableFileFilter(new SimpleFileFilter(FileTypes.XML_EXT,
-        FileTypes.XML_TEXT));
-    fileChooser.addChoosableFileFilter(new SimpleFileFilter(FileTypes.XMI_EXT,
-        FileTypes.XMI_TEXT));
-    fileChooser.addChoosableFileFilter(new SimpleFileFilter(
-        FileTypes.SERIALIZE_EXT, FileTypes.SERIALIZE_TEXT));
+  /**
+   * Default constructor.
+   * @param explorer explorer owning the global action.
+   */
+  public SaveAsAction(Explorer explorer) {
+    super("SaveAs...", explorer);
+    FileTypes.addFileFilters(getFileChooser());
   }
 
-  public void execute() {
-    if (getSelectedFile().exists()) {
-      String message = MessageFormat.format(ResourceUtility
-          .getString("mda.ui.confirmationMsg.FILE_OVERWRITE_CONFIRMATION"),
-          new Object[] { getSelectedFile().getName() });
-      int no = JOptionPane.showConfirmDialog(getExplorer().getFrame(), message,
-          ResourceUtility.getString("mda.ui.confirmationMsg.CONFIRMATION"),
-          JOptionPane.YES_NO_OPTION);
-      if (no == 1)
-        return;
+  public boolean execute() {
+    if (!shouldOverwriteFile()) {
+      return false;
     }
     File file = getSelectedFile();
     String extension = SystemUtilities.getFileExtension(file).toLowerCase();
@@ -98,7 +84,9 @@ public class SaveAsAction extends ExplorerSaveAsAction {
       }
     } catch (IOException e) {
       log.error(e);
+      return false;
     }
+    return true;
   }
 
   /**
@@ -112,7 +100,6 @@ public class SaveAsAction extends ExplorerSaveAsAction {
       MdaExplorer explorer = (MdaExplorer) getExplorer();
       MdaDocument document = explorer.getDocument();
       document.saveAs(file);
-      getExplorer().getMenuBar().documentSaved();
     } catch (PersistenceException e) {
       log.error(e);
     }

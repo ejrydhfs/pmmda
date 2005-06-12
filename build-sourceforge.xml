@@ -16,7 +16,7 @@
     <delete dir="${build.dir}" />
     <mkdir dir="${build.dir}" />
     <javac destdir="${build.dir}"
-           srcdir="${src.dog.dir}:${src.pmmda.dir}::${src.documentor.dir}"
+           srcdir="${src.dog.dir}:${src.pmmda.dir}:${src.documentor.dir}"
            includes="**/*.java,**/*.properties"
            compiler="modern"
            verbose="${compile.verbose}"
@@ -25,7 +25,7 @@
       <classpath refid="application.classpath" />
     </javac>
     <copy todir="${build.dir}">
-      <fileset dir="${src.pmmda.dir}" includes="**/*.properties," />
+      <fileset dir="${src.dog.dir}" includes="**/*.properties," />
     </copy>
     <copy todir="${build.dir}">
       <fileset dir="${src.pmmda.dir}" includes="**/*.properties," />
@@ -60,7 +60,8 @@
     <copy todir="${pmmda-src-dog-idl.dir}">
       <fileset dir="${src.dir}/idl-framework" />
     </copy>
-
+    <echo message="copy all examples"/>
+    <antcall target="pmmda-examples"/>
     <echo message="copy pmMDA needed library files" />
     <copy file="${lib.dir}/${commons-beanutils.lib}" todir="${pmmda-lib.dir}" />
     <copy file="${lib.dir}/${commons-cli.lib}" todir="${pmmda-lib.dir}" />
@@ -116,11 +117,9 @@
       <fileset dir="${src.pmmda.dir}"
                excludes="ch/bbv/bog/**,ch/bbv/documentor/**" />
     </jar>
-    <tar destfile="${dist.dir}/${pmmda.name}-${pmmda.version}.tar"
-         basedir="${pmmda-dist.dir}" />
-    <gzip zipfile="${dist.dir}/${pmmda.name}-${pmmda.version}.tar.gz"
-          src="${dist.dir}/${pmmda.name}-${pmmda.version}.tar" />
-    <delete file="${dist.dir}/${pmmda.name}-${pmmda.version}.tar" />
+    <tar destfile="${dist.dir}/${pmmda.name}-${pmmda.version}.tar.gz"
+      	 basedir="${pmmda-dist.dir}"
+      	 compression="gzip"/>
     <echo message="generate file of all librairies" />
     <zip destfile="${dist.dir}/${pmmda.name}-dev-libs-${pmmda.version}.zip"
          basedir="${lib.dir}"
@@ -147,7 +146,7 @@
     <jar jarfile="${dog-lib.dir}/${dog.name}-${dog.version}.jar" 
       compress="true" index="true">
       <fileset dir="${build.dir}" 
-        excludes="ch/bbv/mda/**,ch/bbv/documentor/**,**/*.properties,**/*.html,**/*.xml,**/*.sql" 
+        excludes="ch/bbv/mda/**,ch/bbv/documentor/**,**/*.html,**/*.xml,**/*.sql" 
         />
     </jar>
     <jar destfile="${dist.dir}/${dog.name}-src-${dog.version}.jar" 
@@ -156,7 +155,8 @@
     </jar>
   </target>
 
-  <target name="pmmda-examples" description="Generates the pmMDA examples">
+  <target name="pmmda-examples" depends="dist-init"
+     description="Generates the pmMDA examples">
     <property name="pmmda-dist.dir" value="${dist.dir}/${pmmda.name}" />
     <property name="pmmda-work.dir" value="${pmmda-dist.dir}/work" />
     <property name="pmmda-ex.dir" value="${pmmda-work.dir}/example" />
@@ -172,6 +172,7 @@
     <mkdir dir="${pmmda-work.dir}" />
     <mkdir dir="${pmmda-ex.dir}" />
     <mkdir dir="${pmmda-ex-model.dir}" />
+    <mkdir dir="${pmmda-ex-model.dir}/codes" />
     <mkdir dir="${pmmda-ex-src.dir}" />
     <mkdir dir="${pmmda-ex-data.dir}" />
     <mkdir dir="${pmmda-ex-lib.dir}" />

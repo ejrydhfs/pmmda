@@ -10,8 +10,9 @@
 #if($isPersistentDataObject)
 #set($columnName=${property.valueOfTag("ojb-column-name")})
 #set($foreignTableName=${type.getAttribute("ojb-table-name")})
+#getForwardFk($property $column)
 ALTER TABLE ${schema}${table} ADD CONSTRAINT ${foreignTableName}_${columnName}_IR 
-  FOREIGN KEY (${columnName}_FK)
+  FOREIGN KEY (${column})
   REFERENCES ${schema}${foreignTableName}(ID)
   ON DELETE RESTRICT;
   
@@ -27,8 +28,9 @@ ALTER TABLE ${schema}${table} ADD CONSTRAINT ${foreignTableName}_${columnName}_I
 #if($isPersistentDataObject)
 #set($columnName=${aggregation.valueOfTag("ojb-column-name")})
 #set($foreignTableName=${type.getAttribute("ojb-table-name")})
+#getForwardFk($property $column)
 ALTER TABLE ${schema}${table} ADD CONSTRAINT ${foreignTableName}_${columnName}_IR 
-  FOREIGN KEY (${foreignTableName}_${columnName}_FK)
+  FOREIGN KEY (${column})
   REFERENCES ${schema}${foreignTableName}(ID)
   ON DELETE RESTRICT;
 
@@ -46,8 +48,9 @@ ALTER TABLE ${schema}${table} ADD CONSTRAINT ${foreignTableName}_${columnName}_I
 #if((${type} == ${class}) && ${type.booleanValueOfTag("persistence")})
 #set($columnName=${relation.valueOfTag("ojb-column-name")})	
 #set($foreignTableName=${reference.getAttribute("ojb-table-name")})
+#getReverseFk($reference $relation $column)
 ALTER TABLE ${schema}${table} ADD CONSTRAINT ${foreignTableName}_${columnName}_IR 
-  FOREIGN KEY (${foreignTableName}_${columnName}_FK)
+  FOREIGN KEY (${column})
   REFERENCES ${schema}${foreignTableName}(ID)
   ON DELETE RESTRICT;
 

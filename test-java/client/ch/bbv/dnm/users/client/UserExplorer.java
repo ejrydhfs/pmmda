@@ -25,7 +25,7 @@ import ch.bbv.explorer.*;
  * and the artifacts generated with the pmMDA tool to implement a complete user
  * interface to visualize and manipulate user roles with only one hand written
  * class.
- * @author MarcelBaumann
+ * @author Marcel Baumann
  * @version $Revision$
  */
 public class UserExplorer extends Explorer {
@@ -44,6 +44,8 @@ public class UserExplorer extends Explorer {
    */
   private static DataObjectManager manager;
 
+  private ExplorerDocument document;
+
   /**
    * Creates a new MDA explorer.
    * @param title title of the explorer frame.
@@ -57,7 +59,7 @@ public class UserExplorer extends Explorer {
         UserExplorer.class, types, arguments);
     return explorer;
   }
-  
+
   /**
    * Constructor of the class.
    * @param title title of the explorer frame.
@@ -66,6 +68,7 @@ public class UserExplorer extends Explorer {
   public UserExplorer(String title, String schema) {
     super(factory, manager, schema);
     this.setTitle(title);
+    document = new ExplorerDocumentImpl();
     if (log.isInfoEnabled()) {
       log.info("Start initializing user explorer");
     }
@@ -77,9 +80,12 @@ public class UserExplorer extends Explorer {
   public static void registerNodeTypes() {
     manager = Application.getApplication().getDataObjectManager();
     factory = new UiNodeTypeFactory();
-
     TypeFactory typeFactory = new TypeFactory(factory, manager);
     typeFactory.registerAllTypes();
+  }
+
+  public ExplorerDocument getDocument() {
+    return document;
   }
 
   /**
@@ -87,16 +93,13 @@ public class UserExplorer extends Explorer {
    * created.
    */
   protected void initialize() {
-    ExplorerMenuBar menuBar = new ExplorerMenuBar();
+    ExplorerMenuBar menuBar = new ExplorerMenuBar(this);
     setMenuBar(menuBar);
-
     Realm realm = new Realm();
     realm.setId(DataObjectId.ILLEGAL_ID);
     realm.setName("Realm");
-
     RealmLw realmLw = new RealmLw(DataObjectId.ILLEGAL_ID);
     realmLw.setName("Realm");
-
     for (Iterator i = manager.getDataObjectHandler().retrieveLw(
         getDatasource(), ProviderLw.class, (String) null).iterator(); i
         .hasNext();) {

@@ -5,13 +5,13 @@
  */
 package ch.bbv.explorer;
 
-import java.awt.Component;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
-import javax.swing.*;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 
+import ch.bbv.explorer.ExplorerDocument.State;
 import ch.bbv.explorer.actions.ExplorerGlobalAction;
 
 /**
@@ -38,55 +38,46 @@ public class ExplorerMenuBar extends JMenuBar {
    */
   private static final long serialVersionUID = 20041201;
 
+  /**
+   * Name of the pull down-menu containing file related actions.
+   */
   public static final String FILE_MENU = "File";
 
+  /**
+   * Name of the pull down-menu containing help related actions.
+   */
   public static final String HELP_MENU = "Help";
 
+  /**
+   * Name of the pull down-menu containing edition related actions.
+   */
   public static final String EDIT_MENU = "Edit";
 
+  public static enum Names {
+    NEW, OPEN, OPEN_LAST, SAVE, SAVE_AS, CLOSE, EXIT
+  };
+
+  /**
+   * Maps containing all menus.
+   */
   private Map<String, JMenu> menus;
 
-  /**
-   * Standard global action to manipulate documents.
-   */
-  private ExplorerGlobalAction newAction;
+  private Map<Names, ExplorerGlobalAction> actions;
 
   /**
-   * Standard global action to manipulate documents.
+   * Explorer to which the menu bar belongs.
    */
-  private ExplorerGlobalAction openAction;
-
-  /**
-   * Standard global action to manipulate documents.
-   */
-  private ExplorerGlobalAction openLastAction;
-
-  /**
-   * Standard global action to manipulate documents.
-   */
-  private ExplorerGlobalAction closeLastAction;
-
-  /**
-   * Standard global action to manipulate documents.
-   */
-  private ExplorerGlobalAction saveAction;
-
-  /**
-   * Standard global action to manipulate documents.
-   */
-  private ExplorerGlobalAction saveAsAction;
-
-  /**
-   * Standard global action to manipulate documents.
-   */
-  private ExplorerGlobalAction exitAction;
+  private Explorer explorer;
 
   /**
    * Default constructor of the class.
+   * @param explorer explorer to which the menu bar belongs.
+   * @pre explorer != null
    */
-  public ExplorerMenuBar() {
+  public ExplorerMenuBar(Explorer explorer) {
+    this.explorer = explorer;
     menus = new HashMap<String, JMenu>();
-
+    actions = new HashMap<Names, ExplorerGlobalAction>();
     JMenu menu = new JMenu(FILE_MENU);
     add(menu);
     menus.put(FILE_MENU, menu);
@@ -120,75 +111,70 @@ public class ExplorerMenuBar extends JMenuBar {
     super.add(menu, index);
   }
 
-  public void registerDocumentFunctions(ExplorerGlobalAction newAction,
-      ExplorerGlobalAction openAction, ExplorerGlobalAction openLastAction,
-      ExplorerGlobalAction saveAction, ExplorerGlobalAction saveAsAction,
-      ExplorerGlobalAction exitAction) {
-    this.newAction = newAction;
-    this.openAction = openAction;
-    this.openLastAction = openLastAction;
-    this.saveAction = saveAction;
-    this.saveAsAction = saveAsAction;
-    this.exitAction = exitAction;
-    setActionEnabled(newAction, true);
-    setActionEnabled(openAction, true);
-    setActionEnabled(openLastAction, true);
-    setActionEnabled(saveAction, false);
-    setActionEnabled(saveAsAction, false);
-    setActionEnabled(exitAction, true);
+  /**
+   * Registers a standard action into the menu bar.
+   * @param name name of the standard action.
+   * @param action standard action to register.
+   * @see #getStandardAction(Names)
+   */
+  public void putStandardAction(Names name, ExplorerGlobalAction action) {
+    actions.put(name, action);
   }
 
   /**
-   * Called when a document is created.
+   * Returns the explorer global action with the given name.
+   * @param name name of the action to retrieve.
+   * @return the requested action if found otherwise null.
+   * @see #putStandardAction(Names, ExplorerGlobalAction)
    */
-  public void documentCreated() {
-    setActionEnabled(saveAction, false);
-    setActionEnabled(saveAsAction, true);
+  public ExplorerGlobalAction getStandardAction(Names name) {
+    return actions.get(name);
   }
 
   /**
-   * Called when a document is opened.
+   * Change event about the status of the current displayed document.
+   * @param state new state of the document.
    */
-  public void documentOpened() {
-    setActionEnabled(saveAction, true);
-    setActionEnabled(saveAsAction, true);
-  }
-
-  /**
-   * Called when a document is saved.
-   */
-  public void documentSaved() {
-    setActionEnabled(saveAction, true);
-    setActionEnabled(saveAsAction, true);
-  }
-
-  /**
-   * Called when a document is modified.
-   */
-  public void documentModified() {
-    setActionEnabled(saveAction, true);
-    setActionEnabled(saveAsAction, true);
-  }
-
-  /**
-   * Sets the explorer to the menu bar and all its subcomponents.
-   * @param explorer the new explorer owning the menu bar.
-   */
-  public void setExplorer(Explorer explorer) {
-    for (Iterator i = menus.values().iterator(); i.hasNext();) {
-      JMenu menu = (JMenu) i.next();
-      Component[] globalNodes = menu.getMenuComponents();
-      for (int j = 0; j < globalNodes.length; j++) {
-        if (globalNodes[j] instanceof JMenuItem) {
-          Action action = ((JMenuItem) globalNodes[j]).getAction();
-          if (action instanceof ExplorerGlobalAction) {
-            ((ExplorerGlobalAction) action).setExplorer(explorer);
-          }
-        }
-      }
+  public void documentChanged(State state) {
+    if (state != null) {
+      explorer.getDocument().setState(state);
+    } else {
+      state = explorer.getDocument().getState();
+    }
+    switch (state) {
+    case NONE:
+      explorer.getFrame().setTitle("");
+      setActionEnabled(actions.get(Names.NEW), true);
+      setActionEnabled(actions.get(Names.OPEN), true);
+      setActionEnabled(actions.get(Names.SAVE), false);
+      setActionEnabled(actions.get(Names.SAVE_AS), false);
+      setActionEnabled(actions.get(Names.CLOSE), false);
+      break;
+    case CREATED:
+      explorer.getFrame().setTitle(explorer.getRoot().getName());
+      setActionEnabled(actions.get(Names.NEW), true);
+      setActionEnabled(actions.get(Names.OPEN), true);
+      setActionEnabled(actions.get(Names.SAVE), false);
+      setActionEnabled(actions.get(Names.SAVE_AS), true);
+      setActionEnabled(actions.get(Names.CLOSE), true);
+      break;
+    case CLEAN:
+      explorer.getFrame().setTitle(explorer.getRoot().getName());
+      setActionEnabled(actions.get(Names.SAVE), false);
+      setActionEnabled(actions.get(Names.CLOSE), true);
+      break;
+    case MODIFIED:
+      explorer.getFrame().setTitle(explorer.getRoot().getName() + " * ");
+      setActionEnabled(actions.get(Names.SAVE), true);
+      break;
     }
   }
 
+  /**
+   * Sets the enabled flag to the action if defined.
+   * @param action action to update.
+   * @param enabled new value of the enabled flag.
+   */
   protected void setActionEnabled(ExplorerGlobalAction action, boolean enabled) {
     if (action != null) {
       action.setEnabled(enabled);

@@ -251,7 +251,7 @@ public class TaggedValuesView extends NodePropertiesView {
         if (type != null) {
           ResourcesManager manager = MdaApplication.getApplication()
               .getResourcesManager();
-          tip = manager.getResource(type.getTag());
+          tip = manager.getString(type.getTag());
         }
       } else {
         tip = super.getToolTipText(event);

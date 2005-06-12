@@ -8,6 +8,7 @@ package ch.bbv.explorer.actions;
 
 import javax.swing.JFrame;
 
+import ch.bbv.explorer.Explorer;
 import ch.bbv.explorer.components.SimpleDialog;
 import ch.bbv.utilities.ReflectUtilities;
 
@@ -37,21 +38,23 @@ public class ExplorerSimpleDialogAction extends ExplorerGlobalActionImpl {
   private SimpleDialog dialog;
 
   /**
-   * Constructor of the class.
+   * Constructor of the instances of the class.
    * @param name name of the action.
    * @param clazz simple dialog class of the dialog to be displayed.
+   * @param explorer explorer owning the global action.
    */
-  public ExplorerSimpleDialogAction(String name, Class clazz) {
-    super(name);
+  public ExplorerSimpleDialogAction(String name, Class clazz, Explorer explorer) {
+    super(name, explorer);
     this.clazz = clazz;
   }
 
-  public void execute() {
+  public boolean execute() {
     if (dialog == null) {
       Object[] objects = { getExplorer().getFrame() };
       dialog = (SimpleDialog) ReflectUtilities.newInstance(clazz, TYPES,
           objects);
     }
     dialog.setVisible(true);
+    return true;
   }
 }

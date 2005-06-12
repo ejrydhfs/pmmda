@@ -120,7 +120,9 @@
 #end
 #end
 #end
-  <index-descriptor name="${table}_IDX" unique="true">
+  <index-descriptor 
+    name="${table}_IDX" 
+    unique="true">
     <index-column name="id"/>
   </index-descriptor>
 #if($shouldGenerateFkIndex)
@@ -161,12 +163,11 @@
 #getType($model $relation $type)	
 #if(${type} == ${class})
 #set($refTable=${reference.valueOfTag("ojb-table-name")})
-#set($relColumn=${relation.valueOfTag("ojb-column-name")})
-#set($name="${refTable}_${relColumn}")
+#set($relationName=${relation.nameUpper()})
   <index-descriptor 
-	name="${table}_${name}_IDX" 
+	name="${table}_${refTable}_${relationName}_IDX" 
 	unique="false">
-	<index-column name="${name}_FK"/>
+	<index-column name="${refTable}_${relationName}_FK"/>
   </index-descriptor>
 #end
 #end

@@ -14,6 +14,7 @@ import javax.swing.JOptionPane;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import ch.bbv.explorer.Explorer;
 import ch.bbv.explorer.actions.ExplorerSaveAction;
 import ch.bbv.mda.persistence.PersistenceException;
 import ch.bbv.mda.ui.MdaDocument;
@@ -36,18 +37,25 @@ public class SaveAction extends ExplorerSaveAction {
    */
   private static Log log = LogFactory.getLog(SaveAction.class);
 
-  public void execute() {
+  /**
+   * Default constructor.
+   * @param explorer explorer owning the global action.
+   */
+  public SaveAction(Explorer explorer) {
+    super(explorer);
+  }
+
+  public boolean execute() {
+    MdaExplorer explorer = (MdaExplorer) getExplorer();
     try {
-      MdaExplorer explorer = (MdaExplorer) getExplorer();
       MdaDocument document = explorer.getDocument();
       String filename = document.getModel().getFilename();
       if (filename != null) {
         filename = filename.trim();
         if (filename.length() > 0) {
           explorer.getDocument().save();
-          getExplorer().getMenuBar().documentSaved();
         } else {
-          JOptionPane.showMessageDialog(getExplorer().getFrame(),
+          JOptionPane.showMessageDialog(explorer.getFrame(),
               ResourceUtility
                   .getString("mda.ui.errorMsg.NO_FILE_DEFINED_ERROR"),
               ResourceUtility.getString("mda.ui.errorMsg.ERROR"),
@@ -56,19 +64,23 @@ public class SaveAction extends ExplorerSaveAction {
       }
     } catch (PersistenceException e) {
       log.error(e);
-      JOptionPane.showMessageDialog(getExplorer().getFrame(), ResourceUtility
+      JOptionPane.showMessageDialog(explorer.getFrame(), ResourceUtility
           .getString("mda.ui.sorryMsg.UNSUPPORTED_FILE_TYPE_FOR_SAVE"),
           ResourceUtility.getString("mda.ui.sorryMsg.SORRY"),
           JOptionPane.ERROR_MESSAGE);
+      return false;
     } catch (NullPointerException e) {
       log.error(e);
-      JOptionPane.showMessageDialog(getExplorer().getFrame(), ResourceUtility
+      JOptionPane.showMessageDialog(explorer.getFrame(), ResourceUtility
           .getString("mda.ui.sorryMsg.UNSUPPORTED_FILE_TYPE_FOR_SAVE"),
           ResourceUtility.getString("mda.ui.sorryMsg.SORRY"),
           JOptionPane.ERROR_MESSAGE);
+      return false;
     } catch (IOException e) {
       log.error(e);
+      return false;
     }
+    return true;
   }
 
   public void actionPerformed(ActionEvent action) {

@@ -21,7 +21,7 @@
   <tab id="" label="Home" dir="" indexfile="index.html"/>
   <tab id="projects" label="Projects" dir="projects/" indexfile="index.html">
     <tab id="pmmda" label="pmMDA" dir="projects/pmmda/" indexfile="index.html"/>
-    <tab id="bog" label="BOG" dir="projects/bog/" indexfile="index.html"/>
+    <tab id="dog" label="DOG" dir="projects/dog/" indexfile="index.html"/>
   </tab>
   <tab id="articles" label="Articles" dir="articles/" indexfile="index.html"/>
 </tabs>

@@ -6,6 +6,7 @@
 package ch.bbv.explorer.actions;
 
 import ch.bbv.application.ProjectInfo;
+import ch.bbv.explorer.Explorer;
 import ch.bbv.explorer.about.AboutFrame;
 
 /**
@@ -31,10 +32,11 @@ public class ExplorerAboutAction extends ExplorerGlobalActionImpl {
   private AboutFrame aboutFrame;
 
   /**
-   * Default constructor of the class.
+   * Constructor of the instances of the class.
+   * @param explorer explorer owning the global action.
    */
-  public ExplorerAboutAction() {
-    super("About");
+  public ExplorerAboutAction(Explorer explorer) {
+    super("About", explorer);
   }
 
   /**
@@ -55,11 +57,12 @@ public class ExplorerAboutAction extends ExplorerGlobalActionImpl {
     this.projectInfo = projectInfo;
   }
 
-  public void execute() {
+  public boolean execute() {
     if (aboutFrame == null) {
       aboutFrame = new AboutFrame(getExplorer().getFrame(), "About",
           projectInfo);
     }
     aboutFrame.setVisible(true);
+    return true;
   }
 }

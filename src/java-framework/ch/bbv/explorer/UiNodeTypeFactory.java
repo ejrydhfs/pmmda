@@ -32,7 +32,7 @@ public class UiNodeTypeFactory {
   private static final Class[] types = { UiNodeType.class, Object.class };
 
   /**
-   * Logger for all instance of the class.
+   * Logger for all instances of the class.
    */
   private static Log log = LogFactory.getLog(UiNodeTypeFactory.class);
 
@@ -63,6 +63,9 @@ public class UiNodeTypeFactory {
    */
   private IconFactory iconFactory;
 
+  /**
+   * The popup menu factory used to create the menus associated with node types.
+   */
   private PopupFactory popupFactory;
 
   /**

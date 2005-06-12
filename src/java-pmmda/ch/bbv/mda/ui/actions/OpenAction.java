@@ -6,15 +6,11 @@
  */
 package ch.bbv.mda.ui.actions;
 
-import java.io.File;
-
-import javax.swing.JFileChooser;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ch.bbv.explorer.actions.ExplorerOpenAction;
-import ch.bbv.explorer.actions.SimpleFileFilter;
+import ch.bbv.explorer.Explorer;
+import ch.bbv.explorer.actions.ExplorerFileAction;
 import ch.bbv.mda.persistence.PersistenceException;
 import ch.bbv.mda.ui.MdaDocument;
 import ch.bbv.mda.ui.MdaExplorer;
@@ -28,7 +24,7 @@ import ch.bbv.mda.ui.MdaExplorer;
  * @author MarcelBaumann
  * @version $Revision$
  */
-public class OpenAction extends ExplorerOpenAction {
+public class OpenAction extends ExplorerFileAction {
   /**
    * Serial version identifier coded as back compatibility date.
    */
@@ -39,43 +35,26 @@ public class OpenAction extends ExplorerOpenAction {
    */
   private static Log log = LogFactory.getLog(OpenAction.class);
 
-  public void initialize() {
-    JFileChooser fileChooser = getFileChooser();
-    fileChooser.addChoosableFileFilter(new SimpleFileFilter(
-        FileTypes.RATIONAL_ROSE_EXT, FileTypes.RATIONAL_ROSE_TEXT));
-    fileChooser.addChoosableFileFilter(new SimpleFileFilter(
-        FileTypes.ARGOUML_EXT, FileTypes.ARGOUML_TEXT));
-    fileChooser.addChoosableFileFilter(new SimpleFileFilter(
-        FileTypes.SERIALIZE_EXT, FileTypes.SERIALIZE_TEXT));
-    fileChooser.addChoosableFileFilter(new SimpleFileFilter(
-        FileTypes.POSEIDON_EXT, FileTypes.POSEIDON_TEXT));
-    fileChooser.addChoosableFileFilter(new SimpleFileFilter(FileTypes.XML_EXT,
-        FileTypes.XML_TEXT));
-    fileChooser.addChoosableFileFilter(new SimpleFileFilter(FileTypes.XMI_EXT,
-        FileTypes.XMI_TEXT));
+  /**
+   * Default constructor.
+   * @param explorer explorer owning the global action.
+   */
+  public OpenAction(Explorer explorer) {
+    super("Open...", explorer);
+    shouldSaveAndProceed = true;
+    FileTypes.addFileFilters(getFileChooser());
   }
 
-  public void execute() {
+  public boolean execute() {
     try {
-      openModel(getSelectedFile());
+      MdaExplorer explorer = (MdaExplorer) getExplorer();
+      MdaDocument document = new MdaDocument();
+      document.load(getSelectedFile());
+      explorer.setDocument(document);
     } catch (PersistenceException e) {
       log.debug("File Not Found", e);
+      return false;
     }
-  }
-
-  /**
-   * Opens the model in the given file programatically.
-   * @param file file containing the model to open.
-   * @throws PersistenceException an exception was encountered when loading the
-   *           model.
-   * @pre file != null
-   */
-  public void openModel(File file) throws PersistenceException {
-    assert (file != null);
-    MdaExplorer explorer = (MdaExplorer) getExplorer();
-    MdaDocument document = new MdaDocument();
-    document.load(file);
-    explorer.setDocument(document);
-    getExplorer().getMenuBar().documentSaved();
+    return true;
   }
 }
