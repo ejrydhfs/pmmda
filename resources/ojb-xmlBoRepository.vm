@@ -28,8 +28,9 @@
 #getType($model $property $type)	
 #isPersistentDataObject($type $isPersistentDataObject)
 #if($isPersistentDataObject)
+#getForwardFk($property $column)
   <field-descriptor name="${property.nameFirstLower()}Handle"
-    column="${property.nameUpper()}_FK"
+    column="${column}"
     jdbc-type="INTEGER"
     nullable="${property.booleanValueOfTag("ojb-can-be-null")}"/>
 #else
@@ -62,9 +63,10 @@
 #foreach($relation in $relations)
 #getType($model $relation $type)	
 #if(${type} == ${class})
+#getReverseFk($reference $relation $column)
   <field-descriptor 
     name="${reference.nameFirstLower()}${relation.nameFirstUpper()}Handle" 
-    column="${reference.valueOfTag("ojb-table-name")}_${reference.nameUpper()}_FK"
+    column="${column}"
     jdbc-type="INTEGER"
     nullable="${relation.canBeNull()}"/>
 #end
@@ -79,7 +81,8 @@
 #if($isPersistentDataObject)
   <field-descriptor name="${aggregation.nameFirstLower()}Handle"
 #if($isDataObject)
-    column="${aggregation.nameUpper()}_FK"
+#getForwardFk($aggregation $column)
+	column="${column}"
     jdbc-type="INTEGER"
     access="anonymous"
     nullable="${aggregation.booleanValueOfTag("ojb-can-be-null")}"/>
@@ -171,10 +174,11 @@
 #isPersistentDataObject($type $isPersistentDataObject)
 #if($isPersistentDataObject)
 #set($name=${aggregation.nameUpper()})
+#getForwardFk($aggregation $column)
   <index-descriptor 
 	name="${table}_${name}_IDX" 
 	unique="false">
-	<index-column name="${name}_FK"/>
+    <index-column name="${column}"/>
   </index-descriptor>
 #end
 #end
@@ -189,10 +193,11 @@
 #if(${type} == ${class})
 #set($refTable=${reference.valueOfTag("ojb-table-name")})
 #set($relationName=${relation.nameUpper()})
+#getReverseFk($reference $relation $column)
   <index-descriptor 
 	name="${table}_${refTable}_${relationName}_IDX" 
 	unique="false">
-	<index-column name="${refTable}_${relationName}_FK"/>
+	<index-column name="${column}"/>
   </index-descriptor>
 #end
 #end

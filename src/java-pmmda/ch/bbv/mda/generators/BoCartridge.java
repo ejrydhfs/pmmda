@@ -381,7 +381,7 @@ public class BoCartridge extends CartridgeImpl implements Cartridge {
   public static final String BO_HAS_INTERFACE = "bo-has-interface";
 
   /**
-   * Log instance for the class.
+   * Log instance for all instatnces of the class.
    */
   private static Log log = LogFactory.getLog(BoCartridge.class);
 

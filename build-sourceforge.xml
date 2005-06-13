@@ -1,6 +1,7 @@
 <project name="pmMDA-sourceforge" basedir="." default="sourceforge">
   <property file="build.properties" />
   <import file="build-inits.xml" />
+  <import file="build-examples.xml" />
   <import file="${forrest.home}/forrest.build.xml" />
 
   <target name="clean"
@@ -36,7 +37,7 @@
   </target>
 
   <target name="pmmda-dist"
-          depends="dist-init, compile-dist, init-libs"
+          depends="dist-init, init-tests, compile-dist, init-libs"
           description="Generates pmMDA distribution">
     <echo message="generate pmMDA binary and source distribution" />
     <delete dir="${pmmda-dist.dir}" />
@@ -46,6 +47,7 @@
     <mkdir dir="${pmmda-src.dir}" />
     <mkdir dir="${pmmda-src-dog-idl.dir}" />
     <mkdir dir="${pmmda-src-dog-corba.dir}" />
+    <mkdir dir="${pmmda-src-etc.dir}" />
     <mkdir dir="${pmmda-resources.dir}" />
 
     <copy todir="${pmmda-model.dir}">
@@ -55,13 +57,20 @@
       </fileset>
     </copy>
     <copy todir="${pmmda-src-dog-corba.dir}">
-      <fileset dir="${src.dir}/corba-framework" />
+      <fileset dir="${src.dir}/corba-framework">
+      	<exclude name="**/*CVS*" />
+      </fileset>
     </copy>
     <copy todir="${pmmda-src-dog-idl.dir}">
-      <fileset dir="${src.dir}/idl-framework" />
+      <fileset dir="${src.dir}/idl-framework">
+      	<exclude name="**/*CVS*" />
+      </fileset>
     </copy>
-    <echo message="copy all examples"/>
-    <antcall target="pmmda-examples"/>
+    <copy todir="${pmmda-src-etc.dir}">
+      <fileset dir="${src.dir}/etc">
+      	<exclude name="**/*CVS*" />
+      </fileset>
+    </copy>
     <echo message="copy pmMDA needed library files" />
     <copy file="${lib.dir}/${commons-beanutils.lib}" todir="${pmmda-lib.dir}" />
     <copy file="${lib.dir}/${commons-cli.lib}" todir="${pmmda-lib.dir}" />
@@ -117,6 +126,9 @@
       <fileset dir="${src.pmmda.dir}"
                excludes="ch/bbv/bog/**,ch/bbv/documentor/**" />
     </jar>
+    <echo message="copy all examples"/>
+    <antcall target="pmmda-examples"/>
+   	<echo message="generate pmMDA distribution as zipped tar file"/> 
     <tar destfile="${dist.dir}/${pmmda.name}-${pmmda.version}.tar.gz"
       	 basedir="${pmmda-dist.dir}"
       	 compression="gzip"/>
@@ -162,7 +174,7 @@
     <property name="pmmda-ex.dir" value="${pmmda-work.dir}/example" />
     <property name="pmmda-ex-model.dir" value="${pmmda-ex.dir}/model" />
     <property name="pmmda-ex-data.dir" value="${pmmda-ex.dir}/db" />
-    <property name="pmmda-ex-lib.dir" value="${pmmda-ex.dir}/lib" />
+    <property name="pmmda-ex-lib.dir" value="${pmmda-ex.dir}/test-lib" />
     <property name="pmmda-ex-gendir.dir" value="${pmmda-ex.dir}/gendir" />
     <property name="pmmda-ex-src.dir" value="${pmmda-ex.dir}/test-java" />
     <property name="pmmda-ex-classes.dir"
@@ -222,8 +234,12 @@
     </copy>
 
     <copy file="${lib.dir}/hsqldb.jar" todir="${pmmda-ex-lib.dir}" />
-    <copy file="${lib.dir}/db-ojb-1.0.1.jar" todir="${pmmda-ex-lib.dir}" />
+    <copy file="${lib.dir}/${commons-cli.lib}" todir="${pmmda-ex-lib.dir}" />
+    <copy file="${lib.dir}/${commons-logging.lib}" todir="${pmmda-ex-lib.dir}" />
+    <copy file="${lib.dir}/${commons-logging-api.lib}" todir="${pmmda-ex-lib.dir}" />
+    <copy file="${lib.dir}/${forms.lib}" todir="${pmmda-ex-lib.dir}" />
     <copy file="${lib.dir}/${glazedlists.lib}" todir="${pmmda-ex-lib.dir}" />
+    <copy file="${lib.dir}/${ojb.lib}" todir="${pmmda-ex-lib.dir}" />
     <copy file="${dog-lib.dir}/${dog.name}-${dog.version}.jar"
           todir="${pmmda-ex-lib.dir}" />
     <copy file="${scripts.dir}/dist/tutorial-users/build.properties"
@@ -332,7 +348,7 @@
   </target>
 
   <target name="sourceforge-without-documentation"
-          depends="dist-init, clean, pmmda-dist, dog-dist, pmmda-examples"
+          depends="dist-init, clean, compile-dist, dog-dist, pmmda-dist, pmmda-examples"
           description="Generates the pmMDA sourceforge site (without web site)">
   </target>
 

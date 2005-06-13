@@ -1,6 +1,48 @@
 <project name="pmMDA-examples" basedir="." default="build-rich-client-tests">
   <property file="build.properties" />
-  <import file="build-inits.xml"/>
+  <target name="init-tests" 
+    description="defines the variables for all test examples (rich client, corba, j2ee)">
+    <property name="compile.debug" value="true" />
+    <property name="compile.source" value="1.5" />
+    <property name="compile.deprecation" value="false" />
+    <property name="compile.verbose" value="false" />
+    <property name="src.dir" value="${basedir}/${src.correction}src" />
+    <property name="gen.dir" value="${basedir}/gendir" />
+    <property name="test.dir" value="${basedir}/test-java"/>
+    <property name="src.corba-framework.dir" value="${src.dir}/corba-framework" />
+    <property name="src.idl-framework.dir" value="${src.dir}/idl-framework" />
+    <property name="src.etc-properties.dir" value="${src.dir}/etc/properties" />
+    <property name="src.ojb-properties-unmanaged.dir" value="${src.dir}/etc/properties/unmanaged" />
+    <property name="test.client.dir" value="${test.dir}/client" />
+    <property name="test.common.dir" value="${test.dir}/common" />
+    <property name="test.server.dir" value="${test.dir}/server" />
+    <property name="test.rich-client.dir" value="${gen.dir}/rich-client" />
+    <property name="test.corba-client.dir" value="${gen.dir}/corba-client" />
+    <property name="test.corba-common.dir" value="${gen.dir}/corba-common" />
+    <property name="test.corba-server.dir" value="${gen.dir}/corba-server" />
+    <property name="test.j2ee-client.dir" value="${gen.dir}/j2ee-client" />
+    <property name="test.j2ee-common.dir" value="${gen.dir}/j2ee-common" />
+    <property name="test.j2ee-server.dir" value="${gen.dir}/j2ee-server" />
+    <property name="test.rich-client.dir" value="${gen.dir}/rich-client" />
+    <property name="test.corba-idl.dir" value="${gen.dir}/corba-idl" />
+    <property name="test.ojb-server.dir" value="${gen.dir}/ojb-server" />
+    <property name="test-lib.dir" value="${basedir}/test-lib" />
+    <property name="classes.dir" value="${basedir}/test-classes" />
+    <property name="test.build.j2ee-client.dir" value="${classes.dir}/j2ee-client" />
+    <property name="test.build.j2ee-server.dir" value="${classes.dir}/j2ee-server" />
+    <property name="test.build.corba-client.dir" value="${classes.dir}/corba-client" />
+    <property name="test.build.corba-server.dir" value="${classes.dir}/corba-server" />
+    <property name="test.build.rich-client.dir" value="${classes.dir}/rich-client" />
+    <property name="test.deploy.dir" value="${basedir}/deploy" />
+    <property name="idl.compiler" value="${java.tools}/idlj.exe" />
+    <path id="tests.classpath">
+      <fileset dir="${test-lib.dir}">
+        <include name="**/*.jar" />
+        <include name="**/*.zip" />
+      </fileset>
+    </path>
+  </target>
+
   <target name="build-rich-client-tests"
           depends="init-tests"
           description="generate the rich client 2-tiers variant of the tests">
@@ -18,7 +60,7 @@
       <classpath refid="tests.classpath" />
     </javac>
     <copy todir="${test.build.rich-client.dir}">
-      <fileset dir="${ojb-properties-unmanaged.dir}" casesensitive="yes" />
+      <fileset dir="${src.etc-properties.dir}/unmanaged" casesensitive="yes" />
     </copy>
     <copy todir="${test.build.rich-client.dir}">
       <fileset dir="${test.ojb-server.dir}" casesensitive="yes">
@@ -37,7 +79,7 @@
            description="generates all server java files from the IDL files"
            dest="${test.corba-common.dir}">
       <arg line="-i " />
-      <arg path="${idl.framework.dir}" />
+      <arg path="${src.idl-framework.dir}" />
       <arg line="-i " />
       <arg path="${test.corba-idl.dir}" />
       <arg line="-fall -emitAll -td " />
@@ -72,12 +114,12 @@
       <src path="${test.corba-common.dir}" />
       <src path="${test.corba-client.dir}" />
       <src path="${test.rich-client.dir}" />
-      <src path="${test.client.dir}" />
       <src path="${test.common.dir}" />
+      <src path="${test.client.dir}" />
       <classpath refid="tests.classpath" />
     </javac>
     <copy todir="${test.build.corba-server.dir}">
-      <fileset dir="${basedir}/src/etc/properties/unmanaged"
+      <fileset dir="${src.etc-properties.dir}/unmanaged"
                casesensitive="yes" />
     </copy>
     <copy todir="${test.build.corba-server.dir}">
@@ -93,35 +135,34 @@
     <delete dir="${test.build.j2ee-server.dir}" />
     <mkdir dir="${test.build.j2ee-server.dir}" />
     <javac destdir="${test.build.j2ee-server.dir}"
-           compiler="modern"
-           verbose="${compile.verbose}"
-           debug="${compile.debug}"
-           source="${compile.source}"
-           deprecation="${compile.deprecation}">
-      <src path="${test.j2ee-common.dir}" />
+      	compiler="modern"
+        verbose="${compile.verbose}"
+        debug="${compile.debug}"
+        source="${compile.source}"
+        deprecation="${compile.deprecation}">
+    	<src path="${test.j2ee-common.dir}" />
       <src path="${test.j2ee-server.dir}" />
       <src path="${test.common.dir}" />
       <src path="${test.server.dir}" />
-      <classpath refid="tests-build.classpath" />
+      <classpath refid="tests.classpath" />
     </javac>
     <delete dir="${test.build.j2ee-client.dir}" />
     <mkdir dir="${test.build.j2ee-client.dir}" />
     <javac destdir="${test.build.j2ee-client.dir}"
-           compiler="modern"
-           verbose="${compile.verbose}"
-           debug="${compile.debug}"
-           source="${compile.source}"
-           deprecation="${compile.deprecation}">
-      <src path="${src.dog.dir}" />
+      	compiler="modern"
+        verbose="${compile.verbose}"
+        debug="${compile.debug}"
+        source="${compile.source}"
+        deprecation="${compile.deprecation}">
       <src path="${test.j2ee-common.dir}" />
       <src path="${test.j2ee-client.dir}" />
       <src path="${test.rich-client.dir}" />
+	    <src path="${test.common.dir}" />
       <src path="${test.client.dir}" />
-      <src path="${test.common.dir}" />
-      <classpath refid="tests-build.classpath" />
+      <classpath refid="tests.classpath" />
     </javac>
     <copy todir="${test.build.j2ee-server.dir}">
-      <fileset dir="${basedir}/src/etc/properties/managed/jboss"
+      <fileset dir="${src.etc-properties.dir}/managed/jboss"
                casesensitive="yes">
         <exclude name="**/*-ds.xml" />
       </fileset>

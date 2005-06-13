@@ -14,6 +14,8 @@ import java.util.Map;
 
 import org.apache.commons.beanutils.MappedPropertyDescriptor;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * The implementation of the lightweight object handler implementation provides
@@ -22,6 +24,11 @@ import org.apache.commons.beanutils.PropertyUtils;
  * @version $Revision$
  */
 public class LightweightObjectHandlerImpl implements LightweightObjectHandler {
+  /**
+   * Log instance for all instatnces of the class.
+   */
+  private static Log log = LogFactory
+      .getLog(LightweightObjectHandlerImpl.class);
 
   private Map<Class, DataObjectType> typesbyLw;
 
@@ -63,11 +70,11 @@ public class LightweightObjectHandlerImpl implements LightweightObjectHandler {
           PropertyUtils.setProperty(lightweight, property, PropertyUtils
               .getProperty(object, property));
         } catch (IllegalAccessException e) {
-          e.printStackTrace();
+          log.error(e);
         } catch (InvocationTargetException e) {
-          e.printStackTrace();
+          log.error(e);
         } catch (NoSuchMethodException e) {
-          e.printStackTrace();
+          log.error(e);
         }
       }
     }

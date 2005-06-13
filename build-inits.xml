@@ -11,16 +11,9 @@
     <property name="src.dog.dir" value="${src.dir}/java-framework" />
     <property name="src.documentor.dir" value="${src.dir}/java-documentor" />
     <property name="src.pmmda.dir" value="${src.dir}/java-pmmda" />
-    <property name="src.corba-framework.dir" value="${src.dir}/corba-framework" />
-    <property name="idl.framework.dir" value="${src.dir}/idl-framework" />
     <property name="lib.dir" value="${basedir}/lib" />
-    <property name="test-lib.dir" value="${basedir}/test-lib" />
     <property name="properties.dir" value="${basedir}/properties" />
     <property name="resources.dir" value="${basedir}/resources" />
-    <property name="ojb-properties-unmanaged.dir" value="${src.dir}/etc/properties/unmanaged" />
-    <property name="test.client.dir" value="${basedir}/test-java/client" />
-    <property name="test.common.dir" value="${basedir}/test-java/common" />
-    <property name="test.server.dir" value="${basedir}/test-java/server" />
     <property name="test.unit.dir" value="${basedir}/test-java/unit-tests" />
     <property name="example.jar.dir" value="${basedir}/test-lib" />
     <property name="example.build.dir" value="${basedir}/test-classes" />
@@ -38,19 +31,6 @@
     <path id="application.classpath">
       <path refid="jdkjars.classpath" />
       <fileset dir="${lib.dir}">
-        <include name="**/*.jar" />
-        <include name="**/*.zip" />
-      </fileset>
-    </path>
-    <path id="tests.classpath">
-      <fileset dir="${test-lib.dir}">
-        <include name="**/*.jar" />
-        <include name="**/*.zip" />
-      </fileset>
-    </path>
-    <path id="tests-build.classpath">
-      <path refid="application.classpath" />
-      <fileset dir="${test-lib.dir}">
         <include name="**/*.jar" />
         <include name="**/*.zip" />
       </fileset>
@@ -84,10 +64,11 @@
     <property name="velocity-dep.lib" value="velocity-dep-1.4.jar" />
     <property name="xpp3.lib" value="xpp3-1.1.3.4.jar" />
     <property name="xstream.lib" value="xstream-1.1.2.jar" />
+    <property name="ojb.lib" value="db-ojb-1.0.1.jar" />
   </target>
 
-  <target name="dist-init" depends="init, init-libs, init-tests" description="Initializes the distribution project properties">
-
+  <target name="dist-init" depends="init, init-libs" 
+    description="Initializes the distribution project properties">
     <property name="dist.dir" value="${basedir}/dist" />
     <property name="pmmda-dist.dir" value="${dist.dir}/${pmmda.name}" />
     <property name="pmmda-lib.dir" value="${pmmda-dist.dir}/lib" />
@@ -95,40 +76,19 @@
     <property name="pmmda-src.dir" value="${pmmda-dist.dir}/src" />
     <property name="pmmda-src-dog-idl.dir" value="${pmmda-src.dir}/idl-framework" />
     <property name="pmmda-src-dog-corba.dir" value="${pmmda-src.dir}/corba-framework" />
+    <property name="pmmda-src-etc.dir" value="${pmmda-src.dir}/etc" />
     <property name="pmmda-resources.dir" value="${pmmda-dist.dir}/resources" />
 
     <property name="pmmda-work.dir" value="${pmmda-dist.dir}/work" />
     <property name="pmmda-ex.dir" value="${pmmda-work.dir}/example" />
     <property name="pmmda-ex-model.dir" value="${pmmda-ex.dir}/model" />
     <property name="pmmda-ex-data.dir" value="${pmmda-ex.dir}/db" />
-    <property name="pmmda-ex-lib.dir" value="${pmmda-ex.dir}/lib" />
+    <property name="pmmda-ex-lib.dir" value="${pmmda-ex.dir}/test-lib" />
     <property name="pmmda-ex-gendir.dir" value="${pmmda-ex.dir}/gendir" />
     <property name="pmmda-ex-src.dir" value="${pmmda-ex.dir}/test-java" />
     <property name="pmmda-ex-classes.dir" value="${pmmda-ex.dir}/test-classes" />
 
     <property name="dog-dist.dir" value="${dist.dir}/${dog.name}" />
     <property name="dog-lib.dir" value="${dog-dist.dir}/lib" />
-  </target>
-
-  <target name="init-tests" depends="init" description="defines the variables for all test examples (rich client, corba, j2ee)">
-    <property name="gen.dir" value="${basedir}/gendir" />
-    <property name="test.rich-client.dir" value="${gen.dir}/rich-client" />
-    <property name="test.corba-client.dir" value="${gen.dir}/corba-client" />
-    <property name="test.corba-common.dir" value="${gen.dir}/corba-common" />
-    <property name="test.corba-server.dir" value="${gen.dir}/corba-server" />
-    <property name="test.j2ee-client.dir" value="${gen.dir}/j2ee-client" />
-    <property name="test.j2ee-common.dir" value="${gen.dir}/j2ee-common" />
-    <property name="test.j2ee-server.dir" value="${gen.dir}/j2ee-server" />
-    <property name="test.rich-client.dir" value="${gen.dir}/rich-client" />
-    <property name="test.corba-idl.dir" value="${gen.dir}/corba-idl" />
-    <property name="test.ojb-server.dir" value="${gen.dir}/ojb-server" />
-    <property name="classes.dir" value="${basedir}/test-classes" />
-    <property name="test.build.j2ee-client.dir" value="${classes.dir}/j2ee-client" />
-    <property name="test.build.j2ee-server.dir" value="${classes.dir}/j2ee-server" />
-    <property name="test.build.corba-client.dir" value="${classes.dir}/corba-client" />
-    <property name="test.build.corba-server.dir" value="${classes.dir}/corba-server" />
-    <property name="test.build.rich-client.dir" value="${classes.dir}/rich-client" />
-    <property name="test.deploy.dir" value="${basedir}/deploy" />
-    <property name="idl.compiler" value="${java.tools}/idlj.exe" />
   </target>
 </project>

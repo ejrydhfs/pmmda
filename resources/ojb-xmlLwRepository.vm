@@ -25,8 +25,9 @@
 #isDataObject($type $isDataObject)
 ## identifies a forward reference 1-0..1 or 1-1
 #if($isDataObject && ${type.booleanValueOfTag("persistence")})
+#getForwardFk($property $column)
   <field-descriptor name="${property.nameFirstLower()}"
-    column="${property.getAttribute("ojb-column-name")}_FK"
+    column="${column}"
     jdbc-type="INTEGER"
     access="anonymous"
     nullable="${property.booleanValueOfTag("ojb-can-be-null")}"/>
@@ -60,9 +61,10 @@
 #if($isDataObject)
 #set($columnName=${aggregation.getAttribute("ojb-column-name")})
 #set($typeName=${property.getTypeName()})
+#getForwardFk($property $column)
   <reference-descriptor name="${property.nameFirstLower()}"
     class-ref="${typeName}"
-    <foreignkey field-ref="${columnName}_FK"/>
+    <foreignkey field-ref="${column}"/>
   />
 #end
 #end
@@ -77,9 +79,10 @@
 #foreach($relation in $relations)
 #getType($model $relation $type)	
 #if(${type} == ${class})
+#getReverseFk($reference $relation $column)
   <field-descriptor 
     name="${reference.nameFirstLower()}${relation.nameFirstUpper()}Handle" 
-    column="${reference.valueOfTag("ojb-table-name")}_${reference.nameUpper()}_FK"
+    column="${column}"
     jdbc-type="INTEGER"
     nullable="${relation.canBeNull()}"
     access="anonymous"/>
@@ -130,11 +133,11 @@
 #if(!${property.isTransient()})
 #getType($model $property $type)
 #if(${DATA_OBJECT.equalsIgnoreCase(${type.getStereotype()})} && ${type.booleanValueOfTag("persistence")})
-#set($name=${property.nameUpper()})
+#getForwardFk($property $column)
   <index-descriptor 
 	name="${table}_${name}_IDX" 
 	unique="false">
-	<index-column name="${name}_FK"/>
+	<index-column name="${column}"/>
   </index-descriptor>
 #end
 #end
@@ -146,10 +149,11 @@
 #set($type=${model.findClass(${typeName})})
 #if(${type} && ${DATA_OBJECT.equalsIgnoreCase(${type.getStereotype()})} && ${type.booleanValueOfTag("persistence")})
 #set($name=${aggregation.nameUpper()})
+#getForwardFk($aggregation $column)
   <index-descriptor 
 	name="${table}_${name}_IDX" 
 	unique="false">
-	<index-column name="${name}_FK"/>
+	<index-column name="${column}"/>
   </index-descriptor>
 #end
 #end
@@ -164,10 +168,11 @@
 #if(${type} == ${class})
 #set($refTable=${reference.valueOfTag("ojb-table-name")})
 #set($relationName=${relation.nameUpper()})
+#getReverseFk($reference $relation $column)
   <index-descriptor 
 	name="${table}_${refTable}_${relationName}_IDX" 
 	unique="false">
-	<index-column name="${refTable}_${relationName}_FK"/>
+	<index-column name="${column}"/>
   </index-descriptor>
 #end
 #end
