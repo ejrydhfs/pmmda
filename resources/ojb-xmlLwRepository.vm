@@ -1,3 +1,4 @@
+#set($dollar="$")
 #isLightweightDataObject($class $isLightweightDataObject)
 #if($isLightweightDataObject)
 #set($shouldGenerateFkIndex=${configuration.getProperty("ojb-cartridge.generate-fk-index").equalsIgnoreCase("true")})

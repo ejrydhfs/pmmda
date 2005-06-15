@@ -33,10 +33,19 @@ public class UserRole implements DataObject {
    */
   private static final long serialVersionUID = 99990101;
 
+  /**
+   * Name of the user in the assocation.
+   */
   private String username;
 
+  /**
+   * Name of the role in the association.
+   */
   private String rolename;
 
+  /**
+   * Role part of the user role association.
+   */
   private Role role;
 
   /**

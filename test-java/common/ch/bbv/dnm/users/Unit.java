@@ -40,21 +40,30 @@ public class Unit implements DataObject {
    */
   private String name;
 
+  /**
+   * Description of the item.
+   */
   private String description;
 
+  /**
+   * List of users belonging to the unit.
+   */
   private List<User> users;
 
+  /**
+   * List of units part of the unit.
+   */
   private List<Unit> units;
 
   /**
    * Mapping for 1: N relationship units as reverse foreign key.
    */
-  private Integer domainUnitsHandle;
+  private Integer unitUnitsHandle;
 
   /**
    * Mapping for 1: N relationship units as reverse foreign key.
    */
-  private Integer unitUnitsHandle;
+  private Integer domainUnitsHandle;
 
   /** 
    * Unique identifier of the data object instance distinguishing it from all

@@ -22,32 +22,110 @@
   </header>
   <body>
     <section>
-      <title>Install pmMDA</title>
-      <p>The binary distribution of <em>pmMDA</em> is delivered as a compressed 
-        file. Unzip the file at your preferred location. ZIP files can be 
-        opened using various open source tools. All required libraries are 
-        contained in the archive file. The installation does not need any 
-        additional steps. No environment variables or registry modifications 
-        are required. Here the steps in details.</p>
-      <ol>
-        <li>Download the <em>pmMDA</em> distribution. The file has a name with
-          the structure <em>pmMDA-&lt;version&gt;.tar.gz</em>. Follow the download
-          link of this site to the location of the distribution.</li>
-        <li>Extract the distribution and store the files into a directory. To
-          extract the files you can use free tools such as <em>7-zip</em> or
-          <em>winzip</em>.</li>
-        <li>In the directory where you stored the file you will find a batch file
-          to start the application. Simply execute the <em>pmMDA.bat</em> 
-          batch file by double clicking it under Windows.</li>
-      </ol>
-      <p>If you want to uninstall <em>pmMDA</em> distribution simply delete the 
-        directory containing the files. The installation process does not insert
-        any data in the registry or in system directories.</p>
-    </section>
-    <section>
-      <title>Run pmMDA</title>
-      <p>The script file <em>pmMDA.bat</em> starts the application. The user 
-        interface allows the user to open an existing model and edit it.</p>
+      <title>Two Minutes Tutorial</title>
+      <section>
+        <title>Install pmMDA</title>
+        <p>The binary distribution of <em>pmMDA</em> is delivered as a 
+          compressed file. Unzip the file at your preferred location. ZIP files 
+          can be opened using various open source tools. All required libraries 
+          are contained in the archive file. The installation does not need any 
+          additional steps. No environment variables or registry modifications 
+          are required. Here the steps in details.</p>
+        <ol>
+          <li>Download the <em>pmMDA</em> distribution. The file has a name 
+            with the structure <em>pmMDA-&lt;version&gt;.tar.gz</em>. Follow 
+            the download link of this site to the location of the 
+            distribution.</li>
+          <li>Extract the distribution and store the files into a directory. To 
+            extract the files you can use free tools such as <em>7-zip</em> or 
+            <em>winzip</em>.</li>
+          <li>In the directory where you stored the file you will find a batch 
+            file to start the application. Simply execute the 
+            <em>pmMDA.bat</em> batch file by double clicking it under 
+            Windows operating system.</li>
+        </ol>
+        <p>If you want to uninstall <em>pmMDA</em> distribution simply delete 
+          the directory containing the files. The installation process does not 
+          insert any data in the registry or in system directories.</p>
+        <note>You must have an installed <em>Java Runtime Environment JRE 
+          1.5</em> or <em>Java Development Environment JDK 1.5</em> to run the 
+          <em>pmMDA</em> application. The JRE can be downloaded from <a 
+          href="http://java.sun.com">Java Sun home page</a>.</note>
+      </section>
+      <section>
+        <title>Run pmMDA</title>
+        <p>The script file <em>pmMDA.bat</em> starts the application. The user 
+          interface allows the user to open an existing model and edit it.</p>
+        <p>The example part of the <em>pmMDA</em> distribution provides a 
+          model. Select the open menu item in the files menu and open the file 
+          <code>work/example/model/test-model.zargo</code>.</p>
+        <p>You can use the context menus to modify the model and set values for 
+          tagged values.</p>
+        <note>You must have an installed <em>Java Runtime Environment JRE 
+          1.5</em> or <em>Java Development Environment JDK 1.5</em>.</note>
+      </section>
+      <section>
+        <title>Generate Code</title>
+        <p>Select the the menu item <em>Generate/Generate All</em>. The logging 
+          information shows the progress of the artifacts generation.</p>
+      </section>
+      <section>
+        <title>Compile Artifacts</title>
+        <p>Ant scripts to compile the artifacts are provided with the example 
+          under <code>work/example/build-examples.xml</code>. To compile the 
+          examples the following targets are provided.</p>
+        <dl>
+          <dt>build-rich-client-tests</dt>
+          <dd>builds the 2-tiers client using the explorer framework and 
+            connecting to the database. The client connects to the database
+            through the O/R mapping tools.</dd>
+          <dt>build-corba-tests</dt>
+          <dd>builds the 3-tiers CORBA application with a CORBA server and a 
+            CORBA client. The client uses the explorer framework. The server
+            connects to the database through the O/R mapping tools.</dd>
+          <dt>build-jboss-tests</dt>
+          <dd>builds the 3-tiers J2EE application with a J2EE JBoss server and 
+            a J2EE client. The client uses the explorer framework. The J2EE 
+            server conects to the database through the O/R mapping tools.</dd>
+        </dl>
+        <p>The ant script is called on the command line <code>ant -f 
+          build-examples.xml &lt;target&gt;</code> where the target is one of 
+          the above mentioned ones. You must have installed JDK1.5 and ant. The 
+          environment variables <code>JAVA_HOME</code> and 
+          <code>ANT_HOME</code> must be defined.</p>
+        <note>You must have an installed <em>Java Development Environment 
+          JDK 1.5</em> to compile the examples.</note>
+        <note>You must install <em>Ant 1.6</em> or higher to run the 
+          compilation scripts.</note>
+      </section>
+      <section>
+        <title>Run Examples</title>
+        <p>Scripts are provided to run the examples. The provided scripts allow 
+          you to run the examples in the following modes.</p>
+        <ul>
+          <li>Rich client scripts to run the 2-tiers application. <dl> 
+            <dt>test-rich-client</dt><dd>starts the 2-tiers rich client 
+            explorer application and the connection to the database.</dd> 
+            </dl></li>
+          <li>CORBA application scripts to run the 3-tiers CORBA application. 
+            The order of the scripts is the one of the list.<dl> 
+            <dt>orb-start</dt><dd>starts the CORBA ORB broker.</dd> 
+            <dt>test-corba-server</dt><dd>starts the CORBA server which 
+            implements the business logic and the database 
+            connection.</dd><dt>test-corba-client</dt><dd>starts the CORBA 
+            client with the rich client explorer user interface.</dd></dl></li>
+          <li>J2EE application scripts to run the 3-tiers J2EE application.<dl> 
+            <dt><em>J2EE server EJB</em></dt><dd>are not a script file. The EJB 
+            are copied in the <em>deploy</em> directory and copied to the 
+            deployment directory of <em>JBoss</em> server.</dd> 
+            <dt>test-j2ee-client</dt><dd>starts t he J233 client with the rich 
+            client explorer user interface.</dd></dl></li>
+        </ul>
+        <note>You must have an installed <em>Java Runtime Environment JRE 
+          1.5</em> or <em>Java Development Environment JDK 1.5</em>.</note>
+        <note>To run the J2EE JBoss mode you must have an installed version 
+          of JBoss.</note>
+      </section>
     </section>
     <section>
       <title>Customise Generator Templates</title>
@@ -56,8 +134,8 @@
         documented in the generators documentation. Each cartridge roles, 
         supported tagged values, attributes and properties are documented. This 
         description is also available on the project web site.</p>
-      <warning>The runtime engine only handles correctly English identifiers.
-        The implemented rules can only infer the singular and plural form of
+      <warning>The runtime engine only handles correctly English identifiers. 
+        The implemented rules can only infer the singular and plural form of 
         regular English nouns.</warning>
     </section>
     <section>

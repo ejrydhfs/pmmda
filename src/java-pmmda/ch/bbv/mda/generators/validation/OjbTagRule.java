@@ -96,10 +96,8 @@ public class OjbTagRule extends TagRule {
   protected boolean validate(MetaProperty property,
       List<ValidationRuleResult> results) {
     boolean sucess = true;
-
     if (!property.isTransient()
-        && property.getContext()
-            .booleanValueOfTag(BoCartridge.PERSISTENCE_TAG)) {
+        && property.getContext().booleanValueOfTag(BoCartridge.PERSISTENCE_TAG)) {
       if (!exists(property, OjbCartridge.COLUMN_NAME_TAG)) {
         sucess = false;
         addErrorMessage(results, ERROR_MISSING_COLUMN,
@@ -130,10 +128,9 @@ public class OjbTagRule extends TagRule {
   }
 
   /**
-   * The following rules are defined for the element.
+   * No rules are defined for the element.
    * <ul>
-   * <li>The indexed property is persistent must have a column name. This name
-   * is used to generate the name of the foreign key columns.</li>
+   * <li>none</li>
    * </ul>
    * @param property element to validate.
    * @param results the validation results.
@@ -141,17 +138,7 @@ public class OjbTagRule extends TagRule {
    */
   protected boolean validate(MetaIndexedProperty property,
       List<ValidationRuleResult> results) {
-    boolean sucess = true;
-    if (!property.isTransient()
-        && property.getContext()
-            .booleanValueOfTag(BoCartridge.PERSISTENCE_TAG)) {
-      if (!exists(property, OjbCartridge.COLUMN_NAME_TAG)) {
-        sucess = false;
-        addErrorMessage(results, ERROR_MISSING_COLUMN,
-            OjbCartridge.COLUMN_NAME_TAG, property.qualifiedName());
-      }
-    }
-    return sucess;
+    return true;
   }
 
   /**

@@ -38,6 +38,9 @@ public class Role implements DataObject {
    */
   private String name;
 
+  /**
+   * Description of the item.
+   */
   private String description;
 
   /** 

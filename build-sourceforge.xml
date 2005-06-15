@@ -132,7 +132,7 @@
     <tar destfile="${dist.dir}/${pmmda.name}-${pmmda.version}.tar.gz"
       	 basedir="${pmmda-dist.dir}"
       	 compression="gzip"/>
-    <echo message="generate file of all librairies" />
+    <echo message="generate archive files of all librairies" />
     <zip destfile="${dist.dir}/${pmmda.name}-dev-libs-${pmmda.version}.zip"
          basedir="${lib.dir}"
          update="true" />
@@ -212,6 +212,15 @@
     <mkdir dir="${pmmda-ex-classes.dir}/j2ee-server" />
     <mkdir dir="${pmmda-ex-classes.dir}/corba-server" />
 
+    <mkdir dir="${pmmda-ex.dir}/scripts" />
+    <mkdir dir="${pmmda-ex.dir}/scripts/tests" />
+    <copy todir="${pmmda-ex.dir}/scripts/tests">
+      <fileset dir="${scripts.dir}/tests">
+        <include name="**/*.bat" />
+        <exclude name="**/*CVS*" />
+      </fileset>
+    </copy>
+    
     <copy file="${model.dir}/test-model/test-model.zargo"
           todir="${pmmda-ex-model.dir}" />
     <copy todir="${pmmda-ex-src.dir}/client">
@@ -234,12 +243,21 @@
     </copy>
 
     <copy file="${lib.dir}/hsqldb.jar" todir="${pmmda-ex-lib.dir}" />
+    <copy file="${lib.dir}/${antlr.lib}" todir="${pmmda-ex-lib.dir}" />
+    <copy file="${lib.dir}/${commons-beanutils.lib}" todir="${pmmda-ex-lib.dir}" />
     <copy file="${lib.dir}/${commons-cli.lib}" todir="${pmmda-ex-lib.dir}" />
+    <copy file="${lib.dir}/${commons-collections.lib}" todir="${pmmda-ex-lib.dir}" />
+    <copy file="${lib.dir}/${commons-dbcp.lib}" todir="${pmmda-ex-lib.dir}" />
+    <copy file="${lib.dir}/${commons-lang.lib}" todir="${pmmda-ex-lib.dir}" />
     <copy file="${lib.dir}/${commons-logging.lib}" todir="${pmmda-ex-lib.dir}" />
     <copy file="${lib.dir}/${commons-logging-api.lib}" todir="${pmmda-ex-lib.dir}" />
+    <copy file="${lib.dir}/${commons-pool.lib}" todir="${pmmda-ex-lib.dir}" />
     <copy file="${lib.dir}/${forms.lib}" todir="${pmmda-ex-lib.dir}" />
+    <copy file="${lib.dir}/${jcalendar.lib}" todir="${pmmda-ex-lib.dir}" />
     <copy file="${lib.dir}/${glazedlists.lib}" todir="${pmmda-ex-lib.dir}" />
     <copy file="${lib.dir}/${ojb.lib}" todir="${pmmda-ex-lib.dir}" />
+    <copy file="${lib.dir}/${mysql-connector.lib}" todir="${pmmda-ex-lib.dir}" />
+    <copy file="${lib.dir}/jbossall-client.jar" todir="${pmmda-ex-lib.dir}" />
     <copy file="${dog-lib.dir}/${dog.name}-${dog.version}.jar"
           todir="${pmmda-ex-lib.dir}" />
     <copy file="${scripts.dir}/dist/tutorial-users/build.properties"

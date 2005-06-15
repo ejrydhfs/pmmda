@@ -39,8 +39,14 @@ public class Domain implements DataObject {
    */
   private String name;
 
+  /**
+   * Description of the item.
+   */
   private String description;
 
+  /**
+   * Long name of the domain used for correspondance and human interactions.
+   */
   private String longname;
 
   /**
@@ -54,6 +60,9 @@ public class Domain implements DataObject {
    */
   private Integer administratorHandle;  
 
+  /**
+   * List of units member of the domain.
+   */
   private List<Unit> units;
 
   /**

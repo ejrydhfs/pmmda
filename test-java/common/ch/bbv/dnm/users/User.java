@@ -39,18 +39,41 @@ public class User implements DataObject {
    */
   private String login;
 
+  /**
+   * Flag indicating if the user is currently active or not.
+   */
   private boolean active;
 
+  /**
+   * The primary email address of the user.
+   */
   private String email;
 
+  /**
+   * The password of the user.
+   */
   private String password;
 
+  /**
+   * Upper range limit of the user account validity. If the value is null no 
+   * upper limit is defined.
+   */
   private Date validTo;
 
+  /**
+   * Lower range limit of the user account validity. If the value is null no 
+   * lower limit is defined.
+   */
   private Date validFrom;
 
+  /**
+   * Name of the user.
+   */
   private String name;
 
+  /**
+   * The roles the user belongs to.
+   */
   private List<UserRole> roles;
 
   /**

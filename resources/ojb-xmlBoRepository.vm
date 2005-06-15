@@ -1,3 +1,4 @@
+#set($dollar="$")
 #if(${class.getStereotype().equalsIgnoreCase("dataObject")})
 #set($shouldGenerateFkIndex=${configuration.getProperty("ojb-cartridge.generate-fk-index").equalsIgnoreCase("true")})
 #set($inheritanceMode=${configuration.getProperty("ojb-cartridge.inheritance")})

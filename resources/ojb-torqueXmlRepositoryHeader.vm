@@ -1,3 +1,11 @@
+#set($dollar="$")
+<--
+    This code was generated automatically with the pmMDA generator. Please do 
+    NOT add code outside the marked zones. All changes outside the marked areas 
+    will be discarded during the next execution of the MDA generator. 
+    ${dollar}Id${dollar}
+-->	
+
 <?xml version="1.0" ?>
 <!DOCTYPE database SYSTEM "http://jakarta.apache.org/turbine/dtd/database.dtd">
 <database name="default" 

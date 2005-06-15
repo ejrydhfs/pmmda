@@ -24,6 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import ch.bbv.dog.DataObject;
 import ch.bbv.dog.DataObjectType;
 import ch.bbv.utilities.ReflectUtilities;
+import ch.bbv.utilities.TypeUtilities;
 
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
@@ -53,31 +54,6 @@ public class GenericNodePropertiesView extends NodePropertiesView {
    * Serial version identifier coded as back compatibility date.
    */
   private static final long serialVersionUID = 20041201;
-
-  /**
-   * Default value for the primitive type.
-   */
-  static final Short SHORT_0 = new Short((short) 0);
-
-  /**
-   * Default value for the primitive type.
-   */
-  static final Integer INTEGER_0 = new Integer(0);
-
-  /**
-   * Default value for the primitive type.
-   */
-  static final Long LONG_0 = new Long(0);
-
-  /**
-   * Default value for the primitive type.
-   */
-  static final Float FLOAT_0 = new Float(0);
-
-  /**
-   * Default value for the primitive type.
-   */
-  static final Double DOUBLE_0 = new Double(0);
 
   /**
    * Logger for all instances of the class.
@@ -159,8 +135,7 @@ public class GenericNodePropertiesView extends NodePropertiesView {
   }
 
   protected void initialize() {
-    FormLayout layout = new FormLayout("right:pref, 3dlu, pref",
-        "");
+    FormLayout layout = new FormLayout("right:pref, 3dlu, pref", "");
     DefaultFormBuilder builder = new DefaultFormBuilder(layout);
     builder.setDefaultDialogBorder();
     generateRows(builder, "Simple Properties", primitivePropertyViews);
@@ -382,7 +357,7 @@ public class GenericNodePropertiesView extends NodePropertiesView {
       } else if (Date.class.equals(type)) {
         dateChooser = new JDateChooser(true);
       } else {
-        formattedText = new JFormattedTextField();
+        formattedText = UiSwingUtilities.getField(type);
       }
     }
 
@@ -426,23 +401,25 @@ public class GenericNodePropertiesView extends NodePropertiesView {
           text = null;
         }
         if (Short.TYPE.equals(type)) {
-          value = (text != null) ? Short.decode(text) : SHORT_0;
+          value = (text != null) ? Short.decode(text) : TypeUtilities.SHORT_0;
         } else if (Short.class.equals(type)) {
           value = (text != null) ? Short.decode(text) : null;
         } else if (Integer.TYPE.equals(type)) {
-          value = (text != null) ? Integer.decode(text) : INTEGER_0;
+          value = (text != null) ? Integer.decode(text)
+              : TypeUtilities.INTEGER_0;
         } else if (Integer.class.equals(type)) {
           value = (text != null) ? Integer.decode(text) : null;
         } else if (Long.TYPE.equals(type)) {
-          value = (text != null) ? Long.decode(text) : LONG_0;
+          value = (text != null) ? Long.decode(text) : TypeUtilities.LONG_0;
         } else if (Long.class.equals(type)) {
           value = (text != null) ? Long.decode(text) : null;
         } else if (Float.TYPE.equals(type)) {
-          value = (text != null) ? Float.valueOf(text) : FLOAT_0;
+          value = (text != null) ? Float.valueOf(text) : TypeUtilities.FLOAT_0;
         } else if (Float.class.equals(type)) {
           value = (text != null) ? Float.valueOf(text) : null;
         } else if (Double.TYPE.equals(type)) {
-          value = (text != null) ? Double.valueOf(text) : DOUBLE_0;
+          value = (text != null) ? Double.valueOf(text)
+              : TypeUtilities.DOUBLE_0;
         } else if (Double.class.equals(type)) {
           value = (text != null) ? Double.valueOf(text) : null;
         }
@@ -464,6 +441,10 @@ public class GenericNodePropertiesView extends NodePropertiesView {
           dateChooser = new JDateChooser(true);
         }
       } else {
+        if (TypeUtilities.isPrimitiveNumber(type)) {
+          value = TypeUtilities.getPrimitiveZero(type);
+
+        }
         formattedText.setValue(value);
       }
     }

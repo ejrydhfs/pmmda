@@ -15,7 +15,7 @@ TODO
   classname, prefix, loaded, active, dependants
 - Have a self contained jar file running with java -jar pmMDA
 
-Version 0.3.0-dev (30 April 2005)
+Version 0.3.0-dev (15 June 2005)
 ------------------------------------
 The following new features were added.
 - A document was introduced at the level of the MDA explorer to provide

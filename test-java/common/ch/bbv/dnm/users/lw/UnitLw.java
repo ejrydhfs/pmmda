@@ -35,8 +35,14 @@ public class UnitLw implements LightweightObject {
    */
   private String name;
 
+  /**
+   * List of users belonging to the unit.
+   */
   private List<UserLw> users;
 
+  /**
+   * List of units part of the unit.
+   */
   private List<UnitLw> units;
 
   /** 

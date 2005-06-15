@@ -14,7 +14,7 @@
 - Run "sourceforge" target to generate distribution. Verify that the 
   completness of the web site with its references to metrics and JavaDoc.
 - Run "build-all-tests" target to generate the test examples.
-- Run each test appliction with the provided shell scripts.
+- Run each test application with the provided shell scripts.
 - Execute the sanity test cases - 2-tiers, CORBA, and J2EE -.
 
 2. Binary and source distribution
@@ -41,6 +41,8 @@ The following steps must be done before the release.
 
 The following steps must be done after the release
 - Verify that the uploaded distributions can be downloaded and installed.
+- Donwload the pmMDA binary distribution and execute the two minutes tutorial
+  as described on the web site.
 - Update the build properties with the next version number and the postfix 
   "-dev". Normally only the patch number should be incremented.
 - Update the version number in the pmmda application.

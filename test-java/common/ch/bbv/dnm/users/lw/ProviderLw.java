@@ -36,6 +36,9 @@ public class ProviderLw implements LightweightObject {
    */
   private String name;
 
+  /**
+   * List of the domains the provider is in charge.
+   */
   private List<DomainLw> domains;
 
   /** 

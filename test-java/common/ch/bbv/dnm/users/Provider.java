@@ -40,10 +40,19 @@ public class Provider implements DataObject {
    */
   private String name;
 
+  /**
+   * Primary email address of the provider.
+   */
   private String email;
 
+  /**
+   * Description of the item.
+   */
   private String description;
 
+  /**
+   * Long name of the provider used for correspondance and human interactions.
+   */
   private String longname;
 
   /**
@@ -52,6 +61,9 @@ public class Provider implements DataObject {
    */
   private Double trusted;
 
+  /**
+   * List of the domains the provider is in charge.
+   */
   private List<Domain> domains;
 
   /** 

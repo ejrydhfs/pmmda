@@ -35,6 +35,9 @@ public class DomainLw implements LightweightObject {
    */
   private String name;
 
+  /**
+   * List of units member of the domain.
+   */
   private List<UnitLw> units;
 
   /** 

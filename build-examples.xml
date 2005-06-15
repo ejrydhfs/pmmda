@@ -249,26 +249,6 @@
     <mkdir dir="${test.build.rich-client.dir}" />
   </target>
 
-  <target name="run-rich-client-tests"
-          depends="init-tests"
-          description="run the rich client variant of the tests">
-    <java classname="ch.bbv.dnm.users.client.Application"
-          fork="true"
-          spawn="true"
-          dir="${example.build.dir}">
-      <classpath>
-        <pathelement path="${example.build.dir}/rich-client" />
-        <fileset dir="${example.jar.dir}">
-          <include name="**/*.jar" />
-          <include name="**/*.zip" />
-        </fileset>
-      </classpath>
-      <arg value="-mode direct" />
-      <arg value="-Djava.util.logging.config.file=logging.properties" />
-      <jvmarg value="-ea" />
-    </java>
-  </target>
-
   <target name="build-all-tests" description="build all tests">
     <antcall target="build-rich-client-tests" />
     <antcall target="build-corba-tests" />
