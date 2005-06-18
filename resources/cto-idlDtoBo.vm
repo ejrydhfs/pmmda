@@ -12,7 +12,7 @@ ${sign}include "NullableTypes.idl"
 #foreach ($property in $properties)
 #if(!${property.isTransient()})
 #getType($model $property $type)
-#isDataObject($type $isDataObject)	
+#isDataObject($type $isDataObject)
 #if($isDataObject && ($type != $class))
 ${sign}include "${type.getAttribute("cto-mo-class")}.idl"
 #end
@@ -20,7 +20,7 @@ ${sign}include "${type.getAttribute("cto-mo-class")}.idl"
 #end
 #foreach ($aggregation in $aggregations)
 #getType($model $aggregation $type)
-#isDataObject($type $isDataObject)	
+#isDataObject($type $isDataObject)
 #if($isDataObject && ($type != $class))
 ${sign}include "${type.getAttribute("cto-mo-class")}.idl"
 #end
@@ -36,7 +36,7 @@ module ch {
         NullTimestamp timestamp;
 #foreach ($property in $properties)
 #if(!${property.isTransient()})
-#getType($model $property $type)	
+#getType($model $property $type)
 #if(${type})
 #isDataObject($type $isDataObject)
 #isReferenceCode($type $isReferenceCode)
@@ -54,7 +54,7 @@ module ch {
 #end
 #foreach($aggregation in $aggregations)
 #if(!${aggregation.isTransient()})
-#getType($model $aggregation $type)	
+#getType($model $aggregation $type)
 #if(${type})
 #isDataObject($type $isDataObject)
 #isReferenceCode($type $isReferenceCode)

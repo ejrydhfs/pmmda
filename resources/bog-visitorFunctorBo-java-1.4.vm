@@ -46,7 +46,7 @@ public class VisitorFunctor implements Visitor, AbstractVisitorFunctor {
   }
     
 #foreach($class in $classes)
-#isDataObject($class $isDataObject)	
+#isDataObject($class $isDataObject)
 #if($isDataObject)
 #if($hasInterface)
 #set($name=${class.getAttribute("bo-if-class")})

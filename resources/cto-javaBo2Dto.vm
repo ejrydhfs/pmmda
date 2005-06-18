@@ -2,6 +2,7 @@
 package ${package.getAttribute("cto-bo2dto-package")};
 
 #set($sign="#")
+#set($dollar="$")
 #set($imports=${cartridge.retrieveImportStatementsForBo(${class}, ${package.getAttribute("cto-bo2dto-package")})})
 #set($dummy=${imports.addPackageName(${package.getAttribute("bo-mo-package")})})
 #set($dummy=${imports.addPackageName("ch.bbv.transport")})
@@ -16,9 +17,9 @@ import $importStatement;
 #set($dtoName=${class.getAttribute("cto-mo-class")}) 
 #set($classname=${class.getAttribute("cto-bo2dto-class")})
 /** 
- * Transformer helper class responsible for the transformation of data 
- * objects between their data object and data transfer object 
- * representation.
+ * Transformer helper class responsible for the transformation of data objects
+ * between their data object and data transfer object representation.
+ * @version ${dollar}Revision${dollar}
  */
 public final class ${classname} {
   /** 
@@ -36,7 +37,7 @@ public final class ${classname} {
 #set($type=${model.findClass(${typeName})})
 #if(${type} && ${type.getStereotype()} == "dataObject")
     if (bo.get${property.nameFirstUpper()}() != null) {
-      dto.${property.getName()} = new ${type.getAttribute("cto-mo-class")}[1];
+	  dto.${property.getName()} = new ${type.getAttribute("cto-mo-class")}[1];
       dto.${property.getName()}[0] = ${type.getAttribute("bo-mo-class")}Transformer.transform(bo.get${property.nameFirstUpper()}());
     } else {
       dto.${property.getName()} = new ${type.getAttribute("cto-mo-class")}[0];
@@ -67,12 +68,15 @@ public final class ${classname} {
 
   /** 
    * Transforms a data transfer object into a data object. The children are
-   * recursively transformed.
+   * recursively transformed. The Java bean conventions are used to set the
+   * attributes.
    * @param dto data transfer object to transform.
    * @return the data object representation.
    */  
   public static final ${dogName} transform(${dtoName} dto) {
     ${dogName} bo = new ${dogName}();
+    bo.setId(TransformerCto.extract(dto.id));
+    bo.setTimestamp(TransformerCto.extract(dto.timestamp));
 #foreach($property in $properties) 
 #if(!${property.isTransient()})
 #set($typeName=${property.getTypeName()})
@@ -95,8 +99,6 @@ public final class ${classname} {
     bo.add${aggregation.nameFirstUpper()}(${type.getAttribute("bo-mo-class")}Transformer.transform(dto.${aggregation.nameFirstLower()}));
 #end
 #end
-    bo.setId(TransformerCto.extract(dto.id));
-    bo.setTimestamp(TransformerCto.extract(dto.timestamp));
     bo.setModified(dto.modified);
     return bo;
   }
@@ -110,9 +112,9 @@ public final class ${classname} {
   public static final ${dtoName}[] transform(List bos) {
     int size = bos.size();
     ${dtoName}[] dtos = new ${dtoName}[size];
-	for (int i = 0; i < size; i++) {
-	  dtos[i] = transform((${dogName})bos.get(i));
-	}
+    for (int i = 0; i < size; i++) {
+      dtos[i] = transform((${dogName})bos.get(i));
+    }
     return dtos;
   }
 

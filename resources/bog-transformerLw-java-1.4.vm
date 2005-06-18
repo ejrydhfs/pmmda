@@ -18,7 +18,7 @@ import ${package.getAttribute("bo-mo-package")}.*;
  */
 public class LwTransformer {
 #foreach($class in $classes)
-#isLightweightDataObject($class $isLightweightDataObject)	
+#isLightweightDataObject($class $isLightweightDataObject)
 #if($isLightweightDataObject)
 #set($boClass=${class.getAttribute("bo-mo-class")})
 #set($lwClass=${class.getAttribute("bo-lw-class")})
@@ -41,7 +41,7 @@ public class LwTransformer {
 #set($aggregations=${class.getIndexedProperties()})
 #foreach ($aggregation in $aggregations) 
 #if(${aggregation.booleanValueOfTag("bo-lightweight")})
-#isTypeLightweigth($model $aggregation $isTypeLightweigth)	
+#isTypeLightweigth($model $aggregation $isTypeLightweigth)
 #if($isTypeLightweigth)
     for (Iterator i = item.get${aggregation.nameFirstUpperPlural()}().iterator(); i.hasNext();) {
       lw.add${aggregation.nameFirstUpperSingular()}(transform((${type.getAttribute("bo-mo-class")})i.next()));

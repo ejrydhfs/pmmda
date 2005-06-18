@@ -70,7 +70,7 @@ public interface ${serverName}Session extends javax.ejb.EJBObject {
    * @throws RemoteException exception was encountered in transport layer.
    */
   DataObjectUpdate[] store${boMoClass}(String datasource, ${boMoClass} bo)
-	throws RemoteException;
+    throws RemoteException;
 
   /** 
    * Removes the data object graph which root has the given identifier.

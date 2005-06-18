@@ -67,7 +67,7 @@ ${spaces} */
 #set($result=false)
 #set($result=${model.findClass(${typename})})
 #end
-	
+
 ## Returns true if the type object of the type name defined in the element is a data object.
 #macro(isTypeModel $model $element $result)
 #set($DATA_OBJECT="dataObject")
@@ -94,7 +94,7 @@ ${spaces} */
 #end
 
 #macro(isTypePersistent $model $element $result)
-#set($type=false)	
+#set($type=false)
 #getType($model $element $type)
 #isPersistentDataObject($type $result)
 #end
@@ -108,14 +108,14 @@ new ${containerType}<${keyType}, ${itemType}>()##end
 #else
 new ${containerType}<${itemType}>()##end
 #end
-#end	
+#end
 
 #macro(getterName $property $result)
 #set($itemType = ${property.retrieveTypeClassName()})
 #if($itemType=="boolean")
-#set($result="is${property.nameFirstUpperSingular()}")	
+#set($result="is${property.nameFirstUpperSingular()}")
 #else
-#set($result="get${property.nameFirstUpperSingular()}")	
+#set($result="get${property.nameFirstUpperSingular()}")
 #end
 #end
 
@@ -131,6 +131,15 @@ new ${containerType}<${itemType}>()##end
 ## Generates a reverse foreign key for the given property referencing
 ## the given reference class.
 #macro(getReverseFk $reference $property $result)
-#set($refTable=${reference.valueOfTag("ojb-table-name")})	
+#set($refTable=${reference.valueOfTag("ojb-table-name")})
 #set($result="${refTable}_${property.nameUpper()}_FK")
 #end
+
+#macro(getForwardHdl $property $result)
+#set($result="${property.nameFirstLower()}Handle")	
+#end
+
+#macro(getReverseHdl $reference $property $result)
+#set($result="${reference.nameFirstLower()}${relation.nameFirstUpper()}Handle")
+#end
+

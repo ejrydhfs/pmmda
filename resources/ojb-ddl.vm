@@ -21,7 +21,7 @@ CREATE TABLE ${schema}${table} (
 #if(!${property.booleanValueOfTag("ojb-can-be-null")} || ${property.isPrimaryKey()})#set($nullInfo=" NOT NULL")#else#set($nullInfo="")#end
 #isPersistentDataObject($type $isPersistentDataObject)
 #if($isPersistentDataObject)
-#getForwardFk($property $column)	
+#getForwardFk($property $column)
   ${column} INTEGER${nullInfo},
 #else
 ## support MySQL version < 4.1. Boolean was introduced as alias only in version 4.1
@@ -44,7 +44,7 @@ CREATE TABLE ${schema}${table} (
 #if(!${aggregation.canBeNull()})#set($nullInfo=" NOT NULL")#else#set($nullInfo="")#end
 #isPersistentDataObject($type $isPersistentDataObject)
 #if($isPersistentDataObject)
-#getForwardFk($aggregation $column)	
+#getForwardFk($aggregation $column)
   $column INTEGER${nullInfo},
 #end
 #end
@@ -58,7 +58,7 @@ CREATE TABLE ${schema}${table} (
 #if($isPersistentDataObject)
 #set($relations=${reference.getIndexedProperties()})
 #foreach($relation in $relations)
-#getType($model $relation $type)	
+#getType($model $relation $type)
 #if(${type} == ${class})
 #if(!${relation.canBeNull()})#set($nullInfo=" NOT NULL")#else#set($nullInfo="")#end
 #getReverseFk($reference $relation $result)
@@ -87,7 +87,7 @@ CREATE UNIQUE INDEX ${table}_IDX ON
 #getType($model $property $type)
 #isPersistentDataObject($type $isPersistentDataObject)
 #if($isPersistentDataObject)
-#getForwardFk($property $column)	
+#getForwardFk($property $column)
 CREATE INDEX ${table}_${column}_IDX ON 
   ${schema}${table}(${column});
 
@@ -101,7 +101,7 @@ CREATE INDEX ${table}_${column}_IDX ON
 #set($type=${model.findClass(${typeName})})
 #isPersistentDataObject($type $isPersistentDataObject)
 #if($isPersistentDataObject)
-#getForwardFk($aggregation $column)	
+#getForwardFk($aggregation $column)
 CREATE INDEX ${table}_${column}_IDX ON 
   ${schema}${table}(${column});
 
@@ -116,9 +116,9 @@ CREATE INDEX ${table}_${column}_IDX ON
 #if($isPersistentDataObject)
 #set($relations=${reference.getIndexedProperties()})
 #foreach($relation in $relations)
-#getType($model $relation $type)	
+#getType($model $relation $type)
 #if(${type} == ${class})
-#getReverseFk($reference $relation $column)	
+#getReverseFk($reference $relation $column)
 CREATE INDEX ${column}_IDX ON 
   ${schema}${table}(${column});
 

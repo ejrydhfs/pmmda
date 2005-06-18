@@ -84,7 +84,7 @@ public class Locator {
   /**
    * The application singleton object.
    */
-  private static Locator theLocator;
+  private static volatile Locator theLocator;
 
   /**
    * Logger for all instances of the class.

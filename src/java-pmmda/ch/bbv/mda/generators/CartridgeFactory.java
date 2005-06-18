@@ -35,7 +35,7 @@ public class CartridgeFactory implements ElementInitialize {
   /**
    * Singleton instance of the class.
    */
-  private static CartridgeFactory factory;
+  private static volatile CartridgeFactory factory;
 
   /**
    * Map of all registered cartridges. The key is the abbreviation of the

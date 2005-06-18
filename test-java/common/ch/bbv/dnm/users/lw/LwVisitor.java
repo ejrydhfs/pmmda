@@ -28,7 +28,7 @@ public interface LwVisitor {
 
   /** 
    * Sets the current depth in the graph when traversing it with the visitor. 
-   * The depth is a positive integer with a minimal value of 1.	
+   * The depth is a positive integer with a minimal value of 1.
    * @param depth current depth of the visitor in the traversed graph.
    */
   void setDepth(int depth);

@@ -4,7 +4,7 @@
     NOT add code outside the marked zones. All changes outside the marked areas 
     will be discarded during the next execution of the MDA generator. 
     ${dollar}Id${dollar}
--->	
+-->
 
 <table name="${tablePrefix}${class.getAttributeValue("jdbcName")}${tablePostfix}"
   javaName="${classPrefix}${class.getAttributeValue("name")}${classPostfix}"

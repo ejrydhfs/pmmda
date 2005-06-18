@@ -4,9 +4,8 @@
 package ${package.getBoPackage()};
 #end
 #set($className="ReferenceService${package.getSimpleNameFirstUpper()}")
-import com.swissre.por.common.framework.facade.PORHierarchicalReferenceCode;
-import com.swissre.por.common.framework.facade.PORReferenceCode;
-import com.swissre.por.common.framework.facade.PORServiceDefault;
+import ch.bbv.dog.reference.HierarchicalReferenceCode;
+import ch.bbv.dog.reference..ReferenceCode;
 import java.util.*;
 
 /** 
@@ -21,7 +20,7 @@ import java.util.*;
  * all changes will be lost.
  * @version ${dollar}Revision${dollar}
  */
-public abstract class ${className} extends PORServiceDefault {
+public abstract class ${className} extends ServiceDefault {
 #foreach ($codeClass in $classes) 
 #if(${codeClass.isCodeType()})
 
@@ -72,12 +71,12 @@ public abstract class ${className} extends PORServiceDefault {
    }
    
    public ${classPrefix}ReferenceCode${classPostfix} getCodeFor(int codeType, Integer key) {
-   	 return (${classPrefix}ReferenceCode${classPostfix})codes[codeType].get(key);
+     return (${classPrefix}ReferenceCode${classPostfix})codes[codeType].get(key);
    }
    
    public List getCodesFor(int codeType) {
      return getActiveCodes(codeType);
-   }   	 
+   }
    
    public List getAllCodesFor(int codeType) {
      return getAllCodes(codeType);
@@ -115,16 +114,16 @@ public abstract class ${className} extends PORServiceDefault {
    * @return list of all active regular reference codes.
    */
   protected List getActiveCodes(int codeType) {
-  	Iterator it = codes[codeType].values().iterator();
-  	List list = new ArrayList();
-  	while (it.hasNext()) {
-  	  PORReferenceCode code = (PORReferenceCode)it.next();
-  	  if (code.getActive()) {
-  	    list.add(code);
-  	  }
-  	}
-  	Collections.sort(list, codeComparator);
-  	return list;
+    Iterator it = codes[codeType].values().iterator();
+    List list = new ArrayList();
+    while (it.hasNext()) {
+      ReferenceCode code = (ReferenceCode)it.next();
+      if (code.getActive()) {
+        list.add(code);
+      }
+    }
+    Collections.sort(list, codeComparator);
+    return list;
   }
  
   /** 
@@ -147,8 +146,8 @@ public abstract class ${className} extends PORServiceDefault {
      * @param right right item to compare.
      */
     public int compare(Object left, Object right) {
-      return (((PORReferenceCode)left).getSortOrder() - 
-              ((PORReferenceCode)right).getSortOrder());
+      return (((ReferenceCode)left).getSortOrder() - 
+              ((ReferenceCode)right).getSortOrder());
     }
   }
   

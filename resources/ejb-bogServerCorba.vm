@@ -128,7 +128,7 @@ public class $classname extends ${serverName}POA  {
       throw create(e, "concurrent access in retrieve${boMoClass}");
     } catch (Exception e) {
       log.error(e);
-	  throw create(e, null);
+      throw create(e, null);
     }
   }
 #if(${class.booleanValueOfAttribute("bo-lightweight")})  
@@ -147,7 +147,7 @@ public class $classname extends ${serverName}POA  {
         if (lw != null) {
           lws.add(lw);
         }
-  	  } else {
+      } else {
         lws = handler.retrieveLw(datasource, ${boLwClass}.class, 
             ((constraints.length() == 0) ? null : constraints));
       }
@@ -158,21 +158,21 @@ public class $classname extends ${serverName}POA  {
       return ctos;
     } catch (Exception e) {
       log.error(e);
-	  throw create(e, null);
+      throw create(e, null);
     }
   }
 #end  
   
   public DataObjectUpdateCto[] store${boMoClass}(String datasource, ${ctoMoClass} cto)
     throws CtoExceptionCto {
-	try {
+    try {
       DataObjectHandler handler = getHandler();
       if (log.isTraceEnabled()) {
         log.trace("start store ${boMoClass} " + datasource + " " + cto.id);
       }
       ${boMoClass} root = ${boMoClass}Transformer.transform(cto);
       List infos = handler.store(datasource, ${boMoClass}.class, root);
-	  DataObjectUpdateCto[] ctos = TransformerCto.createInfos(infos);
+      DataObjectUpdateCto[] ctos = TransformerCto.createInfos(infos);
       if (log.isTraceEnabled()) {
         log.trace("end store ${boMoClass}");
       }
@@ -181,8 +181,8 @@ public class $classname extends ${serverName}POA  {
       throw create(e, "concurrent access in store${boMoClass}");
     } catch (Exception e) {
       log.error(e);
-	  throw create(e, null);
-	}    
+      throw create(e, null);
+    }    
   }
   
   public void remove${boMoClass}(String datasource, int id)
@@ -199,7 +199,7 @@ public class $classname extends ${serverName}POA  {
     } catch (ConcurrentModificationException e) {
       create(e, "concurrent access in remove${boMoClass}");
     } catch (Exception e) {
-	  throw create(e, null);
+      throw create(e, null);
     }
   }
 
@@ -229,8 +229,8 @@ public class $classname extends ${serverName}POA  {
    * @return the CTO representatio of the exception.
    */
   private CtoExceptionCto create(Exception exception, String reason) {
-	CtoException cto = new CtoException(exception.getMessage(), reason);
- 	return TransformerCto.create(cto);
+    CtoException cto = new CtoException(exception.getMessage(), reason);
+    return TransformerCto.create(cto);
   }
   
   /**

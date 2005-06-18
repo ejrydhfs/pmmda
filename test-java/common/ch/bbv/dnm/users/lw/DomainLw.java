@@ -60,7 +60,7 @@ public class DomainLw implements LightweightObject {
    */
   public DomainLw(Integer id) {
     this.id = id;
-  	units = new ArrayList<UnitLw>();
+    units = new ArrayList<UnitLw>();
   }
 
   /** 
@@ -86,7 +86,7 @@ public class DomainLw implements LightweightObject {
    * @return the identifier of the instance.
    */
   public Integer getId() {
-  	return id;
+    return id;
   }
 
   /** 
@@ -162,7 +162,7 @@ public class DomainLw implements LightweightObject {
    * @param visitor visitor to act on the data object.
    */  
   public void accept(LwVisitor visitor) {
-  	visitor.setDepth(visitor.getDepth() + 1);
+    visitor.setDepth(visitor.getDepth() + 1);
     visitor.visit(this);
     for (UnitLw item : units) {
       item.accept(visitor);
@@ -187,6 +187,6 @@ public class DomainLw implements LightweightObject {
     for (int i = 0; i < units.size(); i++) {
       clone.units.add(units.get(i).deepCopy());
     }
-	return clone;
+    return clone;
   }
 }

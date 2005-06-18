@@ -11,16 +11,16 @@
   <field-descriptor name="id" 
     column="ID" 
     jdbc-type="INTEGER" 
-  	primarykey="true"
+    primarykey="true"
     nullable="false"
     indexed="true"
-  	autoincrement="true"
-  	access="readonly"/>
+    autoincrement="true"
+    access="readonly"/>
 ## generates all primitive properties as a column. A primitive property is 
 ## either a simple property or an indexed property with a cardinality of 1
 ## having as type a class not being a data object.
 #foreach($property in $properties)
-#if(!${property.isTransient()} && $property.booleanValueOfTag("bo-lightweight"))	
+#if(!${property.isTransient()} && $property.booleanValueOfTag("bo-lightweight"))
 #set($columnType=${property.valueOfTag("ojb-column-type").toUpperCase()})
 #getType($model $property $type)
 #isDataObject($type $isDataObject)
@@ -43,7 +43,7 @@
 #else    
     jdbc-type="${columnType}"
 #if (${columnType.equalsIgnoreCase("BOOLEAN")})
-	conversion="org.apache.ojb.broker.accesslayer.conversions.Boolean2IntFieldConversion"
+    conversion="org.apache.ojb.broker.accesslayer.conversions.Boolean2IntFieldConversion"
 #end
 #end
 #if(${property.getTaggedValue("ojb-is-primary")} == "true")
@@ -57,7 +57,7 @@
 #end
 #foreach($property in $properties)
 #if($property.booleanValueOfTag("bo-lightweight"))
-#getType($model $property $type)	
+#getType($model $property $type)
 #isDataObject($type $isDataObject)
 #if($isDataObject)
 #set($columnName=${aggregation.getAttribute("ojb-column-name")})
@@ -78,7 +78,7 @@
 #if($isPersistentDataObject)
 #set($relations=${reference.getIndexedProperties()})
 #foreach($relation in $relations)
-#getType($model $relation $type)	
+#getType($model $relation $type)
 #if(${type} == ${class})
 #getReverseFk($reference $relation $column)
   <field-descriptor 
@@ -93,7 +93,7 @@
 #end
 #foreach($aggregation in $aggregations)
 #if($aggregation.booleanValueOfTag("bo-lightweight") && (${aggregation.getMultiplicity().getUpperBound()} == 1))
-#getType($model $aggregation $type)	
+#getType($model $aggregation $type)
 #isDataObject($type $isDataObject)
 #if($isDataObject && ${type.booleanValueOfTag("persistence")})
 #set($typePackage=${type.getContext()})
@@ -108,13 +108,13 @@
 #end
 #foreach($aggregation in $aggregations)
 #if(${aggregation.getMultiplicity().getUpperBound()} == -1)
-#getType($model $aggregation $type)	
+#getType($model $aggregation $type)
 #isDataObject($type $isDataObject)
 #if($isDataObject && ${type.booleanValueOfTag("persistence")} && ${type.booleanValueOfAttribute("bo-lightweight")})
 #set($columnName=${aggregation.getAttribute("ojb-column-name")})
 #set($typePackage=${type.getContext()})
   <collection-descriptor 
-	name="${aggregation.getName()}"
+    name="${aggregation.getName()}"
     collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
     element-class-ref="${typePackage.getAttribute("bo-lw-package")}.${type.getAttribute("bo-lw-class")}"
     orderby="id"
@@ -136,9 +136,9 @@
 #if(${DATA_OBJECT.equalsIgnoreCase(${type.getStereotype()})} && ${type.booleanValueOfTag("persistence")})
 #getForwardFk($property $column)
   <index-descriptor 
-	name="${table}_${name}_IDX" 
-	unique="false">
-	<index-column name="${column}"/>
+    name="${table}_${name}_IDX" 
+    unique="false">
+    <index-column name="${column}"/>
   </index-descriptor>
 #end
 #end
@@ -152,9 +152,9 @@
 #set($name=${aggregation.nameUpper()})
 #getForwardFk($aggregation $column)
   <index-descriptor 
-	name="${table}_${name}_IDX" 
-	unique="false">
-	<index-column name="${column}"/>
+    name="${table}_${name}_IDX" 
+    unique="false">
+    <index-column name="${column}"/>
   </index-descriptor>
 #end
 #end
@@ -165,15 +165,15 @@
 #if($isDataObject && ${reference.booleanValueOfTag("persistence")})
 #set($relations=${reference.getIndexedProperties()})
 #foreach($relation in $relations)
-#getType($model $relation $type)	
+#getType($model $relation $type)
 #if(${type} == ${class})
 #set($refTable=${reference.valueOfTag("ojb-table-name")})
 #set($relationName=${relation.nameUpper()})
 #getReverseFk($reference $relation $column)
   <index-descriptor 
-	name="${table}_${refTable}_${relationName}_IDX" 
-	unique="false">
-	<index-column name="${column}"/>
+    name="${table}_${refTable}_${relationName}_IDX" 
+    unique="false">
+    <index-column name="${column}"/>
   </index-descriptor>
 #end
 #end

@@ -63,7 +63,7 @@ public class Realm implements DataObject {
    * object identifier is set to null to indicate it is a new object.
    */
   public Realm() {
-  	providers = new ArrayList<Provider>();
+    providers = new ArrayList<Provider>();
   }
 
 /* %% USER DEFINED CONSTRUCTORS START %% */
@@ -78,7 +78,7 @@ public class Realm implements DataObject {
    * @see #setId(Integer)
    */
   public Integer getId() {
-  	return id;
+    return id;
   }
   
   /** 
@@ -150,7 +150,7 @@ public class Realm implements DataObject {
    */    
   public void setName(String name) {
     if (((this.name != null) && !this.name.equals(name)) || 
-   	    ((this.name == null) && (name != null)))  {    
+        ((this.name == null) && (name != null)))  {    
       this.name = name;
       setModified(true);
     }
@@ -241,10 +241,10 @@ public class Realm implements DataObject {
    */  
   public void accept(Visitor visitor) {
     assert(visitor != null);
-  	visitor.setDepth(visitor.getDepth() + 1);
+    visitor.setDepth(visitor.getDepth() + 1);
     visitor.visit(this);
     traverse(visitor);
-  	visitor.setDepth(visitor.getDepth() - 1);
+    visitor.setDepth(visitor.getDepth() - 1);
   }
   
   /** 
@@ -310,7 +310,7 @@ public class Realm implements DataObject {
    */
   final protected void setForeignKey(DataObject bean, String property,
       Integer key) {
-	assert((bean != null) && (property != null));
+    assert((bean != null) && (property != null));
     try {
       Field field = bean.getClass().getDeclaredField(property);
       if (field != null) {

@@ -87,7 +87,7 @@ public class Provider implements DataObject {
    * object identifier is set to null to indicate it is a new object.
    */
   public Provider() {
-  	domains = new ArrayList<Domain>();
+    domains = new ArrayList<Domain>();
   }
 
 /* %% USER DEFINED CONSTRUCTORS START %% */
@@ -102,7 +102,7 @@ public class Provider implements DataObject {
    * @see #setId(Integer)
    */
   public Integer getId() {
-  	return id;
+    return id;
   }
   
   /** 
@@ -174,7 +174,7 @@ public class Provider implements DataObject {
    */    
   public void setName(String name) {
     if (((this.name != null) && !this.name.equals(name)) || 
-   	    ((this.name == null) && (name != null)))  {    
+        ((this.name == null) && (name != null)))  {    
       this.name = name;
       setModified(true);
     }
@@ -196,7 +196,7 @@ public class Provider implements DataObject {
    */    
   public void setEmail(String email) {
     if (((this.email != null) && !this.email.equals(email)) || 
-   	    ((this.email == null) && (email != null)))  {    
+        ((this.email == null) && (email != null)))  {    
       this.email = email;
       setModified(true);
     }
@@ -218,7 +218,7 @@ public class Provider implements DataObject {
    */    
   public void setDescription(String description) {
     if (((this.description != null) && !this.description.equals(description)) || 
-   	    ((this.description == null) && (description != null)))  {    
+        ((this.description == null) && (description != null)))  {    
       this.description = description;
       setModified(true);
     }
@@ -240,7 +240,7 @@ public class Provider implements DataObject {
    */    
   public void setLongname(String longname) {
     if (((this.longname != null) && !this.longname.equals(longname)) || 
-   	    ((this.longname == null) && (longname != null)))  {    
+        ((this.longname == null) && (longname != null)))  {    
       this.longname = longname;
       setModified(true);
     }
@@ -262,7 +262,7 @@ public class Provider implements DataObject {
    */    
   public void setTrusted(Double trusted) {
     if (((this.trusted != null) && !this.trusted.equals(trusted)) || 
-   	    ((this.trusted == null) && (trusted != null)))  {    
+        ((this.trusted == null) && (trusted != null)))  {    
       this.trusted = trusted;
       setModified(true);
     }
@@ -301,7 +301,7 @@ public class Provider implements DataObject {
     setModified(true);
     for(Domain item : c) {
       setForeignKey(item, "providerDomainsHandle", getId());
-	}
+    }
     return domains.addAll(c);
   }  
   
@@ -359,10 +359,10 @@ public class Provider implements DataObject {
    */  
   public void accept(Visitor visitor) {
     assert(visitor != null);
-  	visitor.setDepth(visitor.getDepth() + 1);
+    visitor.setDepth(visitor.getDepth() + 1);
     visitor.visit(this);
     traverse(visitor);
-  	visitor.setDepth(visitor.getDepth() - 1);
+    visitor.setDepth(visitor.getDepth() - 1);
   }
   
   /** 
@@ -428,7 +428,7 @@ public class Provider implements DataObject {
    */
   final protected void setForeignKey(DataObject bean, String property,
       Integer key) {
-	assert((bean != null) && (property != null));
+    assert((bean != null) && (property != null));
     try {
       Field field = bean.getClass().getDeclaredField(property);
       if (field != null) {

@@ -136,7 +136,7 @@ public class ${className} extends ComponentImpl implements DataObjectHandler {
 #else
       } else if (clazz == ${boMoClass}.class) {
         objects = Arrays.asList(server.retrieve${boMoClass}(datasource, id, null));
-#end	
+#end
 #end
 #end
       } else {      
@@ -150,7 +150,7 @@ public class ${className} extends ComponentImpl implements DataObjectHandler {
     } catch(RemoteException e) {
       log.error(e);
     }
-#end	
+#end
     return object;
   }
   
@@ -171,7 +171,7 @@ public class ${className} extends ComponentImpl implements DataObjectHandler {
 #else
       } else if (clazz == ${boMoClass}.class) {
         objects = Arrays.asList(server.retrieve${boMoClass}(datasource, null, constraints));
-#end	
+#end
 #end
 #end
       } else {
@@ -183,7 +183,7 @@ public class ${className} extends ComponentImpl implements DataObjectHandler {
       log.error(e);
     }
 #end
-	return objects;
+    return objects;
   }
 #set($isEmpty=true)
 #foreach($class in $classes)
@@ -210,7 +210,7 @@ public class ${className} extends ComponentImpl implements DataObjectHandler {
 #else
       } else if (clazz == ${boLwClass}.class) {
         objects = Arrays.asList(server.retrieveLw${boLwClass}(datasource, id, null));
-#end	
+#end
 #end
 #end
       } else {
@@ -245,7 +245,7 @@ public class ${className} extends ComponentImpl implements DataObjectHandler {
 #else
       } else if (clazz == ${boLwClass}.class) {
         objects = Arrays.asList(server.retrieveLw${boLwClass}(datasource, null, constraints));
-#end	
+#end
 #end
 #end
       } else {
@@ -283,7 +283,7 @@ public class ${className} extends ComponentImpl implements DataObjectHandler {
 #else
       } else if (clazz == ${boMoClass}.class) {
         infos = Arrays.asList(server.store${boMoClass}(datasource, (${boMoClass}) root));
-#end	
+#end
 #end
 #end
       } else {
@@ -313,7 +313,7 @@ public class ${className} extends ComponentImpl implements DataObjectHandler {
 #else
       } else if (clazz == ${boMoClass}.class) {
         server.remove${boMoClass}(datasource, root.getId());
-#end	
+#end
 #end
 #end
       } else {
@@ -342,7 +342,7 @@ public class ${className} extends ComponentImpl implements DataObjectHandler {
 #else
       } else if (clazz == ${boMoClass}.class) {
         server.remove${boMoClass}(datasource, id);
-#end	
+#end
 #end
 #end
       } else {
@@ -374,6 +374,6 @@ public class ${className} extends ComponentImpl implements DataObjectHandler {
       server.heartbeat();
     } catch(RemoteException e) {
       log.error(e);
-	}
+    }
   }
 }

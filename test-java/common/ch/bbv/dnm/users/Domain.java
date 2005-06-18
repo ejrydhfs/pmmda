@@ -54,7 +54,6 @@ public class Domain implements DataObject {
    * optionally some of its subdomains.
    */
   private User administrator;
-
   /**
    * Mapping for 1: 1 relationship ${relation.getName()} as foreign key.
    */
@@ -64,7 +63,6 @@ public class Domain implements DataObject {
    * List of units member of the domain.
    */
   private List<Unit> units;
-
   /**
    * Mapping for 1: N relationship domains as reverse foreign key.
    */
@@ -91,7 +89,7 @@ public class Domain implements DataObject {
    * object identifier is set to null to indicate it is a new object.
    */
   public Domain() {
-  	units = new ArrayList<Unit>();
+    units = new ArrayList<Unit>();
   }
 
 /* %% USER DEFINED CONSTRUCTORS START %% */
@@ -106,7 +104,7 @@ public class Domain implements DataObject {
    * @see #setId(Integer)
    */
   public Integer getId() {
-  	return id;
+    return id;
   }
   
   /** 
@@ -178,7 +176,7 @@ public class Domain implements DataObject {
    */    
   public void setName(String name) {
     if (((this.name != null) && !this.name.equals(name)) || 
-   	    ((this.name == null) && (name != null)))  {    
+        ((this.name == null) && (name != null)))  {    
       this.name = name;
       setModified(true);
     }
@@ -200,7 +198,7 @@ public class Domain implements DataObject {
    */    
   public void setDescription(String description) {
     if (((this.description != null) && !this.description.equals(description)) || 
-   	    ((this.description == null) && (description != null)))  {    
+        ((this.description == null) && (description != null)))  {    
       this.description = description;
       setModified(true);
     }
@@ -222,7 +220,7 @@ public class Domain implements DataObject {
    */    
   public void setLongname(String longname) {
     if (((this.longname != null) && !this.longname.equals(longname)) || 
-   	    ((this.longname == null) && (longname != null)))  {    
+        ((this.longname == null) && (longname != null)))  {    
       this.longname = longname;
       setModified(true);
     }
@@ -244,7 +242,7 @@ public class Domain implements DataObject {
    */    
   public void setAdministrator(User administrator) {
     if (((this.administrator != null) && !this.administrator.equals(administrator)) || 
-   	    ((this.administrator == null) && (administrator != null)))  {    
+        ((this.administrator == null) && (administrator != null)))  {    
       this.administrator = administrator;
       administratorHandle = (administrator != null ? administrator.getId() : null);
       setModified(true);
@@ -284,7 +282,7 @@ public class Domain implements DataObject {
     setModified(true);
     for(Unit item : c) {
       setForeignKey(item, "domainUnitsHandle", getId());
-	}
+    }
     return units.addAll(c);
   }  
   
@@ -342,10 +340,10 @@ public class Domain implements DataObject {
    */  
   public void accept(Visitor visitor) {
     assert(visitor != null);
-  	visitor.setDepth(visitor.getDepth() + 1);
+    visitor.setDepth(visitor.getDepth() + 1);
     visitor.visit(this);
     traverse(visitor);
-  	visitor.setDepth(visitor.getDepth() - 1);
+    visitor.setDepth(visitor.getDepth() - 1);
   }
   
   /** 
@@ -411,7 +409,7 @@ public class Domain implements DataObject {
    */
   final protected void setForeignKey(DataObject bean, String property,
       Integer key) {
-	assert((bean != null) && (property != null));
+    assert((bean != null) && (property != null));
     try {
       Field field = bean.getClass().getDeclaredField(property);
       if (field != null) {
@@ -434,7 +432,7 @@ public class Domain implements DataObject {
   protected void copy(Domain clone) {
     if (administrator != null) {
       clone.administrator = administrator.copy();
-	}
+    }
     clone.units = new ArrayList<Unit>();
     for (int i = 0; i < units.size(); i++) {
       clone.units.add(units.get(i).copy());

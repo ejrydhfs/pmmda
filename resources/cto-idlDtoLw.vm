@@ -12,7 +12,7 @@ ${sign}include "NullableTypes.idl"
 #foreach ($property in $properties)
 #if(!${property.isTransient()} && ${property.booleanValueOfTag("bo-lightweight")})
 #getType($model $property $type)
-#isDataObject($type $isLightweightDataObject)	
+#isDataObject($type $isLightweightDataObject)
 #if($isLightweightDataObject && ($type != $class))
 ${sign}include "${type.getAttribute("cto-lw-class")}.idl"
 #end
@@ -21,7 +21,7 @@ ${sign}include "${type.getAttribute("cto-lw-class")}.idl"
 #foreach ($aggregation in $aggregations)
 #if(!${aggregation.isTransient()} && ${aggregation.booleanValueOfTag("bo-lightweight")})
 #getType($model $aggregation $type)
-#isDataObject($type $isLightweightDataObject)	
+#isDataObject($type $isLightweightDataObject)
 #if($isLightweightDataObject && ($type != $class))
 ${sign}include "${type.getAttribute("cto-lw-class")}.idl"
 #end
@@ -36,7 +36,7 @@ module ch {
         NullInteger id;
 #foreach ($property in $properties)
 #if(!${property.isTransient()} && ${property.booleanValueOfTag("bo-lightweight")})
-#getType($model $property $type)	
+#getType($model $property $type)
 #isDataObject($type $isDataObject)
 #if(${type})
 #if($isDataObject)
@@ -56,7 +56,7 @@ module ch {
 #end
 #foreach($aggregation in $aggregations)
 #if(${aggregation.booleanValueOfTag("bo-lightweight")})
-#getType($model $aggregation $type)	
+#getType($model $aggregation $type)
 #if(${type})
 #isDataObject($type $isDataObject)
 #isReferenceCode($type $isReferenceCode)

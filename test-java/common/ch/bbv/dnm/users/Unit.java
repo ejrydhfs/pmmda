@@ -54,12 +54,10 @@ public class Unit implements DataObject {
    * List of units part of the unit.
    */
   private List<Unit> units;
-
   /**
    * Mapping for 1: N relationship units as reverse foreign key.
    */
   private Integer unitUnitsHandle;
-
   /**
    * Mapping for 1: N relationship units as reverse foreign key.
    */
@@ -91,8 +89,8 @@ public class Unit implements DataObject {
    * object identifier is set to null to indicate it is a new object.
    */
   public Unit() {
-  	users = new ArrayList<User>();
-  	units = new ArrayList<Unit>();
+    users = new ArrayList<User>();
+    units = new ArrayList<Unit>();
     changeSupport = new PropertyChangeSupport(this);
   }
 
@@ -108,7 +106,7 @@ public class Unit implements DataObject {
    * @see #setId(Integer)
    */
   public Integer getId() {
-  	return id;
+    return id;
   }
   
   /** 
@@ -179,9 +177,9 @@ public class Unit implements DataObject {
    * @see #getName()
    */    
   public void setName(String name) {
-	String oldName = this.name;
+    String oldName = this.name;
     if (((this.name != null) && !this.name.equals(name)) || 
-   	    ((this.name == null) && (name != null)))  {    
+        ((this.name == null) && (name != null)))  {    
       this.name = name;
       changeSupport.firePropertyChange("name", oldName, name);
       setModified(true);
@@ -204,7 +202,7 @@ public class Unit implements DataObject {
    */    
   public void setDescription(String description) {
     if (((this.description != null) && !this.description.equals(description)) || 
-   	    ((this.description == null) && (description != null)))  {    
+        ((this.description == null) && (description != null)))  {    
       this.description = description;
       setModified(true);
     }
@@ -243,7 +241,7 @@ public class Unit implements DataObject {
     setModified(true);
     for(User item : c) {
       setForeignKey(item, "unitUsersHandle", getId());
-	}
+    }
     return users.addAll(c);
   }  
   
@@ -325,7 +323,7 @@ public class Unit implements DataObject {
     setModified(true);
     for(Unit item : c) {
       setForeignKey(item, "unitUnitsHandle", getId());
-	}
+    }
     return units.addAll(c);
   }  
   
@@ -383,10 +381,10 @@ public class Unit implements DataObject {
    */  
   public void accept(Visitor visitor) {
     assert(visitor != null);
-  	visitor.setDepth(visitor.getDepth() + 1);
+    visitor.setDepth(visitor.getDepth() + 1);
     visitor.visit(this);
     traverse(visitor);
-  	visitor.setDepth(visitor.getDepth() - 1);
+    visitor.setDepth(visitor.getDepth() - 1);
   }
   
   /** 
@@ -452,7 +450,7 @@ public class Unit implements DataObject {
    */
   final protected void setForeignKey(DataObject bean, String property,
       Integer key) {
-	assert((bean != null) && (property != null));
+    assert((bean != null) && (property != null));
     try {
       Field field = bean.getClass().getDeclaredField(property);
       if (field != null) {

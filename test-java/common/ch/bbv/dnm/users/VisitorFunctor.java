@@ -33,7 +33,7 @@ public class VisitorFunctor implements Visitor, AbstractVisitorFunctor {
   public VisitorFunctor(DoFunctor functor) {
     this.functor = functor;
   }
-	
+
   /** 
    * The current depth of the visitor when traversing a graph.
    */

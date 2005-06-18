@@ -46,7 +46,7 @@ ALTER TABLE ${schema}${table} ADD CONSTRAINT ${foreignTableName}_${columnName}_I
 #foreach($relation in $relations)
 #getType($model $relation $type)
 #if((${type} == ${class}) && ${type.booleanValueOfTag("persistence")})
-#set($columnName=${relation.valueOfTag("ojb-column-name")})	
+#set($columnName=${relation.valueOfTag("ojb-column-name")})
 #set($foreignTableName=${reference.getAttribute("ojb-table-name")})
 #getReverseFk($reference $relation $column)
 ALTER TABLE ${schema}${table} ADD CONSTRAINT ${foreignTableName}_${columnName}_IR 

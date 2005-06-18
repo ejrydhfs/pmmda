@@ -65,8 +65,8 @@ public class UnitLw implements LightweightObject {
    */
   public UnitLw(Integer id) {
     this.id = id;
-  	users = new ArrayList<UserLw>();
-  	units = new ArrayList<UnitLw>();
+    users = new ArrayList<UserLw>();
+    units = new ArrayList<UnitLw>();
   }
 
   /** 
@@ -92,7 +92,7 @@ public class UnitLw implements LightweightObject {
    * @return the identifier of the instance.
    */
   public Integer getId() {
-  	return id;
+    return id;
   }
 
   /** 
@@ -234,7 +234,7 @@ public class UnitLw implements LightweightObject {
    * @param visitor visitor to act on the data object.
    */  
   public void accept(LwVisitor visitor) {
-  	visitor.setDepth(visitor.getDepth() + 1);
+    visitor.setDepth(visitor.getDepth() + 1);
     visitor.visit(this);
     for (UserLw item : users) {
       item.accept(visitor);
@@ -266,6 +266,6 @@ public class UnitLw implements LightweightObject {
     for (int i = 0; i < units.size(); i++) {
       clone.units.add(units.get(i).deepCopy());
     }
-	return clone;
+    return clone;
   }
 }

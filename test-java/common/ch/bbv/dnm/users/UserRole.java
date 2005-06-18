@@ -47,12 +47,10 @@ public class UserRole implements DataObject {
    * Role part of the user role association.
    */
   private Role role;
-
   /**
    * Mapping for 1: 1 relationship ${relation.getName()} as foreign key.
    */
   private Integer roleHandle;  
-
   /**
    * Mapping for 1: N relationship roles as reverse foreign key.
    */
@@ -93,7 +91,7 @@ public class UserRole implements DataObject {
    * @see #setId(Integer)
    */
   public Integer getId() {
-  	return id;
+    return id;
   }
   
   /** 
@@ -165,7 +163,7 @@ public class UserRole implements DataObject {
    */    
   public void setUsername(String username) {
     if (((this.username != null) && !this.username.equals(username)) || 
-   	    ((this.username == null) && (username != null)))  {    
+        ((this.username == null) && (username != null)))  {    
       this.username = username;
       setModified(true);
     }
@@ -187,7 +185,7 @@ public class UserRole implements DataObject {
    */    
   public void setRolename(String rolename) {
     if (((this.rolename != null) && !this.rolename.equals(rolename)) || 
-   	    ((this.rolename == null) && (rolename != null)))  {    
+        ((this.rolename == null) && (rolename != null)))  {    
       this.rolename = rolename;
       setModified(true);
     }
@@ -209,7 +207,7 @@ public class UserRole implements DataObject {
    */    
   public void setRole(Role role) {
     if (((this.role != null) && !this.role.equals(role)) || 
-   	    ((this.role == null) && (role != null)))  {    
+        ((this.role == null) && (role != null)))  {    
       this.role = role;
       roleHandle = (role != null ? role.getId() : null);
       setModified(true);
@@ -225,10 +223,10 @@ public class UserRole implements DataObject {
    */  
   public void accept(Visitor visitor) {
     assert(visitor != null);
-  	visitor.setDepth(visitor.getDepth() + 1);
+    visitor.setDepth(visitor.getDepth() + 1);
     visitor.visit(this);
     traverse(visitor);
-  	visitor.setDepth(visitor.getDepth() - 1);
+    visitor.setDepth(visitor.getDepth() - 1);
   }
   
   /** 
@@ -294,7 +292,7 @@ public class UserRole implements DataObject {
    */
   final protected void setForeignKey(DataObject bean, String property,
       Integer key) {
-	assert((bean != null) && (property != null));
+    assert((bean != null) && (property != null));
     try {
       Field field = bean.getClass().getDeclaredField(property);
       if (field != null) {
@@ -317,7 +315,7 @@ public class UserRole implements DataObject {
   protected void copy(UserRole clone) {
     if (role != null) {
       clone.role = role.copy();
-	}
+    }
   }
 
   /** 

@@ -75,7 +75,6 @@ public class User implements DataObject {
    * The roles the user belongs to.
    */
   private List<UserRole> roles;
-
   /**
    * Mapping for 1: N relationship users as reverse foreign key.
    */
@@ -107,7 +106,7 @@ public class User implements DataObject {
    * object identifier is set to null to indicate it is a new object.
    */
   public User() {
-  	roles = new ArrayList<UserRole>();
+    roles = new ArrayList<UserRole>();
     changeSupport = new PropertyChangeSupport(this);
   }
 
@@ -123,7 +122,7 @@ public class User implements DataObject {
    * @see #setId(Integer)
    */
   public Integer getId() {
-  	return id;
+    return id;
   }
   
   /** 
@@ -194,9 +193,9 @@ public class User implements DataObject {
    * @see #getLogin()
    */    
   public void setLogin(String login) {
-	String oldLogin = this.login;
+    String oldLogin = this.login;
     if (((this.login != null) && !this.login.equals(login)) || 
-   	    ((this.login == null) && (login != null)))  {    
+        ((this.login == null) && (login != null)))  {    
       this.login = login;
       changeSupport.firePropertyChange("login", oldLogin, login);
       setModified(true);
@@ -239,9 +238,9 @@ public class User implements DataObject {
    * @see #getEmail()
    */    
   public void setEmail(String email) {
-	String oldEmail = this.email;
+    String oldEmail = this.email;
     if (((this.email != null) && !this.email.equals(email)) || 
-   	    ((this.email == null) && (email != null)))  {    
+        ((this.email == null) && (email != null)))  {    
       this.email = email;
       changeSupport.firePropertyChange("email", oldEmail, email);
       setModified(true);
@@ -264,7 +263,7 @@ public class User implements DataObject {
    */    
   public void setPassword(String password) {
     if (((this.password != null) && !this.password.equals(password)) || 
-   	    ((this.password == null) && (password != null)))  {    
+        ((this.password == null) && (password != null)))  {    
       this.password = password;
       setModified(true);
     }
@@ -286,7 +285,7 @@ public class User implements DataObject {
    */    
   public void setValidTo(Date validTo) {
     if (((this.validTo != null) && !this.validTo.equals(validTo)) || 
-   	    ((this.validTo == null) && (validTo != null)))  {    
+        ((this.validTo == null) && (validTo != null)))  {    
       this.validTo = validTo;
       setModified(true);
     }
@@ -308,7 +307,7 @@ public class User implements DataObject {
    */    
   public void setValidFrom(Date validFrom) {
     if (((this.validFrom != null) && !this.validFrom.equals(validFrom)) || 
-   	    ((this.validFrom == null) && (validFrom != null)))  {    
+        ((this.validFrom == null) && (validFrom != null)))  {    
       this.validFrom = validFrom;
       setModified(true);
     }
@@ -330,7 +329,7 @@ public class User implements DataObject {
    */    
   public void setName(String name) {
     if (((this.name != null) && !this.name.equals(name)) || 
-   	    ((this.name == null) && (name != null)))  {    
+        ((this.name == null) && (name != null)))  {    
       this.name = name;
       setModified(true);
     }
@@ -421,10 +420,10 @@ public class User implements DataObject {
    */  
   public void accept(Visitor visitor) {
     assert(visitor != null);
-  	visitor.setDepth(visitor.getDepth() + 1);
+    visitor.setDepth(visitor.getDepth() + 1);
     visitor.visit(this);
     traverse(visitor);
-  	visitor.setDepth(visitor.getDepth() - 1);
+    visitor.setDepth(visitor.getDepth() - 1);
   }
   
   /** 
@@ -490,7 +489,7 @@ public class User implements DataObject {
    */
   final protected void setForeignKey(DataObject bean, String property,
       Integer key) {
-	assert((bean != null) && (property != null));
+    assert((bean != null) && (property != null));
     try {
       Field field = bean.getClass().getDeclaredField(property);
       if (field != null) {

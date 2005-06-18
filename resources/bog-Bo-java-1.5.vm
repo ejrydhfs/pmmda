@@ -76,11 +76,11 @@ $line
 ## identifies a forward reference 1-0..1 or 1-1
 #isTypePersistent($model $property $isPersistentDataObject)
 #if($isPersistentDataObject)
-
+#getForwardHdl($property $handle)
   /**
    * Mapping for 1: 1 relationship ${relation.getName()} as foreign key.
    */
-  private Integer ${property.nameFirstLower()}Handle;  
+  private Integer ${handle};  
 #end
 #end
 #foreach ($reference in $references)
@@ -96,7 +96,7 @@ $line
 #emitPropertyDescription($aggregation "  ")
 #if(${cartridge.isOrdered(${aggregation})})
   private ${aggregation.getAttribute("bo-interface-class")}<$keyType, $itemType> ${aggregation.nameFirstLower()};
-#else	
+#else
   private ${aggregation.getAttribute("bo-interface-class")}<$itemType> ${aggregation.nameFirstLower()};
 #end
 #end
@@ -108,13 +108,13 @@ $line
 #if($isPersistentDataObject)
 #set($relations=${reference.getIndexedProperties()})
 #foreach($relation in $relations)
-#getType($model $relation $type)	
+#getType($model $relation $type)
 #if(${type} == ${class})
-
+#getReverseHdl($reference $relation $handle)
   /**
    * Mapping for 1: N relationship ${relation.getName()} as reverse foreign key.
    */
-  private Integer ${reference.nameFirstLower()}${relation.nameFirstUpper()}Handle;
+  private Integer ${handle};
 #end
 #end
 #end
@@ -159,7 +159,7 @@ $line
   public ${className}() {
 #foreach ($aggregation in $aggregations) 
 #set($itemType=${aggregation.retrieveTypeClassName()})
-  	${aggregation.nameFirstLower()} = #containerCreation($aggregation);
+    ${aggregation.nameFirstLower()} = #containerCreation($aggregation);
 #end
 #if (${class.getAttribute("bo-changeable")} == "true")
     changeSupport = new PropertyChangeSupport(this);
@@ -190,7 +190,7 @@ $line
    * @see ${sign}setId(Integer)
    */
   public Integer getId() {
-  	return id;
+    return id;
   }
   
   /** 
@@ -288,23 +288,23 @@ $line
   ${visibility} void ${setter}(${itemType} ${lName}) throws PropertyVetoException {
 #else
   ${visibility} void ${setter}(${itemType} ${lName}) {
-#end	
+#end
 #if(${vetoable} || ${changeable})
-	${itemType} old${uName} = this.${lName};
-#end	
+    ${itemType} old${uName} = this.${lName};
+#end
 #if(${property.isTypePrimitive()})
     if (this.${lName} != ${lName}) {  
       this.${lName} = ${lName};
 #if (${vetoable})
-	  try {
+      try {
         vetoSupport.fireVetoableChange("${lName}", old${uName}, ${lName});
-#if(${changeable})		  
+#if(${changeable})
         changeSupport.firePropertyChange("${lName}", old${uName}, ${lName});
-#end		  
+#end
       } catch (PropertyVetoException e) {
         this.${lName} = old${uName};
-	    throw e;
-	  }
+        throw e;
+      }
 #elseif (${changeable})
       changeSupport.firePropertyChange("${lName}", old${uName}, ${lName});
 #end
@@ -313,32 +313,32 @@ $line
   }
 #else
     if (((this.${lName} != null) && !this.${lName}.equals(${lName})) || 
-   	    ((this.${lName} == null) && (${lName} != null)))  {    
+        ((this.${lName} == null) && (${lName} != null)))  {    
 #if($owner) 
-	  if (this.${lName} != null) {
+      if (this.${lName} != null) {
         this.${lName}.set${owner}(null);
-	  }
-#end	
+      }
+#end
       this.${lName} = ${lName};
 #if($owner) 
       if (this.${lName} != null) {
         this.${lName}.set${owner}(this);
-      }	  
-#end	
+      }
+#end
 #isTypePersistent($model $property $isPersistentDataObject)
 #if($isPersistentDataObject)
       ${property.nameFirstLower()}Handle = (${lName} != null ? ${lName}.getId() : null);
 #end
 #if (${vetoable})
-	  try {
+      try {
         vetoSupport.fireVetoableChange("${lName}", old${uName}, ${lName});
 #if (${changeable})
         changeSupport.firePropertyChange("${lName}", old${uName}, ${lName});
 #end
       } catch (PropertyVetoException e) {
         this.${lName} = old${uName};
-		throw e;
-	  }
+        throw e;
+      }
 #elseif (${changeable})
       changeSupport.firePropertyChange("${lName}", old${uName}, ${lName});
 #end
@@ -463,9 +463,9 @@ $line
     ${lName}.put(key, value);
 #if($owner) 
     if (value != null) {
-	  value.set${owner}(this);
-	}
-#end	
+      value.set${owner}(this);
+    }
+#end
   }
   
   /** 
@@ -477,17 +477,17 @@ $line
   ${visibility} ${itemType} remove${usName}(${keyType} key) {
     setModified(true);
 #if($owner) 
-	${itemType} object = ${lName}.remove(key);
+    ${itemType} object = ${lName}.remove(key);
     if (object != null) {
-	  object.set${owner}(null);
-	}
-	return object;
-#else	
+      object.set${owner}(null);
+    }
+    return object;
+#else
     return ${lName}.remove(key);
-#end	
+#end
   }
 #else
-#set($isPersistentAggregation=${aggregation.booleanValueOfTag("persistence")})	
+#set($isPersistentAggregation=${aggregation.booleanValueOfTag("persistence")})
 #set($keyName="${class.nameFirstLower()}${aggregation.nameFirstUpper()}Handle")
 
   /** 
@@ -504,13 +504,13 @@ $line
 #if($isPersistentAggregation)
     for($itemType item : c) {
       setForeignKey(item, "${keyName}", getId());
-	}
+    }
 #end
 #if($owner)
     for($itemType item : c) {
-	  item.set${owner}(this);
+      item.set${owner}(this);
     }
-#end	
+#end
     return ${lName}.addAll(c);
   }  
   
@@ -530,13 +530,13 @@ $line
 #end
 #if($owner)
     $itemType} item = ${lName}.get(index);
-	if (item != null) {
-	  item.set${owner}(this);
-	}
-	if (element != null) {
-	  element.set${owner}(this);
-	}
-#end	
+    if (item != null) {
+      item.set${owner}(this);
+    }
+    if (element != null) {
+      element.set${owner}(this);
+    }
+#end
     ${lName}.add(index, element);
   }
 
@@ -552,7 +552,7 @@ $line
     setModified(true);
 #if($isPersistentAggregation)
     setForeignKey(element, "${keyName}", getId());
-#end	
+#end
     return ${lName}.add(element);
   }
   
@@ -574,9 +574,9 @@ $line
       if (element != null) {
         item.set${owner}(null);
       }
-#end	  
+#end
       setForeignKey(element, "${keyName}", getId());
-#end	
+#end
     }
     return removed;
   }
@@ -593,10 +593,10 @@ $line
    */  
   public void accept(Visitor visitor) {
     assert(visitor != null);
-  	visitor.setDepth(visitor.getDepth() + 1);
+    visitor.setDepth(visitor.getDepth() + 1);
     visitor.visit(this);
     traverse(visitor);
-  	visitor.setDepth(visitor.getDepth() - 1);
+    visitor.setDepth(visitor.getDepth() - 1);
   }
   
   /** 
@@ -705,7 +705,7 @@ $line
    */
   final protected void setForeignKey(DataObject bean, String property,
       Integer key) {
-	assert((bean != null) && (property != null));
+    assert((bean != null) && (property != null));
     try {
       Field field = bean.getClass().getDeclaredField(property);
       if (field != null) {
@@ -729,14 +729,14 @@ $line
   protected void copy(${className} clone) {
 #if($hasAncestors)
     super.copy(clone);
-#end	
+#end
 #foreach ($property in $properties)
-#isTypeModel($model $property $isTypeModel)	
+#isTypeModel($model $property $isTypeModel)
 #if($isTypeModel)
 #set($lName=${property.nameFirstLower()})
     if (${lName} != null) {
       clone.${lName} = ${lName}.copy();
-	}
+    }
 #end 
 #end
 #foreach ($aggregation in $aggregations) 
@@ -746,8 +746,8 @@ $line
     clone.${lName} = #containerCreation($aggregation);
 #if(${cartridge.isOrdered(${aggregation})})
     for (${keyType} key : ${lName}.keySet()) {
-	  clone.${lName}.put(key, ${lName}.get(key));
-	}
+      clone.${lName}.put(key, ${lName}.get(key));
+    }
 #else
     for (int i = 0; i < ${lName}.size(); i++) {
       clone.${lName}.add(${lName}.get(i).copy());
@@ -765,7 +765,7 @@ $line
   protected void traverse(Visitor visitor) {
 #if($hasAncestors)
     super.traverse(visitor);
-#end	
+#end
 #foreach ($property in $properties)
 #isTypeModel($model $property $isTypeModel)
 #if($isTypeModel)

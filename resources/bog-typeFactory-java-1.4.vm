@@ -51,7 +51,7 @@ public class TypeFactory {
    */
   public void registerAllTypes() {
 #foreach($class in $classes)
-#isLightweightDataObject($class $isLightweightDataObject)	
+#isLightweightDataObject($class $isLightweightDataObject)
 #if($isLightweightDataObject)
     createNodeTypeFor${class.getName()}();
 #end
@@ -59,7 +59,7 @@ public class TypeFactory {
   }
   
 #foreach($class in $classes)
-#isLightweightDataObject($class $isLightweightDataObject)	
+#isLightweightDataObject($class $isLightweightDataObject)
 #if($isLightweightDataObject)
 #set($boClass=${class.getAttribute("bo-mo-class")})
 #set($lwClass=${class.getAttribute("bo-lw-class")})

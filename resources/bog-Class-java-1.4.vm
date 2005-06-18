@@ -73,7 +73,7 @@ $line
 #emitPropertyDescription($aggregation "  ")
 #if(${cartridge.isOrdered(${aggregation})})
   private ${aggregation.getAttribute("bo-interface-class")}<$keyType, $itemType> ${aggregation.nameFirstLower()};
-#else	
+#else
   private ${aggregation.getAttribute("bo-interface-class")}<$itemType> ${aggregation.nameFirstLower()};
 #end
 #end
@@ -147,23 +147,23 @@ $line
   ${visibility} void ${setter}(${itemType} ${lName}) throws PropertyVetoException {
 #else
   ${visibility} void ${setter}(${itemType} ${lName}) {
-#end	
+#end
 #if(${vetoable} || ${changeable})
-	${itemType} old${uName} = this.${lName};
-#end	
+    ${itemType} old${uName} = this.${lName};
+#end
 #if(${property.isTypePrimitive()})
     if (this.${lName} != ${lName}) {  
       this.${lName} = ${lName};
 #if (${vetoable})
-	  try {
+      try {
         vetoSupport.fireVetoableChange("${lName}", old${uName}, ${lName});
-#if(${changeable})		  
+#if(${changeable})
         changeSupport.firePropertyChange("${lName}", old${uName}, ${lName});
-#end		  
+#end
       } catch (PropertyVetoException e) {
         this.${lName} = old${uName};
-	    throw e;
-	  }
+        throw e;
+      }
 #elseif (${changeable})
       changeSupport.firePropertyChange("${lName}", old${uName}, ${lName});
 #end
@@ -171,28 +171,28 @@ $line
   }
 #else
     if (((this.${lName} != null) && !this.${lName}.equals(${lName})) || 
-   	    ((this.${lName} == null) && (${lName} != null)))  {    
+        ((this.${lName} == null) && (${lName} != null)))  {    
 #if($owner) 
-	  if (this.${lName} != null) {
+      if (this.${lName} != null) {
         this.${lName}.set${owner}(null);
-	  }
-#end	
+      }
+#end
       this.${lName} = ${lName};
 #if($owner) 
       if (this.${lName} != null) {
         this.${lName}.set${owner}(this);
-      }	  
-#end	
+      }
+#end
 #if (${vetoable})
-	  try {
+      try {
         vetoSupport.fireVetoableChange("${lName}", old${uName}, ${lName});
 #if (${changeable})
         changeSupport.firePropertyChange("${lName}", old${uName}, ${lName});
 #end
       } catch (PropertyVetoException e) {
         this.${lName} = old${uName};
-		throw e;
-	  }
+        throw e;
+      }
 #elseif (${changeable})
       changeSupport.firePropertyChange("${lName}", old${uName}, ${lName});
 #end
@@ -280,9 +280,9 @@ $line
     ${lName}.put(key, value);
 #if($owner) 
     if (value != null) {
-	  value.set${owner}(this);
-	}
-#end	
+      value.set${owner}(this);
+    }
+#end
   }
   
   /** 
@@ -293,17 +293,17 @@ $line
    */
   ${visibility} ${itemType} remove${usName}(${keyType} key) {
 #if($owner) 
-	${itemType} object = ${lName}.remove(key);
+    ${itemType} object = ${lName}.remove(key);
     if (object != null) {
-	  object.set${owner}(null);
-	}
-	return object;
-#else	
+      object.set${owner}(null);
+    }
+    return object;
+#else
     return ${lName}.remove(key);
-#end	
+#end
   }
 #else
-#set($isPersistentAggregation=${aggregation.booleanValueOfTag("persistence")})	
+#set($isPersistentAggregation=${aggregation.booleanValueOfTag("persistence")})
 #set($keyName="${class.nameFirstLower()}${aggregation.nameFirstUpper()}Handle")
 
   /** 
@@ -319,13 +319,13 @@ $line
 #if($isPersistentAggregation)
     for($itemType item : c) {
       setForeignKey(item, "${keyName}", getId());
-	}
+    }
 #end
 #if($owner)
     for($itemType item : c) {
-	  item.set${owner}(this);
+      item.set${owner}(this);
     }
-#end	
+#end
     return ${lName}.addAll(c);
   }  
   
@@ -469,7 +469,7 @@ $line
   private void initialize() {
 #foreach ($aggregation in $aggregations) 
 #set($itemType=${aggregation.retrieveTypeClassName()})
-  	${aggregation.nameFirstLower()} = #containerCreation($aggregation);
+    ${aggregation.nameFirstLower()} = #containerCreation($aggregation);
 #end
 #if (${class.getAttribute("bo-changeable")} == "true")
     changeSupport = new PropertyChangeSupport(this);

@@ -69,7 +69,7 @@ ${class.retrieveVisibilityText()} class ${className} implements LightweightObjec
     this.id = id;
 #foreach ($aggregation in $aggregations) 
 #if(${aggregation.booleanValueOfTag("bo-lightweight")})
-  	${aggregation.nameFirstLower()} = new ${aggregation.getAttribute("bo-container-class")}();
+    ${aggregation.nameFirstLower()} = new ${aggregation.getAttribute("bo-container-class")}();
 #end
 #end
   }
@@ -120,7 +120,7 @@ ${class.retrieveVisibilityText()} class ${className} implements LightweightObjec
    * @return the identifier of the instance.
    */
   public Integer getId() {
-  	return id;
+    return id;
   }
 #end
 #foreach ($aggregation in $aggregations) 
@@ -262,7 +262,7 @@ ${class.retrieveVisibilityText()} class ${className} implements LightweightObjec
    * @param visitor visitor to act on the data object.
    */  
   public void accept(LwVisitor visitor) {
-  	visitor.setDepth(visitor.getDepth() + 1);
+    visitor.setDepth(visitor.getDepth() + 1);
     visitor.visit(this);
 #foreach ($property in $properties)
 #if(${property.booleanValueOfTag("bo-lightweight")})
@@ -301,12 +301,12 @@ ${class.retrieveVisibilityText()} class ${className} implements LightweightObjec
       return null;
     }
 #foreach ($property in $properties)
-#isLightweightDataObject($property $isLightweightDataObject)	
+#isLightweightDataObject($property $isLightweightDataObject)
 #if($isLightweightDataObject)
 #set($lName=${property.nameFirstLower()})
     if (${lName} != null) {
       clone.${lName} = (${property.getReferenceClass().getAttribute("bo-lw-class")})${lName}.getClone();
-	}
+    }
 #end 
 #end
 #foreach ($aggregation in $aggregations) 
@@ -318,6 +318,6 @@ ${class.retrieveVisibilityText()} class ${className} implements LightweightObjec
     }
 #end
 #end
-	return clone;
+    return clone;
   }
 }

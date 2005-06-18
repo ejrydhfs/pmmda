@@ -85,7 +85,7 @@ public class ${className} extends ComponentImpl
     try {
       Locator locator = Locator.getInstance();
       wrapper = new ${className}(name);
-	  locator.register(wrapper);
+      locator.register(wrapper);
     } catch (ComponentException e) {
       log.fatal("Cannot register CORBA wrapper ${className}", e); 
     }
@@ -116,8 +116,8 @@ public class ${className} extends ComponentImpl
       org.omg.CORBA.Object ref = orb.resolve_initial_references("NameService");
       NamingContextExt ncRef = NamingContextExtHelper.narrow(ref);
       server = ${serverName}Helper.narrow(ncRef.resolve_str(SERVER_NAME));
-	} catch (Exception e) {
-	  log.fatal(e);
+    } catch (Exception e) {
+      log.fatal(e);
     }
   }  
    
@@ -155,7 +155,7 @@ public class ${className} extends ComponentImpl
 #else
       } else if (clazz == ${boMoClass}.class) {
         objects = retrieve${boMoClass}(datasource, id, null);
-#end	
+#end    
 #end
 #end
       } else {      
@@ -188,7 +188,7 @@ public class ${className} extends ComponentImpl
 #else
       } else if (clazz == ${boMoClass}.class) {
         objects = retrieve${boMoClass}(datasource, null, constraints);
-#end	
+#end    
 #end
 #end
       } else {
@@ -225,7 +225,7 @@ public class ${className} extends ComponentImpl
 #else
       } else if (clazz == ${boLwClass}.class) {
         objects = retrieveLw${boLwClass}(datasource, id, null);
-#end	
+#end    
 #end
 #end
       } else {
@@ -258,7 +258,7 @@ public class ${className} extends ComponentImpl
 #else
       } else if (clazz == ${boLwClass}.class) {
         objects = retrieveLw${boLwClass}(datasource, null, constraints);
-#end	
+#end    
 #end
 #end
       } else {
@@ -294,7 +294,7 @@ public class ${className} extends ComponentImpl
 #else
       } else if (clazz == ${boMoClass}.class) {
         infos = store${boMoClass}(datasource, (${boMoClass}) root);
-#end	
+#end    
 #end
 #end
       } else {
@@ -322,7 +322,7 @@ public class ${className} extends ComponentImpl
 #else
       } else if (clazz == ${boMoClass}.class) {
         remove${boMoClass}(datasource, root.getId());
-#end	
+#end    
 #end
 #end
       } else {
@@ -349,7 +349,7 @@ public class ${className} extends ComponentImpl
 #else
       } else if (clazz == ${boMoClass}.class) {
         remove${boMoClass}(datasource, id);
-#end	
+#end    
 #end
 #end
       } else {
@@ -381,11 +381,11 @@ public class ${className} extends ComponentImpl
       String constraintsValue = (constraints == null) ? "" : constraints;
       ${ctoMoClass}[] ctos = server.retrieve${boMoClass}(datasource, idValue, 
         constraintsValue);
-	  List bos = ${boMoClass}Transformer.transform(ctos);
-	  return bos;
-	} catch (CtoExceptionCto e) {
-	  throw TransformerCto.extract(e);
-	}
+      List bos = ${boMoClass}Transformer.transform(ctos);
+      return bos;
+    } catch (CtoExceptionCto e) {
+      throw TransformerCto.extract(e);
+    }
   }
 #if(${class.booleanValueOfAttribute("bo-lightweight")})  
 
@@ -403,12 +403,12 @@ public class ${className} extends ComponentImpl
       int idValue = (id == null) ? ILLEGAL_ID : id.intValue();
       String constraintsValue = (constraints == null) ? "" : constraints;
       ${ctoLwClass}[] ctos = server.retrieveLw${boLwClass}(datasource, idValue, 
-	    constraintsValue);
+        constraintsValue);
       List lws = ${boLwClass}Transformer.transform(ctos);
       return lws;
-	} catch (CtoExceptionCto e) {
-	  throw TransformerCto.extract(e);
-	}
+    } catch (CtoExceptionCto e) {
+      throw TransformerCto.extract(e);
+    }
   }
 #end  
   /** Stores the data object graph with the given root identifier.
@@ -417,16 +417,16 @@ public class ${className} extends ComponentImpl
    * @throws CtoException the remote server encountered an error.
    */
   private List store${boMoClass}(String datasource, ${boMoClass} root)
-	throws CtoException {
+    throws CtoException {
     assert((datasource != null) && (root != null));
-	try {
+    try {
       ${ctoMoClass} cto = ${boMoClass}Transformer.transform(root);
       DataObjectUpdateCto[] ctos = server.store${boMoClass}(datasource, cto);
       List infos = TransformerCto.extractInfos(ctos);
       return infos;    
-	} catch (CtoExceptionCto e) {
-	  throw TransformerCto.extract(e);
-	}
+    } catch (CtoExceptionCto e) {
+      throw TransformerCto.extract(e);
+    }
   }
   
   /** Removes the data object graph with the given root identifier.
@@ -438,9 +438,9 @@ public class ${className} extends ComponentImpl
     assert((datasource != null) && (id != null));
     try {
       server.remove${boMoClass}(datasource, id.intValue());
-	} catch (CtoExceptionCto e) {
-	  throw TransformerCto.extract(e);
-	}
+    } catch (CtoExceptionCto e) {
+      throw TransformerCto.extract(e);
+    }
   }
   
 #end
@@ -460,9 +460,9 @@ public class ${className} extends ComponentImpl
   public void heartbeat() throws CtoException {
     try {
       server.heartbeat();
-	} catch (CtoExceptionCto e) {
-	  throw TransformerCto.extract(e);
-	}
+    } catch (CtoExceptionCto e) {
+      throw TransformerCto.extract(e);
+    }
   }
 
 }

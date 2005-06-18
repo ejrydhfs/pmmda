@@ -61,7 +61,7 @@ public class ProviderLw implements LightweightObject {
    */
   public ProviderLw(Integer id) {
     this.id = id;
-  	domains = new ArrayList<DomainLw>();
+    domains = new ArrayList<DomainLw>();
   }
 
   /** 
@@ -87,7 +87,7 @@ public class ProviderLw implements LightweightObject {
    * @return the identifier of the instance.
    */
   public Integer getId() {
-  	return id;
+    return id;
   }
 
   /** 
@@ -163,7 +163,7 @@ public class ProviderLw implements LightweightObject {
    * @param visitor visitor to act on the data object.
    */  
   public void accept(LwVisitor visitor) {
-  	visitor.setDepth(visitor.getDepth() + 1);
+    visitor.setDepth(visitor.getDepth() + 1);
     visitor.visit(this);
     for (DomainLw item : domains) {
       item.accept(visitor);
@@ -188,6 +188,6 @@ public class ProviderLw implements LightweightObject {
     for (int i = 0; i < domains.size(); i++) {
       clone.domains.add(domains.get(i).deepCopy());
     }
-	return clone;
+    return clone;
   }
 }

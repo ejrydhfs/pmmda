@@ -114,9 +114,9 @@ public final class ${classname} {
   public static final ${dtoName}[] transform(List bos) {
     int size = bos.size();
     ${dtoName}[] dtos = new ${dtoName}[size];
-	for (int i = 0; i < size; i++) {
-	  dtos[i] = transform((${dogName})bos.get(i));
-	}
+    for (int i = 0; i < size; i++) {
+      dtos[i] = transform((${dogName})bos.get(i));
+    }
     return dtos;
   }
 

@@ -47,7 +47,7 @@ public class ${className} implements javax.ejb.SessionBean {
   private SessionContext context;
   
 #foreach($class in $classes)
-#isDataObject($class $isDataObject)	
+#isDataObject($class $isDataObject)
 #if(${class.booleanValueOfTag("bo-is-root")} && $isDataObject)
 #set($boMoClass=${class.getAttribute("bo-mo-class")})
 #set($boLwClass=${class.getAttribute("bo-lw-class")})
@@ -100,7 +100,7 @@ public class ${className} implements javax.ejb.SessionBean {
         if (lw != null) {
           lws.add(lw);
         }
-  	  } else {
+      } else {
         lws = handler.retrieveLw(datasource, ${boLwClass}.class, constraints);
       }
       ${boLwClass}[] items = (${boLwClass}[])lws.toArray(new ${boLwClass}[lws.size()]);
@@ -119,8 +119,8 @@ public class ${className} implements javax.ejb.SessionBean {
 #end  
   
   public DataObjectUpdate[] store${boMoClass}(String datasource, ${boMoClass} root)
-	throws RemoteException {
-	try {
+    throws RemoteException {
+    try {
       DataObjectHandler handler = getHandler();
       if (log.isTraceEnabled()) {
         log.trace("start store${boMoClass} " + datasource + " " + root.getId());

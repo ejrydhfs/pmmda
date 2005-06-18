@@ -58,7 +58,7 @@ public class RealmLw implements LightweightObject {
    */
   public RealmLw(Integer id) {
     this.id = id;
-  	providers = new ArrayList<ProviderLw>();
+    providers = new ArrayList<ProviderLw>();
   }
 
   /** 
@@ -84,7 +84,7 @@ public class RealmLw implements LightweightObject {
    * @return the identifier of the instance.
    */
   public Integer getId() {
-  	return id;
+    return id;
   }
 
   /** 
@@ -160,7 +160,7 @@ public class RealmLw implements LightweightObject {
    * @param visitor visitor to act on the data object.
    */  
   public void accept(LwVisitor visitor) {
-  	visitor.setDepth(visitor.getDepth() + 1);
+    visitor.setDepth(visitor.getDepth() + 1);
     visitor.visit(this);
     for (ProviderLw item : providers) {
       item.accept(visitor);
@@ -185,6 +185,6 @@ public class RealmLw implements LightweightObject {
     for (int i = 0; i < providers.size(); i++) {
       clone.providers.add(providers.get(i).deepCopy());
     }
-	return clone;
+    return clone;
   }
 }

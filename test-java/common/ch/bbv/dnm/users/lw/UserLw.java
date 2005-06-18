@@ -173,7 +173,7 @@ public class UserLw implements LightweightObject {
    * @return the identifier of the instance.
    */
   public Integer getId() {
-  	return id;
+    return id;
   }
 
   /** 
@@ -183,7 +183,7 @@ public class UserLw implements LightweightObject {
    * @param visitor visitor to act on the data object.
    */  
   public void accept(LwVisitor visitor) {
-  	visitor.setDepth(visitor.getDepth() + 1);
+    visitor.setDepth(visitor.getDepth() + 1);
     visitor.visit(this);
     visitor.setDepth(visitor.getDepth() - 1);
   }
@@ -201,6 +201,6 @@ public class UserLw implements LightweightObject {
       // impossible exception because data object is cloneable.
       return null;
     }
-	return clone;
+    return clone;
   }
 }
