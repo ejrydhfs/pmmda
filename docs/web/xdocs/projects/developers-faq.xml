@@ -14,7 +14,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<!DOCTYPE faqs PUBLIC "-//APACHE//DTD FAQ V1.2//EN" "http://forrest.apache.org/dtd/faq-v12.dtd" [
+<!DOCTYPE faqs PUBLIC "-//APACHE//DTD FAQ V1.3//EN" "http://forrest.apache.org/dtd/faq-v13.dtd" [
 <!ENTITY s '<code>site.xml</code>'>
 ]>
 <faqs title="Developers Frequently Asked Questions">
@@ -72,13 +72,15 @@
     </faq>
     <faq>
       <question>Where do I find the used libraries (jar files)?</question>
-      <answer><p>All librairies used in the projects can be donwloaded as a zip 
-        file from the sourceforge project home page. The project team uses the 
-        convention that no binary files should be stored in the version 
-        management system. Therefore the jar files cannot be found in the 
-        repository. A list of all used libraries with their version number is 
-        available as a text file in the test lib directory and also in the 
-        project documentation.</p></answer>
+      <answer>
+        <p>All librairies used in the projects can be donwloaded as a zip file 
+          from the sourceforge project home page. The project team uses the 
+          convention that no binary files should be stored in the version 
+          management system. Therefore the jar files cannot be found in the 
+          repository. A list of all used libraries with their version number is 
+          available as a text file in the test lib directory and also in the 
+          project documentation.</p>
+      </answer>
     </faq>
     <faq>
       <question>Why is it called <em>pmMDA</em>?</question>
@@ -212,12 +214,13 @@
     </faq>
     <faq>
       <question>How can I run the documentation target within the ant goal 
-        without errors.</question>
+        without errors?</question>
       <answer>
-        <p>You need first to install the official forrest release version 0.6. 
-          Second you must add the validator library to your ant libraries in 
-          the lib directory. The validator library 
-          <code>xml-commons-resolver.jar</code>is part of the forrest 
+        <p>You need first to install the official forrest release version 0.6 
+          available under <link href="ext:forrest">forrest</link>. Second you 
+          must add the validator library to your ant libraries in the lib 
+          directory. The validator library 
+          <code>xml-commons-resolver.jar</code> is part of the forrest 
           distribution.</p>
       </answer>
     </faq>

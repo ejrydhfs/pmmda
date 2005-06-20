@@ -94,5 +94,6 @@
       <commons-pool href="commons/pool/"/>
       <velocity href="velocity/"/>
     </jakarta>
+    <forrest href="http://forrest.apache.org/">
   </external-refs>
 </site>
