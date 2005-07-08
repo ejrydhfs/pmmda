@@ -41,6 +41,8 @@ module ch {
 #isDataObject($type $isDataObject)
 #isReferenceCode($type $isReferenceCode)
 #if($isDataObject)
+#getForwardHdl($property $handle)
+        NullInteger $handle;
         sequence<${type.getAttribute("cto-mo-class")}> ${property.getName()};
 #elseif($isReferenceCode)
         NullInteger ${property.getName()};
@@ -68,7 +70,21 @@ module ch {
 #end          
 #end
 #end
-      };
+#set($references=$model.getClassReferences($class))
+#foreach($reference in $references)
+#isPersistentDataObject($reference $isPersistentDataObject)
+#if($isPersistentDataObject)
+#set($relations=${reference.getIndexedProperties()})
+#foreach($relation in $relations)
+#getType($model $relation $type)
+#if(${type} == ${class})
+#getReverseHdl($reference $relation $handle)
+        NullInteger ${handle};
+#end
+#end
+#end
+#end
+	  };
       
       typedef sequence<${ctoMoClass}> ${ctoMoClass}Sequence; 
     };

@@ -23,6 +23,7 @@ import ch.bbv.application.ProjectInfo;
 import ch.bbv.application.VersionId;
 import ch.bbv.cmdlineparser.CmdLineBuilder;
 import ch.bbv.dog.DataObjectManager;
+import ch.bbv.explorer.*;
 import ch.bbv.explorer.Explorer;
 import ch.bbv.explorer.ExplorerMenuBar;
 import ch.bbv.explorer.ExplorerUtilities;
@@ -49,6 +50,8 @@ import ch.bbv.utilities.ResourceUtility;
 public class MdaExplorer extends Explorer {
 
   public static final String PREFERENCES_OPENED_PROJECT = "mda.opened-project";
+
+  public static final String VALIDATION_PANEL_NAME = "Validator";
 
   /**
    * Logger instance of the class.
@@ -130,6 +133,16 @@ public class MdaExplorer extends Explorer {
     TreeConstructor constructor = new TreeConstructor(getNodeTypeFactory());
     model.accept(constructor);
     setRoot(constructor.getRoot());
+    getValidationPanel().clear();
+    getMenuBar().documentChanged(document.getState());
+  }
+
+  /** 
+   * Returns the validation panel of the explorer.
+   * @return the requested validation panel.
+   */
+  public ValidationPanel getValidationPanel() {
+    return (ValidationPanel) getDockingArea().getTab(VALIDATION_PANEL_NAME);
   }
 
   /**
@@ -148,12 +161,10 @@ public class MdaExplorer extends Explorer {
     projectInfo.setLicenceText(Licences.LICENCE_APACHE_2_0);
     projectInfo.setName("pmMDA - poor man Model Driven Architecture -");
     projectInfo.setVersion(new VersionId(0, 3, 0, "dev"));
-
     projectInfo.setContributors(getContributors());
     projectInfo.setLibraries(getLibrairies());
-
     DockingArea dockingArea = getDockingArea();
-    dockingArea.addTab("Validator", new ValidationPanel());
+    dockingArea.addTab(VALIDATION_PANEL_NAME, new ValidationPanel());
 
     JMenu menu = menuBar.getMenu(ExplorerMenuBar.HELP_MENU);
     ExplorerAboutAction aboutAction = new ExplorerAboutAction(this);

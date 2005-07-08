@@ -5,26 +5,29 @@
  */
 package ch.bbv.application;
 
-
-/** The default component provides a default implementation of the component
+/**
+ * The default component provides a default implementation of the component
  * interface. If you need to implement your own component interface take a look
  * to this class before starting.
  * @author Marcel Baumann
  * @version $Revision$
  */
 public class ComponentImpl implements Component {
-  /** Name of the component. The name should be unique in the set of all
-   * registered components of an application. Otherwise the post-office
-   * pattern will not work reliable.
+  /**
+   * Name of the component. The name should be unique in the set of all
+   * registered components of an application. Otherwise the post-office pattern
+   * will not work reliable.
    */
   private String name;
 
-  /** State of the component. The state machine is described in the application
+  /**
+   * State of the component. The state machine is described in the application
    * startup and shutdown pattern.
    */
-  private int state;
+  private States state;
 
-  /** Constructor of the class. All members are initialized to their default 
+  /**
+   * Constructor of the class. All members are initialized to their default
    * value.
    * @param name name of the component.
    * @pre name != null && name.length() > 0
@@ -32,7 +35,7 @@ public class ComponentImpl implements Component {
    */
   public ComponentImpl(String name) {
     this.name = name;
-    state = STOPPED;
+    state = States.STOPPED;
   }
 
   public void install() throws ComponentException {
@@ -42,28 +45,28 @@ public class ComponentImpl implements Component {
 
   public void initialize() throws ComponentException {
     assert isStopped();
-    state = INITIALIZED;
+    state = States.INITIALIZED;
     assert isInitialized();
   }
 
   public void startup() throws ComponentException {
     assert isInitialized() || isStopped();
-    if (state == STOPPED) {
+    if (state == States.STOPPED) {
       initialize();
     }
-    state = RUNNING;
+    state = States.RUNNING;
     assert isRunning();
   }
 
   public void shutdownNormal() throws ComponentException {
     assert isRunning() || isStopped();
-    state = STOPPED;
+    state = States.STOPPED;
     assert isStopped();
   }
 
   public void shutdownImmediate() throws ComponentException {
     assert isRunning() || isStopped();
-    state = STOPPED;
+    state = States.STOPPED;
     assert isStopped();
   }
 
@@ -76,15 +79,15 @@ public class ComponentImpl implements Component {
   }
 
   public boolean isStopped() {
-    return state == STOPPED;
+    return state == States.STOPPED;
   }
 
   public boolean isInitialized() {
-    return state == INITIALIZED;
+    return state == States.INITIALIZED;
   }
 
   public boolean isRunning() {
-    return state == RUNNING;
+    return state == States.RUNNING;
   }
 
   public String getName() {

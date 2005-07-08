@@ -43,6 +43,8 @@ public class CodeType implements DataObject {
    */
   private boolean hierarchical;
 
+  private boolean inMemory;
+
   /**
    * The code values defined for the code type are the set of legal values for 
    * this type.
@@ -70,7 +72,7 @@ public class CodeType implements DataObject {
    * object identifier is set to null to indicate it is a new object.
    */
   public CodeType() {
-  	values = new ArrayList<CodeValue>();
+    values = new ArrayList<CodeValue>();
   }
 
 /* %% USER DEFINED CONSTRUCTORS START %% */
@@ -85,7 +87,7 @@ public class CodeType implements DataObject {
    * @see #setId(Integer)
    */
   public Integer getId() {
-  	return id;
+    return id;
   }
   
   /** 
@@ -140,6 +142,7 @@ public class CodeType implements DataObject {
    public void setTimestamp(Timestamp timestamp) {
      this.timestamp = timestamp;
    }
+
   /** 
    * Returns the current value of the simple property qualifiedName.
    * @return the value of the simple property qualifiedName.
@@ -152,15 +155,16 @@ public class CodeType implements DataObject {
   /** 
    * Sets the new value of the simple property qualifiedName.
    * @param qualifiedName new value of the property.
-   * @see #getQualifiedName
+   * @see #getQualifiedName()
    */    
   public void setQualifiedName(String qualifiedName) {
     if (((this.qualifiedName != null) && !this.qualifiedName.equals(qualifiedName)) || 
-   	    ((this.qualifiedName == null) && (qualifiedName != null)))  {    
+        ((this.qualifiedName == null) && (qualifiedName != null)))  {    
       this.qualifiedName = qualifiedName;
       setModified(true);
     }
   }    
+
   /** 
    * Returns the current value of the simple property hierarchical.
    * @return the value of the simple property hierarchical.
@@ -173,11 +177,32 @@ public class CodeType implements DataObject {
   /** 
    * Sets the new value of the simple property hierarchical.
    * @param hierarchical new value of the property.
-   * @see #isHierarchical
+   * @see #isHierarchical()
    */    
   public void setHierarchical(boolean hierarchical) {
     if (this.hierarchical != hierarchical) {  
       this.hierarchical = hierarchical;
+      setModified(true);
+    }
+  }
+
+  /** 
+   * Returns the current value of the simple property inMemory.
+   * @return the value of the simple property inMemory.
+   * @see #setInMemory(boolean)
+   */
+  public boolean isInMemory() {
+    return inMemory;
+  }
+
+  /** 
+   * Sets the new value of the simple property inMemory.
+   * @param inMemory new value of the property.
+   * @see #isInMemory()
+   */    
+  public void setInMemory(boolean inMemory) {
+    if (this.inMemory != inMemory) {  
+      this.inMemory = inMemory;
       setModified(true);
     }
   }
@@ -267,10 +292,10 @@ public class CodeType implements DataObject {
    */  
   public void accept(Visitor visitor) {
     assert(visitor != null);
-  	visitor.setDepth(visitor.getDepth() + 1);
+    visitor.setDepth(visitor.getDepth() + 1);
     visitor.visit(this);
     traverse(visitor);
-  	visitor.setDepth(visitor.getDepth() - 1);
+    visitor.setDepth(visitor.getDepth() - 1);
   }
   
   /** 
@@ -336,7 +361,7 @@ public class CodeType implements DataObject {
    */
   final protected void setForeignKey(DataObject bean, String property,
       Integer key) {
-	assert((bean != null) && (property != null) && (key != null));
+    assert((bean != null) && (property != null));
     try {
       Field field = bean.getClass().getDeclaredField(property);
       if (field != null) {

@@ -53,6 +53,31 @@ public class FileOperators {
     out.close();
   }
 
+  public static boolean equals(File source, File target) throws IOException {
+    boolean equals = false;
+    if (source.exists() && target.exists()) {
+      if (source.length() == target.length()) {
+        equals = true;
+        BufferedReader sourceReader = new BufferedReader(new InputStreamReader(
+            new FileInputStream(source)));
+        BufferedReader targetReader = new BufferedReader(new InputStreamReader(
+            new FileInputStream(source)));
+        String sourceLine = sourceReader.readLine();
+        String targetLine = targetReader.readLine();
+        while ((sourceLine != null) || (targetLine != null)) {
+          if (((sourceLine == null) || (targetLine == null))
+              || !sourceLine.equals(targetLine)) {
+            equals = false;
+            break;
+          }
+          sourceLine = sourceReader.readLine();
+          targetLine = targetReader.readLine();
+        }
+      }
+    }
+    return equals;
+  }
+
   /**
    * Extracts the source code defined between the given line patterns from the
    * file.
@@ -93,8 +118,7 @@ public class FileOperators {
    */
   public static PrintWriter createWriter(File root, String packageName,
       String filename) throws IOException {
-    File file = null;
-    file = createFile(root, packageName, filename);
+    File file = createFile(root, packageName, filename);
     return new PrintWriter(new BufferedOutputStream(new FileOutputStream(file)));
   }
 

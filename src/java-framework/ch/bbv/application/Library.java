@@ -12,14 +12,14 @@ package ch.bbv.application;
  */
 public class Library {
   /**
-   * The name of the library
+   * The name of the library.
    */
   private String name;
 
   /** The version number should follow the Apache conventions. */
-  private VersionId versionId;
+  private VersionId version;
 
-  /** The licence. */
+  /** The licence name under which the library is released. */
   private String licence;
 
   /** Information about the library. */
@@ -34,7 +34,7 @@ public class Library {
    */
   public Library(String name, VersionId versionId, String licence, String info) {
     this.name = name;
-    this.versionId = versionId;
+    this.version = versionId;
     this.licence = licence;
     this.info = info;
   }
@@ -45,7 +45,7 @@ public class Library {
    */
   public Library(ProjectInfo project) {
     this.name = project.getName();
-    this.versionId = project.getVersion();
+    this.version = project.getVersion();
     this.licence = project.getLicenceName();
     this.info = project.getInfo();
   }
@@ -63,7 +63,7 @@ public class Library {
    * @return the library version.
    */
   public VersionId getVersion() {
-    return versionId;
+    return version;
   }
 
   /**

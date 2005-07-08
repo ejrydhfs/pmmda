@@ -8,6 +8,7 @@ package ch.bbv.mda;
 import java.util.*;
 
 import ch.bbv.mda.operators.ModelOperators;
+import ch.bbv.mda.pim.CodeTypeMgr;
 
 /**
  * The meta project defines a MDA project composed of a set of packages. Overall
@@ -40,11 +41,25 @@ public class MetaModel extends MetaPackage {
   private List<MetaDataType> dataTypes;
 
   /**
+   * The code type manager handling the reference codes of the model.
+   */
+  private transient CodeTypeMgr codeTypeMgr;
+
+  /**
    * Default constructor of the class.
    */
   public MetaModel() {
     packages = new ArrayList<MetaPackage>();
     dataTypes = new ArrayList<MetaDataType>();
+    codeTypeMgr = new CodeTypeMgr();
+  }
+
+  /**
+   * Returns the code type manager of the document.
+   * @return the code type manager property.
+   */
+  public CodeTypeMgr getCodeTypeMgr() {
+    return codeTypeMgr;
   }
 
   /**

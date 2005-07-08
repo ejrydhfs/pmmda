@@ -1,6 +1,7 @@
 <codeType>
-  <qualifiedName>VisibilityCode</qualifiedName>
+  <qualifiedName>ch.bbv.mda.VisibilityCode</qualifiedName>
   <hierarchical>false</hierarchical>
+  <inMemory>false</inMemory>
   <values>
     <code>
       <name>PUBLIC</name>

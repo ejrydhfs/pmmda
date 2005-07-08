@@ -7,10 +7,8 @@
 package ch.bbv.application;
 
 /**
- * <p>
  * The version identifier class defines the concept of versions for various
  * items. A version has three fields.
- * </p>
  * <dl>
  * <dt>Major version identifier</dt>
  * <dd>identifies the main version of the item</dd>
@@ -19,13 +17,11 @@ package ch.bbv.application;
  * <dt>Patch version identifier</dt>
  * <dd>identifies the patch level of the item within a minor version.</dd>
  * </dl>
- * <p>
  * Two versions of an item are fully compatible if their major and minor
  * versions are the same. These two items are at least partially compatible if
  * their major versions are the same. Othewise the two items are incompatible.
  * Patch versions are used to differenciate versions where only cosmetic changes
  * or error corrections was applied.
- * </p>
  * @author Marcel Baumann
  * @version $Revision$
  */

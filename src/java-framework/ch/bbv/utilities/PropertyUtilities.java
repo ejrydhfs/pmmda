@@ -52,7 +52,6 @@ public final class PropertyUtilities {
    */
   public static Properties expand(Properties properties) {
     assert (properties != null);
-
     Properties expandedProperties = new Properties();
     for (Iterator i = properties.keySet().iterator(); i.hasNext();) {
       String key = (String) i.next();
@@ -61,7 +60,6 @@ public final class PropertyUtilities {
         expandedProperties.setProperty(key, value);
       }
     }
-
     // resolve the variables if possible.
     boolean solved = true;
     while ((properties.size() > expandedProperties.size()) && solved) {

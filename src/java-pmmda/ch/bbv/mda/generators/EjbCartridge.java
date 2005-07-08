@@ -13,11 +13,7 @@ import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.Velocity;
-import org.apache.velocity.exception.ParseErrorException;
-import org.apache.velocity.exception.ResourceNotFoundException;
 
 import ch.bbv.application.VersionId;
 import ch.bbv.mda.MetaClass;
@@ -107,86 +103,15 @@ public class EjbCartridge extends CartridgeImpl {
   public static final String CLIENT_PACKAGE = "ejb-client-package";
 
   /**
-   * Log instance for the class.
+   * Log instance for all instances of the class.
    */
   private static Log log = LogFactory.getLog(EjbCartridge.class);
-
-  /**
-   * Velocity template to generate the source code artifacts.
-   */
-  private Template idlDogCorbaTemplate;
-
-  /**
-   * Velocity template to generate the source code artifacts.
-   */
-  private Template dogCorbaTemplate;
-
-  /**
-   * Velocity template to generate the source code artifacts.
-   */
-  private Template dogCorbaWrapperTemplate;
-
-  /**
-   * Velocity template to generate the source code artifacts.
-   */
-  private Template ejbIfTemplate;
-
-  /**
-   * Velocity template to generate the source code artifacts.
-   */
-  private Template ejbTemplate;
-
-  /**
-   * Velocity template to generate the source code artifacts.
-   */
-  private Template ejbHomeTemplate;
-
-  /**
-   * Velocity template to generate the source code artifacts.
-   */
-  private Template dogWrapperTemplate;
-
-  /**
-   * Velocity template to generate the source code artifacts.
-   */
-  private Template ejbDogXmlTemplate;
-
-  /**
-   * Velocity template to generate the source code artifacts.
-   */
-  private Template ejbJbossXmlTemplate;
-
-  /**
-   * Velocity template to generate the source code artifacts.
-   */
-  private Template ejbJbossJdbcXmlTemplate;
 
   /**
    * Default constructor of the class.
    */
   public EjbCartridge() {
     super("Entity Java Bean Cartridge", PREFIX, new VersionId(0, 3, 0));
-    try {
-      idlDogCorbaTemplate = Velocity.getTemplate("ejb-bogServerCorbaIdl.vm");
-      dogCorbaTemplate = Velocity.getTemplate("ejb-bogServerCorba.vm");
-      dogCorbaWrapperTemplate = Velocity
-          .getTemplate("ejb-bogServerCorbaWrapper.vm");
-      ejbIfTemplate = Velocity.getTemplate("ejb-bogServerSessionIf.vm");
-      ejbTemplate = Velocity.getTemplate("ejb-bogServerSession.vm");
-      ejbHomeTemplate = Velocity.getTemplate("ejb-bogServerHome.vm");
-      dogWrapperTemplate = Velocity.getTemplate("ejb-bogServerWrapper.vm");
-      ejbDogXmlTemplate = Velocity.getTemplate("ejb-bogServerDescriptor.vm");
-      ejbJbossXmlTemplate = Velocity
-          .getTemplate("ejb-bogServerJbossDescriptor.vm");
-      ejbJbossJdbcXmlTemplate = Velocity
-          .getTemplate("ejb-bogServerJbossJdbcDescriptor.vm");
-    } catch (ParseErrorException e) {
-      log.fatal(e);
-    } catch (ResourceNotFoundException e) {
-      log.fatal(e);
-    } catch (Exception e) {
-      log.fatal(e);
-    }
   }
 
   public void initialize(Properties properties) {
@@ -254,15 +179,17 @@ public class EjbCartridge extends CartridgeImpl {
         processTemplate(IdlRoot, metaPackage
             .valueOfTag(CtoCartridge.CTO_PACKAGE_IDL_TAG), metaPackage
             .valueOfTag(SERVER_NAME_TAG)
-            + IDL_EXTENSION, idlDogCorbaTemplate, context);
+            + IDL_EXTENSION, retrieveTemplate("server-corba-idl", null),
+            context);
         processJavaTemplate(serverRoot, metaPackage
             .getAttribute(SERVER_PACKAGE), metaPackage
             .valueOfTag(SERVER_NAME_TAG)
-            + "Corba", dogCorbaTemplate, context);
+            + "Corba", retrieveTemplate("server-corba", null), context);
         processJavaTemplate(clientRoot, metaPackage
             .getAttribute(CLIENT_PACKAGE), metaPackage
             .valueOfTag(SERVER_NAME_TAG)
-            + "CorbaWrapper", dogCorbaWrapperTemplate, context);
+            + "CorbaWrapper", retrieveTemplate("server-corba-wrapper", null),
+            context);
       }
       if (getContext().getProperty(GENERATE_BEAN_KEY).equals("true")) {
         File serverRoot = getRoot(ROOT_SERVER_J2EE_KEY,
@@ -274,28 +201,28 @@ public class EjbCartridge extends CartridgeImpl {
         processJavaTemplate(commonRoot, metaPackage
             .getAttribute(SERVER_PACKAGE), metaPackage
             .valueOfTag(SERVER_NAME_TAG)
-            + "Session", ejbIfTemplate, context);
+            + "Session", retrieveTemplate("server-session-if", null), context);
         processJavaTemplate(serverRoot, metaPackage
             .getAttribute(SERVER_PACKAGE), metaPackage
             .valueOfTag(SERVER_NAME_TAG)
-            + "SessionBean", ejbTemplate, context);
+            + "SessionBean", retrieveTemplate("server-session", null), context);
         processJavaTemplate(commonRoot, metaPackage
             .getAttribute(SERVER_PACKAGE), metaPackage
             .valueOfTag(SERVER_NAME_TAG)
-            + "Home", ejbHomeTemplate, context);
+            + "Home", retrieveTemplate("server-home", null), context);
         processJavaTemplate(clientRoot, metaPackage
             .getAttribute(CLIENT_PACKAGE), metaPackage
             .valueOfTag(SERVER_NAME_TAG)
-            + "Wrapper", dogWrapperTemplate, context);
+            + "Wrapper", retrieveTemplate("server-wrapper", null), context);
         processTemplate(serverRoot, metaPackage.getAttribute(SERVER_PACKAGE),
             metaPackage.valueOfTag(SERVER_NAME_TAG) + "-ejb-jar.xml",
-            ejbDogXmlTemplate, context);
+            retrieveTemplate("server-descriptor", null), context);
         processTemplate(serverRoot, metaPackage.getAttribute(SERVER_PACKAGE),
             metaPackage.valueOfTag(SERVER_NAME_TAG) + "-jboss.xml",
-            ejbJbossXmlTemplate, context);
+            retrieveTemplate("server-jboss-descriptor", null), context);
         processTemplate(serverRoot, metaPackage.getAttribute(SERVER_PACKAGE),
             metaPackage.valueOfTag(SERVER_NAME_TAG) + "-jbosscmp-jdbc.xml",
-            ejbJbossJdbcXmlTemplate, context);
+            retrieveTemplate("server-jboss-jdbc-descriptor", null), context);
       }
     } catch (IOException e) {
       log.error("ejb write template generation failed", e);

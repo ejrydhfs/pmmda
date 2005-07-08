@@ -5,10 +5,7 @@
  */
 package ch.bbv.mda.generators;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -18,6 +15,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.Velocity;
 import org.apache.velocity.exception.MethodInvocationException;
 import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
@@ -130,6 +128,9 @@ public abstract class CartridgeImpl implements Cartridge {
    */
   private String abbreviation;
 
+  /**
+   * Operators for the model.
+   */
   private ModelOperators modelOperators;
 
   /**
@@ -245,13 +246,13 @@ public abstract class CartridgeImpl implements Cartridge {
   protected void processJavaTemplate(File root, String packageName,
       String classname, Template template, VelocityContext context)
       throws IOException {
-    PrintWriter writer = createJavaWriter(root, packageName, classname);
-    writer.print(processTemplate(template, context));
-    writer.close();
+    processTemplate(root, packageName, classname + JAVA_EXTENSION, template,
+        context);
   }
 
   /**
-   * Process a velocity template for an artifact.
+   * Processes a velocity template for an artifact. The new artifact is only
+   * created if it is different from the old one to minimize spurious updates.
    * @param root root directory where the artifact should be stored.
    * @param packageName qualified package name of the artifact.
    * @param filename name of the file containing the artifact.
@@ -262,10 +263,17 @@ public abstract class CartridgeImpl implements Cartridge {
   protected void processTemplate(File root, String packageName,
       String filename, Template template, VelocityContext context)
       throws IOException {
-    PrintWriter writer = FileOperators
-        .createWriter(root, packageName, filename);
+    File tempFile = File.createTempFile("pmMDA", null, root);
+    tempFile.deleteOnExit();
+    PrintWriter writer = new PrintWriter(new BufferedOutputStream(
+        new FileOutputStream(tempFile)));
     writer.print(processTemplate(template, context));
     writer.close();
+    File file = FileOperators.createFile(root, packageName, filename);
+    if (!FileOperators.equals(tempFile, file)) {
+      FileOperators.copyFile(tempFile, file);
+    }
+    tempFile.delete();
   }
 
   /**
@@ -282,6 +290,26 @@ public abstract class CartridgeImpl implements Cartridge {
         + JAVA_EXTENSION);
   }
 
+  protected Template retrieveTemplate(String name, String language) {
+    Template template = null;
+    StringBuilder buffer = new StringBuilder();
+    buffer.append(getPrefix()).append("/").append(name.toLowerCase());
+    if (language != null) {
+      buffer.append("-").append(language);
+    }
+    buffer.append(".vm");
+    try {
+      template = Velocity.getTemplate(buffer.toString());
+    } catch (ParseErrorException e) {
+      log.error(e);
+    } catch (ResourceNotFoundException e) {
+      log.error("Couldn not find template " + buffer.toString(), e);
+    } catch (Exception e) {
+      log.error(e);
+    }
+    return template;
+  }
+
   /**
    * Processes the given velocity template with the given context.
    * @param template template to process.
@@ -291,7 +319,6 @@ public abstract class CartridgeImpl implements Cartridge {
    */
   protected String processTemplate(Template template, VelocityContext context) {
     assert ((template != null) && (context != null));
-
     StringWriter writer = new StringWriter();
     try {
       template.merge(context, writer);

@@ -13,6 +13,8 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import ch.bbv.application.Component.States;
+
 /**
  * The application class implements the start-up mechanism of a software
  * application. Sophisticated mechanisms for various start-up, shutdown and
@@ -40,48 +42,6 @@ import org.apache.commons.logging.LogFactory;
  */
 public class Locator {
   /**
-   * The stopped state of the application. See the application startup pattern
-   * for a complete description.
-   */
-  public static final int STOPPED = Component.STOPPED;
-
-  /**
-   * The initializing state of the application. See the application startup
-   * pattern for a complete description.
-   */
-  public static final int INITIALIZING = Component.INITIALIZING;
-
-  /**
-   * The initialized state of the application. See the application startup
-   * pattern for a complete description.
-   */
-  public static final int INITIALIZED = Component.INITIALIZED;
-
-  /**
-   * The starting up state of the application. See the application startup
-   * pattern for a complete description.
-   */
-  public static final int STARTING_UP = Component.STARTING_UP;
-
-  /**
-   * The running state of the application. See the application startup pattern
-   * for a complete description.
-   */
-  public static final int RUNNING = Component.RUNNING;
-
-  /**
-   * The shutting down immediate state of the application. See the application
-   * startup pattern for a complete description.
-   */
-  public static final int SHUTTING_DOWN_IMMEDIATELY = Component.SHUTTING_DOWN_IMMEDIATELY;
-
-  /**
-   * The shutting down normal state of the application. See the startup pattern
-   * for a complete description.
-   */
-  public static final int SHUTTING_DOWN_NORMALLY = Component.SHUTTING_DOWN_NORMALLY;
-
-  /**
    * The application singleton object.
    */
   private static volatile Locator theLocator;
@@ -107,20 +67,20 @@ public class Locator {
   /**
    * State of the application.
    */
-  private int state;
+  private Component.States state;
 
   /**
    * The debug mode status of the application. This mode is used to simplify
    * debugging policies in the application during development.
    */
-  private boolean isDebugOn;
+  private boolean debugMode;
 
   /**
    * The simulation mode status of the application. This mode is used to
    * simplify development policies when no all subsystems are available during
    * development or testing.
    */
-  private boolean isSimulationOn;
+  private boolean simulationMode;
 
   /**
    * Default constructor of the class.
@@ -128,8 +88,9 @@ public class Locator {
   public Locator() {
     components = new HashMap<String, Component>();
     subsystems = new HashMap<String, Object>();
-    isDebugOn = false;
-    isSimulationOn = false;
+    state = States.STOPPED;
+    debugMode = false;
+    simulationMode = false;
   }
 
   /**
@@ -211,7 +172,7 @@ public class Locator {
    * @return True if stopped otherwise false.
    */
   public boolean isStopped() {
-    return state == STOPPED;
+    return state == States.STOPPED;
   }
 
   /**
@@ -219,7 +180,7 @@ public class Locator {
    * @return True if initialized otherwise false.
    */
   public boolean isInitialized() {
-    return state == INITIALIZED;
+    return state == States.INITIALIZED;
   }
 
   /**
@@ -227,7 +188,7 @@ public class Locator {
    * @return True if running otherwise false.
    */
   public boolean isRunning() {
-    return state == RUNNING;
+    return state == States.RUNNING;
   }
 
   /**
@@ -240,11 +201,11 @@ public class Locator {
    */
   protected void initialize() throws ComponentException {
     assert isStopped();
-    state = INITIALIZING;
+    state = States.INITIALIZING;
     for (Component component : components.values()) {
       component.initialize();
     }
-    state = INITIALIZED;
+    state = States.INITIALIZED;
     assert isInitialized();
   }
 
@@ -256,12 +217,12 @@ public class Locator {
    */
   protected void startup() throws ComponentException {
     assert isInitialized();
-    state = STARTING_UP;
+    state = States.STARTING_UP;
     for (Component component : components.values()) {
       component.startup();
     }
 
-    state = RUNNING;
+    state = States.RUNNING;
     assert isRunning();
   }
 
@@ -274,12 +235,12 @@ public class Locator {
    */
   protected void shutdownImmediate() throws ComponentException {
     assert isRunning();
-    state = SHUTTING_DOWN_IMMEDIATELY;
+    state = States.SHUTTING_DOWN_IMMEDIATELY;
     for (Component component : components.values()) {
       component.shutdownImmediate();
     }
 
-    state = STOPPED;
+    state = States.STOPPED;
     assert isStopped();
   }
 
@@ -292,12 +253,12 @@ public class Locator {
    */
   protected void shutdownNormal() throws ComponentException {
     assert isRunning();
-    state = SHUTTING_DOWN_NORMALLY;
+    state = States.SHUTTING_DOWN_NORMALLY;
     for (Component component : components.values()) {
       component.shutdownNormal();
     }
 
-    state = STOPPED;
+    state = States.STOPPED;
     assert isStopped();
   }
 
@@ -355,7 +316,7 @@ public class Locator {
   /**
    * Unregisters the subsystem.
    * @param name name of the subsystem to unregister.
-   * @pre subsystem != null
+   * @pre name != null
    */
   public void unregister(String name) {
     assert name != null;
@@ -366,6 +327,7 @@ public class Locator {
    * Returns true if the component is already registered otherwise false.
    * @param component component which registration should be checked.
    * @return True if registered otherwise false.
+   * @pre component != null
    */
   public boolean isRegistered(Component component) {
     assert component != null;
@@ -404,7 +366,7 @@ public class Locator {
    */
   protected void setDebugMode(boolean isDebugOn) {
     assert isStopped();
-    this.isDebugOn = isDebugOn;
+    this.debugMode = isDebugOn;
     assert getDebugMode() == isDebugOn;
   }
 
@@ -414,7 +376,7 @@ public class Locator {
    * @see #setDebugMode
    */
   protected boolean getDebugMode() {
-    return isDebugOn;
+    return debugMode;
   }
 
   /**
@@ -427,7 +389,7 @@ public class Locator {
    */
   protected void setSimulationMode(boolean isSimulationOn) {
     assert isStopped();
-    this.isSimulationOn = isSimulationOn;
+    this.simulationMode = isSimulationOn;
     assert getSimulationMode() == isSimulationOn;
   }
 
@@ -437,6 +399,6 @@ public class Locator {
    * @see #setSimulationMode
    */
   protected boolean getSimulationMode() {
-    return isSimulationOn;
+    return simulationMode;
   }
 }

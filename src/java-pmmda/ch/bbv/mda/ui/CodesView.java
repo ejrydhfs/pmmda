@@ -5,6 +5,7 @@
  */
 package ch.bbv.mda.ui;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
@@ -13,9 +14,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Date;
 
-import javax.swing.AbstractAction;
-import javax.swing.JPopupMenu;
-import javax.swing.ListSelectionModel;
+import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -32,6 +31,9 @@ import ch.bbv.mda.generators.BoCartridge;
 import ch.bbv.mda.pim.CodeType;
 import ch.bbv.mda.pim.CodeTypeMgr;
 import ch.bbv.mda.pim.CodeValue;
+
+import com.jgoodies.forms.builder.DefaultFormBuilder;
+import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * The reference code values view displays all code values of a reference code
@@ -53,16 +55,38 @@ import ch.bbv.mda.pim.CodeValue;
  * @author MarcelBaumann
  * @version $Revision$
  */
-public class CodesView extends TablePanel implements NodeView {
+public class CodesView extends JPanel implements NodeView {
   /**
    * Serial version identifier coded as back compatibility date.
    */
   private static final long serialVersionUID = 20041201;
 
   /**
+   * The size of a text field in the view.
+   */
+  private final static int TEXT_FIELD_SIZE = 20;
+
+  /**
    * Cells of the columns of the code view tuples.
    */
   private static final TableCell.Cell[] CELLS;
+
+  /**
+   * Swing component to display the associated property.
+   */
+  private JTextField nameText;
+
+  /**
+   * Swing component to display the associated property.
+   */
+  private JCheckBox hierarchical;
+
+  /**
+   * Swing component to display the associated property.
+   */
+  private JCheckBox inMemory;
+
+  private TablePanel tablePanel;
 
   /**
    * Actions available through the popup menu of the view.
@@ -234,6 +258,11 @@ public class CodesView extends TablePanel implements NodeView {
   private CodesListener codesListener;
 
   /**
+   * Name of the view.
+   */
+  private String name;
+
+  /**
    * Creates an instance of the class.
    * @param type user interface type of the nodes to display.
    * @param object parameters list for the constructor.
@@ -249,12 +278,27 @@ public class CodesView extends TablePanel implements NodeView {
    * components.
    */
   public CodesView() {
-    super(Collections.EMPTY_LIST, new TableCell(CELLS));
+    super(new BorderLayout());
+    nameText = new JTextField(TEXT_FIELD_SIZE);
+    nameText.setEditable(false);
+    hierarchical = new JCheckBox();
+    inMemory = new JCheckBox();
+    tablePanel = new TablePanel(Collections.EMPTY_LIST, new TableCell(CELLS));
     initialize();
-    getScrollPane().addMouseListener(new PopupListener(menu));
-    getTable().setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+    tablePanel.getScrollPane().addMouseListener(new PopupListener(menu));
+    tablePanel.getTable().setSelectionMode(
+        ListSelectionModel.SINGLE_INTERVAL_SELECTION);
     codesListener = new CodesListener();
-    getTable().getSelectionModel().addListSelectionListener(codesListener);
+    tablePanel.getTable().getSelectionModel().addListSelectionListener(
+        codesListener);
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
   }
 
   /**
@@ -263,7 +307,7 @@ public class CodesView extends TablePanel implements NodeView {
   public void add() {
     CodeValue value = new CodeValue();
     type.addValue(value);
-    getList().add(value);
+    tablePanel.getList().add(value);
   }
 
   /**
@@ -274,7 +318,7 @@ public class CodesView extends TablePanel implements NodeView {
     if (selectedRow != -1) {
       CodeValue value = type.getValue(selectedRow);
       type.removeValue(value);
-      getList().remove(value);
+      tablePanel.getList().remove(value);
     }
   }
 
@@ -298,7 +342,11 @@ public class CodesView extends TablePanel implements NodeView {
     CodeTypeMgr mgr = getCodeTypeMgr();
     try {
       type = mgr.retrieve(clazz);
-      setModel(type.getValues());
+      type.setQualifiedName(clazz.qualifiedName());
+      nameText.setText(type.getQualifiedName());
+      hierarchical.setSelected(type.isHierarchical());
+      // inMemory.setSelected(type.isInMemory());
+      tablePanel.setModel(type.getValues());
     } catch (IOException e) {
       log.error(e);
     }
@@ -312,7 +360,7 @@ public class CodesView extends TablePanel implements NodeView {
     CodeTypeMgr mgr = getCodeTypeMgr();
     mgr.removeType(clazz);
     load();
-    setModel(type.getValues());
+    tablePanel.setModel(type.getValues());
   }
 
   public void nodeChanged(ExplorerNode node) {
@@ -344,7 +392,8 @@ public class CodesView extends TablePanel implements NodeView {
    * @return the code type manager of the MDA model.
    */
   private CodeTypeMgr getCodeTypeMgr() {
-    return ((MdaExplorer) node.getExplorer()).getDocument().getCodeTypeMgr();
+    return ((MdaExplorer) node.getExplorer()).getDocument().getModel()
+        .getCodeTypeMgr();
   }
 
   /**
@@ -368,5 +417,17 @@ public class CodesView extends TablePanel implements NodeView {
     menu.addSeparator();
     menu.add(new CodesViewAction(Actions.RELOAD, this));
     menu.add(new CodesViewAction(Actions.STORE, this));
+    FormLayout layout = new FormLayout(
+        "right:pref, 3dlu, pref, 7dlu, right:pref, 3dlu, pref", "");
+    DefaultFormBuilder builder = new DefaultFormBuilder(layout);
+    builder.setDefaultDialogBorder();
+    builder.append("&Name", nameText);
+    builder.nextLine();
+    builder.append("&Hierarchical", hierarchical);
+    builder.append("&In Memory", inMemory);
+    builder.appendSeparator("Code Values");
+    builder.append(tablePanel, 7);
+    JPanel panel = builder.getPanel();
+    add(panel, BorderLayout.CENTER);
   }
 }

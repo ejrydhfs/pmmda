@@ -7,7 +7,6 @@ package ch.bbv.mda.generators;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.text.MessageFormat;
 import java.util.*;
 
@@ -15,9 +14,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.Velocity;
-import org.apache.velocity.exception.ParseErrorException;
-import org.apache.velocity.exception.ResourceNotFoundException;
 
 import ch.bbv.application.VersionId;
 import ch.bbv.dog.validation.Validator;
@@ -164,6 +160,11 @@ public class BoCartridge extends CartridgeImpl implements Cartridge {
    * Stereotype name for the reference code stereotype.
    */
   public static final String REFERENCE_CODE_STEREOTYPE = "referenceCode";
+
+  /**
+   * Key for a property of the cartridge used to retrieve user values.
+   */
+  public static final String CYCLIC_WRAPPER_KEY = "bo-cartridge.generate-cyclic-visitor";
 
   /**
    * Key for a property of the cartridge used to retrieve user values.
@@ -391,66 +392,6 @@ public class BoCartridge extends CartridgeImpl implements Cartridge {
   private static List<StereotypeType> stereotypes;
 
   /**
-   * Velocity template to generate data objects.
-   */
-  private Template javaClassTemplate;
-
-  /**
-   * Velocity template to generate data objects.
-   */
-  private Template javaBoTemplate;
-
-  /**
-   * Velocity template to generate lightweight data objects.
-   */
-  private Template javaLwTemplate;
-
-  /**
-   * Velocity template to generate reference service manager for the package.
-   */
-  private Template referenceServiceTemplate;
-
-  /**
-   * Velocity template to generate visitor interface pattern for the package.
-   */
-  private Template visitorIfBoTemplate;
-
-  /**
-   * Velocity template to generate abstract class of the visitor interface with
-   * a functor call.
-   */
-  private Template visitorFunctorBoTemplate;
-
-  /**
-   * Velocity template to generate visitor interface pattern for the package.
-   */
-  private Template visitorIfLwTemplate;
-
-  /**
-   * Velocity template to generate abstract class of the visitor interface with
-   * a functor call.
-   */
-  private Template visitorFunctorLwTemplate;
-
-  /**
-   * Velocity template to generate the transformer between data object graph and
-   * the corresponding lightweight graph.
-   */
-  private Template transformerLwTemplate;
-
-  /**
-   * Velocity template to generate the type factory for all data object types of
-   * the package.
-   */
-  private Template typeFactoryTemplate;
-
-  /**
-   * Velocity template to generate the type factory for all data object types of
-   * the package.
-   */
-  private Template referenceCodeTemplate;
-
-  /**
    * The actual package being processed in the cartridge.
    */
   private MetaPackage metaPackage;
@@ -468,7 +409,7 @@ public class BoCartridge extends CartridgeImpl implements Cartridge {
   /**
    * Root directory of the generated source files.
    */
-  private File rootDirectory;
+  private File root;
 
   /**
    * Constructor of the class. All data object related code generator templates
@@ -490,6 +431,7 @@ public class BoCartridge extends CartridgeImpl implements Cartridge {
     addUndefinedProperty(properties, LANGUAGE_KEY, "java-1.4");
     addUndefinedProperty(properties, UID_KEY, "99990101");
     addUndefinedProperty(properties, BO_GENERATE_INTERFACE_KEY, "false");
+    addUndefinedProperty(properties, CYCLIC_WRAPPER_KEY, "false");
     addUndefinedProperty(properties, IF_PACKAGE_POSTFIX_KEY, "");
     addUndefinedProperty(properties, BO_PACKAGE_POSTFIX_KEY, "");
     addUndefinedProperty(properties, LW_PACKAGE_POSTFIX_KEY, "");
@@ -501,33 +443,6 @@ public class BoCartridge extends CartridgeImpl implements Cartridge {
     addUndefinedProperty(properties, LW_CLASS_POSTFIX_KEY, "");
     addUndefinedProperty(properties, FIELD_PREFIX_KEY, "");
     addUndefinedProperty(properties, FIELD_POSTFIX_KEY, "");
-    try {
-      String postfix = "-" + getContext().getProperty(LANGUAGE_KEY) + ".vm";
-      javaLwTemplate = Velocity.getTemplate("bog-Lw" + postfix);
-      javaBoTemplate = Velocity.getTemplate("bog-Bo" + postfix);
-      javaClassTemplate = Velocity.getTemplate("bog-Class" + postfix);
-      referenceServiceTemplate = Velocity.getTemplate("bog-CodeService"
-          + postfix);
-      visitorIfBoTemplate = Velocity.getTemplate("bog-visitorIfBo" + postfix);
-      visitorFunctorBoTemplate = Velocity.getTemplate("bog-visitorFunctorBo"
-          + postfix);
-      visitorIfLwTemplate = Velocity.getTemplate("bog-visitorIfLw" + postfix);
-      visitorFunctorLwTemplate = Velocity.getTemplate("bog-visitorFunctorLw"
-          + postfix);
-      transformerLwTemplate = Velocity.getTemplate("bog-transformerLw"
-          + postfix);
-      typeFactoryTemplate = Velocity.getTemplate("bog-typeFactory" + postfix);
-      referenceCodeTemplate = Velocity.getTemplate("bog-Code" + postfix);
-    } catch (ParseErrorException pee) {
-      log.error(pee);
-      pee.printStackTrace();
-    } catch (ResourceNotFoundException rnfe) {
-      log.error(rnfe);
-      rnfe.printStackTrace();
-    } catch (Exception exception) {
-      log.error(exception);
-      exception.printStackTrace();
-    }
   }
 
   public List<TagDefinition> getTaggedValueTypes(Class clazz) {
@@ -688,18 +603,18 @@ public class BoCartridge extends CartridgeImpl implements Cartridge {
   }
 
   public void processPackage(MetaPackage metaPackage) {
-    String root = metaPackage.valueOfTag(ROOT_TAG);
-    if (root != null) {
-      root = getContext().getProperty(root);
-      if (root == null) {
+    String rootDirectory = metaPackage.valueOfTag(ROOT_TAG);
+    if (rootDirectory != null) {
+      rootDirectory = getContext().getProperty(rootDirectory);
+      if (rootDirectory == null) {
         log.error(metaPackage.valueOfTag(ROOT_TAG)
             + " logical root directory undefined");
       }
     }
-    if (root == null) {
-      root = getContext().getProperty(ROOT_COMMON_FOLDER_KEY);
+    if (rootDirectory == null) {
+      rootDirectory = getContext().getProperty(ROOT_COMMON_FOLDER_KEY);
     }
-    rootDirectory = new File(root);
+    root = new File(rootDirectory);
     this.metaPackage = metaPackage;
     hasDataObjects = false;
     hasCodes = false;
@@ -728,21 +643,21 @@ public class BoCartridge extends CartridgeImpl implements Cartridge {
           .getAttribute(BO_PACKAGE), clazz.getAttribute(BO_CLASS));
       context.put(CODE_BLOCKS, blocks);
       if (DATA_OBJECT_STEREOTYPE.equalsIgnoreCase(stereotype)) {
-        generateJavaFile(metaPackage.getAttribute(BO_PACKAGE), clazz
-            .getAttribute(BO_CLASS), javaBoTemplate, context);
+        processJavaTemplate(root, metaPackage.getAttribute(BO_PACKAGE), clazz
+            .getAttribute(BO_CLASS), retrieveTemplate("bo"), context);
         if (hasLightweight(clazz)) {
           blocks = extractUserCode(metaPackage.getAttribute(LW_PACKAGE), clazz
               .getAttribute(LW_CLASS));
           context.put(CODE_BLOCKS, blocks);
-          generateJavaFile(metaPackage.getAttribute(LW_PACKAGE), clazz
-              .getAttribute(LW_CLASS), javaLwTemplate, context);
+          processJavaTemplate(root, metaPackage.getAttribute(LW_PACKAGE), clazz
+              .getAttribute(LW_CLASS), retrieveTemplate("lw"), context);
         }
       } else if (REFERENCE_CODE_STEREOTYPE.equalsIgnoreCase(stereotype)) {
-        generateJavaFile(metaPackage.getAttribute(BO_PACKAGE), clazz
-            .getAttribute(BO_CLASS), referenceCodeTemplate, context);
+        processJavaTemplate(root, metaPackage.getAttribute(BO_PACKAGE), clazz
+            .getAttribute(BO_CLASS), retrieveTemplate("code"), context);
       } else if (clazz.booleanValueOfTag(BO_GENERATE)) {
-        generateJavaFile(metaPackage.getAttribute(BO_PACKAGE), clazz
-            .getAttribute(BO_CLASS), javaClassTemplate, context);
+        processJavaTemplate(root, metaPackage.getAttribute(BO_PACKAGE), clazz
+            .getAttribute(BO_CLASS), retrieveTemplate("class"), context);
       }
     } catch (IOException e) {
       log.error(e);
@@ -752,27 +667,35 @@ public class BoCartridge extends CartridgeImpl implements Cartridge {
   public void postProcessPackage(MetaPackage metaPackage) {
     if (metaPackage.booleanValueOfTag(GENERATE_TAG)) {
       VelocityContext context = createContext(metaPackage);
+      boolean cyclicVisitor = Boolean.parseBoolean(getContext().getProperty(
+          CYCLIC_WRAPPER_KEY));
       try {
-        if (hasCodes) {
-          generateJavaFile(metaPackage.getAttribute(BO_PACKAGE),
-              "ReferenceService" + metaPackage.nameFirstUpper(),
-              referenceServiceTemplate, context);
-        }
         if (hasDataObjects) {
-          generateJavaFile(metaPackage.getAttribute(IF_PACKAGE), "Visitor",
-              visitorIfBoTemplate, context);
-          generateJavaFile(metaPackage.getAttribute(IF_PACKAGE),
-              "VisitorFunctor", visitorFunctorBoTemplate, context);
-          generateJavaFile(metaPackage.getAttribute(BO_PACKAGE), "TypeFactory",
-              typeFactoryTemplate, context);
+          String packages = metaPackage.getAttribute(IF_PACKAGE);
+          processJavaTemplate(root, packages, "Visitor",
+              retrieveTemplate("visitor-if-bo"), context);
+          processJavaTemplate(root, packages, "VisitorFunctor",
+              retrieveTemplate("visitor-functor-bo"), context);
+          if (cyclicVisitor) {
+            processJavaTemplate(root, packages, "CyclicVisitor",
+                retrieveTemplate("visitor-cyclic-bo"), context);
+          }
+          processJavaTemplate(root, metaPackage.getAttribute(BO_PACKAGE),
+              "TypeFactory", retrieveTemplate("type-factory"), context);
         }
         if (metaPackage.booleanValueOfAttribute(BO_LIGHTWEIGHT)) {
-          generateJavaFile(metaPackage.getAttribute(LW_PACKAGE), "LwVisitor",
-              visitorIfLwTemplate, context);
-          generateJavaFile(metaPackage.getAttribute(LW_PACKAGE),
-              "LwVisitorFunctor", visitorFunctorLwTemplate, context);
-          generateJavaFile(metaPackage.getAttribute(LW_PACKAGE),
-              "LwTransformer", transformerLwTemplate, context);
+          String packages = metaPackage.getAttribute(LW_PACKAGE);
+          processJavaTemplate(root, packages, "LwVisitor",
+              retrieveTemplate("visitor-if-lw"), context);
+          processJavaTemplate(root, packages, "LwVisitorFunctor",
+              retrieveTemplate("visitor-functor-lw"), context);
+          processJavaTemplate(root, packages, "LwTransformer",
+              retrieveTemplate("transformer-lw"), context);
+          if (cyclicVisitor) {
+            processJavaTemplate(root, packages, "LwCyclicVisitor",
+                retrieveTemplate("visitor-cyclic-lw"), context);
+
+          }
         }
       } catch (IOException e) {
         log.error(e);
@@ -1002,8 +925,8 @@ public class BoCartridge extends CartridgeImpl implements Cartridge {
   private Map<String, List<String>> extractUserCode(String packageName,
       String classname) throws IOException {
     Map<String, List<String>> blocks = new HashMap<String, List<String>>();
-    File source = FileOperators.createFile(rootDirectory, packageName,
-        classname + JAVA_EXTENSION);
+    File source = FileOperators.createFile(root, packageName, classname
+        + JAVA_EXTENSION);
     blocks.put(IMPORT_BLOCK, FileOperators.extractSourceCode(source,
         USER_IMPORT_BEGIN, USER_IMPORT_END));
     blocks.put(DECLARATION_BLOCK, FileOperators.extractSourceCode(source,
@@ -1018,17 +941,11 @@ public class BoCartridge extends CartridgeImpl implements Cartridge {
   }
 
   /**
-   * Generate a Java class in the associated source file.
-   * @param packageName package name of the class to generate.
-   * @param className class name of the class to generate.
-   * @param template velocity template for the generation.
-   * @param context velocity context for the generation.
-   * @throws IOException an file IO exception occured when writing the class.
+   * Retrieves the velocity template with the given name.
+   * @param name name of the template to retrieve.
+   * @return the template if found otherwise null.
    */
-  private void generateJavaFile(String packageName, String className,
-      Template template, VelocityContext context) throws IOException {
-    PrintWriter writer = createJavaWriter(rootDirectory, packageName, className);
-    writer.print(processTemplate(template, context));
-    writer.close();
+  private Template retrieveTemplate(String name) {
+    return super.retrieveTemplate(name, getContext().getProperty(LANGUAGE_KEY));
   }
 }

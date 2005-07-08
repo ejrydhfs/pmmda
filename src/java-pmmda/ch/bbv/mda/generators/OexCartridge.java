@@ -7,16 +7,12 @@ package ch.bbv.mda.generators;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.*;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.Velocity;
-import org.apache.velocity.exception.ParseErrorException;
-import org.apache.velocity.exception.ResourceNotFoundException;
 
 import ch.bbv.application.VersionId;
 import ch.bbv.mda.*;
@@ -64,16 +60,10 @@ public class OexCartridge extends CartridgeImpl {
   private static Log log = LogFactory.getLog(OexCartridge.class);
 
   /**
-   * velocity template to generate user interface types for the rich client.
-   */
-  private Template javaRichClientTypeTemplate;
-
-  /**
    * Default constructor of the class.
    */
   public OexCartridge() {
     super("Object Explorer Cartridge", PREFIX, new VersionId(0, 3, 0));
-
     CartridgeFactory factory = CartridgeFactory.getInstance();
     addCartridge(factory.getCartridge(BoCartridge.PREFIX));
   }
@@ -81,18 +71,6 @@ public class OexCartridge extends CartridgeImpl {
   public void initialize(Properties properties) {
     super.initialize(properties);
     addUndefinedProperty(properties, RICH_CLIENT_PACKAGE_POSTFIX_KEY, "");
-    try {
-      String postfix = "-" + getContext().getProperty(BoCartridge.LANGUAGE_KEY)
-          + ".vm";
-      javaRichClientTypeTemplate = Velocity.getTemplate("oex-typeFactory"
-          + postfix);
-    } catch (ParseErrorException e) {
-      log.error(e);
-    } catch (ResourceNotFoundException e) {
-      log.error(e);
-    } catch (Exception e) {
-      log.error(e);
-    }
   }
 
   /**
@@ -174,13 +152,22 @@ public class OexCartridge extends CartridgeImpl {
           .info("OEX Catridge processing package "
               + metaPackage.qualifiedName());
       try {
-        PrintWriter writer = createJavaWriter(sourceRoot, metaPackage
-            .getAttribute(OEX_RICH_CLIENT_PACKAGE), "TypeFactory");
-        writer.print(processTemplate(javaRichClientTypeTemplate, context));
-        writer.close();
+        processJavaTemplate(sourceRoot, metaPackage
+            .getAttribute(OEX_RICH_CLIENT_PACKAGE), "TypeFactory",
+            retrieveTemplate("type-factory"), context);
       } catch (IOException e) {
         log.error(e);
       }
     }
+  }
+
+  /**
+   * Retrieves the velocity template with the given name.
+   * @param name name of the template to retrieve.
+   * @return the template if found otherwise null.
+   */
+  private Template retrieveTemplate(String name) {
+    return super.retrieveTemplate(name, getContext().getProperty(
+        BoCartridge.LANGUAGE_KEY));
   }
 }

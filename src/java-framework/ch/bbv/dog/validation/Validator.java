@@ -142,7 +142,9 @@ public class Validator extends ComponentImpl {
    */
   public void registerRule(ValidationRule rule, Class clazz, String property) {
     List<ValidationRule> availableRules = findOrCreate(clazz, property);
-    availableRules.add(rule);
+    if (!availableRules.contains(rule)) {
+      availableRules.add(rule);
+    }
   }
 
   /**

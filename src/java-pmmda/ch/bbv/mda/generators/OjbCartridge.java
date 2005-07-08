@@ -10,16 +10,11 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.MissingResourceException;
 import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.Velocity;
-import org.apache.velocity.exception.ParseErrorException;
-import org.apache.velocity.exception.ResourceNotFoundException;
 
 import ch.bbv.application.VersionId;
 import ch.bbv.dog.validation.Validator;
@@ -187,29 +182,9 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
   public static final String DB_TORQUE = "TORQUE";
 
   /**
-   * Logger of the cartridge factory class.
+   * Logger of all instance of the class.
    */
   private static Log log = LogFactory.getLog(OjbCartridge.class);
-
-  /**
-   * Velocity template used to generate the associated artifact.
-   */
-  private Template ojbXmlBoRepositoryTemplate;
-
-  /**
-   * Velocity template used to generate the associated artifact.
-   */
-  private Template ojbXmlLwRepositoryTemplate;
-
-  /**
-   * Velocity template used to generate the associated artifact.
-   */
-  private Template ddlDbTemplate;
-
-  /**
-   * Velocity template used to generate the associated artifact.
-   */
-  private Template ddlDbIntegrityTemplate;
 
   /**
    * Velocity template used to generate the associated artifact.
@@ -234,7 +209,7 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
   /**
    * Root directory of the generated source files.
    */
-  private File rootDirectory;
+  private File root;
 
   /**
    * Default constructor of the class.
@@ -257,37 +232,6 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
     addUndefinedProperty(properties, COLUMN_POSTFIX_KEY, "");
     TaggedValuesView.registerReferenceCode(JdbcTypeCode.class, JdbcTypeCode
         .getCodes(), false);
-    try {
-      String target = properties.getProperty(DATABASE_KEY);
-      String key = DDL_START_KEY + target;
-      String template = properties.getProperty(key);
-      if (template == null) {
-        MissingResourceException e = new MissingResourceException(
-            "Definition error in the properies file", getPrefix(), key);
-        log.fatal(e);
-        throw e;
-      }
-      ddlDbTemplate = Velocity.getTemplate(template);
-      key = DDL_INTEGRITY_START_KEY + target;
-      template = properties.getProperty(key);
-      if (template == null) {
-        MissingResourceException e = new MissingResourceException(
-            "Definition error in the properies file", getPrefix(), key);
-        log.fatal(e);
-        throw e;
-      }
-      ddlDbIntegrityTemplate = Velocity.getTemplate(template);
-      ojbXmlBoRepositoryTemplate = Velocity
-          .getTemplate("ojb-xmlBoRepository.vm");
-      ojbXmlLwRepositoryTemplate = Velocity
-          .getTemplate("ojb-xmlLwRepository.vm");
-    } catch (ParseErrorException e) {
-      log.error(e);
-    } catch (ResourceNotFoundException e) {
-      log.error(e);
-    } catch (Exception e) {
-      log.error(e);
-    }
   }
 
   public List<TagDefinition> getTaggedValueTypes(Class clazz) {
@@ -357,17 +301,17 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
   }
 
   public void processModel(MetaModel metaModel) {
-    rootDirectory = new File(getContext().getProperty(SOURCE_ROOT_FOLDER_KEY));
+    root = new File(getContext().getProperty(SOURCE_ROOT_FOLDER_KEY));
     String target = getContext().getProperty(DATABASE_KEY);
     try {
-      ojbBoWriter = FileOperators.createPrintWriter(new File(rootDirectory,
+      ojbBoWriter = FileOperators.createPrintWriter(new File(root,
           "repository_bo_user.xml"));
-      ojbLwWriter = FileOperators.createPrintWriter(new File(rootDirectory,
+      ojbLwWriter = FileOperators.createPrintWriter(new File(root,
           "repository_lw_user.xml"));
-      ddlWriter = FileOperators.createPrintWriter(new File(rootDirectory,
-          "createTables" + target + ".sql"));
-      ddlIntegrityWriter = FileOperators.createPrintWriter(new File(
-          rootDirectory, "createIntegrity" + target + ".sql"));
+      ddlWriter = FileOperators.createPrintWriter(new File(root, "createTables"
+          + target + ".sql"));
+      ddlIntegrityWriter = FileOperators.createPrintWriter(new File(root,
+          "createIntegrity" + target + ".sql"));
     } catch (IOException ioe) {
       ioe.printStackTrace();
     }
@@ -411,10 +355,13 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
     }
 
     VelocityContext context = createPersistencyContext(clazz);
-    ojbBoWriter.print(processTemplate(ojbXmlBoRepositoryTemplate, context));
-    ojbLwWriter.print(processTemplate(ojbXmlLwRepositoryTemplate, context));
-    ddlWriter.print(processTemplate(ddlDbTemplate, context));
-    ddlIntegrityWriter.print(processTemplate(ddlDbIntegrityTemplate, context));
+    ojbBoWriter.print(processTemplate(retrieveTemplate("ojb-xml-bo-repository",
+        null), context));
+    ojbLwWriter.print(processTemplate(retrieveTemplate("ojb-xml-lw-repository",
+        null), context));
+    ddlWriter.print(processTemplate(retrieveTemplate("ddl", null), context));
+    ddlIntegrityWriter.print(processTemplate(retrieveTemplate("ddl-integrity",
+        null), context));
   }
 
   public void postProcessModel(MetaModel metaModel) {

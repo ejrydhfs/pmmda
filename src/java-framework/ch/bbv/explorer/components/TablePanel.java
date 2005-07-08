@@ -139,7 +139,7 @@ public class TablePanel extends JPanel {
    * listeners for example.
    * @return the table displayed in the pane.
    */
-  protected JTable getTable() {
+  public JTable getTable() {
     return table;
   }
 
@@ -148,7 +148,7 @@ public class TablePanel extends JPanel {
    * available to hook listeners for example.
    * @return the scroll table displayed in the pane.
    */
-  protected JScrollPane getScrollPane() {
+  public JScrollPane getScrollPane() {
     return scrollPane;
   }
 
@@ -156,7 +156,7 @@ public class TablePanel extends JPanel {
    * Returns the sorted list of the panel.
    * @return the sorted list of elements.
    */
-  protected SortedList getList() {
+  public SortedList getList() {
     return sortedList;
   }
 

@@ -8,8 +8,6 @@ package ch.bbv.mda.ui;
 import javax.swing.*;
 
 import ch.bbv.dog.ui.ReferenceCodeComboBox;
-import ch.bbv.explorer.ExplorerMenuBar;
-import ch.bbv.explorer.ExplorerNode;
 import ch.bbv.explorer.NodePropertiesView;
 import ch.bbv.mda.MetaClass;
 import ch.bbv.mda.MetaElement;
@@ -160,7 +158,6 @@ public class MetaClassView extends NodePropertiesView {
     model.setInterface(interfaces.isSelected());
     model.setStatic(statics.isSelected());
     tagsView.commitChanges();
-    ExplorerNode node = getModel();
     getModel().nodeChanged();
   }
 

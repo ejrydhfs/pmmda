@@ -45,16 +45,10 @@ public class MdaDocument implements ExplorerDocument {
   private MetaModel model;
 
   /**
-   * The code type manager handling the reference codes of the model.
-   */
-  private CodeTypeMgr codeTypeMgr;
-
-  /**
    * Default constructor of the class.
    */
   public MdaDocument() {
     state = State.CREATED;
-    codeTypeMgr = new CodeTypeMgr();
     model = new MetaModel();
   }
 
@@ -79,14 +73,6 @@ public class MdaDocument implements ExplorerDocument {
   }
 
   /**
-   * Returns the code type manager of the document.
-   * @return the code type manager property.
-   */
-  public CodeTypeMgr getCodeTypeMgr() {
-    return codeTypeMgr;
-  }
-
-  /**
    * Loads the MDA model and initializes the associated resources.
    * @param file file containing the MDA model.
    * @throws PersistenceException if model could not be written.
@@ -99,7 +85,7 @@ public class MdaDocument implements ExplorerDocument {
     model = parseModel(handler, file);
     model.setFilename(file.toString());
     File directory = new File(model.getFilename()).getParentFile();
-    codeTypeMgr.reset(new File(directory, CODES_DIRECTORY));
+    model.getCodeTypeMgr().reset(new File(directory, CODES_DIRECTORY));
     state = State.CLEAN;
     this.file = file;
   }
@@ -113,7 +99,7 @@ public class MdaDocument implements ExplorerDocument {
     PersistenceHandlerFactory factory = new PersistenceHandlerFactory();
     PersistenceHandler handler = factory.getHandler(file);
     handler.writeModel(model, file);
-    codeTypeMgr.saveAll();
+    model.getCodeTypeMgr().saveAll();
   }
 
   /**
@@ -124,6 +110,7 @@ public class MdaDocument implements ExplorerDocument {
    */
   public void saveAs(File file) throws PersistenceException, IOException {
     PersistenceHandlerFactory factory = new PersistenceHandlerFactory();
+    CodeTypeMgr codeTypeMgr = model.getCodeTypeMgr();
     File root = codeTypeMgr.getRoot();
     File newRoot = file.getParentFile();
     if (root != null) {

@@ -96,7 +96,7 @@ public abstract class ExplorerFileAction extends ExplorerGlobalActionImpl {
         getExplorer().getMenuBar()
             .documentChanged(ExplorerDocument.State.CLEAN);
         try {
-          StringBuffer buffer = new StringBuffer();
+          StringBuilder buffer = new StringBuilder();
           buffer.append(getName()).append(" ").append(
               selectedFile.getCanonicalPath());
           getExplorer().getStatusBar().setInfo(buffer.toString());

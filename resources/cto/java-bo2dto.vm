@@ -1,8 +1,8 @@
+#set($sign="#")
+#set($dollar="$")
 #emitFileHeader()
 package ${package.getAttribute("cto-bo2dto-package")};
 
-#set($sign="#")
-#set($dollar="$")
 #set($imports=${cartridge.retrieveImportStatementsForBo(${class}, ${package.getAttribute("cto-bo2dto-package")})})
 #set($dummy=${imports.addPackageName(${package.getAttribute("bo-mo-package")})})
 #set($dummy=${imports.addPackageName("ch.bbv.transport")})
@@ -27,6 +27,7 @@ public final class ${classname} {
    * recursively transformed.
    * @param bo data object to transform.
    * @return the data transfer object representation.
+   * @see ${sign}transform(${dtoName})
    */
   public static final ${dtoName} transform(${dogName} bo) {
     ${dtoName} dto = new ${dtoName}();
@@ -36,11 +37,14 @@ public final class ${classname} {
 #set($type=false)
 #set($type=${model.findClass(${typeName})})
 #if(${type} && ${type.getStereotype()} == "dataObject")
+#getForwardHdl($property $handle)
     if (bo.get${property.nameFirstUpper()}() != null) {
 	  dto.${property.getName()} = new ${type.getAttribute("cto-mo-class")}[1];
       dto.${property.getName()}[0] = ${type.getAttribute("bo-mo-class")}Transformer.transform(bo.get${property.nameFirstUpper()}());
+	  dto.${handle} = TransformerCto.getHandle(bo, "${handle}");
     } else {
       dto.${property.getName()} = new ${type.getAttribute("cto-mo-class")}[0];
+	  dto.${handle} = TransformerCto.nullInteger;
     }
 #else
     dto.${property.getName()} = ${cartridge.getBo2DtoConversion(${property}, "bo")};
@@ -60,7 +64,21 @@ public final class ${classname} {
 #end
 #end
 #end
-    dto.id = TransformerCto.create(bo.getId());
+#set($references=$model.getClassReferences($class))
+#foreach($reference in $references)
+#isPersistentDataObject($reference $isPersistentDataObject)
+#if($isPersistentDataObject)
+#set($relations=${reference.getIndexedProperties()})
+#foreach($relation in $relations)
+#getType($model $relation $type)
+#if(${type} == ${class})
+#getReverseHdl($reference $relation $handle)
+    dto.${handle} = TransformerCto.getHandle(bo, "${handle}");
+#end
+#end
+#end
+#end
+	dto.id = TransformerCto.create(bo.getId());
     dto.timestamp = TransformerCto.create(bo.getTimestamp());
     dto.modified = bo.isModified();
     return dto;
@@ -72,6 +90,7 @@ public final class ${classname} {
    * attributes.
    * @param dto data transfer object to transform.
    * @return the data object representation.
+   * @see ${sign}transform(${dogName})
    */  
   public static final ${dogName} transform(${dtoName} dto) {
     ${dogName} bo = new ${dogName}();
@@ -83,9 +102,11 @@ public final class ${classname} {
 #set($type=false)
 #set($type=${model.findClass(${typeName})})
 #if(${type} && ${type.getStereotype()} == "dataObject")
+#getForwardHdl($property $handle)
     if (dto.${property.nameFirstLower()}.length == 1) {
       bo.set${property.nameFirstUpper()}(${type.getAttribute("bo-mo-class")}Transformer.transform(dto.${property.nameFirstLower()}[0]));
     }
+	TransformerCto.setHandle(bo, "${handle}", dto.${handle});
 #else
     bo.set${property.nameFirstUpper()}(${cartridge.getDto2BoConversion(${property}, "dto")});
 #end
@@ -97,6 +118,20 @@ public final class ${classname} {
 #set($type=${model.findClass(${typeName})})
 #if(${type} && ${type.getStereotype()} == "dataObject")
     bo.add${aggregation.nameFirstUpper()}(${type.getAttribute("bo-mo-class")}Transformer.transform(dto.${aggregation.nameFirstLower()}));
+#end
+#end
+#set($references=$model.getClassReferences($class))
+#foreach($reference in $references)
+#isPersistentDataObject($reference $isPersistentDataObject)
+#if($isPersistentDataObject)
+#set($relations=${reference.getIndexedProperties()})
+#foreach($relation in $relations)
+#getType($model $relation $type)
+#if(${type} == ${class})
+#getReverseHdl($reference $relation $handle)
+    TransformerCto.setHandle(bo, "${handle}", dto.${handle});
+#end
+#end
 #end
 #end
     bo.setModified(dto.modified);
@@ -132,6 +167,9 @@ public final class ${classname} {
     return bos;
   }  
   
+  /**
+   * Private default constructor to realize a static class.
+   */
   private ${classname}() {
   }
 }

@@ -10,6 +10,8 @@ package ch.bbv.explorer.components;
 import java.util.Collections;
 import java.util.List;
 
+import ch.bbv.dog.validation.ValidationRuleResult;
+
 /**
  * The validation panel displays a list of validation messages. The messages are
  * displayed in a table.
@@ -25,7 +27,7 @@ public class ValidationPanel extends TablePanel {
   /**
    * List of displayed validation results.
    */
-  private List results;
+  private List<ValidationRuleResult> results;
 
   /**
    * Name of the columns of the validation panel.
@@ -51,8 +53,13 @@ public class ValidationPanel extends TablePanel {
    * discarded.
    * @param results list of validation results to display.
    */
-  public void setResults(List results) {
+  public void setResults(List<ValidationRuleResult> results) {
     this.results = results;
+    setModel(results);
+  }
+
+  public void clear() {
+    results = Collections.emptyList();
     setModel(results);
   }
 

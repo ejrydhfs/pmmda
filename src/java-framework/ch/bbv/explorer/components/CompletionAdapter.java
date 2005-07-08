@@ -20,6 +20,9 @@ import javax.swing.text.*;
  * @version $Revision$
  */
 public class CompletionAdapter extends PlainDocument {
+  /**
+   * Serial version identifier coded as back compatibility date.
+   */
   private static final long serialVersionUID = 20041201;
 
   /**
@@ -55,8 +58,9 @@ public class CompletionAdapter extends PlainDocument {
     editor.addFocusListener(new CompletionFocusAdapter());
     editor.addKeyListener(new CompletionKeyAdapter());
     Object selected = comboBox.getSelectedItem();
-    if (selected != null)
+    if (selected != null) {
       editor.setText(selected.toString());
+    }
   }
 
   /**
@@ -71,8 +75,9 @@ public class CompletionAdapter extends PlainDocument {
     if (hitBackspace) {
       // user hit backspace => move the selection backwards
       // old item keeps being selected
-      if (offs > 0 && hitBackspaceOnSelection)
+      if (offs > 0 && hitBackspaceOnSelection) {
         offs--;
+      }
       highlightCompletedText(offs);
       comboBox.setPopupVisible(true);
     } else {
@@ -97,7 +102,6 @@ public class CompletionAdapter extends PlainDocument {
       // not be accepted
       UIManager.getLookAndFeel().provideErrorFeedback(comboBox);
     }
-
     String itemString = item.toString();
     setText(itemString);
 

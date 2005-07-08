@@ -13,7 +13,7 @@ import ch.bbv.dog.DataObjectImpl;
 /**
  * The tagged value implements the UML concept of a tag. A tag is an extension
  * mechanism for UML models. It is composed of a name and a value. Additionally
- * A type definition can define the set of legal values.
+ * a type definition can define the set of legal values.
  * @author Marcel Baumann
  * @version $Revision$
  */

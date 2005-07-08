@@ -7,20 +7,14 @@ package ch.bbv.mda.generators;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.*;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.Velocity;
-import org.apache.velocity.exception.ParseErrorException;
-import org.apache.velocity.exception.ResourceNotFoundException;
 
 import ch.bbv.application.VersionId;
 import ch.bbv.mda.*;
-import ch.bbv.mda.operators.FileOperators;
 import ch.bbv.mda.operators.ModelOperators;
 
 /**
@@ -169,47 +163,15 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
   }
 
   /**
-   * Log instance for the class.
+   * Log instance for all instance of the class.
    */
   private static Log log = LogFactory.getLog(CtoCartridge.class);
-
-  /**
-   * Velocity template for the CORBA transfer interface generation.
-   */
-  private Template idlDtoBoTemplate;
-
-  /**
-   * Velocity template for the CORBA transfer interface generation.
-   */
-  private Template idlDtoLwTemplate;
-
-  /**
-   * Velocity template for the CORBA transfer interface generation.
-   */
-  private Template javaBo2DtoTemplate;
-
-  /**
-   * Velocity template for the CORBA transfer interface generation.
-   */
-  private Template javaLw2DtoTemplate;
 
   /**
    * Constructor of the class.
    */
   public CtoCartridge() {
     super("CORBA Transfer Object Cartridge", PREFIX, new VersionId(0, 3, 0));
-    try {
-      idlDtoBoTemplate = Velocity.getTemplate("cto-idlDtoBo.vm");
-      idlDtoLwTemplate = Velocity.getTemplate("cto-idlDtoLw.vm");
-      javaBo2DtoTemplate = Velocity.getTemplate("cto-javaBo2Dto.vm");
-      javaLw2DtoTemplate = Velocity.getTemplate("cto-javaLw2Dto.vm");
-    } catch (ParseErrorException pee) {
-      pee.printStackTrace();
-    } catch (ResourceNotFoundException rnfe) {
-      rnfe.printStackTrace();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
   }
 
   public void initialize(Properties properties) {
@@ -292,28 +254,21 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
       if (BoCartridge.DATA_OBJECT_STEREOTYPE.equals(clazz.getStereotype())) {
         MetaPackage metaPackage = (MetaPackage) clazz.getContext();
         VelocityContext context = createContext(clazz);
-        PrintWriter writer = FileOperators.createWriter(idlRoot, metaPackage
-            .valueOfTag(CTO_PACKAGE_IDL_TAG), clazz.getAttribute(CTO_MO_CLASS)
-            + IDL_EXTENSION);
-        writer.print(processTemplate(idlDtoBoTemplate, context));
-        writer.close();
-        writer = createJavaWriter(javaRoot, metaPackage
+        processTemplate(idlRoot, metaPackage.valueOfTag(CTO_PACKAGE_IDL_TAG),
+            clazz.getAttribute(CTO_MO_CLASS) + IDL_EXTENSION, retrieveTemplate(
+                "idl-dto-bo", null), context);
+        processJavaTemplate(javaRoot, metaPackage
             .getAttribute(CTO_BO2DTO_PACKAGE), clazz
-            .getAttribute(CTO_BO2DTO_CLASS));
-        writer.print(processTemplate(javaBo2DtoTemplate, context));
-        writer.close();
+            .getAttribute(CTO_BO2DTO_CLASS), retrieveTemplate("java-bo2dto",
+            null), context);
         if (clazz.booleanValueOfAttribute(BoCartridge.BO_LIGHTWEIGHT)) {
-          writer = FileOperators.createWriter(idlRoot, metaPackage
-              .valueOfTag(CTO_PACKAGE_IDL_TAG), clazz
-              .getAttribute(CTO_LW_CLASS)
-              + IDL_EXTENSION);
-          writer.print(processTemplate(idlDtoLwTemplate, context));
-          writer.close();
-          writer = createJavaWriter(javaRoot, metaPackage
+          processTemplate(idlRoot, metaPackage.valueOfTag(CTO_PACKAGE_IDL_TAG),
+              clazz.getAttribute(CTO_LW_CLASS) + IDL_EXTENSION,
+              retrieveTemplate("idl-dto-lw", null), context);
+          processJavaTemplate(javaRoot, metaPackage
               .getAttribute(CTO_LW2DTO_PACKAGE), clazz
-              .getAttribute(CTO_LW2DTO_CLASS));
-          writer.print(processTemplate(javaLw2DtoTemplate, context));
-          writer.close();
+              .getAttribute(CTO_LW2DTO_CLASS), retrieveTemplate("java-lw2dto",
+              null), context);
         }
       }
     } catch (IOException e) {

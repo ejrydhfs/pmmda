@@ -5,6 +5,7 @@
  */
 package ch.bbv.transport;
 
+import java.lang.reflect.Field;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -26,7 +27,7 @@ import ch.bbv.dog.DataPropertyUpdate;
  */
 public final class TransformerCto {
   /**
-   * Logger of the class.
+   * Logger for all instances of the class.
    */
   private static Log log = LogFactory.getLog(TransformerCto.class);
 
@@ -38,42 +39,42 @@ public final class TransformerCto {
   /**
    * The representation of a null string.
    */
-  private static NullString nullString;
+  public static NullString nullString;
 
   /**
    * The representation of a null boolean.
    */
-  private static NullBoolean nullBoolean;
+  public static NullBoolean nullBoolean;
 
   /**
    * The representation of a null short.
    */
-  private static NullShort nullShort;
+  public static NullShort nullShort;
 
   /**
    * The representation of a null long.
    */
-  private static NullInteger nullInteger;
+  public static NullInteger nullInteger;
 
   /**
    * The representation of a null long.
    */
-  private static NullLong nullLong;
+  public static NullLong nullLong;
 
   /**
    * The representation of a null double.
    */
-  private static NullDouble nullDouble;
+  public static NullDouble nullDouble;
 
   /**
    * The representation of a null date.
    */
-  private static NullDate nullDate;
+  public static NullDate nullDate;
 
   /**
    * The representation of a null timestamp.
    */
-  private static NullTimestamp nullTimestamp;
+  public static NullTimestamp nullTimestamp;
 
   static {
     dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -101,6 +102,7 @@ public final class TransformerCto {
    * that it can be transferred over a CORBA transport channel.
    * @param value value to transform.
    * @return the nullable representation of the value.
+   * @see #extract(NullShort)
    */
   public static final NullShort create(Short value) {
     return ((value == null) ? nullShort : new NullShort(value.shortValue(),
@@ -112,6 +114,7 @@ public final class TransformerCto {
    * that it can be transferred over a CORBA transport channel.
    * @param value value to transform.
    * @return the nullable representation of the value.
+   * @see #extract(NullLong)
    */
   public static final NullLong create(Long value) {
     return ((value == null) ? nullLong : new NullLong(value.intValue(), true));
@@ -122,6 +125,7 @@ public final class TransformerCto {
    * that it can be transferred over a CORBA transport channel.
    * @param value value to transform.
    * @return the nullable representation of the value.
+   * @see #extract(NullInteger)
    */
   public static final NullInteger create(Integer value) {
     return ((value == null) ? nullInteger : new NullInteger(value.intValue(),
@@ -133,6 +137,7 @@ public final class TransformerCto {
    * that it can be transferred over a CORBA transport channel.
    * @param value value to transform.
    * @return the nullable representation of the value.
+   * @see #extract(NullDouble)
    */
   public static final NullDouble create(Double value) {
     return ((value == null) ? nullDouble : new NullDouble(value.doubleValue(),
@@ -144,6 +149,7 @@ public final class TransformerCto {
    * that it can be transferred over a CORBA transport channel.
    * @param value value to transform.
    * @return the nullable representation of the value.
+   * @see #extract(NullString)
    */
   public static final NullString create(String value) {
     return ((value == null) ? nullString : new NullString(value, true));
@@ -154,6 +160,7 @@ public final class TransformerCto {
    * that it can be transferred over a CORBA transport channel.
    * @param value value to transform.
    * @return the nullable representation of the value.
+   * @see #extract(NullBoolean)
    */
   public static final NullBoolean create(Boolean value) {
     return ((value == null) ? nullBoolean : new NullBoolean(value
@@ -165,6 +172,7 @@ public final class TransformerCto {
    * that it can be transferred over a CORBA transport channel.
    * @param value value to transform.
    * @return the nullable representation of the value.
+   * @see #extract(NullDate)
    */
   public static final NullDate create(Date value) {
     return ((value == null) ? nullDate : new NullDate(dateFormat.format(value),
@@ -176,6 +184,7 @@ public final class TransformerCto {
    * that it can be transferred over a CORBA transport channel.
    * @param value value to transform.
    * @return the nullable representation of the value.
+   * @see #extract(NullTimestamp)
    */
   public static final NullTimestamp create(Timestamp value) {
     return ((value == null) ? nullTimestamp : new NullTimestamp(value
@@ -217,7 +226,7 @@ public final class TransformerCto {
     cto.reason = create(value.getReason());
     return cto;
   }
-  
+
   public static final DataObjectUpdateCto[] createInfos(List infos) {
     DataObjectUpdateCto[] ctos = new DataObjectUpdateCto[infos.size()];
     for (int i = 0; i < ctos.length; i++) {
@@ -232,6 +241,7 @@ public final class TransformerCto {
    * transferred over a CORBA transport channel.
    * @param value nullable value to transform.
    * @return the wrapped primitive value if defined otherwise null.
+   * @see #create(Short)
    */
   public static final Short extract(NullShort value) {
     return (value.hasValue ? new Short(value.value) : null);
@@ -243,6 +253,7 @@ public final class TransformerCto {
    * transferred over a CORBA transport channel.
    * @param value nullable value to transform.
    * @return the wrapped primitive value if defined otherwise null.
+   * @see #create(Integer)
    */
   public static final Integer extract(NullInteger value) {
     return (value.hasValue ? new Integer(value.value) : null);
@@ -254,6 +265,7 @@ public final class TransformerCto {
    * transferred over a CORBA transport channel.
    * @param value nullable value to transform.
    * @return the wrapped primitive value if defined otherwise null.
+   * @see #create(Long)
    */
   public static final Long extract(NullLong value) {
     return (value.hasValue ? new Long(value.value) : null);
@@ -265,6 +277,7 @@ public final class TransformerCto {
    * transferred over a CORBA transport channel.
    * @param value nullable value to transform.
    * @return the wrapped primitive value if defined otherwise null.
+   * @see #create(Double)
    */
   public static final Double extract(NullDouble value) {
     return (value.hasValue ? new Double(value.value) : null);
@@ -276,6 +289,7 @@ public final class TransformerCto {
    * transferred over a CORBA transport channel.
    * @param value nullable value to transform.
    * @return the wrapped primitive value if defined otherwise null.
+   * @see #create(String)
    */
   public static final String extract(NullString value) {
     return (value.hasValue ? value.value : null);
@@ -287,6 +301,7 @@ public final class TransformerCto {
    * transferred over a CORBA transport channel.
    * @param value nullable value to transform.
    * @return the wrapped primitive value if defined otherwise null.
+   * @see #create(Boolean)
    */
   public static final Boolean extract(NullBoolean value) {
     Boolean bool = null;
@@ -302,6 +317,7 @@ public final class TransformerCto {
    * transferred over a CORBA transport channel.
    * @param value nullable value to transform.
    * @return the wrapped primitive value if defined otherwise null.
+   * @see #create(Date)
    */
   public static final Date extract(NullDate value) {
     return (value.hasValue ? extractDate(value.value) : null);
@@ -313,6 +329,7 @@ public final class TransformerCto {
    * transferred over a CORBA transport channel.
    * @param value nullable value to transform.
    * @return the wrapped primitive value if defined otherwise null.
+   * @see #create(Timestamp)
    */
   public static final Timestamp extract(NullTimestamp value) {
     return (value.hasValue ? Timestamp.valueOf(value.value) : null);
@@ -324,6 +341,7 @@ public final class TransformerCto {
    * transferred over a CORBA transport channel.
    * @param value nullable value to transform.
    * @return the wrapped primitive value if defined otherwise null.
+   * @see #create(Date)
    */
   public static final Date extractDate(String value) {
     Date date = null;
@@ -339,7 +357,7 @@ public final class TransformerCto {
   public static final CtoException extract(CtoExceptionCto cto) {
     return new CtoException(extract(cto.text), extract(cto.reason));
   }
-  
+
   /**
    * Transforms the CTO representation of a data property update into its Java
    * representation.
@@ -379,5 +397,54 @@ public final class TransformerCto {
       updates.add(extract(ctos[i]));
     }
     return updates;
+  }
+
+  /**
+   * Returns the value of the foreign key handle stored in the property.
+   * @param bean bean containing the handle to retrieve.
+   * @param property property containing the foreign key handle.
+   * @return the foreign key handle stored as nullable integer.
+   * @see #setHandle(Bean, String, NullInteger)
+   */
+  public static final NullInteger getHandle(Object bean, String property) {
+    Integer key = null;
+    try {
+      Field field = bean.getClass().getDeclaredField(property);
+      if (field != null) {
+        field.setAccessible(true);
+        key = (Integer) field.get(bean);
+      }
+    } catch (NoSuchFieldException e) {
+      assert (false);
+    } catch (IllegalArgumentException e) {
+      assert (false);
+    } catch (IllegalAccessException e) {
+      assert (false);
+    }
+    return create(key);
+  }
+
+  /**
+   * Sets the value of the foreign key handle stored in the property.
+   * @param bean bean containing the handle to retrieve.
+   * @param property property containing the foreign key handle.
+   * @param key value of the foreign key handle.
+   * @see #getHandle(Bean, String)
+   */
+  public static final void setHandle(Object bean, String property,
+      NullInteger key) {
+    try {
+      Field field = bean.getClass().getDeclaredField(property);
+      if (field != null) {
+        field.setAccessible(true);
+        field.set(bean, extract(key));
+      }
+    } catch (NoSuchFieldException e) {
+      assert (false);
+    } catch (IllegalArgumentException e) {
+      assert (false);
+    } catch (IllegalAccessException e) {
+      assert (false);
+    }
   }
 }

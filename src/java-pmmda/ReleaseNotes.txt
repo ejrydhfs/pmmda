@@ -15,6 +15,21 @@ TODO
   classname, prefix, loaded, active, dependants
 - Have a self contained jar file running with java -jar pmMDA
 
+Version 0.3.0-RC1 (01 July 2005)
+------------------------------------
+The following new features were added.
+- The source code artifacts - java, idl - are only written if the new version 
+  is different from the old artifact.
+
+The following errors were corrected.
+- Duplicate validation rules were removed. Spurious warnings for system classes
+  were removed.
+  
+The following errors and change requests are closed 
+  Errors:  
+  CR:
+  (see Sourceforge site RFE and Tracker for detailed description)
+
 Version 0.3.0-dev (15 June 2005)
 ------------------------------------
 The following new features were added.

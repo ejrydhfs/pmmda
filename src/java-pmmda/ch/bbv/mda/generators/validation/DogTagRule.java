@@ -9,7 +9,10 @@ package ch.bbv.mda.generators.validation;
 import java.util.List;
 
 import ch.bbv.dog.validation.ValidationRuleResult;
-import ch.bbv.mda.*;
+import ch.bbv.mda.MetaClass;
+import ch.bbv.mda.MetaIndexedProperty;
+import ch.bbv.mda.MetaPackage;
+import ch.bbv.mda.MetaProperty;
 import ch.bbv.mda.generators.BoCartridge;
 
 /**
@@ -60,7 +63,8 @@ public class DogTagRule extends TagRule {
   }
 
   /**
-   * The following rules are defined for the element.
+   * The following rules are defined for the element if its class is a 
+   * data object.
    * <ul>
    * <li>The property names "id", "modified" and "timestamp" are reserved for
    * internal functions of the cartridge.</li>
@@ -74,18 +78,21 @@ public class DogTagRule extends TagRule {
   protected boolean validate(MetaProperty property,
       List<ValidationRuleResult> results) {
     boolean success = true;
-    if (property.booleanValueOfTag(BoCartridge.PERSISTENCE_TAG)
-        && property.isTransient()) {
-      success = false;
-      addErrorMessage(results, ERROR_INCONSISTENT_TAG,
-          BoCartridge.PERSISTENCE_TAG, property.qualifiedName());
-    }
-    String name = property.getName();
-    if (name.equalsIgnoreCase(IDENTIFIER) || name.equalsIgnoreCase(TIMESTAMP)
-        || name.equalsIgnoreCase(MODIFIED)) {
-      success = false;
-      addErrorMessage(results, ERROR_RESERVED_IDENTIFIER, BoCartridge.PREFIX,
-          property.qualifiedName());
+    MetaClass clazz = (MetaClass) property.getContext();
+    if (BoCartridge.DATA_OBJECT_STEREOTYPE.equals(clazz.getStereotype())) {
+      if (property.booleanValueOfTag(BoCartridge.PERSISTENCE_TAG)
+          && property.isTransient()) {
+        success = false;
+        addErrorMessage(results, ERROR_INCONSISTENT_TAG,
+            BoCartridge.PERSISTENCE_TAG, property.qualifiedName());
+      }
+      String name = property.getName();
+      if (name.equalsIgnoreCase(IDENTIFIER) || name.equalsIgnoreCase(TIMESTAMP)
+          || name.equalsIgnoreCase(MODIFIED)) {
+        success = false;
+        addErrorMessage(results, ERROR_RESERVED_IDENTIFIER, BoCartridge.PREFIX,
+            property.qualifiedName());
+      }
     }
     return success;
   }

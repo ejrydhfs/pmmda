@@ -19,7 +19,7 @@ import ch.bbv.mda.MetaProperty;
 /**
  * The description rule verifies that packages and classes have a description.
  * Only non system packages and classes are verified.
- * @author MarcelBaumann
+ * @author Marcel Baumann
  * @version $Revision$
  */
 public class DescriptionRule extends ValidationRuleImpl implements
@@ -54,7 +54,8 @@ public class DescriptionRule extends ValidationRuleImpl implements
     boolean success = true;
     if (bean instanceof MetaPackage) {
       MetaPackage element = (MetaPackage) bean;
-      if (!element.isSystem() && element.getDescription() == null) {
+      if (!element.isSystem() && (element.getClasses().size() > 0)
+          && element.getDescription() == null) {
         addMessage(results, resources, PACKAGE_DESCRIPTION_WARNING,
             getSeverity(), bean, property, null, null);
         success = (getSeverity() == ERROR);

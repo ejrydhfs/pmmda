@@ -105,12 +105,17 @@ public abstract class Explorer {
    */
   private JTree tree;
 
+  /**
+   * Current node
+   */
   private NodeView nodeView;
 
   /**
    * The tree model displayed in the explorer.
    */
   private DefaultTreeModel treeModel;
+
+  private ExplorerViewTreeSelectionListener selectionListener;
 
   /**
    * The factory of user interface type used to create all nodes in this
@@ -232,6 +237,7 @@ public abstract class Explorer {
     statusBar = new StatusBar();
     frame.getContentPane().add(BorderLayout.SOUTH, statusBar);
     frame.addWindowListener(new ExplorerWindowListener(this));
+    selectionListener = new ExplorerViewTreeSelectionListener();
   }
 
   /**
@@ -349,7 +355,7 @@ public abstract class Explorer {
     this.root = root;
     root.setExplorer(this);
     initializeRoot();
-    displayCurrentView(root);
+    selectionListener.displayViews(root);
   }
 
   /**
@@ -372,7 +378,7 @@ public abstract class Explorer {
     tree.getSelectionModel().setSelectionMode(
         TreeSelectionModel.SINGLE_TREE_SELECTION);
     tree.setCellRenderer(new ExplorerTreeCellRenderer());
-    tree.addTreeSelectionListener(new ExplorerViewTreeSelectionListener());
+    tree.addTreeSelectionListener(selectionListener);
     tree.addMouseListener(new ExplorerMouseListener());
     leftPane.setViewportView(tree);
   }
@@ -423,20 +429,6 @@ public abstract class Explorer {
   }
 
   /**
-   * Displays the data object members of the node with the provided view type.
-   * @param type type of the node view to display.
-   * @param node node which data object should be displayed.
-   */
-  public void displayViews(UiNodeViewType type, ExplorerNode node) {
-    List<NodeView> views = factory.getNodeViews(node);
-    topRightPane.removeAll();
-    for (NodeView view : views) {
-      topRightPane.addTab(view.getName(), (JComponent) view);
-    }
-    // topRightPane.setViewportView((Component) nodeView);
-  }
-
-  /**
    * The method is called when the user tries to close the window. The subclass
    * can redefine the method to perform house keeping activities or veto the
    */
@@ -446,23 +438,26 @@ public abstract class Explorer {
   }
 
   /**
+   * Returns the top right pane of the explorer.
+   * @return the top right pane of the explorer.
+   */
+  protected DockingArea getTopRightPane() {
+    return topRightPane;
+  }
+
+  /**
+   * Retursn the user interface node type factory of the explorer.
+   * @return the node type factory.
+   */
+  protected UiNodeTypeFactory getFactory() {
+    return factory;
+  }
+
+  /**
    * The initialize method is called after the construction and before the
    * explorer is displayed on the screen.
    */
   protected abstract void initialize();
-
-  /**
-   * Displays the data object member of the node with the current view.
-   * @param node node which data object should be displayed.
-   */
-  protected void displayCurrentView(ExplorerNode node) {
-    if (node != null) {
-      UiNodeViewType type = node.getNodeType().getCurrentView();
-      if (type != null) {
-        displayViews(type, node);
-      }
-    }
-  }
 
   /**
    * Creates the navigator tree representing the lightweight data object graph.
@@ -485,6 +480,9 @@ public abstract class Explorer {
    */
   private final class ExplorerViewTreeSelectionListener implements
       TreeSelectionListener {
+    private ExplorerNode currentNode;
+
+    List<NodeView> views;
 
     /**
      * Reacts on a tree selection event. Each time a node is selected its
@@ -496,7 +494,30 @@ public abstract class Explorer {
     public void valueChanged(TreeSelectionEvent event) {
       ExplorerNode node = (ExplorerNode) getTree()
           .getLastSelectedPathComponent();
-      displayCurrentView(node);
+      if (node != null) {
+        if ((currentNode == null)
+            || (node.getNodeType() != currentNode.getNodeType())) {
+          displayViews(node);
+          currentNode = node;
+        } else {
+          for (NodeView view : views) {
+            view.setModel(node);
+          }
+        }
+      }
+    }
+
+    /**
+     * Displays the data object members of the node with the provided view type.
+     * @param node node which data object should be displayed.
+     */
+    public void displayViews(ExplorerNode node) {
+      DockingArea area = getTopRightPane();
+      views = getFactory().getNodeViews(node);
+      area.removeAll();
+      for (NodeView view : views) {
+        area.addTab(view.getName(), (JComponent) view);
+      }
     }
   }
 

@@ -7,24 +7,23 @@ package ch.bbv.dog.reference;
 
 import java.util.List;
 
-
-
-
 /**
- * <p>The hierarchical reference code defines the interface for all hierarchical
+ * The hierarchical reference code defines the interface for all hierarchical
  * key code of the application. All hierarchical codes of the application should
- * implement this interface.<p>
+ * implement this interface.
  * @author Marcel Baumann
  * @version $Revision$
  */
 public interface HierarchicalReferenceCode extends ReferenceCode {
-  /** Returns the parentId value of the reference code.
+  /**
+   * Returns the parentId value of the reference code.
    * @return parentId value of the code.
    */
   public Integer getParentCode();
 
-  /** Returns all direct descendants of the code instance. The children
-   * are sorted based on their order information.
+  /**
+   * Returns all direct descendants of the code instance. The children are
+   * sorted based on their order information.
    * @return sorted list of all children.
    */
   public List getChildren();

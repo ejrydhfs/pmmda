@@ -119,12 +119,21 @@ public class MdaApplication extends Locator {
   }
 
   /**
-   * Returns the resources manager of the application. 
+   * Returns the resources manager of the application.
    * @return the resources manager of the application.
    */
   public ResourcesManager getResourcesManager() {
     Locator locator = Locator.getInstance();
     return (ResourcesManager) locator.getComponent(ResourcesManager.NAME);
+  }
+
+  /**
+   * Returns the validator of the application.
+   * @return the validator of the application.
+   */
+  public Validator getValidator() {
+    Locator locator = Locator.getInstance();
+    return (Validator) locator.getComponent(Validator.NAME);
   }
 
   /**

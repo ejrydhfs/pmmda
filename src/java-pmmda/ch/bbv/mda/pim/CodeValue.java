@@ -19,7 +19,7 @@ import java.util.Date;
 /**
  * The code value defines one value of a reference code type.
  * @version $Revision$
- * @author ${element.valueOfTag("author")}
+ * @author Marcel Baumann
  */
 public class CodeValue implements DataObject {
 
@@ -107,7 +107,7 @@ public class CodeValue implements DataObject {
    * @see #setId(Integer)
    */
   public Integer getId() {
-  	return id;
+    return id;
   }
   
   /** 
@@ -162,6 +162,7 @@ public class CodeValue implements DataObject {
    public void setTimestamp(Timestamp timestamp) {
      this.timestamp = timestamp;
    }
+
   /** 
    * Returns the current value of the simple property name.
    * @return the value of the simple property name.
@@ -174,15 +175,16 @@ public class CodeValue implements DataObject {
   /** 
    * Sets the new value of the simple property name.
    * @param name new value of the property.
-   * @see #getName
+   * @see #getName()
    */    
   public void setName(String name) {
     if (((this.name != null) && !this.name.equals(name)) || 
-   	    ((this.name == null) && (name != null)))  {    
+        ((this.name == null) && (name != null)))  {    
       this.name = name;
       setModified(true);
     }
   }    
+
   /** 
    * Returns the current value of the simple property sortOrder.
    * @return the value of the simple property sortOrder.
@@ -195,7 +197,7 @@ public class CodeValue implements DataObject {
   /** 
    * Sets the new value of the simple property sortOrder.
    * @param sortOrder new value of the property.
-   * @see #getSortOrder
+   * @see #getSortOrder()
    */    
   public void setSortOrder(int sortOrder) {
     if (this.sortOrder != sortOrder) {  
@@ -203,6 +205,7 @@ public class CodeValue implements DataObject {
       setModified(true);
     }
   }
+
   /** 
    * Returns the current value of the simple property shortDescription.
    * @return the value of the simple property shortDescription.
@@ -215,15 +218,16 @@ public class CodeValue implements DataObject {
   /** 
    * Sets the new value of the simple property shortDescription.
    * @param shortDescription new value of the property.
-   * @see #getShortDescription
+   * @see #getShortDescription()
    */    
   public void setShortDescription(String shortDescription) {
     if (((this.shortDescription != null) && !this.shortDescription.equals(shortDescription)) || 
-   	    ((this.shortDescription == null) && (shortDescription != null)))  {    
+        ((this.shortDescription == null) && (shortDescription != null)))  {    
       this.shortDescription = shortDescription;
       setModified(true);
     }
   }    
+
   /** 
    * Returns the current value of the simple property description.
    * @return the value of the simple property description.
@@ -236,15 +240,16 @@ public class CodeValue implements DataObject {
   /** 
    * Sets the new value of the simple property description.
    * @param description new value of the property.
-   * @see #getDescription
+   * @see #getDescription()
    */    
   public void setDescription(String description) {
     if (((this.description != null) && !this.description.equals(description)) || 
-   	    ((this.description == null) && (description != null)))  {    
+        ((this.description == null) && (description != null)))  {    
       this.description = description;
       setModified(true);
     }
   }    
+
   /** 
    * Returns the current value of the simple property codeId.
    * @return the value of the simple property codeId.
@@ -257,7 +262,7 @@ public class CodeValue implements DataObject {
   /** 
    * Sets the new value of the simple property codeId.
    * @param codeId new value of the property.
-   * @see #getCodeId
+   * @see #getCodeId()
    */    
   public void setCodeId(int codeId) {
     if (this.codeId != codeId) {  
@@ -265,6 +270,7 @@ public class CodeValue implements DataObject {
       setModified(true);
     }
   }
+
   /** 
    * Returns the current value of the simple property start.
    * @return the value of the simple property start.
@@ -277,15 +283,16 @@ public class CodeValue implements DataObject {
   /** 
    * Sets the new value of the simple property start.
    * @param start new value of the property.
-   * @see #getStart
+   * @see #getStart()
    */    
   public void setStart(Date start) {
     if (((this.start != null) && !this.start.equals(start)) || 
-   	    ((this.start == null) && (start != null)))  {    
+        ((this.start == null) && (start != null)))  {    
       this.start = start;
       setModified(true);
     }
   }    
+
   /** 
    * Returns the current value of the simple property end.
    * @return the value of the simple property end.
@@ -298,11 +305,11 @@ public class CodeValue implements DataObject {
   /** 
    * Sets the new value of the simple property end.
    * @param end new value of the property.
-   * @see #getEnd
+   * @see #getEnd()
    */    
   public void setEnd(Date end) {
     if (((this.end != null) && !this.end.equals(end)) || 
-   	    ((this.end == null) && (end != null)))  {    
+        ((this.end == null) && (end != null)))  {    
       this.end = end;
       setModified(true);
     }
@@ -317,10 +324,10 @@ public class CodeValue implements DataObject {
    */  
   public void accept(Visitor visitor) {
     assert(visitor != null);
-  	visitor.setDepth(visitor.getDepth() + 1);
+    visitor.setDepth(visitor.getDepth() + 1);
     visitor.visit(this);
     traverse(visitor);
-  	visitor.setDepth(visitor.getDepth() - 1);
+    visitor.setDepth(visitor.getDepth() - 1);
   }
   
   /** 
@@ -386,7 +393,7 @@ public class CodeValue implements DataObject {
    */
   final protected void setForeignKey(DataObject bean, String property,
       Integer key) {
-	assert((bean != null) && (property != null) && (key != null));
+    assert((bean != null) && (property != null));
     try {
       Field field = bean.getClass().getDeclaredField(property);
       if (field != null) {

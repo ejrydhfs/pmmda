@@ -37,10 +37,10 @@ module ch {
 #foreach ($property in $properties)
 #if(!${property.isTransient()} && ${property.booleanValueOfTag("bo-lightweight")})
 #getType($model $property $type)
-#isDataObject($type $isDataObject)
 #if(${type})
-#if($isDataObject)
+#isDataObject($type $isDataObject)
 #isReferenceCode($type $isReferenceCode)
+#if($isDataObject)
 #if(${type.getAttribute("bo-lightweight")})
         sequence<${type.getAttribute("cto-lw-class")}> ${property.getName()};
 #end

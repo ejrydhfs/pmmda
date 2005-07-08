@@ -1,0 +1,127 @@
+#emitFileHeader()
+   
+#set($blocks=${context.get("blocks")})
+#if (${package})
+package ${package.getAttribute("bo-mo-package")};
+#end
+
+#if($class.booleanValueOf("bo-is-hierarchical"))
+import ch.bbv.dog.reference.HierarchicalReferenceCodeImpl;
+#else
+import ch.bbv.dog.reference.ReferenceCodeImpl;
+#end
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
+
+/* %% USER DEFINED IMPORT START %% */
+#set($lines=${blocks.get("imports")})
+#foreach($line in $lines)
+$line
+#end
+/* %% USER DEFINED IMPORT END %% */
+
+#emitClassDescription($class "")
+#if($class.booleanValueOf("bo-is-hierarchical"))
+#set($extends="HierarchicalReferenceCodeImpl")
+#else
+#set($extends="ReferenceCodeImpl")
+#end
+#set($classname=${class.getAttribute("bo-mo-class")})
+public class ${classname} extends $extends {
+#set($codeType=${model.getCodeTypeMgr().retrieve(${class})})
+#foreach($code in ${codeType.getValues()})
+  /**
+   * The code value associated with the reference code.
+   */
+  public static final int ${code.getName().toUpperCase()}_ID = ${code.getCodeId()};
+#end
+
+#foreach($code in ${codeType.getValues()})
+  /**
+   * The code value associated with the reference code.
+   */
+  public static final ${classname} ${code.getName().toUpperCase()};
+#end
+
+  /**
+   * Serial version identifier coded as back compatibility date.
+   */
+  private static final long serialVersionUID = ${configuration.getProperty("bo-cartridge.uid")};
+
+  /**
+   * List of all reference codes of this type.
+   */
+  private static Map<Integer, $classname> codes;
+
+  /**
+   * Initializes the reference codes of this type.
+   */
+  static {
+    codes = new HashMap<Integer, $classname>();
+#foreach($code in ${codeType.getValues()})
+#set($uName=${code.getName().toUpperCase()})
+    ${uName} = new $classname(${uName}_ID, ${code.getSortOrder()}, "${code.getShortDescription()}", "${code.getDescription()}");
+    codes.put(${uName}_ID, ${uName});
+#end
+  }
+  
+/* %% USER DEFINED DECLARATION START %% */
+#set($lines=${blocks.get("declarations")})
+#foreach($line in $lines)
+$line
+#end
+/* %% USER DEFINED DECLARATION END %% */
+
+/* %% USER DEFINED CONSTRUCTORS START %% */
+#set($lines=${blocks.get("constructors")})
+#foreach($line in $lines)
+$line
+#end
+/* %% USER DEFINED CONSTRUCTORS END %% */
+
+/* %% USER DEFINED CODE START %% */
+#set($lines=${blocks.get("definitions")})
+#foreach($line in $lines)
+$line
+#end
+/* %% USER DEFINED CODE END %% */
+
+  /**
+   * Constructor initializes the immutable instance with all property values.
+   * @param code unique identifier for the code of this type.
+   * @param sortOrder sort order of the code instance.
+   * @param shortDescription short description of the code.
+   * @param description description of the code.
+   */
+  private ${classname}(int code, int sortOrder, String shortDescription,
+      String description) {
+    super(code, sortOrder, shortDescription, description, true);
+  }
+
+  /**
+   * Returns the list of all defined reference code values.
+   * @return list of all reference codes.
+   */
+  public static List<${classname}> getCodes() {
+    return new ArrayList<${classname}>(codes.values());
+  }
+
+  /**
+   * Returns the business code associated with the given code.
+   * @param value value of the requested code.
+   * @return the requested reference code.
+   */
+  public static ${classname} getCode(int value) {
+    return codes.get(value);
+  }
+
+  /**
+   * Guarantees that the returned object is unique in the virtual machine.
+   * @return the code read from the stream if defined otherwise null.
+   */
+  private Object readResolve() {
+    return getCode(getCode());
+  }  
+}

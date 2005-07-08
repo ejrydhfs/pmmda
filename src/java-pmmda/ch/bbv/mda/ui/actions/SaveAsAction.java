@@ -16,6 +16,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ch.bbv.explorer.Explorer;
+import ch.bbv.explorer.ExplorerDocument;
 import ch.bbv.explorer.actions.ExplorerFileAction;
 import ch.bbv.mda.persistence.PersistenceException;
 import ch.bbv.mda.ui.MdaDocument;
@@ -100,6 +101,7 @@ public class SaveAsAction extends ExplorerFileAction {
       MdaExplorer explorer = (MdaExplorer) getExplorer();
       MdaDocument document = explorer.getDocument();
       document.saveAs(file);
+      explorer.getMenuBar().documentChanged(ExplorerDocument.State.CLEAN);
     } catch (PersistenceException e) {
       log.error(e);
     }

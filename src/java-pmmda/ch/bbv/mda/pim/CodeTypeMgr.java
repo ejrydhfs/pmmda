@@ -20,6 +20,7 @@ import com.thoughtworks.xstream.XStream;
 import ch.bbv.dog.functors.IsModifiedFlagFunctor;
 import ch.bbv.dog.functors.ModifiedFlagFunctor;
 import ch.bbv.mda.operators.FileOperators;
+import ch.bbv.mda.MetaClass;
 /* %% USER DEFINED IMPORT END %% */
 
 /**
@@ -150,7 +151,7 @@ public class CodeTypeMgr {
    */    
   public void setRoot(File root) {
     if (((this.root != null) && !this.root.equals(root)) || 
-   	    ((this.root == null) && (root != null)))  {    
+        ((this.root == null) && (root != null)))  {    
       this.root = root;
     }
   }    
@@ -201,7 +202,7 @@ public class CodeTypeMgr {
    * Initializes the attributes generated through the MDA tool.
    */
   private void initialize() {
-  	types = new HashMap<MetaClass, CodeType>();
+    types = new HashMap<MetaClass, CodeType>();
   }
 
 /* %% USER DEFINED PROTECTED/PRIVATE CODE START %% */

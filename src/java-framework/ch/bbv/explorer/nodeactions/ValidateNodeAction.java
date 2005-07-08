@@ -20,7 +20,7 @@ import ch.bbv.dog.validation.ValidationRuleResult;
 import ch.bbv.dog.validation.Validator;
 import ch.bbv.explorer.ExplorerNode;
 import ch.bbv.explorer.UiNodeType;
-import ch.bbv.explorer.components.ValidationPanel;
+import ch.bbv.mda.ui.MdaExplorer;
 
 /**
  * The validate action traverses the data object graph which root is in the
@@ -65,10 +65,9 @@ public class ValidateNodeAction extends AbstractNodeAction {
       List<ValidationRuleResult> results = new ArrayList<ValidationRuleResult>();
       validator.validate(object, visitor, results);
       log.debug("Display validator messages " + results.size());
-      node.getExplorer().getStatusBar().setInfo("Validation Completed");
-      ValidationPanel panel = (ValidationPanel) node.getExplorer()
-          .getDockingArea().getTab("Validator");
-      panel.setResults(results);
+      MdaExplorer explorer = (MdaExplorer) node.getExplorer();
+      explorer.getStatusBar().setInfo("Validation Completed");
+      explorer.getValidationPanel().setResults(results);
     }
   }
 }

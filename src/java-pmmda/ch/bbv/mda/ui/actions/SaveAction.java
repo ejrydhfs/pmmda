@@ -15,6 +15,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ch.bbv.explorer.Explorer;
+import ch.bbv.explorer.ExplorerDocument;
 import ch.bbv.explorer.actions.ExplorerSaveAction;
 import ch.bbv.mda.persistence.PersistenceException;
 import ch.bbv.mda.ui.MdaDocument;
@@ -55,13 +56,13 @@ public class SaveAction extends ExplorerSaveAction {
         if (filename.length() > 0) {
           explorer.getDocument().save();
         } else {
-          JOptionPane.showMessageDialog(explorer.getFrame(),
-              ResourceUtility
-                  .getString("mda.ui.errorMsg.NO_FILE_DEFINED_ERROR"),
+          JOptionPane.showMessageDialog(explorer.getFrame(), ResourceUtility
+              .getString("mda.ui.errorMsg.NO_FILE_DEFINED_ERROR"),
               ResourceUtility.getString("mda.ui.errorMsg.ERROR"),
               JOptionPane.ERROR_MESSAGE);
         }
       }
+      explorer.getMenuBar().documentChanged(ExplorerDocument.State.CLEAN);
     } catch (PersistenceException e) {
       log.error(e);
       JOptionPane.showMessageDialog(explorer.getFrame(), ResourceUtility
