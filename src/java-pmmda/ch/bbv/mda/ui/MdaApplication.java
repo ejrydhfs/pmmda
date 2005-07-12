@@ -22,6 +22,7 @@ import ch.bbv.dog.validation.Validator;
 import ch.bbv.mda.generators.Cartridge;
 import ch.bbv.mda.generators.CartridgeFactory;
 import ch.bbv.mda.validation.RulesFactory;
+import ch.bbv.explorer.Explorer;
 import ch.bbv.utilities.PropertyUtilities;
 
 /**
@@ -52,6 +53,11 @@ public class MdaApplication extends Locator {
    */
   private static Properties properties;
 
+  /**
+   * The explorer visualizing pmMDA
+   */
+  private static Explorer explorer;
+  
   /**
    * Entry point of the application.
    * @param args command line arguments.
@@ -104,7 +110,7 @@ public class MdaApplication extends Locator {
     for (Cartridge cartridge : CartridgeFactory.getInstance().getCartridges()) {
       resourcesManager.registerResources(cartridge);
     }
-    MdaExplorer.create(args);
+    explorer = MdaExplorer.create(args);
   }
 
   /**
@@ -144,6 +150,14 @@ public class MdaApplication extends Locator {
     return properties;
   }
 
+  /**
+   * Returns the explorer associated with pmMDA
+   * @return Explorer
+   */
+  public Explorer getExplorer() {
+    return explorer;
+  }
+  
   /**
    * Reads the properties of the application.
    * @param resource name of the resource containing the properties.
