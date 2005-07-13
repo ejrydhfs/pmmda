@@ -465,7 +465,9 @@ public class NsUmlTransformer {
         owner.addProperty(property);
       }
       property.setName(name);
-      property.setTypeName(owned.qualifiedName());
+      if(owned != null){
+        property.setTypeName(owned.qualifiedName());
+      }
       property.setAggregation(true);
       extractStereotypeAndTags(association, property);
       if (multiplicity != null) {
