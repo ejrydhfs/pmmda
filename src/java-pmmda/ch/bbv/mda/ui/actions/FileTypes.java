@@ -48,6 +48,16 @@ public class FileTypes {
   public static final String RATIONAL_ROSE_TEXT = "Rational Rose (*.mdl)";
 
   /**
+   * Category File extensions for models developed with Rational Rose.
+   */
+  public static final String[] RATIONAL_ROSE_CAT_EXT = { "cat" };
+
+  /**
+   * Text for the associated extensions.
+   */
+  public static final String RATIONAL_ROSE_CAT_TEXT = "Rational Rose Category (*.cat)";
+
+  /**
    * File extensions for models serialized to XML using the open source library
    * from CodeHaus.
    */
@@ -85,6 +95,8 @@ public class FileTypes {
   public static void addFileFilters(JFileChooser chooser) {
     chooser.addChoosableFileFilter(new SimpleFileFilter(
         FileTypes.RATIONAL_ROSE_EXT, FileTypes.RATIONAL_ROSE_TEXT));
+    chooser.addChoosableFileFilter(new SimpleFileFilter(
+        FileTypes.RATIONAL_ROSE_CAT_EXT, FileTypes.RATIONAL_ROSE_CAT_TEXT));
     chooser.addChoosableFileFilter(new SimpleFileFilter(FileTypes.POSEIDON_EXT,
         FileTypes.POSEIDON_TEXT));
     chooser.addChoosableFileFilter(new SimpleFileFilter(
