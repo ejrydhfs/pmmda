@@ -102,7 +102,7 @@ public class NsUmlTransformer {
     }
     source.setEncoding(XML_ENCODING);
 
-    XMIReader xmiReader = new XMIReader();
+    NsumlXmiReader xmiReader = new NsumlXmiReader(file);
     MModel model = xmiReader.parse(source);
     inputStream.close();
     if (input != null) {
