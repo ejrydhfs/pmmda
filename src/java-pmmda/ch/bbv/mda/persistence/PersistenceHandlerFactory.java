@@ -6,7 +6,11 @@
  */
 package ch.bbv.mda.persistence;
 
+
 import java.io.File;
+
+import ch.bbv.mda.persistence.eclipse.RosePersistenceHandler;
+import ch.bbv.utilities.ReflectUtilities;
 
 /**
  * The factory handler creates persistency handlers for various supported
@@ -49,6 +53,8 @@ public class PersistenceHandlerFactory {
       persistencyHandler = getNsUmlHandler();
     } else if (filename.endsWith(".ecore")) {
       persistencyHandler = getEcoreHandler();
+    } else if (filename.endsWith(".mdl") || filename.endsWith(".cat")) {
+      persistencyHandler = getRoseHandler();
     }
     return persistencyHandler;
   }
@@ -109,4 +115,8 @@ public class PersistenceHandlerFactory {
   public PersistenceHandler getJavaDocHandler() {
     return new XmlPersistenceHandler();
   }
+  
+  public PersistenceHandler getRoseHandler() {
+    return (PersistenceHandler)ReflectUtilities.newInstance("ch.bbv.mda.persistence.eclipse.RosePersistenceHandler");
+  } 
 }
