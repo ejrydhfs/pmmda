@@ -57,17 +57,40 @@ public final class ReflectUtilities {
       Method method = bean.getClass().getDeclaredMethod(name, types);
       returns = method.invoke(bean, params);
     } catch (SecurityException e) {
-      e.printStackTrace();
+      log.fatal(e);
     } catch (NoSuchMethodException e) {
       returns = executeInherited(bean, name, types, params);
     } catch (IllegalArgumentException e) {
       executeInherited(bean, name, types, params);
     } catch (IllegalAccessException e) {
-      e.printStackTrace();
+      log.error(e);
     } catch (InvocationTargetException e) {
-      e.printStackTrace();
+      log.error(e);
     }
     return returns;
+  }
+
+  /**
+   * Creates a new instance of the class using the default constructor.
+   * @param classname qualified name of the class.
+   * @return the created instance if sucessful otherwise null.
+   * @pre clazz != null
+   */
+  public static Object newInstance(String classname) {
+    assert (classname != null);
+    Object object = null;
+    try {
+      Class clazz = Class.forName(classname);
+      object = clazz.newInstance();
+    } catch (InstantiationException e) {
+      log.fatal(e);
+    } catch (IllegalAccessException e) {
+      log.fatal(e);
+    } catch (ClassNotFoundException e) {
+      log.fatal(e);
+    }
+    return object;
+
   }
 
   /**
@@ -82,9 +105,9 @@ public final class ReflectUtilities {
     try {
       object = clazz.newInstance();
     } catch (InstantiationException e) {
-      e.printStackTrace();
+      log.fatal(e);
     } catch (IllegalAccessException e) {
-      e.printStackTrace();
+      log.fatal(e);
     }
     return object;
   }
@@ -207,12 +230,12 @@ public final class ReflectUtilities {
     Object value = null;
     try {
       value = PropertyUtils.getProperty(bean, property);
-    } catch (InvocationTargetException ite) {
-      ite.printStackTrace();
-    } catch (NoSuchMethodException nsmi) {
-      nsmi.printStackTrace();
-    } catch (IllegalAccessException iae) {
-      iae.printStackTrace();
+    } catch (InvocationTargetException e) {
+      log.fatal(e);
+    } catch (NoSuchMethodException e) {
+      log.fatal(e);
+    } catch (IllegalAccessException e) {
+      log.fatal(e);
     }
 
     return value;
@@ -230,12 +253,12 @@ public final class ReflectUtilities {
     assert ((bean != null) && (property != null));
     try {
       PropertyUtils.setProperty(bean, property, value);
-    } catch (InvocationTargetException ite) {
-      ite.printStackTrace();
-    } catch (NoSuchMethodException nsmi) {
-      nsmi.printStackTrace();
-    } catch (IllegalAccessException iae) {
-      iae.printStackTrace();
+    } catch (InvocationTargetException e) {
+      log.fatal(e);
+    } catch (NoSuchMethodException e) {
+      log.fatal(e);
+    } catch (IllegalAccessException e) {
+      log.fatal(e);
     }
   }
 
@@ -257,15 +280,15 @@ public final class ReflectUtilities {
       Method method = bean.getClass().getMethod(name, types);
       returns = method.invoke(bean, params);
     } catch (SecurityException e) {
-      e.printStackTrace();
+      log.fatal(e);
     } catch (NoSuchMethodException e) {
-      e.printStackTrace();
+      log.fatal(e);
     } catch (IllegalArgumentException e) {
-      e.printStackTrace();
+      log.fatal(e);
     } catch (IllegalAccessException e) {
-      e.printStackTrace();
+      log.fatal(e);
     } catch (InvocationTargetException e) {
-      e.printStackTrace();
+      log.fatal(e);
     }
     return returns;
   }
