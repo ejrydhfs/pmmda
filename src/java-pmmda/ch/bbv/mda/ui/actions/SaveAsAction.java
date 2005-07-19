@@ -106,4 +106,8 @@ public class SaveAsAction extends ExplorerFileAction {
       log.error(e);
     }
   }
+
+  protected int display() {
+    return getFileChooser().showSaveDialog(getExplorer().getFrame());
+  }
 }

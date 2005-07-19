@@ -57,4 +57,8 @@ public class OpenAction extends ExplorerFileAction {
     }
     return true;
   }
+  
+  protected int display() {
+    return getFileChooser().showOpenDialog(getExplorer().getFrame());
+  }
 }

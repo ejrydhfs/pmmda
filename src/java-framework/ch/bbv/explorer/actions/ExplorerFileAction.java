@@ -86,7 +86,7 @@ public abstract class ExplorerFileAction extends ExplorerGlobalActionImpl {
       }
     }
     fileChooser.setCurrentDirectory(getDirectory());
-    int option = fileChooser.showOpenDialog(getExplorer().getFrame());
+    int option = display();
     switch (option) {
     case JFileChooser.APPROVE_OPTION:
       selectedFile = fileChooser.getSelectedFile();
@@ -143,4 +143,10 @@ public abstract class ExplorerFileAction extends ExplorerGlobalActionImpl {
     }
     return directory;
   }
+  
+  /**
+   * Displays the file selection dialog with the needed options.
+   * @return result of the file selection activity.
+   */
+  protected abstract int display();
 }
