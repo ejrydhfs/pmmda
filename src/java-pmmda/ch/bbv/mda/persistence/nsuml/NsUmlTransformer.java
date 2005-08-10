@@ -135,7 +135,7 @@ public class NsUmlTransformer {
    */
   public void synchronize(MModel source, MetaModel target) {
     target.setName(source.getName());
-
+    extractDataTypes(source, target);
     for (Iterator<MPackage> i = new FilterIterator<MPackage>(source
         .getOwnedElements(), MPackage.class); i.hasNext();) {
       MPackage mSubPackage = i.next();
@@ -286,9 +286,9 @@ public class NsUmlTransformer {
       }
       return;
     }
-    MetaDataType metaDataType = metaModel.findDataType(name);
+    MetaDatatype metaDataType = metaModel.findDataType(name);
     if (metaDataType == null) {
-      metaDataType = new MetaDataType();
+      metaDataType = new MetaDatatype();
       metaDataType.setName(name);
       metaModel.addDataType(metaDataType);
     }
@@ -322,8 +322,8 @@ public class NsUmlTransformer {
           .setTypeName(NsUmlUtilities.getQualifiedName(attribute.getType()));
     } else {
       log.info("Attribute '" + attribute.getName() + "' of class '"
-          + context.getName() + " has no type associated (set to Integer)");
-      property.setTypeName("java.lang.Integer");
+          + context.getName() + "' has no type associated (set to datatype integer)");
+      property.setTypeName("int");
     }
 
     Multiplicity multiplicity = convert(attribute.getMultiplicity());
@@ -490,6 +490,17 @@ public class NsUmlTransformer {
     }
   }
 
+  private void extractDataTypes(MModel source, MetaModel target) {
+    for (Iterator<MDataType> i = new FilterIterator<MDataType>(
+        source.getOwnedElements(), MDataType.class); i.hasNext();) {
+      MDataType mDataType = i.next();
+      MetaDatatype datatype = new MetaDatatype();
+      datatype.setName(mDataType.getName());
+      extractStereotypeAndTags(mDataType, datatype);
+      target.addDataType(datatype);
+    }
+  }
+
   /**
    * Converts a NSUML multiplicity into a MDA multiplicity.
    * @param multiplicity NSUML multiplicity.
@@ -526,13 +537,13 @@ public class NsUmlTransformer {
    */
   private VisibilityCode convert(MVisibilityKind visibilityKind) {
     VisibilityCode visibility = VisibilityCode
-        .getCode(VisibilityCode.PUBLIC_CODE);
+        .getCode(VisibilityCode.PUBLIC_ID);
     if (MVisibilityKind.PUBLIC.equals(visibilityKind)) {
-      visibility = VisibilityCode.getCode(VisibilityCode.PUBLIC_CODE);
+      visibility = VisibilityCode.getCode(VisibilityCode.PUBLIC_ID);
     } else if (MVisibilityKind.PROTECTED.equals(visibilityKind)) {
-      visibility = VisibilityCode.getCode(VisibilityCode.PROTECTED_CODE);
+      visibility = VisibilityCode.getCode(VisibilityCode.PROTECTED_ID);
     } else if (MVisibilityKind.PRIVATE.equals(visibilityKind)) {
-      visibility = VisibilityCode.getCode(VisibilityCode.PRIVATE_CODE);
+      visibility = VisibilityCode.getCode(VisibilityCode.PRIVATE_ID);
     }
     return visibility;
   }
