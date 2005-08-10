@@ -22,6 +22,16 @@
   </header>
   <body>
     <section>
+      <title>Planned Extensions</title>
+      <p>The following extensions are planned in the next scheduled releases.</p>
+      <dl>
+        <dt>Language independant models</dt><dd>Models should be independant of
+          the target programming language. The MDA model will be extended to 
+          support datatypes and mechanisms to map user defined datatypes to types
+          of the target language.</dd>
+      </dl>
+    </section>
+    <section>
       <title>Future Developments</title>
       <p>Some <em>pmMDA</em> future directions are identified. Volonteers are 
         welcome to realize these developments or define new extensions.</p>

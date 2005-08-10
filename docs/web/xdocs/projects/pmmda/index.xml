@@ -1,119 +1,150 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2000-2005 The Apache Software Foundation
-
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-
-      http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
+ Copyright 2000-2005 The Apache Software Foundation
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
 -->
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" 
   "http://forrest.apache.org/dtd/document-v20.dtd">
 <document>
-  <header>
-    <title>pmMDA Project</title>
-  </header>
-  <body>
-    <section>
-      <title>Dependencies</title>
-      <p>The project uses external open source projects. The list of required 
-        libraries <em>jar files</em> are documented in a dependencies document 
-        distributed with the source code. Below a overview of the used 
-        components is provided.</p>
-      <table>
-        <tr>
-          <th>Project</th>
-          <th>Link</th>
-        </tr>
-        <tr>
-          <td>ArgoUML</td>
-          <td><a href="http://argouml.tigris.org">ArgoUML</a></td>
-        </tr>
-        <tr>
-          <td>Jakarta</td>
-          <td><a href="ext:jakarta">Apache Jakarta</a></td>
-        </tr>
-        <tr>
-          <td>JUnit</td>
-          <td><a href="http://www.junit.org">JUnit</a></td>
-        </tr>
-        <tr>
-          <td>NetBeans MDR</td>
-          <td><a href="http://www.netbeans.org">Net Beans MDR</a></td>
-        </tr>
-        <tr>
-          <td>Novosoft NSUML</td>
-          <td><a href="http://argouml.tigris.org">ArgoUML NSUML</a></td>
-        </tr>
-      </table>
-    </section>
-    <section>
-      <title>Jars List</title>
-      <p>The table below documents all the jar files and their versions used in 
-        the project.</p>
-      <table>
-        <tr>
-          <th>Jar File</th>
-          <th>Version</th>
-          <th>Licence</th>
-          <th>Comment</th>
-        </tr>
-        <tr>
-          <td>antlr</td>
-          <td>2.7.2</td>
-          <td>Open Source</td>
-          <td><a href="http://www.antlr.org">ANTLR</a></td>
-        </tr>
-        <tr>
-          <td>beanshell</td>
-          <td>2.0-b2</td>
-          <td>LGPL</td>
-          <td><a href="http://www.beanshell.org">Beanshell</a></td>
-        </tr>
-        <tr>
-          <td>commons-beanutils</td>
-          <td>1.6.1</td>
-          <td>Apache License</td>
-          <td><a href="ext:jakarta/commons-beanutils">Jakarta Commons Bean Utils</a></td>
-        </tr>
-        <tr>
-          <td>commons-collections</td>
-          <td>3.0</td>
-          <td>Apache License</td>
-          <td><a href="ext:jakarta/commons-collections">Jakarta Commons Collections</a></td>
-        </tr>
-        <tr>
-          <td>commons-dbcp</td>
-          <td>1.1</td>
-          <td>Apache License</td>
-          <td><a href="ext:jakarta/commons-dbcp">Jakarta Commons BBCP</a></td>
-        </tr>
-        <tr>
-          <td>commons-lang</td>
-          <td>2.0</td>
-          <td>Apache License</td>
-          <td><a href="ext:jakarta/commons-lang">Jakarta Commons Language</a></td>
-        </tr>
-        <tr>
-          <td>commons-logging</td>
-          <td>1.0.4</td>
-          <td>Apache License</td>
-          <td><a href="ext:jakarta/commons-logging">Jakarta Commons Logging</a></td>
-        </tr>
-        <tr>
-          <td>commons-logging-api</td>
-          <td>1.0.4</td>
-          <td>Apache License</td>
-          <td><a href="ext:jakarta/commons-logging">Jakarta Commons Logging</a></td>
-        </tr>
-      </table>
-    </section>
-  </body>
+ <header>
+  <title>pmMDA Project</title>
+ </header>
+ <body>
+  <section>
+   <title>Dependencies</title>
+   <p>
+    The project uses external open source projects. The list of required
+    libraries
+    <em>jar files</em>
+    are documented in a dependencies document distributed with the source code.
+    Below a overview of the used components is provided.
+   </p>
+   <table>
+    <tr>
+     <th>Project</th>
+     <th>Link</th>
+    </tr>
+    <tr>
+     <td>ArgoUML</td>
+     <td>
+      <a href="site:argoUML">ArgoUML</a>
+     </td>
+    </tr>
+    <tr>
+     <td>Jakarta</td>
+     <td>
+      <a href="ext:jakarta">Apache Jakarta</a>
+     </td>
+    </tr>
+    <tr>
+     <td>JUnit</td>
+     <td>
+      <a href="http://www.junit.org">JUnit</a>
+     </td>
+    </tr>
+    <tr>
+     <td>NetBeans MDR</td>
+     <td>
+      <a href="http://www.netbeans.org">Net Beans MDR</a>
+     </td>
+    </tr>
+    <tr>
+     <td>Novosoft NSUML</td>
+     <td>
+      <a href="http://argouml.tigris.org">ArgoUML NSUML</a>
+     </td>
+    </tr>
+   </table>
+  </section>
+  <section>
+   <title>Jars List</title>
+   <p>
+    The table below documents all the jar files and their versions used in the
+    project.
+   </p>
+   <table>
+    <tr>
+     <th>Jar File</th>
+     <th>Version</th>
+     <th>Licence</th>
+     <th>Comment</th>
+    </tr>
+    <tr>
+     <td>antlr</td>
+     <td>2.7.2</td>
+     <td>Open Source</td>
+     <td>
+      <a href="http://www.antlr.org">ANTLR</a>
+     </td>
+    </tr>
+    <tr>
+     <td>beanshell</td>
+     <td>2.0-b2</td>
+     <td>LGPL</td>
+     <td>
+      <a href="http://www.beanshell.org">Beanshell</a>
+     </td>
+    </tr>
+    <tr>
+     <td>commons-beanutils</td>
+     <td>1.6.1</td>
+     <td>Apache License</td>
+     <td>
+      <a href="ext:jakarta/commons-beanutils">Jakarta Commons Bean Utils</a>
+     </td>
+    </tr>
+    <tr>
+     <td>commons-collections</td>
+     <td>3.0</td>
+     <td>Apache License</td>
+     <td>
+      <a href="ext:jakarta/commons-collections">Jakarta Commons Collections</a>
+     </td>
+    </tr>
+    <tr>
+     <td>commons-dbcp</td>
+     <td>1.1</td>
+     <td>Apache License</td>
+     <td>
+      <a href="ext:jakarta/commons-dbcp">Jakarta Commons BBCP</a>
+     </td>
+    </tr>
+    <tr>
+     <td>commons-lang</td>
+     <td>2.0</td>
+     <td>Apache License</td>
+     <td>
+      <a href="ext:jakarta/commons-lang">Jakarta Commons Language</a>
+     </td>
+    </tr>
+    <tr>
+     <td>commons-logging</td>
+     <td>1.0.4</td>
+     <td>Apache License</td>
+     <td>
+      <a href="ext:jakarta/commons-logging">Jakarta Commons Logging</a>
+     </td>
+    </tr>
+    <tr>
+     <td>commons-logging-api</td>
+     <td>1.0.4</td>
+     <td>Apache License</td>
+     <td>
+      <a href="ext:jakarta/commons-logging">Jakarta Commons Logging</a>
+     </td>
+    </tr>
+   </table>
+  </section>
+ </body>
 </document>

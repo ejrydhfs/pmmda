@@ -43,7 +43,8 @@
       <title>Edit Models</title>
       <p><em>pmMDA</em> UML models can be edited either using the provided user 
         interface or more conveniently UML modeling tools such as 
-        <em>ArgoUML</em> or <em>Poseidon</em>.</p>
+        <em>ArgoUML</em> or <em>Poseidon</em>. Both tools support all UML diagrams
+        and allow the definition of stereotypes, datatypes and tagged values.</p>
       <p>MDA approaches require more formal UML models to allow model 
         transformations and source code artifacts generation. Here we provide 
         some hints which conventions should be followed in UML models 
@@ -61,15 +62,30 @@
       <p>All relashionships should be named. All relationships should be 
         directed. Role names can be defined but are not currently used in the 
         transformation. The validator framework checks that all relationships 
-        are named. </p>
+        are named.</p>
     </section>
     <section>
-      <title>Configure</title>
-      <p>To be written.</p>
+      <title>Configure <em>pmMDA</em></title>
+      <p>The <em>pmMDA</em> provides two major levels of configuration. The 
+        properties file of the application configures overall aspects of the 
+        tool and register the cartridges which should be used. Each cartridge
+        can add their own properties in this file. For a detailed discussion of
+        the supported properties please read the comments in the properties file
+        and the documentation of the cartridge you use.</p>
+      <note>The properties file of <em>pmMDA</em> supports recursive variable
+        definition such as the one provided in Ant. You can structure your 
+        variables in a structured way to minimize customisation effort.</note>
+      <p>Each cartridge provides an xml configuration file to tailor the mapping
+        of PIM elements such as datatypes to the coding conventions of your 
+        projects. The mapping file also provides mechanisms to declare unneeded
+        tagged values as obsolete.</p>
     </section>
     <section>
       <title>Links</title>
-      <p>To be written.</p>
+      <p>UML concepts definition and description can be found in the official
+      site of OMG. Please consult their web site <a href="site:omg">OMG</a>.</p>
+      <p>The UML modelization tool ArgoUML can be downloaded from their home 
+      page <a href="site:argoUML">ArgoUML</a>.</p>
     </section>
   </body>
 </document>
