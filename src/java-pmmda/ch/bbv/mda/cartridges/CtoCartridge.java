@@ -3,7 +3,9 @@
  * you may not use this file except in compliance with the License.
  * $Id$
  */
-package ch.bbv.mda.generators;
+package ch.bbv.mda.cartridges;
+
+import static ch.bbv.mda.cartridges.CtoConstants.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,6 +17,9 @@ import org.apache.velocity.VelocityContext;
 
 import ch.bbv.application.VersionId;
 import ch.bbv.mda.*;
+import ch.bbv.mda.generators.Cartridge;
+import ch.bbv.mda.generators.CartridgeFactory;
+import ch.bbv.mda.generators.CartridgeImpl;
 import ch.bbv.mda.operators.ModelOperators;
 
 /**
@@ -35,82 +40,6 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
    * The prefix of the cartridge.
    */
   public static final String PREFIX = "cto";
-
-  /**
-   * Extension for IDL source file.
-   */
-  public static final String IDL_EXTENSION = ".idl";
-
-  /**
-   * Property defining the root folder where all IDL files are generated.
-   */
-  public static final String ROOT_IDL_KEY = "cto-cartridge.idl-root-folder";
-
-  /**
-   * Property defining the root folder where all Java transformer files are
-   * generated.
-   */
-  public static final String ROOT_JAVA_KEY = "cto-cartridge.java-root-folder";
-
-  /**
-   * Property defining the package containing all transformers of a data object
-   * package.
-   */
-  public static final String TRANSFORM_PACKAGE_POSTFIX = "cto-cartridge.transform-package-postfix";
-
-  /**
-   * Property defining the prefix for all IDL structures.
-   */
-  public static final String IDL_PREFIX_KEY = "cto-cartridge.idl-prefix";
-
-  /**
-   * Property defining the postfix for all IDL structures.
-   */
-  public static final String IDL_POSTFIX_KEY = "cto-cartridge.idl-postfix";
-
-  /**
-   * Tag defining the name of the package containing the IDL sources.
-   */
-  public static final String CTO_PACKAGE_IDL_TAG = "cto-package-idl";
-
-  /**
-   * Attribute defining the name of the IDL structure of the data object.
-   */
-  public static final String CTO_MO_CLASS = "cto-mo-class";
-
-  /**
-   * Attribute defining the name of the IDL structure of the lightweight object.
-   */
-  public static final String CTO_LW_CLASS = "cto-lw-class";
-
-  /**
-   * Attribute defining the IDL type of a property.
-   */
-  public static final String CTO_IDL_TYPE = "cto-idl-type";
-
-  /**
-   * Attribute defining the folder containing the data objects to CORBA
-   * transformer Java classes.
-   */
-  public static final String CTO_BO2DTO_PACKAGE = "cto-bo2dto-package";
-
-  /**
-   * Attribute defining the folder containing the ligthweight data objects to
-   * CORBA transformer Java classes.
-   */
-  public static final String CTO_LW2DTO_PACKAGE = "cto-lw2dto-package";
-
-  /**
-   * Attribute defining the name of the transformer class for the data object
-   * transformers.
-   */
-  public static final String CTO_BO2DTO_CLASS = "cto-bo2dto-class";
-
-  /**
-   * Attribute defining the name of the transformer class for the lightweight
-   * data object transformers.
-   */
-  public static final String CTO_LW2DTO_CLASS = "cto-lw2dto-class";
 
   /**
    * List of all supported Java types which can have a null value.
@@ -168,6 +97,13 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
   private static Log log = LogFactory.getLog(CtoCartridge.class);
 
   /**
+   * Flag indicating if the package is an interface package or not. Only classes
+   * belonging to interface packages are made public through CORBA IDL
+   * descriptions.
+   */
+  private boolean isPackageInterface;
+
+  /**
    * Constructor of the class.
    */
   public CtoCartridge() {
@@ -186,6 +122,7 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
   }
 
   public List<TagDefinition> getTaggedValueTypes(Class clazz) {
+    assert (clazz != null);
     List<TagDefinition> types = new ArrayList<TagDefinition>();
     if (clazz.equals(MetaPackage.class)) {
       types.add(new TagDefinition(CTO_PACKAGE_IDL_TAG, "", String.class));
@@ -193,65 +130,65 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
     return types;
   }
 
-  public void preProcessPackage(MetaPackage metaPackage) {
-    assert (metaPackage != null);
-    Properties context = getContext();
-    StringBuilder buffer = new StringBuilder();
-    buffer.append(metaPackage.qualifiedName()).append(
-        context.getProperty(TRANSFORM_PACKAGE_POSTFIX));
-    metaPackage.addAttribute(CTO_BO2DTO_PACKAGE, buffer.toString());
-    metaPackage.addAttribute(CTO_LW2DTO_PACKAGE, buffer.toString());
+  public void preProcessDatatype(MetaDatatype datatype) {
+    assert (datatype != null);
+    String idlType = java2idl.get(datatype
+        .getAttribute(BoConstants.BO_DATATYPE));
+    if (idlType != null) {
+      datatype.addAttribute(CTO_IDL_TYPE, idlType);
+    }
+  }
+
+  public void preProcessPackage(MetaPackage packages) {
+    assert (packages != null);
+    String attribute = expandIdentifier(null, packages.qualifiedName(),
+        TRANSFORM_PACKAGE_POSTFIX);
+    packages.addAttribute(CTO_BO2DTO_PACKAGE, attribute);
+    packages.addAttribute(CTO_LW2DTO_PACKAGE, attribute);
   }
 
   public void preProcessClass(MetaClass clazz) {
     assert (clazz != null);
-
     Properties context = getContext();
     String name = clazz.getName();
     StringBuilder buffer = new StringBuilder();
     buffer.append(context.getProperty(IDL_PREFIX_KEY)).append(name).append(
-        context.getProperty(BoCartridge.BO_CLASS_POSTFIX_KEY)).append(
+        context.getProperty(BoConstants.BO_CLASS_POSTFIX_KEY)).append(
         context.getProperty(IDL_POSTFIX_KEY));
     clazz.addAttribute(CTO_MO_CLASS, buffer.toString());
     buffer.setLength(0);
     buffer.append(context.getProperty(IDL_PREFIX_KEY)).append(name).append(
-        context.getProperty(BoCartridge.LW_CLASS_POSTFIX_KEY)).append(
+        context.getProperty(BoConstants.LW_CLASS_POSTFIX_KEY)).append(
         context.getProperty(IDL_POSTFIX_KEY));
     clazz.addAttribute(CTO_LW_CLASS, buffer.toString());
     buffer.setLength(0);
-    buffer.append(clazz.getAttribute(BoCartridge.BO_CLASS)).append(
+    buffer.append(clazz.getAttribute(BoConstants.BO_CLASS)).append(
         "Transformer");
     clazz.addAttribute(CTO_BO2DTO_CLASS, buffer.toString());
     buffer.setLength(0);
-    buffer.append(clazz.getAttribute(BoCartridge.LW_CLASS)).append(
+    buffer.append(clazz.getAttribute(BoConstants.LW_CLASS)).append(
         "Transformer");
     clazz.addAttribute(CTO_LW2DTO_CLASS, buffer.toString());
-
-    for (MetaProperty property : clazz.getProperties()) {
-      String idlType = java2idl.get(property.getTypeName());
-      if (idlType != null) {
-        property.addAttribute(CTO_IDL_TYPE, idlType);
-      }
-    }
-    for (MetaProperty property : clazz.getIndexedProperties()) {
-      String idlType = java2idl.get(property.getTypeName());
-      if (idlType != null) {
-        property.addAttribute(CTO_IDL_TYPE, idlType);
-      }
+    String idlType = java2idl.get(clazz.qualifiedName());
+    if (idlType != null) {
+      clazz.addAttribute(CTO_IDL_TYPE, idlType);
     }
   }
 
-  public void processModel(MetaModel model) {
+  public void processPackage(MetaPackage packages) {
+    isPackageInterface = BoConstants.INTERFACE_STEREOTYPE
+        .equalsIgnoreCase(packages.getStereotype());
   }
 
   public void processClass(MetaClass clazz) {
-    File javaRoot = getRoot(ROOT_JAVA_KEY, BoCartridge.ROOT_COMMON_FOLDER_KEY);
+    File javaRoot = getRoot(ROOT_JAVA_KEY, BoConstants.ROOT_COMMON_FOLDER_KEY);
     File idlRoot = new File(getContext().getProperty(ROOT_IDL_KEY));
-    if (!clazz.retrievePackage().booleanValueOfTag(BoCartridge.GENERATE_TAG)) {
+    if (!isPackageInterface
+        || !clazz.retrievePackage().booleanValueOfTag(BoConstants.GENERATE_TAG)) {
       return;
     }
     try {
-      if (BoCartridge.DATA_OBJECT_STEREOTYPE.equals(clazz.getStereotype())) {
+      if (BoConstants.DATA_OBJECT_STEREOTYPE.equals(clazz.getStereotype())) {
         MetaPackage metaPackage = (MetaPackage) clazz.getContext();
         VelocityContext context = createContext(clazz);
         processTemplate(idlRoot, metaPackage.valueOfTag(CTO_PACKAGE_IDL_TAG),
@@ -261,7 +198,7 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
             .getAttribute(CTO_BO2DTO_PACKAGE), clazz
             .getAttribute(CTO_BO2DTO_CLASS), retrieveTemplate("java-bo2dto",
             null), context);
-        if (clazz.booleanValueOfAttribute(BoCartridge.BO_LIGHTWEIGHT)) {
+        if (clazz.booleanValueOfAttribute(BoConstants.BO_LIGHTWEIGHT)) {
           processTemplate(idlRoot, metaPackage.valueOfTag(CTO_PACKAGE_IDL_TAG),
               clazz.getAttribute(CTO_LW_CLASS) + IDL_EXTENSION,
               retrieveTemplate("idl-dto-lw", null), context);
@@ -276,9 +213,18 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
     }
   }
 
+  public String getIdlType(MetaProperty property) {
+    MetaClassifier classifier = property.getClassifier();
+    String idlType = classifier.getAttribute(CTO_IDL_TYPE);
+    if (idlType == null) {
+      idlType = java2idl.get(classifier.qualifiedName());
+    }
+    return idlType;
+  }
+
   /**
    * Creates the transform statement from a business object to a data transfer
-   * object.
+   * object. The case of datatype is also handled.
    * @param property property to transform.
    * @param param name of the object from which the value is retrieved.
    * @return Java statement performing the transformation.
@@ -286,29 +232,30 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
   public String getBo2DtoConversion(MetaProperty property, String param) {
     StringBuilder buffer = new StringBuilder();
     String uName = ModelOperators.identifierFirstUpper(property.getName());
-    String typeName = property.getTypeName();
-    if (Arrays.binarySearch(NULLABLE_TYPES, typeName) >= 0) {
+    uName = ModelOperators.identifierSingular(uName);
+    String typename = getJavaType(property);
+    if (Arrays.binarySearch(NULLABLE_TYPES, typename) >= 0) {
       buffer.append("TransformerCto.create(").append(param).append(".get")
           .append(uName).append("())");
     } else {
-      String getter = ("boolean".equals(typeName)) ? ".is" : ".get";
+      String getter = ("boolean".equals(typename)) ? ".is" : ".get";
       buffer.append(param).append(getter).append(uName).append("()");
-      if (!(Arrays.binarySearch(PRIMITIVE_TYPES, typeName) >= 0)) {
-        if ("Boolean".equals(typeName)) {
+      if (!(Arrays.binarySearch(PRIMITIVE_TYPES, typename) >= 0)) {
+        if ("Boolean".equals(typename)) {
           buffer.append(".booleanValue()");
-        } else if ("Byte".equals(typeName)) {
+        } else if ("Byte".equals(typename)) {
           buffer.append(".byteValue()");
-        } else if ("Short".equals(typeName)) {
+        } else if ("Short".equals(typename)) {
           buffer.append(".shortValue()");
-        } else if ("Integer".equals(typeName)) {
+        } else if ("Integer".equals(typename)) {
           buffer.append(".intValue()");
-        } else if ("Long".equals(typeName)) {
+        } else if ("Long".equals(typename)) {
           buffer.append(".longValue()");
-        } else if ("Float".equals(typeName)) {
+        } else if ("Float".equals(typename)) {
           buffer.append(".longValue()");
-        } else if ("Double".equals(typeName)) {
+        } else if ("Double".equals(typename)) {
           buffer.append(".longValue()");
-        } else if ("Double".equals(typeName)) {
+        } else if ("Double".equals(typename)) {
           buffer.append(".toString()");
         }
       }
@@ -325,28 +272,28 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
    */
   public String getDto2BoConversion(MetaProperty property, String param) {
     StringBuilder buffer = new StringBuilder();
-    String typeName = property.getTypeName();
-    if (Arrays.binarySearch(NULLABLE_TYPES, typeName) >= 0) {
+    String typename = getJavaType(property);
+    if (Arrays.binarySearch(NULLABLE_TYPES, typename) >= 0) {
       buffer.append("TransformerCto.extract(").append(param).append(".")
           .append(property.nameFirstLower()).append(")");
     } else {
       buffer.append(param).append(".").append(property.nameFirstLower());
-      if (!(Arrays.binarySearch(PRIMITIVE_TYPES, typeName) >= 0)) {
-        if ("Boolean".equals(typeName)) {
+      if (!(Arrays.binarySearch(PRIMITIVE_TYPES, typename) >= 0)) {
+        if ("Boolean".equals(typename)) {
           buffer.append(".booleanValue()");
-        } else if ("Byte".equals(typeName)) {
+        } else if ("Byte".equals(typename)) {
           buffer.append(".byteValue()");
-        } else if ("Short".equals(typeName)) {
+        } else if ("Short".equals(typename)) {
           buffer.append(".shortValue()");
-        } else if ("Integer".equals(typeName)) {
+        } else if ("Integer".equals(typename)) {
           buffer.append(".intValue()");
-        } else if ("Long".equals(typeName)) {
+        } else if ("Long".equals(typename)) {
           buffer.append(".longValue()");
-        } else if ("Float".equals(typeName)) {
+        } else if ("Float".equals(typename)) {
           buffer.append(".longValue()");
-        } else if ("Double".equals(typeName)) {
+        } else if ("Double".equals(typename)) {
           buffer.append(".longValue()");
-        } else if ("Double".equals(typeName)) {
+        } else if ("Double".equals(typename)) {
           buffer.append(".toString()");
         }
       }
@@ -399,4 +346,12 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
     return cartridge.retrieveImportStatementsForLw(clazz, packageName);
   }
 
+  private String getJavaType(MetaProperty property) {
+    MetaClassifier classifier = property.getClassifier();
+    String typename = classifier.getAttribute(BoConstants.BO_DATATYPE);
+    if (typename == null) {
+      typename = classifier.qualifiedName();
+    }
+    return typename;
+  }
 }

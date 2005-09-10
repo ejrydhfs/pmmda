@@ -11,8 +11,8 @@ import ch.bbv.dog.ui.ReferenceCodeComboBox;
 import ch.bbv.explorer.NodePropertiesView;
 import ch.bbv.mda.MetaClass;
 import ch.bbv.mda.MetaElement;
-import ch.bbv.mda.MetaFactory;
 import ch.bbv.mda.VisibilityCode;
+import ch.bbv.mda.generators.CartridgeFactory;
 
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
@@ -118,7 +118,7 @@ public class MetaClassView extends NodePropertiesView {
   public void populateView() {
     MetaClass model = (MetaClass) getDataObject();
     if (this.isNewObject()) {
-      MetaFactory.getInstance().initialize(model);
+      CartridgeFactory.getInstance().getItemFactory().initialize(model, MetaClass.class);
     }
     nameText.setText(model.getName());
     stereotypeText.setText(model.getStereotype());

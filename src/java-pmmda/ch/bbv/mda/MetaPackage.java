@@ -44,35 +44,10 @@ public class MetaPackage extends MetaElement {
   private List<MetaClass> classes;
 
   /**
-   * Flag indicating if the package belongs to the standard packages of the
-   * environment or not.
-   * @serial
-   */
-  private boolean system;
-
-  /**
    * Default constructor of the class.
    */
   public MetaPackage() {
     classes = new ArrayList<MetaClass>();
-  }
-
-  /**
-   * Returns true if the package belongs to the standards ones otherwise false.
-   * @return the value of the flag.
-   * @see #setSystem(boolean)
-   */
-  public boolean isSystem() {
-    return system;
-  }
-
-  /**
-   * Sets the new value of the package.
-   * @param system true if the package is a standard one otherwise false.
-   * @see #isSystem()
-   */
-  public void setSystem(boolean system) {
-    this.system = system;
   }
 
   /**

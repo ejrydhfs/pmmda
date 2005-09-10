@@ -11,21 +11,8 @@ import java.util.List;
 
 import ch.bbv.dog.DataObjectManager;
 import ch.bbv.dog.DataObjectType;
-import ch.bbv.explorer.AbstractTypeFactory;
-import ch.bbv.explorer.ChildrenIconSelector;
-import ch.bbv.explorer.NodeTableView;
-import ch.bbv.explorer.PopupSelectorDefault;
-import ch.bbv.explorer.SimpleIconSelector;
-import ch.bbv.explorer.UiField;
-import ch.bbv.explorer.UiNodeTypeFactory;
-import ch.bbv.explorer.UiNodeTypeImpl;
-import ch.bbv.explorer.UiNodeViewType;
-import ch.bbv.mda.MetaClass;
-import ch.bbv.mda.MetaIndexedProperty;
-import ch.bbv.mda.MetaModel;
-import ch.bbv.mda.MetaPackage;
-import ch.bbv.mda.MetaProperty;
-import ch.bbv.mda.VisitorFunctor;
+import ch.bbv.explorer.*;
+import ch.bbv.mda.*;
 import ch.bbv.mda.graphs.ClassGraphView;
 
 /**
@@ -53,6 +40,7 @@ public class TypeFactory extends AbstractTypeFactory {
     createNodeTypeForMetaClass();
     createNodeTypeForMetaProperty();
     createNodeTypeForMetaIndexedProperty();
+    createNodeTypeForMetaDataType();
   }
 
   /**
@@ -66,6 +54,7 @@ public class TypeFactory extends AbstractTypeFactory {
     UiNodeTypeImpl nodeType = new UiNodeTypeImpl(type, "name",
         MetaModelView.class);
     addRelation(nodeType, "packages", MetaPackage.class, true, true);
+    addRelation(nodeType, "dataTypes", MetaDatatype.class, true, true);
 
     List<UiField> params = new ArrayList<UiField>();
     addField(params, "name", String.class, true);
@@ -156,4 +145,20 @@ public class TypeFactory extends AbstractTypeFactory {
     register(type, nodeType, new PopupSelectorDefault(nodeType),
         new FieldVisibilityIconSelector(getIconFactory(), "indexed-field"));
   }
+
+  /**
+   * Creates the node type for a bean type with fields and relations.
+   */
+  public void createNodeTypeForMetaDataType() {
+    DataObjectType type = new DataObjectType(MetaDatatype.class,
+        MetaDatatype.class, MetaDatatype.class,
+        VisitorFunctor.class, VisitorFunctor.class, null);
+    UiNodeTypeImpl nodeType = new UiNodeTypeImpl(type, "name",
+        MetaDatatype.class);
+    nodeType.registerView(new UiNodeViewType("default", nodeType,
+        NodeTableView.class, null, true));
+    register(type, nodeType, new PopupSelectorDefault(nodeType),
+        new SimpleIconSelector("datatype"));
+  }
+
 }

@@ -63,4 +63,9 @@ public interface LwVisitor {
    * @param item item to visit.
    */
   void visit(RealmLw item);
+  /** 
+   * Visits the class NamedEntityLw as part of the visitor pattern.
+   * @param item item to visit.
+   */
+  void visit(NamedEntityLw item);
 }

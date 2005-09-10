@@ -32,8 +32,8 @@ public class TaggedValue extends DataObjectImpl implements Comparable {
   public static class TaggedValueComparator implements Comparator {
 
     /**
-     * Compares two tag values. The two tagged values are equivalent if
-     * both tags are the same.
+     * Compares two tag values. The two tagged values are equivalent if both
+     * tags are the same.
      * @param left tagged value to compare with.
      * @param right tagged value to compare with.
      * @return result of comparing both tag names. The ordering is based on the
@@ -61,6 +61,14 @@ public class TaggedValue extends DataObjectImpl implements Comparable {
    * Type of the values of the tagged value.
    */
   private TagDefinition type;
+
+  /**
+   * Context property of the item. The value is handled in related accessors and
+   * does not need to be persisted but reflection directly manipulating fields
+   * do not call the accessors.
+   * @serial
+   */
+  private transient MetaElement context;
 
   /**
    * Default constructor of the class. No type is defined for the new tag.
@@ -126,12 +134,14 @@ public class TaggedValue extends DataObjectImpl implements Comparable {
   }
 
   /**
-   * Sets the value of the tagged value.
+   * Sets the value of the tagged value. It is a changeable property.
    * @param value new value of the tagged value.
    * @see #getValue()
    */
   public void setValue(String value) {
+    String oldValue = this.value;
     this.value = value;
+    propertyChangeSupport.firePropertyChange("taggedValues", oldValue, value);
   }
 
   /**
@@ -141,6 +151,24 @@ public class TaggedValue extends DataObjectImpl implements Comparable {
    */
   public TagDefinition getType() {
     return type;
+  }
+
+  /**
+   * Returns the context of the element if defined otherwise null.
+   * @return context of the element.
+   * @see #setContext(MetaElement)
+   */
+  public MetaElement getContext() {
+    return context;
+  }
+
+  /**
+   * Sets the context of the element.
+   * @param context new context of the context.
+   * @see #getContext()
+   */
+  public void setContext(MetaElement context) {
+    this.context = context;
   }
 
   /**

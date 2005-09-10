@@ -27,14 +27,17 @@ public class CartridgeDescriptor {
   /**
    * Flag indicating if the cartridge should be loaded or not.
    */
-  private Boolean loaded;
+  private transient boolean loaded;
 
   /**
    * Flag indicating if the cartridge is active or not.
    */
-  private Boolean active;
+  private transient boolean active;
 
-  private Cartridge cartridge;
+  /**
+   * Instance of the cartridge being described.
+   */
+  private transient Cartridge cartridge;
 
   /**
    * Returns the classname of the cartridge.

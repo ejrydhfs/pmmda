@@ -38,7 +38,7 @@ public class MetaModel extends MetaPackage {
    * List of all data types of the model.
    * @serial
    */
-  private List<MetaDataType> dataTypes;
+  private List<MetaDatatype> dataTypes;
 
   /**
    * The code type manager handling the reference codes of the model.
@@ -50,7 +50,7 @@ public class MetaModel extends MetaPackage {
    */
   public MetaModel() {
     packages = new ArrayList<MetaPackage>();
-    dataTypes = new ArrayList<MetaDataType>();
+    dataTypes = new ArrayList<MetaDatatype>();
     codeTypeMgr = new CodeTypeMgr();
   }
 
@@ -125,41 +125,41 @@ public class MetaModel extends MetaPackage {
     }
   }
 
-  public MetaDataType getDataType(int index) {
+  public MetaDatatype getDataType(int index) {
     return dataTypes.get(index);
   }
 
-  public void addDataType(MetaDataType metaDataType) {
+  public void addDataType(MetaDatatype metaDataType) {
     dataTypes.add(metaDataType);
     metaDataType.setContext(this);
   }
 
-  public void addDataType(int index, MetaDataType metaDataType) {
+  public void addDataType(int index, MetaDatatype metaDataType) {
     dataTypes.add(index, metaDataType);
     metaDataType.setContext(this);
     Collections.sort(packages, MetaElement.NAME_COMPARATOR);
   }
 
-  public List<MetaDataType> getDataTypes() {
+  public List<MetaDatatype> getDataTypes() {
     return dataTypes;
   }
 
-  public void setDataTypes(List<MetaDataType> dataTypes) {
+  public void setDataTypes(List<MetaDatatype> dataTypes) {
     removeAllDataTypes();
     dataTypes.addAll(dataTypes);
-    for (MetaDataType dataType : dataTypes) {
+    for (MetaDatatype dataType : dataTypes) {
       dataType.setContext(this);
     }
   }
 
   public void removeAllDataTypes() {
-    for (MetaDataType dataType : dataTypes) {
+    for (MetaDatatype dataType : dataTypes) {
       dataType.setContext(null);
     }
     dataTypes.clear();
   }
 
-  public void removeDataType(MetaDataType dataType) {
+  public void removeDataType(MetaDatatype dataType) {
     if (dataTypes.contains(dataType)) {
       dataTypes.remove(dataType);
       dataType.setContext(null);
@@ -174,6 +174,9 @@ public class MetaModel extends MetaPackage {
     for (MetaClass clazz : getClasses()) {
       clazz.accept(visitor);
     }
+    for (MetaDatatype datatype : getDataTypes()) {
+      datatype.accept(visitor);
+    }
   }
 
   // %% BEGIN USER CODE
@@ -182,8 +185,8 @@ public class MetaModel extends MetaPackage {
     return (MetaPackage) findElement(packages, qualifiedName);
   }
 
-  public MetaDataType findDataType(String qualifiedName) {
-    return (MetaDataType) findElement(dataTypes, qualifiedName);
+  public MetaDatatype findDataType(String qualifiedName) {
+    return (MetaDatatype) findElement(dataTypes, qualifiedName);
   }
 
   /**

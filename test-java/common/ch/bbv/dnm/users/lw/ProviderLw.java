@@ -6,6 +6,7 @@
 
 package ch.bbv.dnm.users.lw;
 
+import ch.bbv.dnm.users.NamedEntity;
 import ch.bbv.dog.LightweightObject;
 import java.util.*;
 
@@ -18,9 +19,9 @@ import java.util.*;
  * commercial entities selling domains to various customers. In the Internet 
  * terminology a provider is often called ISP.
  * @version $Revision$
- * @author MarcelBaumann
+ * @author Marcel Baumann
  */
-public class ProviderLw implements LightweightObject {
+public class ProviderLw  extends NamedEntityLw implements LightweightObject {
 
 /* %% USER DEFINED DECLARATION START %% */
 /* %% USER DEFINED DECLARATION END %% */
@@ -31,21 +32,9 @@ public class ProviderLw implements LightweightObject {
   private static final long serialVersionUID = 99990101;
 
   /**
-   * The human readable name of the entity. The name should be unique in the 
-   * context it is used to simplify navigation for users.
-   */
-  private String name;
-
-  /**
    * List of the domains the provider is in charge.
    */
   private List<DomainLw> domains;
-
-  /** 
-   * Unique identifier of the data object instance distinguishing it from 
-   * all other instances of the same data object type.
-   */
-  private Integer id;
 
   /** 
    * Default constructor of the class used to create new lightweight data 
@@ -60,34 +49,8 @@ public class ProviderLw implements LightweightObject {
    * @param id identifier of the object to which the proxy is associated.
    */
   public ProviderLw(Integer id) {
-    this.id = id;
+    super(id);
     domains = new ArrayList<DomainLw>();
-  }
-
-  /** 
-   * Gets the current value of the attribute Name.
-   * @return the value of the attribute Name.
-   * @see #setName(String)
-   */
-  public String getName() {
-    return name;
-  }
-
-  /** 
-   * Sets the new value of the simple property Name.
-   * @param name new value of the property.
-   * @see #getName()
-   */    
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  /** 
-   * Returns the unique identifier of the data object instance.
-   * @return the identifier of the instance.
-   */
-  public Integer getId() {
-    return id;
   }
 
   /** 
@@ -157,17 +120,17 @@ public class ProviderLw implements LightweightObject {
   }
 
   /** 
-   * Implements the visitor pattern in the data object class. The accept
-   * method dispatches the visitor to all its relevant children. A relevant
-   * child is always another data object.
+   * Implements the visitor pattern in the lightweight data object class. The 
+   * accept method dispatches the visitor to all its relevant children. A 
+   * relevant child is always another data object.
    * @param visitor visitor to act on the data object.
+   * @pre visitor != null
    */  
   public void accept(LwVisitor visitor) {
+    assert(visitor != null);
     visitor.setDepth(visitor.getDepth() + 1);
     visitor.visit(this);
-    for (DomainLw item : domains) {
-      item.accept(visitor);
-    }
+    traverse(visitor);
     visitor.setDepth(visitor.getDepth() - 1);
   }
 
@@ -190,4 +153,18 @@ public class ProviderLw implements LightweightObject {
     }
     return clone;
   }
+
+  /** 
+   * Implements the visitor pattern in the ligthweight data object class. The 
+   * accept method dispatches the visitor to all relevant children of the 
+   * ancestors and its children. A relevant child is always another lightweigth 
+   * data object.
+   * @param visitor visitor to act on the data object.
+   */  
+  protected void traverse(LwVisitor visitor) {
+    super.traverse(visitor);
+    for (DomainLw item : getDomains()) {
+      item.accept(visitor);
+    }
+  }  
 }

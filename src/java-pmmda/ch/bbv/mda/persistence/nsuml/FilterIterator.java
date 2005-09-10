@@ -11,6 +11,7 @@ import java.util.Iterator;
 /**
  * The filter iterator provides a selective iterator over a collection. Only
  * items compatible with the filter class are returned.
+ * @param <T> class which instances should be filtered.
  * @author MarcelBaumann
  * @version $Revision$
  */

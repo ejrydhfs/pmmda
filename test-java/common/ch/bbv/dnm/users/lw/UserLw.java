@@ -6,6 +6,7 @@
 
 package ch.bbv.dnm.users.lw;
 
+import ch.bbv.dnm.users.NamedEntity;
 import ch.bbv.dog.LightweightObject;
 import java.util.Date;
 
@@ -16,9 +17,9 @@ import java.util.Date;
  * A user is an entity who can connect to the system. All operations he 
  * performs can be logged.
  * @version $Revision$
- * @author MarcelBaumann
+ * @author Marcel Baumann
  */
-public class UserLw implements LightweightObject {
+public class UserLw  extends NamedEntityLw implements LightweightObject {
 
 /* %% USER DEFINED DECLARATION START %% */
 /* %% USER DEFINED DECLARATION END %% */
@@ -30,9 +31,10 @@ public class UserLw implements LightweightObject {
 
   /**
    * The human readable name of the entity. The name should be unique in the 
-   * context it is used to simplify navigation for users.
+   * context it is used to simplify navigation for users. The context of the 
+   * user is the domain therefore the login is unique in the domain.
    */
-  private String login;
+  private java.lang.String login;
 
   /**
    * Flag indicating if the user is currently active or not.
@@ -43,24 +45,13 @@ public class UserLw implements LightweightObject {
    * Upper range limit of the user account validity. If the value is null no 
    * upper limit is defined.
    */
-  private Date validTo;
+  private java.util.Date validTo;
 
   /**
    * Lower range limit of the user account validity. If the value is null no 
    * lower limit is defined.
    */
-  private Date validFrom;
-
-  /**
-   * Name of the user.
-   */
-  private String name;
-
-  /** 
-   * Unique identifier of the data object instance distinguishing it from 
-   * all other instances of the same data object type.
-   */
-  private Integer id;
+  private java.util.Date validFrom;
 
   /** 
    * Default constructor of the class used to create new lightweight data 
@@ -75,15 +66,15 @@ public class UserLw implements LightweightObject {
    * @param id identifier of the object to which the proxy is associated.
    */
   public UserLw(Integer id) {
-    this.id = id;
+    super(id);
   }
 
   /** 
    * Gets the current value of the attribute Login.
    * @return the value of the attribute Login.
-   * @see #setLogin(String)
+   * @see #setLogin(java.lang.String)
    */
-  public String getLogin() {
+  public java.lang.String getLogin() {
     return login;
   }
 
@@ -92,7 +83,7 @@ public class UserLw implements LightweightObject {
    * @param login new value of the property.
    * @see #getLogin()
    */    
-  public void setLogin(String login) {
+  public void setLogin(java.lang.String login) {
     this.login = login;
   }
 
@@ -117,9 +108,9 @@ public class UserLw implements LightweightObject {
   /** 
    * Gets the current value of the attribute ValidTo.
    * @return the value of the attribute ValidTo.
-   * @see #setValidTo(Date)
+   * @see #setValidTo(java.util.Date)
    */
-  public Date getValidTo() {
+  public java.util.Date getValidTo() {
     return validTo;
   }
 
@@ -128,16 +119,16 @@ public class UserLw implements LightweightObject {
    * @param validTo new value of the property.
    * @see #getValidTo()
    */    
-  public void setValidTo(Date validTo) {
+  public void setValidTo(java.util.Date validTo) {
     this.validTo = validTo;
   }
 
   /** 
    * Gets the current value of the attribute ValidFrom.
    * @return the value of the attribute ValidFrom.
-   * @see #setValidFrom(Date)
+   * @see #setValidFrom(java.util.Date)
    */
-  public Date getValidFrom() {
+  public java.util.Date getValidFrom() {
     return validFrom;
   }
 
@@ -146,45 +137,22 @@ public class UserLw implements LightweightObject {
    * @param validFrom new value of the property.
    * @see #getValidFrom()
    */    
-  public void setValidFrom(Date validFrom) {
+  public void setValidFrom(java.util.Date validFrom) {
     this.validFrom = validFrom;
   }
 
   /** 
-   * Gets the current value of the attribute Name.
-   * @return the value of the attribute Name.
-   * @see #setName(String)
-   */
-  public String getName() {
-    return name;
-  }
-
-  /** 
-   * Sets the new value of the simple property Name.
-   * @param name new value of the property.
-   * @see #getName()
-   */    
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  /** 
-   * Returns the unique identifier of the data object instance.
-   * @return the identifier of the instance.
-   */
-  public Integer getId() {
-    return id;
-  }
-
-  /** 
-   * Implements the visitor pattern in the data object class. The accept
-   * method dispatches the visitor to all its relevant children. A relevant
-   * child is always another data object.
+   * Implements the visitor pattern in the lightweight data object class. The 
+   * accept method dispatches the visitor to all its relevant children. A 
+   * relevant child is always another data object.
    * @param visitor visitor to act on the data object.
+   * @pre visitor != null
    */  
   public void accept(LwVisitor visitor) {
+    assert(visitor != null);
     visitor.setDepth(visitor.getDepth() + 1);
     visitor.visit(this);
+    traverse(visitor);
     visitor.setDepth(visitor.getDepth() - 1);
   }
 
@@ -203,4 +171,15 @@ public class UserLw implements LightweightObject {
     }
     return clone;
   }
+
+  /** 
+   * Implements the visitor pattern in the ligthweight data object class. The 
+   * accept method dispatches the visitor to all relevant children of the 
+   * ancestors and its children. A relevant child is always another lightweigth 
+   * data object.
+   * @param visitor visitor to act on the data object.
+   */  
+  protected void traverse(LwVisitor visitor) {
+    super.traverse(visitor);
+  }  
 }

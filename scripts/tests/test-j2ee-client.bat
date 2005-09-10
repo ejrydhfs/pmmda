@@ -9,4 +9,4 @@ REM defines the path to the test libraries and test classes relative to the
 REM location of this script file.
 set LIB=..\..\test-lib
 set CLASSES=..\..\test-classes
-"%JAVA%" -ea -classpath %CLASSES%\j2ee-client;%CLASSES%\j2ee-server;%LIB%\commons-beanutils-1.6.1.jar;%LIB%\commons-collections-2.1.1.jar;%LIB%\commons-lang-2.0.jar;%LIB%\commons-logging-api-1.0.4.jar;%LIB%\commons-logging-1.0.4.jar;D:\data\projects\pmmda\test-lib\DoG-0.2.1-RC2.jar;%LIB%\forms-1.0.5.jar;%LIB%\glazedlists-0.9.6.jar;%LIB%\jcalendar-1.2.2.jar;%LIB%\jbossall-client.jar ch.bbv.dnm.users.client.Application -mode j2ee -Djava.util.logging.config.file=logging.properties
+"%JAVA%" -ea -classpath %CLASSES%\j2ee-client;%CLASSES%\j2ee-server;%LIB%\commons-beanutils-1.6.1.jar;%LIB%\commons-collections-2.1.1.jar;%LIB%\commons-lang-2.0.jar;%LIB%\commons-logging-api-1.0.4.jar;%LIB%\commons-logging-1.0.4.jar;D:\data\projects\pmmda\test-lib\DoG-0.2.2-RC1.jar;%LIB%\forms-1.0.5.jar;%LIB%\glazedlists-0.9.7.jar;%LIB%\jcalendar-1.2.2.jar;%LIB%\jbossall-client.jar ch.bbv.dnm.users.client.Application -mode j2ee -Djava.util.logging.config.file=logging.properties

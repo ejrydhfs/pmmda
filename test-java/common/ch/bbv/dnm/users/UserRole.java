@@ -21,7 +21,7 @@ import java.sql.Timestamp;
  * attributes because the MySQL does not support view. The above attributes are 
  * required for the Realm component of the Tomcat application.
  * @version $Revision$
- * @author ${element.valueOfTag("author")}
+ * @author Marcel Baumann
  */
 public class UserRole implements DataObject {
 
@@ -34,19 +34,22 @@ public class UserRole implements DataObject {
   private static final long serialVersionUID = 99990101;
 
   /**
-   * Name of the user in the assocation.
+   * Name of the user in the assocation used to retrieve it. The username 
+   * should be unique in the system to insure compatibility with external 
+   * systems. A positional notation containing the domain and the units the 
+   * user belongs to is used to generate a unique name.
    */
-  private String username;
+  private java.lang.String username;
 
   /**
    * Name of the role in the association.
    */
-  private String rolename;
+  private java.lang.String rolename;
 
   /**
    * Role part of the user role association.
    */
-  private Role role;
+  private ch.bbv.dnm.users.Role role;
   /**
    * Mapping for 1: 1 relationship ${relation.getName()} as foreign key.
    */
@@ -150,9 +153,9 @@ public class UserRole implements DataObject {
   /** 
    * Returns the current value of the simple property username.
    * @return the value of the simple property username.
-   * @see #setUsername(String)
+   * @see #setUsername(java.lang.String)
    */
-  public String getUsername() {
+  public java.lang.String getUsername() {
     return username;
   }
 
@@ -161,7 +164,7 @@ public class UserRole implements DataObject {
    * @param username new value of the property.
    * @see #getUsername()
    */    
-  public void setUsername(String username) {
+  public void setUsername(java.lang.String username) {
     if (((this.username != null) && !this.username.equals(username)) || 
         ((this.username == null) && (username != null)))  {    
       this.username = username;
@@ -172,9 +175,9 @@ public class UserRole implements DataObject {
   /** 
    * Returns the current value of the simple property rolename.
    * @return the value of the simple property rolename.
-   * @see #setRolename(String)
+   * @see #setRolename(java.lang.String)
    */
-  public String getRolename() {
+  public java.lang.String getRolename() {
     return rolename;
   }
 
@@ -183,7 +186,7 @@ public class UserRole implements DataObject {
    * @param rolename new value of the property.
    * @see #getRolename()
    */    
-  public void setRolename(String rolename) {
+  public void setRolename(java.lang.String rolename) {
     if (((this.rolename != null) && !this.rolename.equals(rolename)) || 
         ((this.rolename == null) && (rolename != null)))  {    
       this.rolename = rolename;
@@ -194,9 +197,9 @@ public class UserRole implements DataObject {
   /** 
    * Returns the current value of the simple property role.
    * @return the value of the simple property role.
-   * @see #setRole(Role)
+   * @see #setRole(ch.bbv.dnm.users.Role)
    */
-  public Role getRole() {
+  public ch.bbv.dnm.users.Role getRole() {
     return role;
   }
 
@@ -205,7 +208,7 @@ public class UserRole implements DataObject {
    * @param role new value of the property.
    * @see #getRole()
    */    
-  public void setRole(Role role) {
+  public void setRole(ch.bbv.dnm.users.Role role) {
     if (((this.role != null) && !this.role.equals(role)) || 
         ((this.role == null) && (role != null)))  {    
       this.role = role;

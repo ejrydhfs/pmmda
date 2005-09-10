@@ -36,12 +36,17 @@ public class Role implements DataObject {
    * The human readable name of the entity. The name should be unique in the 
    * context it is used to simplify navigation for users.
    */
-  private String name;
+  private java.lang.String name;
 
   /**
    * Description of the item.
    */
-  private String description;
+  private java.lang.String description;
+
+  /**
+   * The activities is a set of operation kinds allowed for this role.
+   */
+  private long activities;
 
   /** 
    * Unique identifier of the data object instance distinguishing it from all
@@ -143,9 +148,9 @@ public class Role implements DataObject {
   /** 
    * Returns the current value of the simple property name.
    * @return the value of the simple property name.
-   * @see #setName(String)
+   * @see #setName(java.lang.String)
    */
-  public String getName() {
+  public java.lang.String getName() {
     return name;
   }
 
@@ -154,8 +159,8 @@ public class Role implements DataObject {
    * @param name new value of the property.
    * @see #getName()
    */    
-  public void setName(String name) {
-    String oldName = this.name;
+  public void setName(java.lang.String name) {
+    java.lang.String oldName = this.name;
     if (((this.name != null) && !this.name.equals(name)) || 
         ((this.name == null) && (name != null)))  {    
       this.name = name;
@@ -167,9 +172,9 @@ public class Role implements DataObject {
   /** 
    * Returns the current value of the simple property description.
    * @return the value of the simple property description.
-   * @see #setDescription(String)
+   * @see #setDescription(java.lang.String)
    */
-  public String getDescription() {
+  public java.lang.String getDescription() {
     return description;
   }
 
@@ -178,13 +183,34 @@ public class Role implements DataObject {
    * @param description new value of the property.
    * @see #getDescription()
    */    
-  public void setDescription(String description) {
+  public void setDescription(java.lang.String description) {
     if (((this.description != null) && !this.description.equals(description)) || 
         ((this.description == null) && (description != null)))  {    
       this.description = description;
       setModified(true);
     }
   }    
+
+  /** 
+   * Returns the current value of the simple property activities.
+   * @return the value of the simple property activities.
+   * @see #setActivity(long)
+   */
+  public long getActivity() {
+    return activities;
+  }
+
+  /** 
+   * Sets the new value of the simple property activities.
+   * @param activities new value of the property.
+   * @see #getActivity()
+   */    
+  public void setActivity(long activities) {
+    if (this.activities != activities) {  
+      this.activities = activities;
+      setModified(true);
+    }
+  }
 
   /** 
    * Implements the visitor pattern in the data object class. The accept

@@ -36,7 +36,7 @@ public class CodeType implements DataObject {
   /**
    * The qualified name of the class defining the reference code type.
    */
-  private String qualifiedName;
+  private java.lang.String qualifiedName;
 
   /**
    * Flag indicating if the reference code is hierarchical or not.
@@ -146,9 +146,9 @@ public class CodeType implements DataObject {
   /** 
    * Returns the current value of the simple property qualifiedName.
    * @return the value of the simple property qualifiedName.
-   * @see #setQualifiedName(String)
+   * @see #setQualifiedName(java.lang.String)
    */
-  public String getQualifiedName() {
+  public java.lang.String getQualifiedName() {
     return qualifiedName;
   }
 
@@ -157,7 +157,7 @@ public class CodeType implements DataObject {
    * @param qualifiedName new value of the property.
    * @see #getQualifiedName()
    */    
-  public void setQualifiedName(String qualifiedName) {
+  public void setQualifiedName(java.lang.String qualifiedName) {
     if (((this.qualifiedName != null) && !this.qualifiedName.equals(qualifiedName)) || 
         ((this.qualifiedName == null) && (qualifiedName != null)))  {    
       this.qualifiedName = qualifiedName;

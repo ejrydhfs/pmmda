@@ -5,23 +5,12 @@
  */
 package ch.bbv.mda;
 
-import java.util.Arrays;
-
 /**
  * The property class models a simple property of a class.
  * @author Marcel Baumann
  * @version $Revision$
  */
 public class MetaProperty extends MetaMember {
-  /* %% USER DEFINED DECLARATION START %% */
-  /**
-   * The list of primitive types in Java, C and C++.
-   */
-  public static final String[] PRIMITIVES_TYPES = { "boolean", "byte", "char",
-      "double", "float", "int", "long", "short" };
-
-  /* %% USER DEFINED DECLARATION END %% */
-
   /**
    * Serial version identifier coded as back compatibility date.
    */
@@ -224,14 +213,6 @@ public class MetaProperty extends MetaMember {
   public boolean canBeWritten() {
     String mode = getTaggedValue("bo-mode").getValue();
     return (mode.equals("READ_WRITE") || mode.equals("WRITE"));
-  }
-
-  /**
-   * Returns true if the type of the property is a primitive build-in type.
-   * @return true if the type is build-in otherwise false.
-   */
-  public boolean isTypePrimitive() {
-    return Arrays.binarySearch(PRIMITIVES_TYPES, getTypeName()) >= 0;
   }
   /* %% USER DEFINED CODE END %% */
 }

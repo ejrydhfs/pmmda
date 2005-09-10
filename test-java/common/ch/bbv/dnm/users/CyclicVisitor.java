@@ -90,4 +90,16 @@ public class CyclicVisitor implements Visitor {
       delegate.visit(item);
     }
   }
+  public void visit(NamedEntity item) {
+    if (!visitedObjects.contains(item)) {
+      visitedObjects.add(item);  
+      delegate.visit(item);
+    }
+  }
+  public void visit(ResourceType item) {
+    if (!visitedObjects.contains(item)) {
+      visitedObjects.add(item);  
+      delegate.visit(item);
+    }
+  }
 }

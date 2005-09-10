@@ -3,7 +3,9 @@
  * you may not use this file except in compliance with the License. 
  * $Id$
  */
-package ch.bbv.mda.generators;
+package ch.bbv.mda.cartridges;
+
+import static ch.bbv.mda.cartridges.EjbConstants.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,6 +21,8 @@ import ch.bbv.application.VersionId;
 import ch.bbv.mda.MetaClass;
 import ch.bbv.mda.MetaPackage;
 import ch.bbv.mda.TagDefinition;
+import ch.bbv.mda.generators.CartridgeFactory;
+import ch.bbv.mda.generators.CartridgeImpl;
 
 /**
  * The EJB cartridge generates all the artifacts for the data object framework
@@ -33,79 +37,16 @@ public class EjbCartridge extends CartridgeImpl {
   public static final String PREFIX = "ejb";
 
   /**
-   * Extension for IDL source file.
-   */
-  public static final String IDL_EXTENSION = ".idl";
-
-  /**
-   * Key for a property of the cartridge used to retrieve user values.
-   */
-  public static final String GENERATE_CORBA_KEY = "ejb-cartridge.generate-corba";
-
-  /**
-   * Key for a property of the cartridge used to retrieve user values.
-   */
-  public static final String GENERATE_BEAN_KEY = "ejb-cartridge.generate-bean";
-
-  /**
-   * Key for a property of the cartridge used to retrieve user values.
-   */
-  public static final String SERVER_PACKAGE_EXTENSION_KEY = "ejb-cartridge.server-package-extension";
-
-  /**
-   * Key for a property of the cartridge used to retrieve user values.
-   */
-  public static final String CLIENT_PACKAGE_EXTENSION_KEY = "ejb-cartridge.client-package-extension";
-
-  /**
-   * Key for a property of the cartridge used to retrieve user values.
-   */
-  public static final String ROOT_SERVER_CORBA_KEY = "ejb-cartridge.server-corba-root-folder";
-
-  /**
-   * Key for a property of the cartridge used to retrieve user values.
-   */
-  public static final String ROOT_CLIENT_CORBA_KEY = "ejb-cartridge.client-corba-root-folder";
-
-  /**
-   * Key for a property of the cartridge used to retrieve user values.
-   */
-  public static final String ROOT_SERVER_J2EE_KEY = "ejb-cartridge.server-j2ee-root-folder";
-
-  /**
-   * Key for a property of the cartridge used to retrieve user values.
-   */
-  public static final String ROOT_CLIENT_J2EE_KEY = "ejb-cartridge.client-j2ee-root-folder";
-
-  /**
-   * Key for a property of the cartridge used to retrieve user values.
-   */
-  public static final String ROOT_COMMON_J2EE_KEY = "ejb-cartridge.common-j2ee-root-folder";
-
-  /**
-   * Key for a property of the cartridge used to retrieve user values.
-   */
-  public static final String LOCATOR_CLASS_KEY = "ejb-cartridge.server-locator-classname";
-
-  /**
-   * Tag name of the server providing the DOG services.
-   */
-  public static final String SERVER_NAME_TAG = "ejb-server-name";
-
-  /**
-   * Tag name for the server package name.
-   */
-  public static final String SERVER_PACKAGE = "ejb-server-package";
-
-  /**
-   * Tag name for the client package name.
-   */
-  public static final String CLIENT_PACKAGE = "ejb-client-package";
-
-  /**
    * Log instance for all instances of the class.
    */
   private static Log log = LogFactory.getLog(EjbCartridge.class);
+
+  /**
+   * Flag indicating if the package is an interface package or not. Only classes
+   * belonging to interface packages are made public through CORBA IDL
+   * descriptions.
+   */
+  private boolean isPackageInterface;
 
   /**
    * Default constructor of the class.
@@ -161,67 +102,70 @@ public class EjbCartridge extends CartridgeImpl {
     metaPackage.addAttribute(CLIENT_PACKAGE, buffer.toString());
   }
 
-  public void processPackage(MetaPackage metaPackage) {
-    if (!metaPackage.booleanValueOfTag(BoCartridge.GENERATE_TAG)
-        || !shouldCreateServer(metaPackage)) {
+  public void processPackage(MetaPackage packages) {
+    isPackageInterface = BoConstants.INTERFACE_STEREOTYPE
+    .equalsIgnoreCase(packages.getStereotype());
+    if (!isPackageInterface
+        || !packages.booleanValueOfTag(BoConstants.GENERATE_TAG)
+        || !shouldCreateServer(packages)) {
       return;
     }
 
-    VelocityContext context = createContext(metaPackage);
+    VelocityContext context = createContext(packages);
     try {
       if (getContext().getProperty(GENERATE_CORBA_KEY).equals("true")) {
         File serverRoot = getRoot(ROOT_SERVER_CORBA_KEY,
-            BoCartridge.ROOT_SERVER_FOLDER_KEY);
+            BoConstants.ROOT_SERVER_FOLDER_KEY);
         File clientRoot = getRoot(ROOT_CLIENT_CORBA_KEY,
-            BoCartridge.ROOT_CLIENT_FOLDER_KEY);
+            BoConstants.ROOT_CLIENT_FOLDER_KEY);
         File IdlRoot = new File(getContext().getProperty(
-            CtoCartridge.ROOT_IDL_KEY));
-        processTemplate(IdlRoot, metaPackage
-            .valueOfTag(CtoCartridge.CTO_PACKAGE_IDL_TAG), metaPackage
+            CtoConstants.ROOT_IDL_KEY));
+        processTemplate(IdlRoot, packages
+            .valueOfTag(CtoConstants.CTO_PACKAGE_IDL_TAG), packages
             .valueOfTag(SERVER_NAME_TAG)
-            + IDL_EXTENSION, retrieveTemplate("server-corba-idl", null),
-            context);
-        processJavaTemplate(serverRoot, metaPackage
-            .getAttribute(SERVER_PACKAGE), metaPackage
+            + CtoConstants.IDL_EXTENSION, retrieveTemplate("server-corba-idl",
+            null), context);
+        processJavaTemplate(serverRoot, packages
+            .getAttribute(SERVER_PACKAGE), packages
             .valueOfTag(SERVER_NAME_TAG)
             + "Corba", retrieveTemplate("server-corba", null), context);
-        processJavaTemplate(clientRoot, metaPackage
-            .getAttribute(CLIENT_PACKAGE), metaPackage
+        processJavaTemplate(clientRoot, packages
+            .getAttribute(CLIENT_PACKAGE), packages
             .valueOfTag(SERVER_NAME_TAG)
             + "CorbaWrapper", retrieveTemplate("server-corba-wrapper", null),
             context);
       }
       if (getContext().getProperty(GENERATE_BEAN_KEY).equals("true")) {
         File serverRoot = getRoot(ROOT_SERVER_J2EE_KEY,
-            BoCartridge.ROOT_SERVER_FOLDER_KEY);
+            BoConstants.ROOT_SERVER_FOLDER_KEY);
         File clientRoot = getRoot(ROOT_CLIENT_J2EE_KEY,
-            BoCartridge.ROOT_CLIENT_FOLDER_KEY);
+            BoConstants.ROOT_CLIENT_FOLDER_KEY);
         File commonRoot = getRoot(ROOT_COMMON_J2EE_KEY,
-            BoCartridge.ROOT_COMMON_FOLDER_KEY);
-        processJavaTemplate(commonRoot, metaPackage
-            .getAttribute(SERVER_PACKAGE), metaPackage
+            BoConstants.ROOT_COMMON_FOLDER_KEY);
+        processJavaTemplate(commonRoot, packages
+            .getAttribute(SERVER_PACKAGE), packages
             .valueOfTag(SERVER_NAME_TAG)
             + "Session", retrieveTemplate("server-session-if", null), context);
-        processJavaTemplate(serverRoot, metaPackage
-            .getAttribute(SERVER_PACKAGE), metaPackage
+        processJavaTemplate(serverRoot, packages
+            .getAttribute(SERVER_PACKAGE), packages
             .valueOfTag(SERVER_NAME_TAG)
             + "SessionBean", retrieveTemplate("server-session", null), context);
-        processJavaTemplate(commonRoot, metaPackage
-            .getAttribute(SERVER_PACKAGE), metaPackage
+        processJavaTemplate(commonRoot, packages
+            .getAttribute(SERVER_PACKAGE), packages
             .valueOfTag(SERVER_NAME_TAG)
             + "Home", retrieveTemplate("server-home", null), context);
-        processJavaTemplate(clientRoot, metaPackage
-            .getAttribute(CLIENT_PACKAGE), metaPackage
+        processJavaTemplate(clientRoot, packages
+            .getAttribute(CLIENT_PACKAGE), packages
             .valueOfTag(SERVER_NAME_TAG)
             + "Wrapper", retrieveTemplate("server-wrapper", null), context);
-        processTemplate(serverRoot, metaPackage.getAttribute(SERVER_PACKAGE),
-            metaPackage.valueOfTag(SERVER_NAME_TAG) + "-ejb-jar.xml",
+        processTemplate(serverRoot, packages.getAttribute(SERVER_PACKAGE),
+            packages.valueOfTag(SERVER_NAME_TAG) + "-ejb-jar.xml",
             retrieveTemplate("server-descriptor", null), context);
-        processTemplate(serverRoot, metaPackage.getAttribute(SERVER_PACKAGE),
-            metaPackage.valueOfTag(SERVER_NAME_TAG) + "-jboss.xml",
+        processTemplate(serverRoot, packages.getAttribute(SERVER_PACKAGE),
+            packages.valueOfTag(SERVER_NAME_TAG) + "-jboss.xml",
             retrieveTemplate("server-jboss-descriptor", null), context);
-        processTemplate(serverRoot, metaPackage.getAttribute(SERVER_PACKAGE),
-            metaPackage.valueOfTag(SERVER_NAME_TAG) + "-jbosscmp-jdbc.xml",
+        processTemplate(serverRoot, packages.getAttribute(SERVER_PACKAGE),
+            packages.valueOfTag(SERVER_NAME_TAG) + "-jbosscmp-jdbc.xml",
             retrieveTemplate("server-jboss-jdbc-descriptor", null), context);
       }
     } catch (IOException e) {
@@ -236,8 +180,8 @@ public class EjbCartridge extends CartridgeImpl {
    */
   private boolean shouldCreateServer(MetaPackage packages) {
     for (MetaClass clazz : packages.getClasses()) {
-      if (BoCartridge.DATA_OBJECT_STEREOTYPE.equals(clazz.getStereotype())
-          && clazz.booleanValueOfTag(BoCartridge.IS_ROOT_TAG)) {
+      if (BoConstants.DATA_OBJECT_STEREOTYPE.equals(clazz.getStereotype())
+          && clazz.booleanValueOfTag(BoConstants.IS_ROOT_TAG)) {
         return true;
       }
     }

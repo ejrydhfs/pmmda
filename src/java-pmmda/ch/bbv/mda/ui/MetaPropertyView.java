@@ -10,6 +10,7 @@ import javax.swing.*;
 import ch.bbv.dog.ui.ReferenceCodeComboBox;
 import ch.bbv.explorer.NodePropertiesView;
 import ch.bbv.mda.*;
+import ch.bbv.mda.generators.CartridgeFactory;
 
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
@@ -94,7 +95,8 @@ public class MetaPropertyView extends NodePropertiesView {
   public void populateView() {
     MetaProperty model = (MetaProperty) getDataObject();
     if (this.isNewObject()) {
-      MetaFactory.getInstance().initialize(model);
+      CartridgeFactory.getInstance().getItemFactory().initialize(model,
+          model.getClass());
     }
     nameText.setText(model.getName());
     typeText.setText(model.getTypeName());

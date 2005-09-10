@@ -119,14 +119,6 @@ public interface Cartridge {
   List<Cartridge> getUsedCartridges();
 
   /**
-   * Returns the instance responsible to initialize an item. Upon initialization
-   * the item contains reasonable values for all tagged values relevant to the
-   * cartridge.
-   * @return the init instance if defined otherwise null.
-   */
-  ElementInitialize getInitalizor();
-
-  /**
    * Registers the validation rules of the cartridges onto the validator.
    * @param validator validator in charge of the cartridge validation.
    * @pre validator != null
@@ -155,6 +147,14 @@ public interface Cartridge {
    */
   void postProcessModel(MetaModel model);
 
+  /**
+   * Preprocesses the datatype and computes all the attributes used in the
+   * cartidge for the datatype.
+   * @param datatype datatype to process.
+   * @pre datatype != null
+   */
+  void preProcessDatatype(MetaDatatype datatype);
+  
   /**
    * Preprocesses the package and computes all the attributes used in the
    * cartridge for the package. The context of the package is also computed.

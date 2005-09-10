@@ -2,7 +2,7 @@
   <property file="build.properties" />
   <import file="build-inits.xml" />
   <import file="build-examples.xml" />
-  <import file="${forrest.home}/forrest.build.xml" />
+  <import file="${forrest.bin}/forrest.build.xml" />
 
   <target name="clean"
           depends="dist-init"

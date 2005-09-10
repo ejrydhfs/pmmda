@@ -33,6 +33,11 @@ public abstract class SimpleDialog extends JDialog implements ActionListener {
   static final String CANCEL_BUTTON_LABEL = "Cancel";
 
   /**
+   * Text for the cancel button.
+   */
+  static final String APPLY_BUTTON_LABEL = "Apply";
+  
+  /**
    * Swing component of the property dialog.
    */
   private JButton okButton;
@@ -41,6 +46,11 @@ public abstract class SimpleDialog extends JDialog implements ActionListener {
    * Swing component of the property dialog.
    */
   private JButton cancelButton;
+
+  /**
+   * Swing component of the property dialog.
+   */
+  private JButton applyButton;
 
   /**
    * Constructor of the class.
@@ -53,9 +63,11 @@ public abstract class SimpleDialog extends JDialog implements ActionListener {
     okButton.addActionListener(this);
     cancelButton = new JButton(CANCEL_BUTTON_LABEL);
     cancelButton.addActionListener(this);
-
+    applyButton = new JButton(APPLY_BUTTON_LABEL);
+    applyButton.addActionListener(this);
     JPanel panel = new JPanel(new FlowLayout());
     panel.add(cancelButton);
+    panel.add(applyButton);
     panel.add(okButton);
     getContentPane().add(panel, BorderLayout.SOUTH);
     ExplorerUtilities.centerOnParent(this);
@@ -70,10 +82,13 @@ public abstract class SimpleDialog extends JDialog implements ActionListener {
     Object source = event.getSource();
     if (source == okButton) {
       processOk();
+      setVisible(false);
     } else if (source == cancelButton) {
       processCancel();
+      setVisible(false);
+    } else if (source == applyButton) {
+      processApply();
     }
-    setVisible(false);
   }
 
   /**
@@ -98,6 +113,14 @@ public abstract class SimpleDialog extends JDialog implements ActionListener {
    * Sets the enabled status of the button.
    * @param enabled new status of the button.
    */
+  public void setApplyButtonEnabled(boolean enabled) {
+    okButton.setEnabled(enabled);
+  }
+
+  /**
+   * Sets the enabled status of the button.
+   * @param enabled new status of the button.
+   */
   public void setCancelButtonEnabled(boolean enabled) {
     cancelButton.setEnabled(enabled);
   }
@@ -113,6 +136,11 @@ public abstract class SimpleDialog extends JDialog implements ActionListener {
    */
   protected abstract void processOk();
 
+  /**
+   * The process method is called when the apply button is pressed.
+   */
+  protected abstract void processApply();
+  
   /**
    * Implements the window listener of the property dialog.
    */

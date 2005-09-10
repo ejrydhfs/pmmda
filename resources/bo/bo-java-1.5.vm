@@ -11,6 +11,7 @@ package ${package.getAttribute("bo-mo-package")};
 #set($blocks=${context.get("blocks")})
 #set($properties=${class.getProperties()})
 #set($aggregations=${class.getIndexedProperties()})
+#hasDataObjectAncestor($class $hasAncestors)
 #set($ancestors=${class.retrieveAncestors()})
 #set($interfaces=${class.retrieveInterfaces()})
 #set($hasAncestors = (${ancestors.size()} > 0))
@@ -47,13 +48,15 @@ $line
 #emitClassDescription($class "")
 #set($className=${class.getAttribute("bo-mo-class")})
 #if(${hasAncestors})
-#set($extends=" extends ${ancestors.get(0).getName()}")
+#set($ancestorName=${ancestors.get(0).getAttribute("bo-mo-class")})
+#set($extends=" extends ${ancestorName}")
 #else
 #set($extends="")
 #end
 #set($implements=" implements ")
 #foreach ($interface in $interfaces)
-#set($implements="${implements}${interface.getName()}, ")
+#set($interfaceName=${interface.getAttribute("bo-mo-class")})
+#set($implements="${implements}, $interfaceName")
 #end
 #set($implements="${implements}DataObject")
 ${class.retrieveVisibilityText()} class ${className}${extends}${implements} {
@@ -72,7 +75,8 @@ $line
 #foreach ($property in $properties)
 
 #emitPropertyDescription($property "  ")
-  private ${property.retrieveTypeClassName()} ${property.nameFirstLower()};
+#getDatatype($property $datatype)
+  private ${datatype} ${property.nameFirstLower()};
 ## identifies a forward reference 1-0..1 or 1-1
 #isTypePersistent($model $property $isPersistentDataObject)
 #if($isPersistentDataObject)
@@ -119,7 +123,7 @@ $line
 #end
 #end
 #end
-#if (!${hasAncestors})
+#if(!${hasAncestors})
 
   /** 
    * Unique identifier of the data object instance distinguishing it from all
@@ -161,11 +165,13 @@ $line
 #set($itemType=${aggregation.retrieveTypeClassName()})
     ${aggregation.nameFirstLower()} = #containerCreation($aggregation);
 #end
+#if(!${hasAncestors})
 #if (${class.getAttribute("bo-changeable")} == "true")
     changeSupport = new PropertyChangeSupport(this);
 #end
 #if (${class.getAttribute("bo-vetoable")} == "true")
     vetoSupport = new VetoableChangeSupport(this);
+#end
 #end
   }
 
@@ -251,7 +257,7 @@ $line
 #foreach ($property in $properties)
 #set($uName = ${property.nameFirstUpper()})
 #set($lName=${property.nameFirstLower()})
-#set($itemType = ${property.retrieveTypeClassName()})
+#getDatatype($property $itemType)
 #set($visibility = ${property.retrieveVisibilityText()})
 #set($vetoable=${property.booleanValueOfTag("bo-veto-event")})
 #set($changeable=${property.booleanValueOfTag("bo-change-event")})
@@ -263,7 +269,7 @@ $line
    * Returns the current value of the simple property ${lName}.
    * @return the value of the simple property ${lName}.
 #if(${property.canBeWritten()})
-   * @see ${sign}${setter}(${itemType})
+   * @see ${sign}${setter}($itemType)
 #end    
    */
   ${visibility} ${itemType} ${getter}() {
@@ -292,7 +298,7 @@ $line
 #if(${vetoable} || ${changeable})
     ${itemType} old${uName} = this.${lName};
 #end
-#if(${property.isTypePrimitive()})
+#if(${cartridge.isTypePrimitive($property)})
     if (this.${lName} != ${lName}) {  
       this.${lName} = ${lName};
 #if (${vetoable})
@@ -778,6 +784,7 @@ $line
 #isTypeModel($model $aggregation $isTypeModel)
 #if($isTypeModel)
 #set($upName = ${aggregation.nameFirstUpperPlural()})
+#getType($model $aggregation $type)
     for (${type.getAttribute("bo-mo-class")} item : get${upName}()) {
       item.accept(visitor);
     }

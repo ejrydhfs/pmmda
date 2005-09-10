@@ -1,81 +1,81 @@
 <body>
-	The packages defines a user interface to manipulate MDA models.
-	<h2>Introduction</h2>
-	<p>The package defines a user interface to manipulate MDA models and fills all
-		information needed to generate the source code artifacts tailored to the 
-		selected software platform. The user interface provides an efficient client
-		to fill all needed stereotypes and tagged values. These activities could
-		also be done with a UML CASE tool but quite less efficiently.</p>
-	<h2>Views</h2>
-	<p>The MDA interface provides views for each kind of artifacts, which should be
-		generated. The views are.</p>
-	<ul>
-		<li>The business object view allows the definition of business object classes.
-			All properties and relationships can be defined.</li>
-		<li>The lightweight view allows the definition of the lightweight representation
-			of business object classes.</li>
-		<li>The persistency view allows the definition of the persistency aspects of
-			business object classes</li>
-		<li>The data transfer object view allows the definition of the data transfer 
-			object classes.</li>
-		<li>The user interface view allows the definition of the visual attributes of
-			the business objects. Two kinds of user interfaces are supported. Complex 
-			clients using Swing and web based clients using Struts.</li>
-		<li>The properties view allows the edition of the properties of any MDA element
-			and all its tagged values. The default display order of the tagged values
-			is defined in the corresponding model element.</li>
-	</ul>
-	
-	<h2>Features</h2>
-	<h3>Validation</h3>
-	<p>Validation of a named element is performed after the user inputed new data 
-		in a properties view but before it is saved. If inconsistencies are found
-		they are displayed in a todo list.</p>
-	<h3>Persistency</h3>
-	<p>The models are stored as XML files in the file system. Multiple formats are
-		supported to enhance integration with other tools. The supported formats are
-		defined in the documentation of the MDA busines object package. Interested 
-		readers can found detailed information there.</p>
+The packages defines a user interface to manipulate MDA models.
+<h2>Introduction</h2>
+<p>The package defines a user interface to manipulate MDA models and fills all
+information needed to generate the source code artifacts tailored to the
+selected software platform. The user interface provides an efficient client to
+fill all needed stereotypes and tagged values. These activities could also be
+done with a UML CASE tool but quite less efficiently.</p>
+<h2>Views</h2>
+<p>The MDA interface provides views for each kind of artifacts, which should be
+generated. The views are.</p>
+<ul>
+ <li>The business object view allows the definition of business object classes.
+ All properties and relationships can be defined.</li>
+ <li>The lightweight view allows the definition of the lightweight
+ representation of business object classes.</li>
+ <li>The persistency view allows the definition of the persistency aspects of
+ business object classes</li>
+ <li>The data transfer object view allows the definition of the data transfer
+ object classes.</li>
+ <li>The user interface view allows the definition of the visual attributes of
+ the business objects. Two kinds of user interfaces are supported. Complex
+ clients using Swing and web based clients using Struts.</li>
+ <li>The properties view allows the edition of the properties of any MDA element
+ and all its tagged values. The default display order of the tagged values is
+ defined in the corresponding model element.</li>
+</ul>
 
-	<h2>Command Line</h2>
-	<p>The <em>pmMDA Client</em> supports a command line interface to streamline
-		the start of the application with the expected configuration and data. The
-    command line can also be used to execute the pmMDA application in batch
-    mode. The following options are supported.</p>
-	<dl>
-    <dt>-v --verbose</dt><dd>An optional boolean argument. if set the logging
-      level is verbose.</dd>
-    <dt>-q --quiet</dt><dd>An optional boolean argument. If set the logging
-      level is quiet.</dd>
-    <dt>-h --help</dt><dd></dd>
-		<dt>-m --model "path-model"</dt><dd>Loads the given model at startup. The value
-			defines the qualified file name containing the model to load. The command
-			is optional.</dd>
-	</dl>
-		
-	<h2>Architecture</h2>
-	<p>The architectural design of the <em>pmMDA</em> user interface has two
-		major goals. First the amount of written code should be minimized. Second it
-		provides a test bed for the new release of the explorer user interface 
-		framework.</p>		
-		
-  <h3>Document Model</h3>
-  <p>The application should provide a document model supporting the users.</p>
-  <ul>
-    <li>If the user tries to leave the application and a modified model is
-      available, he should be asked if he wants to save the model.</li>
-    <li>If the user generates artifiacts and a validation error exists, he
-      should be informed that the artifacts could contain errors.</li>
-  </ul>
-  
-	<h2>History</h2>
-	<p>The prototype of the <em>pmMDA</em> was developed with the EMF framework
-		of Eclipse. This framework uses passive code generators. This way of 
-		developing applications is against our beliefs how to develop applications.
-		We decided to use the explorer framework to develop a new version of the user
-		interface and implement strong validations of the data. The goal is to provide
-		an efficient mechanism to define a PIM model of an application. Complex
-		architectural modeling should be performed with a professional UML tool.
-		Emphasis is put on validation and reporting and less on fancy features.</p>
-   @since Java 2 Platform, Standard Edition, version 1.5
+<h2>Features</h2>
+<h3>Validation</h3>
+<p>Validation of a named element is performed after the user inputed new data in
+a properties view but before it is saved. If inconsistencies are found they are
+displayed in a todo list.</p>
+<h3>Persistency</h3>
+<p>The models are stored as XML files in the file system. Multiple formats are
+supported to enhance integration with other tools. The supported formats are
+defined in the documentation of the MDA busines object package. Interested
+readers can found detailed information there.</p>
+
+<h2>Command Line</h2>
+<p>The <em>pmMDA Client</em> supports a command line interface to streamline the
+start of the application with the expected configuration and data. The command
+line can also be used to execute the pmMDA application in batch mode. The
+following options are supported.</p>
+<dl>
+ <dt>-v --verbose</dt>
+ <dd>An optional boolean argument. if set the logging level is verbose.</dd>
+ <dt>-q --quiet</dt>
+ <dd>An optional boolean argument. If set the logging level is quiet.</dd>
+ <dt>-h --help</dt>
+ <dd></dd>
+ <dt>-m --model "path-model"</dt>
+ <dd>Loads the given model at startup. The value defines the qualified file name
+ containing the model to load. The command is optional.</dd>
+</dl>
+
+<h2>Architecture</h2>
+<p>The architectural design of the <em>pmMDA</em> user interface has two major
+goals. First the amount of written code should be minimized. Second it provides
+a test bed for the new release of the explorer user interface framework.</p>
+
+<h3>Document Model</h3>
+<p>The application should provide a document model supporting the users.</p>
+<ul>
+ <li>If the user tries to leave the application and a modified model is
+ available, he should be asked if he wants to save the model.</li>
+ <li>If the user generates artifiacts and a validation error exists, he should
+ be informed that the artifacts could contain errors.</li>
+</ul>
+
+<h2>History</h2>
+<p>The prototype of the <em>pmMDA</em> was developed with the EMF framework of
+Eclipse. This framework uses passive code generators. This way of developing
+applications is against our beliefs how to develop applications. We decided to
+use the explorer framework to develop a new version of the user interface and
+implement strong validations of the data. The goal is to provide an efficient
+mechanism to define a PIM model of an application. Complex architectural
+modeling should be performed with a professional UML tool. Emphasis is put on
+validation and reporting and less on fancy features.</p>
+@since Java 2 Platform, Standard Edition, version 1.5
 </body>

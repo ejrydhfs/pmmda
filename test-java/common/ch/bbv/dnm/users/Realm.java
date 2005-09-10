@@ -18,9 +18,13 @@ import java.util.*;
 
 /**
  * The realm manages providers, their domains and users. This approach allows 
- * the definition of indenpendant business units with their own rules.
+ * the definition of indenpendent business units with their own rules. The 
+ * realm is a database of usernames and passwords that identify valid users of 
+ * applications and an enumeration of the list of roles associated with each 
+ * valid user. You can think of roles as similar to groups in Unix like 
+ * operating systems.
  * @version $Revision$
- * @author MarcelBaumann
+ * @author Marcel Baumann
  */
 public class Realm implements DataObject {
 
@@ -35,7 +39,7 @@ public class Realm implements DataObject {
   /**
    * Name of the realm as shown to the users.
    */
-  private String name;
+  private java.lang.String name;
 
   /**
    * The providers defined in the realm.
@@ -137,9 +141,9 @@ public class Realm implements DataObject {
   /** 
    * Returns the current value of the simple property name.
    * @return the value of the simple property name.
-   * @see #setName(String)
+   * @see #setName(java.lang.String)
    */
-  public String getName() {
+  public java.lang.String getName() {
     return name;
   }
 
@@ -148,7 +152,7 @@ public class Realm implements DataObject {
    * @param name new value of the property.
    * @see #getName()
    */    
-  public void setName(String name) {
+  public void setName(java.lang.String name) {
     if (((this.name != null) && !this.name.equals(name)) || 
         ((this.name == null) && (name != null)))  {    
       this.name = name;

@@ -7,11 +7,6 @@
 package ch.bbv.dnm.users;
 
 import ch.bbv.dog.DataObject;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
-import java.beans.VetoableChangeListener;
-import java.lang.reflect.Field;
-import java.sql.Timestamp;
 import java.util.*;
 
 /* %% USER DEFINED IMPORT START %% */
@@ -21,9 +16,9 @@ import java.util.*;
  * A user is an entity who can connect to the system. All operations he 
  * performs can be logged.
  * @version $Revision$
- * @author MarcelBaumann
+ * @author Marcel Baumann
  */
-public class User implements DataObject {
+public class User extends NamedEntity implements DataObject {
 
 /* %% USER DEFINED DECLARATION START %% */
 /* %% USER DEFINED DECLARATION END %% */
@@ -35,9 +30,10 @@ public class User implements DataObject {
 
   /**
    * The human readable name of the entity. The name should be unique in the 
-   * context it is used to simplify navigation for users.
+   * context it is used to simplify navigation for users. The context of the 
+   * user is the domain therefore the login is unique in the domain.
    */
-  private String login;
+  private java.lang.String login;
 
   /**
    * Flag indicating if the user is currently active or not.
@@ -47,29 +43,24 @@ public class User implements DataObject {
   /**
    * The primary email address of the user.
    */
-  private String email;
+  private java.lang.String email;
 
   /**
    * The password of the user.
    */
-  private String password;
+  private java.lang.String password;
 
   /**
    * Upper range limit of the user account validity. If the value is null no 
    * upper limit is defined.
    */
-  private Date validTo;
+  private java.util.Date validTo;
 
   /**
    * Lower range limit of the user account validity. If the value is null no 
    * lower limit is defined.
    */
-  private Date validFrom;
-
-  /**
-   * Name of the user.
-   */
-  private String name;
+  private java.util.Date validFrom;
 
   /**
    * The roles the user belongs to.
@@ -81,33 +72,11 @@ public class User implements DataObject {
   private Integer unitUsersHandle;
 
   /** 
-   * Unique identifier of the data object instance distinguishing it from all
-   * other instances of the same data object type.
-   */
-  private Integer id;
-   
-  /** 
-   * Flag indicated if the data object is dirty or not.
-   */
-  private boolean modified;
-  
-  /** 
-   * Timestamp used to implement optimistic locking. 
-   */
-  private Timestamp timestamp;   
-
-  /** 
-   * Helper class for managing changeable properties and associated listeners.
-   */
-  protected transient PropertyChangeSupport changeSupport;
-
-  /** 
    * Default constructor of the class necessary for Java bean convention. The 
    * object identifier is set to null to indicate it is a new object.
    */
   public User() {
     roles = new ArrayList<UserRole>();
-    changeSupport = new PropertyChangeSupport(this);
   }
 
 /* %% USER DEFINED CONSTRUCTORS START %% */
@@ -116,74 +85,13 @@ public class User implements DataObject {
 /* %% USER DEFINED CODE START %% */
 /* %% USER DEFINED CODE END %% */
 
-  /** 
-   * Returns the unique identifier of the data object instance.
-   * @return the identifier of the instance.
-   * @see #setId(Integer)
-   */
-  public Integer getId() {
-    return id;
-  }
-  
-  /** 
-   * Sets the identifier of the data object instance.
-   * @param id new identifier of the instance.
-   * @see #getId()
-   */
-  public void setId(Integer id) {
-    this.id = id;
-  }
-
-  /** 
-   * Returns the flag indicating if the data object instance was modified.
-   * @return true if the object was modified otherwise false.
-   * @see #setModified
-   */
-  public boolean isModified() {
-    return modified;
-  }
-  
-  /** 
-   * Sets the flag indicating if the data object instance was modified.
-   * @param modified new value of the flag.
-   * @see #isModified
-   */
-  public void setModified(boolean modified) {
-    this.modified = modified;
-  }
-  
-  /** 
-   * Convenience method indicating if the instance is a new one or not.
-   * @return true if the object is new otherwise false.
-   */
-  public boolean isNew()  {
-    return (getId() == null);
-  }
-  
-  /** 
-   * Returns the timestamp of the data object instance.
-   * @return the timestamp of the last persistent modification.
-   * @see #setTimestamp(Timestamp)
-   */
-  public Timestamp getTimestamp() {
-    return timestamp;
-  }
-  
-  /** 
-   * Sets the timestamp of the data object instance.
-   * @param timestamp timestamp of the instance.
-   * @see #getTimestamp()
-   */
-   public void setTimestamp(Timestamp timestamp) {
-     this.timestamp = timestamp;
-   }
 
   /** 
    * Returns the current value of the simple property login.
    * @return the value of the simple property login.
-   * @see #setLogin(String)
+   * @see #setLogin(java.lang.String)
    */
-  public String getLogin() {
+  public java.lang.String getLogin() {
     return login;
   }
 
@@ -192,8 +100,8 @@ public class User implements DataObject {
    * @param login new value of the property.
    * @see #getLogin()
    */    
-  public void setLogin(String login) {
-    String oldLogin = this.login;
+  public void setLogin(java.lang.String login) {
+    java.lang.String oldLogin = this.login;
     if (((this.login != null) && !this.login.equals(login)) || 
         ((this.login == null) && (login != null)))  {    
       this.login = login;
@@ -226,9 +134,9 @@ public class User implements DataObject {
   /** 
    * Returns the current value of the simple property email.
    * @return the value of the simple property email.
-   * @see #setEmail(String)
+   * @see #setEmail(java.lang.String)
    */
-  public String getEmail() {
+  public java.lang.String getEmail() {
     return email;
   }
 
@@ -237,8 +145,8 @@ public class User implements DataObject {
    * @param email new value of the property.
    * @see #getEmail()
    */    
-  public void setEmail(String email) {
-    String oldEmail = this.email;
+  public void setEmail(java.lang.String email) {
+    java.lang.String oldEmail = this.email;
     if (((this.email != null) && !this.email.equals(email)) || 
         ((this.email == null) && (email != null)))  {    
       this.email = email;
@@ -250,9 +158,9 @@ public class User implements DataObject {
   /** 
    * Returns the current value of the simple property password.
    * @return the value of the simple property password.
-   * @see #setPassword(String)
+   * @see #setPassword(java.lang.String)
    */
-  public String getPassword() {
+  public java.lang.String getPassword() {
     return password;
   }
 
@@ -261,7 +169,7 @@ public class User implements DataObject {
    * @param password new value of the property.
    * @see #getPassword()
    */    
-  public void setPassword(String password) {
+  public void setPassword(java.lang.String password) {
     if (((this.password != null) && !this.password.equals(password)) || 
         ((this.password == null) && (password != null)))  {    
       this.password = password;
@@ -272,9 +180,9 @@ public class User implements DataObject {
   /** 
    * Returns the current value of the simple property validTo.
    * @return the value of the simple property validTo.
-   * @see #setValidTo(Date)
+   * @see #setValidTo(java.util.Date)
    */
-  public Date getValidTo() {
+  public java.util.Date getValidTo() {
     return validTo;
   }
 
@@ -283,7 +191,7 @@ public class User implements DataObject {
    * @param validTo new value of the property.
    * @see #getValidTo()
    */    
-  public void setValidTo(Date validTo) {
+  public void setValidTo(java.util.Date validTo) {
     if (((this.validTo != null) && !this.validTo.equals(validTo)) || 
         ((this.validTo == null) && (validTo != null)))  {    
       this.validTo = validTo;
@@ -294,9 +202,9 @@ public class User implements DataObject {
   /** 
    * Returns the current value of the simple property validFrom.
    * @return the value of the simple property validFrom.
-   * @see #setValidFrom(Date)
+   * @see #setValidFrom(java.util.Date)
    */
-  public Date getValidFrom() {
+  public java.util.Date getValidFrom() {
     return validFrom;
   }
 
@@ -305,32 +213,10 @@ public class User implements DataObject {
    * @param validFrom new value of the property.
    * @see #getValidFrom()
    */    
-  public void setValidFrom(Date validFrom) {
+  public void setValidFrom(java.util.Date validFrom) {
     if (((this.validFrom != null) && !this.validFrom.equals(validFrom)) || 
         ((this.validFrom == null) && (validFrom != null)))  {    
       this.validFrom = validFrom;
-      setModified(true);
-    }
-  }    
-
-  /** 
-   * Returns the current value of the simple property name.
-   * @return the value of the simple property name.
-   * @see #setName(String)
-   */
-  public String getName() {
-    return name;
-  }
-
-  /** 
-   * Sets the new value of the simple property name.
-   * @param name new value of the property.
-   * @see #getName()
-   */    
-  public void setName(String name) {
-    if (((this.name != null) && !this.name.equals(name)) || 
-        ((this.name == null) && (name != null)))  {    
-      this.name = name;
       setModified(true);
     }
   }    
@@ -444,72 +330,12 @@ public class User implements DataObject {
     return clone;
   }
 
-  public void addPropertyChangeListener(PropertyChangeListener listener) {
-    changeSupport.addPropertyChangeListener(listener);
-  }
-  
-  public void addPropertyChangeListener(String propertyName, 
-      PropertyChangeListener listener) {
-    changeSupport.addPropertyChangeListener(propertyName, listener);
-  }
-  
-  public void removePropertyChangeListener(PropertyChangeListener listener) {
-    changeSupport.removePropertyChangeListener(listener);
-  }
-  
-  public void removePropertyChangeListener(String propertyName, 
-      PropertyChangeListener listener) {
-    changeSupport.removePropertyChangeListener(propertyName, listener);
-  }
-  
-  public void addVetoableChangeListener(VetoableChangeListener listener) {
-    throw new UnsupportedOperationException();
-  }
-  
-  public void addVetoableChangeListener(String propertyName,
-      VetoableChangeListener listener) {
-    throw new UnsupportedOperationException();
-  }
-  
-  public void removeVetoableChangeListener(VetoableChangeListener listener) {
-    throw new UnsupportedOperationException();
-  }
-  
-  public void removeVetoableChangeListener(String propertyName,
-      VetoableChangeListener listener) {
-    throw new UnsupportedOperationException();
-  }
-
-  /**
-   * Convenience method to set the value of a foreign key.
-   * @param bean object which property should be set.
-   * @param property property to be set.
-   * @param key key identifier to set.
-   * @pre (bean != null) && (property != null) && (key != null)
-   */
-  final protected void setForeignKey(DataObject bean, String property,
-      Integer key) {
-    assert((bean != null) && (property != null));
-    try {
-      Field field = bean.getClass().getDeclaredField(property);
-      if (field != null) {
-        field.setAccessible(true);
-        field.set(bean, key);
-      }
-    } catch (NoSuchFieldException e) {
-      assert(false);
-    } catch (IllegalArgumentException e) {
-      assert(false);
-    } catch (IllegalAccessException e) {
-      assert(false);
-    }
-  }
-
   /** 
    * Copies deeply all the attributes of the class and its ancestors.
    * @param clone the copy which deep copy should be generated.
    */
   protected void copy(User clone) {
+    super.copy(clone);
     clone.roles = new ArrayList<UserRole>();
     for (int i = 0; i < roles.size(); i++) {
       clone.roles.add(roles.get(i).copy());
@@ -523,6 +349,7 @@ public class User implements DataObject {
    * @param visitor visitor to act on the data object.
    */  
   protected void traverse(Visitor visitor) {
+    super.traverse(visitor);
     for (UserRole item : getRoles()) {
       item.accept(visitor);
     }

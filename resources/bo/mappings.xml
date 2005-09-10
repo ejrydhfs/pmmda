@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<cartridge name="bo" version="0.3.0">
+ <!--
+  <configuration>
+  <stereotypes>
+  <stereotype name="dataObject" target="Class"
+  description="Indicates if the class is a data object or not."/>
+  </stereotypes>
+  <tags>
+  <tag name="bo-generate" type="boolean" target="Package" 
+  description="Flag indicating if the package should be processed or not"/>
+  </tags>
+  <obsolete-tags>
+  </obsolete-tags>
+  </configuration>
+ -->
+ <datatypes language="java">
+  <datatype name="bool" type="boolean" />
+  <datatype name="byte" type="byte" />
+  <datatype name="char" type="char" />
+  <datatype name="short" type="short" />
+  <datatype name="int" type="int" />
+  <datatype name="long" type="long" />
+  <datatype name="float" type="float" />
+  <datatype name="double" type="double" />
+
+  <datatype name="Boolean" type="java.lang.Boolean" />
+  <datatype name="Byte" type="java.lang.Byte" />
+  <datatype name="Char" type="java.lang.Character" />
+  <datatype name="Short" type="java.lang.Short" />
+  <datatype name="Integer" type="java.lang.Integer" />
+  <datatype name="Long" type="java.lang.Long" />
+  <datatype name="Float" type="java.lang.Float" />
+  <datatype name="Double" type="java.lang.Double" />
+
+  <datatype name="object" type="java.lang.Object" />
+  <datatype name="string" type="java.lang.String" />
+  <datatype name="date" type="java.util.Date" />
+  <datatype name="decimal" type="java.math.BigDecimal" />
+  <datatype name="natural" type="java.math.BigInteger" />
+  <datatype name="timestamp" type="java.sql.Timestamp" />
+  <datatype name="collection" type="java.util.Collection"
+   concrete="java.util.ArrayList" />
+  <datatype name="list" type="java.util.List" concrete="java.util.ArrayList" />
+  <datatype name="set" type="java.util.Set" concrete="java.util.HashSet" />
+  <datatype name="map" type="java.util.Map" concrete="java.util.HashMap" />
+ </datatypes>
+</cartridge>

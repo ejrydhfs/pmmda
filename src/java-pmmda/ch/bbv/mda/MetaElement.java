@@ -5,10 +5,12 @@
  */
 package ch.bbv.mda;
 
-import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import ch.bbv.dog.DataObject;
 import ch.bbv.dog.DataObjectImpl;
@@ -60,12 +62,12 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
   private String description;
 
   /**
-   * Context property of the class. The value is handled in related accessors
+   * Context property of the item. The value is handled in related accessors
    * and does not need to be persisted but reflection directly manipulating
    * fields do not call the accessors.
    * @serial
    */
-  private MetaElement context;
+  private transient MetaElement context;
 
   /**
    * Visibility property of the class.
@@ -80,6 +82,13 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
   private String stereotype;
 
   /**
+   * Flag indicating if the package belongs to the standard packages of the
+   * environment or not.
+   * @serial
+   */
+  private boolean system;
+
+  /**
    * Tagged values of the element indexed with the tag.
    * @serial
    */
@@ -92,18 +101,12 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
   private transient Map<String, String> attributes;
 
   /**
-   * Helper class for managing changeable properties and associated listeners.
-   */
-  protected transient PropertyChangeSupport changeSupport;
-
-  /**
    * Default constructor of the class.
    */
   public MetaElement() {
     taggedValues = new HashMap<String, TaggedValue>();
     attributes = new HashMap<String, String>();
-    visibility = VisibilityCode.getCode(VisibilityCode.PUBLIC_CODE);
-    changeSupport = new PropertyChangeSupport(this);
+    visibility = VisibilityCode.getCode(VisibilityCode.PUBLIC_ID);
   }
 
   /**
@@ -117,7 +120,24 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
       ClassNotFoundException {
     stream.defaultReadObject();
     attributes = new HashMap<String, String>();
-    changeSupport = new PropertyChangeSupport(this);
+  }
+
+  /**
+   * Returns true if the package belongs to the standards ones otherwise false.
+   * @return the value of the flag.
+   * @see #setSystem(boolean)
+   */
+  public final boolean isSystem() {
+    return system;
+  }
+
+  /**
+   * Sets the new value of the package.
+   * @param system true if the package is a standard one otherwise false.
+   * @see #isSystem()
+   */
+  public final void setSystem(boolean system) {
+    this.system = system;
   }
 
   /**
@@ -271,8 +291,13 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
   public void setTaggedValue(String tag, TaggedValue taggedValue) {
     assert (tag != null) && tag.equals(taggedValue.getTag());
     TaggedValue oldValue = getTaggedValue(tag);
+    if (oldValue != null) {
+      oldValue.setContext(null);
+    }
+    taggedValue.setContext(this);
     taggedValues.put(tag, taggedValue);
-    changeSupport.firePropertyChange("taggedValues", oldValue, taggedValue);
+    propertyChangeSupport.firePropertyChange("taggedValues", oldValue,
+        taggedValue);
   }
 
   /**
@@ -290,7 +315,10 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
    */
   public TaggedValue removeTaggedValue(String tag) {
     TaggedValue oldValue = taggedValues.remove(tag);
-    changeSupport.firePropertyChange("taggedValues", oldValue, null);
+    if (oldValue != null) {
+      oldValue.setContext(null);
+    }
+    propertyChangeSupport.firePropertyChange("taggedValues", oldValue, null);
     return oldValue;
   }
 
@@ -318,6 +346,14 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
       context = context.getContext();
     }
     return context;
+  }
+
+  /**
+   * Returns the model containing the element.
+   * @return the model containing the element.
+   */
+  public MetaModel getModel() {
+    return (MetaModel) getRoot();
   }
 
   /**
@@ -408,7 +444,7 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
   public MetaClass findClass(String qualifiedName) {
     MetaClass clazz = null;
     if (qualifiedName != null) {
-      clazz = ((MetaModel) getRoot()).findClass(qualifiedName);
+      clazz = getModel().findClass(qualifiedName);
     }
     return clazz;
   }
@@ -520,7 +556,8 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
    * @return the requested element if found otherwise null.
    * @pre (list != null) && (name != null)
    */
-  protected MetaElement findElement(List<? extends MetaElement> list, String name) {
+  protected MetaElement findElement(List< ? extends MetaElement> list,
+      String name) {
     assert ((list != null) && name != null);
     for (MetaElement element : list) {
       if (name.equals(element.getName())) {

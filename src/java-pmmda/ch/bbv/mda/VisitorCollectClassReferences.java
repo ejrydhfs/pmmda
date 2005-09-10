@@ -82,6 +82,10 @@ public class VisitorCollectClassReferences implements Visitor {
     }
   }
 
+  public void visit(MetaDatatype datatype) {
+    assert (datatype != null);
+  }
+
   public void visit(TaggedValue taggedValue) {
     assert (taggedValue != null);
   }

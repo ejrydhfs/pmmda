@@ -1,36 +1,36 @@
 <body>
-  The graphs package provides the abstractions to display UML class diagrams.
-  <h2>Purpose</h2>
-  <h2>Concepts</h2>
-  <p>UML class diagram contains the various types of vertexes and edges.</p> 
-  <dl>
-    <dt>Class</dt>
-    <dd>A UML class is a rectangle with three containers. The first one 
-      contains the name and the stereotype. The second contains some of the 
-      attributes and the third some of the operations of the class.</dd>
-    <dt>Interface</dt>
-    <dd>A UML interface is a rectangle with two containers. The first one 
-      contains the name and the stereotype. The second contains some of the
-      operations of the interface.</dd>
-    <dt>Aggregation</dt>
-    <dd>An aggregation connects two classes. It has a name, roles and 
-      cardinalities.</dd>
-    <dt>Inheritance and Realize</dt>
-    <dd>Inheritance connects two classes or two interfaces. A realize connects 
-      a class with an interface.</dd>
-  </dl>
-  <h2>Architecture</h2>
-  <h3>JGraph Extensions</h3>
-  <p>A new cell type requires three new classes. First a new vertex type must 
-    be defined to identify the new kind of nodes. Second the associated view 
-    class provides a view on the new kind of nodes. The primary goal of the 
-    view is to provide the correct renderer. Third the renderer responsible to 
-    draw the view must be provided. The renderer instance is the same for all 
-    instances of the new node type and its views.</p>
-  <p>One design aspect must be solved. How does the renderer knowns the view 
-    and node it should draw. The well-known model view controller pattern is 
-    applied. The view knowns its model, the renderer knows the view to render.
-    Because we use the lightweight renderer pattern the view is set to the
-    renderer each time it is requested from the view.</p>
-   @since Java 2 Platform, Standard Edition, version 1.5
+The graphs package provides the abstractions to display UML class diagrams.
+<h2>Purpose</h2>
+<h2>Concepts</h2>
+<p>UML class diagram contains the various types of vertexes and edges.</p>
+<dl>
+ <dt>Class</dt>
+ <dd>A UML class is a rectangle with three containers. The first one contains
+ the name and the stereotype. The second contains some of the attributes and the
+ third some of the operations of the class.</dd>
+ <dt>Interface</dt>
+ <dd>A UML interface is a rectangle with two containers. The first one contains
+ the name and the stereotype. The second contains some of the operations of the
+ interface.</dd>
+ <dt>Aggregation</dt>
+ <dd>An aggregation connects two classes. It has a name, roles and
+ cardinalities.</dd>
+ <dt>Inheritance and Realize</dt>
+ <dd>Inheritance connects two classes or two interfaces. A realize connects a
+ class with an interface.</dd>
+</dl>
+<h2>Architecture</h2>
+<h3>JGraph Extensions</h3>
+<p>A new cell type requires three new classes. First a new vertex type must be
+defined to identify the new kind of nodes. Second the associated view class
+provides a view on the new kind of nodes. The primary goal of the view is to
+provide the correct renderer. Third the renderer responsible to draw the view
+must be provided. The renderer instance is the same for all instances of the new
+node type and its views.</p>
+<p>One design aspect must be solved. How does the renderer knowns the view and
+node it should draw. The well-known model view controller pattern is applied.
+The view knowns its model, the renderer knows the view to render. Because we use
+the lightweight renderer pattern the view is set to the renderer each time it is
+requested from the view.</p>
+@since Java 2 Platform, Standard Edition, version 1.5
 </body>

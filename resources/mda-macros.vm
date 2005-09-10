@@ -3,116 +3,139 @@
 
 ## emit file header for a Java source file artifact.
 #macro(emitFileHeader)
-#set($dollar="$")
+#set($_dollar="$")
 /* This code was generated automatically with the pmMDA generator. Please do 
    NOT add code outside the marked zones. All changes outside the marked areas 
    will be discarded during the next execution of the MDA generator. 
-   ${dollar}Id${dollar}
+   ${_dollar}Id${_dollar}
 */
 #end
 
 ## emit the description for a meta class for a Java source file artifact.
-## @param $element element which description should be generated
+## @param $element element which description should be generated.
 ## @param $spaces leading spaces for the indentation of the comment.
 #macro(emitClassDescription $element $spaces)
-#set($dollar="$")
-#set($offset=${spaces.length()} + 3)
-#set($lines = ${element.docComment(${offset})})
-#if(${lines.size()} > 0)
+#set($_dollar="$")
+#set($_offset=${spaces.length()} + 3)
+#set($_lines = ${element.docComment(${_offset})})
+#if(${_lines.size()} > 0)
 ${spaces}/**
-#foreach($line in $lines)
-${spaces} * ${line}
+#foreach($_line in $_lines)
+${spaces} * ${_line}
 #end
-${spaces} * @version ${dollar}Revision${dollar}
+${spaces} * @version ${_dollar}Revision${_dollar}
 ${spaces} * @author ${element.valueOfTag("author")}
 ${spaces} */
 #end
 #end
 
 ## emit the description for a meta property for a Java source file artifact.
+## @param $element element which description should be generated.
+## @param $spaces leading spaces for the indentation of the comment.
 #macro(emitPropertyDescription $element $spaces)
-#set($offset=${spaces.length()} + 3)
-#set($lines = ${element.docComment(${offset})})
-#if(${lines.size()} > 0)
+#set($_offset=${spaces.length()} + 3)
+#set($_lines = ${element.docComment(${_offset})})
+#if(${_lines.size()} > 0)
 ${spaces}/**
-#foreach($line in $lines)
-${spaces} * ${line}
+#foreach($_line in $_lines)
+${spaces} * ${_line}
 #end
 ${spaces} */
 #end
 #end
 
 ## Returns true if the element is a data object.
+## @param $element element to check if it has the "data object" stereotype.
+## @return true if the stereotype is defined otherwise false.
 #macro(isDataObject $element $result)
-#set($DATA_OBJECT="dataObject")
-#set($result=${DATA_OBJECT.equalsIgnoreCase(${element.getStereotype()})})
+#set($_DATA_OBJECT="dataObject")
+#set($result=${_DATA_OBJECT.equalsIgnoreCase(${element.getStereotype()})})
 #end
 
 ## Returns true if the element is a data object.
+## @param $element element to check if it has the "reference code" stereotype.
+## @return true if the steretotype is defined otherwise false.
 #macro(isReferenceCode $element $result)
-#set($REFERENCE_CODE="referenceCode")
-#set($result=${REFERENCE_CODE.equalsIgnoreCase(${element.getStereotype()})})
+#set($_REFERENCE_CODE="referenceCode")
+#set($result=${_REFERENCE_CODE.equalsIgnoreCase(${element.getStereotype()})})
 #end
 
 ## Returns true if the element is a data object.
+## @param $element element to check if it is a lightweight object.
+## @return true if the element is a lightweight object otherwise false.
 #macro(isLightweightDataObject $element $result)
-#set($DATA_OBJECT="dataObject")
-#set($result=${DATA_OBJECT.equalsIgnoreCase(${element.getStereotype()})} && ${element.booleanValueOfAttribute("bo-lightweight")})
+#set($_DATA_OBJECT="dataObject")
+#set($result=${_DATA_OBJECT.equalsIgnoreCase(${element.getStereotype()})} && ${element.booleanValueOfAttribute("bo-lightweight")})
+#end
+
+## Returns true if the class has a direct ancestor being a data object.
+#macro(hasDataObjectAncestor $element $result)
+#set($_ancestors=${class.retrieveAncestors()})
+#set($result = (${_ancestors.size()} > 0))
+#if($result)
+#isDataObject($element $result)
+#end
 #end
 
 ## Returns the type object of the type name defined in the element.
 #macro(getType $model $element $result)
-#set($DATA_OBJECT="dataObject")
-#set($typename=${element.getTypeName()})
+#set($_typename=${element.getTypeName()})
 #set($result=false)
-#set($result=${model.findClass(${typename})})
+#set($result=${model.findClass(${_typename})})
+#end
+
+## Returns the type of the element. If the type is a datatype the value
+## of the attribute is returned otherwise the type name.
+## @param element element which type should be returned.
+## @return the type name of the element as seen from the BO cartridge.
+#macro(getDatatype $element $result)
+#set($result=false)
+#set($result=${element.getClassifier().getAttribute("bo-datatype")})
+#if(!$result)
+#set($result=${element.getTypeName()})
+#end
 #end
 
 ## Returns true if the type object of the type name defined in the element is a data object.
 #macro(isTypeModel $model $element $result)
-#set($DATA_OBJECT="dataObject")
-#set($typename=${element.getTypeName()})
-#set($type=false)
-#set($type=${model.findClass(${typename})})
-#set($result=$type && ${DATA_OBJECT.equalsIgnoreCase(${type.getStereotype()})})
+#getType($model $element $_type)
+#set($result=$_type && ${_DATA_OBJECT.equalsIgnoreCase(${_type.getStereotype()})})
 #end
 
 ## Returns true if the type object of the type name defined in the element is a lightweight 
 ## data object.
 #macro(isTypeLightweigth $model $element $result)
-#set($DATA_OBJECT="dataObject")
-#set($typename=${element.getTypeName()})
-#set($type=false)
-#set($type=${model.findClass(${typename})})
-#set($result=$type && ${DATA_OBJECT.equalsIgnoreCase(${type.getStereotype()})} && (${type.getAttribute("bo-lightweight")}))
+#set($_DATA_OBJECT="dataObject")
+#getType($model $element $_type)
+#set($result=$_type && ${_DATA_OBJECT.equalsIgnoreCase(${_type.getStereotype()})} && (${_type.getAttribute("bo-lightweight")}))
 #end
 
 ## Returns true if the type exists and is a persistent data object
 #macro(isPersistentDataObject $type $result)
-#set($DATA_OBJECT="dataObject")
-#set($result=${type} && ${DATA_OBJECT.equalsIgnoreCase(${type.getStereotype()})} && ${type.booleanValueOfTag("persistence")})
+#set($_DATA_OBJECT="dataObject")
+#set($result=${type} && ${_DATA_OBJECT.equalsIgnoreCase(${type.getStereotype()})} && ${type.booleanValueOfTag("persistence")})
 #end
 
 #macro(isTypePersistent $model $element $result)
-#set($type=false)
-#getType($model $element $type)
-#isPersistentDataObject($type $result)
+#set($_type=false)
+#getType($model $element $_type)
+#isPersistentDataObject($_type $result)
 #end
 
 #macro(containerCreation $relation)
-#set($containerType=${aggregation.getAttribute("bo-container-class")})
-#set($keyType=${aggregation.getAttribute("bo-key-class")})
-#set($itemType=${aggregation.retrieveTypeClassName()})
-#if($keyType && (${keyType.length()} != 0))
-new ${containerType}<${keyType}, ${itemType}>()##end
+#set($_containerType=${aggregation.getAttribute("bo-container-class")})
+#set($_keyType=${aggregation.getAttribute("bo-key-class")})
+#set($_type=${aggregation.retrieveTypeClassName()})
+#if($_keyType && (${_keyType.length()} > 0))
+new ${_containerType}<${_keyType}, ${_type}>()##end
 #else
-new ${containerType}<${itemType}>()##end
+new ${_containerType}<${_type}>()##end
 #end
 #end
 
 #macro(getterName $property $result)
-#set($itemType = ${property.retrieveTypeClassName()})
-#if($itemType=="boolean")
+#set($_type = ${property.getClassifier().getAttribute("bo-datatype")})
+#if($_type=="boolean")
 #set($result="is${property.nameFirstUpperSingular()}")
 #else
 #set($result="get${property.nameFirstUpperSingular()}")
@@ -131,8 +154,8 @@ new ${containerType}<${itemType}>()##end
 ## Generates a reverse foreign key for the given property referencing
 ## the given reference class.
 #macro(getReverseFk $reference $property $result)
-#set($refTable=${reference.valueOfTag("ojb-table-name")})
-#set($result="${refTable}_${property.nameUpper()}_FK")
+#set($_refTable=${reference.valueOfTag("ojb-table-name")})
+#set($result="${_refTable}_${property.nameUpper()}_FK")
 #end
 
 #macro(getForwardHdl $property $result)
@@ -142,4 +165,3 @@ new ${containerType}<${itemType}>()##end
 #macro(getReverseHdl $reference $property $result)
 #set($result="${reference.nameFirstLower()}${relation.nameFirstUpper()}Handle")
 #end
-

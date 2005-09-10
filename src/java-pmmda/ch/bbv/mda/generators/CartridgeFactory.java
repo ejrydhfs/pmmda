@@ -15,6 +15,9 @@ import org.apache.velocity.app.Velocity;
 import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
 
+import ch.bbv.application.Component;
+import ch.bbv.application.ComponentException;
+import ch.bbv.application.ComponentImpl;
 import ch.bbv.application.Locator;
 import ch.bbv.dog.validation.Validator;
 import ch.bbv.mda.*;
@@ -26,16 +29,16 @@ import ch.bbv.mda.*;
  * @author MarcelBaumann
  * @version $Revision$
  */
-public class CartridgeFactory implements ElementInitialize {
+public class CartridgeFactory extends ComponentImpl implements Component {
+  /**
+   * Name of the component to find it through the locator service.
+   */
+  public static final String NAME = "Cartridge Factory";
+
   /**
    * Logger for all instances of the class.
    */
   private static Log log = LogFactory.getLog(CartridgeFactory.class);
-
-  /**
-   * Singleton instance of the class.
-   */
-  private static volatile CartridgeFactory factory;
 
   /**
    * Map of all registered cartridges. The key is the abbreviation of the
@@ -54,6 +57,11 @@ public class CartridgeFactory implements ElementInitialize {
   private List<CartridgeListener> listeners;
 
   /**
+   * The item factory of the cartridge factory.
+   */
+  private ItemFactory itemFactory;
+  
+  /**
    * Initialization properties.
    */
   private Properties properties;
@@ -65,36 +73,25 @@ public class CartridgeFactory implements ElementInitialize {
   private NumberFormat format;
 
   /**
-   * Creates the factory singleton instance.
-   * @param properties properties containing user specific values.
-   */
-  public static void create(Properties properties) {
-    assert factory == null;
-    synchronized (CartridgeFactory.class) {
-      if (factory == null) {
-        factory = new CartridgeFactory(properties);
-      }
-    }
-    factory.initialize();
-  }
-
-  /**
    * Returns the singleton instance of the class.
    * @return singleton instance of the class.
    */
   public static CartridgeFactory getInstance() {
-    return factory;
+    return (CartridgeFactory) Locator.getInstance().getComponent(NAME);
   }
 
   /**
    * Constructor of the class.
+   * @param name name of the instance as accessible through the locator.
    * @param properties properties used to configure the factory.
    */
-  protected CartridgeFactory(Properties properties) {
+  public CartridgeFactory(String name, Properties properties) {
+    super(name);
     cartridges = new HashMap<String, Cartridge>();
     cartridgeDescriptors = new ArrayList<CartridgeDescriptor>();
     listeners = new ArrayList<CartridgeListener>();
-    this.properties = new Properties(properties);
+    this.properties = properties;
+    itemFactory = new ItemFactory();
     format = NumberFormat.getInstance();
     format.setParseIntegerOnly(true);
     format.setMinimumIntegerDigits(2);
@@ -107,20 +104,22 @@ public class CartridgeFactory implements ElementInitialize {
         "parser.pool.size", "10"));
     try {
       Velocity.init(properties);
-    } catch (ParseErrorException pee) {
-      pee.printStackTrace();
-    } catch (ResourceNotFoundException rnfe) {
-      rnfe.printStackTrace();
+    } catch (ParseErrorException e) {
+      log.error(e);
+    } catch (ResourceNotFoundException e) {
+      log.error(e);
     } catch (Exception e) {
-      e.printStackTrace();
+      log.error(e);
     }
   }
 
   /**
    * All defined cartridges are read from the properties and created. The name
    * of the class is trimmed to avoid space problems with the property file.
+   * @throws ComponentException if an initialization problem occurs.
    */
-  protected void initialize() {
+  public void initialize() throws ComponentException {
+    super.initialize();
     int i = 1;
     String propertyName = "pm-mda.cartridges." + format.format(i);
     String propertyValue = properties.getProperty(propertyName);
@@ -146,10 +145,10 @@ public class CartridgeFactory implements ElementInitialize {
           descriptor.setActive(Boolean.TRUE);
           descriptor.setCartridge(cartridge);
           register(cartridge);
-        } catch (InstantiationException ie) {
-          log.error(ie);
-        } catch (IllegalAccessException iae) {
-          log.error(iae);
+        } catch (InstantiationException e) {
+          log.error(e);
+        } catch (IllegalAccessException e) {
+          log.error(e);
         }
       }
       i++;
@@ -158,6 +157,14 @@ public class CartridgeFactory implements ElementInitialize {
     }
   }
 
+  /**
+   * Returns the item factory of the cartridge factory.
+   * @return the item factory of the cartridge factory.
+   */
+  public ItemFactory getItemFactory() {
+    return itemFactory;
+  }
+  
   /**
    * Returns the list of loaded and instantiated cartridges.
    * @return list of instantiated cartridges.
@@ -256,7 +263,7 @@ public class CartridgeFactory implements ElementInitialize {
    * @pre (cartridge != null) && (model != null)
    */
   public void execute(Cartridge cartridge, MetaModel model) {
-    assert ((cartridge != null) && (model != null));
+    assert (cartridge != null) && (model != null);
     preprocess(cartridge, model);
     process(cartridge, model);
   }
@@ -287,36 +294,6 @@ public class CartridgeFactory implements ElementInitialize {
     if (!clazz.isSystem()) {
       preprocess(cartridge, clazz);
       process(cartridge, clazz);
-    }
-  }
-
-  public void initialize(MetaModel item) {
-    for (ElementInitialize functor : generateFunctors()) {
-      functor.initialize(item);
-    }
-  }
-
-  public void initialize(MetaPackage item) {
-    for (ElementInitialize functor : generateFunctors()) {
-      functor.initialize(item);
-    }
-  }
-
-  public void initialize(MetaClass item) {
-    for (ElementInitialize functor : generateFunctors()) {
-      functor.initialize(item);
-    }
-  }
-
-  public void initialize(MetaProperty item) {
-    for (ElementInitialize functor : generateFunctors()) {
-      functor.initialize(item);
-    }
-  }
-
-  public void initialize(MetaIndexedProperty item) {
-    for (ElementInitialize functor : generateFunctors()) {
-      functor.initialize(item);
     }
   }
 
@@ -391,9 +368,28 @@ public class CartridgeFactory implements ElementInitialize {
       preprocess(cartridge, (MetaPackage) model);
     }
 
+    for (MetaDatatype item : model.getDataTypes()) {
+      preprocess(cartridge, item);
+    }
+
     for (MetaPackage item : model.getPackages()) {
       preprocess(cartridge, item);
     }
+  }
+
+  /**
+   * Preprocesses the cartridge on the given element.
+   * @param cartridge catridge being processed.
+   * @param datatype element being processed.
+   */
+  protected void preprocess(Cartridge cartridge, MetaDatatype datatype) {
+    for (Cartridge supplier : cartridge.getUsedCartridges()) {
+      supplier.preProcessDatatype(datatype);
+    }
+    logProgressInfo(cartridge, datatype,
+        "{0} Catridge pre-processing datatype {1}");
+    cartridge.preProcessDatatype(datatype);
+
   }
 
   /**
@@ -445,7 +441,7 @@ public class CartridgeFactory implements ElementInitialize {
   protected void registerTaggedValueTypes(Cartridge cartridge, Class clazz) {
     List<TagDefinition> types = cartridge.getTaggedValueTypes(clazz);
     if (types != null) {
-      MetaFactory.getInstance().registerTypes(clazz, types);
+      getItemFactory().registerTypes(clazz, types);
     }
   }
 
@@ -459,7 +455,7 @@ public class CartridgeFactory implements ElementInitialize {
       Class clazz) {
     List<TagDefinition> types = cartridge.getObsoleteTaggedValueTypes(clazz);
     if ((types != null) && (types.size() > 0)) {
-      MetaFactory.getInstance().addObsoleteTypes(clazz, types);
+      getItemFactory().addObsoleteTypes(clazz, types);
     }
   }
 
@@ -492,17 +488,5 @@ public class CartridgeFactory implements ElementInitialize {
     if (!dependants.contains(cartridge)) {
       dependants.add(cartridge);
     }
-  }
-
-  private List<ElementInitialize> generateFunctors() {
-    List<ElementInitialize> functors = new ArrayList<ElementInitialize>();
-    List<Cartridge> dependants = generateOrder(cartridges.values());
-    for (Cartridge cartridge : dependants) {
-      ElementInitialize functor = cartridge.getInitalizor();
-      if (functor != null) {
-        functors.add(functor);
-      }
-    }
-    return functors;
   }
 }

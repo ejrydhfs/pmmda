@@ -6,11 +6,12 @@
 package ch.bbv.mda.generators;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
+import org.apache.commons.configuration.CompositeConfiguration;
+import org.apache.commons.configuration.ConfigurationConverter;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.Template;
@@ -129,6 +130,11 @@ public abstract class CartridgeImpl implements Cartridge {
   private String abbreviation;
 
   /**
+   * The configuration of the cartridge based on a set of properties files.
+   */
+  private CompositeConfiguration configuration;
+
+  /**
    * Operators for the model.
    */
   private ModelOperators modelOperators;
@@ -143,8 +149,9 @@ public abstract class CartridgeImpl implements Cartridge {
     this.name = name;
     this.abbreviation = abbreviation;
     this.version = version;
-    cartridges = new ArrayList<Cartridge>();
-    modelOperators = new ModelOperators();
+    this.cartridges = new ArrayList<Cartridge>();
+    this.configuration = new CompositeConfiguration();
+    this.modelOperators = new ModelOperators();
   }
 
   public String getName() {
@@ -175,10 +182,6 @@ public abstract class CartridgeImpl implements Cartridge {
     return Collections.emptyList();
   }
 
-  public ElementInitialize getInitalizor() {
-    return null;
-  }
-
   public void registerRules(Validator validator) {
   }
 
@@ -189,6 +192,9 @@ public abstract class CartridgeImpl implements Cartridge {
   }
 
   public void postProcessModel(MetaModel model) {
+  }
+
+  public void preProcessDatatype(MetaDatatype datatype) {
   }
 
   public void preProcessPackage(MetaPackage metaPackage) {
@@ -208,6 +214,8 @@ public abstract class CartridgeImpl implements Cartridge {
 
   public void initialize(Properties properties) {
     this.properties = properties;
+    this.configuration.addConfiguration(ConfigurationConverter
+        .getConfiguration(properties));
   }
 
   public List<TagDefinition> getTaggedValueTypes(Class clazz) {
@@ -227,8 +235,17 @@ public abstract class CartridgeImpl implements Cartridge {
   }
 
   /**
+   * Returns the configuration of cartridge.
+   * @return the properties of the configuration of the cartridge.
+   */
+  protected CompositeConfiguration getConfiguration() {
+    return configuration;
+  }
+
+  /**
    * Adds a cartridge being used in the cartridge to create the context.
    * @param cartridge cartridge being used.
+   * @pre cartridge != null
    */
   protected void addCartridge(Cartridge cartridge) {
     cartridges.add(cartridge);
@@ -242,6 +259,8 @@ public abstract class CartridgeImpl implements Cartridge {
    * @param template velocity template to execute.
    * @param context velocity context of the template.
    * @throws IOException An exception occured when trying to create the file.
+   * @pre (root != null) && (packageName != null) && (classname != null) &&
+   *      (template != null) && (context != null)
    */
   protected void processJavaTemplate(File root, String packageName,
       String classname, Template template, VelocityContext context)
@@ -259,6 +278,8 @@ public abstract class CartridgeImpl implements Cartridge {
    * @param template velocity template to execute.
    * @param context velocity context of the template.
    * @throws IOException An exception occured when trying to create the file.
+   * @pre (root != null) && (packageName != null) && (filename != null) &&
+   *      (template != null) && (context != null)
    */
   protected void processTemplate(File root, String packageName,
       String filename, Template template, VelocityContext context)
@@ -283,6 +304,7 @@ public abstract class CartridgeImpl implements Cartridge {
    * @param classname name of the Java class.
    * @return the requested print writer.
    * @throws IOException An exception occured when trying to create the file.
+   * @pre (root != null) && (packageName != null) && (classname != null)
    */
   protected PrintWriter createJavaWriter(File root, String packageName,
       String classname) throws IOException {
@@ -290,6 +312,13 @@ public abstract class CartridgeImpl implements Cartridge {
         + JAVA_EXTENSION);
   }
 
+  /**
+   * Retrieves the template with the given name and language extension.
+   * @param name name of the template to retrieve.
+   * @param language language handled in the template.
+   * @return the requested template if found otherwise null.
+   * @pre (name != null) && (language != null)
+   */
   protected Template retrieveTemplate(String name, String language) {
     Template template = null;
     StringBuilder buffer = new StringBuilder();
@@ -363,7 +392,7 @@ public abstract class CartridgeImpl implements Cartridge {
     context.put(UTILITIES_KEY, modelOperators);
     context.put(CARTRIDGE_KEY, this);
     context.put(CONFIGURATION_KEY, getContext());
-    context.put(MODEL_KEY, metaPackage.getRoot());
+    context.put(MODEL_KEY, metaPackage.getModel());
     context.put(PACKAGE_KEY, metaPackage);
     context.put(CLASSES_KEY, metaPackage.getClasses());
     return context;
@@ -380,7 +409,7 @@ public abstract class CartridgeImpl implements Cartridge {
     context.put(UTILITIES_KEY, modelOperators);
     context.put(CARTRIDGE_KEY, this);
     context.put(CONFIGURATION_KEY, getContext());
-    context.put(MODEL_KEY, clazz.getRoot());
+    context.put(MODEL_KEY, clazz.getModel());
     context.put(PACKAGE_KEY, clazz.getContext());
     context.put(CLASS_KEY, clazz);
     context.put(PROPERTIES_KEY, modelOperators.getTransitiveFieldsFor(clazz));
@@ -426,5 +455,63 @@ public abstract class CartridgeImpl implements Cartridge {
       root = new File(value);
     }
     return root;
+  }
+
+  protected final void loadConfiguration(String name)
+      throws ConfigurationException {
+    StringBuilder buffer = new StringBuilder();
+    buffer.append(configuration.getProperty("file.resource.loader.path"))
+        .append("/").append(getPrefix()).append("/").append(name);
+    configuration.addConfiguration(new XMLConfiguration(buffer.toString()));
+  }
+
+  /**
+   * Returns the mapping for the type to the target language. A mapping exists
+   * only for datatypes.
+   * @param type type to map to a language construct.
+   * @param language language to map to.
+   * @param concrete flag indicating if the implementation class should be
+   *          retrieve or not.
+   * @return the requested mapping if found otherwise the qualified name of the
+   *         type.
+   */
+  protected String translateDatatype(MetaDatatype type, String language,
+      boolean concrete) {
+    String typename = type.qualifiedName();
+    int size = ((Collection) configuration
+        .getProperty("datatypes.datatype[@name]")).size();
+    StringBuilder buffer = new StringBuilder();
+    for (int i = 0; i < size; i++) {
+      buffer.setLength(0);
+      buffer.append("datatypes.datatype(").append(i).append(")[@name]");
+      if (typename.equals(configuration.getString(buffer.toString()))) {
+        buffer.setLength(0);
+        buffer.append("datatypes.datatype(").append(i).append(")[@type]");
+        typename = configuration.getString(buffer.toString());
+        break;
+      }
+    }
+    return typename;
+  }
+
+  /**
+   * Expands an identifier with its prefix and postfix.
+   * @param prefixKey key of the prefix defined in the context.
+   * @param identifier identifier to expand.
+   * @param postfixKey key of the prefix defined in the context.
+   * @return expanded identifier.
+   */
+  protected String expandIdentifier(String prefixKey, String identifier,
+      String postfixKey) {
+    Properties context = getContext();
+    StringBuilder buffer = new StringBuilder();
+    if (prefixKey != null) {
+      buffer.append(context.getProperty(prefixKey));
+    }
+    buffer.append(identifier);
+    if (postfixKey != null) {
+      buffer.append(context.getProperty(postfixKey));
+    }
+    return buffer.toString();
   }
 }

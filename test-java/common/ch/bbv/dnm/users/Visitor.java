@@ -77,4 +77,16 @@ public interface Visitor {
    * @param item item to visit.
    */
   void visit(UserRole item);
+
+  /** 
+   * Visits the class NamedEntity as part of the visitor pattern.
+   * @param item item to visit.
+   */
+  void visit(NamedEntity item);
+
+  /** 
+   * Visits the class ResourceType as part of the visitor pattern.
+   * @param item item to visit.
+   */
+  void visit(ResourceType item);
 }

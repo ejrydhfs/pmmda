@@ -6,13 +6,18 @@
 
 package ch.bbv.mda.generators.validation;
 
+import static ch.bbv.mda.cartridges.OjbConstants.COLUMN_NAME_TAG;
+import static ch.bbv.mda.cartridges.OjbConstants.COLUMN_SIZE_TAG;
+import static ch.bbv.mda.cartridges.OjbConstants.COLUMN_TYPE_TAG;
+
 import java.util.List;
 
 import ch.bbv.dog.validation.ValidationRuleResult;
 import ch.bbv.mda.*;
-import ch.bbv.mda.generators.BoCartridge;
-import ch.bbv.mda.generators.JdbcTypeCode;
-import ch.bbv.mda.generators.OjbCartridge;
+import ch.bbv.mda.cartridges.JdbcTypeCode;
+import ch.bbv.mda.cartridges.OjbCartridge;
+import ch.bbv.mda.cartridges.OjbConstants;
+import ch.bbv.mda.cartridges.UmlConstants;
 
 /**
  * The OJB tag rule implements all validation rules for the tag values defined
@@ -69,11 +74,11 @@ public class OjbTagRule extends TagRule {
    */
   protected boolean validate(MetaClass clazz, List<ValidationRuleResult> results) {
     boolean sucess = true;
-    if (clazz.booleanValueOfTag(BoCartridge.PERSISTENCE_TAG)) {
-      if (!exists(clazz, OjbCartridge.TABLE_NAME_TAG)) {
+    if (clazz.booleanValueOfTag(UmlConstants.PERSISTENCE_TAG)) {
+      if (!exists(clazz, OjbConstants.TABLE_NAME_TAG)) {
         sucess = false;
         addErrorMessage(results, ERROR_MISSING_TABLE,
-            BoCartridge.PERSISTENCE_TAG, clazz.qualifiedName());
+            UmlConstants.PERSISTENCE_TAG, clazz.qualifiedName());
       }
     }
     return sucess;
@@ -97,30 +102,30 @@ public class OjbTagRule extends TagRule {
       List<ValidationRuleResult> results) {
     boolean sucess = true;
     if (!property.isTransient()
-        && property.getContext().booleanValueOfTag(BoCartridge.PERSISTENCE_TAG)) {
-      if (!exists(property, OjbCartridge.COLUMN_NAME_TAG)) {
+        && property.getContext().booleanValueOfTag(UmlConstants.PERSISTENCE_TAG)) {
+      if (!exists(property, COLUMN_NAME_TAG)) {
         sucess = false;
-        addErrorMessage(results, ERROR_MISSING_COLUMN,
-            OjbCartridge.COLUMN_NAME_TAG, property.qualifiedName());
+        addErrorMessage(results, ERROR_MISSING_COLUMN, COLUMN_NAME_TAG,
+            property.qualifiedName());
       }
-      if (!exists(property, OjbCartridge.COLUMN_TYPE_TAG)) {
+      if (!exists(property, COLUMN_TYPE_TAG)) {
         sucess = false;
-        addErrorMessage(results, ERROR_MISSING_TYPE,
-            OjbCartridge.COLUMN_TYPE_TAG, property.qualifiedName());
+        addErrorMessage(results, ERROR_MISSING_TYPE, COLUMN_TYPE_TAG, property
+            .qualifiedName());
       }
-      String value = property.valueOfTag(OjbCartridge.COLUMN_TYPE_TAG);
-      if (value.equalsIgnoreCase(JdbcTypeCode.getCode(JdbcTypeCode.STRING)
-          .getShortDescription())) {
-        if (!exists(property, OjbCartridge.COLUMN_SIZE_TAG)) {
+      String value = property.valueOfTag(COLUMN_TYPE_TAG);
+      if (value.equalsIgnoreCase(JdbcTypeCode.VARCHAR.getShortDescription())
+          || value.equalsIgnoreCase(JdbcTypeCode.CHAR.getShortDescription())) {
+        if (!exists(property, COLUMN_SIZE_TAG)) {
           sucess = false;
-          addErrorMessage(results, ERROR_MISSING_LENGTH,
-              OjbCartridge.COLUMN_SIZE_TAG, property.qualifiedName());
+          addErrorMessage(results, ERROR_MISSING_LENGTH, COLUMN_SIZE_TAG,
+              property.qualifiedName());
         }
       } else {
-        if (intValue(property, OjbCartridge.COLUMN_SIZE_TAG) != 0) {
+        if (intValue(property, COLUMN_SIZE_TAG) != 0) {
           sucess = false;
-          addErrorMessage(results, WARNING_SUPERFLUOUS_LENGTH,
-              OjbCartridge.COLUMN_SIZE_TAG, property.qualifiedName());
+          addErrorMessage(results, WARNING_SUPERFLUOUS_LENGTH, COLUMN_SIZE_TAG,
+              property.qualifiedName());
         }
       }
     }

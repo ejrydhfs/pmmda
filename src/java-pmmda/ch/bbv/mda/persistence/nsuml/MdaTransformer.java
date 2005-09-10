@@ -289,10 +289,6 @@ public class MdaTransformer {
         taggedValue.setValue(tag.getValue());
       }
     }
-    for (TagDefinition type : MetaFactory.getInstance().getObsoleteTypes(
-        source.getClass())) {
-      item.removeTaggedValue(type.getTag());
-    }
   }
 
   /**
@@ -303,7 +299,7 @@ public class MdaTransformer {
    */
   private void extractDataTypes(MetaModel source, MModel target) {
     MDataType mDataType;
-    for (MetaDataType metaDataType : source.getDataTypes()) {
+    for (MetaDatatype metaDataType : source.getDataTypes()) {
       boolean found = false;
       Iterator<MDataType> mDatatypes = new FilterIterator<MDataType>(target
           .getOwnedElements(), MDataType.class);
@@ -670,13 +666,13 @@ public class MdaTransformer {
    * @param visibility new visibility of the item.
    */
   private void setVisibility(MModelElement item, VisibilityCode visibility) {
-    if (VisibilityCode.PUBLIC_CODE == visibility.getCode()) {
+    if (VisibilityCode.PUBLIC_ID == visibility.getCode()) {
       item.setVisibility(MVisibilityKind.PUBLIC);
-    } else if (VisibilityCode.PROTECTED_CODE == visibility.getCode()) {
+    } else if (VisibilityCode.PROTECTED_ID == visibility.getCode()) {
       item.setVisibility(MVisibilityKind.PROTECTED);
-    } else if (VisibilityCode.PRIVATE_CODE == visibility.getCode()) {
+    } else if (VisibilityCode.PRIVATE_ID == visibility.getCode()) {
       item.setVisibility(MVisibilityKind.PRIVATE);
-    } else if (VisibilityCode.PACKAGE_CODE == visibility.getCode()) {
+    } else if (VisibilityCode.PACKAGE_ID == visibility.getCode()) {
       item.setVisibility(MVisibilityKind.PUBLIC);
     }
   }

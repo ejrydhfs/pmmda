@@ -8,9 +8,9 @@ package ${package.getAttribute("bo-lw-package")};
 
 #set($properties=${class.getProperties()})
 #set($aggregations=${class.getIndexedProperties()})
+#hasDataObjectAncestor($class $hasAncestors)
 #set($ancestors=${class.retrieveAncestors()})
 #set($interfaces=${class.retrieveInterfaces()})
-#set($hasAncestors = (${ancestors.size()} > 0))
 #set($imports=${cartridge.retrieveImportStatementsForLw(${class}, ${package.getAttribute("bo-lw-package")})})
 #set($dummy=${imports.addClassName("ch.bbv.dog.LightweightObject")})
 #set($importStatements=${imports.getImportStatements(4)})
@@ -23,7 +23,13 @@ import $importStatement;
 
 #emitClassDescription($class "")
 #set($className=${class.getAttribute("bo-lw-class")})
-${class.retrieveVisibilityText()} class ${className} implements LightweightObject {
+#if(${hasAncestors})
+#set($ancestorName=${ancestors.get(0).getAttribute("bo-lw-class")})
+#set($extends=" extends ${ancestorName}")
+#else
+#set($extends="")
+#end
+${class.retrieveVisibilityText()} class ${className} ${extends} implements LightweightObject {
 
 /* %% USER DEFINED DECLARATION START %% */
 /* %% USER DEFINED DECLARATION END %% */
@@ -42,7 +48,8 @@ ${class.retrieveVisibilityText()} class ${className} implements LightweightObjec
 #set($itemType = ${type.getAttribute("bo-lw-class")})
   private ${itemType} ${property.nameFirstLower()};
 #else
-  private ${property.retrieveTypeClassName()} ${property.nameFirstLower()};
+#getDatatype($property $datatype)
+  private ${datatype} ${property.nameFirstLower()};
 #end
 #end
 #end
@@ -55,7 +62,7 @@ ${class.retrieveVisibilityText()} class ${className} implements LightweightObjec
   private ${aggregation.getAttribute("bo-interface-class")}<$itemType> ${aggregation.nameFirstLower()};
 #end
 #end
-#if (!${hasAncestors})
+#if(!${hasAncestors})
 
   /** 
    * Unique identifier of the data object instance distinguishing it from 
@@ -77,7 +84,11 @@ ${class.retrieveVisibilityText()} class ${className} implements LightweightObjec
    * @param id identifier of the object to which the proxy is associated.
    */
   public ${className}(Integer id) {
+#if(!${hasAncestors})
     this.id = id;
+#else
+    super(id);
+#end
 #foreach ($aggregation in $aggregations) 
 #if(${aggregation.booleanValueOfTag("bo-lightweight")})
 #getType($model $aggregation $type)
@@ -96,7 +107,7 @@ ${class.retrieveVisibilityText()} class ${className} implements LightweightObjec
 #if($isTypeLightweight)
 #set($itemType = ${type.getAttribute("bo-lw-class")})
 #else
-#set($itemType = ${property.retrieveTypeClassName()})
+#getDatatype($property $itemType)
 #end
 #set($visibility = ${property.retrieveVisibilityText()})
 #getterName($property $getter)
@@ -273,34 +284,17 @@ ${class.retrieveVisibilityText()} class ${className} implements LightweightObjec
 #end
 
   /** 
-   * Implements the visitor pattern in the data object class. The accept
-   * method dispatches the visitor to all its relevant children. A relevant
-   * child is always another data object.
+   * Implements the visitor pattern in the lightweight data object class. The 
+   * accept method dispatches the visitor to all its relevant children. A 
+   * relevant child is always another data object.
    * @param visitor visitor to act on the data object.
+   * @pre visitor != null
    */  
   public void accept(LwVisitor visitor) {
+    assert(visitor != null);
     visitor.setDepth(visitor.getDepth() + 1);
     visitor.visit(this);
-#foreach ($property in $properties)
-#if(${property.booleanValueOfTag("bo-lightweight")})
-#isTypeLightweigth($model $property $isTypeLightweigth)
-#if($isTypeLightweigth)
-    if (${property.nameFirstLower()} != null) {
-      ${property.nameFirstLower()}.accept(visitor);
-    }
-#end
-#end
-#end
-#foreach ($aggregation in $aggregations) 
-#if(${aggregation.booleanValueOfTag("bo-lightweight")})
-#isTypeLightweigth($model $aggregation $isTypeLightweigth)
-#if($isTypeLightweigth)
-    for (${type.getAttribute("bo-lw-class")} item : ${aggregation.nameFirstLower()}) {
-      item.accept(visitor);
-    }
-#end
-#end
-#end
+    traverse(visitor);
     visitor.setDepth(visitor.getDepth() - 1);
   }
 
@@ -339,4 +333,39 @@ ${class.retrieveVisibilityText()} class ${className} implements LightweightObjec
 #end
     return clone;
   }
+
+  /** 
+   * Implements the visitor pattern in the ligthweight data object class. The 
+   * accept method dispatches the visitor to all relevant children of the 
+   * ancestors and its children. A relevant child is always another lightweigth 
+   * data object.
+   * @param visitor visitor to act on the data object.
+   */  
+  protected void traverse(LwVisitor visitor) {
+#if($hasAncestors)
+    super.traverse(visitor);
+#end
+#foreach ($property in $properties)
+#if(${property.booleanValueOfTag("bo-lightweight")})
+#isTypeLightweigth($model $property $isTypeLightweigth)
+#if($isTypeLightweigth)
+    if (${property.nameFirstLower()} != null) {
+      ${property.nameFirstLower()}.accept(visitor);
+    }
+#end
+#end
+#end
+#foreach ($aggregation in $aggregations) 
+#if(${aggregation.booleanValueOfTag("bo-lightweight")})
+#isTypeLightweigth($model $aggregation $isTypeLightweigth)
+#if($isTypeLightweigth)
+#set($upName = ${aggregation.nameFirstUpperPlural()})
+#getType($model $aggregation $type)
+    for (${type.getAttribute("bo-lw-class")} item : get${upName}()) {
+      item.accept(visitor);
+    }
+#end
+#end
+#end
+  }  
 }

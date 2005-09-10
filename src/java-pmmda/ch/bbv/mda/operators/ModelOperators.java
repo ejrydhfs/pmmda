@@ -8,9 +8,7 @@ package ch.bbv.mda.operators;
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.bbv.mda.MetaClass;
-import ch.bbv.mda.MetaIndexedProperty;
-import ch.bbv.mda.MetaProperty;
+import ch.bbv.mda.*;
 
 /**
  * The utility class provides utility functions for generators activities.
@@ -22,9 +20,10 @@ public class ModelOperators {
    * Returns the identifier with its first letter in lowercase.
    * @param identifier identifier to manipulate.
    * @return new representation of the identifier.
+   * @pre (identifier != null) && (identifier.length() > 0)
    */
   public static String identifierFirstLower(String identifier) {
-    assert ((identifier != null) && (identifier.length() > 0));
+    assert (identifier != null) && (identifier.length() > 0);
 
     StringBuilder buffer = new StringBuilder(identifier);
     buffer.setCharAt(0, Character.toLowerCase(buffer.charAt(0)));
@@ -35,9 +34,10 @@ public class ModelOperators {
    * Returns the identifier with its first letter in uppercase.
    * @param identifier identifier to manipulate.
    * @return new representation of the identifier.
+   * @pre (identifier != null) && (identifier.length() > 0)
    */
   public static String identifierFirstUpper(String identifier) {
-    assert ((identifier != null) && (identifier.length() > 0));
+    assert (identifier != null) && (identifier.length() > 0);
 
     StringBuilder buffer = new StringBuilder(identifier);
     buffer.setCharAt(0, Character.toUpperCase(buffer.charAt(0)));
@@ -50,9 +50,10 @@ public class ModelOperators {
    * underline.
    * @param identifier identifier to manipulate.
    * @return new representation of the identifier.
+   * @pre (identifier != null) && (identifier.length() > 0)
    */
   public static String identifierUpper(String identifier) {
-    assert ((identifier != null) && (identifier.length() > 0));
+    assert (identifier != null) && (identifier.length() > 0);
 
     StringBuilder buffer = new StringBuilder();
     buffer.append(Character.toUpperCase(identifier.charAt(0)));
@@ -95,10 +96,10 @@ public class ModelOperators {
    * Returns the identifier in the plural form.
    * @param identifier identifier to manipulate.
    * @return new representation of the identifier.
+   * @pre identifier != null
    */
   public static String identifierPlural(String identifier) {
-    assert (identifier != null);
-
+    assert identifier != null;
     String name;
     if (identifier.endsWith("y")) {
       name = identifier.substring(0, identifier.length() - 1) + "ies";
@@ -150,9 +151,27 @@ public class ModelOperators {
    * Returns an identifier representation of the qualified name.
    * @param qualifiedName qualified name to transform.
    * @return the transformed qualified name.
+   * @pre qualifiedName != null
    */
   public static String qualifiedNameToIdentifier(String qualifiedName) {
+    assert qualifiedName != null;
     return qualifiedName.replaceAll(".", "_");
+  }
+
+  /**
+   * finds the classifier with the given qualified name.
+   * @param model model containing the requested classifier.
+   * @param qualifiedName the qualified name of the requested classifier.
+   * @return the requested classifier if found otherwise null
+   * @pre (model != null) && (qualifiedName != null)
+   */
+  public static MetaClassifier findClassifier(MetaModel model, String qualifiedName) {
+    assert (model != null) && (qualifiedName != null);
+    MetaClassifier classifier = model.findDataType(qualifiedName);
+    if (classifier == null) {
+      classifier = model.findClass(qualifiedName);
+    }
+    return classifier;
   }
 
   /**

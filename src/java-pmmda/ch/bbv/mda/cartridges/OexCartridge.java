@@ -3,7 +3,9 @@
  * you may not use this file except in compliance with the License. 
  * $Id$
  */
-package ch.bbv.mda.generators;
+package ch.bbv.mda.cartridges;
+
+import static ch.bbv.mda.cartridges.OexConstants.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,6 +18,8 @@ import org.apache.velocity.VelocityContext;
 
 import ch.bbv.application.VersionId;
 import ch.bbv.mda.*;
+import ch.bbv.mda.generators.CartridgeFactory;
+import ch.bbv.mda.generators.CartridgeImpl;
 
 /**
  * The OEX cartridge generates all the artifacts for the explorer framework to
@@ -28,31 +32,6 @@ public class OexCartridge extends CartridgeImpl {
    * The prefix of the cartridge.
    */
   public static final String PREFIX = "oex";
-
-  /**
-   * Key for a property of the cartridge used to retrieve user values.
-   */
-  public static final String RICH_CLIENT_PACKAGE_POSTFIX_KEY = "oex-cartridge.rich-client-package-extension";
-
-  /**
-   * Key for a property of the cartridge used to retrieve user values.
-   */
-  public static final String ROOT_RICH_CLIENT_KEY = "oex-cartridge.rich-client-folder";
-
-  /**
-   * Tag name defining the class of the property view used to display the class.
-   */
-  public static final String VIEW_CLASS_TAG = "oex-view-class";
-
-  /**
-   * Tag name indicating if the class is visible in the explorer or not.
-   */
-  public static final String IS_VISIBLE_TAG = "oex-visible";
-
-  /**
-   * Tag name of the package containing the rich client source code artifacts.
-   */
-  public static final String OEX_RICH_CLIENT_PACKAGE = "oex-rich-client-package";
 
   /**
    * Log instance for the class.
@@ -81,16 +60,15 @@ public class OexCartridge extends CartridgeImpl {
    */
   public Collection getVisibleFields(MetaClass clazz) {
     Map<String, MetaProperty> fields = new HashMap<String, MetaProperty>();
-    MetaModel model = (MetaModel) clazz.getRoot();
     for (MetaIndexedProperty object : clazz.getIndexedProperties()) {
       String className = object.getTypeName();
       if (className == null) {
         continue;
       }
 
-      MetaClass objectClass = model.findClass(className);
+      MetaClass objectClass = clazz.getModel().findClass(className);
       if ((objectClass == null)
-          || !BoCartridge.DATA_OBJECT_STEREOTYPE.equals(objectClass
+          || !BoConstants.DATA_OBJECT_STEREOTYPE.equals(objectClass
               .getStereotype())) {
         continue;
       }
@@ -145,8 +123,8 @@ public class OexCartridge extends CartridgeImpl {
 
   public void postProcessPackage(MetaPackage metaPackage) {
     File sourceRoot = getRoot(ROOT_RICH_CLIENT_KEY,
-        BoCartridge.ROOT_CLIENT_FOLDER_KEY);
-    if (metaPackage.booleanValueOfTag(BoCartridge.GENERATE_TAG)) {
+        BoConstants.ROOT_CLIENT_FOLDER_KEY);
+    if (metaPackage.booleanValueOfTag(BoConstants.GENERATE_TAG)) {
       VelocityContext context = createContext(metaPackage);
       log
           .info("OEX Catridge processing package "
@@ -168,6 +146,6 @@ public class OexCartridge extends CartridgeImpl {
    */
   private Template retrieveTemplate(String name) {
     return super.retrieveTemplate(name, getContext().getProperty(
-        BoCartridge.LANGUAGE_KEY));
+        BoConstants.LANGUAGE_KEY));
   }
 }

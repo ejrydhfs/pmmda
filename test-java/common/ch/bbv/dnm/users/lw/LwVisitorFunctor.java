@@ -59,4 +59,7 @@ public class LwVisitorFunctor implements LwVisitor, AbstractVisitorFunctor {
   public void visit(RealmLw item) {
     functor.execute(item);
   }
+  public void visit(NamedEntityLw item) {
+    functor.execute(item);
+  }
 }

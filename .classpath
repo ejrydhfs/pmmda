@@ -1,220 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="**/*CVS*.*" kind="src" path="properties">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry excluding="**/*.html|**/Entries|**/Repository" kind="src" path="gendir/ojb-server">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry excluding="**/Entries|**/Repository|**/Root" kind="src" path="src/etc/properties/unmanaged">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry including="**/*.java|**/*.properties" excluding="**/*.html" kind="src" path="gendir/rich-client">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry including="**/*.java|**/*.properties" excluding="**/*.html" kind="src" path="test-java/unit-tests">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry including="**/*.java|**/*.properties" excluding="**/*.html" kind="src" path="src/java-documentor">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry including="**/*.java|**/*.properties" excluding="**/*.html" kind="src" path="src/java-framework">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry including="**/*.java|**/*.properties" excluding="**/*.html" kind="src" path="src/java-pmmda">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry including="**/*.java|**/*.properties" excluding="**/*.html" kind="src" path="test-java/client">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry including="**/*.java|**/*.properties" excluding="**/*.html" kind="src" path="test-java/common">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/jdom.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/commons-digester.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/jcs.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/nsuml.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/dnsns.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/jmi.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/jmiutils.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/mdrapi.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/mof.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/nbmdr.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/ngen.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/commons-logging-1.0.4.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/commons-logging-api-1.0.4.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/dbunit-1.5.1.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/dtdparser-1.5.1.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/hsqldb.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/velocity-1.4.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/velocity-dep-1.4.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/antlr-2.7.3.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/commons-collections-2.1.1.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/commons-dbcp-1.1.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/commons-lang-2.0.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/commons-pool-1.1.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/antlr_compiletime-2.7.3.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/commons-beanutils-1.6.1.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/jbossall-client.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/junit-3.8.1.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/jakarta-regexp-1.3.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry sourcepath="C:/bin/db-ojb-1.0.1/dist/db-ojb-1.0.1-src.jar" kind="lib" path="lib/db-ojb-1.0.1.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/bsh-2.0b2.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/p6spy.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/mysql-connector-3.0.15.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/forms-1.0.5.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/commons-functor.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/openide-util.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/commons-cli-1.0.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/jgraph-5.4.5.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/jgraphaddons-1.0.7.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/glazedlists-0.9.6.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/xpp3-1.1.3.4.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/xstream-1.1.2.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/jcalendar-1.2.2.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="var" path="JDK_TOOLS">
-		<attributes>
-		</attributes>
-	</classpathentry>
+	<classpathentry excluding="**/*CVS*.*" kind="src" path="properties"/>
+	<classpathentry excluding="**/*.html|**/Entries|**/Repository" kind="src" path="gendir/ojb-server"/>
+	<classpathentry excluding="**/Entries|**/Repository|**/Root" kind="src" path="src/etc/properties/unmanaged"/>
+	<classpathentry including="**/*.java|**/*.properties" excluding="**/*.html" kind="src" path="gendir/rich-client"/>
+	<classpathentry including="**/*.java|**/*.properties" excluding="**/*.html" kind="src" path="test-java/unit-tests"/>
+	<classpathentry including="**/*.java|**/*.properties" excluding="**/*.html" kind="src" path="src/java-documentor"/>
+	<classpathentry including="**/*.java|**/*.properties" excluding="**/*.html" kind="src" path="src/java-framework"/>
+	<classpathentry including="**/*.java|**/*.properties" excluding="**/*.html" kind="src" path="src/java-pmmda"/>
+	<classpathentry including="**/*.java|**/*.properties" excluding="**/*.html" kind="src" path="test-java/client"/>
+	<classpathentry including="**/*.java|**/*.properties" excluding="**/*.html" kind="src" path="test-java/common"/>
+	<classpathentry kind="lib" path="lib/jdom.jar"/>
+	<classpathentry kind="lib" path="lib/commons-digester.jar"/>
+	<classpathentry kind="lib" path="lib/jcs.jar"/>
+	<classpathentry kind="lib" path="lib/nsuml.jar"/>
+	<classpathentry kind="lib" path="lib/dnsns.jar"/>
+	<classpathentry kind="lib" path="lib/jmi.jar"/>
+	<classpathentry kind="lib" path="lib/jmiutils.jar"/>
+	<classpathentry kind="lib" path="lib/mdrapi.jar"/>
+	<classpathentry kind="lib" path="lib/mof.jar"/>
+	<classpathentry kind="lib" path="lib/nbmdr.jar"/>
+	<classpathentry kind="lib" path="lib/ngen.jar"/>
+	<classpathentry kind="lib" path="lib/commons-logging-1.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/commons-logging-api-1.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/dbunit-1.5.1.jar"/>
+	<classpathentry kind="lib" path="lib/dtdparser-1.5.1.jar"/>
+	<classpathentry kind="lib" path="lib/hsqldb.jar"/>
+	<classpathentry kind="lib" path="lib/velocity-1.4.jar"/>
+	<classpathentry kind="lib" path="lib/velocity-dep-1.4.jar"/>
+	<classpathentry kind="lib" path="lib/antlr-2.7.3.jar"/>
+	<classpathentry kind="lib" path="lib/commons-dbcp-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons-lang-2.0.jar"/>
+	<classpathentry kind="lib" path="lib/commons-pool-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/antlr_compiletime-2.7.3.jar"/>
+	<classpathentry kind="lib" path="lib/commons-beanutils-1.6.1.jar"/>
+	<classpathentry kind="lib" path="lib/jbossall-client.jar"/>
+	<classpathentry kind="lib" path="lib/junit-3.8.1.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta-regexp-1.3.jar"/>
+	<classpathentry sourcepath="C:/bin/db-ojb-1.0.1/dist/db-ojb-1.0.1-src.jar" kind="lib" path="lib/db-ojb-1.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/bsh-2.0b2.jar"/>
+	<classpathentry kind="lib" path="lib/p6spy.jar"/>
+	<classpathentry kind="lib" path="lib/mysql-connector-3.0.15.jar"/>
+	<classpathentry kind="lib" path="lib/forms-1.0.5.jar"/>
+	<classpathentry kind="lib" path="lib/commons-functor.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/openide-util.jar"/>
+	<classpathentry kind="lib" path="lib/commons-cli-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/jgraph-5.4.5.jar"/>
+	<classpathentry kind="lib" path="lib/jgraphaddons-1.0.7.jar"/>
+	<classpathentry kind="lib" path="lib/xpp3-1.1.3.4.jar"/>
+	<classpathentry kind="lib" path="lib/xstream-1.1.2.jar"/>
+	<classpathentry kind="lib" path="lib/jcalendar-1.2.2.jar"/>
+	<classpathentry kind="var" path="JDK_TOOLS"/>
+	<classpathentry kind="lib" path="lib/glazedlists-0.9.7.jar"/>
+	<classpathentry sourcepath="C:/bin/commons-configuration-1.1/src/java" kind="lib" path="lib/commons-configuration-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons-collections-3.1.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>

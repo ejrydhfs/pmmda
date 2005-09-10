@@ -23,7 +23,6 @@ import ch.bbv.application.ProjectInfo;
 import ch.bbv.application.VersionId;
 import ch.bbv.cmdlineparser.CmdLineBuilder;
 import ch.bbv.dog.DataObjectManager;
-import ch.bbv.explorer.*;
 import ch.bbv.explorer.Explorer;
 import ch.bbv.explorer.ExplorerMenuBar;
 import ch.bbv.explorer.ExplorerUtilities;
@@ -137,7 +136,7 @@ public class MdaExplorer extends Explorer {
     getMenuBar().documentChanged(document.getState());
   }
 
-  /** 
+  /**
    * Returns the validation panel of the explorer.
    * @return the requested validation panel.
    */
@@ -312,7 +311,7 @@ public class MdaExplorer extends Explorer {
         "Apache License", "http://jakarta.apache.org/commons"));
     librairies.add(new Library("forms", new VersionId(1, 0, 5), "Open Source",
         "www.jgoodies.com"));
-    librairies.add(new Library("glazedlists", new VersionId(0, 9, 6), "LGPL",
+    librairies.add(new Library("glazedlists", new VersionId(0, 9, 7), "LGPL",
         "www.publicobject.com/glazedlists"));
     librairies.add(new Library("jgraph", new VersionId(5, 4, 5), "LGPL/BSD",
         "www.jgraph.com"));

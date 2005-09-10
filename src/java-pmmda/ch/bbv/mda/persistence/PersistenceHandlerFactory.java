@@ -6,10 +6,8 @@
  */
 package ch.bbv.mda.persistence;
 
-
 import java.io.File;
 
-import ch.bbv.mda.persistence.eclipse.RosePersistenceHandler;
 import ch.bbv.utilities.ReflectUtilities;
 
 /**
@@ -115,8 +113,9 @@ public class PersistenceHandlerFactory {
   public PersistenceHandler getJavaDocHandler() {
     return new XmlPersistenceHandler();
   }
-  
+
   public PersistenceHandler getRoseHandler() {
-    return (PersistenceHandler)ReflectUtilities.newInstance("ch.bbv.mda.persistence.eclipse.RosePersistenceHandler");
-  } 
+    return (PersistenceHandler) ReflectUtilities
+        .newInstance("ch.bbv.mda.persistence.eclipse.RosePersistenceHandler");
+  }
 }

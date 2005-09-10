@@ -3,13 +3,16 @@
  * you may not use this file except in compliance with the License.
  * $Id$
  */
-package ch.bbv.mda.generators;
+package ch.bbv.mda.cartridges;
+
+import static ch.bbv.mda.cartridges.BoConstants.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.*;
 
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.Template;
@@ -18,6 +21,8 @@ import org.apache.velocity.VelocityContext;
 import ch.bbv.application.VersionId;
 import ch.bbv.dog.validation.Validator;
 import ch.bbv.mda.*;
+import ch.bbv.mda.generators.Cartridge;
+import ch.bbv.mda.generators.CartridgeImpl;
 import ch.bbv.mda.generators.validation.DogTagRule;
 import ch.bbv.mda.generators.validation.TagRule;
 import ch.bbv.mda.operators.FileOperators;
@@ -57,329 +62,15 @@ import ch.bbv.mda.operators.ModelOperators;
  */
 public class BoCartridge extends CartridgeImpl implements Cartridge {
   /**
-   * Key for all user defined blocks stored in the Velocity context.
-   */
-  public static final String CODE_BLOCKS = "blocks";
-
-  /**
-   * Key for user defined source code.
-   */
-  public static final String IMPORT_BLOCK = "imports";
-
-  /**
-   * Key for user defined source code.
-   */
-  public static final String DECLARATION_BLOCK = "declarations";
-
-  /**
-   * Key for user defined source code.
-   */
-  public static final String CONSTRUCTOR_BLOCK = "constructors";
-
-  /**
-   * Key for user defined source code.
-   */
-  public static final String DEFINITION_BLOCK = "definitions";
-
-  /**
-   * Key for user defined source code.
-   */
-  public static final String PRIVATE_DEFINITION_BLOCK = "private definitions";
-
-  /**
-   * Comment in the generated code to detect a border of a user defined source
-   * code.
-   */
-  public static final String USER_IMPORT_BEGIN = "/* %% USER DEFINED IMPORT START %% */";
-
-  /**
-   * Comment in the generated code to detect a border of a user defined source
-   * code.
-   */
-  public static final String USER_IMPORT_END = "/* %% USER DEFINED IMPORT END %% */";
-
-  /**
-   * Comment in the generated code to detect a border of a user defined source
-   * code.
-   */
-  public static final String USER_DECLARATION_BEGIN = "/* %% USER DEFINED DECLARATION START %% */";
-
-  /**
-   * Comment in the generated code to detect a border of a user defined source
-   * code.
-   */
-  public static final String USER_DECLARATION_END = "/* %% USER DEFINED DECLARATION END %% */";
-
-  /**
-   * Comment in the generated code to detect a border of a user defined source
-   * code.
-   */
-  public static final String USER_CONSTRUCTORS_BEGIN = "/* %% USER DEFINED CONSTRUCTORS START %% */";
-
-  /**
-   * Comment in the generated code to detect a border of a user defined source
-   * code.
-   */
-  public static final String USER_CONSTRUCTORS_END = "/* %% USER DEFINED CONSTRUCTORS END %% */";
-
-  /**
-   * Comment in the generated code to detect a border of a user defined source
-   * code.
-   */
-  public static final String USER_CODE_BEGIN = "/* %% USER DEFINED CODE START %% */";
-
-  /**
-   * Comment in the generated code to detect a border of a user defined source
-   * code.
-   */
-  public static final String USER_CODE_END = "/* %% USER DEFINED CODE END %% */";
-
-  /**
-   * Comment in the generated code to detect a border of a user defined source
-   * code for protected or private methods.
-   */
-  public static final String USER_PRIVATE_CODE_BEGIN = "/* %% USER DEFINED PROTECTED/PRIVATE CODE START %% */";
-
-  /**
-   * Comment in the generated code to detect a border of a user defined source
-   * code for protected or private methods.
-   */
-  public static final String USER_PRIVATE_CODE_END = "/* %% USER DEFINED PROTECTED/PRIVATE CODE END %% */";
-
-  /**
    * The prefix of the cartridge.
    */
   public static final String PREFIX = "bo";
 
   /**
-   * Stereotype name for the data object stereotype.
+   * The list of primitive types in Java, C and C++.
    */
-  public static final String DATA_OBJECT_STEREOTYPE = "dataObject";
-
-  /**
-   * Stereotype name for the reference code stereotype.
-   */
-  public static final String REFERENCE_CODE_STEREOTYPE = "referenceCode";
-
-  /**
-   * Key for a property of the cartridge used to retrieve user values.
-   */
-  public static final String CYCLIC_WRAPPER_KEY = "bo-cartridge.generate-cyclic-visitor";
-
-  /**
-   * Key for a property of the cartridge used to retrieve user values.
-   */
-  public static final String REFERENCE_CODE_FOLDER_KEY = "bo-cartridge.reference-code-folder";
-
-  /**
-   * Key for a property of the cartridge used to retrieve user values.
-   */
-  public static final String BO_GENERATE_INTERFACE_KEY = "bo-cartridge.should-generate-interface";
-
-  /**
-   * Key for a property of the cartridge used to retrieve user values.
-   */
-  public static final String ROOT_COMMON_FOLDER_KEY = "bo-cartridge.common-source-root-folder";
-
-  /**
-   * Key for a property of the cartridge used to retrieve user values.
-   */
-  public static final String ROOT_SERVER_FOLDER_KEY = "bo-cartridge.server-source-root-folder";
-
-  /**
-   * Key for a property of the cartridge used to retrieve user values.
-   */
-  public static final String ROOT_CLIENT_FOLDER_KEY = "bo-cartridge.client-source-root-folder";
-
-  /**
-   * Key for a property of the cartridge used to retrieve user values.
-   */
-  public static final String LANGUAGE_KEY = "bo-cartridge.language";
-
-  /**
-   * Key for a property of the cartridge used to retrieve user values.
-   */
-  public static final String UID_KEY = "bo-cartridge.uid";
-
-  /**
-   * Key for a property of the cartridge used to retrieve user values.
-   */
-  public static final String IF_PACKAGE_POSTFIX_KEY = "bo-cartridge.interface-package-postfix";
-
-  /**
-   * Key for a property of the cartridge used to retrieve user values.
-   */
-  public static final String BO_PACKAGE_POSTFIX_KEY = "bo-cartridge.business-package-postfix";
-
-  /**
-   * Key for a property of the cartridge used to retrieve user values.
-   */
-  public static final String LW_PACKAGE_POSTFIX_KEY = "bo-cartridge.lightweight-package-postfix";
-
-  /**
-   * Key for a property of the cartridge used to retrieve user values.
-   */
-  public static final String IF_CLASS_PREFIX_KEY = "bo-cartridge.interface-object-class-prefix";
-
-  /**
-   * Key for a property of the cartridge used to retrieve user values.
-   */
-  public static final String IF_CLASS_POSTFIX_KEY = "bo-cartridge.interface-object-class-postfix";
-
-  /**
-   * Key for a property of the cartridge used to retrieve user values.
-   */
-  public static final String BO_CLASS_PREFIX_KEY = "bo-cartridge.business-object-class-prefix";
-
-  /**
-   * Key for a property of the cartridge used to retrieve user values.
-   */
-  public static final String BO_CLASS_POSTFIX_KEY = "bo-cartridge.business-object-class-postfix";
-
-  /**
-   * Key for a property of the cartridge used to retrieve user values.
-   */
-  public static final String LW_CLASS_PREFIX_KEY = "bo-cartridge.lightweight-object-class-prefix";
-
-  /**
-   * Key for a property of the cartridge used to retrieve user values.
-   */
-  public static final String LW_CLASS_POSTFIX_KEY = "bo-cartridge.lightweight-object-class-postfix";
-
-  /**
-   * Key for a property of the cartridge used to retrieve user values.
-   */
-  public static final String FIELD_PREFIX_KEY = "bo-cartridge.class-field-prefix";
-
-  /**
-   * Key for a property of the cartridge used to retrieve user values.
-   */
-  public static final String FIELD_POSTFIX_KEY = "bo-cartridge.class-field-postfix";
-
-  /**
-   * The UML standard persistence tag.
-   */
-  public static final String PERSISTENCE_TAG = "persistence";
-
-  /**
-   * The flag specifies if the package should be generated or not.
-   */
-  public static final String GENERATE_TAG = "bo-generate";
-
-  /**
-   * The value is the logical root directory, meaning a variable defined in the
-   * properties where the Java code artifacts are created.
-   */
-  public static final String ROOT_TAG = "bo-root";
-
-  /**
-   * The mode of the property either read, write or read-write.
-   */
-  public static final String MODE_TAG = "bo-mode";
-
-  /**
-   * Indicates if the property supports property change events.
-   */
-  public static final String CHANGE_EVENT_TAG = "bo-change-event";
-
-  /**
-   * Indicates if the property supports vetoable change events.
-   */
-  public static final String VETO_EVENT_TAG = "bo-veto-event";
-
-  /**
-   * Indicates if owned data objects can navigate back to their owner.
-   */
-  public static final String NAVIGABLE_RELATION_TAG = "bo-navigable";
-
-  /**
-   * Indicates if the property is member of the lightweight representation.
-   */
-  public static final String LIGHTWEIGHT_TAG = "bo-lightweight";
-
-  /**
-   * Defines the class used to store the items of the indexed property. The type
-   * of the indexed property defines the type of items in the container.
-   */
-  public static final String CONTAINER_CLASS_TAG = "bo-container-class";
-
-  /**
-   * Defines the interface of the class used to store the items of the indexed
-   * property. This information supports interface for public signature coding
-   * guideline.
-   */
-  public static final String INTERFACE_CLASS_TAG = "bo-interface-class";
-
-  /**
-   * Flag indicating if a class is a root class in data object graph or not.
-   */
-  public static final String IS_ROOT_TAG = "bo-is-root";
-
-  /**
-   * Defines the class of the key used to order the indexed property. This tag
-   * is only relevant if the indexed property is ordered.
-   */
-  public static final String KEY_CLASS_TAG = "bo-key-class";
-
-  /**
-   * Attribute containing the qualified package name containing the interfaces
-   * of the package.
-   */
-  public static final String IF_PACKAGE = "bo-if-package";
-
-  /**
-   * Attribute containing the qualified package name containing the
-   * implementation classes of the package.
-   */
-  public static final String BO_PACKAGE = "bo-mo-package";
-
-  /**
-   * Attribute containing the qualified package name containing the lightweight
-   * implementation classes of the package.
-   */
-  public static final String LW_PACKAGE = "bo-lw-package";
-
-  /**
-   * Attribute containing the name of the interface of the data class.
-   */
-  public static final String IF_CLASS = "bo-if-class";
-
-  /**
-   * Attribute containing the name of the implemenation of the data class.
-   */
-  public static final String BO_CLASS = "bo-mo-class";
-
-  /**
-   * Attribute containing the name of the lightweight implementation of the data
-   * class.
-   */
-  public static final String LW_CLASS = "bo-lw-class";
-
-  /**
-   * Attribute indicating if the class should be generated or not.
-   */
-  public static final String BO_GENERATE = "bo-generate";
-
-  /**
-   * Attribute indicating if the class has changeable properties.
-   */
-  public static final String BO_CHANGEABLE = "bo-changeable";
-
-  /**
-   * Attribute indicating if the class has vetoable properties.
-   */
-  public static final String BO_VETOABLE = "bo-vetoable";
-
-  /**
-   * Attribute indicating if the class or the package has lightweight
-   * properties.
-   */
-  public static final String BO_LIGHTWEIGHT = "bo-lightweight";
-
-  /**
-   * Attribute indicating if the class has an interface.
-   */
-  public static final String BO_HAS_INTERFACE = "bo-has-interface";
+  public static final String[] PRIMITIVES_TYPES = { "boolean", "byte", "char",
+      "double", "float", "int", "long", "short" };
 
   /**
    * Log instance for all instatnces of the class.
@@ -394,7 +85,7 @@ public class BoCartridge extends CartridgeImpl implements Cartridge {
   /**
    * The actual package being processed in the cartridge.
    */
-  private MetaPackage metaPackage;
+  private MetaPackage packages;
 
   /**
    * Flag indicating if the package contains reference code declarations.
@@ -443,6 +134,11 @@ public class BoCartridge extends CartridgeImpl implements Cartridge {
     addUndefinedProperty(properties, LW_CLASS_POSTFIX_KEY, "");
     addUndefinedProperty(properties, FIELD_PREFIX_KEY, "");
     addUndefinedProperty(properties, FIELD_POSTFIX_KEY, "");
+    try {
+      loadConfiguration("mappings.xml");
+    } catch (ConfigurationException e) {
+      log.error("Configuration file not found", e);
+    }
   }
 
   public List<TagDefinition> getTaggedValueTypes(Class clazz) {
@@ -452,10 +148,10 @@ public class BoCartridge extends CartridgeImpl implements Cartridge {
       types.add(new TagDefinition(ROOT_TAG, String.class));
     } else if (clazz.equals(MetaClass.class)) {
       types.add(new TagDefinition(GENERATE_TAG, "false", Boolean.TYPE));
-      types.add(new TagDefinition(PERSISTENCE_TAG, "false", Boolean.TYPE));
+      types.add(new TagDefinition(UmlConstants.PERSISTENCE_TAG, "false", Boolean.TYPE));
       types.add(new TagDefinition(IS_ROOT_TAG, "false", Boolean.TYPE));
     } else if (clazz.equals(MetaProperty.class)) {
-      types.add(new TagDefinition(PERSISTENCE_TAG, "false", Boolean.TYPE));
+      types.add(new TagDefinition(UmlConstants.PERSISTENCE_TAG, "false", Boolean.TYPE));
       types.add(new TagDefinition(MODE_TAG, "READ_WRITE",
           PropertyModeCode.class));
       types.add(new TagDefinition(CHANGE_EVENT_TAG, "false", Boolean.TYPE));
@@ -463,7 +159,7 @@ public class BoCartridge extends CartridgeImpl implements Cartridge {
       types.add(new TagDefinition(NAVIGABLE_RELATION_TAG, String.class));
       types.add(new TagDefinition(LIGHTWEIGHT_TAG, "false", Boolean.TYPE));
     } else if (clazz.equals(MetaIndexedProperty.class)) {
-      types.add(new TagDefinition(PERSISTENCE_TAG, "false", Boolean.TYPE));
+      types.add(new TagDefinition(UmlConstants.PERSISTENCE_TAG, "false", Boolean.TYPE));
       types.add(new TagDefinition(MODE_TAG, "READ_WRITE",
           PropertyModeCode.class));
       types.add(new TagDefinition(CHANGE_EVENT_TAG, "false", Boolean.TYPE));
@@ -502,6 +198,10 @@ public class BoCartridge extends CartridgeImpl implements Cartridge {
     tagRule.register(validator);
   }
 
+  public void preProcessDatatype(MetaDatatype datatype) {
+    datatype.addAttribute(BO_DATATYPE, translateDatatype(datatype, "", false));
+  }
+
   /**
    * Computes the data object cartridge relevant attributes for the meta
    * package. The following attributes are defined.
@@ -525,20 +225,14 @@ public class BoCartridge extends CartridgeImpl implements Cartridge {
    */
   public void preProcessPackage(MetaPackage packages) {
     assert (packages != null);
-    Properties context = getContext();
-    StringBuilder buffer = new StringBuilder();
-    String qualifiedName = packages.qualifiedName();
-    buffer.append(qualifiedName).append(
-        context.getProperty(IF_PACKAGE_POSTFIX_KEY));
-    packages.addAttribute(IF_PACKAGE, buffer.toString());
-    buffer.setLength(0);
-    buffer.append(qualifiedName).append(
-        context.getProperty(BO_PACKAGE_POSTFIX_KEY));
-    packages.addAttribute(BO_PACKAGE, buffer.toString());
-    buffer.setLength(0);
-    buffer.append(qualifiedName).append(
-        context.getProperty(LW_PACKAGE_POSTFIX_KEY));
-    packages.addAttribute(LW_PACKAGE, buffer.toString());
+    this.packages = packages;
+    String name = packages.qualifiedName();
+    packages.addAttribute(IF_PACKAGE, expandIdentifier(null, name,
+        IF_PACKAGE_POSTFIX_KEY));
+    packages.addAttribute(BO_PACKAGE, expandIdentifier(null, name,
+        BO_PACKAGE_POSTFIX_KEY));
+    packages.addAttribute(LW_PACKAGE, expandIdentifier(null, name,
+        LW_PACKAGE_POSTFIX_KEY));
     packages.addAttribute(BO_LIGHTWEIGHT, Boolean
         .toString(hasLightweight(packages)));
   }
@@ -564,50 +258,39 @@ public class BoCartridge extends CartridgeImpl implements Cartridge {
    */
   public void preProcessClass(MetaClass clazz) {
     assert (clazz != null);
-    Properties context = getContext();
     String name = clazz.getName();
-    StringBuilder buffer = new StringBuilder();
-    buffer.append(context.getProperty(IF_CLASS_PREFIX_KEY)).append(name)
-        .append(context.getProperty(IF_CLASS_POSTFIX_KEY));
-    clazz.addAttribute(IF_CLASS, buffer.toString());
-    buffer.setLength(0);
-    buffer.append(context.getProperty(BO_CLASS_PREFIX_KEY)).append(name)
-        .append(context.getProperty(BO_CLASS_POSTFIX_KEY));
-    clazz.addAttribute(BO_CLASS, buffer.toString());
-    buffer.setLength(0);
-    buffer.append(context.getProperty(LW_CLASS_PREFIX_KEY)).append(name)
-        .append(context.getProperty(LW_CLASS_POSTFIX_KEY));
-    clazz.addAttribute(LW_CLASS, buffer.toString());
-    clazz.addAttribute(BO_HAS_INTERFACE, context
-        .getProperty(BO_GENERATE_INTERFACE_KEY));
+    clazz.addAttribute(IF_CLASS, expandIdentifier(IF_CLASS_PREFIX_KEY, name,
+        IF_CLASS_POSTFIX_KEY));
+    clazz.addAttribute(BO_CLASS, expandIdentifier(BO_CLASS_PREFIX_KEY, name,
+        BO_CLASS_POSTFIX_KEY));
+    clazz.addAttribute(LW_CLASS, expandIdentifier(LW_CLASS_PREFIX_KEY, name,
+        LW_CLASS_POSTFIX_KEY));
+    clazz.addAttribute(BO_HAS_INTERFACE, getContext().getProperty(
+        BO_GENERATE_INTERFACE_KEY));
     clazz.addAttribute(BO_LIGHTWEIGHT, Boolean.toString(hasLightweight(clazz)));
-
-    boolean isChangeable = false;
-    boolean isVetoable = false;
+    boolean changeable = false;
+    boolean vetoable = false;
     for (MetaProperty property : clazz.getProperties()) {
-      isChangeable |= property.retrieveIsChangeable();
-      isVetoable |= property.retrieveIsVetoable();
+      changeable |= property.retrieveIsChangeable();
+      vetoable |= property.retrieveIsVetoable();
     }
     for (MetaIndexedProperty property : clazz.getIndexedProperties()) {
-      isChangeable |= property.retrieveIsChangeable();
-      isVetoable |= property.retrieveIsVetoable();
-      property.addAttribute(INTERFACE_CLASS_TAG, ModelOperators
-          .getComponentName(property.valueOfTag(INTERFACE_CLASS_TAG)));
-      property.addAttribute(CONTAINER_CLASS_TAG, ModelOperators
-          .getComponentName(property.valueOfTag(CONTAINER_CLASS_TAG)));
-      property.addAttribute(KEY_CLASS_TAG, ModelOperators
-          .getComponentName(property.valueOfTag(KEY_CLASS_TAG)));
+      changeable |= property.retrieveIsChangeable();
+      vetoable |= property.retrieveIsVetoable();
+      preProcessClassifier(property, INTERFACE_CLASS_TAG, true);
+      preProcessClassifier(property, CONTAINER_CLASS_TAG, false);
+      preProcessClassifier(property, KEY_CLASS_TAG, false);
     }
-    clazz.addAttribute(BO_CHANGEABLE, Boolean.toString(isChangeable));
-    clazz.addAttribute(BO_VETOABLE, Boolean.toString(isVetoable));
+    preProcessBean(clazz, changeable, vetoable);
   }
 
-  public void processPackage(MetaPackage metaPackage) {
-    String rootDirectory = metaPackage.valueOfTag(ROOT_TAG);
+  public void processPackage(MetaPackage packages) {
+    this.packages = packages;
+    String rootDirectory = packages.valueOfTag(ROOT_TAG);
     if (rootDirectory != null) {
       rootDirectory = getContext().getProperty(rootDirectory);
       if (rootDirectory == null) {
-        log.error(metaPackage.valueOfTag(ROOT_TAG)
+        log.error(packages.valueOfTag(ROOT_TAG)
             + " logical root directory undefined");
       }
     }
@@ -615,13 +298,12 @@ public class BoCartridge extends CartridgeImpl implements Cartridge {
       rootDirectory = getContext().getProperty(ROOT_COMMON_FOLDER_KEY);
     }
     root = new File(rootDirectory);
-    this.metaPackage = metaPackage;
     hasDataObjects = false;
     hasCodes = false;
-    if (!metaPackage.booleanValueOfTag(GENERATE_TAG)) {
+    if (!packages.booleanValueOfTag(GENERATE_TAG)) {
       return;
     }
-    for (MetaClass clazz : metaPackage.getClasses()) {
+    for (MetaClass clazz : packages.getClasses()) {
       hasDataObjects |= DATA_OBJECT_STEREOTYPE.equalsIgnoreCase(clazz
           .getStereotype());
       hasCodes |= REFERENCE_CODE_STEREOTYPE.equalsIgnoreCase(clazz
@@ -639,24 +321,24 @@ public class BoCartridge extends CartridgeImpl implements Cartridge {
     VelocityContext context = createContext(clazz);
     super.processClass(clazz);
     try {
-      Map<String, List<String>> blocks = extractUserCode(metaPackage
+      Map<String, List<String>> blocks = extractUserCode(packages
           .getAttribute(BO_PACKAGE), clazz.getAttribute(BO_CLASS));
       context.put(CODE_BLOCKS, blocks);
       if (DATA_OBJECT_STEREOTYPE.equalsIgnoreCase(stereotype)) {
-        processJavaTemplate(root, metaPackage.getAttribute(BO_PACKAGE), clazz
+        processJavaTemplate(root, packages.getAttribute(BO_PACKAGE), clazz
             .getAttribute(BO_CLASS), retrieveTemplate("bo"), context);
         if (hasLightweight(clazz)) {
-          blocks = extractUserCode(metaPackage.getAttribute(LW_PACKAGE), clazz
+          blocks = extractUserCode(packages.getAttribute(LW_PACKAGE), clazz
               .getAttribute(LW_CLASS));
           context.put(CODE_BLOCKS, blocks);
-          processJavaTemplate(root, metaPackage.getAttribute(LW_PACKAGE), clazz
+          processJavaTemplate(root, packages.getAttribute(LW_PACKAGE), clazz
               .getAttribute(LW_CLASS), retrieveTemplate("lw"), context);
         }
       } else if (REFERENCE_CODE_STEREOTYPE.equalsIgnoreCase(stereotype)) {
-        processJavaTemplate(root, metaPackage.getAttribute(BO_PACKAGE), clazz
+        processJavaTemplate(root, packages.getAttribute(BO_PACKAGE), clazz
             .getAttribute(BO_CLASS), retrieveTemplate("code"), context);
       } else if (clazz.booleanValueOfTag(BO_GENERATE)) {
-        processJavaTemplate(root, metaPackage.getAttribute(BO_PACKAGE), clazz
+        processJavaTemplate(root, packages.getAttribute(BO_PACKAGE), clazz
             .getAttribute(BO_CLASS), retrieveTemplate("class"), context);
       }
     } catch (IOException e) {
@@ -704,13 +386,28 @@ public class BoCartridge extends CartridgeImpl implements Cartridge {
   }
 
   /**
+   * Returns true if the type of the property is a primitive build-in type.
+   * @param member member to check if it is primitive.
+   * @return true if the type is build-in otherwise false.
+   * @pre (member != null) && (member.getClassifier() != null)
+   */
+  public boolean isTypePrimitive(MetaMember member) {
+    assert (member != null) && (member.getClassifier() != null);
+    MetaClassifier classifier = member.getClassifier();
+    String typename = classifier.getAttribute("bo-datatype");
+    if (typename == null) {
+      typename = member.getTypeName();
+    }
+    return Arrays.binarySearch(PRIMITIVES_TYPES, typename) >= 0;
+  }
+
+  /**
    * Returns true if the property type is a reference code.
    * @param property property to evaluate.
    * @return true if the property type is a reference code otherwise false.
    */
   public boolean isReferenceCode(MetaProperty property) {
-    MetaModel model = (MetaModel) property.getRoot();
-    MetaClass clazz = model.findClass(property.getTypeName());
+    MetaClass clazz = property.getModel().findClass(property.getTypeName());
     if ((clazz != null) && (clazz.getStereotype() == REFERENCE_CODE_STEREOTYPE)) {
       return true;
     }
@@ -857,17 +554,23 @@ public class BoCartridge extends CartridgeImpl implements Cartridge {
     if (MdaUtilities.isStandardItem(qualifiedName)) {
       statements.addClassName(qualifiedName);
     } else {
-      MetaClass type = clazz.findClass(qualifiedName);
-      if (type != null) {
-        statements.addClass(type);
+      MetaModel model = clazz.getModel();
+      MetaDatatype datatype = model.findDataType(qualifiedName);
+      if (datatype != null) {
+        statements.addClassName(datatype.getAttribute(BO_DATATYPE));
       } else {
-        if (log.isErrorEnabled()) {
-          Object[] parameters = { qualifiedName, clazz.qualifiedName() };
-          log
-              .error(MessageFormat
-                  .format(
-                      "Non standard class {0} used in class {1} is not defined in model",
-                      parameters));
+        MetaClass type = model.findClass(qualifiedName);
+        if (type != null) {
+          statements.addClass(type);
+        } else {
+          if (log.isErrorEnabled()) {
+            Object[] parameters = { qualifiedName, clazz.qualifiedName() };
+            log
+                .error(MessageFormat
+                    .format(
+                        "Non standard class {0} used in class {1} is not defined in model",
+                        parameters));
+          }
         }
       }
     }
@@ -948,4 +651,41 @@ public class BoCartridge extends CartridgeImpl implements Cartridge {
   private Template retrieveTemplate(String name) {
     return super.retrieveTemplate(name, getContext().getProperty(LANGUAGE_KEY));
   }
+
+  private void preProcessClassifier(MetaElement element, String tag,
+      boolean interfaces) {
+    String qualifiedName = element.valueOfTag(tag);
+    MetaDatatype datatype = packages.getModel().findDataType(qualifiedName);
+    if (datatype != null) {
+      qualifiedName = translateDatatype(datatype, "", interfaces);
+    }
+    qualifiedName = ModelOperators.getComponentName(qualifiedName);
+
+    element.addAttribute(tag, qualifiedName);
+  }
+
+  /**
+   * Propagates the vetoable and changeable information through the class
+   * inheritance hierarchy.
+   * @param clazz class to process.
+   * @param changeable flag indicating if the class has a changeable property.
+   * @param vetoable flag indicating if the class has a vetoable property.
+   */
+  private void preProcessBean(MetaClass clazz, boolean changeable,
+      boolean vetoable) {
+    clazz.addAttribute(BO_CHANGEABLE, Boolean.toString(clazz
+        .booleanValueOfAttribute(BO_CHANGEABLE)
+        || changeable));
+    clazz.addAttribute(BO_VETOABLE, Boolean.toString(clazz
+        .booleanValueOfAttribute(BO_VETOABLE)
+        || vetoable));
+    if (changeable || vetoable) {
+      for (MetaClass ancestor : clazz.retrieveAncestors()) {
+        if (DATA_OBJECT_STEREOTYPE.equals(ancestor.getStereotype())) {
+          preProcessBean(ancestor, changeable, vetoable);
+        }
+      }
+    }
+  }
+
 }

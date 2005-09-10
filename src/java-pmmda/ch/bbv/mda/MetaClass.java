@@ -38,7 +38,7 @@ import java.util.List;
  * @author Marcel Baumann
  * @version $Revision$
  */
-public class MetaClass extends MetaElement {
+public class MetaClass extends MetaClassifier {
   /**
    * Serial version identifier coded as back compatibility date.
    */
@@ -71,12 +71,6 @@ public class MetaClass extends MetaElement {
   private boolean statics;
 
   /**
-   * Flag indicating if the element is a system element defined in the
-   * environment.
-   */
-  private boolean system;
-
-  /**
    * List of ancestors of the class. An ancestor is either a class or an
    * interface.
    */
@@ -105,24 +99,6 @@ public class MetaClass extends MetaElement {
     properties = new ArrayList<MetaProperty>();
     indexedProperties = new ArrayList<MetaIndexedProperty>();
     classes = new ArrayList<MetaClass>();
-  }
-
-  /**
-   * Returns true if the class is a system class.
-   * @return system flag value.
-   * @see #setSystem(boolean)
-   */
-  public boolean isSystem() {
-    return system;
-  }
-
-  /**
-   * Sets the system flag indicating if the class is as system class.
-   * @param system new value of the flag.
-   * @see #isSystem()
-   */
-  public void setSystem(boolean system) {
-    this.system = system;
   }
 
   /**
@@ -272,7 +248,10 @@ public class MetaClass extends MetaElement {
    * @param property to be removed.
    */
   public void removeProperty(MetaProperty property) {
-    properties.remove(property);
+    if (properties.contains(property)) {
+      property.setContext(null);
+      properties.remove(property);
+    }
   }
 
   /**
@@ -484,8 +463,7 @@ public class MetaClass extends MetaElement {
    */
   public boolean hasAncestor(String qualifiedName) {
     assert qualifiedName != null;
-    MetaModel model = (MetaModel) getRoot();
-    MetaClass ancestor = model.findClass(qualifiedName);
+    MetaClass ancestor = getModel().findClass(qualifiedName);
     boolean hasAncestor = false;
     if (ancestor != null) {
       hasAncestor = hasAncestor(ancestor);

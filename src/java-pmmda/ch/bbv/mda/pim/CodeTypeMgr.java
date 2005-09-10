@@ -44,7 +44,7 @@ public class CodeTypeMgr {
    * The root directory where the code values of a code type are stored. The 
    * package structure is mapped to a directory hierarchy.
    */
-  private File root;
+  private java.io.File root;
 
   /**
    * All the code types handled in the manager.
@@ -138,9 +138,9 @@ public class CodeTypeMgr {
   /** 
    * Returns the current value of the simple property root.
    * @return the value of the simple property root.
-   * @see #setRoot(File)
+   * @see #setRoot(java.io.File)
    */
-  public File getRoot() {
+  public java.io.File getRoot() {
     return root;
   }
 
@@ -149,7 +149,7 @@ public class CodeTypeMgr {
    * @param root new value of the property.
    * @see #getRoot()
    */    
-  public void setRoot(File root) {
+  public void setRoot(java.io.File root) {
     if (((this.root != null) && !this.root.equals(root)) || 
         ((this.root == null) && (root != null)))  {    
       this.root = root;

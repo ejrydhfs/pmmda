@@ -108,7 +108,8 @@ public final class ${classname} {
     }
 	TransformerCto.setHandle(bo, "${handle}", dto.${handle});
 #else
-    bo.set${property.nameFirstUpper()}(${cartridge.getDto2BoConversion(${property}, "dto")});
+#setterName($property $setter)
+    bo.${setter}(${cartridge.getDto2BoConversion(${property}, "dto")});
 #end
 #end
 #end

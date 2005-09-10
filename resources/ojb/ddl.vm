@@ -1,4 +1,5 @@
 ## generate the table declaration
+#set($DATA_OBJECT="dataObject")
 #set($shouldGenerateFkIndex=${configuration.getProperty("ojb-cartridge.generate-fk-index").equalsIgnoreCase("true")})
 #set($database=${configuration.getProperty("ojb-cartridge.database")})
 #if(${database.equalsIgnoreCase("MySQL")})
@@ -27,10 +28,18 @@ CREATE TABLE ${schema}${table} (
 ## support MySQL version < 4.1. Boolean was introduced as alias only in version 4.1
 #if(${columnType.equalsIgnoreCase("BOOLEAN")})
   ${columnName} INTEGER${nullInfo},
-#elseif(($columnType == "STRING") || ($columnType == "String")) 
+#elseif(${columnType.equalsIgnoreCase("STRING")}) 
   ${columnName} VARCHAR(${property.valueOfTag("ojb-column-size")})${nullInfo},
+#elseif(${columnType.equalsIgnoreCase("VARCHAR")}) 
+  ${columnName} VARCHAR(${property.valueOfTag("ojb-column-size")})${nullInfo},
+#elseif(${columnType.equalsIgnoreCase("NUMERIC")}) 
+  ${columnName} DECIMAL(${property.valueOfTag("ojb-column-size")})${nullInfo},
+#elseif(${columnType.equalsIgnoreCase("DECIMAL")})
+#set($sizes= ${property.valueOfTag("ojb-column-size")})
+  ${columnName} DECIMAL(${cartridge.getSizeParameter(${property}, 0)}, ${cartridge.getSizeParameter(${property}, 1)})${nullInfo},
 #else
   ${columnName} ${columnType.toUpperCase()}${nullInfo},
+#end
 #end
 #end
 #end
@@ -46,7 +55,6 @@ CREATE TABLE ${schema}${table} (
 #if($isPersistentDataObject)
 #getForwardFk($aggregation $column)
   $column INTEGER${nullInfo},
-#end
 #end
 #end
 #end

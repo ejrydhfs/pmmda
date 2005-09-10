@@ -27,7 +27,7 @@ import ch.bbv.explorer.UiNodeType;
 import ch.bbv.explorer.components.TableCell;
 import ch.bbv.explorer.components.TablePanel;
 import ch.bbv.mda.MetaClass;
-import ch.bbv.mda.generators.BoCartridge;
+import ch.bbv.mda.cartridges.BoConstants;
 import ch.bbv.mda.pim.CodeType;
 import ch.bbv.mda.pim.CodeTypeMgr;
 import ch.bbv.mda.pim.CodeValue;
@@ -286,6 +286,7 @@ public class CodesView extends JPanel implements NodeView {
     tablePanel = new TablePanel(Collections.EMPTY_LIST, new TableCell(CELLS));
     initialize();
     tablePanel.getScrollPane().addMouseListener(new PopupListener(menu));
+    tablePanel.getTable().addMouseListener(new PopupListener(menu));
     tablePanel.getTable().setSelectionMode(
         ListSelectionModel.SINGLE_INTERVAL_SELECTION);
     codesListener = new CodesListener();
@@ -375,7 +376,7 @@ public class CodesView extends JPanel implements NodeView {
   public void setModel(ExplorerNode node) {
     this.node = node;
     MetaClass clazz = (MetaClass) node.getDataObject();
-    if (BoCartridge.REFERENCE_CODE_STEREOTYPE.equals(clazz.getStereotype())) {
+    if (BoConstants.REFERENCE_CODE_STEREOTYPE.equals(clazz.getStereotype())) {
       load();
       setMenuEnabled(true);
       // TODO synchronize tagged values with code values

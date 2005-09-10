@@ -115,7 +115,7 @@ public abstract class ExplorerFileAction extends ExplorerGlobalActionImpl {
    */
   protected boolean shouldOverwriteFile() {
     if (getSelectedFile().exists()) {
-      int selection = displayMessage("actions.FILE_OVERWRITE_CONFIRMATION");
+      int selection = displayMessage("actions.FILE_OVERWRITE");
       return (selection != 1);
     }
     return true;

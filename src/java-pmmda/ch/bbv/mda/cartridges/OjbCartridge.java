@@ -3,11 +3,14 @@
  * you may not use this file except in compliance with the License.
  * $Id$
  */
-package ch.bbv.mda.generators;
+package ch.bbv.mda.cartridges;
+
+import static ch.bbv.mda.cartridges.OjbConstants.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -19,6 +22,9 @@ import org.apache.velocity.VelocityContext;
 import ch.bbv.application.VersionId;
 import ch.bbv.dog.validation.Validator;
 import ch.bbv.mda.*;
+import ch.bbv.mda.generators.Cartridge;
+import ch.bbv.mda.generators.CartridgeFactory;
+import ch.bbv.mda.generators.CartridgeImpl;
 import ch.bbv.mda.generators.validation.OjbTagRule;
 import ch.bbv.mda.generators.validation.TagRule;
 import ch.bbv.mda.operators.FileOperators;
@@ -46,115 +52,6 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
    * The prefix of the cartridge.
    */
   public static final String PREFIX = "ojb";
-
-  /**
-   * Key part for a property of the cartridge used to retrieve user values.
-   */
-  public static final String DDL_START_KEY = "ojb-cartridge.ddl.";
-
-  /**
-   * Key part for a property of the cartridge used to retrieve user values.
-   */
-  public static final String DDL_INTEGRITY_START_KEY = "ojb-cartridge.ddl-integrity.";
-
-  /**
-   * Key for a property of the cartridge used to retrieve user values.
-   */
-  public static final String SOURCE_ROOT_FOLDER_KEY = "ojb-cartridge.root-folder";
-
-  /**
-   * Key for a property of the cartridge used to retrieve user values.
-   */
-  public static final String GENERATE_FK_INDEX_KEY = "ojb-cartridge.generate-fk-index";
-
-  /**
-   * Key for a property of the cartridge defining the inheritance mode.
-   */
-  public static final String INHERITANCE_KEY = "ojb-cartridge.inheritance";
-
-  /**
-   * Key for a property of the cartridge used to retrieve user values.
-   */
-  public static final String DATABASE_KEY = "ojb-cartridge.database";
-
-  /**
-   * Key for a property of the cartridge used to retrieve user values.
-   */
-  public static final String TABLE_PREFIX_KEY = "obj-cartridge.table-prefix";
-
-  /**
-   * Key for a property of the cartridge used to retrieve user values.
-   */
-  public static final String TABLE_POSTFIX_KEY = "obj-cartridge.table-postfix";
-
-  /**
-   * Key for a property of the cartridge used to retrieve user values.
-   */
-  public static final String COLUMN_PREFIX_KEY = "obj-cartridge.column-prefix";
-
-  /**
-   * Key for a property of the cartridge used to retrieve user values.
-   */
-  public static final String COLUMN_POSTFIX_KEY = "obj-cartridge.column-postfix";
-
-  /**
-   * The tag shows if the class is persisten or not.
-   */
-  public static final String SCHEMA_TAG = "ojb-schema";
-
-  /**
-   * If the class is persistent, this tag contains the name of the table in
-   * which the instances are persisted.
-   */
-  public static final String TABLE_NAME_TAG = "ojb-table-name";
-
-  /**
-   * JDBC column name of the property if the property is persistent.
-   */
-  public static final String COLUMN_NAME_TAG = "ojb-column-name";
-
-  /**
-   * JDBC type of the property if the property is persistent.
-   */
-  public static final String COLUMN_TYPE_TAG = "ojb-column-type";
-
-  /**
-   * JDBC type size of the property if the property is peristent and if the
-   * information is relevant for the associated JDBC type.
-   */
-  public static final String COLUMN_SIZE_TAG = "ojb-column-size";
-
-  /**
-   * Indicates if the property is a primary key for the class it belongs to.
-   */
-  public static final String IS_PRIMARY_TAG = "ojb-is-primary";
-
-  /**
-   * True if the property persistent representation can be null. Such a property
-   * must not be a primitive Java type and not a primary key.
-   */
-  public static final String CAN_BE_NULL_TAG = "ojb-can-be-null";
-
-  /**
-   * Indicates if the property to realise optimistic locking. The JDBC type
-   * should be integer or timestamp if the flag is set to true.
-   */
-  public static final String OPTIMISTIC_LOCKING_TAG = "ojb-locking";
-
-  /**
-   * Defines if the property is used for ordering.
-   */
-  public static final String ORDER_BY_TAG = "ojb-order-by";
-
-  /**
-   * Attribute defining the computed table name.
-   */
-  public static final String TABLE_NAME = TABLE_NAME_TAG;
-
-  /**
-   * Attribute defining the computed column name.
-   */
-  public static final String COLUMN_NAME = COLUMN_NAME_TAG;
 
   /**
    * Database identifier for a database product.
@@ -232,6 +129,7 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
     addUndefinedProperty(properties, COLUMN_POSTFIX_KEY, "");
     TaggedValuesView.registerReferenceCode(JdbcTypeCode.class, JdbcTypeCode
         .getCodes(), false);
+    factory.getItemFactory().registerListener(TaggedValue.class, new OjbTagListener());
   }
 
   public List<TagDefinition> getTaggedValueTypes(Class clazz) {
@@ -240,18 +138,16 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
     } else if (clazz.equals(MetaPackage.class)) {
       types.add(new TagDefinition(SCHEMA_TAG, "", String.class));
     } else if (clazz.equals(MetaClass.class)) {
-      types.add(new TagDefinition(BoCartridge.PERSISTENCE_TAG, "false",
+      types.add(new TagDefinition(UmlConstants.PERSISTENCE_TAG, "false",
           Boolean.TYPE));
       types.add(new TagDefinition(TABLE_NAME_TAG, null, String.class));
     } else if (clazz.equals(MetaProperty.class)) {
       types.add(new TagDefinition(COLUMN_NAME_TAG, null, String.class));
       types
           .add(new TagDefinition(COLUMN_TYPE_TAG, "String", JdbcTypeCode.class));
-      types.add(new TagDefinition(COLUMN_SIZE_TAG, "255", Integer.TYPE));
+      types.add(new TagDefinition(COLUMN_SIZE_TAG, "255", BigInteger.class));
       types.add(new TagDefinition(CAN_BE_NULL_TAG, "false", Boolean.TYPE));
       types.add(new TagDefinition(IS_PRIMARY_TAG, "false", Boolean.TYPE));
-      types
-          .add(new TagDefinition(OPTIMISTIC_LOCKING_TAG, "false", Boolean.TYPE));
     } else if (clazz.equals(MetaIndexedProperty.class)) {
       types.add(new TagDefinition(COLUMN_NAME_TAG, null, String.class));
       types.add(new TagDefinition(ORDER_BY_TAG, null, String.class));
@@ -277,6 +173,7 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
       types.add(new TagDefinition("ojb-foreign-key", String.class));
       types.add(new TagDefinition("ojb-canBeNull", Boolean.TYPE));
       types.add(new TagDefinition("ojb-isPrimary", Boolean.TYPE));
+      types.add(new TagDefinition("ojb-locking", Boolean.TYPE));
     } else if (clazz == MetaIndexedProperty.class) {
       types = new ArrayList<TagDefinition>();
       types.add(new TagDefinition("ojb-jdbc-type", String.class));
@@ -290,7 +187,6 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
       types.add(new TagDefinition(COLUMN_NAME_TAG, String.class));
       types.add(new TagDefinition(COLUMN_TYPE_TAG, JdbcTypeCode.class));
       types.add(new TagDefinition(COLUMN_SIZE_TAG, Integer.TYPE));
-      types.add(new TagDefinition(OPTIMISTIC_LOCKING_TAG, Boolean.TYPE));
     }
     return types;
   }
@@ -312,13 +208,13 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
           + target + ".sql"));
       ddlIntegrityWriter = FileOperators.createPrintWriter(new File(root,
           "createIntegrity" + target + ".sql"));
-    } catch (IOException ioe) {
-      ioe.printStackTrace();
+    } catch (IOException e) {
+      log.error(e);
     }
   }
 
   public void preProcessClass(MetaClass clazz) {
-    if (clazz.booleanValueOfTag(BoCartridge.PERSISTENCE_TAG)) {
+    if (clazz.booleanValueOfTag(UmlConstants.PERSISTENCE_TAG)) {
       Properties context = getContext();
       StringBuilder buffer = new StringBuilder();
       buffer.append(context.get(TABLE_PREFIX_KEY)).append(
@@ -347,10 +243,10 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
   }
 
   public void processClass(MetaClass clazz) {
-    if (!clazz.retrievePackage().booleanValueOfTag(BoCartridge.GENERATE_TAG)
-        || !BoCartridge.DATA_OBJECT_STEREOTYPE.equalsIgnoreCase(clazz
+    if (!clazz.retrievePackage().booleanValueOfTag(BoConstants.GENERATE_TAG)
+        || !BoConstants.DATA_OBJECT_STEREOTYPE.equalsIgnoreCase(clazz
             .getStereotype())
-        || !clazz.booleanValueOfTag(BoCartridge.PERSISTENCE_TAG)) {
+        || !clazz.booleanValueOfTag(UmlConstants.PERSISTENCE_TAG)) {
       return;
     }
 
@@ -369,6 +265,27 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
     FileOperators.closePrintWriter(ojbLwWriter);
     FileOperators.closePrintWriter(ddlWriter);
     FileOperators.closePrintWriter(ddlIntegrityWriter);
+  }
+
+  public String getSizeParameter(MetaElement element, int order) {
+    String sizes = element.valueOfTag(COLUMN_SIZE_TAG);
+    String size;
+    if (sizes != null) {
+      int position = sizes.indexOf(".");
+      switch (order) {
+      case 0:
+        size = position != -1 ? sizes.substring(0, position) : "0";
+        break;
+      case 1:
+        size = position != -1 ? sizes.substring(position) : "0";
+        break;
+      default:
+        size = "0";
+      }
+    } else {
+      size = "0";
+    }
+    return size;
   }
 
   /**

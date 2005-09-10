@@ -76,4 +76,10 @@ public class VisitorFunctor implements Visitor, AbstractVisitorFunctor {
   public void visit(UserRole item) {
     functor.execute(item);
   }
+  public void visit(NamedEntity item) {
+    functor.execute(item);
+  }
+  public void visit(ResourceType item) {
+    functor.execute(item);
+  }
 }

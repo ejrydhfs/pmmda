@@ -13,7 +13,9 @@ import ch.bbv.mda.MetaClass;
 import ch.bbv.mda.MetaIndexedProperty;
 import ch.bbv.mda.MetaPackage;
 import ch.bbv.mda.MetaProperty;
-import ch.bbv.mda.generators.BoCartridge;
+import ch.bbv.mda.cartridges.BoCartridge;
+import ch.bbv.mda.cartridges.BoConstants;
+import ch.bbv.mda.cartridges.UmlConstants;
 
 /**
  * The DOG tag rule implements all validation rules for the tag values defined
@@ -63,8 +65,8 @@ public class DogTagRule extends TagRule {
   }
 
   /**
-   * The following rules are defined for the element if its class is a 
-   * data object.
+   * The following rules are defined for the element if its class is a data
+   * object.
    * <ul>
    * <li>The property names "id", "modified" and "timestamp" are reserved for
    * internal functions of the cartridge.</li>
@@ -79,12 +81,12 @@ public class DogTagRule extends TagRule {
       List<ValidationRuleResult> results) {
     boolean success = true;
     MetaClass clazz = (MetaClass) property.getContext();
-    if (BoCartridge.DATA_OBJECT_STEREOTYPE.equals(clazz.getStereotype())) {
-      if (property.booleanValueOfTag(BoCartridge.PERSISTENCE_TAG)
+    if (BoConstants.DATA_OBJECT_STEREOTYPE.equals(clazz.getStereotype())) {
+      if (property.booleanValueOfTag(UmlConstants.PERSISTENCE_TAG)
           && property.isTransient()) {
         success = false;
         addErrorMessage(results, ERROR_INCONSISTENT_TAG,
-            BoCartridge.PERSISTENCE_TAG, property.qualifiedName());
+            UmlConstants.PERSISTENCE_TAG, property.qualifiedName());
       }
       String name = property.getName();
       if (name.equalsIgnoreCase(IDENTIFIER) || name.equalsIgnoreCase(TIMESTAMP)

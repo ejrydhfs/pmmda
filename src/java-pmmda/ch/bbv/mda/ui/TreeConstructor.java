@@ -83,7 +83,13 @@ public class TreeConstructor implements Visitor {
     constructNode(metaIndexedProperty);
   }
 
+  public void visit(MetaDatatype datatype) {
+    assert (datatype != null);
+    constructNode(datatype);
+  }
+
   public void visit(TaggedValue taggedValue) {
+    assert (taggedValue != null);
   }
 
   /**

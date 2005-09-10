@@ -21,8 +21,8 @@ import org.xml.sax.SAXException;
 import ru.novosoft.uml.MFactory;
 import ru.novosoft.uml.model_management.MModel;
 import ru.novosoft.uml.xmi.IncompleteXMIException;
-import ch.bbv.mda.MetaFactory;
 import ch.bbv.mda.MetaModel;
+import ch.bbv.mda.generators.ItemFactory;
 import ch.bbv.mda.persistence.nsuml.ArgoWriter;
 import ch.bbv.mda.persistence.nsuml.MdaTransformer;
 import ch.bbv.mda.persistence.nsuml.NsUmlTransformer;
@@ -61,7 +61,6 @@ public class NsUmlPersistenceHandler implements PersistenceHandler {
 
   public MetaModel readModel(File file) throws PersistenceException {
     MetaModel metaModel = new MetaModel();
-    MetaFactory.getInstance().initialize(metaModel);
     try {
       MModel mModel = nsUmlTransformer.loadArgoModel(file);
       if (mModel == null) {

@@ -65,6 +65,7 @@ public class NodePropertiesDialog extends SimpleDialog {
     view = factory.getViewFor(node.getNodeType());
     view.setEditable(isEditable);
     setOkButtonEnabled(isEditable);
+    setApplyButtonEnabled(isEditable);
     view.setNewObject(isNew);
     view.setModel(node);
     this.action = action;
@@ -72,13 +73,7 @@ public class NodePropertiesDialog extends SimpleDialog {
   }
 
   protected void processOk() {
-    if (view.isEditable()) {
-      view.commitChanges();
-      ExplorerNode node = view.getModel();
-      LightweightObjectHandler handler = node.getExplorer().getManager()
-          .getLwHandler();
-      handler.synchronize(node.getLightweightObject(), node.getDataObject());
-    }
+    processApply();
     if (action != null) {
       action.postExecute(view.getModel(), false);
     }
@@ -93,5 +88,16 @@ public class NodePropertiesDialog extends SimpleDialog {
       action.postExecute(view.getModel(), true);
     }
     view.setModel(null);
+  }
+
+  protected void processApply() {
+    if (view.isEditable()) {
+      view.commitChanges();
+      view.populateSubViews();
+      ExplorerNode node = view.getModel();
+      LightweightObjectHandler handler = node.getExplorer().getManager()
+          .getLwHandler();
+      handler.synchronize(node.getLightweightObject(), node.getDataObject());
+    }
   }
 }

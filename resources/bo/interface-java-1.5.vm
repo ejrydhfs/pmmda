@@ -1,0 +1,302 @@
+#set($sign="#")
+#set($dollar="$")
+#set($__="")
+#set($____="")
+#emitFileHeader()
+   
+#if (${package})
+package ${package.getAttribute("bo-if-package")};
+#end
+
+#set($blocks=${context.get("blocks")})
+#set($properties=${class.getProperties()})
+#set($aggregations=${class.getIndexedProperties()})
+#set($ancestors=${class.retrieveAncestors()})
+#set($interfaces=${class.retrieveInterfaces()})
+#set($hasAncestors = (${ancestors.size()} > 0))
+#set($hasInterfaces = (${interfaces.size()} > 0))
+## generate the import list of the class
+#set($imports=${cartridge.retrieveImportStatementsForIf(${class}, ${package.getAttribute("bo-if-package")})})
+#if (${class.booleanValueOfAttribute("bo-vetoable")})
+#set($dummy=${imports.addClassName("java.beans.PropertyVetoException")})
+#end
+#set($importStatements=${imports.getImportStatements(4)})
+#foreach($importStatement in $importStatements) 
+import $importStatement;
+#end
+
+/* %% USER DEFINED IMPORT START %% */
+#set($lines=${blocks.get("imports")})
+#foreach($line in $lines)
+$line
+#end
+/* %% USER DEFINED IMPORT END %% */
+
+#emitClassDescription($class "")
+#if(${hasAncestors})
+#set($extends=" extends ${ancestors.get(0).getName()}")
+#else
+#set($extends="")
+#end
+#if(${hasInterfaces})
+#set($implements=" implements ")
+#foreach ($interface in $interfaces)
+#set($implements="${implements}${interface.getName()}, ")
+#end
+#else
+#set($implements="")
+#end
+${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$extends$implements {
+
+/* %% USER DEFINED DECLARATION START %% */
+#set($lines=${blocks.get("declarations")})
+#foreach($line in $lines)
+$line
+#end
+/* %% USER DEFINED DECLARATION END %% */
+
+/* %% USER DEFINED CODE START %% */
+#set($lines=${blocks.get("definitions")})
+#foreach($line in $lines)
+$line
+#end
+/* %% USER DEFINED CODE END %% */
+
+## generates the source code for all simple properties. Two variants are 
+## defined to guarantee correct indenting of the generated source code.
+#foreach ($property in $properties)
+#set($uName = ${property.nameFirstUpper()})
+#set($lName=${property.nameFirstLower()})
+#set($itemType = ${property.retrieveTypeClassName()})
+#set($vetoable=${property.booleanValueOfTag("bo-veto-event")})
+#set($changeable=${property.booleanValueOfTag("bo-change-event")})
+#getterName($property $getter)
+#setterName($property $setter)
+#if(${property.canBeRead()})
+  /** 
+   * Returns the current value of the simple property ${lName}.
+   * @return the value of the simple property ${lName}.
+#if(${property.canBeWritten()})
+   * @see ${sign}${setter}(${itemType})
+#end    
+   */
+  ${itemType} ${getter}();
+#end
+#if(${property.canBeWritten()})
+#set($owner=false)
+#set($owner=$property.valueOfTag("bo-navigable"))
+
+  /** 
+   * Sets the new value of the simple property ${lName}.
+   * @param ${lName} new value of the property.
+#if(${vetoable})
+   * @throws PropertyVetoException if a listener refuses the change.
+#end
+#if(${property.canBeRead()})
+   * @see ${sign}${getter}()
+#end    
+   */    
+#if(${vetoable})
+  void ${setter}(${itemType} ${lName}) throws PropertyVetoException;
+#else
+  void ${setter}(${itemType} ${lName});
+#end
+#end
+#end
+#foreach ($aggregation in $aggregations) 
+#set($uName = ${aggregation.nameFirstUpper()})
+#set($lName = ${aggregation.nameFirstLower()})
+#set($usName = ${aggregation.nameFirstUpperSingular()})
+#set($upName = ${aggregation.nameFirstUpperPlural()})
+#set($interface = ${aggregation.getAttribute("bo-interface-class")}) 
+#set($itemType = ${aggregation.retrieveTypeClassName()})
+#set($keyType=${aggregation.getAttribute("bo-key-class")})
+#set($type=false)
+#set($type=${model.findClass(${aggregation.ypeName()})})
+#if(${aggregation.canBeRead()})
+#if(${cartridge.isOrdered(${aggregation})})
+
+  /** 
+   * Gets all elements of the ordered relation ${lName}.
+   * @return non mutable list of all children.
+   * @see java.util.Map${sign}values()
+   */
+  Collection<${itemType}> get${upName}();
+
+  /** 
+   * Returns the element with the specified key in the ordered indexed  
+   * property ${lName}.
+   * @param key key of element to return. 
+   * @return the element at the specified position in this list.
+#if(${aggregation.canBeWritten()})
+   * @see ${sign}set${usName}(${keyType}, ${itemType})
+#end    
+   * @see java.util.Map${sign}get(Object)
+   */
+  ${itemType} get${usName}(${keyType} key);
+#else
+
+  /** 
+   * Gets all elements of the relation ${lName}.
+   * @return List of all children.
+   */
+  ${interface}<$itemType> get${upName}();
+
+  /** 
+   * Returns the element at the specified position in the indexed property 
+   * ${lName}.
+   * @param index index of element to return. 
+   * @return the element at the specified position in this list.
+#if(${aggregation.canBeWritten()})
+   * @see ${sign}${setter}(int, ${itemType})
+#end    
+   * @see java.util.List${sign}get(int)
+   */
+  ${itemType} get${usName}(int index);
+#end  
+#end
+#if(${aggregation.canBeWritten()})
+#set($owner=$property.valueOfTag("bo-navigable"))
+#if(${cartridge.isOrdered(${aggregation})})
+
+  /** 
+   * Inserts the given child with the given key in the ordered indexed
+   * property ${lName}.
+   * @param key key at which the specified element is to be inserted.
+   * @param value value to be inserted.
+#if(${aggregation.canBeRead()})
+   * @see ${sign}get${usName}(${keyType})
+#end   
+   */
+  void set${usName}(${keyType} key, ${itemType} value);
+  
+  /** 
+   * Removes the element with the specified key.
+   * @param key key whose mappingis to be removed from the map. 
+   * @return true if this list contained the specified element. 
+   * @see java.util.Map${sign}remove(Object)
+   */
+  ${itemType} remove${usName}(${keyType} key);
+#else
+#set($isPersistentAggregation=${aggregation.booleanValueOfTag("persistence")})
+#set($keyName="${class.nameFirstLower()}${aggregation.nameFirstUpper()}Handle")
+
+  /** 
+   * Appends all of the elements in the specified collection to the end of 
+   * this list, in the order that they are returned by the specified 
+   * collection's iterator. The behavior of this operation is unspecified if 
+   * the specified collection is modified while the operation is in progress. 
+   * @param c collection whose elements are to be added to this list. 
+   * @return true if this list changed as a result of the call. 
+   * @see java.util.List${sign}addAll(Collection)
+   */
+  boolean add${upName}(Collection<$itemType> c);
+  
+  /** 
+   * Inserts the given child at the select position in the relation ${lName}.
+   * @param index index at which the specified element is to be inserted.
+   * @param element element to be inserted.
+#if(${aggregation.canBeWritten()})
+   * @see ${sign}${getter}(int)
+#end    
+   * @see java.util.List${sign}add(int, Object)
+   */
+  void set${usName}(int index, ${itemType} element);
+
+  /** 
+   * Appends the specified element to the end of this list in the relation 
+   * ${lName}.
+   * @param element to be appended to this list.
+   * @return true (as per the general contract of the Collection.add method).   
+   * @see java.util.List${sign}add(Object)
+   * @pre element != null
+   */
+  boolean add${usName}(${itemType} element);
+
+  /** 
+   * Removes the first occurrence in this list of the specified element 
+   * If this list does not contain the element, it is unchanged. More formally, 
+   * removes the element with the lowest index i such that 
+   * (o==null ? get(i)==null : o.equals(get(i))) (if such an element exists). 
+   * @param element element to be removed from this list, if present. 
+   * @return true if this list contained the specified element. 
+   * @see java.util.List${sign}remove(Object)
+   */
+  boolean remove${usName}(${itemType} element);
+#end
+#end
+#end  
+#if (${class.booleanValueOfAttribute("bo-changeable")})
+
+  /**
+   * Adds a property change listener to the data object. If not defined for the
+   * class an operation not supported exception is thrown.
+   * @param listener listener to add.
+   * @see ${sign}removePropertyChangeListener(PropertyChangeListener)
+   */
+  void addPropertyChangeListener(PropertyChangeListener listener);
+  
+  /**
+   * Adds a property change listener for a property to the data object. If not
+   * defined for the class an operation not supported exception is thrown.
+   * @param property name of the property to listen to.
+   * @param listener listener to add.
+   * @see ${sign}removePropertyChangeListener(String, PropertyChangeListener)
+   */
+  void addPropertyChangeListener(String property, PropertyChangeListener listener);
+  
+  /**
+   * Remove the property change listener from the data object. If not defined
+   * for the class an operation not supported exception is thrown.
+   * @param listener listener to remove.
+   * @see ${sign}addPropertyChangeListener(PropertyChangeListener)
+   */
+  void removePropertyChangeListener(PropertyChangeListener listener);
+  
+  /**
+   * Remove the property change listener from the data object. If not defined
+   * for the class an operation not supported exception is thrown.
+   * @param property name of the property listened to.
+   * @param listener listener to remove.
+   * @see ${sign}addPropertyChangeListener(String, PropertyChangeListener)
+   */
+  void removePropertyChangeListener(String property, PropertyChangeListener listener);
+#end  
+#if (${class.booleanValueOfAttribute("bo-vetoable")})
+
+  /**
+   * Adds a property vetoable change listener to the data object. If not defined
+   * for the class an operation not supported exception is thrown.
+   * @param listener listener to add.
+   * @see ${sign}removeVetoableChangeListener(VetoableChangeListener)
+   */
+  public void addVetoableChangeListener(VetoableChangeListener listener);
+  
+  /**
+   * Adds a property vetoable change listener for a property to the data object.
+   * If not defined for the class an operation not supported exception is
+   * thrown.
+   * @param property name of the property to listen to.
+   * @param listener listener to add.
+   * @see ${sign}removeVetoableChangeListener(String, VetoableChangeListener)
+   */
+  void addVetoableChangeListener(String property, VetoableChangeListener listener);
+  
+  /**
+   * Removes the property vetoable change listener from the data object. If not
+   * defined for the class an operation not supported exception is thrown.
+   * @param listener listener to remove.
+   * @see ${sign}addVetoableChangeListener(VetoableChangeListener)
+   */
+  void removeVetoableChangeListener(VetoableChangeListener listener);
+  
+  /**
+   * Removes the property vetoable change listener from the data object. If not
+   * defined for the class an operation not supported exception is thrown.
+   * @param property name of the property listened to.
+   * @param listener listener to remove.
+   * @see ${sign}addVetoableChangeListener(String, VetoableChangeListener)
+   */
+  void removeVetoableChangeListener(String property, VetoableChangeListener listener);
+#end
+}

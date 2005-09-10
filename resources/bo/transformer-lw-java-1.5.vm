@@ -38,6 +38,7 @@ public class LwTransformer {
 #set($aggregations=${class.getIndexedProperties()})
 #foreach ($aggregation in $aggregations) 
 #if(${aggregation.booleanValueOfTag("bo-lightweight")})
+#getType($model $aggregation $type)
 #isTypeLightweigth($model $aggregation $isTypeLightweigth)
 #if($isTypeLightweigth)
     for (${type.getAttribute("bo-mo-class")} i : item.get${aggregation.nameFirstUpperPlural()}()) {

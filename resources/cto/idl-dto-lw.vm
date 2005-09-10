@@ -47,10 +47,10 @@ module ch {
 #elseif($isReferenceCode)
         NullInteger ${property.getName()};
 #else
-        ${property.getAttribute("cto-idl-type")} ${property.getName()};
+        ${cartridge.getIdlType(${property})} ${property.getName()};
 #end
 #else
-        ${property.getAttribute("cto-idl-type")} ${property.getName()};
+        ${cartridge.getIdlType(${property})} ${property.getName()};
 #end
 #end          
 #end
@@ -68,7 +68,7 @@ module ch {
         sequence<NullableInteger> ${aggregation.getName()};
 #end
 #else
-        sequence<${aggregation.getAttribute("cto-idl-type")})> ${aggregation.getName()};
+        sequence<${aggregation.getIdlType(${property})}> ${aggregation.getName()};
 #end          
 #end
 #end

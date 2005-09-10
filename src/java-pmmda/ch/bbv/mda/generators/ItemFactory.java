@@ -3,12 +3,15 @@
  * you may not use this file except in compliance with the License.
  * $Id$
  */
-package ch.bbv.mda;
+package ch.bbv.mda.generators;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.beans.PropertyChangeListener;
+import java.util.*;
+
+import ch.bbv.dog.DataObject;
+import ch.bbv.mda.MetaElement;
+import ch.bbv.mda.TagDefinition;
+import ch.bbv.mda.TaggedValue;
 
 /**
  * The meta factory class initializes newly created meta element instances. The
@@ -25,12 +28,7 @@ import java.util.Map;
  * @author marcelbaumann
  * @version $Revision$
  */
-public class MetaFactory {
-  /**
-   * The singleton instance of the meta factory.
-   */
-  private static MetaFactory factory;
-
+public class ItemFactory {
   /**
    * Map associating a class with all the active tagged values it supports.
    */
@@ -42,32 +40,42 @@ public class MetaFactory {
    */
   private Map<Class, List<TagDefinition>> obsoleteTaggedValueTypes;
 
-  static {
-    factory = new MetaFactory();
-  }
+  /**
+   * Map associating a class with the listeners interested in.
+   */
+  private Map<Class, List<PropertyChangeListener>> listeners;
 
   /**
    * Default constructor of the class.
    */
-  public MetaFactory() {
+  public ItemFactory() {
     tagDefinitions = new HashMap<Class, List<TagDefinition>>();
     obsoleteTaggedValueTypes = new HashMap<Class, List<TagDefinition>>();
+    listeners = new HashMap<Class, List<PropertyChangeListener>>();
   }
 
   /**
-   * Returns the singleton instance of the class.
-   * @return singleton instance of the class.
+   * Registers the listener interested in the given class.
+   * @param clazz class the listener is interested in.
+   * @param listener listener to register.
+   * @pre (clazz != null) && (listener != null)
    */
-  public static MetaFactory getInstance() {
-    return factory;
+  public void registerListener(Class clazz, PropertyChangeListener listener) {
+    assert (clazz != null) && (listener != null);
+    if (!listeners.containsKey(clazz)) {
+      listeners.put(clazz, new ArrayList<PropertyChangeListener>());
+    }
+    listeners.get(clazz).add(listener);
   }
 
   /**
    * Registers the list of tagged value types to the given class.
    * @param clazz class owning the tagged value types.
    * @param taggedValueTypes tagged value types to register.
+   * @pre (clazz != null) && (taggedValueTypes != null)
    */
   public void registerTypes(Class clazz, List<TagDefinition> taggedValueTypes) {
+    assert (clazz != null) && (taggedValueTypes != null);
     List<TagDefinition> types = tagDefinitions.get(clazz);
     if (types == null) {
       tagDefinitions.put(clazz, taggedValueTypes);
@@ -80,9 +88,10 @@ public class MetaFactory {
    * Registers the list of obsolete tagged value types to the given class.
    * @param clazz class owning the tagged value types.
    * @param taggedValueTypes tagged value types to register.
-   * @pre clazz != null && taggedValueTypes != null
+   * @pre (clazz != null) && (taggedValueTypes != null)
    */
   public void addObsoleteTypes(Class clazz, List<TagDefinition> taggedValueTypes) {
+    assert (clazz != null) && (taggedValueTypes != null);
     List<TagDefinition> types = obsoleteTaggedValueTypes.get(clazz);
     if (types == null) {
       obsoleteTaggedValueTypes.put(clazz, taggedValueTypes);
@@ -96,8 +105,10 @@ public class MetaFactory {
    * @param clazz class of the meta element.
    * @return the list of obsolete tagged value types or an empty list if none is
    *         defined.
+   * @pre clazz != null
    */
   public List<TagDefinition> getObsoleteTypes(Class clazz) {
+    assert clazz != null;
     List<TagDefinition> types = obsoleteTaggedValueTypes.get(clazz);
     if (types != null) {
       types = Collections.unmodifiableList(types);
@@ -114,8 +125,7 @@ public class MetaFactory {
    * @pre name != null && name.length() > 0
    */
   public TagDefinition findType(String name) {
-    assert ((name != null) && (name.length() > 0));
-
+    assert (name != null) && (name.length() > 0);
     for (List<TagDefinition> types : tagDefinitions.values()) {
       for (TagDefinition type : types) {
         if (type.getTag().equals(name)) {
@@ -129,67 +139,18 @@ public class MetaFactory {
   /**
    * Initializes the element with the defined tagged value types. All missing
    * tagged values are added with their default value and all obsolete ones are
-   * removed.
-   * @param element meta element to initialize.
-   */
-  public void initialize(MetaModel element) {
-    if (!element.isSystem()) {
-      initialize(element, MetaModel.class);
-    }
-  }
-
-  /**
-   * Initializes the element with the defined tagged value types. All missing
-   * tagged values are added with their default value and all obsolete ones are
-   * removed.
-   * @param element meta element to initialize.
-   */
-  public void initialize(MetaPackage element) {
-    if (!element.isSystem()) {
-      initialize(element, MetaPackage.class);
-    }
-  }
-
-  /**
-   * Initializes the element with the defined tagged value types. All missing
-   * tagged values are added with their default value and all obsolete ones are
-   * removed.
-   * @param element meta element to initialize.
-   */
-  public void initialize(MetaClass element) {
-    if (!element.isSystem()) {
-      initialize(element, MetaClass.class);
-    }
-  }
-
-  /**
-   * Initialize the element with the defined tagged value types. All missing
-   * tagged values are added with their default value and all obsolete ones are
-   * removed.
-   * @param element meta element to initialize.
-   */
-  public void initialize(MetaProperty element) {
-    initialize(element, MetaProperty.class);
-  }
-
-  /**
-   * Initializes the element with the defined tagged value types. All missing
-   * tagged values are added with their default value and all obsolete ones are
-   * removed.
-   * @param element meta element to initialize.
-   */
-  public void initialize(MetaIndexedProperty element) {
-    initialize(element, MetaIndexedProperty.class);
-  }
-
-  /**
-   * Initializes the element with the defined tagged value types. All missing
-   * tagged values are added with their default value and all obsolete ones are
-   * removed. Existing tags are completed with their tagged value type.
+   * removed. Existing tags are completed with their tagged value type. Finally
+   * the tag initialization routines of the cartridge are applied.
    * @param element meta element to initialize.
    * @param clazz class of the meta element to initialize.
+   * @pre (element != null) && (clazz != null)
    */
-  protected void initialize(MetaElement element, Class clazz) {
+  public void initialize(MetaElement element, Class clazz) {
+    assert (element != null) && (clazz != null);
+    if (element.isSystem()) {
+      return;
+    }
+    register(clazz, element);
     List<TagDefinition> types = tagDefinitions.get(clazz);
     if (types != null) {
       for (TagDefinition type : types) {
@@ -200,12 +161,21 @@ public class MetaFactory {
         } else {
           value.setType(type);
         }
+        register(TaggedValue.class, value);
       }
     }
     types = obsoleteTaggedValueTypes.get(clazz);
     if (types != null) {
       for (TagDefinition type : types) {
         element.removeTaggedValue(type.getTag());
+      }
+    }
+  }
+
+  private void register(Class clazz, DataObject object) {
+    if (listeners.containsKey(clazz)) {
+      for (PropertyChangeListener listener : listeners.get(clazz)) {
+        object.addPropertyChangeListener(listener);
       }
     }
   }

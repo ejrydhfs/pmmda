@@ -17,7 +17,7 @@ import ch.bbv.dog.LightweightObject;
  * @version $Revision$
  * @author MarcelBaumann
  */
-public class RoleLw implements LightweightObject {
+public class RoleLw  implements LightweightObject {
 
 /* %% USER DEFINED DECLARATION START %% */
 /* %% USER DEFINED DECLARATION END %% */
@@ -31,7 +31,7 @@ public class RoleLw implements LightweightObject {
    * The human readable name of the entity. The name should be unique in the 
    * context it is used to simplify navigation for users.
    */
-  private String name;
+  private java.lang.String name;
 
   /** 
    * Unique identifier of the data object instance distinguishing it from 
@@ -58,9 +58,9 @@ public class RoleLw implements LightweightObject {
   /** 
    * Gets the current value of the attribute Name.
    * @return the value of the attribute Name.
-   * @see #setName(String)
+   * @see #setName(java.lang.String)
    */
-  public String getName() {
+  public java.lang.String getName() {
     return name;
   }
 
@@ -69,7 +69,7 @@ public class RoleLw implements LightweightObject {
    * @param name new value of the property.
    * @see #getName()
    */    
-  public void setName(String name) {
+  public void setName(java.lang.String name) {
     this.name = name;
   }
 
@@ -82,14 +82,17 @@ public class RoleLw implements LightweightObject {
   }
 
   /** 
-   * Implements the visitor pattern in the data object class. The accept
-   * method dispatches the visitor to all its relevant children. A relevant
-   * child is always another data object.
+   * Implements the visitor pattern in the lightweight data object class. The 
+   * accept method dispatches the visitor to all its relevant children. A 
+   * relevant child is always another data object.
    * @param visitor visitor to act on the data object.
+   * @pre visitor != null
    */  
   public void accept(LwVisitor visitor) {
+    assert(visitor != null);
     visitor.setDepth(visitor.getDepth() + 1);
     visitor.visit(this);
+    traverse(visitor);
     visitor.setDepth(visitor.getDepth() - 1);
   }
 
@@ -108,4 +111,14 @@ public class RoleLw implements LightweightObject {
     }
     return clone;
   }
+
+  /** 
+   * Implements the visitor pattern in the ligthweight data object class. The 
+   * accept method dispatches the visitor to all relevant children of the 
+   * ancestors and its children. A relevant child is always another lightweigth 
+   * data object.
+   * @param visitor visitor to act on the data object.
+   */  
+  protected void traverse(LwVisitor visitor) {
+  }  
 }

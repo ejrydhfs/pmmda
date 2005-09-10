@@ -6,6 +6,7 @@
 
 package ch.bbv.dnm.users.lw;
 
+import ch.bbv.dnm.users.NamedEntity;
 import ch.bbv.dog.LightweightObject;
 import java.util.*;
 
@@ -17,9 +18,9 @@ import java.util.*;
  * terminology it is a sub address modeling e.g. a subsudiary of a company. A 
  * unit can have sub units.
  * @version $Revision$
- * @author MarcelBaumann
+ * @author Marcel Baumann
  */
-public class UnitLw implements LightweightObject {
+public class UnitLw  extends NamedEntityLw implements LightweightObject {
 
 /* %% USER DEFINED DECLARATION START %% */
 /* %% USER DEFINED DECLARATION END %% */
@@ -30,12 +31,6 @@ public class UnitLw implements LightweightObject {
   private static final long serialVersionUID = 99990101;
 
   /**
-   * The human readable name of the entity. The name should be unique in the 
-   * context it is used to simplify navigation for users.
-   */
-  private String name;
-
-  /**
    * List of users belonging to the unit.
    */
   private List<UserLw> users;
@@ -44,12 +39,6 @@ public class UnitLw implements LightweightObject {
    * List of units part of the unit.
    */
   private List<UnitLw> units;
-
-  /** 
-   * Unique identifier of the data object instance distinguishing it from 
-   * all other instances of the same data object type.
-   */
-  private Integer id;
 
   /** 
    * Default constructor of the class used to create new lightweight data 
@@ -64,35 +53,9 @@ public class UnitLw implements LightweightObject {
    * @param id identifier of the object to which the proxy is associated.
    */
   public UnitLw(Integer id) {
-    this.id = id;
+    super(id);
     users = new ArrayList<UserLw>();
     units = new ArrayList<UnitLw>();
-  }
-
-  /** 
-   * Gets the current value of the attribute Name.
-   * @return the value of the attribute Name.
-   * @see #setName(String)
-   */
-  public String getName() {
-    return name;
-  }
-
-  /** 
-   * Sets the new value of the simple property Name.
-   * @param name new value of the property.
-   * @see #getName()
-   */    
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  /** 
-   * Returns the unique identifier of the data object instance.
-   * @return the identifier of the instance.
-   */
-  public Integer getId() {
-    return id;
   }
 
   /** 
@@ -228,20 +191,17 @@ public class UnitLw implements LightweightObject {
   }
 
   /** 
-   * Implements the visitor pattern in the data object class. The accept
-   * method dispatches the visitor to all its relevant children. A relevant
-   * child is always another data object.
+   * Implements the visitor pattern in the lightweight data object class. The 
+   * accept method dispatches the visitor to all its relevant children. A 
+   * relevant child is always another data object.
    * @param visitor visitor to act on the data object.
+   * @pre visitor != null
    */  
   public void accept(LwVisitor visitor) {
+    assert(visitor != null);
     visitor.setDepth(visitor.getDepth() + 1);
     visitor.visit(this);
-    for (UserLw item : users) {
-      item.accept(visitor);
-    }
-    for (UnitLw item : units) {
-      item.accept(visitor);
-    }
+    traverse(visitor);
     visitor.setDepth(visitor.getDepth() - 1);
   }
 
@@ -268,4 +228,21 @@ public class UnitLw implements LightweightObject {
     }
     return clone;
   }
+
+  /** 
+   * Implements the visitor pattern in the ligthweight data object class. The 
+   * accept method dispatches the visitor to all relevant children of the 
+   * ancestors and its children. A relevant child is always another lightweigth 
+   * data object.
+   * @param visitor visitor to act on the data object.
+   */  
+  protected void traverse(LwVisitor visitor) {
+    super.traverse(visitor);
+    for (UserLw item : getUsers()) {
+      item.accept(visitor);
+    }
+    for (UnitLw item : getUnits()) {
+      item.accept(visitor);
+    }
+  }  
 }

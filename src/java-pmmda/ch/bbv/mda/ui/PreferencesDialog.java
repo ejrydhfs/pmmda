@@ -55,4 +55,7 @@ public class PreferencesDialog extends SimpleDialog {
 
   protected void processOk() {
   }
+
+  protected void processApply() {
+  }
 }

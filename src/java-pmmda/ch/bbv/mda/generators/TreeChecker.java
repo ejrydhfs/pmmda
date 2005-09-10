@@ -4,7 +4,9 @@
  * you may not use this file except in compliance with the License. 
  * $Id$ 
  */
-package ch.bbv.mda;
+package ch.bbv.mda.generators;
+
+import ch.bbv.mda.*;
 
 /**
  * The tree checker completes the tagged values list of each meta element in the
@@ -16,24 +18,40 @@ package ch.bbv.mda;
  * @version $Revision$
  */
 public class TreeChecker implements Visitor {
+  /**
+   * The item factory used to initialize the MDA model tag values.
+   */
+  private ItemFactory itemFactory;
+
+  /**
+   * Default constructor of the class.
+   */
+  public TreeChecker() {
+    itemFactory = CartridgeFactory.getInstance().getItemFactory();
+  }
+
   public void visit(MetaModel metaModel) {
-    MetaFactory.getInstance().initialize(metaModel);
+    itemFactory.initialize(metaModel, MetaModel.class);
   }
 
   public void visit(MetaPackage metaPackage) {
-    MetaFactory.getInstance().initialize(metaPackage);
+    itemFactory.initialize(metaPackage, MetaPackage.class);
   }
 
   public void visit(MetaClass metaClass) {
-    MetaFactory.getInstance().initialize(metaClass);
+    itemFactory.initialize(metaClass, MetaClass.class);
   }
 
-  public void visit(MetaIndexedProperty metaIndexedProperty) {
-    MetaFactory.getInstance().initialize(metaIndexedProperty);
+  public void visit(MetaIndexedProperty property) {
+    itemFactory.initialize(property, MetaIndexedProperty.class);
   }
 
-  public void visit(MetaProperty metaProperty) {
-    MetaFactory.getInstance().initialize(metaProperty);
+  public void visit(MetaProperty property) {
+    itemFactory.initialize(property, MetaProperty.class);
+  }
+
+  public void visit(MetaDatatype datatype) {
+    // no MDA initialization for such items
   }
 
   public void visit(TaggedValue taggedValue) {

@@ -84,4 +84,10 @@ public class LwCyclicVisitor implements LwVisitor {
       delegate.visit(item);
     }
   }
+  public void visit(NamedEntityLw item) {
+    if (!visitedObjects.contains(item)) {
+      visitedObjects.add(item);  
+      delegate.visit(item);
+    }
+  }
 }

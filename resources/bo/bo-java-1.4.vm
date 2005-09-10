@@ -61,7 +61,8 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
 #foreach ($property in $properties)
 
 #emitPropertyDescription($property "  ")
-  private ${property.retrieveTypeClassName()} ${property.nameFirstLower()};
+#getDatatype($property $datatype)
+  private ${datatype} ${property.nameFirstLower()};
 ## identifies a forward reference 1-0..1 or 1-1
 #isTypePersistent($model $property $isPersistentDataObject)
 #if($isPersistentDataObject)
@@ -225,7 +226,7 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
 #foreach ($property in $properties)
 #set($uName = ${property.nameFirstUpper()})
 #set($lName=${property.nameFirstLower()})
-#set($itemType = ${property.retrieveTypeClassName()})
+#getDatatype($property $itemType)
 #set($visibility = ${property.retrieveVisibilityText()})
 #set($vetoable=${property.booleanValueOfTag("bo-veto-event")})
 #set($changeable=${property.booleanValueOfTag("bo-change-event")})
@@ -264,7 +265,7 @@ ${class.retrieveVisibilityText()} class ${class.getAttribute("bo-mo-class")}$ext
 #if(${vetoable} || ${changeable})
     ${itemType} old${uName} = this.${lName};
 #end
-#if(${property.isTypePrimitive()})
+#if(${cartridge.isTypePrimitive($property)})
     if (this.${lName} != ${lName}) {  
       this.${lName} = ${lName};
 #if (${vetoable})

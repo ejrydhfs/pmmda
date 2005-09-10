@@ -11,9 +11,13 @@ package ch.bbv.mda;
  * @author MarcelBaumann
  * @version $Revision$
  */
-public class MetaDataType extends MetaElement {
+public class MetaDatatype extends MetaClassifier {
   /**
    * Serial version identifier coded as back compatibility date.
    */
   private static final long serialVersionUID = 20041201;
+
+  public void accept(Visitor visitor) {
+    visitor.visit(this);
+  }
 }

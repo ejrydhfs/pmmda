@@ -45,6 +45,7 @@ public class TypeFactory {
     createNodeTypeForDomain();
     createNodeTypeForProvider();
     createNodeTypeForRealm();
+    createNodeTypeForNamedEntity();
   }
   
 
@@ -109,12 +110,23 @@ public class TypeFactory {
   }
 
   /** 
+   * Creates a new data object type for the data object graph framework.
+   */
+  public void createNodeTypeForNamedEntity() {
+    DataObjectType type = new DataObjectType(NamedEntityLw.class,
+      NamedEntity.class, NamedEntity.class, VisitorFunctor.class, 
+      LwVisitorFunctor.class, LwTransformer.class);
+    manager.register(type);
+  }
+
+  /** 
    * Returns the list of the classnames of all reference code types defined in 
    * the package.
    * @return list of class names of all reference code types in the package.
    */
   public List<String> getReferenceCodeTypes() {
     List<String> classnames = new ArrayList<String>();
+    classnames.add("ch.bbv.dnm.users.Activity");
     return classnames;
   }
 }

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<cartridge name="ojb" version="0.3.0">
+ <datatypes language="mySQL">
+  <datatype name="bool" type="BOOLEAN" null="false" param="0" />
+  <datatype name="byte" type="TINYINT" null="false" param="0" />
+  <datatype name="char" type="CHAR" null="false" param="0" />
+  <datatype name="short" type="MEDIUMINT" null="false" param="0" />
+  <datatype name="int" type="INT" null="false" param="0" />
+  <datatype name="long" type="BIGINT" null="false" param="0" />
+  <datatype name="float" type="FLOAT" null="false" param="0" />
+  <datatype name="double" type="DOUBLE" null="false" param="0" />
+
+  <datatype name="Boolean" type="BOOLEAN" null="true" />
+  <datatype name="Byte" type="TINYINT" null="true" param="0" />
+  <datatype name="Char" type="CHAR" null="true" param="0" />
+  <datatype name="Short" type="MEDIUMINT" null="true" param="0" />
+  <datatype name="Integer" type="INT" null="true" param="0" />
+  <datatype name="Long" type="BIGINT" null="true" param="0" />
+  <datatype name="Float" type="FLOAT" null="true" param="0" />
+  <datatype name="Double" type="DOUBLE" null="true" param="0" />
+
+  <datatype name="object" type="VARBINARY" null="true" param="1" />
+  <datatype name="string" type="VARCHAR" null="true" param="1" />
+  <datatype name="date" type="DATE" null="true" param="0" />
+  <datatype name="decimal" type="DECIMAL" null="true" param="2" />
+  <datatype name="natural" type="DECIMAL" null="true" param="1" />
+  <datatype name="timestamp" type="TIMESTAMP" null="true" param="0" />
+ </datatypes>
+</cartridge>

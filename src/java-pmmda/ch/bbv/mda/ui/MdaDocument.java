@@ -10,7 +10,7 @@ import java.io.IOException;
 
 import ch.bbv.explorer.ExplorerDocument;
 import ch.bbv.mda.MetaModel;
-import ch.bbv.mda.TreeChecker;
+import ch.bbv.mda.generators.TreeChecker;
 import ch.bbv.mda.operators.FileOperators;
 import ch.bbv.mda.persistence.PersistenceException;
 import ch.bbv.mda.persistence.PersistenceHandler;
@@ -82,7 +82,11 @@ public class MdaDocument implements ExplorerDocument {
     PersistenceHandlerFactory factory = new PersistenceHandlerFactory();
     PersistenceHandler handler = factory.getHandler(file);
     assert (handler != null);
-    model = parseModel(handler, file);
+    MetaModel loadedModel = handler.readModel(file);
+    if (loadedModel != null) {
+      model = loadedModel;
+    }
+    model.accept(new TreeChecker());
     model.setFilename(file.toString());
     File directory = new File(model.getFilename()).getParentFile();
     model.getCodeTypeMgr().reset(new File(directory, CODES_DIRECTORY));
@@ -125,22 +129,5 @@ public class MdaDocument implements ExplorerDocument {
     handler.writeModel(model, file);
     state = State.CLEAN;
     this.file = file;
-  }
-
-  /**
-   * Parses given file with given handler
-   * @param handler handler to parse the given file.
-   * @param file file containing the model to be parsed.
-   * @throws PersistenceException an exception was encountered when loading the
-   *           model.
-   * @return MetaModel containing parsed file
-   */
-  private MetaModel parseModel(PersistenceHandler handler, File file)
-      throws PersistenceException {
-    MetaModel model = handler.readModel(file);
-    if (model == null)
-      return null;
-    model.accept(new TreeChecker());
-    return model;
   }
 }

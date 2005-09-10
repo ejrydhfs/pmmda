@@ -6,7 +6,10 @@
 
 package ch.bbv.dog;
 
-import java.beans.*;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+import java.beans.VetoableChangeListener;
+import java.beans.VetoableChangeSupport;
 import java.sql.Timestamp;
 
 /**
@@ -39,12 +42,20 @@ public class DataObjectImpl implements DataObject {
   /**
    * The utility class used to implement change events for Java beans.
    */
-  private PropertyChangeSupport propertyChangeSupport;
+  protected PropertyChangeSupport propertyChangeSupport;
 
   /**
    * The utility class used to implement vetoable change events for Java beans.
    */
-  private VetoableChangeSupport vetoableChangeSupport;
+  protected VetoableChangeSupport vetoableChangeSupport;
+
+  /**
+   * Default constructor of the class.
+   */
+  public DataObjectImpl() {
+    propertyChangeSupport = new PropertyChangeSupport(this);
+    vetoableChangeSupport = new VetoableChangeSupport(this);
+  }
 
   public Integer getId() {
     return id;

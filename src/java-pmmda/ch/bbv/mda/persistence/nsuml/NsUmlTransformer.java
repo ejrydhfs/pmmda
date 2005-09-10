@@ -27,7 +27,6 @@ import ru.novosoft.uml.foundation.extension_mechanisms.MTaggedValue;
 import ru.novosoft.uml.model_management.MModel;
 import ru.novosoft.uml.model_management.MPackage;
 import ru.novosoft.uml.xmi.IncompleteXMIException;
-import ru.novosoft.uml.xmi.XMIReader;
 import ru.novosoft.uml.xmi.XMIWriter;
 import ch.bbv.mda.*;
 import ch.bbv.mda.generators.CartridgeFactory;
@@ -58,8 +57,6 @@ public class NsUmlTransformer {
    */
   private static Log log = LogFactory.getLog(NsUmlTransformer.class);
 
-  private MetaFactory factory;
-
   /**
    * Maps between the source objects used as keys and the target objects used as
    * values. Source objects are NSUML entities, target objects are MDA
@@ -71,7 +68,6 @@ public class NsUmlTransformer {
    * Default constructor of the class.
    */
   public NsUmlTransformer() {
-    factory = MetaFactory.getInstance();
     elements = new HashMap<Object, MetaElement>();
   }
 
@@ -168,7 +164,6 @@ public class NsUmlTransformer {
       metaPackage = new MetaPackage();
       metaPackage.setName(qualifiedName);
       context.addPackage(metaPackage);
-      factory.initialize(metaPackage);
     }
     extractStereotypeAndTags(source, metaPackage);
 
@@ -207,7 +202,6 @@ public class NsUmlTransformer {
       metaClass = new MetaClass();
       metaClass.setName(name);
       context.addClass(metaClass);
-      factory.initialize(metaClass);
     }
     elements.put(source, metaClass);
     metaClass.setAbstract(source.isAbstract());
@@ -255,9 +249,7 @@ public class NsUmlTransformer {
     if (metaNestedClass == null) {
       metaNestedClass = new MetaClass();
       metaNestedClass.setName(name);
-      factory.initialize(metaNestedClass);
       context.addClass(metaNestedClass);
-      CartridgeFactory.getInstance().initialize(context);
     }
     elements.put(source, metaNestedClass);
     metaNestedClass.setAbstract(source.isAbstract());
@@ -322,7 +314,8 @@ public class NsUmlTransformer {
           .setTypeName(NsUmlUtilities.getQualifiedName(attribute.getType()));
     } else {
       log.info("Attribute '" + attribute.getName() + "' of class '"
-          + context.getName() + "' has no type associated (set to datatype integer)");
+          + context.getName()
+          + "' has no type associated (set to datatype integer)");
       property.setTypeName("int");
     }
 
@@ -465,7 +458,7 @@ public class NsUmlTransformer {
         owner.addProperty(property);
       }
       property.setName(name);
-      if(owned != null){
+      if (owned != null) {
         property.setTypeName(owned.qualifiedName());
       }
       property.setAggregation(true);
@@ -491,8 +484,8 @@ public class NsUmlTransformer {
   }
 
   private void extractDataTypes(MModel source, MetaModel target) {
-    for (Iterator<MDataType> i = new FilterIterator<MDataType>(
-        source.getOwnedElements(), MDataType.class); i.hasNext();) {
+    for (Iterator<MDataType> i = new FilterIterator<MDataType>(source
+        .getOwnedElements(), MDataType.class); i.hasNext();) {
       MDataType mDataType = i.next();
       MetaDatatype datatype = new MetaDatatype();
       datatype.setName(mDataType.getName());

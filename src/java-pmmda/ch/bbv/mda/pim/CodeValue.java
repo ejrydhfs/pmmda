@@ -35,7 +35,7 @@ public class CodeValue implements DataObject {
    * Name of the code value. The name is used to generate identifiers for the 
    * value or to define enumeration constant.
    */
-  private String name;
+  private java.lang.String name;
 
   /**
    * The order of the value in the set of values for a code type. The sort 
@@ -47,12 +47,12 @@ public class CodeValue implements DataObject {
    * The short description of the code value. This description is often used in 
    * lists.
    */
-  private String shortDescription;
+  private java.lang.String shortDescription;
 
   /**
    * The description of the code value.
    */
-  private String description;
+  private java.lang.String description;
 
   /**
    * The identifier uniquely identifying this code values in the set of values 
@@ -64,13 +64,13 @@ public class CodeValue implements DataObject {
    * The start date of the validity of the code value. If null the code is 
    * valid from the beginning.
    */
-  private Date start;
+  private java.util.Date start;
 
   /**
    * The end date of the validity of the code value. If null the value is no 
    * end date.
    */
-  private Date end;
+  private java.util.Date end;
 
   /** 
    * Unique identifier of the data object instance distinguishing it from all
@@ -166,9 +166,9 @@ public class CodeValue implements DataObject {
   /** 
    * Returns the current value of the simple property name.
    * @return the value of the simple property name.
-   * @see #setName(String)
+   * @see #setName(java.lang.String)
    */
-  public String getName() {
+  public java.lang.String getName() {
     return name;
   }
 
@@ -177,7 +177,7 @@ public class CodeValue implements DataObject {
    * @param name new value of the property.
    * @see #getName()
    */    
-  public void setName(String name) {
+  public void setName(java.lang.String name) {
     if (((this.name != null) && !this.name.equals(name)) || 
         ((this.name == null) && (name != null)))  {    
       this.name = name;
@@ -209,9 +209,9 @@ public class CodeValue implements DataObject {
   /** 
    * Returns the current value of the simple property shortDescription.
    * @return the value of the simple property shortDescription.
-   * @see #setShortDescription(String)
+   * @see #setShortDescription(java.lang.String)
    */
-  public String getShortDescription() {
+  public java.lang.String getShortDescription() {
     return shortDescription;
   }
 
@@ -220,7 +220,7 @@ public class CodeValue implements DataObject {
    * @param shortDescription new value of the property.
    * @see #getShortDescription()
    */    
-  public void setShortDescription(String shortDescription) {
+  public void setShortDescription(java.lang.String shortDescription) {
     if (((this.shortDescription != null) && !this.shortDescription.equals(shortDescription)) || 
         ((this.shortDescription == null) && (shortDescription != null)))  {    
       this.shortDescription = shortDescription;
@@ -231,9 +231,9 @@ public class CodeValue implements DataObject {
   /** 
    * Returns the current value of the simple property description.
    * @return the value of the simple property description.
-   * @see #setDescription(String)
+   * @see #setDescription(java.lang.String)
    */
-  public String getDescription() {
+  public java.lang.String getDescription() {
     return description;
   }
 
@@ -242,7 +242,7 @@ public class CodeValue implements DataObject {
    * @param description new value of the property.
    * @see #getDescription()
    */    
-  public void setDescription(String description) {
+  public void setDescription(java.lang.String description) {
     if (((this.description != null) && !this.description.equals(description)) || 
         ((this.description == null) && (description != null)))  {    
       this.description = description;
@@ -274,9 +274,9 @@ public class CodeValue implements DataObject {
   /** 
    * Returns the current value of the simple property start.
    * @return the value of the simple property start.
-   * @see #setStart(Date)
+   * @see #setStart(java.util.Date)
    */
-  public Date getStart() {
+  public java.util.Date getStart() {
     return start;
   }
 
@@ -285,7 +285,7 @@ public class CodeValue implements DataObject {
    * @param start new value of the property.
    * @see #getStart()
    */    
-  public void setStart(Date start) {
+  public void setStart(java.util.Date start) {
     if (((this.start != null) && !this.start.equals(start)) || 
         ((this.start == null) && (start != null)))  {    
       this.start = start;
@@ -296,9 +296,9 @@ public class CodeValue implements DataObject {
   /** 
    * Returns the current value of the simple property end.
    * @return the value of the simple property end.
-   * @see #setEnd(Date)
+   * @see #setEnd(java.util.Date)
    */
-  public Date getEnd() {
+  public java.util.Date getEnd() {
     return end;
   }
 
@@ -307,7 +307,7 @@ public class CodeValue implements DataObject {
    * @param end new value of the property.
    * @see #getEnd()
    */    
-  public void setEnd(Date end) {
+  public void setEnd(java.util.Date end) {
     if (((this.end != null) && !this.end.equals(end)) || 
         ((this.end == null) && (end != null)))  {    
       this.end = end;

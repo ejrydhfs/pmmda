@@ -53,6 +53,13 @@ public class FileOperators {
     out.close();
   }
 
+  /**
+   * Checks if the two given text files have the same content or not.
+   * @param source source file to compare to.
+   * @param target target file to compare to.
+   * @return true if both files have the same content othwerwise false.
+   * @throws IOException if an IO error occured.
+   */
   public static boolean equals(File source, File target) throws IOException {
     boolean equals = false;
     if (source.exists() && target.exists()) {

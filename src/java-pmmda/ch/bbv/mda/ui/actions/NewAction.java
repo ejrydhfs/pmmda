@@ -7,8 +7,8 @@ package ch.bbv.mda.ui.actions;
 
 import ch.bbv.explorer.Explorer;
 import ch.bbv.explorer.actions.ExplorerNewAction;
-import ch.bbv.mda.MetaFactory;
 import ch.bbv.mda.MetaModel;
+import ch.bbv.mda.generators.TreeChecker;
 import ch.bbv.mda.ui.MdaDocument;
 import ch.bbv.mda.ui.MdaExplorer;
 
@@ -37,7 +37,7 @@ public class NewAction extends ExplorerNewAction {
     MdaDocument document = new MdaDocument();
     MetaModel model = document.getModel();
     model.setName("default");
-    MetaFactory.getInstance().initialize(model);
+    model.accept(new TreeChecker());
     explorer.setDocument(document);
     return true;
   }

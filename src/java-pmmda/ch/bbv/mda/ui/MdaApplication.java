@@ -93,6 +93,7 @@ public class MdaApplication extends Locator {
         new LightweightObjectHandlerImpl(), null));
     register(new Validator(Validator.NAME));
     register(new ResourcesManager(ResourcesManager.NAME));
+    register(new CartridgeFactory(CartridgeFactory.NAME, getProperties()));
     initialize();
     startup();
   }
@@ -101,7 +102,6 @@ public class MdaApplication extends Locator {
     super.initialize();
     MdaExplorer.registerNodeTypes();
     (new RulesFactory()).registerAllRules();
-    CartridgeFactory.create(getProperties());
   }
 
   public void startup() throws ComponentException {
@@ -142,6 +142,15 @@ public class MdaApplication extends Locator {
     return (Validator) locator.getComponent(Validator.NAME);
   }
 
+  /**
+   * Returns the cartridge factory of the application.
+   * @return the cartridge factory of the application.
+   */
+  public CartridgeFactory getCartridgeFactory() {
+    Locator locator = Locator.getInstance();
+    return (CartridgeFactory) locator.getComponent(CartridgeFactory.NAME);
+  }
+  
   /**
    * Returns the properties of the application.
    * @return properties of the application.
