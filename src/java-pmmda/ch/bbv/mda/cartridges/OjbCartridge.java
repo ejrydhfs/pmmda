@@ -267,12 +267,18 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
     FileOperators.closePrintWriter(ddlIntegrityWriter);
   }
 
-  public String getSizeParameter(MetaElement element, int order) {
+  /**
+   * Returns the size parameter for the element.
+   * @param element element which size parameter should be returned.
+   * @param index the index of the requested parameter.
+   * @return the requested size parameter if defined otherwise "0".
+   */
+  public String getSizeParameter(MetaElement element, int index) {
     String sizes = element.valueOfTag(COLUMN_SIZE_TAG);
     String size;
     if (sizes != null) {
       int position = sizes.indexOf(".");
-      switch (order) {
+      switch (index) {
       case 0:
         size = position != -1 ? sizes.substring(0, position) : "0";
         break;
@@ -287,7 +293,7 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
     }
     return size;
   }
-
+ 
   /**
    * Creates the context for a persistent class.
    * @param clazz clazz which persistent context should be generated.

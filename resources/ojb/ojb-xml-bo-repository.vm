@@ -207,9 +207,11 @@
 #end
 #set($subClasses=${model.findSubClasses($class)})
 #foreach($subClass in $subClasses)
-#if(${subClass.getStereotype().equalsIgnoreCase("dataObject")})
-  <extent-class class-ref="${subClass.qualifiedName()}"/>
-#end
+## commented out due to a problem with OJB 1.0.1 and 1.0.3
+###if(${subClass.getStereotype().equalsIgnoreCase("dataObject")})
+##  <extent-class class-ref="${subClass.qualifiedName()}"/>
+###end
 #end
 </class-descriptor>
+
 #end

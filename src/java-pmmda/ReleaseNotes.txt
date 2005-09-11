@@ -15,7 +15,8 @@ TODO
   classname, prefix, loaded, active, dependants
 - Have a self contained jar file running with java -jar pmMDA
 
-Version 0.3.0-RC1 (01 July 2005)
+
+Version 0.3.0-RC1 (15 September 2005)
 ------------------------------------
 The following new features were added.
 - The source code artifacts - java, idl - are only written if the new version 
@@ -24,12 +25,13 @@ The following new features were added.
 The following errors were corrected.
 - Duplicate validation rules were removed. Spurious warnings for system classes
   were removed.
-  
-The following errors and change requests are closed 
-  Errors:  
-  CR:
-  (see Sourceforge site RFE and Tracker for detailed description)
 
+The following open points are known
+- Extends in the OJB cartridge induce infinite recursion in OJB 1.0.1 and 1.0.3.
+  Currently the extends generation is disabled.
+- If foreign keys are defined the deletion of items generate a constraint 
+  violation. 
+  
 Version 0.3.0-dev (15 June 2005)
 ------------------------------------
 The following new features were added.

@@ -35,10 +35,11 @@
           <li>Download the <em>pmMDA</em> distribution. The file has a name 
             with the structure <em>pmMDA-&lt;version&gt;.tar.gz</em>. Follow 
             the download link of this site to the location of the 
-            distribution.</li>
+            distribution <a href="site:pmmda">pmMDA</a>.</li>
           <li>Extract the distribution and store the files into a directory. To 
             extract the files you can use free tools such as <em>7-zip</em> or 
-            <em>winzip</em>.</li>
+            <em>winzip</em>. No need to modify startup scripts or set environment
+            variables.</li>
           <li>In the directory where you stored the file you will find a batch 
             file to start the application. Simply execute the 
             <em>pmMDA.bat</em> batch file by double clicking it under 

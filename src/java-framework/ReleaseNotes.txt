@@ -1,3 +1,8 @@
+Version 0.2.2-RC1 (15 September 2005)
+-----------------------------------
+The following new features were added.
+- apply button in the properties dialog.
+
 Version 0.2.2-dev (15 June 2005)
 -----------------------------------
 The following new features were added.

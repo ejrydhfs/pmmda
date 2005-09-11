@@ -49,8 +49,10 @@ class HandlerPolicyOjb {
    * @param clazz class of the requested object.
    * @param id identifier of the requested object.
    * @return the requested object if found otherwise false.
+   * @pre (database != null) && (clazz != null) && (id != null)
    */
   Object retrieve(Database database, Class clazz, Integer id) {
+    assert (database != null) && (clazz != null) && (id != null);
     Object object = null;
     String query = createRetrieveQuery(clazz, id, null);
     List<Object> objects = retrieve(database, query);
@@ -67,8 +69,10 @@ class HandlerPolicyOjb {
    * @param clazz class of the requested objects.
    * @param constraints constraints for the requested objects.
    * @return the list of objects fulfilling the constraints.
+   * @pre (database != null) && (clazz != null)
    */
   List<Object> retrieve(Database database, Class clazz, String constraints) {
+    assert (database != null) && (clazz != null);
     String query = createRetrieveQuery(clazz, null, constraints);
     return retrieve(database, query);
   }
@@ -162,8 +166,10 @@ class HandlerPolicyOjb {
    * transaction.
    * @param tx transaction context which cache should be cleared.
    * @param objects objects to flush from the cache.
+   * @pre (tx != null) && (objects != null)
    */
   protected final void flushCache(Transaction tx, List<DataObject> objects) {
+    assert (tx != null) && (objects != null);
     PersistenceBroker broker = getBroker(tx);
     for (DataObject object : objects) {
       broker.removeFromCache(object);
@@ -176,8 +182,10 @@ class HandlerPolicyOjb {
    * the database.
    * @param tx transaction context which cache should be cleared.
    * @param objects objects to cache in the broker's cache.
+   * @pre (tx != null) && (objects != null)
    */
   protected final void cache(Transaction tx, List<DataObject> objects) {
+    assert (tx != null) && (objects != null);
     PersistenceBroker broker = getBroker(tx);
     ObjectCache cache = broker.serviceObjectCache();
     for (DataObject object : objects) {
@@ -192,22 +200,23 @@ class HandlerPolicyOjb {
    * @param database database containing the requested objects.
    * @param queryString the OQL query string used to retrieve the elements.
    * @return the list of objects respecting the search criteria.
+   * @pre database != null
    */
-  protected List retrieve(Database database, String queryString) {
+  protected List<Object> retrieve(Database database, String queryString) {
+    assert database != null;
     Transaction tx = databaseMgr.createTransaction(database);
-    List<DataObject> items = null;
+    List<Object> items = null;
     try {
       tx.begin();
-
       OQLQuery query = databaseMgr.createOQLQuery(database);
       query.create(queryString);
-      items = (DList) query.execute();
+      items = (List<Object>) query.execute();
       tx.commit();
-    } catch (QueryInvalidException qie) {
-      log.error(qie);
+    } catch (QueryInvalidException e) {
+      log.error(e);
       tx.abort();
-    } catch (QueryException qe) {
-      log.error(qe);
+    } catch (QueryException e) {
+      log.error(e);
       tx.abort();
     }
     return items;
@@ -217,8 +226,10 @@ class HandlerPolicyOjb {
    * Returns the broker associated with the transaction.
    * @param tx transaction which broker is requested.
    * @return the requested broker.
+   * @pre tx != null
    */
   protected final PersistenceBroker getBroker(Transaction tx) {
+    assert tx != null;
     return ((HasBroker) tx).getBroker();
   }
 

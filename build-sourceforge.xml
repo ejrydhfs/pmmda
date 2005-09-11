@@ -76,11 +76,14 @@
     <copy file="${lib.dir}/${commons-cli.lib}" todir="${pmmda-lib.dir}" />
     <copy file="${lib.dir}/${commons-collections.lib}"
           todir="${pmmda-lib.dir}" />
+    <copy file="${lib.dir}/${commons-configuration.lib}" todir="${pmmda-lib.dir}" />
+    <copy file="${lib.dir}/${commons-lang.lib}" todir="${pmmda-lib.dir}" />
     <copy file="${lib.dir}/${commons-logging.lib}" todir="${pmmda-lib.dir}" />
     <copy file="${lib.dir}/${commons-logging-api.lib}"
           todir="${pmmda-lib.dir}" />
     <copy file="${lib.dir}/${forms.lib}" todir="${pmmda-lib.dir}" />
     <copy file="${lib.dir}/${glazedlists.lib}" todir="${pmmda-lib.dir}" />
+    <copy file="${lib.dir}/${jgraph.lib}" todir="${pmmda-lib.dir}" />
     <copy file="${lib.dir}/${nsuml.lib}" todir="${pmmda-lib.dir}" />
     <copy file="${lib.dir}/${velocity.lib}" todir="${pmmda-lib.dir}" />
     <copy file="${lib.dir}/${velocity-dep.lib}" todir="${pmmda-lib.dir}" />
