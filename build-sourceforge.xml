@@ -84,6 +84,7 @@
     <copy file="${lib.dir}/${forms.lib}" todir="${pmmda-lib.dir}" />
     <copy file="${lib.dir}/${glazedlists.lib}" todir="${pmmda-lib.dir}" />
     <copy file="${lib.dir}/${jgraph.lib}" todir="${pmmda-lib.dir}" />
+    <copy file="${lib.dir}/${jgraphaddons.lib}" todir="${pmmda-lib.dir}" />
     <copy file="${lib.dir}/${nsuml.lib}" todir="${pmmda-lib.dir}" />
     <copy file="${lib.dir}/${velocity.lib}" todir="${pmmda-lib.dir}" />
     <copy file="${lib.dir}/${velocity-dep.lib}" todir="${pmmda-lib.dir}" />
