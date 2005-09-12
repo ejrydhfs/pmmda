@@ -15,6 +15,14 @@ import ch.bbv.mda.generators.Cartridge;
 import ch.bbv.mda.generators.CartridgeFactory;
 import ch.bbv.mda.operators.ModelOperators;
 
+/**
+ * The resouce manager provides a facade to access the resources defined for
+ * each registered cartridge. The resource files are identified through a naming
+ * conventions <code> cartridge-prefix "UiMessages"</code> and have the file
+ * extension properties.
+ * @author MarcelBaumann
+ * @version $Revision$
+ */
 public class ResourcesManager extends ComponentImpl implements Component {
   /**
    * Name of the component to find it through the locator service.

@@ -5,6 +5,14 @@
  */
 package ch.bbv.mda.cartridges;
 
+/**
+ * The constant class defines the public constant declarations of the cartridge.
+ * The stereotypes, tags, attributes and artifact markers are made available.
+ * The keys of the properties available to the cartridge are also made
+ * available.
+ * @author MarcelBaumann
+ * @version $Revision$
+ */
 public final class EjbConstants {
   /**
    * Key for a property of the cartridge used to retrieve user values.

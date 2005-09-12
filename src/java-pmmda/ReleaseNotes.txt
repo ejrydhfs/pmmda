@@ -21,10 +21,17 @@ Version 0.3.0-RC1 (15 September 2005)
 The following new features were added.
 - The source code artifacts - java, idl - are only written if the new version 
   is different from the old artifact.
+- An initial version of the initialization mechanism was added.  
 
 The following errors were corrected.
 - Duplicate validation rules were removed. Spurious warnings for system classes
-  were removed.
+  were removed. The refactoring is based on the validation and initialization
+  mechanisms.
+
+The following errors and change requests are closed 
+  Errors: 1211832, 1222392, 1224270, 1229535, 1237425
+  CR: 1222410
+  (see Sourceforge site RFE and Tracker for detailed description)
 
 The following open points are known
 - Extends in the OJB cartridge induce infinite recursion in OJB 1.0.1 and 1.0.3.

@@ -7,6 +7,11 @@ package ch.bbv.explorer;
 
 import java.io.File;
 
+/**
+ * The interface defines the contract of any document loaded in an explorer.
+ * @author MarcelBaumann
+ * @version $Revision$
+ */
 public interface ExplorerDocument {
   /**
    * Defines the states a document can have.

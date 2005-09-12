@@ -160,8 +160,8 @@ public class MdaApplication extends Locator {
   }
 
   /**
-   * Returns the explorer associated with pmMDA
-   * @return Explorer
+   * Returns the explorer associated with pmMDA.
+   * @return the explorer of the application.
    */
   public Explorer getExplorer() {
     return explorer;
