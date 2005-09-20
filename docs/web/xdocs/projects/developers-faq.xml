@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   Copyright 2000-2005 The Apache Software Foundation
-
+  
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-
-      http://www.apache.org/licenses/LICENSE-2.0
-
+  
+  http://www.apache.org/licenses/LICENSE-2.0
+  
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,50 +19,78 @@
 ]>
 <faqs title="Developers Frequently Asked Questions">
   <part id="Installing">
-    <title>Installing <em>pmMDA</em> Project</title>
+    <title>
+      Installing
+      <em>pmMDA</em>
+      Project
+    </title>
     <faq id="components">
       <question>Which components do I need to develop on the project</question>
       <answer>
-        <p>The development environment to work on the project requires the 
-          following components.</p>
+        <p>
+          The development environment to work on the project requires the
+          following components.
+        </p>
         <ul>
-          <li>A complete Java development environment - we recommend to install 
-            Sun JDK 1.4 and JDK 1.5 -. Compatibility to other Java 
-            environments, e.g. IBM Jikes are not tested.</li>
-          <li>The Eclipse IDE - the actual project files are defined for 
-            versions 3.x -. Eclipse application can be downloaded from 
-            <code>www.eclipse.org</code>. The Eclipse project files are checked 
-            in the CVS repository.</li>
-          <li>If you want to generate the web based documentation you need 
-            forrest. Forrest can be downloaded from 
-            <code>forrest.apache.org</code></li>
-          <li>If you want to extend the web based documentation you need an XML 
-            editor for the forrest files and open office for the white papers. 
-            Open office can be downloaded from 
-            <code>www.openoffice.org</code></li>
+          <li>
+            A complete Java development environment - we recommend to install
+            Sun JDK 1.4 and JDK 1.5 -. Compatibility to other Java environments,
+            e.g. IBM Jikes are not tested.
+          </li>
+          <li>
+            The Eclipse IDE - the actual project files are defined for versions
+            3.x -. Eclipse application can be downloaded from
+            <code>www.eclipse.org</code>
+            . The Eclipse project files are checked in the CVS repository.
+          </li>
+          <li>
+            If you want to generate the web based documentation you need
+            forrest. Forrest can be downloaded from
+            <code>forrest.apache.org</code>
+          </li>
+          <li>
+            If you want to extend the web based documentation you need an XML
+            editor for the forrest files and open office for the white papers.
+            Open office can be downloaded from
+            <code>www.openoffice.org</code>
+          </li>
         </ul>
       </answer>
     </faq>
-    <faq id= "installation">
-      <question>How do I install the <em>pmMDA</em> project?</question>
+    <faq id="installation">
+      <question>
+        How do I install the
+        <em>pmMDA</em>
+        project?
+      </question>
       <answer>
-        <p>We assume you have a basic knowledge of Eclipse and CVS. If not 
-          please consult a tutorial about these themes. Very good books and 
-          online tutorials can be found about <em>Eclipse</em>. The web site of 
-          Eclipse is <code>www.eclipse.org</code></p>
-        <p>The CVS repository of <em>pmMDA</em> on sourceforge already contains 
-          all the files defining an Eclipse project. You must only define a new 
-          CVS repository in the CVS view of Eclipse. The parameters for a 
-          read-only configuration are</p>
+        <p>
+          We assume you have a basic knowledge of Eclipse and CVS. If not please
+          consult a tutorial about these themes. Very good books and online
+          tutorials can be found about
+          <em>Eclipse</em>
+          . The web site of Eclipse is
+          <code>www.eclipse.org</code>
+        </p>
+        <p>
+          The CVS repository of
+          <em>pmMDA</em>
+          on sourceforge already contains all the files defining an Eclipse
+          project. You must only define a new CVS repository in the CVS view of
+          Eclipse. The parameters for a read-only configuration are
+        </p>
         <dl>
           <dt>Host</dt>
           <dd>cvs.sourceforge.net</dd>
           <dt>Repository</dt>
-          <dd>/pmmda</dd>
+          <dd>/cvsroot/pmmda</dd>
           <dt>User</dt>
           <dd>anonymous</dd>
           <dt>Password</dt>
-          <dd>empty</dd>
+          <dd>
+            There is no password for anonymous CVS access (just hit the enter
+            key when prompted for one).
+          </dd>
           <dt>Connection type</dt>
           <dd>pserver</dd>
           <dt>Use Default Port</dt>
@@ -73,155 +101,250 @@
     <faq>
       <question>Where do I find the used libraries (jar files)?</question>
       <answer>
-        <p>All librairies used in the projects can be donwloaded as a zip file 
-          from the sourceforge project home page. The project team uses the 
-          convention that no binary files should be stored in the version 
-          management system. Therefore the jar files cannot be found in the 
-          repository. A list of all used libraries with their version number is 
-          available as a text file in the test lib directory and also in the 
-          project documentation.</p>
+        <p>
+          All librairies used in the projects can be donwloaded as a zip file
+          from the sourceforge project home page. The project team uses the
+          convention that no binary files should be stored in the version
+          management system. Therefore the jar files cannot be found in the
+          repository. A list of all used libraries with their version number is
+          available as a text file in the test lib directory and also in the
+          project documentation.
+        </p>
       </answer>
     </faq>
     <faq>
-      <question>Why is it called <em>pmMDA</em>?</question>
+      <question>
+        Why is it called
+        <em>pmMDA</em>
+        ?
+      </question>
       <answer>
-        <p>The <em>pmMDA</em> stays for <em>p</em>oor <em>m</em>an 
-          <em>M</em>odel <em>D</em>riven <em>A</em>rchitecture. It emphazises 
-          the goal of the project to provide a pragmantic solution to implement 
-          MDA approach in concrete project.</p>
+        <p>
+          The
+          <em>pmMDA</em>
+          stays for
+          <em>p</em>
+          oor
+          <em>m</em>
+          an
+          <em>M</em>
+          odel
+          <em>D</em>
+          riven
+          <em>A</em>
+          rchitecture. It emphazises the goal of the project to provide a
+          pragmantic solution to implement MDA approach in concrete project.
+        </p>
       </answer>
     </faq>
   </part>
   <part id="configuring">
-    <title>Configuring <em>Eclipse 3.x</em> IDE</title>
+    <title>
+      Configuring
+      <em>Eclipse 3.x</em>
+      IDE
+    </title>
     <faq>
-      <question>Do I need to configure environment variables for <em>pmMDA</em> 
-        project?</question>
+      <question>
+        Do I need to configure environment variables for
+        <em>pmMDA</em>
+        project?
+      </question>
       <answer>
-        <p>Yes. As discribed in the developer's installation guide you must 
-          configure a set of JDK and variables. This approach is the 
-          recommended way to define portable projects under Eclipse.</p>
+        <p>
+          Yes. As discribed in the developer's installation guide you must
+          configure a set of JDK and variables. This approach is the recommended
+          way to define portable projects under Eclipse.
+        </p>
         <dl>
           <dt>jdk1.4</dt>
-          <dd>Defines the root directory to your JDK 1.4. Java development or 
-            runtime kits are defined under 
-            <em>Windows/Preferences/Java/Installed JRE</em>.</dd>
+          <dd>
+            Defines the root directory to your JDK 1.4. Java development or
+            runtime kits are defined under
+            <em>Windows/Preferences/Java/Installed JRE</em>
+            .
+          </dd>
           <dt>jdk1.5</dt>
-          <dd>Defines the root directory to your JDK 5.0. Java development or 
-            runtime kits are defined under 
-            <em>Windows/Preferences/Java/Installed JRE</em>.</dd>
+          <dd>
+            Defines the root directory to your JDK 5.0. Java development or
+            runtime kits are defined under
+            <em>Windows/Preferences/Java/Installed JRE</em>
+            .
+          </dd>
           <dt>JDK_TOOLS</dt>
-          <dd>Defines the tools.jar file in the the JDK 5.0 directory in the 
-            lib directory. Variables can be defined in 
-            <em>Windows/Preferences/Java/Build Path/Classpath Variables</em> 
-            menu. Consult the JDK documentation for the purpose and content of 
-            the <code>tools.jar</code></dd>
+          <dd>
+            Defines the tools.jar file in the the JDK 5.0 directory in the lib
+            directory. Variables can be defined in
+            <em>Windows/Preferences/Java/Build Path/Classpath Variables</em>
+            menu. Consult the JDK documentation for the purpose and content of
+            the
+            <code>tools.jar</code>
+          </dd>
         </dl>
       </answer>
     </faq>
     <faq>
       <question>Which Eclipse plugin do you use in the project?</question>
       <answer>
-        <p>Modern IDE simplify a lot the development activities. We recommend 
-          using such environments and plugins to augment the efficiency of 
-          developers. A fundamental rule in our project is that all artifacts 
-          generated with the help of interactive tools can also be generated 
-          with command line tools. This approach guarantees batch generation of 
-          the deliverables and are the conerstome of a continuous deployment 
-          process such as nightly builds.</p>
-        <p>The project uses the <em>Eclipse</em> environment as development 
-          platform for all artifacts. The following features are configured.</p>
+        <p>
+          Modern IDE simplify a lot the development activities. We recommend
+          using such environments and plugins to augment the efficiency of
+          developers. A fundamental rule in our project is that all artifacts
+          generated with the help of interactive tools can also be generated
+          with command line tools. This approach guarantees batch generation of
+          the deliverables and are the conerstome of a continuous deployment
+          process such as nightly builds.
+        </p>
+        <p>
+          The project uses the
+          <em>Eclipse</em>
+          environment as development platform for all artifacts. The following
+          features are configured.
+        </p>
         <dl>
           <dt>JDT</dt>
-          <dd>Java development environment for all Java related source code 
-            development.</dd>
+          <dd>
+            Java development environment for all Java related source code
+            development.
+          </dd>
           <dt>CDT</dt>
-          <dd>C/C++ development environment for all C++ related source code 
-            development.</dd>
+          <dd>
+            C/C++ development environment for all C++ related source code
+            development.
+          </dd>
           <dt>CVS</dt>
-          <dd>The integrated CVS client is used to communicate with the version 
-            management system CVS. The check-in uses the SSH2 mode to 
-            authenticate the comitters. The read access uses anonymous 
-            login.</dd>
+          <dd>
+            The integrated CVS client is used to communicate with the version
+            management system CVS. The check-in uses the SSH2 mode to
+            authenticate the comitters. The read access uses anonymous login.
+          </dd>
           <dt>JUnit</dt>
-          <dd>The integrated JUnit test client is used to create all units 
-            tests.</dd>
+          <dd>
+            The integrated JUnit test client is used to create all units tests.
+          </dd>
           <dt>Veloeclipse</dt>
           <dd>The velocity plugin is used to edit all Velocity plugin</dd>
           <dt>XML Buddy</dt>
-          <dd>The velocity plugin is used to edit XML files part of the home 
-            page of the project. The home page is generated using forest.</dd>
+          <dd>
+            The velocity plugin is used to edit XML files part of the home page
+            of the project. The home page is generated using forest.
+          </dd>
           <dt>PMD</dt>
           <dd>The PMD plugin is used to generate quality code metrics.</dd>
           <dt>JDepend</dt>
           <dd>The PMD plugin is used to generate quality code metrics.</dd>
           <dt>FindBugs</dt>
-          <dd>The Find Bugs plugin is used to generate quality code 
-            metrics.</dd>
+          <dd>
+            The Find Bugs plugin is used to generate quality code metrics.
+          </dd>
         </dl>
       </answer>
     </faq>
   </part>
   <part id="building">
-    <title>Building <em>pmMDA</em> Project</title>
+    <title>
+      Building
+      <em>pmMDA</em>
+      Project
+    </title>
     <faq>
       <question>A compile error TOOLS not found is displayed?</question>
-      <answer><p>You must define the <code>JDK_TOOLS</code> variable in eclipse 
-        environment. See the FAQ entry about variable configuration.</p></answer>
+      <answer>
+        <p>
+          You must define the
+          <code>JDK_TOOLS</code>
+          variable in eclipse environment. See the FAQ entry about variable
+          configuration.
+        </p>
+      </answer>
     </faq>
   </part>
   <part>
-    <title>Developing <em>pmMDA</em> Cartridges</title>
+    <title>
+      Developing
+      <em>pmMDA</em>
+      Cartridges
+    </title>
     <faq>
-      <question>Do I need to have a pmMDA project to develop new 
-        cartridges?</question>
+      <question>
+        Do I need to have a pmMDA project to develop new cartridges?
+      </question>
       <answer>
-        <p>No. You could develop your cartridges without the <em>pmMDA</em> 
-          project set up. You only need the <em>pmMDA</em> libraries. Using 
-          Eclipse you can debug and test your cartridge before releasing it. 
-          The <em>pmMDA</em> has a plugin mechanism for cartridge and no 
-          recompile is necessary to support new catridges.</p>
-        <p>You only need to set up the project if you want to debug the 
-          <em>pmMDA</em> kernel functions. For example if you are a developer 
-          of the project or want to understand the internals of the 
-          <em>pmMDA</em>.</p>
+        <p>
+          No. You could develop your cartridges without the
+          <em>pmMDA</em>
+          project set up. You only need the
+          <em>pmMDA</em>
+          libraries. Using Eclipse you can debug and test your cartridge before
+          releasing it. The
+          <em>pmMDA</em>
+          has a plugin mechanism for cartridge and no recompile is necessary to
+          support new catridges.
+        </p>
+        <p>
+          You only need to set up the project if you want to debug the
+          <em>pmMDA</em>
+          kernel functions. For example if you are a developer of the project or
+          want to understand the internals of the
+          <em>pmMDA</em>
+          .
+        </p>
       </answer>
     </faq>
     <faq>
       <question>Which programming environments are supported?</question>
       <answer>
-        <p>Cartridges can generate artifacts for any programming environments. 
-          We know that users developped cartridges for Java - J2SE &amp; J2EE 
-          -, C/C++, .NET, SQL, etc. The <em>pmMDA</em> application is written 
-          in pure Java to ensure the program can be run under various operation 
-          systems. The <em>pmMDA</em> group thinks this advantage is very 
-          important and will only provide support for cartridges written in 
-          Java.</p>
-          <p>But feel free to port the <em>pmMDA</em> to other development 
-            environments. Let us know about and we will put a link to your 
-            project on our site.</p>
+        <p>
+          Cartridges can generate artifacts for any programming environments. We
+          know that users developped cartridges for Java - J2SE &amp; J2EE -,
+          C/C++, .NET, SQL, etc. The
+          <em>pmMDA</em>
+          application is written in pure Java to ensure the program can be run
+          under various operation systems. The
+          <em>pmMDA</em>
+          group thinks this advantage is very important and will only provide
+          support for cartridges written in Java.
+        </p>
+        <p>
+          But feel free to port the
+          <em>pmMDA</em>
+          to other development environments. Let us know about and we will put a
+          link to your project on our site.
+        </p>
       </answer>
     </faq>
     <faq>
       <question>How can I find out which ant target are available?</question>
       <answer>
-        <p>Execute Ant with <code>ant -p</code> to see a description of the 
-          available targets. For more details consult the Ant documentation.</p>
-        <p>Please remember that development of the <em>pmMDA</em> core is 
-          supported through the Eclispe projects. The Ant targets are provided 
-          to generate the distribution and the test cases.</p>
+        <p>
+          Execute Ant with
+          <code>ant -p</code>
+          to see a description of the available targets. For more details
+          consult the Ant documentation.
+        </p>
+        <p>
+          Please remember that development of the
+          <em>pmMDA</em>
+          core is supported through the Eclispe projects. The Ant targets are
+          provided to generate the distribution and the test cases.
+        </p>
       </answer>
     </faq>
     <faq>
-      <question>How can I run the documentation target within the ant goal 
-        without errors?</question>
+      <question>
+        How can I run the documentation target within the ant goal without
+        errors?
+      </question>
       <answer>
-        <p>You need first to install the official forrest release version 0.6 
-          available under <link href="ext:forrest">forrest</link>. Second you 
-          must add the validator library to your ant libraries in the lib 
-          directory. The validator library 
-          <code>xml-commons-resolver.jar</code> is part of the forrest 
-          distribution.</p>
+        <p>
+          You need first to install the official forrest release version 0.6
+          available under
+          <link href="ext:forrest">forrest</link>
+          . Second you must add the validator library to your ant libraries in
+          the lib directory. The validator library
+          <code>xml-commons-resolver.jar</code>
+          is part of the forrest distribution.
+        </p>
       </answer>
     </faq>
   </part>
