@@ -54,31 +54,6 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
   public static final String PREFIX = "ojb";
 
   /**
-   * Database identifier for a database product.
-   */
-  public static final String DB_MYSQL = "MySQL";
-
-  /**
-   * Database identifier for a database product.
-   */
-  public static final String DB_DB2 = "DB2";
-
-  /**
-   * Database identifier for a database product.
-   */
-  public static final String DB_HSQL = "HSQL";
-
-  /**
-   * Database identifier for a database product.
-   */
-  public static final String DB_POSTGRES = "POSTGRES";
-
-  /**
-   * Database identifier for a database product.
-   */
-  public static final String DB_TORQUE = "TORQUE";
-
-  /**
    * Logger of all instance of the class.
    */
   private static Log log = LogFactory.getLog(OjbCartridge.class);
@@ -121,6 +96,7 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
     addCartridge(factory.getCartridge(BoCartridge.PREFIX));
     addUndefinedProperty(properties, SOURCE_ROOT_FOLDER_KEY, "");
     addUndefinedProperty(properties, GENERATE_FK_INDEX_KEY, "false");
+    addUndefinedProperty(properties, GENERATE_CONSTRAINTS_KEY, "false");
     addUndefinedProperty(properties, INHERITANCE_KEY, "expand");
     addUndefinedProperty(properties, DATABASE_KEY, "MySQL");
     addUndefinedProperty(properties, TABLE_PREFIX_KEY, "");
@@ -129,7 +105,8 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
     addUndefinedProperty(properties, COLUMN_POSTFIX_KEY, "");
     TaggedValuesView.registerReferenceCode(JdbcTypeCode.class, JdbcTypeCode
         .getCodes(), false);
-    factory.getItemFactory().registerListener(TaggedValue.class, new OjbTagListener());
+    factory.getItemFactory().registerListener(TaggedValue.class,
+        new OjbTagListener());
   }
 
   public List<TagDefinition> getTaggedValueTypes(Class clazz) {
@@ -293,7 +270,7 @@ public class OjbCartridge extends CartridgeImpl implements Cartridge {
     }
     return size;
   }
- 
+
   /**
    * Creates the context for a persistent class.
    * @param clazz clazz which persistent context should be generated.

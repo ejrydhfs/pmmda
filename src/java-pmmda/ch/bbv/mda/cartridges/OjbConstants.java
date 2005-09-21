@@ -35,6 +35,11 @@ public final class OjbConstants {
   public static final String GENERATE_FK_INDEX_KEY = "ojb-cartridge.generate-fk-index";
 
   /**
+   * Key for a property of the cartridge used to retrieve user values.
+   */
+  public static final String GENERATE_CONSTRAINTS_KEY = "ojb-cartridge.generate-constraints";
+
+  /**
    * Key for a property of the cartridge defining the inheritance mode.
    */
   public static final String INHERITANCE_KEY = "ojb-cartridge.inheritance";
@@ -117,4 +122,28 @@ public final class OjbConstants {
    */
   public static final String COLUMN_NAME = COLUMN_NAME_TAG;
 
+  /**
+   * Database identifier for a database product.
+   */
+  public static final String DB_MYSQL = "MySQL";
+
+  /**
+   * Database identifier for a database product.
+   */
+  public static final String DB_DB2 = "DB2";
+
+  /**
+   * Database identifier for a database product.
+   */
+  public static final String DB_HSQL = "HSQL";
+
+  /**
+   * Database identifier for a database product.
+   */
+  public static final String DB_POSTGRES = "POSTGRES";
+
+  /**
+   * Database identifier for a database product.
+   */
+  public static final String DB_TORQUE = "TORQUE";
 }
