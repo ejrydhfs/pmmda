@@ -19,11 +19,7 @@
 ]>
 <faqs title="Developers Frequently Asked Questions">
   <part id="Installing">
-    <title>
-      Installing
-      <em>pmMDA</em>
-      Project
-    </title>
+    <title>Installing pmMDA Project</title>
     <faq id="components">
       <question>Which components do I need to develop on the project</question>
       <answer>
@@ -58,11 +54,7 @@
       </answer>
     </faq>
     <faq id="installation">
-      <question>
-        How do I install the
-        <em>pmMDA</em>
-        project?
-      </question>
+      <question>How do I install the pmMDA project?</question>
       <answer>
         <p>
           We assume you have a basic knowledge of Eclipse and CVS. If not please
@@ -73,11 +65,10 @@
           <code>www.eclipse.org</code>
         </p>
         <p>
-          The CVS repository of
-          <em>pmMDA</em>
-          on sourceforge already contains all the files defining an Eclipse
-          project. You must only define a new CVS repository in the CVS view of
-          Eclipse. The parameters for a read-only configuration are
+          The CVS repository of pmMDA on sourceforge already contains all the
+          files defining an Eclipse project. You must only define a new CVS
+          repository in the CVS view of Eclipse. The parameters for a read-only
+          configuration are
         </p>
         <dl>
           <dt>Host</dt>
@@ -96,6 +87,12 @@
           <dt>Use Default Port</dt>
           <dd>true</dd>
         </dl>
+        <p>
+          The project structure contains empty directories where generated
+          artifacts are stored. You should configure CVS so that empty
+          directories are downloaded otherwise you must create them by hand. You
+          set the option in Eclipse in Windows->Preferences->Team->CVS by
+          disabling the option "Prune empty directories".
       </answer>
     </faq>
     <faq>
