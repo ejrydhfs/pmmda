@@ -1,100 +1,118 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   Copyright 2000-2005 The Apache Software Foundation
-
+  
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-
-      http://www.apache.org/licenses/LICENSE-2.0
-
+  
+  http://www.apache.org/licenses/LICENSE-2.0
+  
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<site label="pmMDA" href="" xmlns="http://apache.org/forrest/linkmap/1.0" tab="">
+<site label="pmMDA" href="" xmlns="http://apache.org/forrest/linkmap/1.0"
+  tab="">
   <about label="About">
-    <home label="Home" href="index.html" description="Home Page"/>
-    <news label="News" href="news.html" description="Site News"/>
-    <license label="License" href="license.html" description="Apache License"/>
-    <downloads label="Downloads" href="downloads.html" description="Downloads"/>
-    <support label="Support" href="support.html" description="Support"/>
+    <home label="Home" href="index.html" description="Home Page" />
+    <news label="News" href="news.html" description="Site News" />
+    <license label="License" href="license.html" description="Apache License" />
+    <downloads label="Downloads" href="downloads.html" description="Downloads" />
+    <support label="Support" href="support.html" description="Support" />
   </about>
 
   <project label="Projects" href="projects/" tab="projects">
     <pmmda label="pmMDA" href="pmmda/" description="pmMDA - poor man MDA -">
-	   <overview label="Overview" href="index.html" description="Overview"/>
-	   <status label="Status" href="status.html" description="Status and News"/>
-	   <download label="Download" href="http://www.sourceforge.net/projects/pmmda"/>
-	   <user-manual label="User Manual" href="user-manual.html" description="User Manual"/>
-	   <documentation label="Documentation" href="documentation.html" description="Documentation"/>
-	   <javadoc label="JavaDoc" href="../../api/index.html" description="JavaDoc"/>
-	   <tutorial label="Tutorials" href="tutorial.html" description="Tutorials"/>
-	   <release-tests label="Release Tests" href="release-tests.html" description="Release Tests"/>
-	 </pmmda>
+      <overview label="Overview" href="index.html" description="Overview" />
+      <status label="Status" href="status.html" description="Status and News" />
+      <download label="Download"
+        href="http://www.sourceforge.net/projects/pmmda" />
+      <user-manual label="User Manual" href="user-manual.html"
+        description="User Manual" />
+      <documentation label="Documentation" href="documentation.html"
+        description="Documentation" />
+      <javadoc label="JavaDoc" href="../../api/index.html"
+        description="JavaDoc" />
+      <tutorial label="Tutorials" href="tutorial.html" description="Tutorials" />
+      <release-tests label="Release Tests" href="release-tests.html"
+        description="Release Tests" />
+    </pmmda>
     <dog label="DOG" href="dog/" description="dog - Data Object Graphs -">
-	   <overview label="Overview" href="index.html" description="Overview"/>
-	   <status label="Status" href="status.html" description="Status and News"/>
-	   <download label="Download" href="http://www.sourceforge.net/projects/pmmda"/>
-	   <documentation label="Documentation" href="documentation.html" description="Documentation"/>
-	   <javadoc label="JavaDoc" href="../../api/index.html" description="JavaDoc"/>
-	   <tutorial label="Tutorials" href="tutorial.html" description="Tutorials"/>
-	   <experiences label="Experiences" href="dog-experiences.html" description="Experiences"/>
-	 </dog>
-	 <development label="Development" description="Projects Development">
-		<contributing label="Contributing" href="contributing.html" description="Contributing"/>
-		<dev-faq label="Developer's FAQ" href="developers-faq.html" description="Developers-FAQ"/>
-	 </development>
+      <overview label="Overview" href="index.html" description="Overview" />
+      <status label="Status" href="status.html" description="Status and News" />
+      <download label="Download"
+        href="http://www.sourceforge.net/projects/pmmda" />
+      <documentation label="Documentation" href="documentation.html"
+        description="Documentation" />
+      <javadoc label="JavaDoc" href="../../api/index.html"
+        description="JavaDoc" />
+      <tutorial label="Tutorials" href="tutorial.html" description="Tutorials" />
+      <experiences label="Experiences" href="dog-experiences.html"
+        description="Experiences" />
+    </dog>
+    <development label="Development" description="Projects Development">
+      <contributing label="Contributing" href="contributing.html"
+        description="Contributing" />
+      <dev-faq label="Developer's FAQ" href="developers-faq.html"
+        description="Developers-FAQ" />
+    </development>
   </project>
-  
-  <articles label="Articles" href="articles/" description="Articles" tab="articles">
-	<pmda-design label="pmMDA Design" href="pmMDA/pmMDA.html" description="pmMDA Design"/>
-	<pmda-ui label="pmMDA UI" href="pmMDA/pmMDA-UI.html" description="pmMDA User Interface"/>
-	
-    <dog-design label="DOG Design" href="data-objects/dog-graphs.html" description="DOG Design"/>
-    <dog-transactions label="DOG Transactions" href="data-objects/dog-transactions.html" description="DOG Transactions"/>
 
-    <oex-design label="OEX Design" href="explorer/explorer.html" description="DOG Explorer Design"/>
+  <articles label="Articles" href="articles/" description="Articles"
+    tab="articles">
+    <pmda-design label="pmMDA Design" href="pmMDA/pmMDA.html"
+      description="pmMDA Design" />
+    <pmda-ui label="pmMDA UI" href="pmMDA/pmMDA-UI.html"
+      description="pmMDA User Interface" />
+
+    <dog-design label="DOG Design" href="data-objects/dog-graphs.html"
+      description="DOG Design" />
+    <dog-transactions label="DOG Transactions"
+      href="data-objects/dog-transactions.html" description="DOG Transactions" />
+
+    <oex-design label="OEX Design" href="explorer/explorer.html"
+      description="DOG Explorer Design" />
   </articles>
-  
-<!--  
-  <all label="All">
-     <all_site label="Whole Site HTML" href="wholesite.html"/>
-     <all_sitePDF label="Whole Site PDF" href="wholesite.pdf"/>
-  </all>
--->
-    
+
+  <!--  
+    <all label="All">
+    <all_site label="Whole Site HTML" href="wholesite.html"/>
+    <all_sitePDF label="Whole Site PDF" href="wholesite.pdf"/>
+    </all>
+  -->
+
   <external-refs>
     <api href="api/">
-      <javadoc href="index.html"/>
+      <javadoc href="index.html" />
     </api>
     <metrics href="metrics/">
-      <doccheck href="index.html"/>
-      <javancss href="javancss-report.html"/>
-      <jdepend href="jdepend-report.html"/>
-      <pmd href="pmd-report.html"/>
-	</metrics>    
-	<pmmda href="http://www.sourceforge.net/projects/pmmda">
-	  <binary-download href=""/>
-	  <source-download href=""/>
-	  <project-site href=""/>
-	</pmmda>
+      <doccheck href="index.html" />
+      <javancss href="javancss-report.html" />
+      <jdepend href="jdepend-report.html" />
+      <pmd href="pmd-report.html" />
+    </metrics>
+    <pmmda href="http://www.sourceforge.net/projects/pmmda">
+      <binary-download href="" />
+      <source-download href="" />
+      <project-site href="" />
+    </pmmda>
     <jakarta href="http://jakarta.apache.org/">
-      <commons href="commons/"/>
-      <commons-beanutils href="commons/beanutils/"/>
-      <commons-cli href="commons/cli/"/>
-      <commons-collections href="commons/collections/"/>
-      <commons-dbcp href="commons/dbcp/"/>
-      <commons-digester href="commons/digester/"/>
-      <commons-lang href="commons/lang/"/>
-      <commons-logging href="commons/logging/"/>
-      <commons-pool href="commons/pool/"/>
-      <velocity href="velocity/"/>
+      <commons href="commons/" />
+      <commons-beanutils href="commons/beanutils/" />
+      <commons-cli href="commons/cli/" />
+      <commons-collections href="commons/collections/" />
+      <commons-dbcp href="commons/dbcp/" />
+      <commons-digester href="commons/digester/" />
+      <commons-lang href="commons/lang/" />
+      <commons-logging href="commons/logging/" />
+      <commons-pool href="commons/pool/" />
+      <velocity href="velocity/" />
     </jakarta>
-    <forrest href="http://forrest.apache.org/"/>
-    <omg href="http://www.omg.org"/>
-    <argoUML href="http://argouml.tigris.org"/>
+    <forrest href="http://forrest.apache.org/" />
+    <omg href="http://www.omg.org" />
+    <argoUML href="http://argouml.tigris.org" />
   </external-refs>
 </site>

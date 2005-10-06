@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   Copyright 2000-2005 The Apache Software Foundation
-
+  
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-
-      http://www.apache.org/licenses/LICENSE-2.0
-
+  
+  http://www.apache.org/licenses/LICENSE-2.0
+  
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,30 +23,46 @@
   <body>
     <section>
       <title>Community Support</title>
-      <p><a href="http://www.sourceforge.net/projects/pmmda"><em>pmMDA 
-        group</em></a> provides community support, advices and development. All 
-        community activities are released under the Apache license and are 
-        available to all. The members of the group try hard to answer all open 
-        questions and requests in a timely manner.</p>
-      <p>The error tracking system is the standard one provided in Sourceforge. 
-        The forums are available for questions and extension requests. Please 
-        publish all your questions, enhacements, and error reports through the 
-        provided tracker tools. It allows all interested parties to have access 
-        to the discussion threads and current status of each request. The 
-        developers try to respond quickly to all pending demands.</p>
+      <p>
+        <a href="http://www.sourceforge.net/projects/pmmda">
+          <em>pmMDA group</em>
+        </a>
+        provides community support, advices and development. All community
+        activities are released under the Apache license and are available to
+        all. The members of the group try hard to answer all open questions and
+        requests in a timely manner.
+      </p>
+      <p>
+        The error tracking system is the standard one provided in Sourceforge.
+        The forums are available for questions and extension requests. Please
+        publish all your questions, enhacements, and error reports through the
+        provided tracker tools. It allows all interested parties to have access
+        to the discussion threads and current status of each request. The
+        developers try to respond quickly to all pending demands.
+      </p>
     </section>
     <section>
       <title>Commercial Support</title>
-      <p>Commercial support is available for companies wishing extensive 
-        support, training and coaching activities. Commercial partners provide 
-        services in Europe.</p>
-      <p>Please send an email to the developers of <em>pmMDA group</em> at 
-        <em>marcelbaumann@users.sourceforge.net</em></p>
+      <p>
+        Commercial support is available for companies wishing extensive support,
+        training and coaching activities. Commercial partners provide services
+        in Europe.
+      </p>
+      <p>
+        Please send an email to the developers of
+        <em>pmMDA group</em>
+        at
+        <em>marcelbaumann@users.sourceforge.net</em>
+      </p>
     </section>
     <section>
       <title>Sponsors</title>
-      <p>Companies and academical institutions are supporting the development 
-        of the <em>pmMDA</em> frameworks and the related projects.</p>
+      <p>
+        Companies and academical institutions are supporting the development of
+        the
+        <em>pmMDA</em>
+        frameworks and the related projects.
+      </p>
       <table>
         <tr>
           <th>Logo</th>
@@ -54,7 +70,7 @@
         </tr>
         <tr>
           <td>
-            <img src="images/sponsor-bbv.gif" alt="bbv logo"/>
+            <img src="images/sponsor-bbv.gif" alt="bbv logo" />
           </td>
           <td>
             <a href="http://www.bbv.ch">bbv Software Services AG</a>
@@ -62,16 +78,40 @@
         </tr>
         <tr>
           <td>
-            <img src="images/sponsor-hsr.gif" alt="hsr logo"/>
+            <img src="images/sponsor-hsr.gif" alt="hsr logo" />
           </td>
           <td>
-            <a href="http://www.hsr.ch">Hochschule f&uuml;r Technik Rapperswil</a>
+            <a href="http://www.hsr.ch">
+              Hochschule f
+              &uuml;
+              r Technik Rapperswil
+            </a>
+          </td>
+        </tr>
+      </table>
+    </section>
+    <section>
+      <title>Publications</title>
+      <p>Below a list of publications referencing pmMDA.</p>
+      <table>
+        <tr>
+          <th>Title</th>
+          <th>Link</th>
+        </tr>
+        <tr>
+          <td>pmMDA Factsheet</td>
+          <td>
+            <a href="articles/publications/factsheet_pmmda_bbv.pdf">
+              <em>pmMDA</em>
+              factsheet (in German)
+            </a>
           </td>
         </tr>
       </table>
     </section>
     <section>
       <title>Links to similar projects</title>
+      <p>Below a list of affiliated projects building on pmMDA.</p>
       <table>
         <tr>
           <th>Project</th>
@@ -80,9 +120,14 @@
         </tr>
         <tr>
           <td>pmMDA.NET</td>
-          <td><a href="http://pmmda-net.sourceforge.net">pmMDA.NET</a></td>
-          <td>pmMDA.NET is a port of the <em>pmMDA</em> project to the .NET 
-            framework</td>
+          <td>
+            <a href="http://pmmda-net.sourceforge.net">pmMDA.NET</a>
+          </td>
+          <td>
+            pmMDA.NET is a port of the
+            <em>pmMDA</em>
+            project to the .NET framework
+          </td>
         </tr>
       </table>
     </section>

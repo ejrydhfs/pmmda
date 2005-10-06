@@ -93,6 +93,7 @@
           directories are downloaded otherwise you must create them by hand. You
           set the option in Eclipse in Windows->Preferences->Team->CVS by
           disabling the option "Prune empty directories".
+        </p>
       </answer>
     </faq>
     <faq>
