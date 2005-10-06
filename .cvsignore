@@ -4,7 +4,8 @@ deploy
 dist
 logs
 test-classes
-*.log
-todo.txt
+.settings
 *.fb
+*.log
 *.settings
+todo.txt
