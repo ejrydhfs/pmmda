@@ -2,27 +2,18 @@
   <property file="build.properties" />
   <import file="build-inits.xml" />
   <import file="build-examples.xml" />
-  <import file="${forrest.bin}/forrest.build.xml" />
+  <property name="forrest.plugins-dir" value="${forrest.home}/build/plugins"/>
+  <import file="${forrest.home}/main/forrest.build.xml" />
 
-  <target name="clean"
-          depends="dist-init"
-          description="Clean the distribution directories">
+  <target name="clean" depends="dist-init" description="Clean the distribution directories">
     <delete dir="${dist.dir}" />
     <mkdir dir="${dist.dir}" />
   </target>
 
-  <target name="compile-dist"
-          depends="dist-init"
-          description="compiles all java files of the projects dog, pmmda, documentor">
+  <target name="compile-dist" depends="dist-init" description="compiles all java files of the projects dog, pmmda, documentor">
     <delete dir="${build.dir}" />
     <mkdir dir="${build.dir}" />
-    <javac destdir="${build.dir}"
-           srcdir="${src.dog.dir}:${src.pmmda.dir}:${src.documentor.dir}"
-           includes="**/*.java,**/*.properties"
-           compiler="modern"
-           verbose="${compile.verbose}"
-           debug="${compile.debug}"
-           source="${compile.source}">
+    <javac destdir="${build.dir}" srcdir="${src.dog.dir}:${src.pmmda.dir}:${src.documentor.dir}" includes="**/*.java,**/*.properties" compiler="modern" verbose="${compile.verbose}" debug="${compile.debug}" source="${compile.source}">
       <classpath refid="application.classpath" />
     </javac>
     <copy todir="${build.dir}">
@@ -36,9 +27,7 @@
     </copy>
   </target>
 
-  <target name="pmmda-dist"
-          depends="dist-init, init-tests, compile-dist, init-libs"
-          description="Generates pmMDA distribution">
+  <target name="pmmda-dist" depends="dist-init, init-tests, compile-dist, init-libs" description="Generates pmMDA distribution">
     <echo message="generate pmMDA binary and source distribution" />
     <delete dir="${pmmda-dist.dir}" />
     <mkdir dir="${pmmda-dist.dir}" />
@@ -53,34 +42,32 @@
     <copy todir="${pmmda-model.dir}">
       <fileset dir="${model.dir}/test-model">
         <include name="**/*.zargo" />
-				<include name="**/*.xml"/>
+        <include name="**/*.xml" />
       </fileset>
     </copy>
     <copy todir="${pmmda-src-dog-corba.dir}">
       <fileset dir="${src.dir}/corba-framework">
-      	<exclude name="**/*CVS*" />
+        <exclude name="**/*CVS*" />
       </fileset>
     </copy>
     <copy todir="${pmmda-src-dog-idl.dir}">
       <fileset dir="${src.dir}/idl-framework">
-      	<exclude name="**/*CVS*" />
+        <exclude name="**/*CVS*" />
       </fileset>
     </copy>
     <copy todir="${pmmda-src-etc.dir}">
       <fileset dir="${src.dir}/etc">
-      	<exclude name="**/*CVS*" />
+        <exclude name="**/*CVS*" />
       </fileset>
     </copy>
     <echo message="copy pmMDA needed library files" />
     <copy file="${lib.dir}/${commons-beanutils.lib}" todir="${pmmda-lib.dir}" />
     <copy file="${lib.dir}/${commons-cli.lib}" todir="${pmmda-lib.dir}" />
-    <copy file="${lib.dir}/${commons-collections.lib}"
-          todir="${pmmda-lib.dir}" />
+    <copy file="${lib.dir}/${commons-collections.lib}" todir="${pmmda-lib.dir}" />
     <copy file="${lib.dir}/${commons-configuration.lib}" todir="${pmmda-lib.dir}" />
     <copy file="${lib.dir}/${commons-lang.lib}" todir="${pmmda-lib.dir}" />
     <copy file="${lib.dir}/${commons-logging.lib}" todir="${pmmda-lib.dir}" />
-    <copy file="${lib.dir}/${commons-logging-api.lib}"
-          todir="${pmmda-lib.dir}" />
+    <copy file="${lib.dir}/${commons-logging-api.lib}" todir="${pmmda-lib.dir}" />
     <copy file="${lib.dir}/${forms.lib}" todir="${pmmda-lib.dir}" />
     <copy file="${lib.dir}/${glazedlists.lib}" todir="${pmmda-lib.dir}" />
     <copy file="${lib.dir}/${jgraph.lib}" todir="${pmmda-lib.dir}" />
@@ -91,18 +78,15 @@
     <copy file="${lib.dir}/${xpp3.lib}" todir="${pmmda-lib.dir}" />
     <copy file="${lib.dir}/${xstream.lib}" todir="${pmmda-lib.dir}" />
     <copy file="${scripts.dir}/dist/pmMDA.bat" todir="${pmmda-dist.dir}" />
-    <copy file="${scripts.dir}/dist/pmMDA.properties"
-          todir="${pmmda-dist.dir}" />
-    <copy file="${scripts.dir}/dist/logging.properties"
-          todir="${pmmda-dist.dir}" />
+    <copy file="${scripts.dir}/dist/pmMDA.properties" todir="${pmmda-dist.dir}" />
+    <copy file="${scripts.dir}/dist/logging.properties" todir="${pmmda-dist.dir}" />
     <copy file="${src.pmmda.dir}/ReleaseNotes.txt" todir="${pmmda-dist.dir}" />
     <copy todir="${pmmda-resources.dir}">
       <fileset dir="${resources.dir}">
         <exclude name="**/*CVS*" />
       </fileset>
     </copy>
-    <property name="jars.list"
-              value="${commons-beanutils.lib} ${commons-cli.lib} ${commons-collections.lib} ${commons-logging.lib} ${commons-logging-api.lib} ${forms.lib} ${glazedlists.lib} ${nsuml.lib} ${velocity.lib} ${velocity-dep.lib} ${xpp3.lib} ${xstream.lib}" />
+    <property name="jars.list" value="${commons-beanutils.lib} ${commons-cli.lib} ${commons-collections.lib} ${commons-logging.lib} ${commons-logging-api.lib} ${forms.lib} ${glazedlists.lib} ${nsuml.lib} ${velocity.lib} ${velocity-dep.lib} ${xpp3.lib} ${xstream.lib}" />
     <manifest file="${pmmda-lib.dir}/Manifest.mf">
       <attribute name="Main-Class" value="ch.bbv.mda.ui.MdaApplication" />
       <attribute name="Class-Path" value="${jars.list}" />
@@ -116,37 +100,23 @@
         <attribute name="Implementation-Vendor" value="${user.name}" />
       </section>
     </manifest>
-    <jar jarfile="${pmmda-lib.dir}/${pmmda.name}.jar"
-         compress="true"
-         index="true"
-         manifest="${pmmda-lib.dir}/Manifest.mf">
-      <fileset dir="${build.dir}"
-               excludes="ch/bbv/documentor/**,**/pmmda.properties,**/*.html,**/*.xml,**/*.sql" />
+    <jar jarfile="${pmmda-lib.dir}/${pmmda.name}.jar" compress="true" index="true" manifest="${pmmda-lib.dir}/Manifest.mf">
+      <fileset dir="${build.dir}" excludes="ch/bbv/documentor/**,**/pmmda.properties,**/*.html,**/*.xml,**/*.sql" />
     </jar>
     <delete file="${pmmda-lib.dir}/Manifest.mf" />
-    <jar destfile="${dist.dir}/${pmmda.name}-src-${pmmda.version}.jar"
-         compress="true"
-         index="true">
-      <fileset dir="${src.pmmda.dir}"
-               excludes="ch/bbv/bog/**,ch/bbv/documentor/**" />
+    <jar destfile="${dist.dir}/${pmmda.name}-src-${pmmda.version}.jar" compress="true" index="true">
+      <fileset dir="${src.pmmda.dir}" excludes="ch/bbv/bog/**,ch/bbv/documentor/**" />
     </jar>
-    <echo message="copy all examples"/>
-    <antcall target="pmmda-examples"/>
-   	<echo message="generate pmMDA distribution as zipped tar file"/> 
-    <tar destfile="${dist.dir}/${pmmda.name}-${pmmda.version}.tar.gz"
-      	 basedir="${pmmda-dist.dir}"
-      	 compression="gzip"/>
+    <echo message="copy all examples" />
+    <antcall target="pmmda-examples" />
+    <echo message="generate pmMDA distribution as zipped tar file" />
+    <tar destfile="${dist.dir}/${pmmda.name}-${pmmda.version}.tar.gz" basedir="${pmmda-dist.dir}" compression="gzip" />
     <echo message="generate archive files of all librairies" />
-    <zip destfile="${dist.dir}/${pmmda.name}-dev-libs-${pmmda.version}.zip"
-         basedir="${lib.dir}"
-         update="true" />
-    <zip destfile="${dist.dir}/${pmmda.name}-dev-metrics-libs-${pmmda.version}.zip"
-         basedir="${scripts.lib.dir}"
-         update="true" />
+    <zip destfile="${dist.dir}/${pmmda.name}-dev-libs-${pmmda.version}.zip" basedir="${lib.dir}" update="true" />
+    <zip destfile="${dist.dir}/${pmmda.name}-dev-metrics-libs-${pmmda.version}.zip" basedir="${scripts.lib.dir}" update="true" />
   </target>
 
-  <target name="dog-dist" description="Generates DOG distribution" 
-    depends="dist-init">
+  <target name="dog-dist" description="Generates DOG distribution" depends="dist-init">
     <delete dir="${dog-dist.dir}" />
     <mkdir dir="${dog-dist.dir}" />
     <mkdir dir="${dog-lib.dir}" />
@@ -159,20 +129,15 @@
     <copy file="${lib.dir}/${commons-pool.lib}" todir="${dog-lib.dir}" />
     <copy file="${lib.dir}/${mysql-connector.lib}" todir="${dog-lib.dir}" />
     <copy file="${src.dog.dir}/ReleaseNotes.txt" todir="${dog-dist.dir}" />
-    <jar jarfile="${dog-lib.dir}/${dog.name}-${dog.version}.jar" 
-      compress="true" index="true">
-      <fileset dir="${build.dir}" 
-        excludes="ch/bbv/mda/**,ch/bbv/documentor/**,**/*.html,**/*.xml,**/*.sql" 
-        />
+    <jar jarfile="${dog-lib.dir}/${dog.name}-${dog.version}.jar" compress="true" index="true">
+      <fileset dir="${build.dir}" excludes="ch/bbv/mda/**,ch/bbv/documentor/**,**/*.html,**/*.xml,**/*.sql" />
     </jar>
-    <jar destfile="${dist.dir}/${dog.name}-src-${dog.version}.jar" 
-      compress="true" index="true">
+    <jar destfile="${dist.dir}/${dog.name}-src-${dog.version}.jar" compress="true" index="true">
       <fileset dir="${src.dog.dir}" includes="*/**" />
     </jar>
   </target>
 
-  <target name="pmmda-examples" depends="dist-init"
-     description="Generates the pmMDA examples">
+  <target name="pmmda-examples" depends="dist-init" description="Generates the pmMDA examples">
     <property name="pmmda-dist.dir" value="${dist.dir}/${pmmda.name}" />
     <property name="pmmda-work.dir" value="${pmmda-dist.dir}/work" />
     <property name="pmmda-ex.dir" value="${pmmda-work.dir}/example" />
@@ -181,8 +146,7 @@
     <property name="pmmda-ex-lib.dir" value="${pmmda-ex.dir}/test-lib" />
     <property name="pmmda-ex-gendir.dir" value="${pmmda-ex.dir}/gendir" />
     <property name="pmmda-ex-src.dir" value="${pmmda-ex.dir}/test-java" />
-    <property name="pmmda-ex-classes.dir"
-              value="${pmmda-ex.dir}/test-classes" />
+    <property name="pmmda-ex-classes.dir" value="${pmmda-ex.dir}/test-classes" />
 
     <echo message="copying the examples" />
     <mkdir dir="${pmmda-work.dir}" />
@@ -224,9 +188,8 @@
         <exclude name="**/*CVS*" />
       </fileset>
     </copy>
-    
-    <copy file="${model.dir}/test-model/test-model.zargo"
-          todir="${pmmda-ex-model.dir}" />
+
+    <copy file="${model.dir}/test-model/test-model.zargo" todir="${pmmda-ex-model.dir}" />
     <copy todir="${pmmda-ex-src.dir}/client">
       <fileset dir="${test.client.dir}">
         <include name="**/*.java" />
@@ -262,27 +225,14 @@
     <copy file="${lib.dir}/${ojb.lib}" todir="${pmmda-ex-lib.dir}" />
     <copy file="${lib.dir}/${mysql-connector.lib}" todir="${pmmda-ex-lib.dir}" />
     <copy file="${lib.dir}/jbossall-client.jar" todir="${pmmda-ex-lib.dir}" />
-    <copy file="${dog-lib.dir}/${dog.name}-${dog.version}.jar"
-          todir="${pmmda-ex-lib.dir}" />
-    <copy file="${scripts.dir}/dist/tutorial-users/build.properties"
-          todir="${pmmda-ex.dir}" />
+    <copy file="${dog-lib.dir}/${dog.name}-${dog.version}.jar" todir="${pmmda-ex-lib.dir}" />
+    <copy file="${scripts.dir}/dist/tutorial-users/build.properties" todir="${pmmda-ex.dir}" />
     <copy file="${basedir}/build-examples.xml" todir="${pmmda-ex.dir}" />
   </target>
 
-  <target name="javadoc"
-          depends="init"
-          description="generates javadoc for the project">
+  <target name="javadoc" depends="init" description="generates javadoc for the project">
     <mkdir dir="${site.api.dir}" />
-    <javadoc destdir="${site.api.dir}"
-             packagenames="ch.bbv.*"
-             classpath="${build.dir}"
-             classpathref="application.classpath"
-             access="private"
-             author="true"
-             version="true"
-             use="true"
-             source="1.5"
-             windowtitle="pmMDA API">
+    <javadoc destdir="${site.api.dir}" packagenames="ch.bbv.*" classpath="${build.dir}" classpathref="application.classpath" access="private" author="true" version="true" use="true" source="1.5" windowtitle="pmMDA API">
       <sourcepath>
         <pathelement path="${src.pmmda.dir}/" />
         <pathelement path="${src.dog.dir}/" />
@@ -294,27 +244,16 @@
     </javadoc>
   </target>
 
-  <target name="clean-docs"
-          depends="init"
-          description="remove all generated document and metrics artifacts">
+  <target name="clean-docs" depends="init" description="remove all generated document and metrics artifacts">
     <delete dir="${site.api.dir}" />
     <mkdir dir="${site.api.dir}" />
     <delete dir="${site.quality.dir}" />
     <mkdir dir="${site.quality.dir}" />
   </target>
 
-  <target name="metrics"
-          depends="init"
-          description="generates quality metrics on the project">
+  <target name="metrics" depends="init" description="generates quality metrics on the project">
     <mkdir dir="${site.quality.dir}" />
-    <javadoc destdir="${site.quality.dir}"
-             doclet="com.sun.tools.doclets.doccheck.DocCheck"
-             docletpathref="scripts.classpath"
-             packagenames="ch.bbv.*"
-             classpath="${build.dir}"
-             classpathref="application.classpath"
-             source="1.5"
-             protected="true">
+    <javadoc destdir="${site.quality.dir}" doclet="com.sun.tools.doclets.doccheck.DocCheck" docletpathref="scripts.classpath" packagenames="ch.bbv.*" classpath="${build.dir}" classpathref="application.classpath" source="1.5" protected="true">
       <sourcepath>
         <pathelement path="${src.pmmda.dir}/" />
         <pathelement path="${src.dog.dir}/" />
@@ -333,9 +272,7 @@
       <arg path="${src.dog.dir}" />
       <arg path="${src.documentor.dir}" />
     </java>
-    <xslt in="${site.quality.dir}/javancss-report.xml"
-          out="${site.quality.dir}/javancss-report.html"
-          style="${scripts.dir}/resources/xslt/javancss2html.xsl" />
+    <xslt in="${site.quality.dir}/javancss-report.xml" out="${site.quality.dir}/javancss-report.html" style="${scripts.dir}/resources/xslt/javancss2html.xsl" />
     <taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask">
       <classpath>
         <path refid="scripts.classpath" />
@@ -345,16 +282,13 @@
                        ${pmdrules.dir}/codesize.xml,${pmdrules.dir}/coupling.xml,
                        ${pmdrules.dir}/naming.xml,${pmdrules.dir}/design.xml,
                        ${pmdrules.dir}/strings.xml,${pmdrules.dir}/imports.xml,
-                       ${pmdrules.dir}/unusedcode.xml"
-         failonerror="no">
+                       ${pmdrules.dir}/unusedcode.xml" failonerror="no">
       <formatter type="xml" toFile="${site.quality.dir}/pmd-report.xml" />
       <fileset dir="${src.dir}/java-framework">
         <include name="**/*.java" />
       </fileset>
     </pmd>
-    <xslt in="${site.quality.dir}/pmd-report.xml"
-          out="${site.quality.dir}/pmd-report.html"
-          style="${scripts.dir}/resources/xslt/pmd-report.xsl" />
+    <xslt in="${site.quality.dir}/pmd-report.xml" out="${site.quality.dir}/pmd-report.html" style="${scripts.dir}/resources/xslt/pmd-report.xsl" />
     <jdepend outputfile="${site.quality.dir}/jdepend-report.xml" format="xml">
       <classespath>
         <pathelement location="${build.dir}" />
@@ -364,26 +298,18 @@
         <pathelement location="${lib.dir}" />
       </classpath>
     </jdepend>
-    <xslt in="${site.quality.dir}/jdepend-report.xml"
-          out="${site.quality.dir}/jdepend-report.html"
-          style="${scripts.dir}/resources/xslt/jdepend.xsl" />
+    <xslt in="${site.quality.dir}/jdepend-report.xml" out="${site.quality.dir}/jdepend-report.html" style="${scripts.dir}/resources/xslt/jdepend.xsl" />
   </target>
 
-  <target name="sourceforge-without-documentation"
-          depends="dist-init, clean, compile-dist, dog-dist, pmmda-dist, pmmda-examples"
-          description="Generates the pmMDA sourceforge site (without web site)">
+  <target name="sourceforge-without-documentation" depends="dist-init, clean, compile-dist, dog-dist, pmmda-dist, pmmda-examples" description="Generates the pmMDA sourceforge site (without web site)">
   </target>
 
-  <target name="generate-docs"
-          depends="dist-init, clean-docs"
-          description="Generates the site related documents (before running forrest)">
+  <target name="generate-docs" depends="dist-init, clean-docs" description="Generates the site related documents (before running forrest)">
     <antcall target="javadoc" />
     <antcall target="metrics" />
   </target>
 
-  <target name="sourceforge"
-          depends="sourceforge-without-documentation, generate-docs, site"
-          description="Generates the pmMDA sourceforge site including web site">
+  <target name="sourceforge" depends="sourceforge-without-documentation, generate-docs, site" description="Generates the pmMDA sourceforge site including web site">
     <echo message="generate sourceforge web site (forrest is mandatory)" />
   </target>
 </project>

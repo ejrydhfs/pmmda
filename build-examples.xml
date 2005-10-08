@@ -25,7 +25,7 @@
     <property name="test.j2ee-server.dir" value="${gen.dir}/j2ee-server" />
     <property name="test.rich-client.dir" value="${gen.dir}/rich-client" />
     <property name="test.corba-idl.dir" value="${gen.dir}/corba-idl" />
-    <property name="test.ojb-server.dir" value="${gen.dir}/ojb-server" />
+    <property name="test.orm-server.dir" value="${gen.dir}/orm-server" />
     <property name="test-lib.dir" value="${basedir}/test-lib" />
     <property name="classes.dir" value="${basedir}/test-classes" />
     <property name="test.build.j2ee-client.dir" value="${classes.dir}/j2ee-client" />
@@ -63,7 +63,7 @@
       <fileset dir="${src.etc-properties.dir}/unmanaged" casesensitive="yes" />
     </copy>
     <copy todir="${test.build.rich-client.dir}">
-      <fileset dir="${test.ojb-server.dir}" casesensitive="yes">
+      <fileset dir="${test.orm-server.dir}" casesensitive="yes">
         <filename name="**/*.xml" />
       </fileset>
     </copy>
@@ -123,7 +123,7 @@
                casesensitive="yes" />
     </copy>
     <copy todir="${test.build.corba-server.dir}">
-      <fileset dir="${test.ojb-server.dir}" casesensitive="yes">
+      <fileset dir="${test.orm-server.dir}" casesensitive="yes">
         <filename name="**/*.xml" />
       </fileset>
     </copy>
@@ -168,7 +168,7 @@
       </fileset>
     </copy>
     <copy todir="${test.build.j2ee-server.dir}">
-      <fileset dir="${gen.dir}/ojb-server" casesensitive="yes">
+      <fileset dir="${gen.dir}/orm-server" casesensitive="yes">
         <filename name="**/*.xml" />
       </fileset>
     </copy>
@@ -213,8 +213,8 @@
   <target name="clean-tests"
           depends="init-tests"
           description="cleans all test directories, NOT java-common (Files could be edited)">
-    <delete dir="${test.ojb-server.dir}" />
-    <mkdir dir="${test.ojb-server.dir}" />
+    <delete dir="${test.orm-server.dir}" />
+    <mkdir dir="${test.orm-server.dir}" />
     <delete dir="${test.corba-idl.dir}" />
     <mkdir dir="${test.corba-idl.dir}" />
 
