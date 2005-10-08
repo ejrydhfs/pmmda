@@ -104,6 +104,7 @@
       <commons-beanutils href="commons/beanutils/" />
       <commons-cli href="commons/cli/" />
       <commons-collections href="commons/collections/" />
+      <commons-configuration href="commons/configuration/" />
       <commons-dbcp href="commons/dbcp/" />
       <commons-digester href="commons/digester/" />
       <commons-lang href="commons/lang/" />

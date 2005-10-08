@@ -82,7 +82,7 @@
     </tr>
     <tr>
      <td>antlr</td>
-     <td>2.7.2</td>
+     <td>2.7.3</td>
      <td>Open Source</td>
      <td>
       <a href="http://www.antlr.org">ANTLR</a>
@@ -90,7 +90,7 @@
     </tr>
     <tr>
      <td>beanshell</td>
-     <td>2.0-b2</td>
+     <td>2.0-b4</td>
      <td>LGPL</td>
      <td>
       <a href="http://www.beanshell.org">Beanshell</a>
@@ -98,7 +98,7 @@
     </tr>
     <tr>
      <td>commons-beanutils</td>
-     <td>1.6.1</td>
+     <td>1.7.0</td>
      <td>Apache License</td>
      <td>
       <a href="ext:jakarta/commons-beanutils">Jakarta Commons Bean Utils</a>
@@ -106,10 +106,18 @@
     </tr>
     <tr>
      <td>commons-collections</td>
-     <td>3.0</td>
+     <td>3.1</td>
      <td>Apache License</td>
      <td>
       <a href="ext:jakarta/commons-collections">Jakarta Commons Collections</a>
+     </td>
+    </tr>
+    <tr>
+     <td>commons-configuration</td>
+     <td>1.1</td>
+     <td>Apache License</td>
+     <td>
+      <a href="ext:jakarta/commons-configuration">Jakarta Commons Configuration</a>
      </td>
     </tr>
     <tr>
@@ -122,7 +130,7 @@
     </tr>
     <tr>
      <td>commons-lang</td>
-     <td>2.0</td>
+     <td>2.1</td>
      <td>Apache License</td>
      <td>
       <a href="ext:jakarta/commons-lang">Jakarta Commons Language</a>

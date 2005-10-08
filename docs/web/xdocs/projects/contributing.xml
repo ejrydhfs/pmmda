@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   Copyright 2000-2005 The Apache Software Foundation
-
+  
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-
-      http://www.apache.org/licenses/LICENSE-2.0
-
+  
+  http://www.apache.org/licenses/LICENSE-2.0
+  
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,213 +23,343 @@
   <body>
     <section>
       <title>Introduction</title>
-      <p>The <em>pmMDA</em> project is an Open Source volunteer project 
-        released under a very open license. This means there are many ways to 
-        contribute to the project - either with direct participation (coding, 
-        documenting, answering questions, reporting bugs, etc.) or by resource 
-        donations (money, time, publicity, hardware, conference presentations, 
-        speeches, etc.).</p>
-      <p>To begin with, we suggest you to subscribe to the news and forums of 
-        the project (follow the link for information on how to subscribe and to 
-        access the forums) <a 
-        href="http://www.sourceforge.net/projects/pmmda">forums</a>.</p>
-      <p>This document provides information how to set up the Eclipse 
-        environment and the <em>pmMDA</em> project. Upon these steps you will 
-        be able to develop your own cartridges or extend the MDA kernel.</p>
+      <p>
+        The
+        <em>pmMDA</em>
+        project is an Open Source volunteer project released under a very open
+        license. This means there are many ways to contribute to the project -
+        either with direct participation (coding, documenting, answering
+        questions, reporting bugs, etc.) or by resource donations (money, time,
+        publicity, hardware, conference presentations, speeches, etc.).
+      </p>
+      <p>
+        To begin with, we suggest you to subscribe to the news and forums of the
+        project (follow the link for information on how to subscribe and to
+        access the forums)
+        <a href="http://www.sourceforge.net/projects/pmmda">forums</a>
+        .
+      </p>
+      <p>
+        This document provides information how to set up the Eclipse environment
+        and the
+        <em>pmMDA</em>
+        project. Upon these steps you will be able to develop your own
+        cartridges or extend the MDA kernel.
+      </p>
     </section>
     <section>
       <title>Install Development Environment</title>
-      <p>If you are interesting to work on the <em>pmMDA</em> project you must 
-        download the project and configure Eclipse IDE. Tips are also provided 
-        for the Eclipse plugins used in the project.</p>
+      <p>
+        If you are interesting to work on the
+        <em>pmMDA</em>
+        project you must download the project and configure Eclipse IDE. Tips
+        are also provided for the Eclipse plugins used in the project.
+      </p>
       <section>
         <title>Configure Project</title>
-        <p>Developers interested to participate to the project must have an 
-          account in Sourceforge and install Eclipse 3.x on their development 
-          machine. The next steps install the <em>pmMDA</em> project.</p>
+        <p>
+          Developers interested to participate to the project must have an
+          account in Sourceforge and install Eclipse 3.x on their development
+          machine. The next steps install the
+          <em>pmMDA</em>
+          project.
+        </p>
         <ol>
-          <li>Define a JDK installation named <em>jdk1.5</em> and another named 
-            <em>jdk1.4</em> in Eclipse (Windows/Preferences/Java/Installed JRE) 
-            and mapped them to your local installation of JDK 1.4.x and JDK 
-            1.5.x.</li>
-          <li>Define a classpath variable named <em>JDK_TOOLS</em> and mapped 
-            it to the location of the <code>tools.jar</code> file located in 
-            the <code>lib</code> directory of your JDK installation in Eclipse 
-            (Windows/Preferences/Java/Build Path/Classpath Variables). Please 
-            consult the JDK documentation to see what is the role of 
-            <code>tools.jar</code>.</li>
-          <li>Check-out the <em>pmMDA</em> project from Sourceforge using the 
-            the anonymous method or the SSH2 method if you are a registered 
-            developer. Directives how to set up such a CVS repository can be 
-            found in the Eclipse help. You should check out the project as a 
-            Java project in Eclipse CVS view. You must publish your changes as 
-            patches and send them to the Sourceforge project responsible.</li>
-          <li>Retrieve the development library package available under the 
-            download files of the project. Create a directory <em>lib</em> in 
-            the project, unzip the downloaded file and copy all the libraries 
-            files to the <em>lib</em> directory. A subset of these libraries is 
-            used to execute the provided tests. The list of required libraries 
-            stored in the <em>test-lib</em> directory is available in CVS.</li>
-          <li>You should now be able to compile the project. Some errors can 
-            still remain in the test folders. Start the <em>pmMDA</em> 
-            application with the provided model and configuration file, 
-            generate the artifacts with all the loaded cartridges. Rebuild the 
-            project. Now no errors should remain.</li>
-          <li>If you want to generate the project metrics you must download the 
-            metrics library package containing the libraries of the used 
-            quality tools. Unzip this file and copy all the libraries in the 
-            directory <em>scripts/lib</em>.</li>
+          <li>
+            Define a JDK installation named
+            <em>jdk1.5</em>
+            and another named
+            <em>jdk1.4</em>
+            in Eclipse (Windows/Preferences/Java/Installed JRE) and mapped them
+            to your local installation of JDK 1.4.x and JDK 1.5.x.
+          </li>
+          <li>
+            Define a classpath variable named
+            <em>JDK_TOOLS</em>
+            and mapped it to the location of the
+            <code>tools.jar</code>
+            file located in the
+            <code>lib</code>
+            directory of your JDK installation in Eclipse
+            (Windows/Preferences/Java/Build Path/Classpath Variables). Please
+            consult the JDK documentation to see what is the role of
+            <code>tools.jar</code>
+            .
+          </li>
+          <li>
+            Check-out the
+            <em>pmMDA</em>
+            project from Sourceforge using the the anonymous method or the SSH2
+            method if you are a registered developer. Directives how to set up
+            such a CVS repository can be found in the Eclipse help. You should
+            check out the project as a Java project in Eclipse CVS view. You
+            must publish your changes as patches and send them to the
+            Sourceforge project responsible.
+          </li>
+          <li>
+            Retrieve the development library package available under the
+            download files of the project. Create a directory
+            <em>lib</em>
+            in the project, unzip the downloaded file and copy all the libraries
+            files to the
+            <em>lib</em>
+            directory. A subset of these libraries is used to execute the
+            provided tests. The list of required libraries stored in the
+            <em>test-lib</em>
+            directory is available in CVS.
+          </li>
+          <li>
+            You should now be able to compile the project. Some errors can still
+            remain in the test folders. Start the
+            <em>pmMDA</em>
+            application with the provided model and configuration file, generate
+            the artifacts with all the loaded cartridges. Rebuild the project.
+            Now no errors should remain.
+          </li>
+          <li>
+            If you want to generate the project metrics you must download the
+            metrics library package containing the libraries of the used quality
+            tools. Unzip this file and copy all the libraries in the directory
+            <em>scripts/lib</em>
+            .
+          </li>
         </ol>
-        <p>Detailed instructions how to work with sourceforge project can be 
-          found on their <a 
-          href="http://www.sourceforge.net/docman/?group_id=1"> home page 
-          </a>.</p>
-        <p>If you have the status of registered developer, you can directly 
-          commit your enhancements in CVS. Ask the technical project leader to 
-          become a registered developer and receive write access to CVS 
-          repository.</p>
+        <p>
+          Detailed instructions how to work with sourceforge project can be
+          found on their
+          <a href="http://www.sourceforge.net/docman/?group_id=1">home page</a>
+          .
+        </p>
+        <p>
+          If you have the status of registered developer, you can directly
+          commit your enhancements in CVS. Ask the technical project leader to
+          become a registered developer and receive write access to CVS
+          repository.
+        </p>
       </section>
       <section>
         <title>Used Eclipse Plugins</title>
-        <p>Here some tips how to install the plugins often used in the 
-          project..</p>
+        <p>
+          Here some tips how to install the plugins often used in the project..
+        </p>
         <dl>
           <dt>Veloedit</dt>
-          <dd>Online updates are available on <a 
-            href="http://propsorter.sourceforge.net/veloeclipse">VeloEclipse</a>. 
-            Define a site bookmark in Eclipse's Update Manager view, navigate 
-            to the update site via this bookmark and install the Velocity UI 
-            feature.</dd>
+          <dd>
+            Online updates are available on
+            <a href="http://propsorter.sourceforge.net/veloeclipse">
+              VeloEclipse
+            </a>
+            . Define a site bookmark in Eclipse's Update Manager view, navigate
+            to the update site via this bookmark and install the Velocity UI
+            feature.
+          </dd>
           <dt>XML Buddy</dt>
-          <dd>Download the plugin from <a 
-            href="http://www.xmlbuddy.com">xmlbuddy</a> and copy the file in 
-            the plugin directory of eclipse. Restart eclipse with the clean 
-            option. The web site contains step by step guide.</dd>
+          <dd>
+            Download the plugin from
+            <a href="http://www.xmlbuddy.com">xmlbuddy</a>
+            and copy the file in the plugin directory of eclipse. Restart
+            eclipse with the clean option. The web site contains step by step
+            guide.
+          </dd>
           <dt>PMD Plugin</dt>
-          <dd>Download from <a 
-            href="http://sourceforge.net/projects/pmd">PMD</a>. Install it in 
-            the Eclipse plugin directory.</dd>
+          <dd>
+            Download from
+            <a href="http://sourceforge.net/projects/pmd">PMD</a>
+            . Install it in the Eclipse plugin directory.
+          </dd>
           <dt>JDepend Plugin</dt>
-          <dd>Download from <a 
-            href="http://andrei.gmxhome.de/jdepend4eclipse">JDepend</a>. All 
-            what you need to install JDepend4Eclipse plugin is to unzip 
-            JDepend4Eclipse zip to you Eclipse plugin directory and restart 
-            Eclipse with the clean option. You don't need to do anymore to 
-            install JDepend4Eclipse.</dd>
+          <dd>
+            Download from
+            <a href="http://andrei.gmxhome.de/jdepend4eclipse">JDepend</a>
+            . All what you need to install JDepend4Eclipse plugin is to unzip
+            JDepend4Eclipse zip to you Eclipse plugin directory and restart
+            Eclipse with the clean option. You don't need to do anymore to
+            install JDepend4Eclipse.
+          </dd>
           <dt>JDepend Plugin</dt>
-          <dd>Download from <a 
-            href="http://sourceforge.net/projects/findbugs">FindBugs</a>. 
-            Install it in the Eclipse plugin directory and restart Eclipse with 
-            the clean option.</dd>
+          <dd>
+            Download from
+            <a href="http://sourceforge.net/projects/findbugs">FindBugs</a>
+            . Install it in the Eclipse plugin directory and restart Eclipse
+            with the clean option.
+          </dd>
           <dt>Eclipse Colorer</dt>
-          <dd>Download from <a 
-            href="http://sourceforge.net/projects/eclipsecolorer">EclipseColorer</a>. 
-            Copy ProfilerDLL.dll from root plugin folder into bin folder of 
-            your JRE installation. You can skip this step, plugin will ask you 
-            and copy DLL into your JRE\BIN when you will start profiling local 
-            application inside of Eclipse first time. It will also check, that 
-            you have in JRE\BIN same DLL as in plugin directory.</dd>
+          <dd>
+            Download from
+            <a href="http://sourceforge.net/projects/eclipsecolorer">
+              EclipseColorer
+            </a>
+            . Copy ProfilerDLL.dll from root plugin folder into bin folder of
+            your JRE installation. You can skip this step, plugin will ask you
+            and copy DLL into your JRE\BIN when you will start profiling local
+            application inside of Eclipse first time. It will also check, that
+            you have in JRE\BIN same DLL as in plugin directory.
+          </dd>
         </dl>
       </section>
     </section>
     <section>
       <title>Project Structure</title>
-      <p>The project structure was derived from examples we found on the 
-        Internet, in particular on the Apache site. The structure could evolve 
-        when the project team becomes more sophisticated and the project 
-        grows.</p>
+      <p>
+        The project structure was derived from examples we found on the
+        Internet, in particular on the Apache site. The structure could evolve
+        when the project team becomes more sophisticated and the project grows.
+      </p>
       <p>The following rules exist for the project.</p>
       <ul>
-        <li>All source artifacts are stored under the <em>src</em> directory. 
-          Each project has a seperate tree. The coding style follows the Sun 
-          Java coding guidelines. The documentation of the source code uses 
-          JavaDoc. Developers are requested to follow these guidelines.</li>
-        <li>All generated artifacts are stored under the <em>gendir</em> 
-          directory. They are not part of the version management.</li>
-        <li>All documentation artifacts are stored under the <em>docs</em> 
-          directory. All documents are either XML based on written using the <a 
-          href="http://www.openoffice.org">Open Office Tools</a>. The final 
-          documentation is generated with <a href="http://forrest.apache.org"> 
-          Forrest</a>.</li>
-        <li>The analysis and design are stored under the <em>model</em> 
-          directory.</li>
-        <li>The compiled classes of the projects are written to 
-          <em>classes</em>. The compiled classes of the examples and tests are 
-          written to <em>test-classes</em>. They ar not part of the version 
-          management.</li>
-        <li>All libraries of the projects are stored under <em>lib</em>. They 
-          are not part of the version management.</li>
+        <li>
+          All source artifacts are stored under the
+          <em>src</em>
+          directory. Each project has a seperate tree. The coding style follows
+          the Sun Java coding guidelines. The documentation of the source code
+          uses JavaDoc. Developers are requested to follow these guidelines.
+        </li>
+        <li>
+          All generated artifacts are stored under the
+          <em>gendir</em>
+          directory. They are not part of the version management.
+        </li>
+        <li>
+          All documentation artifacts are stored under the
+          <em>docs</em>
+          directory. All documents are either XML based on written using the
+          <a href="http://www.openoffice.org">Open Office Tools</a>
+          . The final documentation is generated with
+          <a href="http://forrest.apache.org">Forrest</a>
+          .
+        </li>
+        <li>
+          The analysis and design are stored under the
+          <em>model</em>
+          directory.
+        </li>
+        <li>
+          The compiled classes of the projects are written to
+          <em>classes</em>
+          . The compiled classes of the examples and tests are written to
+          <em>test-classes</em>
+          . They ar not part of the version management.
+        </li>
+        <li>
+          All libraries of the projects are stored under
+          <em>lib</em>
+          . They are not part of the version management.
+        </li>
       </ul>
-      <p>All build activities are realized with Ant. The documentation is 
-        generated with Forrest and JavaDoc. The <em>pmMDA Group</em> is a 
-        strong believer of programming by contract. The project provides 
-        JavaDoc taglets to document preconditions, posonditions and 
-        invariants.</p>
-      <p>Examples of applications are provided to fulfill two major goals. 
-        First potential users of <em>pmMDA</em> and the provided frameworks 
-        should have examples demonstrating how to use of the provided 
-        solutions. Second these programs are used to perform functional tests 
-        on the delivered versions. The goal is to provide a stable, easy to use 
-        and well documented tools and frameworks.</p>
+      <p>
+        All build activities are realized with Ant. The documentation is
+        generated with Forrest and JavaDoc. The
+        <em>pmMDA Group</em>
+        is a strong believer of programming by contract. The project provides
+        JavaDoc taglets to document preconditions, posonditions and invariants.
+      </p>
+      <p>
+        Examples of applications are provided to fulfill two major goals. First
+        potential users of
+        <em>pmMDA</em>
+        and the provided frameworks should have examples demonstrating how to
+        use of the provided solutions. Second these programs are used to perform
+        functional tests on the delivered versions. The goal is to provide a
+        stable, easy to use and well documented tools and frameworks.
+      </p>
     </section>
     <section>
-      <title>Goals of <em>pmMDA</em> Distribution</title>
-      <p>The success of an open source is certainly dependant of the quality of 
-        its distribution. The following criteria are defined for the 
-        project.</p>
+      <title>
+        Goals of
+        <em>pmMDA</em>
+        Distribution
+      </title>
+      <p>
+        The success of an open source is certainly dependant of the quality of
+        its distribution. The following criteria are defined for the project.
+      </p>
       <dl>
         <dt>pmMDA binairies</dt>
-        <dd>The pmMDA binary distribution is available as a binary compressed 
-          file. The user can download it and unpack it. A script file is 
-          available to start the application. The user does not need to 
-          compile, configure or install the software. The execution of the 
-          script file starts a running instance.</dd>
+        <dd>
+          The pmMDA binary distribution is available as a binary compressed
+          file. The user can download it and unpack it. A script file is
+          available to start the application. The user does not need to compile,
+          configure or install the software. The execution of the script file
+          starts a running instance.
+        </dd>
         <dt>Documentation</dt>
-        <dd>The project provides extensive documentation available online as a 
-          sourceforge project web site. The JavaDoc of the project is available 
-          and checked with the DockCheck doclet.</dd>
+        <dd>
+          The project provides extensive documentation available online as a
+          sourceforge project web site. The JavaDoc of the project is available
+          and checked with the DockCheck doclet.
+        </dd>
         <dt>Examples</dt>
-        <dd>The available examples can be downloaded and installed. A tutorial 
-          explains step by step the configuration operations to perform. An Ant 
-          script is available to build all the examples. Script files are 
-          provided to start the examples upon build. The tutorial also explain 
-          these steps.</dd>
+        <dd>
+          The available examples can be downloaded and installed. A tutorial
+          explains step by step the configuration operations to perform. An Ant
+          script is available to build all the examples. Script files are
+          provided to start the examples upon build. The tutorial also explain
+          these steps.
+        </dd>
         <dt>White Papers</dt>
-        <dd>White papers describing the implemented concepts are available as 
-          PDF files.</dd>
+        <dd>
+          White papers describing the implemented concepts are available as PDF
+          files.
+        </dd>
       </dl>
-      <p>The distribution creation is defined in an ant file. The ant file 
-        contains all distribution artifacts of all subprojects. The creation 
-        action is defined in the main ant file of the project.</p>
+      <p>
+        The distribution creation is defined in an ant file. The ant file
+        contains all distribution artifacts of all subprojects. The creation
+        action is defined in the main ant file of the project.
+      </p>
+      <p>
+        Experience shows that the development team must dedicate about one fifth
+        of the available resource for quality insurance, tracking of found
+        problems, implementation of the solutions. About the same amount of work
+        is put in correcting software errors as in improving the documentation,
+        tests, and web site. New members in the team should expect to invest
+        similar amount of time for quality assurance. This approach helps us to
+        increase the overall satisfaction of our customers.</p>
     </section>
     <section>
       <title>Contributing Tips</title>
-      <p>This is a collection of tips for contributing to the project in a 
-        manner that is productive for all parties.</p>
+      <p>
+        This is a collection of tips for contributing to the project in a manner
+        that is productive for all parties.
+      </p>
       <ul>
-        <li>Every contribution is worthwhile. Even if the ensuing discussion 
-          proves it to be off-beam, then it may jog ideas for other people.</li>
-        <li>Use sensible and concise email subject headings. Search engines, 
-          and humans trying to browse a voluminous list, will respond 
-          favourably to a descriptive title.</li>
-        <li>Start new threads with new subject for new topics, rather than 
-          reusing the previous subject line.</li>
-        <li>Research your topic thoroughly before beginning to discuss a new 
-          development issue. Search and browse trhough the archives - your 
-          issue may have been discussed before. Do not just perceive a problem 
-          and then rush out with a question - instead delve.</li>
-        <li>Take the time to clearly explain your issue and write a concise 
-          email message. Less confusion facilitates fast and complete 
-          resolution.</li>
+        <li>
+          Every contribution is worthwhile. Even if the ensuing discussion
+          proves it to be off-beam, then it may jog ideas for other people.
+        </li>
+        <li>
+          Use sensible and concise email subject headings. Search engines, and
+          humans trying to browse a voluminous list, will respond favourably to
+          a descriptive title.
+        </li>
+        <li>
+          Start new threads with new subject for new topics, rather than reusing
+          the previous subject line.
+        </li>
+        <li>
+          Research your topic thoroughly before beginning to discuss a new
+          development issue. Search and browse trhough the archives - your issue
+          may have been discussed before. Do not just perceive a problem and
+          then rush out with a question - instead delve.
+        </li>
+        <li>
+          Take the time to clearly explain your issue and write a concise email
+          message. Less confusion facilitates fast and complete resolution.
+        </li>
       </ul>
-      <p>To build an effective project group, it is essential to develop a 
-        culture that is supportive to software development. The following are 
-        some of key precepts we learned from others or discovered during our 
-        journey.</p>
+      <p>
+        To build an effective project group, it is essential to develop a
+        culture that is supportive to software development. The following are
+        some of key precepts we learned from others or discovered during our
+        journey.
+      </p>
       <ul>
         <li>Work hard, be proud of the results, have fun</li>
-        <li>Be creative, be curious, be extreme (<em>eXtreme 
-          Programming</em>)</li>
+        <li>
+          Be creative, be curious, be extreme (
+          <em>eXtreme Programming</em>
+          )
+        </li>
         <li>Learn new skills, teach your skills to others</li>
         <li>Value the contributions of team members</li>
         <li>Read papers, write papers, give presentations</li>
