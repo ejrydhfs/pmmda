@@ -32,9 +32,15 @@ public class NamedEntity implements DataObject {
    */
   private static final long serialVersionUID = 99990101;
 
-  private java.lang.String name;
+  /**
+   * The name of the named entity.
+   */
+  private String name;
 
-  private java.lang.String description;
+  /**
+   * The description of the named entity.
+   */
+  private String description;
 
   /** 
    * Unique identifier of the data object instance distinguishing it from all
@@ -136,9 +142,9 @@ public class NamedEntity implements DataObject {
   /** 
    * Returns the current value of the simple property name.
    * @return the value of the simple property name.
-   * @see #setName(java.lang.String)
+   * @see #setName(String)
    */
-  public java.lang.String getName() {
+  public String getName() {
     return name;
   }
 
@@ -147,7 +153,7 @@ public class NamedEntity implements DataObject {
    * @param name new value of the property.
    * @see #getName()
    */    
-  public void setName(java.lang.String name) {
+  public void setName(String name) {
     if (((this.name != null) && !this.name.equals(name)) || 
         ((this.name == null) && (name != null)))  {    
       this.name = name;
@@ -158,9 +164,9 @@ public class NamedEntity implements DataObject {
   /** 
    * Returns the current value of the simple property description.
    * @return the value of the simple property description.
-   * @see #setDescription(java.lang.String)
+   * @see #setDescription(String)
    */
-  public java.lang.String getDescription() {
+  public String getDescription() {
     return description;
   }
 
@@ -169,7 +175,7 @@ public class NamedEntity implements DataObject {
    * @param description new value of the property.
    * @see #getDescription()
    */    
-  public void setDescription(java.lang.String description) {
+  public void setDescription(String description) {
     if (((this.description != null) && !this.description.equals(description)) || 
         ((this.description == null) && (description != null)))  {    
       this.description = description;

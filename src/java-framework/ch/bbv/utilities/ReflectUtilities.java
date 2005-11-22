@@ -250,7 +250,7 @@ public final class ReflectUtilities {
    * @see #getProperty(Object, String)
    */
   public static void setProperty(Object bean, String property, Object value) {
-    assert ((bean != null) && (property != null));
+    assert (bean != null) && (property != null);
     try {
       PropertyUtils.setProperty(bean, property, value);
     } catch (InvocationTargetException e) {

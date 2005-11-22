@@ -49,7 +49,7 @@ public final class CtoConstants {
   /**
    * Tag defining the name of the package containing the IDL sources.
    */
-  public static final String CTO_PACKAGE_IDL_TAG = "cto-package-idl";
+  public static final String CTO_PACKAGE_IDL = "cto-package-idl";
 
   /**
    * Attribute defining the name of the IDL structure of the data object.

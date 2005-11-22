@@ -8,9 +8,9 @@ package ch.bbv.explorer;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
-
 import org.apache.commons.beanutils.PropertyUtils;
-
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import ch.bbv.utilities.ReflectUtilities;
 import ch.bbv.utilities.TextUtilities;
 
@@ -43,6 +43,11 @@ public class UiRelation {
    * Prefix of the method used to get all items from the relation.
    */
   public static final String GET_ALL_PREFIX = "get";
+
+  /**
+   * Logger instance of the class.
+   */
+  private static Log log = LogFactory.getLog(UiRelation.class);
 
   /**
    * Name of the indexed or mapped property.
@@ -93,17 +98,14 @@ public class UiRelation {
     this.lwClass = lwClass;
     this.isEditable = isEditable;
     this.isMultiple = isMultiple;
-
     addMethodName = ADD_PREFIX
         + TextUtilities.identifierSingular(TextUtilities
             .identifierFirstUpper(TextUtilities
                 .removeSpecialCharacters(property)));
-
     removeMethodName = REMOVE_PREFIX
         + TextUtilities.identifierSingular(TextUtilities
             .identifierFirstUpper(TextUtilities
                 .removeSpecialCharacters(property)));
-
     getAllMethodName = GET_ALL_PREFIX
         + TextUtilities.identifierPlural(TextUtilities
             .identifierFirstUpper(TextUtilities
@@ -152,18 +154,16 @@ public class UiRelation {
    */
   public Object getProperty(Object bean, int index) {
     assert ((bean != null) && isMultiple);
-
     Object value = null;
     try {
       value = PropertyUtils.getIndexedProperty(bean, property, index);
-    } catch (InvocationTargetException ite) {
-      ite.printStackTrace();
-    } catch (NoSuchMethodException nsmi) {
-      nsmi.printStackTrace();
-    } catch (IllegalAccessException iae) {
-      iae.printStackTrace();
+    } catch (InvocationTargetException e) {
+      log.error(e);
+    } catch (NoSuchMethodException e) {
+      log.error(e);
+    } catch (IllegalAccessException e) {
+      log.error(e);
     }
-
     return value;
   }
 
@@ -181,12 +181,12 @@ public class UiRelation {
     assert ((bean != null) && isMultiple);
     try {
       PropertyUtils.setProperty(bean, property, value);
-    } catch (InvocationTargetException ite) {
-      ite.printStackTrace();
-    } catch (NoSuchMethodException nsmi) {
-      nsmi.printStackTrace();
-    } catch (IllegalAccessException iae) {
-      iae.printStackTrace();
+    } catch (InvocationTargetException e) {
+      log.error(e);
+    } catch (NoSuchMethodException e) {
+      log.error(e);
+    } catch (IllegalAccessException e) {
+      log.error(e);
     }
   }
 
@@ -198,7 +198,6 @@ public class UiRelation {
    */
   public void addProperty(Object bean, Object value) {
     assert ((bean != null) && isMultiple && (value != null));
-
     Class[] types = { value.getClass() };
     Object[] params = { value };
     ReflectUtilities.execute(bean, addMethodName, types, params);
@@ -212,7 +211,6 @@ public class UiRelation {
    */
   public void removeProperty(Object bean, Object value) {
     assert ((bean != null) && (value != null));
-
     Class[] types = { value.getClass() };
     Object[] params = { value };
     ReflectUtilities.execute(bean, removeMethodName, types, params);

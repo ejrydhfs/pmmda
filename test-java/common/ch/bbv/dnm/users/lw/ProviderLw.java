@@ -6,7 +6,6 @@
 
 package ch.bbv.dnm.users.lw;
 
-import ch.bbv.dnm.users.NamedEntity;
 import ch.bbv.dog.LightweightObject;
 import java.util.*;
 
@@ -32,6 +31,17 @@ public class ProviderLw  extends NamedEntityLw implements LightweightObject {
   private static final long serialVersionUID = 99990101;
 
   /**
+   * Defines the level of trust the application has to the provider instance. 
+   * Values range between 0 and 1.
+   */
+  private double trusted;
+
+  /**
+   * Costs to host the provider in the system.
+   */
+  private int cost;
+
+  /**
    * List of the domains the provider is in charge.
    */
   private List<DomainLw> domains;
@@ -51,6 +61,42 @@ public class ProviderLw  extends NamedEntityLw implements LightweightObject {
   public ProviderLw(Integer id) {
     super(id);
     domains = new ArrayList<DomainLw>();
+  }
+
+  /** 
+   * Gets the current value of the attribute Trusted.
+   * @return the value of the attribute Trusted.
+   * @see #setTrusted(double)
+   */
+  public double getTrusted() {
+    return trusted;
+  }
+
+  /** 
+   * Sets the new value of the simple property Trusted.
+   * @param trusted new value of the property.
+   * @see #getTrusted()
+   */    
+  public void setTrusted(double trusted) {
+    this.trusted = trusted;
+  }
+
+  /** 
+   * Gets the current value of the attribute Cost.
+   * @return the value of the attribute Cost.
+   * @see #setCost(int)
+   */
+  public int getCost() {
+    return cost;
+  }
+
+  /** 
+   * Sets the new value of the simple property Cost.
+   * @param cost new value of the property.
+   * @see #getCost()
+   */    
+  public void setCost(int cost) {
+    this.cost = cost;
   }
 
   /** 

@@ -25,9 +25,9 @@ public class GenerateCartridgeAction extends ExplorerGlobalActionImpl {
   private static final long serialVersionUID = 20041201;
 
   /**
-   * Name of the generate action as displayed in the menu.
+   * Name of the action as displayed in the menu.
    */
-  protected static final String GENERATE_ACTION = "Generate";
+  private static final String ACTION = "Generate";
 
   /**
    * Cartridge associated with the action.
@@ -60,7 +60,7 @@ public class GenerateCartridgeAction extends ExplorerGlobalActionImpl {
    */
   private static String createActionName(Cartridge cartridge) {
     StringBuilder buffer = new StringBuilder();
-    buffer.append(GENERATE_ACTION).append(" ").append(cartridge.getPrefix());
+    buffer.append(ACTION).append(" ").append(cartridge.getPrefix());
     return buffer.toString();
   }
 }

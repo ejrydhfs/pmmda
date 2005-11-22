@@ -62,9 +62,9 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
   private String description;
 
   /**
-   * Context property of the item. The value is handled in related accessors
-   * and does not need to be persisted but reflection directly manipulating
-   * fields do not call the accessors.
+   * Context property of the item. The value is handled in related accessors and
+   * does not need to be persisted but reflection directly manipulating fields
+   * do not call the accessors.
    * @serial
    */
   private transient MetaElement context;
@@ -107,19 +107,6 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
     taggedValues = new HashMap<String, TaggedValue>();
     attributes = new HashMap<String, String>();
     visibility = VisibilityCode.getCode(VisibilityCode.PUBLIC_ID);
-  }
-
-  /**
-   * Reads an object from a persistent stream and creates all transient
-   * properties.
-   * @param stream object stream read from.
-   * @throws IOException if the object could not be read.
-   * @throws ClassNotFoundException if the class cannot be found.
-   */
-  private void readObject(ObjectInputStream stream) throws IOException,
-      ClassNotFoundException {
-    stream.defaultReadObject();
-    attributes = new HashMap<String, String>();
   }
 
   /**
@@ -201,7 +188,7 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
    * @pre key != null
    */
   public String getAttribute(String key) {
-    assert (key != null);
+    assert key != null;
     return attributes.get(key);
   }
 
@@ -507,8 +494,10 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
    * templates.
    * @param tag tag name which value should be returned.
    * @return the value of the tagged value if found otherwise null.
+   * @pre tag != null
    */
   public String valueOfTag(String tag) {
+    assert tag != null;
     TaggedValue taggedValue = getTaggedValue(tag);
     String value = null;
     if (taggedValue != null) {
@@ -522,8 +511,10 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
    * a boolean value false is returned.
    * @param tag name of the tag to retrieve.
    * @return boolean value of the tag if found otherwise false.
+   * @pre tag != null
    */
   public boolean booleanValueOfTag(String tag) {
+    assert tag != null;
     TaggedValue taggedValue = getTaggedValue(tag);
     return ((taggedValue != null) && taggedValue.getValue().equals("true"));
   }
@@ -533,8 +524,10 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
    * @param tag tag name of the tagged value.
    * @param value value of the tagged value.
    * @see #booleanValueOfTag(String)
+   * @pre tag != null
    */
   public void setTaggedValue(String tag, boolean value) {
+    assert tag != null;
     setTaggedValue(tag, new TaggedValue(tag, Boolean.toString(value)));
   }
 
@@ -543,10 +536,16 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
    * @param tag tag name of the requested tagged value.
    * @return the boolean value of the tagged value.
    * @see #setTaggedValue(String, boolean)
+   * @pre tag != null
    */
   public boolean booleanValueOfAttribute(String tag) {
+    assert tag != null;
     String value = getAttribute(tag);
     return ((value != null) && value.equals("true"));
+  }
+
+  public String toString() {
+    return qualifiedName();
   }
 
   /**
@@ -558,7 +557,7 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
    */
   protected MetaElement findElement(List< ? extends MetaElement> list,
       String name) {
-    assert ((list != null) && name != null);
+    assert (list != null) && (name != null);
     for (MetaElement element : list) {
       if (name.equals(element.getName())) {
         return element;
@@ -567,16 +566,17 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
     return null;
   }
 
-  public ImportStatements createImportStatements() {
-    return new ImportStatements();
-  }
-
-  public ImportStatements createImportStatements(String context) {
-    return new ImportStatements(context);
-  }
-
-  public String toString() {
-    return qualifiedName();
+  /**
+   * Reads an object from a persistent stream and creates all transient
+   * properties.
+   * @param stream object stream read from.
+   * @throws IOException if the object could not be read.
+   * @throws ClassNotFoundException if the class cannot be found.
+   */
+  private void readObject(ObjectInputStream stream) throws IOException,
+      ClassNotFoundException {
+    stream.defaultReadObject();
+    attributes = new HashMap<String, String>();
   }
 
   // %% END USER CODE

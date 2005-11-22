@@ -27,12 +27,12 @@ public final class OexConstants {
   /**
    * Tag name defining the class of the property view used to display the class.
    */
-  public static final String VIEW_CLASS_TAG = "oex-view-class";
+  public static final String VIEW_CLASS = "oex-view-class";
 
   /**
-   * Tag name indicating if the class is visible in the explorer or not.
+   * Tag name indicating if the item is visible in the explorer or not.
    */
-  public static final String IS_VISIBLE_TAG = "oex-visible";
+  public static final String IS_VISIBLE = "oex-visible";
 
   /**
    * Tag name of the package containing the rich client source code artifacts.

@@ -22,11 +22,16 @@ public abstract class ExplorerNewAction extends ExplorerGlobalActionImpl {
   private static final long serialVersionUID = 20041201;
 
   /**
+   * Name of the action as displayed in the menu.
+   */
+  private static final String ACTION = "New";
+  
+  /**
    * Constructor of the instances of the class.
    * @param explorer explorer owning the global action.
    */
   public ExplorerNewAction(Explorer explorer) {
-    super("New", explorer);
+    super(ACTION, explorer);
   }
 
   public void actionPerformed(ActionEvent action) {

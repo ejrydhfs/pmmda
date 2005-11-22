@@ -71,11 +71,11 @@ public class FileReferenceCodeRetriever implements ReferenceCodeRetriever {
       infos = (List<ReferenceCodeInfo>) in.readObject();
       in.close();
     } catch (FileNotFoundException e) {
-      e.printStackTrace();
+      log.error(e);
     } catch (IOException e) {
-      e.printStackTrace();
+      log.error(e);
     } catch (ClassNotFoundException e) {
-      e.printStackTrace();
+      log.error(e);
     }
     return infos;
   }

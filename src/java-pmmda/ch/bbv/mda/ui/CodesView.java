@@ -21,16 +21,19 @@ import javax.swing.event.ListSelectionListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import ch.bbv.dog.ui.ReferenceCodeComboBox;
 import ch.bbv.explorer.ExplorerNode;
 import ch.bbv.explorer.NodeView;
 import ch.bbv.explorer.UiNodeType;
 import ch.bbv.explorer.components.TableCell;
 import ch.bbv.explorer.components.TablePanel;
 import ch.bbv.mda.MetaClass;
+import ch.bbv.mda.VisibilityCode;
 import ch.bbv.mda.cartridges.BoConstants;
 import ch.bbv.mda.pim.CodeType;
 import ch.bbv.mda.pim.CodeTypeMgr;
 import ch.bbv.mda.pim.CodeValue;
+import ch.bbv.mda.pim.StorageKind;
 
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
@@ -84,7 +87,7 @@ public class CodesView extends JPanel implements NodeView {
   /**
    * Swing component to display the associated property.
    */
-  private JCheckBox inMemory;
+  private ReferenceCodeComboBox storageKind;
 
   private TablePanel tablePanel;
 
@@ -282,7 +285,8 @@ public class CodesView extends JPanel implements NodeView {
     nameText = new JTextField(TEXT_FIELD_SIZE);
     nameText.setEditable(false);
     hierarchical = new JCheckBox();
-    inMemory = new JCheckBox();
+    storageKind = new ReferenceCodeComboBox(VisibilityCode.class, StorageKind
+        .getCodes());
     tablePanel = new TablePanel(Collections.EMPTY_LIST, new TableCell(CELLS));
     initialize();
     tablePanel.getScrollPane().addMouseListener(new PopupListener(menu));
@@ -346,7 +350,7 @@ public class CodesView extends JPanel implements NodeView {
       type.setQualifiedName(clazz.qualifiedName());
       nameText.setText(type.getQualifiedName());
       hierarchical.setSelected(type.isHierarchical());
-      // inMemory.setSelected(type.isInMemory());
+      storageKind.setSelectedCode(type.getStorageKind());
       tablePanel.setModel(type.getValues());
     } catch (IOException e) {
       log.error(e);
@@ -425,7 +429,7 @@ public class CodesView extends JPanel implements NodeView {
     builder.append("&Name", nameText);
     builder.nextLine();
     builder.append("&Hierarchical", hierarchical);
-    builder.append("&In Memory", inMemory);
+    builder.append("&Storage Kind", storageKind);
     builder.appendSeparator("Code Values");
     builder.append(tablePanel, 7);
     JPanel panel = builder.getPanel();

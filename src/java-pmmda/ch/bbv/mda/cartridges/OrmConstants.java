@@ -13,114 +13,108 @@ package ch.bbv.mda.cartridges;
  * @author MarcelBaumann
  * @version $Revision$
  */
-public final class OjbConstants {
+public final class OrmConstants {
   /**
    * Key part for a property of the cartridge used to retrieve user values.
    */
-  public static final String DDL_START_KEY = "ojb-cartridge.ddl.";
+  public static final String DDL_START_KEY = "orm-cartridge.ddl.";
 
   /**
    * Key part for a property of the cartridge used to retrieve user values.
    */
-  public static final String DDL_INTEGRITY_START_KEY = "ojb-cartridge.ddl-integrity.";
+  public static final String DDL_INTEGRITY_START_KEY = "orm-cartridge.ddl-integrity.";
 
   /**
    * Key for a property of the cartridge used to retrieve user values.
    */
-  public static final String SOURCE_ROOT_FOLDER_KEY = "ojb-cartridge.root-folder";
+  public static final String SOURCE_ROOT_FOLDER_KEY = "orm-cartridge.root-folder";
 
   /**
    * Key for a property of the cartridge used to retrieve user values.
    */
-  public static final String GENERATE_FK_INDEX_KEY = "ojb-cartridge.generate-fk-index";
+  public static final String GENERATE_FK_INDEX_KEY = "orm-cartridge.generate-fk-index";
 
   /**
    * Key for a property of the cartridge used to retrieve user values.
    */
-  public static final String GENERATE_CONSTRAINTS_KEY = "ojb-cartridge.generate-constraints";
+  public static final String GENERATE_CONSTRAINTS_KEY = "orm-cartridge.generate-constraints";
 
   /**
    * Key for a property of the cartridge defining the inheritance mode.
    */
-  public static final String INHERITANCE_KEY = "ojb-cartridge.inheritance";
+  public static final String INHERITANCE_KEY = "orm-cartridge.inheritance";
 
   /**
    * Key for a property of the cartridge used to retrieve user values.
    */
-  public static final String DATABASE_KEY = "ojb-cartridge.database";
+  public static final String DATABASE_KEY = "orm-cartridge.database";
 
   /**
    * Key for a property of the cartridge used to retrieve user values.
    */
-  public static final String TABLE_PREFIX_KEY = "obj-cartridge.table-prefix";
+  public static final String ORM_KEY = "orm-cartridge.orm";
 
   /**
    * Key for a property of the cartridge used to retrieve user values.
    */
-  public static final String TABLE_POSTFIX_KEY = "obj-cartridge.table-postfix";
+  public static final String TABLE_PREFIX_KEY = "orm-cartridge.table-prefix";
 
   /**
    * Key for a property of the cartridge used to retrieve user values.
    */
-  public static final String COLUMN_PREFIX_KEY = "obj-cartridge.column-prefix";
+  public static final String TABLE_POSTFIX_KEY = "orm-cartridge.table-postfix";
 
   /**
    * Key for a property of the cartridge used to retrieve user values.
    */
-  public static final String COLUMN_POSTFIX_KEY = "obj-cartridge.column-postfix";
+  public static final String COLUMN_PREFIX_KEY = "orm-cartridge.column-prefix";
 
   /**
-   * The tag shows if the class is persisten or not.
+   * Key for a property of the cartridge used to retrieve user values.
    */
-  public static final String SCHEMA_TAG = "ojb-schema";
+  public static final String COLUMN_POSTFIX_KEY = "orm-cartridge.column-postfix";
 
   /**
-   * If the class is persistent, this tag contains the name of the table in
-   * which the instances are persisted.
+   * The tag shows if the class is persistent or not.
    */
-  public static final String TABLE_NAME_TAG = "ojb-table-name";
+  public static final String SCHEMA = "orm-schema";
 
   /**
-   * JDBC column name of the property if the property is persistent.
+   * The name of the table in which the instances are persisted.
    */
-  public static final String COLUMN_NAME_TAG = "ojb-column-name";
+  public static final String TABLE_NAME = "orm-table-name";
+
+  /**
+   * The column name of the property if the property is persistent.
+   */
+  public static final String COLUMN_NAME = "orm-column-name";
 
   /**
    * JDBC type of the property if the property is persistent.
    */
-  public static final String COLUMN_TYPE_TAG = "ojb-column-type";
+  public static final String COLUMN_TYPE = "orm-column-type";
 
   /**
-   * JDBC type size of the property if the property is peristent and if the
+   * JDBC type size of the property if the property is persistent and if the
    * information is relevant for the associated JDBC type.
    */
-  public static final String COLUMN_SIZE_TAG = "ojb-column-size";
+  public static final String COLUMN_SIZE = "orm-column-size";
 
   /**
    * Indicates if the property is a primary key for the class it belongs to.
    */
-  public static final String IS_PRIMARY_TAG = "ojb-is-primary";
+  public static final String IS_PRIMARY = "orm-is-primary";
 
   /**
-   * True if the property persistent representation can be null. Such a property
-   * must not be a primitive Java type and not a primary key.
+   * Flag defines if the property persistent representation can be null. Such a
+   * property must not be a primitive Java type and not a primary key.
    */
-  public static final String CAN_BE_NULL_TAG = "ojb-can-be-null";
+  public static final String CAN_BE_NULL = "orm-can-be-null";
 
   /**
    * Defines if the property is used for ordering.
    */
-  public static final String ORDER_BY_TAG = "ojb-order-by";
-
-  /**
-   * Attribute defining the computed table name.
-   */
-  public static final String TABLE_NAME = TABLE_NAME_TAG;
-
-  /**
-   * Attribute defining the computed column name.
-   */
-  public static final String COLUMN_NAME = COLUMN_NAME_TAG;
+  public static final String ORDER_BY = "orm-order-by";
 
   /**
    * Database identifier for a database product.

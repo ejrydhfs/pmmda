@@ -58,6 +58,9 @@ public class ValidationPanel extends TablePanel {
     setModel(results);
   }
 
+  /**
+   * Clears the content of the validation panel.
+   */
   public void clear() {
     results = Collections.emptyList();
     setModel(results);

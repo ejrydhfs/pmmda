@@ -38,7 +38,7 @@ public class MetaModel extends MetaPackage {
    * List of all data types of the model.
    * @serial
    */
-  private List<MetaDatatype> dataTypes;
+  private List<MetaDatatype> datatypes;
 
   /**
    * The code type manager handling the reference codes of the model.
@@ -50,7 +50,7 @@ public class MetaModel extends MetaPackage {
    */
   public MetaModel() {
     packages = new ArrayList<MetaPackage>();
-    dataTypes = new ArrayList<MetaDatatype>();
+    datatypes = new ArrayList<MetaDatatype>();
     codeTypeMgr = new CodeTypeMgr();
   }
 
@@ -125,43 +125,43 @@ public class MetaModel extends MetaPackage {
     }
   }
 
-  public MetaDatatype getDataType(int index) {
-    return dataTypes.get(index);
+  public MetaDatatype getDatatype(int index) {
+    return datatypes.get(index);
   }
 
-  public void addDataType(MetaDatatype metaDataType) {
-    dataTypes.add(metaDataType);
-    metaDataType.setContext(this);
+  public void addDatatype(MetaDatatype datatype) {
+    datatypes.add(datatype);
+    datatype.setContext(this);
   }
 
-  public void addDataType(int index, MetaDatatype metaDataType) {
-    dataTypes.add(index, metaDataType);
-    metaDataType.setContext(this);
+  public void addDatatype(int index, MetaDatatype datatype) {
+    datatypes.add(index, datatype);
+    datatype.setContext(this);
     Collections.sort(packages, MetaElement.NAME_COMPARATOR);
   }
 
-  public List<MetaDatatype> getDataTypes() {
-    return dataTypes;
+  public List<MetaDatatype> getDatatypes() {
+    return datatypes;
   }
 
-  public void setDataTypes(List<MetaDatatype> dataTypes) {
-    removeAllDataTypes();
+  public void setDatatypes(List<MetaDatatype> dataTypes) {
+    removeAllDatatypes();
     dataTypes.addAll(dataTypes);
     for (MetaDatatype dataType : dataTypes) {
       dataType.setContext(this);
     }
   }
 
-  public void removeAllDataTypes() {
-    for (MetaDatatype dataType : dataTypes) {
+  public void removeAllDatatypes() {
+    for (MetaDatatype dataType : datatypes) {
       dataType.setContext(null);
     }
-    dataTypes.clear();
+    datatypes.clear();
   }
 
-  public void removeDataType(MetaDatatype dataType) {
-    if (dataTypes.contains(dataType)) {
-      dataTypes.remove(dataType);
+  public void removeDatatype(MetaDatatype dataType) {
+    if (datatypes.contains(dataType)) {
+      datatypes.remove(dataType);
       dataType.setContext(null);
     }
   }
@@ -174,7 +174,7 @@ public class MetaModel extends MetaPackage {
     for (MetaClass clazz : getClasses()) {
       clazz.accept(visitor);
     }
-    for (MetaDatatype datatype : getDataTypes()) {
+    for (MetaDatatype datatype : getDatatypes()) {
       datatype.accept(visitor);
     }
   }
@@ -185,8 +185,8 @@ public class MetaModel extends MetaPackage {
     return (MetaPackage) findElement(packages, qualifiedName);
   }
 
-  public MetaDatatype findDataType(String qualifiedName) {
-    return (MetaDatatype) findElement(dataTypes, qualifiedName);
+  public MetaDatatype findDatatype(String qualifiedName) {
+    return (MetaDatatype) findElement(datatypes, qualifiedName);
   }
 
   /**

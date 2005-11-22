@@ -13,7 +13,7 @@ import java.util.*;
 /* %% USER DEFINED IMPORT END %% */
 
 /**
- * A resource is a domain item which can be accessed 
+ * A resource is a domain item which can be accessed
  * @version $Revision$
  * @author Marcel Baumann
  */

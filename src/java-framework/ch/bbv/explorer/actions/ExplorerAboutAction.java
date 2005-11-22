@@ -22,6 +22,11 @@ public class ExplorerAboutAction extends ExplorerGlobalActionImpl {
   private static final long serialVersionUID = 20041201;
 
   /**
+   * Name of the action as displayed in the menu.
+   */
+  private static final String ACTION = "About";
+
+  /**
    * The project description displayed in the about frame.
    */
   private transient ProjectInfo projectInfo;
@@ -36,7 +41,7 @@ public class ExplorerAboutAction extends ExplorerGlobalActionImpl {
    * @param explorer explorer owning the global action.
    */
   public ExplorerAboutAction(Explorer explorer) {
-    super("About", explorer);
+    super(ACTION, explorer);
   }
 
   /**

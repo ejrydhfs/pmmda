@@ -57,7 +57,9 @@ public class MdaDocument implements ExplorerDocument {
   }
 
   public void setState(State state) {
-    this.state = state;
+    if ((state != State.MODIFIED) || (this.state != State.CREATED)) {
+      this.state = state;
+    }
   }
 
   public File getFile() {

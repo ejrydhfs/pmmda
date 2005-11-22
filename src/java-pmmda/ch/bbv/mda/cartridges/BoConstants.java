@@ -222,62 +222,62 @@ public final class BoConstants {
   /**
    * The flag specifies if the package should be generated or not.
    */
-  public static final String GENERATE_TAG = "bo-generate";
+  public static final String GENERATE = "bo-generate";
 
   /**
    * The value is the logical root directory, meaning a variable defined in the
    * properties where the Java code artifacts are created.
    */
-  public static final String ROOT_TAG = "bo-root";
+  public static final String ROOT = "bo-root";
 
   /**
    * The mode of the property either read, write or read-write.
    */
-  public static final String MODE_TAG = "bo-mode";
+  public static final String MODE = "bo-mode";
 
   /**
    * Indicates if the property supports property change events.
    */
-  public static final String CHANGE_EVENT_TAG = "bo-change-event";
+  public static final String CHANGE_EVENT = "bo-change-event";
 
   /**
    * Indicates if the property supports vetoable change events.
    */
-  public static final String VETO_EVENT_TAG = "bo-veto-event";
+  public static final String VETO_EVENT = "bo-veto-event";
 
   /**
    * Indicates if owned data objects can navigate back to their owner.
    */
-  public static final String NAVIGABLE_RELATION_TAG = "bo-navigable";
+  public static final String NAVIGABLE_RELATION = "bo-navigable";
 
   /**
    * Indicates if the property is member of the lightweight representation.
    */
-  public static final String LIGHTWEIGHT_TAG = "bo-lightweight";
+  public static final String LIGHTWEIGHT = "bo-lightweight";
 
   /**
    * Defines the class used to store the items of the indexed property. The type
    * of the indexed property defines the type of items in the container.
    */
-  public static final String CONTAINER_CLASS_TAG = "bo-container-class";
+  public static final String CONTAINER_CLASS = "bo-container-class";
 
   /**
    * Defines the interface of the class used to store the items of the indexed
    * property. This information supports interface for public signature coding
    * guideline.
    */
-  public static final String INTERFACE_CLASS_TAG = "bo-interface-class";
+  public static final String INTERFACE_CLASS = "bo-interface-class";
 
   /**
    * Flag indicating if a class is a root class in data object graph or not.
    */
-  public static final String IS_ROOT_TAG = "bo-is-root";
+  public static final String IS_ROOT = "bo-is-root";
 
   /**
    * Defines the class of the key used to order the indexed property. This tag
    * is only relevant if the indexed property is ordered.
    */
-  public static final String KEY_CLASS_TAG = "bo-key-class";
+  public static final String KEY_CLASS = "bo-key-class";
 
   /**
    * Attribute containing the mapping of the classifier to the primitive type or

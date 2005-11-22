@@ -20,7 +20,6 @@ import com.thoughtworks.xstream.XStream;
 import ch.bbv.dog.functors.IsModifiedFlagFunctor;
 import ch.bbv.dog.functors.ModifiedFlagFunctor;
 import ch.bbv.mda.operators.FileOperators;
-import ch.bbv.mda.MetaClass;
 /* %% USER DEFINED IMPORT END %% */
 
 /**
@@ -44,7 +43,7 @@ public class CodeTypeMgr {
    * The root directory where the code values of a code type are stored. The 
    * package structure is mapped to a directory hierarchy.
    */
-  private java.io.File root;
+  private File root;
 
   /**
    * All the code types handled in the manager.
@@ -138,9 +137,9 @@ public class CodeTypeMgr {
   /** 
    * Returns the current value of the simple property root.
    * @return the value of the simple property root.
-   * @see #setRoot(java.io.File)
+   * @see #setRoot(File)
    */
-  public java.io.File getRoot() {
+  public File getRoot() {
     return root;
   }
 
@@ -149,7 +148,7 @@ public class CodeTypeMgr {
    * @param root new value of the property.
    * @see #getRoot()
    */    
-  public void setRoot(java.io.File root) {
+  public void setRoot(File root) {
     if (((this.root != null) && !this.root.equals(root)) || 
         ((this.root == null) && (root != null)))  {    
       this.root = root;

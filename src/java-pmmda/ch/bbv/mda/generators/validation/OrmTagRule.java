@@ -6,56 +6,53 @@
 
 package ch.bbv.mda.generators.validation;
 
-import static ch.bbv.mda.cartridges.OjbConstants.COLUMN_NAME_TAG;
-import static ch.bbv.mda.cartridges.OjbConstants.COLUMN_SIZE_TAG;
-import static ch.bbv.mda.cartridges.OjbConstants.COLUMN_TYPE_TAG;
+import static ch.bbv.mda.cartridges.OrmConstants.COLUMN_NAME;
+import static ch.bbv.mda.cartridges.OrmConstants.COLUMN_SIZE;
+import static ch.bbv.mda.cartridges.OrmConstants.COLUMN_TYPE;
 
 import java.util.List;
 
 import ch.bbv.dog.validation.ValidationRuleResult;
 import ch.bbv.mda.*;
-import ch.bbv.mda.cartridges.JdbcTypeCode;
-import ch.bbv.mda.cartridges.OjbCartridge;
-import ch.bbv.mda.cartridges.OjbConstants;
-import ch.bbv.mda.cartridges.UmlConstants;
+import ch.bbv.mda.cartridges.*;
 
 /**
- * The OJB tag rule implements all validation rules for the tag values defined
- * in the OJB cartridge. The rules are only applied to persistent data objects.
+ * The orm tag rule implements all validation rules for the tag values defined
+ * in the orm cartridge. The rules are only applied to persistent data objects.
  * @author MarcelBaumann
  * @version $Revision$
  */
-public class OjbTagRule extends TagRule {
+public class OrmTagRule extends TagRule {
   /**
    * Key for validation result message.
    */
-  private static final String ERROR_MISSING_TABLE = "ojb.error.missing-table";
+  private static final String ERROR_MISSING_TABLE = "orm.error.missing-table";
 
   /**
    * Key for validation result message.
    */
-  private static final String ERROR_MISSING_COLUMN = "ojb.error.mssing-column";
+  private static final String ERROR_MISSING_COLUMN = "orm.error.mssing-column";
 
   /**
    * Key for validation result message.
    */
-  private static final String ERROR_MISSING_TYPE = "ojb.error.missing-jdbc-type";
+  private static final String ERROR_MISSING_TYPE = "orm.error.missing-jdbc-type";
 
   /**
    * Key for validation result message.
    */
-  private static final String ERROR_MISSING_LENGTH = "ojb.error.missing-jdbc-length";
+  private static final String ERROR_MISSING_LENGTH = "orm.error.missing-jdbc-length";
 
   /**
    * Key for validation result message.
    */
-  private static final String WARNING_SUPERFLUOUS_LENGTH = "ojb.warning.superflous-jdbc-length";
+  private static final String WARNING_SUPERFLUOUS_LENGTH = "orm.warning.superflous-jdbc-length";
 
   /**
    * Default constructor of the class.
    */
-  public OjbTagRule() {
-    super(OjbCartridge.PREFIX);
+  public OrmTagRule() {
+    super(OrmCartridge.PREFIX);
   }
 
   protected boolean validate(MetaPackage packages,
@@ -75,7 +72,7 @@ public class OjbTagRule extends TagRule {
   protected boolean validate(MetaClass clazz, List<ValidationRuleResult> results) {
     boolean sucess = true;
     if (clazz.booleanValueOfTag(UmlConstants.PERSISTENCE_TAG)) {
-      if (!exists(clazz, OjbConstants.TABLE_NAME_TAG)) {
+      if (!exists(clazz, OrmConstants.TABLE_NAME)) {
         sucess = false;
         addErrorMessage(results, ERROR_MISSING_TABLE,
             UmlConstants.PERSISTENCE_TAG, clazz.qualifiedName());
@@ -101,31 +98,33 @@ public class OjbTagRule extends TagRule {
   protected boolean validate(MetaProperty property,
       List<ValidationRuleResult> results) {
     boolean sucess = true;
-    if (!property.isTransient()
-        && property.getContext().booleanValueOfTag(UmlConstants.PERSISTENCE_TAG)) {
-      if (!exists(property, COLUMN_NAME_TAG)) {
+    if (property.booleanValueOfTag(UmlConstants.PERSISTENCE_TAG)) {
+      if (!exists(property, COLUMN_NAME)) {
         sucess = false;
-        addErrorMessage(results, ERROR_MISSING_COLUMN, COLUMN_NAME_TAG,
-            property.qualifiedName());
-      }
-      if (!exists(property, COLUMN_TYPE_TAG)) {
-        sucess = false;
-        addErrorMessage(results, ERROR_MISSING_TYPE, COLUMN_TYPE_TAG, property
+        addErrorMessage(results, ERROR_MISSING_COLUMN, COLUMN_NAME, property
             .qualifiedName());
       }
-      String value = property.valueOfTag(COLUMN_TYPE_TAG);
-      if (value.equalsIgnoreCase(JdbcTypeCode.VARCHAR.getShortDescription())
-          || value.equalsIgnoreCase(JdbcTypeCode.CHAR.getShortDescription())) {
-        if (!exists(property, COLUMN_SIZE_TAG)) {
+      if (!BoConstants.DATA_OBJECT_STEREOTYPE.equals(property.getClassifier()
+          .getStereotype())) {
+        if (!exists(property, COLUMN_TYPE)) {
           sucess = false;
-          addErrorMessage(results, ERROR_MISSING_LENGTH, COLUMN_SIZE_TAG,
-              property.qualifiedName());
+          addErrorMessage(results, ERROR_MISSING_TYPE, COLUMN_TYPE, property
+              .qualifiedName());
         }
-      } else {
-        if (intValue(property, COLUMN_SIZE_TAG) != 0) {
-          sucess = false;
-          addErrorMessage(results, WARNING_SUPERFLUOUS_LENGTH, COLUMN_SIZE_TAG,
-              property.qualifiedName());
+        String value = property.valueOfTag(COLUMN_TYPE);
+        if (value.equalsIgnoreCase(JdbcTypeCode.VARCHAR.getShortDescription())
+            || value.equalsIgnoreCase(JdbcTypeCode.CHAR.getShortDescription())) {
+          if (!exists(property, COLUMN_SIZE)) {
+            sucess = false;
+            addErrorMessage(results, ERROR_MISSING_LENGTH, COLUMN_SIZE,
+                property.qualifiedName());
+          }
+        } else {
+          if (intValue(property, COLUMN_SIZE) != 0) {
+            sucess = false;
+            addErrorMessage(results, WARNING_SUPERFLUOUS_LENGTH, COLUMN_SIZE,
+                property.qualifiedName());
+          }
         }
       }
     }

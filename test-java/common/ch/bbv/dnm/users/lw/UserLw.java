@@ -6,7 +6,6 @@
 
 package ch.bbv.dnm.users.lw;
 
-import ch.bbv.dnm.users.NamedEntity;
 import ch.bbv.dog.LightweightObject;
 import java.util.Date;
 
@@ -34,7 +33,7 @@ public class UserLw  extends NamedEntityLw implements LightweightObject {
    * context it is used to simplify navigation for users. The context of the 
    * user is the domain therefore the login is unique in the domain.
    */
-  private java.lang.String login;
+  private String login;
 
   /**
    * Flag indicating if the user is currently active or not.
@@ -45,13 +44,13 @@ public class UserLw  extends NamedEntityLw implements LightweightObject {
    * Upper range limit of the user account validity. If the value is null no 
    * upper limit is defined.
    */
-  private java.util.Date validTo;
+  private Date validTo;
 
   /**
    * Lower range limit of the user account validity. If the value is null no 
    * lower limit is defined.
    */
-  private java.util.Date validFrom;
+  private Date validFrom;
 
   /** 
    * Default constructor of the class used to create new lightweight data 
@@ -72,9 +71,9 @@ public class UserLw  extends NamedEntityLw implements LightweightObject {
   /** 
    * Gets the current value of the attribute Login.
    * @return the value of the attribute Login.
-   * @see #setLogin(java.lang.String)
+   * @see #setLogin(String)
    */
-  public java.lang.String getLogin() {
+  public String getLogin() {
     return login;
   }
 
@@ -83,7 +82,7 @@ public class UserLw  extends NamedEntityLw implements LightweightObject {
    * @param login new value of the property.
    * @see #getLogin()
    */    
-  public void setLogin(java.lang.String login) {
+  public void setLogin(String login) {
     this.login = login;
   }
 
@@ -108,9 +107,9 @@ public class UserLw  extends NamedEntityLw implements LightweightObject {
   /** 
    * Gets the current value of the attribute ValidTo.
    * @return the value of the attribute ValidTo.
-   * @see #setValidTo(java.util.Date)
+   * @see #setValidTo(Date)
    */
-  public java.util.Date getValidTo() {
+  public Date getValidTo() {
     return validTo;
   }
 
@@ -119,16 +118,16 @@ public class UserLw  extends NamedEntityLw implements LightweightObject {
    * @param validTo new value of the property.
    * @see #getValidTo()
    */    
-  public void setValidTo(java.util.Date validTo) {
+  public void setValidTo(Date validTo) {
     this.validTo = validTo;
   }
 
   /** 
    * Gets the current value of the attribute ValidFrom.
    * @return the value of the attribute ValidFrom.
-   * @see #setValidFrom(java.util.Date)
+   * @see #setValidFrom(Date)
    */
-  public java.util.Date getValidFrom() {
+  public Date getValidFrom() {
     return validFrom;
   }
 
@@ -137,7 +136,7 @@ public class UserLw  extends NamedEntityLw implements LightweightObject {
    * @param validFrom new value of the property.
    * @see #getValidFrom()
    */    
-  public void setValidFrom(java.util.Date validFrom) {
+  public void setValidFrom(Date validFrom) {
     this.validFrom = validFrom;
   }
 

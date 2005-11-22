@@ -14,7 +14,7 @@ import org.apache.commons.logging.LogFactory;
 
 import bsh.EvalError;
 import bsh.Interpreter;
-import ch.bbv.dog.persistence.PersistenceHandler;
+import ch.bbv.dog.persistence.ojb.PersistenceHandler;
 
 /**
  * The beanshell validation rule implements validation rules which logic is

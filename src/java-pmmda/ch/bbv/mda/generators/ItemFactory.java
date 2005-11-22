@@ -73,6 +73,7 @@ public class ItemFactory {
    * @param clazz class owning the tagged value types.
    * @param taggedValueTypes tagged value types to register.
    * @pre (clazz != null) && (taggedValueTypes != null)
+   * @post tagDefinitions.
    */
   public void registerTypes(Class clazz, List<TagDefinition> taggedValueTypes) {
     assert (clazz != null) && (taggedValueTypes != null);

@@ -37,23 +37,25 @@ public class RemoveNodeAction extends ExplorerNodeActionImpl {
     UiNodeType nodeType = getNodeType();
     if (nodeType.isStructureEditable(node.getLightweightObject())) {
       ExplorerNode parent = (ExplorerNode) node.getParent();
-      if (parent != null) {
-        String property = findProperty(node);
-        if (property != null) {
-          UiNodeType type = parent.getNodeType();
-          UiRelation relation = type.getRelation(property);
-          if (relation != null) {
-            relation.removeProperty(parent.getLightweightObject(), node
-                .getLightweightObject());
-            if (parent.getDataObject() != null && node.getDataObject() != null
-                && parent.getLightweightObject() != parent.getDataObject()) {
-              relation.removeProperty(parent.getDataObject(), node
-                  .getDataObject());
-            }
-            parent.remove(node);
-          }
-        }
+      if (parent == null) {
+        return;
       }
+      String property = findProperty(node);
+      if (property == null) {
+        return;
+      }
+      UiNodeType type = parent.getNodeType();
+      UiRelation relation = type.getRelation(property);
+      if (relation == null) {
+        return;
+      }
+      relation.removeProperty(parent.getLightweightObject(), node
+          .getLightweightObject());
+      if (parent.getDataObject() != null && node.getDataObject() != null
+          && parent.getLightweightObject() != parent.getDataObject()) {
+        relation.removeProperty(parent.getDataObject(), node.getDataObject());
+      }
+      parent.remove(node);
     }
   }
 

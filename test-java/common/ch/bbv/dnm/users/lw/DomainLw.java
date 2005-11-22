@@ -6,7 +6,6 @@
 
 package ch.bbv.dnm.users.lw;
 
-import ch.bbv.dnm.users.NamedEntity;
 import ch.bbv.dog.LightweightObject;
 import java.util.*;
 

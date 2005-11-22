@@ -10,7 +10,7 @@ import java.util.List;
 
 import ch.bbv.dog.validation.ValidationRuleResult;
 import ch.bbv.mda.*;
-import ch.bbv.mda.cartridges.OjbCartridge;
+import ch.bbv.mda.cartridges.OrmCartridge;
 
 /**
  * The CTO tag rule implements all validation rules for the tag values defined
@@ -23,7 +23,7 @@ public class CtoTagRule extends TagRule {
    * Default constructor of the class.
    */
   public CtoTagRule() {
-    super(OjbCartridge.PREFIX);
+    super(OrmCartridge.PREFIX);
   }
 
   protected boolean validate(MetaPackage packages,

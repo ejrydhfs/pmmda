@@ -35,7 +35,7 @@ public class RealmLw  implements LightweightObject {
   /**
    * Name of the realm as shown to the users.
    */
-  private java.lang.String name;
+  private String name;
 
   /**
    * The providers defined in the realm.
@@ -68,9 +68,9 @@ public class RealmLw  implements LightweightObject {
   /** 
    * Gets the current value of the attribute Name.
    * @return the value of the attribute Name.
-   * @see #setName(java.lang.String)
+   * @see #setName(String)
    */
-  public java.lang.String getName() {
+  public String getName() {
     return name;
   }
 
@@ -79,7 +79,7 @@ public class RealmLw  implements LightweightObject {
    * @param name new value of the property.
    * @see #getName()
    */    
-  public void setName(java.lang.String name) {
+  public void setName(String name) {
     this.name = name;
   }
 

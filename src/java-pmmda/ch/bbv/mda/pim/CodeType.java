@@ -36,14 +36,14 @@ public class CodeType implements DataObject {
   /**
    * The qualified name of the class defining the reference code type.
    */
-  private java.lang.String qualifiedName;
+  private String qualifiedName;
 
   /**
    * Flag indicating if the reference code is hierarchical or not.
    */
   private boolean hierarchical;
 
-  private boolean inMemory;
+  private StorageKind storageKind;
 
   /**
    * The code values defined for the code type are the set of legal values for 
@@ -146,9 +146,9 @@ public class CodeType implements DataObject {
   /** 
    * Returns the current value of the simple property qualifiedName.
    * @return the value of the simple property qualifiedName.
-   * @see #setQualifiedName(java.lang.String)
+   * @see #setQualifiedName(String)
    */
-  public java.lang.String getQualifiedName() {
+  public String getQualifiedName() {
     return qualifiedName;
   }
 
@@ -157,7 +157,7 @@ public class CodeType implements DataObject {
    * @param qualifiedName new value of the property.
    * @see #getQualifiedName()
    */    
-  public void setQualifiedName(java.lang.String qualifiedName) {
+  public void setQualifiedName(String qualifiedName) {
     if (((this.qualifiedName != null) && !this.qualifiedName.equals(qualifiedName)) || 
         ((this.qualifiedName == null) && (qualifiedName != null)))  {    
       this.qualifiedName = qualifiedName;
@@ -187,25 +187,26 @@ public class CodeType implements DataObject {
   }
 
   /** 
-   * Returns the current value of the simple property inMemory.
-   * @return the value of the simple property inMemory.
-   * @see #setInMemory(boolean)
+   * Returns the current value of the simple property storageKind.
+   * @return the value of the simple property storageKind.
+   * @see #setStorageKind(StorageKind)
    */
-  public boolean isInMemory() {
-    return inMemory;
+  public StorageKind getStorageKind() {
+    return storageKind;
   }
 
   /** 
-   * Sets the new value of the simple property inMemory.
-   * @param inMemory new value of the property.
-   * @see #isInMemory()
+   * Sets the new value of the simple property storageKind.
+   * @param storageKind new value of the property.
+   * @see #getStorageKind()
    */    
-  public void setInMemory(boolean inMemory) {
-    if (this.inMemory != inMemory) {  
-      this.inMemory = inMemory;
+  public void setStorageKind(StorageKind storageKind) {
+    if (((this.storageKind != null) && !this.storageKind.equals(storageKind)) || 
+        ((this.storageKind == null) && (storageKind != null)))  {    
+      this.storageKind = storageKind;
       setModified(true);
     }
-  }
+  }    
 
   /** 
    * Gets all elements of the relation values.

@@ -131,7 +131,7 @@ public class ModelOperators {
   }
 
   /**
-   * Returns the component name of a qualified class name.
+   * Returns the component name of a qualified name.
    * @param qualifiedName qualified name to process.
    * @return the component name or null if qualified name is null.
    */
@@ -165,9 +165,10 @@ public class ModelOperators {
    * @return the requested classifier if found otherwise null
    * @pre (model != null) && (qualifiedName != null)
    */
-  public static MetaClassifier findClassifier(MetaModel model, String qualifiedName) {
+  public static MetaClassifier findClassifier(MetaModel model,
+      String qualifiedName) {
     assert (model != null) && (qualifiedName != null);
-    MetaClassifier classifier = model.findDataType(qualifiedName);
+    MetaClassifier classifier = model.findDatatype(qualifiedName);
     if (classifier == null) {
       classifier = model.findClass(qualifiedName);
     }

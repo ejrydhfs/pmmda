@@ -77,6 +77,7 @@ public class MetaPackageView extends NodePropertiesView {
     initialize();
   }
 
+  @Override
   public void setViewEditable(boolean editable) {
     nameText.setEditable(editable);
     stereotypeText.setEditable(editable);
@@ -85,6 +86,7 @@ public class MetaPackageView extends NodePropertiesView {
     visibility.setEnabled(editable);
   }
 
+  @Override
   public void populateView() {
     MetaPackage model = (MetaPackage) getDataObject();
     if (this.isNewObject()) {
@@ -104,6 +106,7 @@ public class MetaPackageView extends NodePropertiesView {
     }
   }
 
+  @Override
   public void commitChanges() {
     MetaPackage model = (MetaPackage) getDataObject();
     String text = nameText.getText();
@@ -124,6 +127,7 @@ public class MetaPackageView extends NodePropertiesView {
     getModel().nodeChanged();
   }
 
+  @Override
   public void cancelChanges() {
     tagsView.cancelChanges();
   }

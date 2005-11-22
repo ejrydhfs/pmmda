@@ -60,7 +60,7 @@ public class CartridgeFactory extends ComponentImpl implements Component {
    * The item factory of the cartridge factory.
    */
   private ItemFactory itemFactory;
-  
+
   /**
    * Initialization properties.
    */
@@ -73,7 +73,9 @@ public class CartridgeFactory extends ComponentImpl implements Component {
   private NumberFormat format;
 
   /**
-   * Returns the singleton instance of the class.
+   * Returns the singleton instance of the class. The services of the
+   * application framework are used to provide access to the single instance of
+   * the class in the application.
    * @return singleton instance of the class.
    */
   public static CartridgeFactory getInstance() {
@@ -164,7 +166,7 @@ public class CartridgeFactory extends ComponentImpl implements Component {
   public ItemFactory getItemFactory() {
     return itemFactory;
   }
-  
+
   /**
    * Returns the list of loaded and instantiated cartridges.
    * @return list of instantiated cartridges.
@@ -368,7 +370,7 @@ public class CartridgeFactory extends ComponentImpl implements Component {
       preprocess(cartridge, (MetaPackage) model);
     }
 
-    for (MetaDatatype item : model.getDataTypes()) {
+    for (MetaDatatype item : model.getDatatypes()) {
       preprocess(cartridge, item);
     }
 
@@ -439,10 +441,7 @@ public class CartridgeFactory extends ComponentImpl implements Component {
    * @param clazz meta element class to complete with tags.
    */
   protected void registerTaggedValueTypes(Cartridge cartridge, Class clazz) {
-    List<TagDefinition> types = cartridge.getTaggedValueTypes(clazz);
-    if (types != null) {
-      getItemFactory().registerTypes(clazz, types);
-    }
+    getItemFactory().registerTypes(clazz, cartridge.getTaggedValueTypes(clazz));
   }
 
   /**
@@ -453,10 +452,8 @@ public class CartridgeFactory extends ComponentImpl implements Component {
    */
   protected void registerObsoleteTaggedValueTypes(Cartridge cartridge,
       Class clazz) {
-    List<TagDefinition> types = cartridge.getObsoleteTaggedValueTypes(clazz);
-    if ((types != null) && (types.size() > 0)) {
-      getItemFactory().addObsoleteTypes(clazz, types);
-    }
+    getItemFactory().addObsoleteTypes(clazz,
+        cartridge.getObsoleteTaggedValueTypes(clazz));
   }
 
   /**

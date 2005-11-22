@@ -50,6 +50,8 @@ public class LwTransformer {
   
   public static ProviderLw transform(Provider item) {
     ProviderLw lw = new ProviderLw(item.getId());
+    lw.setTrusted(item.getTrusted());
+    lw.setCost(item.getCost());
     for (Domain i : item.getDomains()) {
       lw.addDomain(transform(i));
     }

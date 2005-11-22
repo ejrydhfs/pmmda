@@ -14,10 +14,20 @@ import ch.bbv.explorer.Explorer;
  */
 public abstract class ExplorerOpenLast extends ExplorerGlobalActionImpl {
   /**
+   * Serial version identifier coded as back compatibility date.
+   */
+  private static final long serialVersionUID = 20041201;
+
+  /**
+   * Name of the action as displayed in the menu.
+   */
+  private static final String ACTION = "Open Last...";
+
+  /**
    * Constructor of the instances of the class.
    * @param explorer explorer owning the global action.
    */
   public ExplorerOpenLast(Explorer explorer) {
-    super("Save", explorer);
+    super(ACTION, explorer);
   }
 }

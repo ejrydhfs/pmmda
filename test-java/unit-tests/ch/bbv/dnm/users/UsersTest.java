@@ -43,7 +43,7 @@ public class UsersTest extends TestCase {
   /**
    * The name of the datasource containing all data objects.
    */
-  private static final String DATASOURCE = "ojb-dnm";
+  private static final String DATASOURCE = "orm-dnm";
 
   private static final String UPDATE = "update field";
 

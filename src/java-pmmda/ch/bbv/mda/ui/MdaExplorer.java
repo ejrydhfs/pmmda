@@ -67,8 +67,14 @@ public class MdaExplorer extends Explorer {
    */
   private static DataObjectManager manager;
 
+  /**
+   * The document edited in the explorer component.
+   */
   private MdaDocument document;
 
+  /**
+   * The command line arguments of the application.
+   */
   private String[] arguments;
 
   private ExplorerGlobalAction generateAllAction;
@@ -147,6 +153,7 @@ public class MdaExplorer extends Explorer {
   /**
    * Initializes the pmmda explorer.
    */
+  @Override
   protected void initialize() {
     new ResourceUtility("ch.bbv.mda.ui.Messages", Locale.US);
     ExplorerMenuBar menuBar = new ExplorerMenuBar(this);
@@ -260,6 +267,9 @@ public class MdaExplorer extends Explorer {
     }
   }
 
+  /**
+   * Creates the dynamic menu containing all configured cartridges.
+   */
   private void createGenerateMenu() {
     JMenu menu = new JMenu("Generate");
     menu.setName("Generate");

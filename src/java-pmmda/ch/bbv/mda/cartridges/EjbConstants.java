@@ -67,7 +67,7 @@ public final class EjbConstants {
   /**
    * Tag name of the server providing the DOG services.
    */
-  public static final String SERVER_NAME_TAG = "ejb-server-name";
+  public static final String SERVER_NAME = "ejb-server-name";
 
   /**
    * Tag name for the server package name.
@@ -78,5 +78,4 @@ public final class EjbConstants {
    * Tag name for the client package name.
    */
   public static final String CLIENT_PACKAGE = "ejb-client-package";
-
 }

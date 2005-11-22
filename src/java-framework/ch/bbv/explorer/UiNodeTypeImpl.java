@@ -8,9 +8,9 @@ package ch.bbv.explorer;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-
 import org.apache.commons.beanutils.PropertyUtils;
-
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import ch.bbv.dog.DataObjectType;
 
 /**
@@ -20,6 +20,11 @@ import ch.bbv.dog.DataObjectType;
  * @version $Revision$
  */
 public class UiNodeTypeImpl implements UiNodeType {
+  /**
+   * Logger instance of the class.
+   */
+  private static Log log = LogFactory.getLog(UiNodeTypeImpl.class);
+
   /**
    * The data object type descriptor for the type displayed in this node type.
    */
@@ -165,14 +170,13 @@ public class UiNodeTypeImpl implements UiNodeType {
     String name = null;
     try {
       name = (String) PropertyUtils.getProperty(lwObject, nameProperty);
-    } catch (InvocationTargetException ite) {
-      ite.printStackTrace();
-    } catch (NoSuchMethodException nsmi) {
-      nsmi.printStackTrace();
-    } catch (IllegalAccessException iae) {
-      iae.printStackTrace();
+    } catch (InvocationTargetException e) {
+      log.error(e);
+    } catch (NoSuchMethodException e) {
+      log.error(e);
+    } catch (IllegalAccessException e) {
+      log.error(e);
     }
-
     return name;
   }
 
@@ -201,7 +205,6 @@ public class UiNodeTypeImpl implements UiNodeType {
     for (UiRelation relation : getRelations()) {
       rowCount += getPropertySize(object, relation);
     }
-
     return rowCount;
   }
 
@@ -248,7 +251,6 @@ public class UiNodeTypeImpl implements UiNodeType {
 
   public String findProperty(Object parent, Object object) {
     assert ((parent != null) && (object != null));
-
     String property = null;
     UiNodeType nodeType = factory.getNodeTypeForLw(parent.getClass());
     for (UiRelation relation : nodeType.getRelations()) {

@@ -17,11 +17,16 @@ import ch.bbv.explorer.ExplorerDocument;
  */
 public abstract class ExplorerSaveAction extends ExplorerGlobalActionImpl {
   /**
+   * Name of the action as displayed in the menu.
+   */
+  private static final String ACTION = "Save";
+
+  /**
    * Constructor of the instances of the class.
    * @param explorer explorer owning the global action.
    */
   public ExplorerSaveAction(Explorer explorer) {
-    super("Save", explorer);
+    super(ACTION, explorer);
   }
 
   public void actionPerformed(ActionEvent action) {

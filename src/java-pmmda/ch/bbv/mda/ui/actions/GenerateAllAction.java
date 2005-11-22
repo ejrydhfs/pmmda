@@ -28,11 +28,16 @@ public class GenerateAllAction extends ExplorerGlobalActionImpl {
   private static final long serialVersionUID = 20041201;
 
   /**
+   * Name of the action as displayed in the menu.
+   */
+  private static final String ACTION = "Generate All";
+
+  /**
    * Default constructor.
    * @param explorer explorer owning the global action.
    */
   public GenerateAllAction(Explorer explorer) {
-    super("Generate All", explorer);
+    super(ACTION, explorer);
   }
 
   /**

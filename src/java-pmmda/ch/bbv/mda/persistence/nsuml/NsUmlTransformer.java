@@ -29,7 +29,6 @@ import ru.novosoft.uml.model_management.MPackage;
 import ru.novosoft.uml.xmi.IncompleteXMIException;
 import ru.novosoft.uml.xmi.XMIWriter;
 import ch.bbv.mda.*;
-import ch.bbv.mda.generators.CartridgeFactory;
 
 /**
  * The NSUML transformer defines rules how to transform a NSUML element into the
@@ -278,11 +277,11 @@ public class NsUmlTransformer {
       }
       return;
     }
-    MetaDatatype metaDataType = metaModel.findDataType(name);
-    if (metaDataType == null) {
-      metaDataType = new MetaDatatype();
-      metaDataType.setName(name);
-      metaModel.addDataType(metaDataType);
+    MetaDatatype metaDatatype = metaModel.findDatatype(name);
+    if (metaDatatype == null) {
+      metaDatatype = new MetaDatatype();
+      metaDatatype.setName(name);
+      metaModel.addDatatype(metaDatatype);
     }
   }
 
@@ -490,7 +489,7 @@ public class NsUmlTransformer {
       MetaDatatype datatype = new MetaDatatype();
       datatype.setName(mDataType.getName());
       extractStereotypeAndTags(mDataType, datatype);
-      target.addDataType(datatype);
+      target.addDatatype(datatype);
     }
   }
 

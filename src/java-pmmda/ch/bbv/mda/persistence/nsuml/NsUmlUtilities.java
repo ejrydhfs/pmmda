@@ -7,10 +7,12 @@
 package ch.bbv.mda.persistence.nsuml;
 
 import ru.novosoft.uml.foundation.core.MModelElement;
+import ru.novosoft.uml.foundation.data_types.MVisibilityKind;
+import ch.bbv.mda.VisibilityCode;
 
 /**
- * The NS UML utilities provides a set of convenience methods to navigate 
- * through a NS UML model and extract information. 
+ * The NS UML utilities provides a set of convenience methods to navigate
+ * through a NS UML model and extract information.
  * @author MarcelBaumann
  * @version $Revision$
  */
@@ -37,6 +39,23 @@ public class NsUmlUtilities {
       }
     }
     return buffer.toString();
+  }
+
+  /**
+   * Sets the visibility of the item.
+   * @param item item which visibility should be set.
+   * @param visibility new visibility of the item.
+   */
+  public static void setVisibility(MModelElement item, VisibilityCode visibility) {
+    if (VisibilityCode.PUBLIC_ID == visibility.getCode()) {
+      item.setVisibility(MVisibilityKind.PUBLIC);
+    } else if (VisibilityCode.PROTECTED_ID == visibility.getCode()) {
+      item.setVisibility(MVisibilityKind.PROTECTED);
+    } else if (VisibilityCode.PRIVATE_ID == visibility.getCode()) {
+      item.setVisibility(MVisibilityKind.PRIVATE);
+    } else if (VisibilityCode.PACKAGE_ID == visibility.getCode()) {
+      item.setVisibility(MVisibilityKind.PUBLIC);
+    }
   }
 
   /**

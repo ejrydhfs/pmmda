@@ -50,11 +50,16 @@ public class SaveAsAction extends ExplorerFileAction {
   private static Log log = LogFactory.getLog(SaveAsAction.class);
 
   /**
+   * Name of the action as displayed in the menu.
+   */
+  private static final String ACTION = "SaveAs...";
+
+  /**
    * Default constructor.
    * @param explorer explorer owning the global action.
    */
   public SaveAsAction(Explorer explorer) {
-    super("SaveAs...", explorer);
+    super(ACTION, explorer);
     FileTypes.addFileFilters(getFileChooser());
   }
 

@@ -39,7 +39,7 @@ public class Realm implements DataObject {
   /**
    * Name of the realm as shown to the users.
    */
-  private java.lang.String name;
+  private String name;
 
   /**
    * The providers defined in the realm.
@@ -141,9 +141,9 @@ public class Realm implements DataObject {
   /** 
    * Returns the current value of the simple property name.
    * @return the value of the simple property name.
-   * @see #setName(java.lang.String)
+   * @see #setName(String)
    */
-  public java.lang.String getName() {
+  public String getName() {
     return name;
   }
 
@@ -152,7 +152,7 @@ public class Realm implements DataObject {
    * @param name new value of the property.
    * @see #getName()
    */    
-  public void setName(java.lang.String name) {
+  public void setName(String name) {
     if (((this.name != null) && !this.name.equals(name)) || 
         ((this.name == null) && (name != null)))  {    
       this.name = name;

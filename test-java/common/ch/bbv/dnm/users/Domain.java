@@ -32,13 +32,13 @@ public class Domain extends NamedEntity implements DataObject {
   /**
    * Long name of the domain used for correspondance and human interactions.
    */
-  private java.lang.String longname;
+  private String longname;
 
   /**
    * The administrator of a domain is the user responsible for it and 
    * optionally some of its subdomains.
    */
-  private ch.bbv.dnm.users.User administrator;
+  private User administrator;
   /**
    * Mapping for 1: 1 relationship ${relation.getName()} as foreign key.
    */
@@ -77,9 +77,9 @@ public class Domain extends NamedEntity implements DataObject {
   /** 
    * Returns the current value of the simple property longname.
    * @return the value of the simple property longname.
-   * @see #setLongname(java.lang.String)
+   * @see #setLongname(String)
    */
-  public java.lang.String getLongname() {
+  public String getLongname() {
     return longname;
   }
 
@@ -88,7 +88,7 @@ public class Domain extends NamedEntity implements DataObject {
    * @param longname new value of the property.
    * @see #getLongname()
    */    
-  public void setLongname(java.lang.String longname) {
+  public void setLongname(String longname) {
     if (((this.longname != null) && !this.longname.equals(longname)) || 
         ((this.longname == null) && (longname != null)))  {    
       this.longname = longname;
@@ -99,9 +99,9 @@ public class Domain extends NamedEntity implements DataObject {
   /** 
    * Returns the current value of the simple property administrator.
    * @return the value of the simple property administrator.
-   * @see #setAdministrator(ch.bbv.dnm.users.User)
+   * @see #setAdministrator(User)
    */
-  public ch.bbv.dnm.users.User getAdministrator() {
+  public User getAdministrator() {
     return administrator;
   }
 
@@ -110,7 +110,7 @@ public class Domain extends NamedEntity implements DataObject {
    * @param administrator new value of the property.
    * @see #getAdministrator()
    */    
-  public void setAdministrator(ch.bbv.dnm.users.User administrator) {
+  public void setAdministrator(User administrator) {
     if (((this.administrator != null) && !this.administrator.equals(administrator)) || 
         ((this.administrator == null) && (administrator != null)))  {    
       this.administrator = administrator;

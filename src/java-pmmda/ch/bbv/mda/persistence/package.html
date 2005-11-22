@@ -7,30 +7,31 @@ and third party tools. Multiple formats are supported to insure that the tool
 can exchange data with major open source modeling tools. The following exchange
 formats are supported.</p>
 <dl>
- <dt>Java Serialize Format</dt>
- <dd>The Java serialization framework is fully supported. The format can be used
- to exchange efficiently data between <em>pmMDA</em>.</dd>
- <dt>XML Serialize Format</dt>
- <dd>The tree of objects are transformed in a XML format. The current XML long
- term persistency framework of Java cannot handle indexed properties based on
- lists or hash maps. Therefore we use the Jakarta Commons Betwist project to
- generate and read XML representations. The XML format supports long term
- persistency and migration to newer versions of the <em>pmMDA</em> MDA model.</dd>
- <dt>XMI 1.1 and MOF-UML 1.3</dt>
- <dd>The standard format XMI 1.1 and MOF-UML 1.3 is supported. UML modeling
- tools like MagicDraw, ArgoUML or Poseidon support it. Through the use of plugin
- model for Rational Rose can also be exchanged. This function is realized with
- the help of the NSUML library version 0.4.20. This format supports long term
- persistency and migration to newer versions of the <em>pmMDA</em> MDA model.</dd>
- <dt>XMI 2.0 and MOF-UML 2.0</dt>
- <dd>The standard format XMI 2.0 and MOF-UML 2.0 will be supported in the
- future. The function is realized with the help of the MDR library. This format
- is used in the NetBeans environment. This format supports long term persistency
- and migration to newer versions of the <em>pmMDA</em> MDA model.</dd>
- <dt>XMI 2.0 and Ecore 2.0</dt>
- <dd>This format is the exchange format used in the Eclipse environment. This
- format supports long term persistency and migration to newer versions of the <em>pmMDA</em>
- MDA model.</dd>
+  <dt>Java Serialize Format</dt>
+  <dd>The Java serialization framework is fully supported. The format can be
+  used to exchange efficiently data between <em>pmMDA</em>.</dd>
+  <dt>XML Serialize Format</dt>
+  <dd>The tree of objects are transformed in a XML format. The current XML long
+  term persistency framework of Java cannot handle indexed properties based on
+  lists or hash maps. Therefore we use the Jakarta Commons Betwist project to
+  generate and read XML representations. The XML format supports long term
+  persistency and migration to newer versions of the <em>pmMDA</em> MDA model.</dd>
+  <dt>XMI 1.1 and MOF-UML 1.3</dt>
+  <dd>The standard format XMI 1.1 and MOF-UML 1.3 is supported. UML modeling
+  tools like MagicDraw, ArgoUML or Poseidon support it. Through the use of
+  plugin model for Rational Rose can also be exchanged. This function is
+  realized with the help of the NSUML library version 0.4.20. This format
+  supports long term persistency and migration to newer versions of the <em>pmMDA</em>
+  MDA model.</dd>
+  <dt>XMI 2.0 and MOF-UML 2.0</dt>
+  <dd>The standard format XMI 2.0 and MOF-UML 2.0 will be supported in the
+  future. The function is realized with the help of the MDR library. This format
+  is used in the NetBeans environment. This format supports long term
+  persistency and migration to newer versions of the <em>pmMDA</em> MDA model.</dd>
+  <dt>XMI 2.0 and Ecore 2.0</dt>
+  <dd>This format is the exchange format used in the Eclipse environment. This
+  format supports long term persistency and migration to newer versions of the <em>pmMDA</em>
+  MDA model.</dd>
 </dl>
 <p>The UML 1.4 format is available to migrate old projects to newer UML
 versions. It should not be used for productive development.</p>
@@ -40,19 +41,39 @@ versions. It should not be used for productive development.</p>
 functions to read, write and update description information. The persistency
 policy defines the detailed methods used to implement the retrieval functions.</p>
 
+<h3>Synchronization</h3>
+<p>Each time a model is written back to its representation both models must be
+synchronized. The models are synchronized and not created to keep all references
+from the diagrams to the underlying model. The following situations exist.</p>
+<dl>
+  <dt>Unmodified</dt>
+  <dd>No modifications were performed on the item. Therefore no actions are
+  necessary.</dd>
+  <dt>Modified</dt>
+  <dd>Attributes of an item have been changed. The new values are stored in the
+  associated representation in the model.</dd>
+  <dt>Added</dt>
+  <dd>The item was added. A new item must be created in the corresponding
+  context. All attribute values must be copied. The operation does not need to
+  be recursive because the traversal algorithm will anyway visit all items.</dd>
+  <dt>Removed</dt>
+  <dd>The item was removed. The item representation must be removed from the
+  model.</dd>
+</dl>
+
 <h3>XML Serialization</h3>
 <p>Releases 0.3.x and higher use the open source XStream library and serialize
 patterns. The following design decisions were taken.</p>
 <ul>
- <li>Read object is as documented in "Effective Java" a factory method
- implementing a constructor of the class. Initialization of transient fields,
- computation of derived attributes and validation of class invariants must be
- performed in this method.</li>
- <li>The Java library provide a method read resolve to insure that singleton
- patterns hold when serializing objects. This method must be provided for all
- classes implementing a singleton.</li>
- <li>The JavaDoc environment provides tags for serialized properties. They must
- be used in the application to provide complete documentation.</li>
+  <li>Read object is as documented in "Effective Java" a factory method
+  implementing a constructor of the class. Initialization of transient fields,
+  computation of derived attributes and validation of class invariants must be
+  performed in this method.</li>
+  <li>The Java library provide a method read resolve to insure that singleton
+  patterns hold when serializing objects. This method must be provided for all
+  classes implementing a singleton.</li>
+  <li>The JavaDoc environment provides tags for serialized properties. They must
+  be used in the application to provide complete documentation.</li>
 </ul>
 <p>General operations are provided as static operators to the project.
 </body>

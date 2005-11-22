@@ -14,6 +14,25 @@ members of the same package. This assumption follow the object-oriented design
 rules.</p>
 
 <h2>Analysis</h2>
+<h3>Mapping Syntax</h3>
+<p>Each cartridge can define its capabilities in a XML file. The syntax for the
+mapping information is described below.</p>
+<p>The tag description contains the following information.</p>
+<dl>
+  <dt>name</dt>
+  <dd>name of the tag used in the UML model and processed in the cartridges.</dd>
+  <dt>type</dt>
+  <dd>the type of the tag is either the fully qualified name of the class or the
+  name of the primitive type such as boolean.</dd>
+  <dt>context</dt>
+  <dd>the context where the tag is used. The following values are legal: model,
+  package, class, property, indexed-property.</dd>
+  <dt>default value</dt>
+  <dd>the default value of the tag. This information is optional.</dd>
+  <dt>description</dt>
+  <dd>the description of the tag signification. This information is optional.</dd>
+</dl>
+
 <h3>Tag Initialization</h3>
 <p>Cartridges should initialize the tags they define. Two mechanisms are
 provided. A default value can be defined for a tag and will be automatically set
@@ -46,64 +65,64 @@ configuration.</p>
 cartridge interface. The class also provide helper methods to create the
 velocity context passed to the invoked velocity templates.</p>
 <ul>
- <li>Model Context
- <dl>
-  <dt>properties</dt>
-  <dd>The properties defined in the configuration file and read in the running
-  instance.</dd>
-  <dt>utilities</dt>
-  <dd>Utility class provided in the package to simplify complex catridge
-  operations.</dd>
-  <dt>cartridge</dt>
-  <dd>the cartridge instance invoking the template.</dd>
-  <dt>model</dt>
-  <dd>the meta model instance being processed.</dd>
- </dl>
- </li>
- <li>Package Context
- <dl>
-  <dt>properties</dt>
-  <dd>The properties defined in the configuration file and read in the running
-  instance.</dd>
-  <dt>utilities</dt>
-  <dd>Utility class provided in the package to simplify complex catridge
-  operations.</dd>
-  <dt>cartridge</dt>
-  <dd>the cartridge instance invoking the template.</dd>
-  <dt>model</dt>
-  <dd>the meta model instance being processed.</dd>
-  <dt>package</dt>
-  <dd>the meta package instance being processed.</dd>
-  <dt>classes</dt>
-  <dd>the list of classes defined in the package.</dd>
- </dl>
- </li>
- <li>Class Context
- <dl>
-  <dt>properties</dt>
-  <dd>The properties defined in the configuration file and read in the running
-  instance.</dd>
-  <dt>utilities</dt>
-  <dd>Utility class provided in the package to simplify complex catridge
-  operations.</dd>
-  <dt>cartridge</dt>
-  <dd>the cartridge instance invoking the template.</dd>
-  <dt>model</dt>
-  <dd>the meta model instance being processed.</dd>
-  <dt>package</dt>
-  <dd>the meta package instance being processed.</dd>
-  <dt>class</dt>
-  <dd>the meta class instance being processed.</dd>
-  <dt>properties</dt>
-  <dd>the list of properties of the class.</dd>
-  <dt>aggregations</dt>
-  <dd>the list of indexed properties of the class.</dd>
-  <dt>references</dt>
-  <dd>to be written.</dd>
-  <dt>imports</dt>
-  <dd>the list of computed import statements of the class.</dd>
- </dl>
- </li>
+  <li>Model Context
+  <dl>
+    <dt>properties</dt>
+    <dd>The properties defined in the configuration file and read in the running
+    instance.</dd>
+    <dt>utilities</dt>
+    <dd>Utility class provided in the package to simplify complex catridge
+    operations.</dd>
+    <dt>cartridge</dt>
+    <dd>the cartridge instance invoking the template.</dd>
+    <dt>model</dt>
+    <dd>the meta model instance being processed.</dd>
+  </dl>
+  </li>
+  <li>Package Context
+  <dl>
+    <dt>properties</dt>
+    <dd>The properties defined in the configuration file and read in the running
+    instance.</dd>
+    <dt>utilities</dt>
+    <dd>Utility class provided in the package to simplify complex catridge
+    operations.</dd>
+    <dt>cartridge</dt>
+    <dd>the cartridge instance invoking the template.</dd>
+    <dt>model</dt>
+    <dd>the meta model instance being processed.</dd>
+    <dt>package</dt>
+    <dd>the meta package instance being processed.</dd>
+    <dt>classes</dt>
+    <dd>the list of classes defined in the package.</dd>
+  </dl>
+  </li>
+  <li>Class Context
+  <dl>
+    <dt>properties</dt>
+    <dd>The properties defined in the configuration file and read in the running
+    instance.</dd>
+    <dt>utilities</dt>
+    <dd>Utility class provided in the package to simplify complex catridge
+    operations.</dd>
+    <dt>cartridge</dt>
+    <dd>the cartridge instance invoking the template.</dd>
+    <dt>model</dt>
+    <dd>the meta model instance being processed.</dd>
+    <dt>package</dt>
+    <dd>the meta package instance being processed.</dd>
+    <dt>class</dt>
+    <dd>the meta class instance being processed.</dd>
+    <dt>properties</dt>
+    <dd>the list of properties of the class.</dd>
+    <dt>aggregations</dt>
+    <dd>the list of indexed properties of the class.</dd>
+    <dt>references</dt>
+    <dd>to be written.</dd>
+    <dt>imports</dt>
+    <dd>the list of computed import statements of the class.</dd>
+  </dl>
+  </li>
 </ul>
 <h3>Initialization of Tagged Values</h3>
 <p></p>

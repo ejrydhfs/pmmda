@@ -9,7 +9,10 @@ import static ch.bbv.mda.cartridges.CtoConstants.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -57,6 +60,9 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
   public static final String[] PRIMITIVE_TYPES = { "boolean", "byte", "char",
       "double", "float", "integer", "long", "short" };
 
+  /**
+   * Map between Java types and IDL corresponding representation.
+   */
   private static Map<String, String> java2idl;
 
   static {
@@ -110,28 +116,9 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
     super("CORBA Transfer Object Cartridge", PREFIX, new VersionId(0, 3, 0));
   }
 
-  public void initialize(Properties properties) {
-    super.initialize(properties);
-
-    CartridgeFactory factory = CartridgeFactory.getInstance();
-    addCartridge(factory.getCartridge(BoCartridge.PREFIX));
-    addUndefinedProperty(properties, ROOT_IDL_KEY, "");
-    addUndefinedProperty(properties, TRANSFORM_PACKAGE_POSTFIX, "");
-    addUndefinedProperty(properties, IDL_PREFIX_KEY, "");
-    addUndefinedProperty(properties, IDL_POSTFIX_KEY, "");
-  }
-
-  public List<TagDefinition> getTaggedValueTypes(Class clazz) {
-    assert (clazz != null);
-    List<TagDefinition> types = new ArrayList<TagDefinition>();
-    if (clazz.equals(MetaPackage.class)) {
-      types.add(new TagDefinition(CTO_PACKAGE_IDL_TAG, "", String.class));
-    }
-    return types;
-  }
-
+  @Override
   public void preProcessDatatype(MetaDatatype datatype) {
-    assert (datatype != null);
+    assert datatype != null;
     String idlType = java2idl.get(datatype
         .getAttribute(BoConstants.BO_DATATYPE));
     if (idlType != null) {
@@ -139,16 +126,18 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
     }
   }
 
+  @Override
   public void preProcessPackage(MetaPackage packages) {
-    assert (packages != null);
+    assert packages != null;
     String attribute = expandIdentifier(null, packages.qualifiedName(),
         TRANSFORM_PACKAGE_POSTFIX);
     packages.addAttribute(CTO_BO2DTO_PACKAGE, attribute);
     packages.addAttribute(CTO_LW2DTO_PACKAGE, attribute);
   }
 
+  @Override
   public void preProcessClass(MetaClass clazz) {
-    assert (clazz != null);
+    assert clazz != null;
     Properties context = getContext();
     String name = clazz.getName();
     StringBuilder buffer = new StringBuilder();
@@ -175,31 +164,35 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
     }
   }
 
+  @Override
   public void processPackage(MetaPackage packages) {
+    assert packages != null;
     isPackageInterface = BoConstants.INTERFACE_STEREOTYPE
         .equalsIgnoreCase(packages.getStereotype());
   }
 
+  @Override
   public void processClass(MetaClass clazz) {
-    File javaRoot = getRoot(ROOT_JAVA_KEY, BoConstants.ROOT_COMMON_FOLDER_KEY);
-    File idlRoot = new File(getContext().getProperty(ROOT_IDL_KEY));
+    assert clazz != null;
     if (!isPackageInterface
-        || !clazz.retrievePackage().booleanValueOfTag(BoConstants.GENERATE_TAG)) {
+        && !clazz.retrievePackage().booleanValueOfTag(BoConstants.GENERATE)) {
       return;
     }
+    File javaRoot = getRoot(ROOT_JAVA_KEY, BoConstants.ROOT_COMMON_FOLDER_KEY);
+    File idlRoot = new File(getContext().getProperty(ROOT_IDL_KEY));
     try {
       if (BoConstants.DATA_OBJECT_STEREOTYPE.equals(clazz.getStereotype())) {
         MetaPackage metaPackage = (MetaPackage) clazz.getContext();
         VelocityContext context = createContext(clazz);
-        processTemplate(idlRoot, metaPackage.valueOfTag(CTO_PACKAGE_IDL_TAG),
-            clazz.getAttribute(CTO_MO_CLASS) + IDL_EXTENSION, retrieveTemplate(
-                "idl-dto-bo", null), context);
+        processTemplate(idlRoot, metaPackage.valueOfTag(CTO_PACKAGE_IDL), clazz
+            .getAttribute(CTO_MO_CLASS)
+            + IDL_EXTENSION, retrieveTemplate("idl-dto-bo", null), context);
         processJavaTemplate(javaRoot, metaPackage
             .getAttribute(CTO_BO2DTO_PACKAGE), clazz
             .getAttribute(CTO_BO2DTO_CLASS), retrieveTemplate("java-bo2dto",
             null), context);
         if (clazz.booleanValueOfAttribute(BoConstants.BO_LIGHTWEIGHT)) {
-          processTemplate(idlRoot, metaPackage.valueOfTag(CTO_PACKAGE_IDL_TAG),
+          processTemplate(idlRoot, metaPackage.valueOfTag(CTO_PACKAGE_IDL),
               clazz.getAttribute(CTO_LW_CLASS) + IDL_EXTENSION,
               retrieveTemplate("idl-dto-lw", null), context);
           processJavaTemplate(javaRoot, metaPackage
@@ -213,6 +206,11 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
     }
   }
 
+  /**
+   * Returns the IDL type of the type of the property.
+   * @param property property wich IDL representation is requested.
+   * @return the IDL type of the property.
+   */
   public String getIdlType(MetaProperty property) {
     MetaClassifier classifier = property.getClassifier();
     String idlType = classifier.getAttribute(CTO_IDL_TYPE);

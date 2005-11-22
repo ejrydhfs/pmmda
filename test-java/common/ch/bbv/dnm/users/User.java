@@ -33,7 +33,7 @@ public class User extends NamedEntity implements DataObject {
    * context it is used to simplify navigation for users. The context of the 
    * user is the domain therefore the login is unique in the domain.
    */
-  private java.lang.String login;
+  private String login;
 
   /**
    * Flag indicating if the user is currently active or not.
@@ -43,24 +43,24 @@ public class User extends NamedEntity implements DataObject {
   /**
    * The primary email address of the user.
    */
-  private java.lang.String email;
+  private String email;
 
   /**
    * The password of the user.
    */
-  private java.lang.String password;
+  private String password;
 
   /**
    * Upper range limit of the user account validity. If the value is null no 
    * upper limit is defined.
    */
-  private java.util.Date validTo;
+  private Date validTo;
 
   /**
    * Lower range limit of the user account validity. If the value is null no 
    * lower limit is defined.
    */
-  private java.util.Date validFrom;
+  private Date validFrom;
 
   /**
    * The roles the user belongs to.
@@ -89,9 +89,9 @@ public class User extends NamedEntity implements DataObject {
   /** 
    * Returns the current value of the simple property login.
    * @return the value of the simple property login.
-   * @see #setLogin(java.lang.String)
+   * @see #setLogin(String)
    */
-  public java.lang.String getLogin() {
+  public String getLogin() {
     return login;
   }
 
@@ -100,8 +100,8 @@ public class User extends NamedEntity implements DataObject {
    * @param login new value of the property.
    * @see #getLogin()
    */    
-  public void setLogin(java.lang.String login) {
-    java.lang.String oldLogin = this.login;
+  public void setLogin(String login) {
+    String oldLogin = this.login;
     if (((this.login != null) && !this.login.equals(login)) || 
         ((this.login == null) && (login != null)))  {    
       this.login = login;
@@ -134,9 +134,9 @@ public class User extends NamedEntity implements DataObject {
   /** 
    * Returns the current value of the simple property email.
    * @return the value of the simple property email.
-   * @see #setEmail(java.lang.String)
+   * @see #setEmail(String)
    */
-  public java.lang.String getEmail() {
+  public String getEmail() {
     return email;
   }
 
@@ -145,8 +145,8 @@ public class User extends NamedEntity implements DataObject {
    * @param email new value of the property.
    * @see #getEmail()
    */    
-  public void setEmail(java.lang.String email) {
-    java.lang.String oldEmail = this.email;
+  public void setEmail(String email) {
+    String oldEmail = this.email;
     if (((this.email != null) && !this.email.equals(email)) || 
         ((this.email == null) && (email != null)))  {    
       this.email = email;
@@ -158,9 +158,9 @@ public class User extends NamedEntity implements DataObject {
   /** 
    * Returns the current value of the simple property password.
    * @return the value of the simple property password.
-   * @see #setPassword(java.lang.String)
+   * @see #setPassword(String)
    */
-  public java.lang.String getPassword() {
+  public String getPassword() {
     return password;
   }
 
@@ -169,7 +169,7 @@ public class User extends NamedEntity implements DataObject {
    * @param password new value of the property.
    * @see #getPassword()
    */    
-  public void setPassword(java.lang.String password) {
+  public void setPassword(String password) {
     if (((this.password != null) && !this.password.equals(password)) || 
         ((this.password == null) && (password != null)))  {    
       this.password = password;
@@ -180,9 +180,9 @@ public class User extends NamedEntity implements DataObject {
   /** 
    * Returns the current value of the simple property validTo.
    * @return the value of the simple property validTo.
-   * @see #setValidTo(java.util.Date)
+   * @see #setValidTo(Date)
    */
-  public java.util.Date getValidTo() {
+  public Date getValidTo() {
     return validTo;
   }
 
@@ -191,7 +191,7 @@ public class User extends NamedEntity implements DataObject {
    * @param validTo new value of the property.
    * @see #getValidTo()
    */    
-  public void setValidTo(java.util.Date validTo) {
+  public void setValidTo(Date validTo) {
     if (((this.validTo != null) && !this.validTo.equals(validTo)) || 
         ((this.validTo == null) && (validTo != null)))  {    
       this.validTo = validTo;
@@ -202,9 +202,9 @@ public class User extends NamedEntity implements DataObject {
   /** 
    * Returns the current value of the simple property validFrom.
    * @return the value of the simple property validFrom.
-   * @see #setValidFrom(java.util.Date)
+   * @see #setValidFrom(Date)
    */
-  public java.util.Date getValidFrom() {
+  public Date getValidFrom() {
     return validFrom;
   }
 
@@ -213,7 +213,7 @@ public class User extends NamedEntity implements DataObject {
    * @param validFrom new value of the property.
    * @see #getValidFrom()
    */    
-  public void setValidFrom(java.util.Date validFrom) {
+  public void setValidFrom(Date validFrom) {
     if (((this.validFrom != null) && !this.validFrom.equals(validFrom)) || 
         ((this.validFrom == null) && (validFrom != null)))  {    
       this.validFrom = validFrom;
@@ -252,6 +252,9 @@ public class User extends NamedEntity implements DataObject {
    */
   public boolean addRoles(Collection<UserRole> c) {
     setModified(true);
+    for(UserRole item : c) {
+      setForeignKey(item, "userRolesHandle", getId());
+    }
     return roles.addAll(c);
   }  
   
@@ -264,6 +267,7 @@ public class User extends NamedEntity implements DataObject {
    */
   public void setRole(int index, UserRole element) {
     setModified(true);
+    setForeignKey(element, "userRolesHandle", getId());
     roles.add(index, element);
   }
 
@@ -277,6 +281,7 @@ public class User extends NamedEntity implements DataObject {
    */
   public boolean addRole(UserRole element) {
     setModified(true);
+    setForeignKey(element, "userRolesHandle", getId());
     return roles.add(element);
   }
   
@@ -293,6 +298,7 @@ public class User extends NamedEntity implements DataObject {
     boolean removed = roles.remove(element);
     if (removed) {
       setModified(true);
+      setForeignKey(element, "userRolesHandle", getId());
     }
     return removed;
   }

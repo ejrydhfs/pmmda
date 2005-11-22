@@ -4,7 +4,7 @@
  * $Id$
  */
 
-package ch.bbv.dog.persistence;
+package ch.bbv.dog.persistence.ojb;
 
 import java.util.List;
 

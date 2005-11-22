@@ -405,6 +405,7 @@ public abstract class Explorer {
    * @param index index of the removed child node.
    */
   public void nodeRemoved(ExplorerNode parent, ExplorerNode node, int index) {
+    getMenuBar().documentChanged(State.MODIFIED);
     int[] childIndices = new int[1];
     Object[] removedChildren = new Object[1];
     childIndices[0] = index;

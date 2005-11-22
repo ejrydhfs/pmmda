@@ -60,10 +60,12 @@ public class MetaModelView extends NodePropertiesView {
     initialize();
   }
 
+  @Override
   public void setViewEditable(boolean editable) {
     name.setEditable(editable);
   }
 
+  @Override
   public void populateView() {
     MetaModel model = (MetaModel) getDataObject();
     name.setText(model.getName());
@@ -72,6 +74,7 @@ public class MetaModelView extends NodePropertiesView {
     filename.setText(file.getAbsolutePath());
   }
 
+  @Override
   public void commitChanges() {
     MetaModel model = (MetaModel) getDataObject();
     model.setName(name.getText());
@@ -79,6 +82,7 @@ public class MetaModelView extends NodePropertiesView {
     getModel().nodeChanged();
   }
 
+  @Override
   public void cancelChanges() {
   }
 

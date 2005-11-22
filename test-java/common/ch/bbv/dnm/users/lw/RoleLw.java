@@ -31,7 +31,7 @@ public class RoleLw  implements LightweightObject {
    * The human readable name of the entity. The name should be unique in the 
    * context it is used to simplify navigation for users.
    */
-  private java.lang.String name;
+  private String name;
 
   /** 
    * Unique identifier of the data object instance distinguishing it from 
@@ -58,9 +58,9 @@ public class RoleLw  implements LightweightObject {
   /** 
    * Gets the current value of the attribute Name.
    * @return the value of the attribute Name.
-   * @see #setName(java.lang.String)
+   * @see #setName(String)
    */
-  public java.lang.String getName() {
+  public String getName() {
     return name;
   }
 
@@ -69,7 +69,7 @@ public class RoleLw  implements LightweightObject {
    * @param name new value of the property.
    * @see #getName()
    */    
-  public void setName(java.lang.String name) {
+  public void setName(String name) {
     this.name = name;
   }
 

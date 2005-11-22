@@ -26,7 +26,7 @@ public class DescriptionRule extends ValidationRuleImpl implements
     ValidationRule {
   private static final String PACKAGE_DESCRIPTION_WARNING = "ch.bbv.mda.package-description-warning";
 
-  private static final String CLASS_DESCRIPTION_WARNING = "ch.bbv.mda.package-description-warning";
+  private static final String CLASS_DESCRIPTION_WARNING = "ch.bbv.mda.class-description-warning";
 
   private static final String PROPERTY_DESCRIPTION_WARNING = "ch.bbv.mda.property-description-warning";
 

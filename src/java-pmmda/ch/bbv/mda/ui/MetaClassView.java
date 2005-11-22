@@ -115,6 +115,7 @@ public class MetaClassView extends NodePropertiesView {
     initialize();
   }
 
+  @Override
   public void populateView() {
     MetaClass model = (MetaClass) getDataObject();
     if (this.isNewObject()) {
@@ -137,6 +138,7 @@ public class MetaClassView extends NodePropertiesView {
     descriptionText.setText(model.getDescription());
   }
 
+  @Override
   public void commitChanges() {
     MetaClass model = (MetaClass) getDataObject();
     String text = nameText.getText();
@@ -161,6 +163,7 @@ public class MetaClassView extends NodePropertiesView {
     getModel().nodeChanged();
   }
 
+  @Override
   public void setViewEditable(boolean editable) {
     nameText.setEditable(editable);
     stereotypeText.setEditable(editable);
@@ -173,6 +176,7 @@ public class MetaClassView extends NodePropertiesView {
     tagsView.setEnabled(editable);
   }
 
+  @Override
   public void cancelChanges() {
     tagsView.cancelChanges();
   }

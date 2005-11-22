@@ -10,9 +10,11 @@ import static ch.bbv.mda.cartridges.BoConstants.*;
 import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.Template;
@@ -22,7 +24,6 @@ import ch.bbv.application.VersionId;
 import ch.bbv.dog.validation.Validator;
 import ch.bbv.mda.*;
 import ch.bbv.mda.generators.Cartridge;
-import ch.bbv.mda.generators.CartridgeImpl;
 import ch.bbv.mda.generators.validation.DogTagRule;
 import ch.bbv.mda.generators.validation.TagRule;
 import ch.bbv.mda.operators.FileOperators;
@@ -60,17 +61,11 @@ import ch.bbv.mda.operators.ModelOperators;
  * @author Marcel Baumann
  * @version $Revision$
  */
-public class BoCartridge extends CartridgeImpl implements Cartridge {
+public class BoCartridge extends JavaCartridge implements Cartridge {
   /**
    * The prefix of the cartridge.
    */
   public static final String PREFIX = "bo";
-
-  /**
-   * The list of primitive types in Java, C and C++.
-   */
-  public static final String[] PRIMITIVES_TYPES = { "boolean", "byte", "char",
-      "double", "float", "int", "long", "short" };
 
   /**
    * Log instance for all instatnces of the class.
@@ -113,91 +108,13 @@ public class BoCartridge extends CartridgeImpl implements Cartridge {
     stereotypes.add(new StereotypeType(REFERENCE_CODE_STEREOTYPE));
   }
 
-  public void initialize(Properties properties) {
-    super.initialize(properties);
-    addUndefinedProperty(properties, REFERENCE_CODE_FOLDER_KEY, "");
-    addUndefinedProperty(properties, ROOT_COMMON_FOLDER_KEY, "");
-    addUndefinedProperty(properties, ROOT_SERVER_FOLDER_KEY, "");
-    addUndefinedProperty(properties, ROOT_CLIENT_FOLDER_KEY, "");
-    addUndefinedProperty(properties, LANGUAGE_KEY, "java-1.4");
-    addUndefinedProperty(properties, UID_KEY, "99990101");
-    addUndefinedProperty(properties, BO_GENERATE_INTERFACE_KEY, "false");
-    addUndefinedProperty(properties, CYCLIC_WRAPPER_KEY, "false");
-    addUndefinedProperty(properties, IF_PACKAGE_POSTFIX_KEY, "");
-    addUndefinedProperty(properties, BO_PACKAGE_POSTFIX_KEY, "");
-    addUndefinedProperty(properties, LW_PACKAGE_POSTFIX_KEY, "");
-    addUndefinedProperty(properties, IF_CLASS_PREFIX_KEY, "");
-    addUndefinedProperty(properties, IF_CLASS_POSTFIX_KEY, "");
-    addUndefinedProperty(properties, BO_CLASS_PREFIX_KEY, "");
-    addUndefinedProperty(properties, BO_CLASS_POSTFIX_KEY, "");
-    addUndefinedProperty(properties, LW_CLASS_PREFIX_KEY, "");
-    addUndefinedProperty(properties, LW_CLASS_POSTFIX_KEY, "");
-    addUndefinedProperty(properties, FIELD_PREFIX_KEY, "");
-    addUndefinedProperty(properties, FIELD_POSTFIX_KEY, "");
-    try {
-      loadConfiguration("mappings.xml");
-    } catch (ConfigurationException e) {
-      log.error("Configuration file not found", e);
-    }
-  }
-
-  public List<TagDefinition> getTaggedValueTypes(Class clazz) {
-    List<TagDefinition> types = new ArrayList<TagDefinition>();
-    if (clazz.equals(MetaPackage.class)) {
-      types.add(new TagDefinition(GENERATE_TAG, "false", Boolean.TYPE));
-      types.add(new TagDefinition(ROOT_TAG, String.class));
-    } else if (clazz.equals(MetaClass.class)) {
-      types.add(new TagDefinition(GENERATE_TAG, "false", Boolean.TYPE));
-      types.add(new TagDefinition(UmlConstants.PERSISTENCE_TAG, "false", Boolean.TYPE));
-      types.add(new TagDefinition(IS_ROOT_TAG, "false", Boolean.TYPE));
-    } else if (clazz.equals(MetaProperty.class)) {
-      types.add(new TagDefinition(UmlConstants.PERSISTENCE_TAG, "false", Boolean.TYPE));
-      types.add(new TagDefinition(MODE_TAG, "READ_WRITE",
-          PropertyModeCode.class));
-      types.add(new TagDefinition(CHANGE_EVENT_TAG, "false", Boolean.TYPE));
-      types.add(new TagDefinition(VETO_EVENT_TAG, "false", Boolean.TYPE));
-      types.add(new TagDefinition(NAVIGABLE_RELATION_TAG, String.class));
-      types.add(new TagDefinition(LIGHTWEIGHT_TAG, "false", Boolean.TYPE));
-    } else if (clazz.equals(MetaIndexedProperty.class)) {
-      types.add(new TagDefinition(UmlConstants.PERSISTENCE_TAG, "false", Boolean.TYPE));
-      types.add(new TagDefinition(MODE_TAG, "READ_WRITE",
-          PropertyModeCode.class));
-      types.add(new TagDefinition(CHANGE_EVENT_TAG, "false", Boolean.TYPE));
-      types.add(new TagDefinition(VETO_EVENT_TAG, "false", Boolean.TYPE));
-      types.add(new TagDefinition(NAVIGABLE_RELATION_TAG, String.class));
-      types.add(new TagDefinition(CONTAINER_CLASS_TAG, "java.util.ArrayList",
-          String.class));
-      types.add(new TagDefinition(INTERFACE_CLASS_TAG, "java.util.List",
-          String.class));
-      types.add(new TagDefinition(KEY_CLASS_TAG, "String", String.class));
-      types.add(new TagDefinition(LIGHTWEIGHT_TAG, "false", Boolean.TYPE));
-    }
-    return types;
-  }
-
-  public List<TagDefinition> getObsoleteTaggedValueTypes(Class clazz) {
-    List<TagDefinition> types = null;
-    if (MetaProperty.class.equals(clazz)) {
-      types = new ArrayList<TagDefinition>();
-      types.add(new TagDefinition("bo-constructor-parameter", Boolean.TYPE));
-      types.add(new TagDefinition("bo-bidirectional", Boolean.TYPE));
-      types.add(new TagDefinition("bo-key-class", String.class));
-      types.add(new TagDefinition("bo-is-ordered", Boolean.TYPE));
-      types.add(new TagDefinition("bo-item-class", String.class));
-    } else if (MetaIndexedProperty.class.equals(clazz)) {
-      types = new ArrayList<TagDefinition>();
-      types.add(new TagDefinition("bo-constructor-parameter", Boolean.TYPE));
-      types.add(new TagDefinition("bo-bidirectional", Boolean.TYPE));
-      types.add(new TagDefinition("bo-item-class", String.class));
-    }
-    return types;
-  }
-
+  @Override
   public void registerRules(Validator validator) {
     TagRule tagRule = new DogTagRule();
     tagRule.register(validator);
   }
 
+  @Override
   public void preProcessDatatype(MetaDatatype datatype) {
     datatype.addAttribute(BO_DATATYPE, translateDatatype(datatype, "", false));
   }
@@ -223,6 +140,7 @@ public class BoCartridge extends CartridgeImpl implements Cartridge {
    * @param packages the package, which attributes should be computed.
    * @pre packages != null
    */
+  @Override
   public void preProcessPackage(MetaPackage packages) {
     assert (packages != null);
     this.packages = packages;
@@ -256,6 +174,7 @@ public class BoCartridge extends CartridgeImpl implements Cartridge {
    * @param clazz the class, which attributes should be computed.
    * @pre clazz != null
    */
+  @Override
   public void preProcessClass(MetaClass clazz) {
     assert (clazz != null);
     String name = clazz.getName();
@@ -277,20 +196,21 @@ public class BoCartridge extends CartridgeImpl implements Cartridge {
     for (MetaIndexedProperty property : clazz.getIndexedProperties()) {
       changeable |= property.retrieveIsChangeable();
       vetoable |= property.retrieveIsVetoable();
-      preProcessClassifier(property, INTERFACE_CLASS_TAG, true);
-      preProcessClassifier(property, CONTAINER_CLASS_TAG, false);
-      preProcessClassifier(property, KEY_CLASS_TAG, false);
+      preProcessClassifier(property, INTERFACE_CLASS, true);
+      preProcessClassifier(property, CONTAINER_CLASS, false);
+      preProcessClassifier(property, KEY_CLASS, false);
     }
     preProcessBean(clazz, changeable, vetoable);
   }
 
+  @Override
   public void processPackage(MetaPackage packages) {
     this.packages = packages;
-    String rootDirectory = packages.valueOfTag(ROOT_TAG);
+    String rootDirectory = packages.valueOfTag(ROOT);
     if (rootDirectory != null) {
       rootDirectory = getContext().getProperty(rootDirectory);
       if (rootDirectory == null) {
-        log.error(packages.valueOfTag(ROOT_TAG)
+        log.error(packages.valueOfTag(ROOT)
             + " logical root directory undefined");
       }
     }
@@ -300,7 +220,7 @@ public class BoCartridge extends CartridgeImpl implements Cartridge {
     root = new File(rootDirectory);
     hasDataObjects = false;
     hasCodes = false;
-    if (!packages.booleanValueOfTag(GENERATE_TAG)) {
+    if (!packages.booleanValueOfTag(GENERATE)) {
       return;
     }
     for (MetaClass clazz : packages.getClasses()) {
@@ -311,15 +231,15 @@ public class BoCartridge extends CartridgeImpl implements Cartridge {
     }
   }
 
+  @Override
   public void processClass(MetaClass clazz) {
     String stereotype = clazz.getStereotype();
     // class is only emitted if the class is relevant and the package should be
     // generated
-    if (!clazz.retrievePackage().booleanValueOfTag(GENERATE_TAG)) {
+    if (!clazz.retrievePackage().booleanValueOfTag(GENERATE)) {
       return;
     }
     VelocityContext context = createContext(clazz);
-    super.processClass(clazz);
     try {
       Map<String, List<String>> blocks = extractUserCode(packages
           .getAttribute(BO_PACKAGE), clazz.getAttribute(BO_CLASS));
@@ -346,8 +266,9 @@ public class BoCartridge extends CartridgeImpl implements Cartridge {
     }
   }
 
+  @Override
   public void postProcessPackage(MetaPackage metaPackage) {
-    if (metaPackage.booleanValueOfTag(GENERATE_TAG)) {
+    if (metaPackage.booleanValueOfTag(GENERATE)) {
       VelocityContext context = createContext(metaPackage);
       boolean cyclicVisitor = Boolean.parseBoolean(getContext().getProperty(
           CYCLIC_WRAPPER_KEY));
@@ -386,43 +307,16 @@ public class BoCartridge extends CartridgeImpl implements Cartridge {
   }
 
   /**
-   * Returns true if the type of the property is a primitive build-in type.
-   * @param member member to check if it is primitive.
-   * @return true if the type is build-in otherwise false.
-   * @pre (member != null) && (member.getClassifier() != null)
+   * Returns the component name of the type of the property.
+   * @param property property to infer.
+   * @return the component name of the property type.
    */
-  public boolean isTypePrimitive(MetaMember member) {
-    assert (member != null) && (member.getClassifier() != null);
-    MetaClassifier classifier = member.getClassifier();
-    String typename = classifier.getAttribute("bo-datatype");
-    if (typename == null) {
-      typename = member.getTypeName();
+  public String getDatatype(MetaProperty property) {
+    String qualifiedName = property.getClassifier().getAttribute(BO_DATATYPE);
+    if (qualifiedName == null) {
+      qualifiedName = property.getTypeName();
     }
-    return Arrays.binarySearch(PRIMITIVES_TYPES, typename) >= 0;
-  }
-
-  /**
-   * Returns true if the property type is a reference code.
-   * @param property property to evaluate.
-   * @return true if the property type is a reference code otherwise false.
-   */
-  public boolean isReferenceCode(MetaProperty property) {
-    MetaClass clazz = property.getModel().findClass(property.getTypeName());
-    if ((clazz != null) && (clazz.getStereotype() == REFERENCE_CODE_STEREOTYPE)) {
-      return true;
-    }
-    return false;
-  }
-
-  /**
-   * Returns true if the property is ordered. An indexed property is ordered if
-   * the "bo-key-class" is not null.
-   * @param property indexed property to evaluate.
-   * @return true if the property is ordered otherwise false.
-   */
-  public boolean isOrdered(MetaIndexedProperty property) {
-    String value = property.valueOfTag(KEY_CLASS_TAG);
-    return (value != null) && (value.trim().length() > 0);
+    return ModelOperators.getComponentName(qualifiedName);
   }
 
   /**
@@ -435,8 +329,7 @@ public class BoCartridge extends CartridgeImpl implements Cartridge {
    */
   public ImportStatements retrieveImportStatementsForBo(MetaClass clazz,
       String packageName) {
-    ImportStatements imports = new ImportStatements(packageName);
-    return retrieveImportStatements(imports, clazz, null, BO_CLASS);
+    return retrieveImportStatements(packageName, clazz, null, BO_CLASS);
   }
 
   /**
@@ -449,8 +342,7 @@ public class BoCartridge extends CartridgeImpl implements Cartridge {
    */
   public ImportStatements retrieveImportStatementsForIf(MetaClass clazz,
       String packageName) {
-    ImportStatements imports = new ImportStatements(packageName);
-    return retrieveImportStatements(imports, clazz, null, IF_CLASS);
+    return retrieveImportStatements(packageName, clazz, null, IF_CLASS);
   }
 
   /**
@@ -463,14 +355,15 @@ public class BoCartridge extends CartridgeImpl implements Cartridge {
    */
   public ImportStatements retrieveImportStatementsForLw(MetaClass clazz,
       String packageName) {
-    ImportStatements imports = new ImportStatements(packageName);
-    return retrieveImportStatements(imports, clazz, BO_LIGHTWEIGHT, LW_CLASS);
+    return retrieveImportStatements(packageName, clazz, BO_LIGHTWEIGHT,
+        LW_CLASS);
   }
 
   /**
    * Generates the import statements necessary for the class. The import
    * statement should be only used if the classes belong to another package.
-   * @param imports imports statements where to add the new identified ones.
+   * @param packageName qualified name of the package containing the generated
+   *          artifact.
    * @param clazz class for which the import statements should be retrieved.
    * @param key key of the tag or attribute constraining the properties, which
    *          dependencies should be imported.
@@ -478,13 +371,14 @@ public class BoCartridge extends CartridgeImpl implements Cartridge {
    *          property.
    * @return list of all import statements for the class.
    */
-  private ImportStatements retrieveImportStatements(ImportStatements imports,
+  private ImportStatements retrieveImportStatements(String packageName,
       MetaClass clazz, String key, String kind) {
+    ImportStatements imports = new ImportStatements(packageName);
     for (MetaClass item : clazz.retrieveAncestors()) {
-      imports.addClass(item);
+      addImportStatement(imports, clazz, item, kind);
     }
     for (MetaClass item : clazz.retrieveInterfaces()) {
-      imports.addClass(item);
+      addImportStatement(imports, clazz, item, kind);
     }
     for (MetaProperty property : clazz.getProperties()) {
       if ((key == null)
@@ -510,12 +404,10 @@ public class BoCartridge extends CartridgeImpl implements Cartridge {
         }
         imports.addClassName("java.util.Collection");
         imports.addClassName("java.util.Iterator");
-        addImportStatement(imports, clazz, property
-            .valueOfTag(INTERFACE_CLASS_TAG));
-        addImportStatement(imports, clazz, property
-            .valueOfTag(CONTAINER_CLASS_TAG));
+        addImportStatement(imports, clazz, property.valueOfTag(INTERFACE_CLASS));
+        addImportStatement(imports, clazz, property.valueOfTag(CONTAINER_CLASS));
         if (isOrdered(property)) {
-          type = clazz.findClass(property.valueOfTag(KEY_CLASS_TAG));
+          type = clazz.findClass(property.valueOfTag(KEY_CLASS));
           if (type != null) {
             imports.addClass(type);
           }
@@ -528,7 +420,7 @@ public class BoCartridge extends CartridgeImpl implements Cartridge {
   /**
    * Adds the import statement for the type entity. If the attribute is defined
    * it is used otherwise the qualified type name is used.
-   * @param statements
+   * @param statements statements to add to.
    * @param clazz
    * @param type
    * @param attribute
@@ -555,7 +447,7 @@ public class BoCartridge extends CartridgeImpl implements Cartridge {
       statements.addClassName(qualifiedName);
     } else {
       MetaModel model = clazz.getModel();
-      MetaDatatype datatype = model.findDataType(qualifiedName);
+      MetaDatatype datatype = model.findDatatype(qualifiedName);
       if (datatype != null) {
         statements.addClassName(datatype.getAttribute(BO_DATATYPE));
       } else {
@@ -597,14 +489,14 @@ public class BoCartridge extends CartridgeImpl implements Cartridge {
     assert clazz != null;
     boolean hasLightweight = false;
     for (MetaProperty property : clazz.getProperties()) {
-      hasLightweight = property.booleanValueOfTag(LIGHTWEIGHT_TAG);
+      hasLightweight = property.booleanValueOfTag(LIGHTWEIGHT);
       if (hasLightweight) {
         break;
       }
     }
     if (!hasLightweight) {
       for (MetaIndexedProperty property : clazz.getIndexedProperties()) {
-        hasLightweight = property.booleanValueOfTag(LIGHTWEIGHT_TAG);
+        hasLightweight = property.booleanValueOfTag(LIGHTWEIGHT);
         if (hasLightweight) {
           break;
         }
@@ -655,12 +547,11 @@ public class BoCartridge extends CartridgeImpl implements Cartridge {
   private void preProcessClassifier(MetaElement element, String tag,
       boolean interfaces) {
     String qualifiedName = element.valueOfTag(tag);
-    MetaDatatype datatype = packages.getModel().findDataType(qualifiedName);
+    MetaDatatype datatype = packages.getModel().findDatatype(qualifiedName);
     if (datatype != null) {
       qualifiedName = translateDatatype(datatype, "", interfaces);
     }
     qualifiedName = ModelOperators.getComponentName(qualifiedName);
-
     element.addAttribute(tag, qualifiedName);
   }
 
@@ -687,5 +578,4 @@ public class BoCartridge extends CartridgeImpl implements Cartridge {
       }
     }
   }
-
 }

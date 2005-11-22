@@ -17,7 +17,6 @@ import ru.novosoft.uml.MFactory;
 import ru.novosoft.uml.foundation.core.*;
 import ru.novosoft.uml.foundation.data_types.MExpression;
 import ru.novosoft.uml.foundation.data_types.MMultiplicity;
-import ru.novosoft.uml.foundation.data_types.MVisibilityKind;
 import ru.novosoft.uml.foundation.extension_mechanisms.MStereotype;
 import ru.novosoft.uml.foundation.extension_mechanisms.MTaggedValue;
 import ru.novosoft.uml.foundation.extension_mechanisms.MTaggedValueImpl;
@@ -147,7 +146,7 @@ public class MdaTransformer {
    * @param context NSUML context containing the class to synchronize.
    */
   protected void extractClass(MetaClass source, MPackage context) {
-    assert ((source != null) && (context != null));
+    assert (source != null) && (context != null);
     MClass mClass = createClass(context, source.getName());
     elements.put(source, mClass);
     mClass.setAbstract(source.isAbstract());
@@ -171,7 +170,7 @@ public class MdaTransformer {
    * @param context NSUML context containing the class to synchronize.
    */
   protected void extractNestedClass(MetaClass source, MClass context) {
-    assert ((source != null) && (context != null));
+    assert (source != null) && (context != null);
     MClass mClass = createClass(context, source.getName());
     elements.put(source, mClass);
     mClass.setAbstract(source.isAbstract());
@@ -195,7 +194,7 @@ public class MdaTransformer {
    * @param context NSUML context containing the property to synchronize.
    */
   protected void extractProperty(MetaProperty source, MClass context) {
-    assert ((source != null) && (context != null));
+    assert (source != null) && (context != null);
     if (source.isAggregation()) {
       MetaElement mElement = source.getContext().getContext();
       while (!(mElement instanceof MetaPackage)) {
@@ -239,7 +238,7 @@ public class MdaTransformer {
    */
   protected void extractIndexedProperty(MetaIndexedProperty source,
       MClass context) {
-    assert ((source != null) && (context != null));
+    assert (source != null) && (context != null);
     if (source.isAggregation()) {
       MetaPackage metaPackage = (MetaPackage) source.getContext().getContext();
       MPackage mPackage = (MPackage) elements.get(metaPackage);
@@ -284,10 +283,8 @@ public class MdaTransformer {
     for (TaggedValue tag : source.getTags()) {
       String tagName = tag.getTag();
       String tagValue = tag.getValue();
-      if (tagValue != null) {
-        MTaggedValue taggedValue = createTag(item, tagName);
-        taggedValue.setValue(tag.getValue());
-      }
+      MTaggedValue taggedValue = createTag(item, tagName);
+      taggedValue.setValue(tagValue != null ? tagValue : "");
     }
   }
 
@@ -299,7 +296,7 @@ public class MdaTransformer {
    */
   private void extractDataTypes(MetaModel source, MModel target) {
     MDataType mDataType;
-    for (MetaDatatype metaDataType : source.getDataTypes()) {
+    for (MetaDatatype metaDataType : source.getDatatypes()) {
       boolean found = false;
       Iterator<MDataType> mDatatypes = new FilterIterator<MDataType>(target
           .getOwnedElements(), MDataType.class);
@@ -326,7 +323,7 @@ public class MdaTransformer {
    * @pre (item != null) && (tagName != null)
    */
   private MTaggedValue findTag(MModelElement item, String tagName) {
-    assert ((item != null) && (tagName != null));
+    assert (item != null) && (tagName != null);
     for (Iterator i = item.getTaggedValues().iterator(); i.hasNext();) {
       MTaggedValue tag = (MTaggedValue) i.next();
       if (tagName.equals(tag.getTag())) {
@@ -404,7 +401,6 @@ public class MdaTransformer {
 
   private MClass findClass(MPackage context, String name) {
     assert (context != null) && (name != null);
-
     MClass mClass = null;
     for (Iterator<MClass> i = new FilterIterator<MClass>(context
         .getOwnedElements(), MClass.class); i.hasNext();) {
@@ -418,8 +414,7 @@ public class MdaTransformer {
   }
 
   private MClass findClass(MClass context, String name) {
-    assert ((context != null) && (name != null));
-
+    assert (context != null) && (name != null);
     MClass mClass = null;
     for (Iterator<MClass> i = new FilterIterator<MClass>(context
         .getOwnedElements(), MClass.class); i.hasNext();) {
@@ -434,7 +429,6 @@ public class MdaTransformer {
 
   private MClass createClass(MPackage context, String name) {
     assert (context != null) && (name != null);
-
     MClass item = findClass(context, name);
     if (item == null) {
       item = new MClassImpl();
@@ -446,7 +440,6 @@ public class MdaTransformer {
 
   private MClass createClass(MClass context, String name) {
     assert (context != null) && (name != null);
-
     MClass item = findClass(context, name);
     if (item == null) {
       item = new MClassImpl();
@@ -458,7 +451,6 @@ public class MdaTransformer {
 
   private MAttribute findAttribute(MClass context, String name) {
     assert (context != null) && (name != null);
-
     MAttribute mAttribute = null;
     for (Iterator<MAttribute> i = new FilterIterator<MAttribute>(context
         .getFeatures(), MAttribute.class); i.hasNext();) {
@@ -543,18 +535,23 @@ public class MdaTransformer {
     }
   }
 
+  /**
+   * finds the association with the given name defined in the context.
+   * @param context context where to look for the association.
+   * @param clazz class owning the association.
+   * @param name name of the requested association
+   * @return the requested association if found otherwise null.
+   */
   private MAssociation findAssociation(MPackage context, MClass clazz,
       String name) {
     assert (context != null) && (clazz != null) && (name != null);
-
     MAssociation association = null;
     for (Iterator<MAssociation> i = new FilterIterator<MAssociation>(context
         .getOwnedElements(), MAssociation.class); i.hasNext();) {
       association = i.next();
-
       MAssociationEnd e1 = association.getConnection(0);
       MAssociationEnd e2 = association.getConnection(1);
-      MClass owner = (MClass) e1.getType();
+      MClassifier owner = (MClassifier) e1.getType();
       if (owner == clazz) {
         String associationName = e2.getName();
         if ((associationName == null) || (associationName.length() == 0)) {
@@ -657,23 +654,7 @@ public class MdaTransformer {
       mStereotype.setName("");
     }
 
-    setVisibility(context, source.getVisibility());
+    NsUmlUtilities.setVisibility(context, source.getVisibility());
   }
 
-  /**
-   * Sets the visibility of the item.
-   * @param item item which visibility should be set.
-   * @param visibility new visibility of the item.
-   */
-  private void setVisibility(MModelElement item, VisibilityCode visibility) {
-    if (VisibilityCode.PUBLIC_ID == visibility.getCode()) {
-      item.setVisibility(MVisibilityKind.PUBLIC);
-    } else if (VisibilityCode.PROTECTED_ID == visibility.getCode()) {
-      item.setVisibility(MVisibilityKind.PROTECTED);
-    } else if (VisibilityCode.PRIVATE_ID == visibility.getCode()) {
-      item.setVisibility(MVisibilityKind.PRIVATE);
-    } else if (VisibilityCode.PACKAGE_ID == visibility.getCode()) {
-      item.setVisibility(MVisibilityKind.PUBLIC);
-    }
-  }
 }

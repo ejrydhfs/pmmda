@@ -33,18 +33,23 @@ public class Provider extends NamedEntity implements DataObject {
   /**
    * Primary email address of the provider.
    */
-  private java.lang.String email;
+  private String email;
 
   /**
    * Long name of the provider used for correspondance and human interactions.
    */
-  private java.lang.String longname;
+  private String longname;
 
   /**
    * Defines the level of trust the application has to the provider instance. 
    * Values range between 0 and 1.
    */
   private double trusted;
+
+  /**
+   * Costs to host the provider in the system.
+   */
+  private int cost;
 
   /**
    * List of the domains the provider is in charge.
@@ -69,9 +74,9 @@ public class Provider extends NamedEntity implements DataObject {
   /** 
    * Returns the current value of the simple property email.
    * @return the value of the simple property email.
-   * @see #setEmail(java.lang.String)
+   * @see #setEmail(String)
    */
-  public java.lang.String getEmail() {
+  public String getEmail() {
     return email;
   }
 
@@ -80,7 +85,7 @@ public class Provider extends NamedEntity implements DataObject {
    * @param email new value of the property.
    * @see #getEmail()
    */    
-  public void setEmail(java.lang.String email) {
+  public void setEmail(String email) {
     if (((this.email != null) && !this.email.equals(email)) || 
         ((this.email == null) && (email != null)))  {    
       this.email = email;
@@ -91,9 +96,9 @@ public class Provider extends NamedEntity implements DataObject {
   /** 
    * Returns the current value of the simple property longname.
    * @return the value of the simple property longname.
-   * @see #setLongname(java.lang.String)
+   * @see #setLongname(String)
    */
-  public java.lang.String getLongname() {
+  public String getLongname() {
     return longname;
   }
 
@@ -102,7 +107,7 @@ public class Provider extends NamedEntity implements DataObject {
    * @param longname new value of the property.
    * @see #getLongname()
    */    
-  public void setLongname(java.lang.String longname) {
+  public void setLongname(String longname) {
     if (((this.longname != null) && !this.longname.equals(longname)) || 
         ((this.longname == null) && (longname != null)))  {    
       this.longname = longname;
@@ -127,6 +132,27 @@ public class Provider extends NamedEntity implements DataObject {
   public void setTrusted(double trusted) {
     if (this.trusted != trusted) {  
       this.trusted = trusted;
+      setModified(true);
+    }
+  }
+
+  /** 
+   * Returns the current value of the simple property cost.
+   * @return the value of the simple property cost.
+   * @see #setCost(int)
+   */
+  public int getCost() {
+    return cost;
+  }
+
+  /** 
+   * Sets the new value of the simple property cost.
+   * @param cost new value of the property.
+   * @see #getCost()
+   */    
+  public void setCost(int cost) {
+    if (this.cost != cost) {  
+      this.cost = cost;
       setModified(true);
     }
   }

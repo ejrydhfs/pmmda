@@ -22,7 +22,6 @@ import ru.novosoft.uml.MFactory;
 import ru.novosoft.uml.model_management.MModel;
 import ru.novosoft.uml.xmi.IncompleteXMIException;
 import ch.bbv.mda.MetaModel;
-import ch.bbv.mda.generators.ItemFactory;
 import ch.bbv.mda.persistence.nsuml.ArgoWriter;
 import ch.bbv.mda.persistence.nsuml.MdaTransformer;
 import ch.bbv.mda.persistence.nsuml.NsUmlTransformer;
@@ -137,16 +136,16 @@ public class NsUmlPersistenceHandler implements PersistenceHandler {
   }
 
   /**
-   * Returns the ArgoUML file name of the file containing the XMI UML model.
-   * The file is part of the set of files stored in a zip file and is recognized
-   * through its extension. 
+   * Returns the ArgoUML file name of the file containing the XMI UML model. The
+   * file is part of the set of files stored in a zip file and is recognized
+   * through its extension.
    * @param file Zip file containing all artifacts of a ArgoUML project.
    * @return The name of the file containing the XMI UML model.
    * @throws FileNotFoundException if the requested file was not found.
    * @throws IOException if an IO error occured when reading the zip file.
    */
-  private String getArgoModelFileName(File file)
-      throws FileNotFoundException, IOException {
+  private String getArgoModelFileName(File file) throws FileNotFoundException,
+      IOException {
     ZipFile zipFile = new ZipFile(file);
     Enumeration< ? extends ZipEntry> entries = zipFile.entries();
     String modelFileName = null;

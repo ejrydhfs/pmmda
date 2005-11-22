@@ -9,8 +9,6 @@ import static ch.bbv.mda.cartridges.EjbConstants.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.logging.Log;
@@ -20,9 +18,7 @@ import org.apache.velocity.VelocityContext;
 import ch.bbv.application.VersionId;
 import ch.bbv.mda.MetaClass;
 import ch.bbv.mda.MetaPackage;
-import ch.bbv.mda.TagDefinition;
-import ch.bbv.mda.generators.CartridgeFactory;
-import ch.bbv.mda.generators.CartridgeImpl;
+import ch.bbv.mda.generators.Cartridge;
 
 /**
  * The EJB cartridge generates all the artifacts for the data object framework
@@ -30,7 +26,7 @@ import ch.bbv.mda.generators.CartridgeImpl;
  * @author MarcelBaumann
  * @version $Revision$
  */
-public class EjbCartridge extends CartridgeImpl {
+public class EjbCartridge extends JavaCartridge implements Cartridge {
   /**
    * The prefix of the cartridge.
    */
@@ -55,59 +51,29 @@ public class EjbCartridge extends CartridgeImpl {
     super("Entity Java Bean Cartridge", PREFIX, new VersionId(0, 3, 0));
   }
 
-  public void initialize(Properties properties) {
-    super.initialize(properties);
-
-    CartridgeFactory factory = CartridgeFactory.getInstance();
-    addCartridge(factory.getCartridge(BoCartridge.PREFIX));
-    addCartridge(factory.getCartridge(CtoCartridge.PREFIX));
-    addUndefinedProperty(properties, GENERATE_CORBA_KEY, "false");
-    addUndefinedProperty(properties, GENERATE_BEAN_KEY, "false");
-    addUndefinedProperty(properties, SERVER_PACKAGE_EXTENSION_KEY, "");
-    addUndefinedProperty(properties, CLIENT_PACKAGE_EXTENSION_KEY, "");
-    addUndefinedProperty(properties, ROOT_SERVER_CORBA_KEY, "");
-    addUndefinedProperty(properties, ROOT_CLIENT_CORBA_KEY, "");
-    addUndefinedProperty(properties, ROOT_SERVER_J2EE_KEY, "");
-    addUndefinedProperty(properties, ROOT_CLIENT_J2EE_KEY, "");
-  }
-
-  public List<TagDefinition> getTaggedValueTypes(Class clazz) {
-    List<TagDefinition> types = new ArrayList<TagDefinition>();
-    if (clazz.equals(MetaPackage.class)) {
-      types.add(new TagDefinition(SERVER_NAME_TAG, null, String.class));
-    }
-    return types;
-  }
-
-  public List<TagDefinition> getObsoleteTaggedValueTypes(Class clazz) {
-    List<TagDefinition> types = null;
-    if (MetaClass.class.equals(clazz)) {
-      types = new ArrayList<TagDefinition>();
-      types.add(new TagDefinition("ejb-is-root", Boolean.TYPE));
-      types.add(new TagDefinition(SERVER_NAME_TAG, String.class));
-    }
-    return types;
-  }
-
-  public void preProcessPackage(MetaPackage metaPackage) {
+  @Override
+  public void preProcessPackage(MetaPackage packages) {
+    assert packages != null;
     Properties context = getContext();
     StringBuilder buffer = new StringBuilder();
-    String qualifiedName = metaPackage.qualifiedName();
+    String qualifiedName = packages.qualifiedName();
     buffer.append(qualifiedName).append(
         context.getProperty(SERVER_PACKAGE_EXTENSION_KEY));
-    metaPackage.addAttribute(SERVER_PACKAGE, buffer.toString());
+    packages.addAttribute(SERVER_PACKAGE, buffer.toString());
     buffer.setLength(0);
     buffer.append(qualifiedName).append(
         context.getProperty(CLIENT_PACKAGE_EXTENSION_KEY));
-    metaPackage.addAttribute(CLIENT_PACKAGE, buffer.toString());
+    packages.addAttribute(CLIENT_PACKAGE, buffer.toString());
   }
 
+  @Override
   public void processPackage(MetaPackage packages) {
+    assert packages != null;
     isPackageInterface = BoConstants.INTERFACE_STEREOTYPE
-    .equalsIgnoreCase(packages.getStereotype());
+        .equalsIgnoreCase(packages.getStereotype());
     if (!isPackageInterface
-        || !packages.booleanValueOfTag(BoConstants.GENERATE_TAG)
-        || !shouldCreateServer(packages)) {
+        && !packages.booleanValueOfTag(BoConstants.GENERATE)
+        && !shouldCreateServer(packages)) {
       return;
     }
 
@@ -121,19 +87,16 @@ public class EjbCartridge extends CartridgeImpl {
         File IdlRoot = new File(getContext().getProperty(
             CtoConstants.ROOT_IDL_KEY));
         processTemplate(IdlRoot, packages
-            .valueOfTag(CtoConstants.CTO_PACKAGE_IDL_TAG), packages
-            .valueOfTag(SERVER_NAME_TAG)
+            .valueOfTag(CtoConstants.CTO_PACKAGE_IDL), packages
+            .valueOfTag(SERVER_NAME)
             + CtoConstants.IDL_EXTENSION, retrieveTemplate("server-corba-idl",
             null), context);
-        processJavaTemplate(serverRoot, packages
-            .getAttribute(SERVER_PACKAGE), packages
-            .valueOfTag(SERVER_NAME_TAG)
-            + "Corba", retrieveTemplate("server-corba", null), context);
-        processJavaTemplate(clientRoot, packages
-            .getAttribute(CLIENT_PACKAGE), packages
-            .valueOfTag(SERVER_NAME_TAG)
-            + "CorbaWrapper", retrieveTemplate("server-corba-wrapper", null),
-            context);
+        processJavaTemplate(serverRoot, packages.getAttribute(SERVER_PACKAGE),
+            packages.valueOfTag(SERVER_NAME) + "Corba", retrieveTemplate(
+                "server-corba", null), context);
+        processJavaTemplate(clientRoot, packages.getAttribute(CLIENT_PACKAGE),
+            packages.valueOfTag(SERVER_NAME) + "CorbaWrapper",
+            retrieveTemplate("server-corba-wrapper", null), context);
       }
       if (getContext().getProperty(GENERATE_BEAN_KEY).equals("true")) {
         File serverRoot = getRoot(ROOT_SERVER_J2EE_KEY,
@@ -142,30 +105,26 @@ public class EjbCartridge extends CartridgeImpl {
             BoConstants.ROOT_CLIENT_FOLDER_KEY);
         File commonRoot = getRoot(ROOT_COMMON_J2EE_KEY,
             BoConstants.ROOT_COMMON_FOLDER_KEY);
-        processJavaTemplate(commonRoot, packages
-            .getAttribute(SERVER_PACKAGE), packages
-            .valueOfTag(SERVER_NAME_TAG)
-            + "Session", retrieveTemplate("server-session-if", null), context);
-        processJavaTemplate(serverRoot, packages
-            .getAttribute(SERVER_PACKAGE), packages
-            .valueOfTag(SERVER_NAME_TAG)
-            + "SessionBean", retrieveTemplate("server-session", null), context);
-        processJavaTemplate(commonRoot, packages
-            .getAttribute(SERVER_PACKAGE), packages
-            .valueOfTag(SERVER_NAME_TAG)
-            + "Home", retrieveTemplate("server-home", null), context);
-        processJavaTemplate(clientRoot, packages
-            .getAttribute(CLIENT_PACKAGE), packages
-            .valueOfTag(SERVER_NAME_TAG)
-            + "Wrapper", retrieveTemplate("server-wrapper", null), context);
+        processJavaTemplate(commonRoot, packages.getAttribute(SERVER_PACKAGE),
+            packages.valueOfTag(SERVER_NAME) + "Session", retrieveTemplate(
+                "server-session-if", null), context);
+        processJavaTemplate(serverRoot, packages.getAttribute(SERVER_PACKAGE),
+            packages.valueOfTag(SERVER_NAME) + "SessionBean",
+            retrieveTemplate("server-session", null), context);
+        processJavaTemplate(commonRoot, packages.getAttribute(SERVER_PACKAGE),
+            packages.valueOfTag(SERVER_NAME) + "Home", retrieveTemplate(
+                "server-home", null), context);
+        processJavaTemplate(clientRoot, packages.getAttribute(CLIENT_PACKAGE),
+            packages.valueOfTag(SERVER_NAME) + "Wrapper", retrieveTemplate(
+                "server-wrapper", null), context);
         processTemplate(serverRoot, packages.getAttribute(SERVER_PACKAGE),
-            packages.valueOfTag(SERVER_NAME_TAG) + "-ejb-jar.xml",
+            packages.valueOfTag(SERVER_NAME) + "-ejb-jar.xml",
             retrieveTemplate("server-descriptor", null), context);
         processTemplate(serverRoot, packages.getAttribute(SERVER_PACKAGE),
-            packages.valueOfTag(SERVER_NAME_TAG) + "-jboss.xml",
+            packages.valueOfTag(SERVER_NAME) + "-jboss.xml",
             retrieveTemplate("server-jboss-descriptor", null), context);
         processTemplate(serverRoot, packages.getAttribute(SERVER_PACKAGE),
-            packages.valueOfTag(SERVER_NAME_TAG) + "-jbosscmp-jdbc.xml",
+            packages.valueOfTag(SERVER_NAME) + "-jbosscmp-jdbc.xml",
             retrieveTemplate("server-jboss-jdbc-descriptor", null), context);
       }
     } catch (IOException e) {
@@ -181,7 +140,7 @@ public class EjbCartridge extends CartridgeImpl {
   private boolean shouldCreateServer(MetaPackage packages) {
     for (MetaClass clazz : packages.getClasses()) {
       if (BoConstants.DATA_OBJECT_STEREOTYPE.equals(clazz.getStereotype())
-          && clazz.booleanValueOfTag(BoConstants.IS_ROOT_TAG)) {
+          && clazz.booleanValueOfTag(BoConstants.IS_ROOT)) {
         return true;
       }
     }

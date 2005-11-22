@@ -42,21 +42,14 @@ public class DerivedAttributeMgr implements PropertyChangeListener {
    * interesting properties and to compute all derived properties of a data
    * object graph.
    */
-  private Map visitorClasses;
-
-  /**
-   * Buffer containing at moste one instance of a visitor with functor class for
-   * a register visitor class.
-   */
-  private Map visitors;
+  private Map<Class, Class> visitorClasses;
 
   /**
    * Default constructor of the class.
    */
   public DerivedAttributeMgr() {
     classes = new HashMap<Class, Map<String, Object>>();
-    visitorClasses = new HashMap();
-    visitors = new HashMap();
+    visitorClasses = new HashMap<Class, Class>();
   }
 
   public void register(Class clazz, Class visitorWithFunctor) {
@@ -72,9 +65,9 @@ public class DerivedAttributeMgr implements PropertyChangeListener {
    */
   public void register(Class clazz, String property, DoFunctor functor) {
     assert (clazz != null && property != null && functor != null);
-    Map properties = getProperties(clazz);
+    Map<String, Object> properties = (Map<String, Object>)getProperties(clazz);
     if (properties == null) {
-      properties = new HashMap();
+      properties = new HashMap<String, Object>();
       classes.put(clazz, properties);
     }
 

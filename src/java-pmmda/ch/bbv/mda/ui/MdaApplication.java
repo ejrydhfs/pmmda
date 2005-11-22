@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -19,10 +21,10 @@ import ch.bbv.dog.DataObjectManager;
 import ch.bbv.dog.EmptyHandler;
 import ch.bbv.dog.LightweightObjectHandlerImpl;
 import ch.bbv.dog.validation.Validator;
+import ch.bbv.explorer.Explorer;
 import ch.bbv.mda.generators.Cartridge;
 import ch.bbv.mda.generators.CartridgeFactory;
 import ch.bbv.mda.validation.RulesFactory;
-import ch.bbv.explorer.Explorer;
 import ch.bbv.utilities.PropertyUtilities;
 
 /**
@@ -57,7 +59,7 @@ public class MdaApplication extends Locator {
    * The explorer visualizing pmMDA
    */
   private static Explorer explorer;
-  
+
   /**
    * Entry point of the application.
    * @param args command line arguments.
@@ -65,7 +67,6 @@ public class MdaApplication extends Locator {
   public static void main(String[] args) {
     try {
       properties = readProperties(PROPERTIES_NAME);
-      properties = PropertyUtilities.expand(properties);
       new MdaApplication(args);
     } catch (ComponentException e) {
       log.fatal(e);
@@ -98,12 +99,14 @@ public class MdaApplication extends Locator {
     startup();
   }
 
+  @Override
   public void initialize() throws ComponentException {
     super.initialize();
     MdaExplorer.registerNodeTypes();
     (new RulesFactory()).registerAllRules();
   }
 
+  @Override
   public void startup() throws ComponentException {
     super.startup();
     ResourcesManager resourcesManager = getResourcesManager();
@@ -150,7 +153,7 @@ public class MdaApplication extends Locator {
     Locator locator = Locator.getInstance();
     return (CartridgeFactory) locator.getComponent(CartridgeFactory.NAME);
   }
-  
+
   /**
    * Returns the properties of the application.
    * @return properties of the application.
@@ -166,19 +169,19 @@ public class MdaApplication extends Locator {
   public Explorer getExplorer() {
     return explorer;
   }
-  
+
   /**
    * Reads the properties of the application.
    * @param resource name of the resource containing the properties.
    * @return the read properties if sucessful otherwise null.
    */
   public static Properties readProperties(String resource) {
-    Properties properties = null;
+    PropertiesConfiguration properties = null;
     try {
       if (resource != null) {
         InputStream stream = MdaApplication.class.getResourceAsStream(resource);
         if (stream != null) {
-          properties = new Properties();
+          properties = new PropertiesConfiguration();
           properties.load(stream);
           stream.close();
         } else {
@@ -187,9 +190,11 @@ public class MdaApplication extends Locator {
           }
         }
       }
+    } catch (ConfigurationException e) {
+      log.error(e);
     } catch (IOException e) {
       log.error(e);
     }
-    return properties;
+    return PropertyUtilities.convert(properties);
   }
 }

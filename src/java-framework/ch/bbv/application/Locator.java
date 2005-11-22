@@ -109,8 +109,10 @@ public class Locator {
    * @param params parameters list of the create method. The type of the
    *          parameters must correspond to the ones of the constructor
    *          signature.
+   * @pre classname != null
    */
   public static final void create(String classname, Object[] params) {
+    assert classname != null;
     if (getInstance() == null) {
       synchronized (Locator.class) {
         if (getInstance() == null) {
@@ -156,10 +158,10 @@ public class Locator {
    * class the singleton pattern.
    * @param locator locator to register. Subclass instances of locator can be
    *          registered.
-   * @pre theLocator == null
+   * @pre (theLocator == null) && (locator != null)
    */
   public static final void register(Locator locator) {
-    assert theLocator == null;
+    assert (theLocator == null) && (locator != null);
     synchronized (Locator.class) {
       if (theLocator == null) {
         theLocator = locator;
@@ -362,7 +364,7 @@ public class Locator {
    * @param isDebugOn new debug mode for the application.
    * @see #getDebugMode
    * @pre isStopped()
-   * @post getDebugMode() == isSimulationOn
+   * @post getDebugMode() == isDebugOn
    */
   protected void setDebugMode(boolean isDebugOn) {
     assert isStopped();

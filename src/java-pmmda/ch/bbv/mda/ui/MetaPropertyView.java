@@ -92,6 +92,7 @@ public class MetaPropertyView extends NodePropertiesView {
     initialize();
   }
 
+  @Override
   public void populateView() {
     MetaProperty model = (MetaProperty) getDataObject();
     if (this.isNewObject()) {
@@ -105,7 +106,6 @@ public class MetaPropertyView extends NodePropertiesView {
     transients.setSelected(model.isTransient());
     statics.setSelected(model.isStatic());
     finals.setSelected(model.isFinal());
-
     Multiplicity multiplicity = model.getMultiplicity();
     multiplicityLowerBoundText.setText(Multiplicity.stringValue(multiplicity
         .getLowerBound()));
@@ -128,6 +128,7 @@ public class MetaPropertyView extends NodePropertiesView {
     descriptionText.setText(model.getDescription());
   }
 
+  @Override
   public void commitChanges() {
     MetaProperty model = (MetaProperty) getDataObject();
     String text = nameText.getText();
@@ -153,6 +154,7 @@ public class MetaPropertyView extends NodePropertiesView {
     getModel().nodeChanged();
   }
 
+  @Override
   public void setViewEditable(boolean editable) {
     nameText.setEditable(editable);
     typeText.setEditable(editable);
@@ -168,6 +170,7 @@ public class MetaPropertyView extends NodePropertiesView {
     tagsView.setEnabled(editable);
   }
 
+  @Override
   public void cancelChanges() {
     tagsView.cancelChanges();
   }

@@ -6,7 +6,10 @@
 package ch.bbv.mda.generators;
 
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Properties;
 
 import org.apache.commons.configuration.CompositeConfiguration;
 import org.apache.commons.configuration.ConfigurationConverter;
@@ -26,6 +29,7 @@ import ch.bbv.dog.validation.Validator;
 import ch.bbv.mda.*;
 import ch.bbv.mda.operators.FileOperators;
 import ch.bbv.mda.operators.ModelOperators;
+import ch.bbv.utilities.PropertyUtilities;
 
 /**
  * The default cartridge implementation provides a set of utility methods to
@@ -68,11 +72,6 @@ public abstract class CartridgeImpl implements Cartridge {
    * Velocity context key to identify the object stored in the context.
    */
   public static final String MODEL_KEY = "model";
-
-  /**
-   * Velocity context key to identify the object stored in the context.
-   */
-  public static final String PACKAGES_KEY = "packages";
 
   /**
    * Velocity context key to identify the object stored in the context.
@@ -216,14 +215,60 @@ public abstract class CartridgeImpl implements Cartridge {
     this.properties = properties;
     this.configuration.addConfiguration(ConfigurationConverter
         .getConfiguration(properties));
+    try {
+      StringBuilder buffer = new StringBuilder();
+      buffer.append(configuration.getProperty("file.resource.loader.path"))
+          .append("/").append(getPrefix()).append("/").append("mappings.xml");
+      configuration.addConfiguration(new XMLConfiguration(buffer.toString()));
+      addDependencies();
+      addUndefinedProperties();
+    } catch (ConfigurationException e) {
+      log.error("Configuration file not found", e);
+    }
   }
 
   public List<TagDefinition> getTaggedValueTypes(Class clazz) {
-    return null;
+    List<TagDefinition> types = new ArrayList<TagDefinition>();
+    StringBuilder buffer = new StringBuilder();
+    buffer.append("configuration.tags.tag");
+    for (int i = 0;; i++) {
+      String tag = PropertyUtilities.getAttributeAt(configuration, buffer, i,
+          "name");
+      if (tag == null) {
+        break;
+      }
+      String type = PropertyUtilities.getAttributeAt(configuration, buffer, i,
+          "type");
+      String context = PropertyUtilities.getAttributeAt(configuration, buffer,
+          i, "context");
+      String defaultValue = PropertyUtilities.getAttributeAt(configuration,
+          buffer, i, "default-value");
+      if (clazz == convertContext(context)) {
+        types.add(new TagDefinition(tag, defaultValue, convertType(type)));
+      }
+    }
+    return types;
   }
 
   public List<TagDefinition> getObsoleteTaggedValueTypes(Class clazz) {
-    return Collections.emptyList();
+    List<TagDefinition> types = new ArrayList<TagDefinition>();
+    StringBuilder buffer = new StringBuilder();
+    buffer.append("configuration.obsolete-tags.obsolete-tag");
+    for (int i = 0;; i++) {
+      String tag = PropertyUtilities.getAttributeAt(configuration, buffer, i,
+          "name");
+      if (tag == null) {
+        break;
+      }
+      String type = PropertyUtilities.getAttributeAt(configuration, buffer, i,
+          "type");
+      String context = PropertyUtilities.getAttributeAt(configuration, buffer,
+          i, "context");
+      if (clazz == convertContext(context)) {
+        types.add(new TagDefinition(tag, convertType(type)));
+      }
+    }
+    return types;
   }
 
   public Properties getContext() {
@@ -238,7 +283,7 @@ public abstract class CartridgeImpl implements Cartridge {
    * Returns the configuration of cartridge.
    * @return the properties of the configuration of the cartridge.
    */
-  protected CompositeConfiguration getConfiguration() {
+  public CompositeConfiguration getConfiguration() {
     return configuration;
   }
 
@@ -347,21 +392,17 @@ public abstract class CartridgeImpl implements Cartridge {
    * @pre template != null && context != null
    */
   protected String processTemplate(Template template, VelocityContext context) {
-    assert ((template != null) && (context != null));
+    assert (template != null) && (context != null);
     StringWriter writer = new StringWriter();
     try {
       template.merge(context, writer);
-    } catch (MethodInvocationException mie) {
-      mie.printStackTrace();
-      log.error(mie);
-    } catch (ParseErrorException pee) {
-      pee.printStackTrace();
-      log.error(pee);
-    } catch (ResourceNotFoundException rnfe) {
-      rnfe.printStackTrace();
-      log.error(rnfe);
+    } catch (MethodInvocationException e) {
+      log.error(e);
+    } catch (ParseErrorException e) {
+      log.error(e);
+    } catch (ResourceNotFoundException e) {
+      log.error(e);
     } catch (Exception e) {
-      e.printStackTrace();
       log.error(e);
     }
 
@@ -421,14 +462,13 @@ public abstract class CartridgeImpl implements Cartridge {
 
   /**
    * Adds a property with a default value to the properties if it is missing.
-   * @param properties properties set to complete.
    * @param property property name to add if not defined.
    * @param value value of the property to add if not defined.
+   * @deprecated
    * @pre (properties != null) && (property != null)
    * @post properties.getProperty(property) != null
    */
-  protected void addUndefinedProperty(Properties properties, String property,
-      String value) {
+  protected void addUndefinedProperty(String property, String value) {
     String propertyValue = properties.getProperty(property);
     if (propertyValue == null) {
       properties.setProperty(property, value);
@@ -457,43 +497,6 @@ public abstract class CartridgeImpl implements Cartridge {
     return root;
   }
 
-  protected final void loadConfiguration(String name)
-      throws ConfigurationException {
-    StringBuilder buffer = new StringBuilder();
-    buffer.append(configuration.getProperty("file.resource.loader.path"))
-        .append("/").append(getPrefix()).append("/").append(name);
-    configuration.addConfiguration(new XMLConfiguration(buffer.toString()));
-  }
-
-  /**
-   * Returns the mapping for the type to the target language. A mapping exists
-   * only for datatypes.
-   * @param type type to map to a language construct.
-   * @param language language to map to.
-   * @param concrete flag indicating if the implementation class should be
-   *          retrieve or not.
-   * @return the requested mapping if found otherwise the qualified name of the
-   *         type.
-   */
-  protected String translateDatatype(MetaDatatype type, String language,
-      boolean concrete) {
-    String typename = type.qualifiedName();
-    int size = ((Collection) configuration
-        .getProperty("datatypes.datatype[@name]")).size();
-    StringBuilder buffer = new StringBuilder();
-    for (int i = 0; i < size; i++) {
-      buffer.setLength(0);
-      buffer.append("datatypes.datatype(").append(i).append(")[@name]");
-      if (typename.equals(configuration.getString(buffer.toString()))) {
-        buffer.setLength(0);
-        buffer.append("datatypes.datatype(").append(i).append(")[@type]");
-        typename = configuration.getString(buffer.toString());
-        break;
-      }
-    }
-    return typename;
-  }
-
   /**
    * Expands an identifier with its prefix and postfix.
    * @param prefixKey key of the prefix defined in the context.
@@ -513,5 +516,105 @@ public abstract class CartridgeImpl implements Cartridge {
       buffer.append(context.getProperty(postfixKey));
     }
     return buffer.toString();
+  }
+
+  /**
+   * Returns the mapping for the type to the target language. A mapping exists
+   * only for datatypes.
+   * @param type type to map to a language construct.
+   * @param language language to map to.
+   * @param concrete flag indicating if the implementation class should be
+   *          retrieve or not.
+   * @return the requested mapping if found otherwise the qualified name of the
+   *         type.
+   */
+  protected String translateDatatype(MetaDatatype type, String language,
+      boolean concrete) {
+    String typename = type.qualifiedName();
+    StringBuilder buffer = new StringBuilder();
+    buffer.append("datatypes.datatype");
+    for (int i = 0;; i++) {
+      String name = PropertyUtilities.getAttributeAt(configuration, buffer, i,
+          "name");
+      if (name == null) {
+        break;
+      }
+      if (typename.equals(name)) {
+        typename = PropertyUtilities.getAttributeAt(configuration, buffer, i,
+            "type");
+        break;
+      }
+    }
+    return typename;
+  }
+
+  /**
+   * Adds all properties defined in the configuration file of the cartridge and
+   * not already defined in the application property file.
+   */
+  private void addUndefinedProperties() {
+    StringBuilder buffer = new StringBuilder();
+    buffer.append("configuration.properties.property");
+    for (int i = 0;; i++) {
+      String property = PropertyUtilities.getAttributeAt(configuration, buffer,
+          i, "name");
+      if (property == null) {
+        break;
+      }
+      String value = PropertyUtilities.getAttributeAt(configuration, buffer, i,
+          "default-value");
+      String propertyValue = properties.getProperty(property);
+      if (propertyValue == null) {
+        properties.setProperty(property, value);
+      }
+    }
+  }
+
+  private void addDependencies() {
+    StringBuilder buffer = new StringBuilder();
+    buffer.append("configuration.uses.cartridge");
+    CartridgeFactory factory = CartridgeFactory.getInstance();
+    for (int i = 0;; i++) {
+      String prefix = PropertyUtilities.getAttributeAt(configuration, buffer,
+          i, "name");
+      if (prefix == null) {
+        break;
+      }
+      addCartridge(factory.getCartridge(prefix));
+    }
+
+  }
+
+  private Class convertType(String type) {
+    Class clazz = null;
+    if ("boolean".equals(type)) {
+      clazz = Boolean.TYPE;
+    } else if ("int".equals(type)) {
+      clazz = Integer.TYPE;
+    } else {
+      try {
+        clazz = Class.forName(type);
+      } catch (ClassNotFoundException e) {
+        log.error("Class not found for name " + type, e);
+      }
+    }
+    assert (clazz != null);
+    return clazz;
+  }
+
+  private Class convertContext(String context) {
+    Class clazz = null;
+    if ("model".equals(context)) {
+      clazz = MetaModel.class;
+    } else if ("package".equals(context)) {
+      clazz = MetaPackage.class;
+    } else if ("class".equals(context)) {
+      clazz = MetaClass.class;
+    } else if ("property".equals(context)) {
+      clazz = MetaProperty.class;
+    } else if ("indexed-property".equals(context)) {
+      clazz = MetaIndexedProperty.class;
+    }
+    return clazz;
   }
 }

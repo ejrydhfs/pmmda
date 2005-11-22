@@ -48,6 +48,7 @@ public class TypeFactory {
    */
   public List<String> getReferenceCodeTypes() {
     List<String> classnames = new ArrayList<String>();
+    classnames.add("ch.bbv.mda.pim.StorageKind");
     return classnames;
   }
 }

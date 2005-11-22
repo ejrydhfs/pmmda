@@ -7,7 +7,8 @@ package ch.bbv.dog;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import ch.bbv.utilities.ReflectUtilities;
 
 /**
@@ -50,6 +51,11 @@ public class DataObjectType {
    * Name of the transform method in the transformer class as generated.
    */
   public static final String TRANSFORM_METHOD_NAME = "transform";
+
+  /**
+   * Logger instance of the class.
+   */
+  private static Log log = LogFactory.getLog(DataObjectType.class);
 
   /**
    * The class of the data object instances.
@@ -225,15 +231,15 @@ public class DataObjectType {
       Object[] params = { boGraph };
       lwGraph = (LightweightObject) method.invoke(null, params);
     } catch (SecurityException e) {
-      e.printStackTrace();
+      log.error(e);
     } catch (NoSuchMethodException e) {
-      e.printStackTrace();
+      log.error(e);
     } catch (IllegalArgumentException e) {
-      e.printStackTrace();
+      log.error(e);
     } catch (IllegalAccessException e) {
-      e.printStackTrace();
+      log.error(e);
     } catch (InvocationTargetException e) {
-      e.printStackTrace();
+      log.error(e);
     }
     return lwGraph;
   }
@@ -303,21 +309,20 @@ public class DataObjectType {
           break;
         }
       }
-
       Method method = clazz.getDeclaredMethod(ACCEPT_METHOD_NAME, types);
       assert (method != null);
       Object[] params = { visitor };
       method.invoke(object, params);
     } catch (SecurityException e) {
-      e.printStackTrace();
+      log.error(e);
     } catch (NoSuchMethodException e) {
-      e.printStackTrace();
+      log.error(e);
     } catch (IllegalArgumentException e) {
-      e.printStackTrace();
+      log.error(e);
     } catch (IllegalAccessException e) {
-      e.printStackTrace();
+      log.error(e);
     } catch (InvocationTargetException e) {
-      e.printStackTrace();
+      log.error(e);
     }
   }
 }

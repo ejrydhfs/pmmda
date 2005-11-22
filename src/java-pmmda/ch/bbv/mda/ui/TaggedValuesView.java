@@ -46,9 +46,13 @@ public class TaggedValuesView extends NodePropertiesView {
    */
   private static Map<Class, CellEditor> editors;
 
+  /**
+   * Cells defining the columns displayed in the tagged value list.
+   */
+  private static final TableCell.Cell[] CELLS;
+
   static {
     editors = new HashMap<Class, CellEditor>();
-
     ReferenceCodeComboBox comboBox = new ReferenceCodeComboBox(
         BooleanCode.class, BooleanCode.getCodes());
     comboBox.setCaseSensitive(false);
@@ -60,22 +64,20 @@ public class TaggedValuesView extends NodePropertiesView {
         false);
     registerReferenceCode(PropertyModeCode.class, PropertyModeCode.getCodes(),
         false);
-  }
-
-  private TableCell tableCell;
-
-  private TablePanel tablePanel;
-
-  /**
-   * Cells defining the columns displayed in the tagged value list.
-   */
-  private static final TableCell.Cell[] CELLS;
-
-  static {
     CELLS = new TableCell.Cell[2];
     CELLS[0] = new TableCell.Cell("tag", "tag", String.class, false);
     CELLS[1] = new TableCell.Cell("value", "value", String.class, true);
   }
+
+  /**
+   * Table cell defining the characteristics of the table.
+   */
+  private TableCell tableCell;
+
+  /**
+   * The panel containing the table.
+   */
+  private TablePanel tablePanel;
 
   /**
    * Default constructor of the class. The content of the view is constructed.
@@ -94,7 +96,7 @@ public class TaggedValuesView extends NodePropertiesView {
    * @pre clazz != null
    */
   static TableCellEditor getEditor(Class clazz) {
-    assert (clazz != null);
+    assert clazz != null;
     return (TableCellEditor) editors.get(clazz);
   }
 
@@ -116,9 +118,11 @@ public class TaggedValuesView extends NodePropertiesView {
     editors.put(referenceCode, new DefaultCellEditor(comboBox));
   }
 
+  @Override
   public void cancelChanges() {
   }
 
+  @Override
   public void commitChanges() {
     MetaElement model = (MetaElement) getDataObject();
     for (TaggedValue newTag : (Collection<TaggedValue>) tablePanel.getModel()) {
@@ -140,14 +144,13 @@ public class TaggedValuesView extends NodePropertiesView {
         if (!oldValue.equals(newValue)) {
           originalTag.setValue(newValue);
         }
-      } else {
-        if (newValue != null) {
-          originalTag.setValue(newValue);
-        }
+      } else if (newValue != null) {
+        originalTag.setValue(newValue);
       }
     }
   }
 
+  @Override
   public void populateView() {
     MetaElement model = (MetaElement) getDataObject();
     List tags = cloneTaggedValues(model.getTags());

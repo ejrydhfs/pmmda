@@ -36,7 +36,7 @@ public class ImportStatements {
    * List of the imported packages. Each entry of the map is again the list of
    * its classes imported in the class file.
    */
-  private Map<String, Map<String, String>> packageNames;
+  private Map<String, Map<String, String>> packages;
 
   /**
    * Name of the package where the item defining the import statements is
@@ -59,7 +59,7 @@ public class ImportStatements {
    */
   public ImportStatements(String context) {
     assert context != null;
-    this.packageNames = new HashMap<String, Map<String, String>>();
+    this.packages = new HashMap<String, Map<String, String>>();
     this.context = context;
   }
 
@@ -79,7 +79,7 @@ public class ImportStatements {
    * @return list of imported packages.
    */
   public Collection<String> getPackageNames() {
-    return new ArrayList<String>(packageNames.keySet());
+    return new ArrayList<String>(packages.keySet());
   }
 
   /**
@@ -90,7 +90,7 @@ public class ImportStatements {
    */
   public Collection<String> getClassNames(String packageName) {
     assert packageName != null;
-    Map<String, String> classes = packageNames.get(packageName);
+    Map<String, String> classes = packages.get(packageName);
     Collection<String> classNames;
     if (classes != null) {
       classNames = classes.values();
@@ -110,7 +110,7 @@ public class ImportStatements {
   public int getNrOfClasses(String packageName) {
     assert packageName != null;
     int nrOfClasses = 0;
-    Map<String, String> classes = packageNames.get(packageName);
+    Map<String, String> classes = packages.get(packageName);
     if (classes != null) {
       if (classes.containsValue(ALL_CLASSES)) {
         nrOfClasses = Integer.MAX_VALUE;
@@ -144,10 +144,10 @@ public class ImportStatements {
       return;
     }
 
-    Map<String, String> classes = packageNames.get(name);
+    Map<String, String> classes = packages.get(name);
     if (classes == null) {
       classes = new HashMap<String, String>();
-      packageNames.put(name, classes);
+      packages.put(name, classes);
     }
     name = ModelOperators.getComponentName(qualifiedName);
     classes.put(name, name);
@@ -161,9 +161,6 @@ public class ImportStatements {
   public void addPackageName(String packageName) {
     assert (packageName != null) && (packageName.length() > 0);
     StringBuilder buffer = new StringBuilder();
-    if (!isRelevant(packageName)) {
-      return;
-    }
     buffer.append(packageName).append(".*");
     addClassName(buffer.toString());
   }
@@ -179,11 +176,11 @@ public class ImportStatements {
     assert (limit > 0) || (limit == -1);
     List<String> imports = new ArrayList<String>();
     StringBuilder buffer = new StringBuilder();
-    for (String name : packageNames.keySet()) {
+    for (String name : packages.keySet()) {
       buffer.setLength(0);
       buffer.append(name).append(".");
       int length = buffer.length();
-      Set<String> classes = packageNames.get(name).keySet();
+      Set<String> classes = packages.get(name).keySet();
       if (((limit != -1) && (classes.size() >= limit))
           || classes.contains(ALL_CLASSES)) {
         buffer.append("*");

@@ -19,7 +19,7 @@ import ch.bbv.dog.CacheHandler;
 import ch.bbv.dog.DataObjectHandler;
 import ch.bbv.dog.DataObjectManager;
 import ch.bbv.dog.LightweightObjectHandlerImpl;
-import ch.bbv.dog.persistence.PersistenceHandler;
+import ch.bbv.dog.persistence.ojb.PersistenceHandler;
 import ch.bbv.utilities.ReflectUtilities;
 
 /**
@@ -47,9 +47,9 @@ public class Application extends Locator {
   public static final String ORB_NAME = "CORBA_ORB";
 
   /**
-   * The OJB schema name of the database containing the persistent data.
+   * The schema name of the database containing the persistent data.
    */
-  public static final String SCHEMA = "ojb-dnm";
+  public static final String SCHEMA = "orm-dnm";
 
   /**
    * The mode for the 2-tier mode of the application.

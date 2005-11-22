@@ -7,7 +7,7 @@ package ch.bbv.dog.reference;
 
 import java.util.List;
 
-import ch.bbv.dog.persistence.PersistenceHandler;
+import ch.bbv.dog.persistence.ojb.PersistenceHandler;
 
 /**
  * The reference code factory creates all the codes available in an application.

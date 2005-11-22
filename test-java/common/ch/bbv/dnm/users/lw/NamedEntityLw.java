@@ -27,7 +27,10 @@ public class NamedEntityLw  implements LightweightObject {
    */
   private static final long serialVersionUID = 99990101;
 
-  private java.lang.String name;
+  /**
+   * The name of the named entity.
+   */
+  private String name;
 
   /** 
    * Unique identifier of the data object instance distinguishing it from 
@@ -54,9 +57,9 @@ public class NamedEntityLw  implements LightweightObject {
   /** 
    * Gets the current value of the attribute Name.
    * @return the value of the attribute Name.
-   * @see #setName(java.lang.String)
+   * @see #setName(String)
    */
-  public java.lang.String getName() {
+  public String getName() {
     return name;
   }
 
@@ -65,7 +68,7 @@ public class NamedEntityLw  implements LightweightObject {
    * @param name new value of the property.
    * @see #getName()
    */    
-  public void setName(java.lang.String name) {
+  public void setName(String name) {
     this.name = name;
   }
 

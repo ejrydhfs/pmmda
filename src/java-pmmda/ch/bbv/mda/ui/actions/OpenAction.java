@@ -36,11 +36,16 @@ public class OpenAction extends ExplorerFileAction {
   private static Log log = LogFactory.getLog(OpenAction.class);
 
   /**
+   * Name of the action as displayed in the menu.
+   */
+  private static final String ACTION = "Open...";
+
+  /**
    * Default constructor.
    * @param explorer explorer owning the global action.
    */
   public OpenAction(Explorer explorer) {
-    super("Open...", explorer);
+    super(ACTION, explorer);
     shouldSaveAndProceed = true;
     FileTypes.addFileFilters(getFileChooser());
   }
