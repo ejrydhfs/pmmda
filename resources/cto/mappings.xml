@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<cartridge name="cto" version="0.3.0">
+  <configuration>
+    <uses>
+      <cartridge name="bo" />
+    </uses>
+    <stereotypes></stereotypes>
+    <tags>
+      <tag name="cto-package-idl" type="java.lang.String" context="package"
+        default-value=""
+        description="defines the name of the package containing the IDL sources." />
+    </tags>
+    <obsolete-tags></obsolete-tags>
+    <properties>
+      <property name="cto-cartridge.idl-root-folder" default-value="" />
+      <property name="cto-cartridge.transform-package-postfix" default-value="" />
+      <property name="cto-cartridge.idl-prefix" default-value="" />
+      <property name="cto-cartridge.idl-postfix" default-value="" />
+    </properties>
+  </configuration>
+  <datatypes></datatypes>
+</cartridge>

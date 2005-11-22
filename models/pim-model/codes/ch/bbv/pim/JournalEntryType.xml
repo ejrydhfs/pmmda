@@ -1,0 +1,47 @@
+<codeType>
+  <qualifiedName>ch.bbv.pim.JournalEntryType</qualifiedName>
+  <hierarchical>false</hierarchical>
+  <values>
+    <code>
+      <name>EMAIL</name>
+      <sortOrder>1</sortOrder>
+      <shortDescription>email</shortDescription>
+      <description>email</description>
+      <codeId>1</codeId>
+      <modified>false</modified>
+    </code>
+    <code>
+      <name>PHONE</name>
+      <sortOrder>2</sortOrder>
+      <shortDescription>phone call</shortDescription>
+      <description>phone call</description>
+      <codeId>2</codeId>
+      <modified>false</modified>
+    </code>
+    <code>
+      <name>LETTER</name>
+      <sortOrder>3</sortOrder>
+      <shortDescription>letter</shortDescription>
+      <description>letter</description>
+      <codeId>3</codeId>
+      <modified>false</modified>
+    </code>
+    <code>
+      <name>MEETING</name>
+      <sortOrder>4</sortOrder>
+      <shortDescription>meeting</shortDescription>
+      <description>meeting</description>
+      <codeId>4</codeId>
+      <modified>false</modified>
+    </code>
+    <code>
+      <name>NOTE</name>
+      <sortOrder>5</sortOrder>
+      <shortDescription>note</shortDescription>
+      <description>note</description>
+      <codeId>5</codeId>
+      <modified>false</modified>
+    </code>
+  </values>
+  <modified>false</modified>
+</codeType>

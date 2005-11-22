@@ -1,11 +1,16 @@
+#if(${prefix})
+## no prefix is necessary for OJB declarative file
+#elseif(${postfix})
+## no prefix is necessary for OJB declarative file
+#else
 #set($dollar="$")
 #isLightweightDataObject($class $isLightweightDataObject)
 #if($isLightweightDataObject)
-#set($shouldGenerateFkIndex=${configuration.getProperty("ojb-cartridge.generate-fk-index").equalsIgnoreCase("true")})
-#set($inheritanceMode=${configuration.getProperty("ojb-cartridge.inheritance")})
-#set($schema=${package.valueOfTag("ojb-schema")})
+#set($shouldGenerateFkIndex=${configuration.getProperty("orm-cartridge.generate-fk-index").equalsIgnoreCase("true")})
+#set($inheritanceMode=${configuration.getProperty("orm-cartridge.inheritance")})
+#set($schema=${package.valueOfTag("orm-schema")})
 #if(${schema})#set($schema="${schema}.")#else#set($schema="")#end
-#set($table=${class.getAttribute("ojb-table-name")})
+#set($table=${class.getAttribute("orm-table-name")})
 <class-descriptor class="${package.getAttribute("bo-lw-package")}.${class.getAttribute("bo-lw-class")}"
   table="${schema}${table}">
   <field-descriptor name="id" 
@@ -21,7 +26,7 @@
 ## having as type a class not being a data object.
 #foreach($property in $properties)
 #if(!${property.isTransient()} && $property.booleanValueOfTag("bo-lightweight"))
-#set($columnType=${property.valueOfTag("ojb-column-type").toUpperCase()})
+#set($columnType=${property.valueOfTag("orm-column-type").toUpperCase()})
 #getType($model $property $type)
 #isDataObject($type $isDataObject)
 ## identifies a forward reference 1-0..1 or 1-1
@@ -31,10 +36,10 @@
     column="${column}"
     jdbc-type="INTEGER"
     access="anonymous"
-    nullable="${property.booleanValueOfTag("ojb-can-be-null")}"/>
+    nullable="${property.booleanValueOfTag("orm-can-be-null")}"/>
 #else
   <field-descriptor name="${property.nameFirstLower()}"
-    column="${property.getAttribute("ojb-column-name")}"
+    column="${property.getAttribute("orm-column-name")}"
 #if(${columnType.equalsIgnoreCase("BOOLEAN")})
     jdbc-type="INTEGER"
     conversion="org.apache.ojb.broker.accesslayer.conversions.Boolean2IntFieldConversion"
@@ -46,11 +51,11 @@
     conversion="org.apache.ojb.broker.accesslayer.conversions.Boolean2IntFieldConversion"
 #end
 #end
-#if(${property.getTaggedValue("ojb-is-primary")} == "true")
+#if(${property.getTaggedValue("orm-is-primary")} == "true")
     autoincrement="true"
     primarykey="true"
 #end
-    nullable="${property.booleanValueOfTag("ojb-can-be-null")}"
+    nullable="${property.booleanValueOfTag("orm-can-be-null")}"
     access="readonly"/>
 #end
 #end
@@ -60,7 +65,7 @@
 #getType($model $property $type)
 #isDataObject($type $isDataObject)
 #if($isDataObject)
-#set($columnName=${aggregation.getAttribute("ojb-column-name")})
+#set($columnName=${aggregation.getAttribute("orm-column-name")})
 #set($typeName=${property.getTypeName()})
 #getForwardFk($property $column)
   <reference-descriptor name="${property.nameFirstLower()}"
@@ -97,7 +102,7 @@
 #isDataObject($type $isDataObject)
 #if($isDataObject && ${type.booleanValueOfTag("persistence")})
 #set($typePackage=${type.getContext()})
-#set($columnName=${aggregation.getAttribute("ojb-column-name")})
+#set($columnName=${aggregation.getAttribute("orm-column-name")})
   <reference-descriptor
     name="${property.getName()}"
     class-ref="${type.qualifiedName()}">
@@ -111,7 +116,7 @@
 #getType($model $aggregation $type)
 #isDataObject($type $isDataObject)
 #if($isDataObject && ${type.booleanValueOfTag("persistence")} && ${type.booleanValueOfAttribute("bo-lightweight")})
-#set($columnName=${aggregation.getAttribute("ojb-column-name")})
+#set($columnName=${aggregation.getAttribute("orm-column-name")})
 #set($typePackage=${type.getContext()})
   <collection-descriptor 
     name="${aggregation.getName()}"
@@ -167,7 +172,7 @@
 #foreach($relation in $relations)
 #getType($model $relation $type)
 #if(${type} == ${class})
-#set($refTable=${reference.valueOfTag("ojb-table-name")})
+#set($refTable=${reference.valueOfTag("orm-table-name")})
 #set($relationName=${relation.nameUpper()})
 #getReverseFk($reference $relation $column)
   <index-descriptor 
@@ -188,4 +193,4 @@
 #end
 </class-descriptor>
 #end
-
+#end

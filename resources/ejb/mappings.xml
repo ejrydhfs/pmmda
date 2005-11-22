@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<cartridge name="ejb" version="0.3.0">
+  <configuration>
+    <uses>
+      <cartridge name="bo" />
+      <cartridge name="cto" />
+    </uses>
+    <stereotypes></stereotypes>
+    <tags>
+      <tag name="ejb-server-name" type="java.lang.String" context="package"
+        description="defines the name of the server providing the DOG services" />
+    </tags>
+    <obsolete-tags>
+      <obsolete-tag name="oex-is-root" type="boolean" context="class" />
+    </obsolete-tags>
+    <properties>
+      <property name="ejb-cartridge.generate-corba" default-value="false" />
+      <property name="ejb-cartridge.generate-bean" default-value="false" />
+      <property name="ejb-cartridge.server-package-extension" default-value="" />
+      <property name="ejb-cartridge.client-package-extension" default-value="" />
+      <property name="ejb-cartridge.server-corba-root-folder" default-value="" />
+      <property name="ejb-cartridge.client-corba-root-folder" default-value="" />
+      <property name="ejb-cartridge.server-j2ee-root-folder" default-value="" />
+      <property name="ejb-cartridge.client-j2ee-root-folder" default-value="" />
+    </properties>
+  </configuration>
+  <datatypes language="java"></datatypes>
+</cartridge>

@@ -153,13 +153,12 @@
             to the update site via this bookmark and install the Velocity UI
             feature.
           </dd>
-          <dt>XML Buddy</dt>
+          <dt>Eclipe Web Tools</dt>
           <dd>
             Download the plugin from
-            <a href="http://www.xmlbuddy.com">xmlbuddy</a>
-            and copy the file in the plugin directory of eclipse. Restart
-            eclipse with the clean option. The web site contains step by step
-            guide.
+            <a href="http://www.eclipe.org/webtools">Web Tools</a>
+            and follow the instruction on the web site. The extensions extends
+            Eclipse in the area of web based tools for XML and HTML edition.
           </dd>
           <dt>PMD Plugin</dt>
           <dd>
@@ -176,7 +175,7 @@
             Eclipse with the clean option. You don't need to do anymore to
             install JDepend4Eclipse.
           </dd>
-          <dt>JDepend Plugin</dt>
+          <dt>FindBugs Plugin</dt>
           <dd>
             Download from
             <a href="http://sourceforge.net/projects/findbugs">FindBugs</a>
@@ -196,6 +195,14 @@
             you have in JRE\BIN same DLL as in plugin directory.
           </dd>
         </dl>
+        <note>
+          The
+          <em>WebTools</em>
+          project is now used to edit XML and HTML files instead of third party
+          plugins. This extension is an official project of the Eclipse
+          foundation. Therefore the support and compatibility with the Eclipse
+          platform is guaranteed.
+        </note>
       </section>
     </section>
     <section>
@@ -223,7 +230,7 @@
           All documentation artifacts are stored under the
           <em>docs</em>
           directory. All documents are either XML based on written using the
-          <a href="http://www.openoffice.org">Open Office Tools</a>
+          <a href="http://www.openoffice.org">Open Office Tools 2.x</a>
           . The final documentation is generated with
           <a href="http://forrest.apache.org">Forrest</a>
           .
@@ -314,7 +321,8 @@
         is put in correcting software errors as in improving the documentation,
         tests, and web site. New members in the team should expect to invest
         similar amount of time for quality assurance. This approach helps us to
-        increase the overall satisfaction of our customers.</p>
+        increase the overall satisfaction of our customers.
+      </p>
     </section>
     <section>
       <title>Contributing Tips</title>

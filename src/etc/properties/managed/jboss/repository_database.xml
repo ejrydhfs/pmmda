@@ -1,5 +1,5 @@
 <jdbc-connection-descriptor
-  jcd-alias="ojb-dnm"
+  jcd-alias="orm-dnm"
   default-connection="true"
   platform="MySQL"
   jdbc-level="3.0"

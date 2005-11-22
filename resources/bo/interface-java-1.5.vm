@@ -18,7 +18,7 @@ package ${package.getAttribute("bo-if-package")};
 ## generate the import list of the class
 #set($imports=${cartridge.retrieveImportStatementsForIf(${class}, ${package.getAttribute("bo-if-package")})})
 #if (${class.booleanValueOfAttribute("bo-vetoable")})
-#set($dummy=${imports.addClassName("java.beans.PropertyVetoException")})
+#set($foo=${imports.addClassName("java.beans.PropertyVetoException")})
 #end
 #set($importStatements=${imports.getImportStatements(4)})
 #foreach($importStatement in $importStatements) 

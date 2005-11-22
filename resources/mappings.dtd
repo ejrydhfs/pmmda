@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!ELEMENT cartridge (configuration datatypes)>
+<!ELEMENT configuration (dependencies stereotypes tags obsolete-tags properties)>
+
+<!ELEMENT dependencies (depends*)>
+<!ELEMENT stereotypes (stereotype*)>
+<!ELEMENT tags (tag*)>
+<!ELEMENT obsolete-tags (obsolete-tag*)>
+<!ELEMENT properties (property*)>
+

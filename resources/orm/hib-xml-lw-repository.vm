@@ -1,0 +1,128 @@
+#set($dollar="$")
+#set($schema=${package.valueOfTag("orm-schema")})
+#if(${schema})#set($schema="${schema}")#else#set($schema="")#end
+#if(${prefix})
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping 
+	auto-import="false"
+	schema="${schema}"
+	default-access="field">	
+#elseif(${postfix})
+</hibernate-mapping>
+
+#else	
+#isLightweightDataObject($class $isLightweightDataObject)
+#if($isLightweightDataObject)
+#set($shouldGenerateFkIndex=${configuration.getProperty("orm-cartridge.generate-fk-index").equalsIgnoreCase("true")})
+#set($inheritanceMode=${configuration.getProperty("orm-cartridge.inheritance")})
+#set($table=${class.getAttribute("orm-table-name")})
+  <class name="${package.getAttribute("bo-lw-package")}.${class.getAttribute("bo-lw-class")}"
+    table="${table}"
+    mutable="true">
+    <id name="id" column="ID" type="integer" unsaved-value="null" index="${table}_IDX">
+      <generator class="increment"/>
+    </id>
+    <timestamp name="timestamp" column="TS"/>
+## generates all primitive properties as a column. A primitive property is 
+## either a simple property or an indexed property with a cardinality of 1
+## having as type a class not being a data object.
+#foreach($property in $properties)
+#if(!${property.isTransient()} && $property.booleanValueOfTag("bo-lightweight"))
+#set($columnType=${property.valueOfTag("orm-column-type").toUpperCase()})
+#set($notNull=!${property.booleanValueOfTag("orm-can-be-null")})	
+#getType($model $property $type)
+#isDataObject($type $isDataObject)
+## identifies a forward reference 1-0..1 or 1-1
+#if($isDataObject && ${type.booleanValueOfTag("persistence")})
+#getForwardFk($property $column)
+    <many-to-one name="${property.nameFirstLower()}"
+	  column="${column}"
+	  class="${type.qualifiedName()}"
+      not-null="${notNull}"
+#if($shouldGenerateFkIndex)
+	  index="${table}_${columnName}_IDX"
+#end
+    />	
+#else
+    <property name="${property.nameFirstLower()}"
+      column="${columnName}"
+      type="${columnType}"
+      not-null="${notNull}"/>
+#end
+#end
+#end
+#foreach($property in $properties)
+#if($property.booleanValueOfTag("bo-lightweight"))
+#getType($model $property $type)
+#isDataObject($type $isDataObject)
+#if($isDataObject)
+#set($columnName=${aggregation.getAttribute("orm-column-name")})
+#set($typeName=${property.getTypeName()})
+#getForwardFk($property $column)
+  <reference-descriptor name="${property.nameFirstLower()}"
+    class-ref="${typeName}"
+    <foreignkey field-ref="${column}"/>
+  />
+#end
+#end
+#end
+## references to the class having indexed properties with cardinality 1-N to the
+## class are generated as reverse foreign keys in the class.
+#set($references=$model.getClassReferences($class))
+#foreach($reference in $references)
+#isPersistentDataObject($reference $isPersistentDataObject)
+#if($isPersistentDataObject)
+#set($relations=${reference.getIndexedProperties()})
+#foreach($relation in $relations)
+#getType($model $relation $type)
+#if(${type} == ${class})
+#getReverseFk($reference $relation $column)
+  <field-descriptor 
+    name="${reference.nameFirstLower()}${relation.nameFirstUpper()}Handle" 
+    column="${column}"
+    jdbc-type="INTEGER"
+    nullable="${relation.canBeNull()}"
+    access="anonymous"/>
+#end
+#end
+#end
+#end
+#foreach($aggregation in $aggregations)
+#if(${aggregation.getMultiplicity().getUpperBound()} == 1)
+#set($notNull=!${property.booleanValueOfTag("orm-can-be-null")})	
+#set($columnName=${aggregation.getAttribute("orm-column-name")})
+#getType($model $aggregation $type)
+#isPersistentDataObject($type $isPersistentDataObject)
+#if($isPersistentDataObject)
+#getForwardFk($aggregation $column)
+    <many-to-one name="${aggregation.nameFirstLower()}"
+      column="${column}"
+      class="${type.qualifiedName()}"
+      not-null="${notNull}"
+#if($shouldGenerateFkIndex)
+      index="${table}_${columnName}_IDX"
+#end
+    />	
+#end
+#end
+#end
+#foreach($aggregation in $aggregations)
+#if(${aggregation.getMultiplicity().getUpperBound()} == -1)
+#getType($model $aggregation $type)
+#isPersistentDataObject($type $isPersistentDataObject)
+#if($isPersistentDataObject)
+#set($typePackage=${type.getContext()})
+    <list name="${aggregation.getName()}">
+      <key column="${class.nameFirstLower()}${aggregation.nameFirstUpper()}Handle"/>
+      <index column="id"/>
+      <one-to-many class="${typePackage.getAttribute("bo-lw-package")}.${type.getAttribute("bo-lw-class")}"/>
+    </list>
+#end
+#end
+#end
+  </class>
+#end
+#end

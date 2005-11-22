@@ -6,6 +6,7 @@ commons-lang-2.0.jar
 commons-logging-1.0.4.jar
 commons-logging-api-1.0.4.jar
 commons-pool-1.1.jar
+commons-transaction-1.1.jar
 db-ojb-1.0.1.jar
 dog-<x.x.x>.jar
 forms-1.0.5.jar

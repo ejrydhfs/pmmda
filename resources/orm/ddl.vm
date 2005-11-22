@@ -1,13 +1,13 @@
 ## generate the table declaration
 #set($DATA_OBJECT="dataObject")
-#set($shouldGenerateFkIndex=${configuration.getProperty("ojb-cartridge.generate-fk-index").equalsIgnoreCase("true")})
-#set($database=${configuration.getProperty("ojb-cartridge.database")})
+#set($shouldGenerateFkIndex=${configuration.getProperty("orm-cartridge.generate-fk-index").equalsIgnoreCase("true")})
+#set($database=${configuration.getProperty("orm-cartridge.database")})
 #if(${database.equalsIgnoreCase("MySQL")})
 #set($postTable="TYPE=InnoDB")
 #end
-#set($schema=${package.valueOfTag("ojb-schema-name")})
+#set($schema=${package.valueOfTag("orm-schema-name")})
 #if(${schema})#set($schema=${schema} + ".")#else#set($schema="")#end
-#set($table=${class.getAttribute("ojb-table-name")})
+#set($table=${class.getAttribute("orm-table-name")})
 DROP TABLE IF EXISTS ${schema}${table};
 CREATE TABLE ${schema}${table} (
 #if(${DATA_OBJECT.equalsIgnoreCase(${class.getStereotype()})})
@@ -16,10 +16,10 @@ CREATE TABLE ${schema}${table} (
 #end
 #foreach($property in $properties)
 #if(!${property.isTransient()})
-#set($columnType=${property.valueOfTag("ojb-column-type")})
-#set($columnName=${property.getAttribute("ojb-column-name")})
+#set($columnType=${property.valueOfTag("orm-column-type")})
+#set($columnName=${property.getAttribute("orm-column-name")})
 #getType($model $property $type)
-#if(!${property.booleanValueOfTag("ojb-can-be-null")} || ${property.isPrimaryKey()})#set($nullInfo=" NOT NULL")#else#set($nullInfo="")#end
+#if(!${property.booleanValueOfTag("orm-can-be-null")} || ${property.isPrimaryKey()})#set($nullInfo=" NOT NULL")#else#set($nullInfo="")#end
 #isPersistentDataObject($type $isPersistentDataObject)
 #if($isPersistentDataObject)
 #getForwardFk($property $column)
@@ -29,13 +29,13 @@ CREATE TABLE ${schema}${table} (
 #if(${columnType.equalsIgnoreCase("BOOLEAN")})
   ${columnName} INTEGER${nullInfo},
 #elseif(${columnType.equalsIgnoreCase("STRING")}) 
-  ${columnName} VARCHAR(${property.valueOfTag("ojb-column-size")})${nullInfo},
+  ${columnName} VARCHAR(${property.valueOfTag("orm-column-size")})${nullInfo},
 #elseif(${columnType.equalsIgnoreCase("VARCHAR")}) 
-  ${columnName} VARCHAR(${property.valueOfTag("ojb-column-size")})${nullInfo},
+  ${columnName} VARCHAR(${property.valueOfTag("orm-column-size")})${nullInfo},
 #elseif(${columnType.equalsIgnoreCase("NUMERIC")}) 
-  ${columnName} DECIMAL(${property.valueOfTag("ojb-column-size")})${nullInfo},
+  ${columnName} DECIMAL(${property.valueOfTag("orm-column-size")})${nullInfo},
 #elseif(${columnType.equalsIgnoreCase("DECIMAL")})
-#set($sizes= ${property.valueOfTag("ojb-column-size")})
+#set($sizes= ${property.valueOfTag("orm-column-size")})
   ${columnName} DECIMAL(${cartridge.getSizeParameter(${property}, 0)}, ${cartridge.getSizeParameter(${property}, 1)})${nullInfo},
 #else
   ${columnName} ${columnType.toUpperCase()}${nullInfo},

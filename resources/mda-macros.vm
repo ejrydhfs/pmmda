@@ -84,18 +84,6 @@ ${spaces} */
 #set($result=${model.findClass(${_typename})})
 #end
 
-## Returns the type of the element. If the type is a datatype the value
-## of the attribute is returned otherwise the type name.
-## @param element element which type should be returned.
-## @return the type name of the element as seen from the BO cartridge.
-#macro(getDatatype $element $result)
-#set($result=false)
-#set($result=${element.getClassifier().getAttribute("bo-datatype")})
-#if(!$result)
-#set($result=${element.getTypeName()})
-#end
-#end
-
 ## Returns true if the type object of the type name defined in the element is a data object.
 #macro(isTypeModel $model $element $result)
 #getType($model $element $_type)
@@ -134,6 +122,7 @@ new ${_containerType}<${_type}>()##end
 #end
 
 #macro(getterName $property $result)
+#set($_type="")	
 #set($_type = ${property.getClassifier().getAttribute("bo-datatype")})
 #if($_type=="boolean")
 #set($result="is${property.nameFirstUpperSingular()}")
@@ -154,7 +143,7 @@ new ${_containerType}<${_type}>()##end
 ## Generates a reverse foreign key for the given property referencing
 ## the given reference class.
 #macro(getReverseFk $reference $property $result)
-#set($_refTable=${reference.valueOfTag("ojb-table-name")})
+#set($_refTable=${reference.valueOfTag("orm-table-name")})
 #set($result="${_refTable}_${property.nameUpper()}_FK")
 #end
 
@@ -165,3 +154,17 @@ new ${_containerType}<${_type}>()##end
 #macro(getReverseHdl $reference $property $result)
 #set($result="${reference.nameFirstLower()}${relation.nameFirstUpper()}Handle")
 #end
+
+#macro(getVisibility $element $visibility)
+#set($_visibilityCode=${element.getVisibility().getCode()})	
+#if($visibilityCode == 1)
+#set($visibility="public")
+#elseif($visbilityCode == 2)
+#set($visibility="protected")
+#elseif($visibility == 3)
+#set($visibility="")
+#elseif($visibility == 4)
+#set($visibility="private")
+#end
+#end
+	

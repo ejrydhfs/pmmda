@@ -1,49 +1,143 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <cartridge name="bo" version="0.3.0">
- <!--
   <configuration>
-  <stereotypes>
-  <stereotype name="dataObject" target="Class"
-  description="Indicates if the class is a data object or not."/>
-  </stereotypes>
-  <tags>
-  <tag name="bo-generate" type="boolean" target="Package" 
-  description="Flag indicating if the package should be processed or not"/>
-  </tags>
-  <obsolete-tags>
-  </obsolete-tags>
+    <uses></uses>
+    <stereotypes>
+      <stereotype name="dataObject" context="class"
+        description="Indicates if the class is a data object or not" />
+      <stereotype name="referenceCode" context="class"
+        description="indicates if the class is a reference code or not" />
+    </stereotypes>
+    <tags>
+      <tag name="bo-generate" type="boolean" context="package"
+        default-value="false"
+        description="Flag specifies if the package should be processed or not" />
+      <tag name="bo-root" type="java.lang.String" context="package"
+        description="The value is the logical root directory" />
+      <tag name="bo-generate" type="boolean" context="class"
+        default-value="false"
+        description="flag specifies if the class should be processed or not." />
+      <tag name="bo-is-root" type="boolean" context="class"
+        default-value="false"
+        description="flag specifies if a class is a root class in data object graph." />
+      <tag name="bo-mode" type="ch.bbv.mda.PropertyModeCode" context="property"
+        default-value="READ_WRITE"
+        description="The mode of the property either read, write or read-write." />
+      <tag name="bo-change-event" type="boolean" context="property"
+        default-value="false"
+        description="flag specifies if the property supports property change events." />
+      <tag name="bo-veto-event" type="boolean" context="property"
+        default-value="false"
+        description="flag specifies if the property supports vetoable change events." />
+      <tag name="bo-navigable" type="java.lang.String" context="property"
+        description="flag specifies if owned data objects can navigate back to their owner." />
+      <tag name="bo-lightweight" type="boolean" context="property"
+        default-value="false"
+        description="flag specifies if the property is member of the lightweight class." />
+      <tag name="persistence" type="boolean" context="indexed-property"
+        default-value="false" description="The UML standard persistence tag." />
+      <tag name="bo-mode" type="ch.bbv.mda.PropertyModeCode"
+        context="indexed-property" default-value="READ_WRITE"
+        description="The mode of the property either read, write or read-write." />
+      <tag name="bo-change-event" type="boolean" context="indexed-property"
+        default-value="false"
+        description="flag specifies if the property supports property change events." />
+      <tag name="bo-veto-event" type="boolean" context="indexed-property"
+        default-value="false"
+        description="flag specifies if the property supports vetoable change events." />
+      <tag name="bo-navigable" type="java.lang.String"
+        context="indexed-property"
+        description="flag specifies if owned data objects can navigate back to their owner." />
+      <tag name="bo-lightweight" type="boolean" context="indexed-property"
+        default-value="false"
+        description="flag specifies if the property is member of the lightweight class." />
+      <tag name="bo-interface-class" type="java.lang.String"
+        context="indexed-property" default-value="java.util.List"
+        description="defines the interface of the container class." />
+      <tag name="bo-container-class" type="java.lang.String"
+        context="indexed-property" default-value="java.util.ArrayList"
+        description="defines the implementation of the container class." />
+      <tag name="bo-key-class" type="java.lang.String"
+        context="indexed-property"
+        description="defines the class of the key used to order the collection." />
+    </tags>
+    <obsolete-tags>
+      <obsolete-tag name="bo-constructor-parameter" type="boolean"
+        context="property" />
+      <obsolete-tag name="bo-bidirectional" type="boolean" context="property" />
+      <obsolete-tag name="bo-key-class" type="java.lang.String"
+        context="property" />
+      <obsolete-tag name="bo-is-ordered" type="boolean" context="property" />
+      <obsolete-tag name="bo-item-class" type="java.lang.String"
+        context="property" />
+      <obsolete-tag name="bo-constructor-parameter" type="boolean"
+        context="indexed-property" />
+      <obsolete-tag name="bo-bidirectional" type="boolean"
+        context="indexed-property" />
+      <obsolete-tag name="bo-item-class" type="java.lang.String"
+        context="indexed-property" />
+    </obsolete-tags>
+    <properties>
+      <property name="bo-cartridge.reference-code-folder" default-value="" />
+      <property name="bo-cartridge.should-generate-interface"
+        default-value="false" />
+      <property name="bo-cartridge.common-source-root-folder" default-value="" />
+      <property name="bo-cartridge.server-source-root-folder" default-value="" />
+      <property name="bo-cartridge.client-source-root-folder" default-value="" />
+      <property name="bo-cartridge.language" default-value="java-1.5" />
+      <property name="bo-cartridge.uid" default-value="99990101" />
+      <property name="bo-cartridge.interface-package-postfix" default-value="" />
+      <property name="bo-cartridge.business-package-postfix" default-value="" />
+      <property name="bo-cartridge.lightweight-package-postfix"
+        default-value="" />
+      <property name="bo-cartridge.interface-object-class-prefix"
+        default-value="" />
+      <property name="bo-cartridge.interface-object-class-postfix"
+        default-value="" />
+      <property name="bo-cartridge.business-object-class-prefix"
+        default-value="" />
+      <property name="bo-cartridge.business-object-class-postfix"
+        default-value="" />
+      <property name="bo-cartridge.lightweight-object-class-prefix"
+        default-value="" />
+      <property name="bo-cartridge.lightweight-object-class-postfix"
+        default-value="" />
+      <property name="bo-cartridge.class-field-prefix" default-value="" />
+      <property name="bo-cartridge.class-field-postfix" default-value="" />
+      <property name="bo-cartridge.generate-cyclic-visitor"
+        default-value="false" />
+    </properties>
   </configuration>
- -->
- <datatypes language="java">
-  <datatype name="bool" type="boolean" />
-  <datatype name="byte" type="byte" />
-  <datatype name="char" type="char" />
-  <datatype name="short" type="short" />
-  <datatype name="int" type="int" />
-  <datatype name="long" type="long" />
-  <datatype name="float" type="float" />
-  <datatype name="double" type="double" />
+  <datatypes language="java">
+    <datatype name="bool" type="boolean" />
+    <datatype name="byte" type="byte" />
+    <datatype name="char" type="char" />
+    <datatype name="short" type="short" />
+    <datatype name="int" type="int" />
+    <datatype name="long" type="long" />
+    <datatype name="float" type="float" />
+    <datatype name="double" type="double" />
 
-  <datatype name="Boolean" type="java.lang.Boolean" />
-  <datatype name="Byte" type="java.lang.Byte" />
-  <datatype name="Char" type="java.lang.Character" />
-  <datatype name="Short" type="java.lang.Short" />
-  <datatype name="Integer" type="java.lang.Integer" />
-  <datatype name="Long" type="java.lang.Long" />
-  <datatype name="Float" type="java.lang.Float" />
-  <datatype name="Double" type="java.lang.Double" />
+    <datatype name="Boolean" type="java.lang.Boolean" />
+    <datatype name="Byte" type="java.lang.Byte" />
+    <datatype name="Char" type="java.lang.Character" />
+    <datatype name="Short" type="java.lang.Short" />
+    <datatype name="Integer" type="java.lang.Integer" />
+    <datatype name="Long" type="java.lang.Long" />
+    <datatype name="Float" type="java.lang.Float" />
+    <datatype name="Double" type="java.lang.Double" />
 
-  <datatype name="object" type="java.lang.Object" />
-  <datatype name="string" type="java.lang.String" />
-  <datatype name="date" type="java.util.Date" />
-  <datatype name="decimal" type="java.math.BigDecimal" />
-  <datatype name="natural" type="java.math.BigInteger" />
-  <datatype name="timestamp" type="java.sql.Timestamp" />
-  <datatype name="collection" type="java.util.Collection"
-   concrete="java.util.ArrayList" />
-  <datatype name="list" type="java.util.List" concrete="java.util.ArrayList" />
-  <datatype name="set" type="java.util.Set" concrete="java.util.HashSet" />
-  <datatype name="map" type="java.util.Map" concrete="java.util.HashMap" />
- </datatypes>
+    <datatype name="object" type="java.lang.Object" />
+    <datatype name="string" type="java.lang.String" />
+    <datatype name="date" type="java.util.Date" />
+    <datatype name="decimal" type="java.math.BigDecimal" />
+    <datatype name="natural" type="java.math.BigInteger" />
+    <datatype name="timestamp" type="java.sql.Timestamp" />
+    <datatype name="collection" type="java.util.Collection"
+      concrete="java.util.ArrayList" />
+    <datatype name="list" type="java.util.List" concrete="java.util.ArrayList" />
+    <datatype name="set" type="java.util.Set" concrete="java.util.HashSet" />
+    <datatype name="map" type="java.util.Map" concrete="java.util.HashMap" />
+  </datatypes>
 </cartridge>

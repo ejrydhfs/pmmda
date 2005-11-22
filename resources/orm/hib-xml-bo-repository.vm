@@ -1,0 +1,91 @@
+#set($dollar="$")
+#set($schema=${package.valueOfTag("orm-schema")})
+#if(${schema})#set($schema="${schema}")#else#set($schema="")#end
+#if(${prefix})
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping 
+	auto-import="false"
+	schema="${schema}"
+	default-access="field">	
+#elseif(${postfix})
+</hibernate-mapping>
+
+#else	
+#if(${class.getStereotype().equalsIgnoreCase("dataObject")})
+#set($shouldGenerateFkIndex=${configuration.getProperty("orm-cartridge.generate-fk-index").equalsIgnoreCase("true")})
+#set($inheritanceMode=${configuration.getProperty("orm-cartridge.inheritance")})
+#set($table=${class.getAttribute("orm-table-name")})
+  <class name="${package.getAttribute("bo-mo-package")}.${class.getAttribute("bo-mo-class")}"
+    table="${table}"
+    mutable="true">
+    <id name="id" column="ID" type="integer" unsaved-value="null" index="${table}_IDX">
+      <generator class="increment"/>
+    </id>
+    <timestamp name="timestamp" column="TS"/>
+## generates all primitive properties as a column. A primitive property is 
+## either a simple property or an indexed property with a cardinality of 1
+## having as type a class not being a data object.
+#foreach($property in $properties)
+#if(!${property.isTransient()})
+#set($notNull=!${property.booleanValueOfTag("orm-can-be-null")})	
+#set($columnType=${property.valueOfTag("orm-column-type").toUpperCase()})
+#set($columnName=${property.getAttribute("orm-column-name").toUpperCase()})
+#getType($model $property $type)
+#isPersistentDataObject($type $isPersistentDataObject)
+#if($isPersistentDataObject)
+#getForwardFk($property $column)
+    <many-to-one name="${property.nameFirstLower()}"
+      column="${column}"
+      class="${type.qualifiedName()}"
+      not-null="${notNull}"
+#if($shouldGenerateFkIndex)
+      index="${table}_${columnName}_IDX"
+#end
+    />	
+#else
+    <property name="${property.nameFirstLower()}"
+      column="${columnName}"
+      type="${columnType}"
+      not-null="${notNull}"/>
+#end
+#end
+#end
+#foreach($aggregation in $aggregations)
+#if(${aggregation.getMultiplicity().getUpperBound()} == 1)
+#set($notNull=!${property.booleanValueOfTag("orm-can-be-null")})	
+#set($columnName=${aggregation.getAttribute("orm-column-name")})
+#getType($model $aggregation $type)
+#isPersistentDataObject($type $isPersistentDataObject)
+#if($isPersistentDataObject)
+#getForwardFk($aggregation $column)
+    <many-to-one name="${aggregation.nameFirstLower()}"
+      column="${column}"
+      class="${type.qualifiedName()}"
+      not-null="${notNull}"
+#if($shouldGenerateFkIndex)
+      index="${table}_${columnName}_IDX"
+#end
+    />	
+#end
+#end
+#end
+#foreach($aggregation in $aggregations)
+#if(${aggregation.getMultiplicity().getUpperBound()} == -1)
+#getType($model $aggregation $type)
+#isPersistentDataObject($type $isPersistentDataObject)
+#if($isPersistentDataObject)
+#set($typePackage=${type.getContext()})
+    <list name="${aggregation.getName()}">
+      <key column="${class.nameFirstLower()}${aggregation.nameFirstUpper()}Handle"/>
+      <index column="id"/>
+      <one-to-many class="${typePackage.getAttribute("bo-mo-package")}.${type.getAttribute("bo-mo-class")}"/>
+    </list>
+#end
+#end
+#end
+  </class>
+#end
+#end

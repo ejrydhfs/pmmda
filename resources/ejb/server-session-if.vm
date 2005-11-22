@@ -4,18 +4,18 @@
 
 package ${package.getAttribute("ejb-server-package")};
 
-#set($imports=${model.createImportStatements(${package.getAttribute("ejb-server-package")})})
-#set($dummy=${imports.addClassName("java.rmi.RemoteException")})
-#set($dummy=${imports.addPackageName(${package.getAttribute("bo-mo-package")})})
+#set($imports=${cartridge.createImports(${package.getAttribute("ejb-server-package")})})
+#set($foo=${imports.addClassName("java.rmi.RemoteException")})
+#set($foo=${imports.addPackageName(${package.getAttribute("bo-mo-package")})})
 #if(${package.booleanValueOfAttribute("bo-lightweight")})  
-#set($dummy=${imports.addPackageName(${package.getAttribute("bo-lw-package")})})
+#set($foo=${imports.addPackageName(${package.getAttribute("bo-lw-package")})})
 #end
-#set($dummy=${imports.addClassName("ch.bbv.dog.DataObjectManager")})
-#set($dummy=${imports.addClassName("ch.bbv.dog.DataObjectHandler")})
-#set($dummy=${imports.addClassName("ch.bbv.dog.DataObject")})
-#set($dummy=${imports.addClassName("ch.bbv.dog.DataObjectId")})
-#set($dummy=${imports.addClassName("ch.bbv.dog.DataObjectUpdate")})
-#set($dummy=${imports.addClassName("ch.bbv.dog.LightweightObject")})
+#set($foo=${imports.addClassName("ch.bbv.dog.DataObjectManager")})
+#set($foo=${imports.addClassName("ch.bbv.dog.DataObjectHandler")})
+#set($foo=${imports.addClassName("ch.bbv.dog.DataObject")})
+#set($foo=${imports.addClassName("ch.bbv.dog.DataObjectId")})
+#set($foo=${imports.addClassName("ch.bbv.dog.DataObjectUpdate")})
+#set($foo=${imports.addClassName("ch.bbv.dog.LightweightObject")})
 #set($importStatements=${imports.getImportStatements(4)})
 #foreach($importStatement in $importStatements) 
 import $importStatement;

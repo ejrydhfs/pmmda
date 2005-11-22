@@ -12,7 +12,7 @@ package ${package.getAttribute("bo-lw-package")};
 #set($interfaces=${class.retrieveInterfaces()})
 #set($hasAncestors = (${ancestors.size()} > 0))
 #set($imports=${cartridge.retrieveImportStatementsForLw(${class}, ${package.getAttribute("bo-lw-package")})})
-#set($dummy=${imports.addClassName("ch.bbv.dog.LightweightObject")})
+#set($foo=${imports.addClassName("ch.bbv.dog.LightweightObject")})
 #set($importStatements=${imports.getImportStatements(4)})
 #foreach($importStatement in $importStatements) 
 import $importStatement;

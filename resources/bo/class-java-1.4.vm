@@ -18,13 +18,13 @@ package ${package.getAttribute("bo-mo-package")};
 ## generate the import list of the class
 #set($imports=${cartridge.retrieveImportStatementsForBo(${class}, ${package.getAttribute("bo-mo-package")})})
 #if (${class.booleanValueOfAttribute("bo-changeable")})
-#set($dummy=${imports.addClassName("java.beans.PropertyChangeListener")})
-#set($dummy=${imports.addClassName("java.beans.PropertyChangeSupport")})
+#set($foo=${imports.addClassName("java.beans.PropertyChangeListener")})
+#set($foo=${imports.addClassName("java.beans.PropertyChangeSupport")})
 #end
 #if (${class.booleanValueOfAttribute("bo-vetoable")})
-#set($dummy=${imports.addClassName("java.beans.VetoableChangeListener")})
-#set($dummy=${imports.addClassName("java.beans.VetoableChangeSupport")})
-#set($dummy=${imports.addClassName("java.beans.PropertyVetoException")})
+#set($foo=${imports.addClassName("java.beans.VetoableChangeListener")})
+#set($foo=${imports.addClassName("java.beans.VetoableChangeSupport")})
+#set($foo=${imports.addClassName("java.beans.PropertyVetoException")})
 #end
 #set($importStatements=${imports.getImportStatements(4)})
 #foreach($importStatement in $importStatements) 
@@ -63,7 +63,7 @@ $line
 #foreach ($property in $properties)
 
 #emitPropertyDescription($property "  ")
-#getDatatype($property $datatype)
+#set($datatype=${cartridge.getDatatype(${property})})
   private ${datatype} ${property.nameFirstLower()};
 #end
 #foreach ($aggregation in $aggregations) 
@@ -112,7 +112,7 @@ $line
 #foreach ($property in $properties)
 #set($uName = ${property.nameFirstUpper()})
 #set($lName=${property.nameFirstLower()})
-#getDatatype($property $itemType)
+#set($datatype=${cartridge.getDatatype(${property})})
 #set($visibility = ${property.retrieveVisibilityText()})
 #set($vetoable=${property.booleanValueOfTag("bo-veto-event")})
 #set($changeable=${property.booleanValueOfTag("bo-change-event")})
@@ -123,10 +123,10 @@ $line
    * Returns the current value of the simple property ${lName}.
    * @return the value of the simple property ${lName}.
 #if(${property.canBeWritten()})
-   * @see ${sign}${setter}(${itemType})
+   * @see ${sign}${setter}(${datatype})
 #end    
    */
-  ${visibility} ${itemType} ${getter}() {
+  ${visibility} ${datatype} ${getter}() {
     return ${lName};
   }
 #end
@@ -145,12 +145,12 @@ $line
 #end    
    */    
 #if(${vetoable})
-  ${visibility} void ${setter}(${itemType} ${lName}) throws PropertyVetoException {
+  ${visibility} void ${setter}(${datatype} ${lName}) throws PropertyVetoException {
 #else
-  ${visibility} void ${setter}(${itemType} ${lName}) {
+  ${visibility} void ${setter}(${datatype} ${lName}) {
 #end
 #if(${vetoable} || ${changeable})
-    ${itemType} old${uName} = this.${lName};
+    ${datatype} old${uName} = this.${lName};
 #end
 #if(${cartridge.isTypePrimitive($property)})
     if (this.${lName} != ${lName}) {  

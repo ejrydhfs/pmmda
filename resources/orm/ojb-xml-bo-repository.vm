@@ -1,10 +1,15 @@
+#if(${prefix})
+## no prefix is necessary for OJB declarative file
+#elseif(${postfix})
+## no prefix is necessary for OJB declarative file
+#else
 #set($dollar="$")
 #if(${class.getStereotype().equalsIgnoreCase("dataObject")})
-#set($shouldGenerateFkIndex=${configuration.getProperty("ojb-cartridge.generate-fk-index").equalsIgnoreCase("true")})
-#set($inheritanceMode=${configuration.getProperty("ojb-cartridge.inheritance")})
-#set($schema=${package.valueOfTag("ojb-schema")})
+#set($shouldGenerateFkIndex=${configuration.getProperty("orm-cartridge.generate-fk-index").equalsIgnoreCase("true")})
+#set($inheritanceMode=${configuration.getProperty("orm-cartridge.inheritance")})
+#set($schema=${package.valueOfTag("orm-schema")})
 #if(${schema})#set($schema="${schema}.")#else#set($schema="")#end
-#set($table=${class.getAttribute("ojb-table-name")})
+#set($table=${class.getAttribute("orm-table-name")})
 <class-descriptor class="${package.getAttribute("bo-mo-package")}.${class.getAttribute("bo-mo-class")}"
   table="${schema}${table}">
   <field-descriptor name="id" 
@@ -24,8 +29,8 @@
 ## having as type a class not being a data object.
 #foreach($property in $properties)
 #if(!${property.isTransient()})
-#set($columnType=${property.valueOfTag("ojb-column-type").toUpperCase()})
-#set($columnName=${property.getAttribute("ojb-column-name").toUpperCase()})
+#set($columnType=${property.valueOfTag("orm-column-type").toUpperCase()})
+#set($columnName=${property.getAttribute("orm-column-name").toUpperCase()})
 #getType($model $property $type)
 #isPersistentDataObject($type $isPersistentDataObject)
 #if($isPersistentDataObject)
@@ -33,7 +38,7 @@
   <field-descriptor name="${property.nameFirstLower()}Handle"
     column="${column}"
     jdbc-type="INTEGER"
-    nullable="${property.booleanValueOfTag("ojb-can-be-null")}"/>
+    nullable="${property.booleanValueOfTag("orm-can-be-null")}"/>
 #else
   <field-descriptor name="${property.nameFirstLower()}"
     column="${columnName}"
@@ -47,10 +52,10 @@
     jdbc-type="${columnType}"
 #end
 #end
-#if(${property.booleanValueOfTag("ojb-is-primary")})
+#if(${property.booleanValueOfTag("orm-is-primary")})
     primarykey="true"
 #end
-    nullable="${property.booleanValueOfTag("ojb-can-be-null")}"/>
+    nullable="${property.booleanValueOfTag("orm-can-be-null")}"/>
 #end
 #end
 #end
@@ -76,7 +81,7 @@
 #end
 #foreach($aggregation in $aggregations)
 #if(${aggregation.getMultiplicity().getUpperBound()} == 1)
-#set($columnName=${aggregation.getAttribute("ojb-column-name")})
+#set($columnName=${aggregation.getAttribute("orm-column-name")})
 #getType($model $aggregation $type)
 #isPersistentDataObject($type $isPersistentDataObject)
 #if($isPersistentDataObject)
@@ -86,12 +91,12 @@
     column="${column}"
     jdbc-type="INTEGER"
     access="anonymous"
-    nullable="${aggregation.booleanValueOfTag("ojb-can-be-null")}"/>
+    nullable="${aggregation.booleanValueOfTag("orm-can-be-null")}"/>
 #else
-    column="${aggregation.getAttribute("ojb-column-name")}"
-    jdbc-type="${aggregation.valueOfTag("ojb-column-type")}"
-    nullable="${aggregation.booleanValueOfTag("ojb-can-be-null")}"
-#if(${aggregation.getTaggedValue("ojb-is-primary")} == "true")
+    column="${aggregation.getAttribute("orm-column-name")}"
+    jdbc-type="${aggregation.valueOfTag("orm-column-type")}"
+    nullable="${aggregation.booleanValueOfTag("orm-can-be-null")}"
+#if(${aggregation.getTaggedValue("orm-is-primary")} == "true")
     primaryKey="true"
     autoincrement="true"/>
 #end
@@ -115,7 +120,7 @@
 #end
 #foreach($aggregation in $aggregations)
 #if(${aggregation.getMultiplicity().getUpperBound()} == 1)
-#set($columnName=${aggregation.getAttribute("ojb-column-name")})
+#set($columnName=${aggregation.getAttribute("orm-column-name")})
 #getType($model $aggregation $type)
 #isPersistentDataObject($type $isPersistentDataObject)
 #if($isPersistentDataObject)
@@ -192,7 +197,7 @@
 #foreach($relation in $relations)
 #getType($model $relation $type)
 #if(${type} == ${class})
-#set($refTable=${reference.valueOfTag("ojb-table-name")})
+#set($refTable=${reference.valueOfTag("orm-table-name")})
 #set($relationName=${relation.nameUpper()})
 #getReverseFk($reference $relation $column)
   <index-descriptor 
@@ -213,5 +218,5 @@
 ###end
 #end
 </class-descriptor>
-
+#end
 #end

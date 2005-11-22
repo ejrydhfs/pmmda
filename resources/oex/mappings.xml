@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<cartridge name="oex" version="0.3.0">
+  <configuration>
+    <uses>
+      <cartridge name="bo" />
+    </uses>
+    <stereotypes></stereotypes>
+    <tags>
+      <tag name="oex-view-class" type="java.lang.String" context="class"
+        default-value=""
+        description="defines the class of the property view used to display the class" />
+      <tag name="oex-visible" type="boolean" context="property"
+        default-value="false"
+        description="defines if the property is visible in the explorer or not" />
+      <tag name="oex-visible" type="boolean" context="indexed-property"
+        default-value="false"
+        description="defines if the relation is visible in the explorer or not" />
+    </tags>
+    <obsolete-tags>
+      <obsolete-tag name="ejb-is-root" type="boolean" context="class" />
+    </obsolete-tags>
+    <properties>
+      <property name="oex-cartridge.rich-client-package-extension"
+        default-value="" />
+    </properties>
+  </configuration>
+  <datatypes language="java"></datatypes>
+</cartridge>

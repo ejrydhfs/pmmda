@@ -1,6 +1,6 @@
-#set($schema=${package.getAttribute("ojb-schema-name")})
+#set($schema=${package.getAttribute("orm-schema-name")})
 #if(${schema})#set($schema="")#else#set($schema=${schema} + ".")#end
-#set($table=${class.getAttribute("ojb-table-name")})
+#set($table=${class.getAttribute("orm-table-name")})
 #foreach($property in $properties)
 #if(${property.isReferenceType()})
 

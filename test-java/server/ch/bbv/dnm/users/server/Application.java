@@ -22,7 +22,7 @@ import ch.bbv.cmdlineparser.CmdLineBuilder;
 import ch.bbv.dnm.users.TypeFactory;
 import ch.bbv.dog.DataObjectManager;
 import ch.bbv.dog.LightweightObjectHandlerImpl;
-import ch.bbv.dog.persistence.PersistenceHandler;
+import ch.bbv.dog.persistence.ojb.PersistenceHandler;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -59,7 +59,7 @@ public class Application extends Locator {
   /**
    * Database alias to connect to the O/R mapping layer tool.
    */
-  public static final String USERS_DATABASE = "ojb-dnm";
+  public static final String USERS_DATABASE = "orm-dnm";
 
   /**
    * Logger of the application class.

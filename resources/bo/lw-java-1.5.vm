@@ -12,7 +12,7 @@ package ${package.getAttribute("bo-lw-package")};
 #set($ancestors=${class.retrieveAncestors()})
 #set($interfaces=${class.retrieveInterfaces()})
 #set($imports=${cartridge.retrieveImportStatementsForLw(${class}, ${package.getAttribute("bo-lw-package")})})
-#set($dummy=${imports.addClassName("ch.bbv.dog.LightweightObject")})
+#set($foo=${imports.addClassName("ch.bbv.dog.LightweightObject")})
 #set($importStatements=${imports.getImportStatements(4)})
 #foreach($importStatement in $importStatements) 
 import $importStatement;
@@ -48,7 +48,7 @@ ${class.retrieveVisibilityText()} class ${className} ${extends} implements Light
 #set($itemType = ${type.getAttribute("bo-lw-class")})
   private ${itemType} ${property.nameFirstLower()};
 #else
-#getDatatype($property $datatype)
+#set($datatype=${cartridge.getDatatype(${property})})
   private ${datatype} ${property.nameFirstLower()};
 #end
 #end
@@ -105,9 +105,9 @@ ${class.retrieveVisibilityText()} class ${className} ${extends} implements Light
 #getType($model $property $type)
 #isTypeLightweigth($model $type $isTypeLightweight)
 #if($isTypeLightweight)
-#set($itemType = ${type.getAttribute("bo-lw-class")})
+#set($datatype = ${type.getAttribute("bo-lw-class")})
 #else
-#getDatatype($property $itemType)
+#set($datatype=${cartridge.getDatatype(${property})})
 #end
 #set($visibility = ${property.retrieveVisibilityText()})
 #getterName($property $getter)
@@ -118,10 +118,10 @@ ${class.retrieveVisibilityText()} class ${className} ${extends} implements Light
    * Gets the current value of the attribute ${uName}.
    * @return the value of the attribute ${uName}.
 #if(${property.canBeWritten()})
-   * @see ${sign}${setter}(${itemType})
+   * @see ${sign}${setter}(${datatype})
 #end    
    */
-  ${visibility} ${itemType} ${getter}() {
+  ${visibility} ${datatype} ${getter}() {
     return ${lName};
   }
 #end
@@ -135,7 +135,7 @@ ${class.retrieveVisibilityText()} class ${className} ${extends} implements Light
    * @see ${sign}${getter}()
 #end    
    */    
-  ${visibility} void ${setter}(${itemType} ${lName}) {
+  ${visibility} void ${setter}(${datatype} ${lName}) {
     this.${lName} = ${lName};
   }
 #end

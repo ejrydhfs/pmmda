@@ -1,0 +1,31 @@
+<codeType>
+  <qualifiedName>ch.bbv.mda.pim.StorageKind</qualifiedName>
+  <hierarchical>false</hierarchical>
+  <values>
+    <code>
+      <name>CODE</name>
+      <sortOrder>1</sortOrder>
+      <shortDescription>code</shortDescription>
+      <description>code</description>
+      <codeId>0</codeId>
+      <modified>false</modified>
+    </code>
+    <code>
+      <name>PROPERTIES</name>
+      <sortOrder>2</sortOrder>
+      <shortDescription>properties</shortDescription>
+      <description>properties</description>
+      <codeId>1</codeId>
+      <modified>false</modified>
+    </code>
+    <code>
+      <name>DATABASE</name>
+      <sortOrder>3</sortOrder>
+      <shortDescription>database</shortDescription>
+      <description>database</description>
+      <codeId>2</codeId>
+      <modified>false</modified>
+    </code>
+  </values>
+  <modified>false</modified>
+</codeType>

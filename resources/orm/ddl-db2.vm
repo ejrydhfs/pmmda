@@ -1,5 +1,5 @@
 #set($dollar="$")
-#set($tableName=${class.getAttribute("ojb-table-name")})
+#set($tableName=${class.getAttribute("orm-table-name")})
 #set($spaceName=${tableName})
 #if($spaceName.length() > 7)
 #set($spaceName=${spaceName.substring(0, 7)})
@@ -16,8 +16,8 @@ CREATE TABLESPACE S${spaceName} IN DIUF
 
 CREATE TABLE ${tableName} (
 #foreach($property in $properties)
-#set($columnName=${property.getAttribute("ojb-column-name")})
-#set($columnType=${property.valueOfTag("ojb-column-type")})
+#set($columnName=${property.getAttribute("orm-column-name")})
+#set($columnType=${property.valueOfTag("orm-column-type")})
 #if(!${property.canBeNull()})#set($nullInfo=" NOT NULL")#else#set($nullInfo="")#end
 #if(${property.isPrimaryKey()})#set($nullInfo=" NOT NULL")#end
 #if(${columnType} == "VARCHAR")
@@ -36,7 +36,7 @@ CREATE TABLE ${tableName} (
 CREATE UNIQUE INDEX ${indexPrefix}X${indexName}${indexPostfix} ON ${tableName} (
 #foreach($property in $properties)
 #if(${property.isPrimaryKey()})
-#set($columnName=${property.getAttribute("ojb-column-name")})
+#set($columnName=${property.getAttribute("orm-column-name")})
 #if($velocityCount < ${nrOfPrimaryProperties})
   ${columnName} ASC,
 #else

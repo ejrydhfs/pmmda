@@ -12,5 +12,5 @@ are.
 - j2ee-client
 - j2ee-common
 - j2ee-server
-- ojb-server
+- orm-server
 - rich-client

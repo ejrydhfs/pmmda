@@ -17,21 +17,21 @@ package ${package.getAttribute("bo-mo-package")};
 #set($hasAncestors = (${ancestors.size()} > 0))
 ## generate the import list of the class
 #set($imports=${cartridge.retrieveImportStatementsForBo(${class}, ${package.getAttribute("bo-mo-package")})})
-#set($dummy=${imports.addClassName("ch.bbv.dog.DataObject")})
+#set($foo=${imports.addClassName("ch.bbv.dog.DataObject")})
 #if(!${hasAncestors})
-#set($dummy=${imports.addClassName("java.beans.PropertyChangeListener")})
-#set($dummy=${imports.addClassName("java.beans.VetoableChangeListener")})
-#set($dummy=${imports.addClassName("java.lang.reflect.Field")})
-#set($dummy=${imports.addClassName("java.sql.Timestamp")})
+#set($foo=${imports.addClassName("java.beans.PropertyChangeListener")})
+#set($foo=${imports.addClassName("java.beans.VetoableChangeListener")})
+#set($foo=${imports.addClassName("java.lang.reflect.Field")})
+#set($foo=${imports.addClassName("java.sql.Timestamp")})
 #if (${class.getAttribute("bo-changeable")} == "true")
-#set($dummy=${imports.addClassName("java.beans.PropertyChangeSupport")})
+#set($foo=${imports.addClassName("java.beans.PropertyChangeSupport")})
 #end
 #if (${class.getAttribute("bo-vetoable")} == "true")
-#set($dummy=${imports.addClassName("java.beans.VetoableChangeSupport")})
+#set($foo=${imports.addClassName("java.beans.VetoableChangeSupport")})
 #end
 #end
 #if (${class.getAttribute("bo-vetoable")} == "true")
-#set($dummy=${imports.addClassName("java.beans.PropertyVetoException")})
+#set($foo=${imports.addClassName("java.beans.PropertyVetoException")})
 #end
 #set($importStatements=${imports.getImportStatements(4)})
 #foreach($importStatement in $importStatements) 
@@ -75,7 +75,7 @@ $line
 #foreach ($property in $properties)
 
 #emitPropertyDescription($property "  ")
-#getDatatype($property $datatype)
+#set($datatype=${cartridge.getDatatype(${property})})
   private ${datatype} ${property.nameFirstLower()};
 ## identifies a forward reference 1-0..1 or 1-1
 #isTypePersistent($model $property $isPersistentDataObject)
@@ -257,7 +257,7 @@ $line
 #foreach ($property in $properties)
 #set($uName = ${property.nameFirstUpper()})
 #set($lName=${property.nameFirstLower()})
-#getDatatype($property $itemType)
+#set($datatype=${cartridge.getDatatype(${property})})
 #set($visibility = ${property.retrieveVisibilityText()})
 #set($vetoable=${property.booleanValueOfTag("bo-veto-event")})
 #set($changeable=${property.booleanValueOfTag("bo-change-event")})
@@ -269,34 +269,33 @@ $line
    * Returns the current value of the simple property ${lName}.
    * @return the value of the simple property ${lName}.
 #if(${property.canBeWritten()})
-   * @see ${sign}${setter}($itemType)
+   * @see ${sign}${setter}($datatype)
 #end    
    */
-  ${visibility} ${itemType} ${getter}() {
+  ${visibility} ${datatype} ${getter}() {
     return ${lName};
   }
 #end
 #if(${property.canBeWritten()})
-#set($owner=false)
 #set($owner=$property.valueOfTag("bo-navigable"))
 
   /** 
    * Sets the new value of the simple property ${lName}.
    * @param ${lName} new value of the property.
 #if(${vetoable})
-   * @throws PropertyVetoException if a listener refuses the change.
+   * @throws PropertyVetoException if a listener refuses the published change.
 #end
 #if(${property.canBeRead()})
    * @see ${sign}${getter}()
 #end    
    */    
 #if(${vetoable})
-  ${visibility} void ${setter}(${itemType} ${lName}) throws PropertyVetoException {
+  ${visibility} void ${setter}(${datatype} ${lName}) throws PropertyVetoException {
 #else
-  ${visibility} void ${setter}(${itemType} ${lName}) {
+  ${visibility} void ${setter}(${datatype} ${lName}) {
 #end
 #if(${vetoable} || ${changeable})
-    ${itemType} old${uName} = this.${lName};
+    ${datatype} old${uName} = this.${lName};
 #end
 #if(${cartridge.isTypePrimitive($property)})
     if (this.${lName} != ${lName}) {  
@@ -320,13 +319,13 @@ $line
 #else
     if (((this.${lName} != null) && !this.${lName}.equals(${lName})) || 
         ((this.${lName} == null) && (${lName} != null)))  {    
-#if($owner) 
+#if($owner && (${owner.length()} > 0))
       if (this.${lName} != null) {
         this.${lName}.set${owner}(null);
       }
 #end
       this.${lName} = ${lName};
-#if($owner) 
+#if($owner && (${owner.length()} > 0))
       if (this.${lName} != null) {
         this.${lName}.set${owner}(this);
       }
@@ -467,7 +466,7 @@ $line
   ${visibility} void set${usName}(${keyType} key, ${itemType} value) {
     setModified(true);
     ${lName}.put(key, value);
-#if($owner) 
+#if($owner && (${owner.length()} > 0))
     if (value != null) {
       value.set${owner}(this);
     }
@@ -482,7 +481,7 @@ $line
    */
   ${visibility} ${itemType} remove${usName}(${keyType} key) {
     setModified(true);
-#if($owner) 
+#if($owner && (${owner.length()} > 0))
     ${itemType} object = ${lName}.remove(key);
     if (object != null) {
       object.set${owner}(null);
@@ -512,7 +511,7 @@ $line
       setForeignKey(item, "${keyName}", getId());
     }
 #end
-#if($owner)
+#if($owner && (${owner.length()} > 0))
     for($itemType item : c) {
       item.set${owner}(this);
     }
@@ -534,7 +533,7 @@ $line
 #if($isPersistentAggregation)
     setForeignKey(element, "${keyName}", getId());
 #end
-#if($owner)
+#if($owner && (${owner.length()} > 0))
     $itemType} item = ${lName}.get(index);
     if (item != null) {
       item.set${owner}(this);
@@ -576,7 +575,7 @@ $line
     if (removed) {
       setModified(true);
 #if($isPersistentAggregation)
-#if($owner)
+#if($owner && (${owner.length()} > 0))
       if (element != null) {
         item.set${owner}(null);
       }

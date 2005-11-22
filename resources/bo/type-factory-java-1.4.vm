@@ -6,18 +6,18 @@
 package ${package.getAttribute("bo-mo-package")};
 #end
 
-#set($imports=${model.createImportStatements(${package.getAttribute("bo-mo-package")})})
+#set($imports=${cartridge.createImports(${package.getAttribute("bo-mo-package")})})
 #if(${package.getAttribute("bo-has-interface")} == "true")
-#set($dummy=${imports.addPackageName(${package.getAttribute("bo-if-package")})})
+#set($foo=${imports.addPackageName(${package.getAttribute("bo-if-package")})})
 #end
 #if(${package.getAttribute("bo-lightweight")} == "true")
-#set($dummy=${imports.addPackageName(${package.getAttribute("bo-lw-package")})})
+#set($foo=${imports.addPackageName(${package.getAttribute("bo-lw-package")})})
 #end
-#set($dummy=${imports.addPackageName(${package.getAttribute("bo-mo-package")})})
-#set($dummy=${imports.addClassName("ch.bbv.dog.DataObjectManager")})
-#set($dummy=${imports.addClassName("ch.bbv.dog.DataObjectType")})
-#set($dummy=${imports.addClassName("java.util.List")})
-#set($dummy=${imports.addClassName("java.util.ArrayList")})
+#set($foo=${imports.addPackageName(${package.getAttribute("bo-mo-package")})})
+#set($foo=${imports.addClassName("ch.bbv.dog.DataObjectManager")})
+#set($foo=${imports.addClassName("ch.bbv.dog.DataObjectType")})
+#set($foo=${imports.addClassName("java.util.List")})
+#set($foo=${imports.addClassName("java.util.ArrayList")})
 #set($importStatements=${imports.getImportStatements(4)})
 #foreach($importStatement in $importStatements) 
 import $importStatement;

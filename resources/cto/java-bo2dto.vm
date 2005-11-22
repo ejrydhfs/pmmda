@@ -4,10 +4,10 @@
 package ${package.getAttribute("cto-bo2dto-package")};
 
 #set($imports=${cartridge.retrieveImportStatementsForBo(${class}, ${package.getAttribute("cto-bo2dto-package")})})
-#set($dummy=${imports.addPackageName(${package.getAttribute("bo-mo-package")})})
-#set($dummy=${imports.addPackageName("ch.bbv.transport")})
-#set($dummy=${imports.addClassName("java.util.ArrayList")})
-#set($dummy=${imports.addClassName("java.util.List")})
+#set($foo=${imports.addPackageName(${package.getAttribute("bo-mo-package")})})
+#set($foo=${imports.addPackageName("ch.bbv.transport")})
+#set($foo=${imports.addClassName("java.util.ArrayList")})
+#set($foo=${imports.addClassName("java.util.List")})
 #set($importStatements=${imports.getImportStatements(4)})
 #foreach($importStatement in $importStatements) 
 import $importStatement;

@@ -2,7 +2,7 @@
   <property file="build.properties" />
   <import file="build-inits.xml" />
   <import file="build-examples.xml" />
-  <property name="forrest.plugins-dir" value="${forrest.home}/build/plugins"/>
+  <property name="forrest.plugins-dir" value="${forrest.home}/build/plugins" />
   <import file="${forrest.home}/main/forrest.build.xml" />
 
   <target name="clean" depends="dist-init" description="Clean the distribution directories">
@@ -13,7 +13,7 @@
   <target name="compile-dist" depends="dist-init" description="compiles all java files of the projects dog, pmmda, documentor">
     <delete dir="${build.dir}" />
     <mkdir dir="${build.dir}" />
-    <javac destdir="${build.dir}" srcdir="${src.dog.dir}:${src.pmmda.dir}:${src.documentor.dir}" includes="**/*.java,**/*.properties" compiler="modern" verbose="${compile.verbose}" debug="${compile.debug}" source="${compile.source}">
+    <javac destdir="${build.dir}" srcdir="${src.dog.dir}:${src.pmmda.dir}:${src.documentor.dir}" includes="**/*.java,**/*.properties" compiler="modern" verbose="${compile.verbose}" debug="${compile.debug}" optimize="${compile.optimize}" source="${compile.source}">
       <classpath refid="application.classpath" />
     </javac>
     <copy todir="${build.dir}">
@@ -143,6 +143,7 @@
     <property name="pmmda-ex.dir" value="${pmmda-work.dir}/example" />
     <property name="pmmda-ex-model.dir" value="${pmmda-ex.dir}/model" />
     <property name="pmmda-ex-data.dir" value="${pmmda-ex.dir}/db" />
+    <property name="pmmda-ex-deploy.dir" value="${pmmda-ex.dir}/deploy" />
     <property name="pmmda-ex-lib.dir" value="${pmmda-ex.dir}/test-lib" />
     <property name="pmmda-ex-gendir.dir" value="${pmmda-ex.dir}/gendir" />
     <property name="pmmda-ex-src.dir" value="${pmmda-ex.dir}/test-java" />
@@ -155,6 +156,7 @@
     <mkdir dir="${pmmda-ex-model.dir}/codes" />
     <mkdir dir="${pmmda-ex-src.dir}" />
     <mkdir dir="${pmmda-ex-data.dir}" />
+    <mkdir dir="${pmmda-ex-deploy.dir}" />
     <mkdir dir="${pmmda-ex-lib.dir}" />
 
     <mkdir dir="${pmmda-ex-src.dir}" />
@@ -163,7 +165,7 @@
     <mkdir dir="${pmmda-ex-src.dir}/server" />
 
     <mkdir dir="${pmmda-ex-gendir.dir}" />
-    <mkdir dir="${pmmda-ex-gendir.dir}/ojb-server" />
+    <mkdir dir="${pmmda-ex-gendir.dir}/orm-server" />
     <mkdir dir="${pmmda-ex-gendir.dir}/corba-idl" />
     <mkdir dir="${pmmda-ex-gendir.dir}/corba-common" />
     <mkdir dir="${pmmda-ex-gendir.dir}/corba-server" />

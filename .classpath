@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry excluding="**/*CVS*.*" kind="src" path="properties"/>
-	<classpathentry excluding="**/*.html" kind="src" path="src/pim"/>
+	<classpathentry excluding="**/*.html" kind="src" path="src/pim/java"/>
 	<classpathentry excluding="**/Entries|**/Repository|**/Root" kind="src" path="src/etc/properties/unmanaged"/>
 	<classpathentry including="**/*.java|**/*.properties" excluding="**/*.html" kind="src" path="gendir/rich-client"/>
 	<classpathentry including="**/*.java|**/*.properties" excluding="**/*.html" kind="src" path="test-java/unit-tests"/>
@@ -10,7 +10,6 @@
 	<classpathentry including="**/*.java|**/*.properties" excluding="**/*.html" kind="src" path="src/java-pmmda"/>
 	<classpathentry including="**/*.java|**/*.properties" excluding="**/*.html" kind="src" path="test-java/client"/>
 	<classpathentry including="**/*.java|**/*.properties" excluding="**/*.html" kind="src" path="test-java/common"/>
-	<classpathentry kind="lib" path="lib/jdom.jar"/>
 	<classpathentry kind="lib" path="lib/jcs.jar"/>
 	<classpathentry kind="lib" path="lib/nsuml.jar"/>
 	<classpathentry kind="lib" path="lib/dnsns.jar"/>
@@ -56,5 +55,7 @@
 	<classpathentry kind="lib" path="lib/jgraph-5.7.3.1.jar"/>
 	<classpathentry kind="lib" path="lib/jgraphaddons-1.0.8.jar"/>
 	<classpathentry kind="var" path="JDK_TOOLS"/>
+	<classpathentry kind="lib" path="lib/commons-codec-1.3.jar"/>
+	<classpathentry kind="lib" path="lib/jdom-1.0.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
