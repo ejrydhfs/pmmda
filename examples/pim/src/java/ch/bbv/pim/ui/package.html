@@ -1,0 +1,83 @@
+<body>
+<h2>Introduction</h2>
+<p>The PIM application was developed to provide personal information management
+capabilities to users who are not always connected to the company Intranet. The
+application provides key functions in three areas.</p>
+<p>The first group of functions provide interoperability to well known
+applications. Synchronization is provided with the Mozilla application suite in
+particular with Thunderbird contact management module. The exchange uses the
+LDIF format. Synchronization is also provided to any applications able to handle
+the Internet standard VCARD. IN particular the iPod devices can read this format
+and display it.</p>
+<p>The second group of functions provide support for journal entries for all
+interactions done with a specific contact. These activities are coordinated with
+the information stored in external systems such as Thunderbird or VCARD based
+systems.</p>
+<h2>Usage</h2>
+<p>The application provides a command line to automate the transformation of a
+LIDF contact list into a VCARD list. The supported options are as follow.</p>
+<dl>
+  <dt>-i[mport] &lt;name&gt;</dt>
+  <dd>the name of the file containing the contacts to import.</dd>
+  <dt>-e[xport] &lt;name&gt;</dt>
+  <dd>the name of the file where the exported contacts will be written.</dd>
+  <dt>-l[anguage] &lt;language&gt;</dt>
+  <dd>the language to use as default if none is specified in the contact. The
+  parameter is optional. The default is English. Users can specify the default
+  language they are working with.</dd>
+  <dt>-c[ountry] &lt;country&gt;</dt>
+  <dd>the country to use as default if none is specified in the contact. The
+  parameter is option. The default is Switzerland. Users can specify the countrz
+  they are working.</dd>
+</dl>
+<h2>Dependencies</h2>
+<p>The following external librairies are used.
+<table>
+  <tr>
+    <th>Package</th>
+    <th>Version</th>
+    <th>License</th>
+    <th>web site</th>
+  </tr>
+  <tr>
+    <td>commons-cli</td>
+    <td>1.0</td>
+    <td>Apache License</td>
+    <td><a href="http://jakarta.apache.org/commons-cli">Jakarta Commons Command
+    Line Interface</a></td>
+  </tr>
+  <tr>
+    <td>commons-codec</td>
+    <td>1.3</td>
+    <td>Apache License</td>
+    <td><a href="http://jakarta.apache.org/commons-codec">Jakarta Commons Codec</a></td>
+  </tr>
+  <tr>
+    <td>commons-beanutils</td>
+    <td>1.7.0</td>
+    <td>Apache License</td>
+    <td><a href="http://jakarta.apache.org/commons-beanutils">Jakarta Commons
+    Bean Utils</a></td>
+  </tr>
+  <tr>
+    <td>commons-logging</td>
+    <td>1.0.4</td>
+    <td>Apache License</td>
+    <td><a href="http://jakarta.apache.org/commons-logging">Jakarta Commons
+    Logging</a></td>
+  </tr>
+  <tr>
+    <td>commons-logging-api</td>
+    <td>1.0.4</td>
+    <td>Apache License</td>
+    <td><a href="http://jakarta.apache.org/commons-logging">Jakarta Commons
+    Logging</a></td>
+  </tr>
+  <tr>
+    <td>velocity</td>
+    <td>1.4</td>
+    <td>Apache License</td>
+    <td><a href="http://jakarta.apache.org/velocity">Velocity</a></td>
+  </tr>
+</table>
+</body>

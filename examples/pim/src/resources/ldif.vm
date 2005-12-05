@@ -1,0 +1,81 @@
+#macro(transform $key $text)
+#if(${emitter.shouldTransform(${text})})
+$key: $emitter.transform($text)
+#else
+$key $text
+#end
+#end
+#macro(call $property $result)
+#set($_result=false)
+#set($_result=${property})
+#if($_result)#set($result=${_result})#else#set($result="")#end
+#end
+#macro(emit $key $property)
+#set($_result=false)
+#set($_result=${property})
+#if($_result)
+#transform($key ${_result})
+#end
+#end	
+#call($contact.getDistinguishedName() $distinguishedName)
+#call($contact.getPrefix() $prefix)
+#call($contact.getFirstname() $firstname)
+#call($contact.getMiddlename() $middlename)
+#call($contact.getLastname() $lastname)
+#set($workEmail=false)
+#set($workEmail=${contact.getWorkEmail()})
+#if($workEmail)
+#set($dn="cn=${distinguishedName},mail=${workEmail}")
+#else
+#set($dn="cn=${distinguishedName}")	
+#end
+#transform("dn:" ${dn})
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+objectclass: mozillaAbPersonObsolete
+#transform("givenName:" ${firstname})
+#transform("sn:" ${lastname})
+#transform("cn:" ${distinguishedName})
+#if($workEmail)
+mail: ${workEmail}
+#end
+#emit("mozillaSecondEmail:" $contact.getHomeEmail())
+xmozillausehtmlmail: false
+modifytimestamp: 0Z
+#emit("telephoneNumber:" $contact.getWorkNumber())
+#emit("homePhone:" $contact.getHomeNumber())
+#emit("facsimileTelephoneNumber:" $contact.getWorkFaxNumber())
+#emit("mobile:" $contact.getWorkMobileNumber())
+#set($address=false)
+#set($address=${contact.getHomeAddress()})
+#if($address)
+#call($address.getState() $state)
+#call($address.getCountry().getShortDescription() $country)
+#emit("homePostalAddress:" $address.getStreet())
+#emit("mozillaHomeLocalityName:" $address.getCity())
+#emit("mozillaHomePostalCode:" $address.getPostalCode())
+#emit("mozillaHomeCountryName:" ${country})
+#end
+#set($address=false)
+#set($address=${contact.getWorkAddress()})
+#if($address)
+#call($address.getCountry().getShortDescription() $country)
+#emit("postalAddress:" $address.getStreet())
+#emit("mozillaPostalAddress2:" $address.getPoBox())
+#emit("l:" $address.getCity())
+#emit("st:" $address.getState())
+#emit("postalCode:" $address.getPostalCode())
+#emit("c:" $country)
+#end
+#emit("title:" $contact.getTitle())
+#emit("o:" $organization.getName())
+#emit("ou:" $contact.getDepartment())
+#emit("workurl:" $contact.getWorkUrl())
+#set($entries=false)
+#set($entries=${contact.getEntries()})
+#if(${entries} && ${entries.size()} > 0)
+description:: ${emitter.transform(${emitter.transform(${entries})})}
+#end
+

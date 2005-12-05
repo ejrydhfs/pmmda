@@ -2,6 +2,15 @@
 #set($dollar="$")
 #set($__="")
 #set($____="")
+#macro(getOwner $property $owner)
+#set($owner=false)
+#set($owner=$property.valueOfTag("bo-navigable"))
+#if($owner && ${owner.length()} > 0)
+#set($owner=${utilities.identifierFirstUpper(${owner})})
+#else
+#set($owner=false)	
+#end
+#end
 #emitFileHeader()
 
 #if (${package})
@@ -277,7 +286,7 @@ $line
   }
 #end
 #if(${property.canBeWritten()})
-#set($owner=$property.valueOfTag("bo-navigable"))
+#getOwner($property $owner)	
 
   /** 
    * Sets the new value of the simple property ${lName}.
@@ -319,13 +328,13 @@ $line
 #else
     if (((this.${lName} != null) && !this.${lName}.equals(${lName})) || 
         ((this.${lName} == null) && (${lName} != null)))  {    
-#if($owner && (${owner.length()} > 0))
+#if($owner)
       if (this.${lName} != null) {
         this.${lName}.set${owner}(null);
       }
 #end
       this.${lName} = ${lName};
-#if($owner && (${owner.length()} > 0))
+#if($owner)
       if (this.${lName} != null) {
         this.${lName}.set${owner}(this);
       }
@@ -451,7 +460,7 @@ $line
 #end  
 #end
 #if(${aggregation.canBeWritten()})
-#set($owner=$property.valueOfTag("bo-navigable"))
+#getOwner($property $owner)	
 #if(${cartridge.isOrdered(${aggregation})})
 
   /** 
@@ -466,7 +475,7 @@ $line
   ${visibility} void set${usName}(${keyType} key, ${itemType} value) {
     setModified(true);
     ${lName}.put(key, value);
-#if($owner && (${owner.length()} > 0))
+#if($owner)
     if (value != null) {
       value.set${owner}(this);
     }
@@ -481,7 +490,7 @@ $line
    */
   ${visibility} ${itemType} remove${usName}(${keyType} key) {
     setModified(true);
-#if($owner && (${owner.length()} > 0))
+#if($owner)
     ${itemType} object = ${lName}.remove(key);
     if (object != null) {
       object.set${owner}(null);
@@ -511,7 +520,7 @@ $line
       setForeignKey(item, "${keyName}", getId());
     }
 #end
-#if($owner && (${owner.length()} > 0))
+#if($owner)
     for($itemType item : c) {
       item.set${owner}(this);
     }
@@ -533,7 +542,7 @@ $line
 #if($isPersistentAggregation)
     setForeignKey(element, "${keyName}", getId());
 #end
-#if($owner && (${owner.length()} > 0))
+#if($owner)
     $itemType} item = ${lName}.get(index);
     if (item != null) {
       item.set${owner}(this);
@@ -575,7 +584,7 @@ $line
     if (removed) {
       setModified(true);
 #if($isPersistentAggregation)
-#if($owner && (${owner.length()} > 0))
+#if($owner)
       if (element != null) {
         item.set${owner}(null);
       }

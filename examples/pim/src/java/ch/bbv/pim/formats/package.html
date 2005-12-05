@@ -1,0 +1,35 @@
+<body>
+<h2>Introduction</h2>
+<p>The package contains the transformation engines to the various supported
+formats. Two classes of transformation engines are defined. Emitters generates a
+given format, parsers parses a given format and stores the extracted information
+in the internal representation.</p>
+<h2>Rules</h2>
+<p>The transformation engines implements the following semantic rules.</p>
+<ul>
+  <li>The contact unique identifier is the LDIF distinguised name containing the
+  full name and the email addresss. The VCARD formated name is used in the VCARD
+  and contains the full name and the email address between rectangular
+  parenthesises.</li>
+  <li>The first email address in the LDIF format is the business email address.
+  The second email address is the private email address. Both addresses are
+  optional.</li>
+  <li>The business email address is set as the preferred one in VCARD format.</li>
+</ul>
+<h2>Journal Entries</h2>
+<p>Journal entries document activities associated with a specific contact. The
+entries are specified as XML items to simplify the parsing and increase the
+interoperability between applications.</p>
+<dl>
+  <dt>date</dt>
+  <dd>The date of the journal entry using the ISO date standard. The time is
+  optional and should only be specified for meetings.</dd>
+  <dt>type</dt>
+  <dd>The type of the journal entry. The legal values are specified as a
+  reference code: meeting, note, email.</dd>
+  <dt>author</dt>
+  <dd>The author of the journal entry.</dd>
+  <dt>duration</dt>
+  <dd>The duration of the journal entry activity.</dd>
+</dl>
+</body>

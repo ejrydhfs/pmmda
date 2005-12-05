@@ -1,0 +1,2 @@
+The governance example manages corporate governance activities performed on a 
+set of IT projects. The activities are best practices.

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry excluding="**/*CVS*.*" kind="src" path="properties"/>
-	<classpathentry excluding="**/*.html" kind="src" path="src/pim/java"/>
+	<classpathentry including="**/*.java;**/*.properties" excluding="**/*.html" kind="src" path="examples/pim/src/java"/>
+	<classpathentry kind="src" path="examples/pim/src/resources"/>
 	<classpathentry excluding="**/Entries|**/Repository|**/Root" kind="src" path="src/etc/properties/unmanaged"/>
 	<classpathentry including="**/*.java|**/*.properties" excluding="**/*.html" kind="src" path="gendir/rich-client"/>
 	<classpathentry including="**/*.java|**/*.properties" excluding="**/*.html" kind="src" path="test-java/unit-tests"/>

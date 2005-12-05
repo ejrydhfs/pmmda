@@ -1,0 +1,17 @@
+TODO
+----
+- Create user interface with tabs for journal entry
+
+Version 0.0.1 (30 November 2005)
+-------------------------------
+This version is the first release of the PIM application. It was tested
+against Thunderbird 1.0.7 and iPod third and fourth generation. Care was taken 
+that only dependencies to Apache Jakarta libraries exist.
+
+The following new features were added.
+- Import and export the LIDF contact format of Thunderbird. The UTF-8 base64 
+  encoded strings are correctly decoded to UTF-16.
+- Import and export to the VCARD contact format of iPod. The handling of 
+  missing attributes is correctly handled.
+- Creation of organization in which the contact work is supported. Creation of
+  journal entry based on a XML based description in the description field.
