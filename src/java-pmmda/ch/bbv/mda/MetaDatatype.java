@@ -17,6 +17,10 @@ public class MetaDatatype extends MetaClassifier {
    */
   private static final long serialVersionUID = 20041201;
 
+  /**
+   * Implements the visitor pattern.
+   * @param visitor visitor to process.
+   */
   public void accept(Visitor visitor) {
     visitor.visit(this);
   }

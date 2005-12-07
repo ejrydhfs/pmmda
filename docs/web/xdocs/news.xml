@@ -48,7 +48,8 @@
       <ul>
         <li>
           The development environment was updated to Eclipse 3.1.1 and Open
-          Office 2.0.
+          Office 2.0. The JDK was upgraded to the latest available version
+          JDK-1.5-06.
         </li>
         <li>
           Effort was put in the serie to use only actual versions of external

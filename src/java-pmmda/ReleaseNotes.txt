@@ -20,9 +20,10 @@ The following errors and change requests are closed
   CR: 1305596
   (see Sourceforge site RFE and Tracker for detailed description)
 
-Version 0.3.0-RC2 (30 October 2005)
+Version 0.3.0-RC2 (30 November 2005)
 ------------------------------------
 The following new features were added.
+- Moved the newest JDK 1.5.0-06 to check compatibility.
 - The OJB cartridge has a new property controlling if constraints are generated
   when foreign keys are defined in the DDL.
 - The cartridge default implementation was extended to support a declarative 
@@ -35,6 +36,8 @@ The following new features were added.
 The following errors were corrected.
 - The java class 1.5 template for the bo cartridge had an error in the handling
   of the navigable property.
+- The handling of navigable relations had an error if the name of the property
+  used for backward navigation started with a lower case.  
 - In special cases the getter name was eroneously defined following the conventions
   of boolean properties. This error is corrected.  
 - The NSUML writer had a type cast error when retrieving associations. The cast

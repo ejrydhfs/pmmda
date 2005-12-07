@@ -18,10 +18,11 @@
   "http://forrest.apache.org/dtd/tab-cocoon-v11.dtd">
 <tabs software="pmMDA" title="pmMDA" copyright="pmMDA Group Apache License 2.0" 
   xmlns:xlink="http://www.w3.org/1999/xlink">
-  <tab id="" label="Home" dir="" indexfile="index.html"/>
+  <tab id="home" label="Home" dir="" indexfile="index.html"/>
   <tab id="projects" label="Projects" dir="projects/" indexfile="index.html">
     <tab id="pmmda" label="pmMDA" dir="projects/pmmda/" indexfile="index.html"/>
     <tab id="dog" label="DOG" dir="projects/dog/" indexfile="index.html"/>
   </tab>
   <tab id="articles" label="Articles" dir="articles/" indexfile="index.html"/>
+  <tab id="examples" label="Examples" dir="examples/" indexfile="index.html"/>
 </tabs>

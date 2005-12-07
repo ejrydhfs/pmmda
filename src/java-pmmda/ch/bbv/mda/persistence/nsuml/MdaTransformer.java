@@ -158,7 +158,7 @@ public class MdaTransformer {
     for (MetaIndexedProperty item : source.getIndexedProperties()) {
       extractIndexedProperty(item, mClass);
     }
-    for (MetaClass item : source.getClasses()) {
+    for (MetaClass item : source.getNestedClasses()) {
       extractNestedClass(item, mClass);
     }
   }
@@ -182,7 +182,7 @@ public class MdaTransformer {
     for (MetaIndexedProperty item : source.getIndexedProperties()) {
       extractIndexedProperty(item, mClass);
     }
-    for (MetaClass item : source.getClasses()) {
+    for (MetaClass item : source.getNestedClasses()) {
       extractNestedClass(item, mClass);
     }
   }
@@ -551,7 +551,7 @@ public class MdaTransformer {
       association = i.next();
       MAssociationEnd e1 = association.getConnection(0);
       MAssociationEnd e2 = association.getConnection(1);
-      MClassifier owner = (MClassifier) e1.getType();
+      MClassifier owner = e1.getType();
       if (owner == clazz) {
         String associationName = e2.getName();
         if ((associationName == null) || (associationName.length() == 0)) {

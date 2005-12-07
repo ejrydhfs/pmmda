@@ -484,6 +484,11 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
     return lines;
   }
 
+  /**
+   * Returns the visibility text of the visibility code as defined in languages
+   * such as Java or C++.
+   * @return the visibility code of the element.
+   */
   public String retrieveVisibilityText() {
     return MdaUtilities.visibilityToString(getVisibility().getCode());
   }

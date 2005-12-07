@@ -456,7 +456,7 @@ public abstract class CartridgeImpl implements Cartridge {
     context.put(PROPERTIES_KEY, modelOperators.getTransitiveFieldsFor(clazz));
     context.put(AGGREGATIONS_KEY, modelOperators
         .getTransitiveIndexedFieldsFor(clazz));
-    context.put("nestedClasses", clazz.getClasses());
+    context.put("nestedClasses", clazz.getNestedClasses());
     return context;
   }
 

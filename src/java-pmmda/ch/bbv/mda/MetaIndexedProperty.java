@@ -30,10 +30,6 @@ public class MetaIndexedProperty extends MetaProperty {
   }
 
   /* %% USER DEFINED CODE START %% */
-  public String getStorageSize() {
-    return "N";
-  }
-
   /**
    * Returns true if the lower bound if the multiplicity is zero.
    * @return true if elements are optional otherwise false.

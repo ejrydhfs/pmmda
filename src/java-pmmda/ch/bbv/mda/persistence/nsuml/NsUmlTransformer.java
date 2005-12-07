@@ -248,7 +248,7 @@ public class NsUmlTransformer {
     if (metaNestedClass == null) {
       metaNestedClass = new MetaClass();
       metaNestedClass.setName(name);
-      context.addClass(metaNestedClass);
+      context.addNestedClass(metaNestedClass);
     }
     elements.put(source, metaNestedClass);
     metaNestedClass.setAbstract(source.isAbstract());

@@ -89,7 +89,7 @@ public class MetaClass extends MetaClassifier {
   /**
    * List of nested classes of the class.
    */
-  private List<MetaClass> classes;
+  private List<MetaClass> nestedClasses;
 
   /**
    * Default constructor of the class.
@@ -98,7 +98,7 @@ public class MetaClass extends MetaClassifier {
     ancestors = new ArrayList<MetaClass>();
     properties = new ArrayList<MetaProperty>();
     indexedProperties = new ArrayList<MetaIndexedProperty>();
-    classes = new ArrayList<MetaClass>();
+    nestedClasses = new ArrayList<MetaClass>();
   }
 
   /**
@@ -326,50 +326,79 @@ public class MetaClass extends MetaClassifier {
     }
   }
 
-  public MetaClass getClass(int index) {
-    return classes.get(index);
+  /**
+   * Returns the nested class with the given index.
+   * @param index index of the requested nested class.
+   * @return the requested nested class.
+   */
+  public MetaClass getNestedClass(int index) {
+    return nestedClasses.get(index);
   }
 
-  public void addClass(MetaClass metaClass) {
-    classes.add(metaClass);
-    metaClass.setContext(this);
+  /**
+   * Adds the nested class.
+   * @param clazz nested class to add.
+   */
+  public void addNestedClass(MetaClass clazz) {
+    nestedClasses.add(clazz);
+    clazz.setContext(this);
   }
 
-  public void addClass(int index, MetaClass metaClass) {
-    classes.add(index, metaClass);
-    metaClass.setContext(this);
+  /**
+   * Adds a nested class.
+   * @param index index of the class to add.
+   * @param clazz the nested class to add.
+   */
+  public void addNestedClass(int index, MetaClass clazz) {
+    nestedClasses.add(index, clazz);
+    clazz.setContext(this);
   }
 
-  public List<MetaClass> getClasses() {
-    return classes;
+  /**
+   * Returns the list of nested classes.
+   * @return the list of nested classes.
+   * @see #setNestedClasses(List)
+   */
+  public List<MetaClass> getNestedClasses() {
+    return nestedClasses;
   }
 
-  public void setClasses(List<MetaClass> classes) {
-    removeAllClasses();
+  /**
+   * Sets the list of nested classes. The previous set of nested classes is
+   * discarded.
+   * @param classes list of nested classes to add.
+   * @see #getNestedClasses()
+   */
+  public void setNestedClasses(List<MetaClass> classes) {
+    removeAllNestedClasses();
     classes.addAll(classes);
     for (MetaClass clazz : classes) {
       clazz.setContext(this);
     }
   }
 
-  public void removeAllClasses() {
-    for (MetaClass clazz : classes) {
+  /**
+   * Removes all nested classes.
+   */
+  public void removeAllNestedClasses() {
+    for (MetaClass clazz : nestedClasses) {
       clazz.setContext(null);
     }
-    classes.clear();
+    nestedClasses.clear();
   }
 
   /**
-   * Removes a nested class from this class
+   * Removes a nested class from this class.
    * @param metaClass to be removed.
    */
-  public void removeClass(MetaClass metaClass) {
-    classes.remove(metaClass);
+  public void removeNestedClass(MetaClass metaClass) {
+    nestedClasses.remove(metaClass);
   }
 
   /**
    * Returns the number of properties being primary keys.
    * @return number of primary properties in the class.
+   * @see #setNrOfPrimaryProperties(int)
    */
   public int getNrOfPrimaryProperties() {
     return nrOfPrimaryProperties;
@@ -396,6 +425,7 @@ public class MetaClass extends MetaClassifier {
   /**
    * Sets the number of properties being primary keys.
    * @param nrOfPrimaryProperties new number of primary properties.
+   * @see #getNrOfPrimaryProperties()
    */
   public void setNrOfPrimaryProperties(int nrOfPrimaryProperties) {
     this.nrOfPrimaryProperties = nrOfPrimaryProperties;
@@ -422,19 +452,24 @@ public class MetaClass extends MetaClassifier {
     for (MetaIndexedProperty item : indexedProperties) {
       item.accept(visitor);
     }
-    for (MetaClass item : classes) {
+    for (MetaClass item : nestedClasses) {
       item.accept(visitor);
     }
   }
 
   /**
-   * Retunrs the package containing the class.
+   * Returns the package containing the class.
    * @return the package owning the class.
    */
   public MetaPackage retrievePackage() {
     return (MetaPackage) getContext();
   }
 
+  /**
+   * Retrieves all the class extended in this class. In Java the list can
+   * contains at most one item.
+   * @return list of all extended implemented in the class.
+   */
   public List<MetaClass> retrieveAncestors() {
     List<MetaClass> list = new ArrayList<MetaClass>();
     for (MetaClass clazz : ancestors) {
@@ -445,6 +480,10 @@ public class MetaClass extends MetaClassifier {
     return list;
   }
 
+  /**
+   * Retrieves all the interfaces implemented in this class.
+   * @return list of all interfaces implemented in the class.
+   */
   public List<MetaClass> retrieveInterfaces() {
     List<MetaClass> list = new ArrayList<MetaClass>();
     for (MetaClass clazz : ancestors) {
@@ -531,7 +570,7 @@ public class MetaClass extends MetaClassifier {
   }
 
   /**
-   * Returns true if context is of type class, false if not (package)
+   * Returns true if context is of type class, false if not (package).
    * @return true if context is MetaClass
    */
   public boolean isNestedClass() {
