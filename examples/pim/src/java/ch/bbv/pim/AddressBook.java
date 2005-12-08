@@ -70,6 +70,46 @@ public class AddressBook implements DataObject {
 /* %% USER DEFINED CONSTRUCTORS END %% */
 
 /* %% USER DEFINED CODE START %% */
+  /**
+   * Finds the contact with the distinguished name and email address. At least
+   * one of the parameter must not be null.
+   * @param distinguishedName distinguished name of the contact is build with
+   *          firstname middlename surname. The name can have a prefix such as
+   *          mister.
+   * @param email email address of the contact - either the work or private
+   *          email address can be specified.
+   * @return the requested contact if found otherwise null.
+   */
+  public Contact findContact(String distinguishedName, String email) {
+    for (Organization organization : getOrganizations()) {
+      for (Contact contact : organization.getContacts()) {
+        if (email != null) {
+          if (email.equalsIgnoreCase(contact.getWorkEmail())
+              || email.equalsIgnoreCase(contact.getHomeEmail())) {
+            if ((distinguishedName == null)
+                || (distinguishedName.indexOf(contact.getDistinguishedName()) != -1)) {
+              return contact;
+            }
+          }
+        } else {
+          if (distinguishedName.indexOf(contact.getDistinguishedName()) != -1) {
+            return contact;
+          }
+        }
+      }
+    }
+    return null;
+  }
+
+  public Organization findOrganization(String name) {
+    for (Organization organization : getOrganizations()) {
+      if (name.equalsIgnoreCase(organization.getName())) {
+        return organization;
+      }
+    }
+    return null;
+  }
+
 /* %% USER DEFINED CODE END %% */
 
   /** 

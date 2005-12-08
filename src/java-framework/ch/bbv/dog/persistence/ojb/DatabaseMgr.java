@@ -5,7 +5,9 @@
  */
 package ch.bbv.dog.persistence.ojb;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -14,15 +16,24 @@ import org.apache.ojb.broker.query.Query;
 import org.apache.ojb.odmg.HasBroker;
 import org.apache.ojb.odmg.OJB;
 import org.apache.ojb.odmg.oql.EnhancedOQLQuery;
-import org.odmg.*;
+import org.odmg.Database;
+import org.odmg.Implementation;
+import org.odmg.ODMGException;
+import org.odmg.Transaction;
 
 /**
+ * <p>
  * The database manager provides access to all defined logical and physical
  * databases defined in the application. The manager hides the limitation of the
  * persistency layer and provides a simple interface to retrieve a database. A
  * database is a logical connection to a physical database. The manager handles
  * multiple logical and physical databases simultaneously. Operations are always
  * performed on one database.
+ * </p>
+ * <p>
+ * The handling of implementation and database instances follow the
+ * recommendations of the ODMG API guide of OJB.
+ * </p>
  * @author MarcelBaumann
  * @version $Revision$
  */
@@ -47,7 +58,7 @@ class DatabaseMgr {
   /**
    * Opens a database with the given name and access rights.
    * @param jcdAlias name of the database to open. The name is the OJB JCD alias
-   *        defined in the XML configuration file of OJB.
+   *          defined in the XML configuration file of OJB.
    * @param accessMode access mode of the database.
    * @see org.odmg.Database
    * @pre (jcdAlias != null) && ((accessMode == Database.OPEN_EXCLUSIVE) ||

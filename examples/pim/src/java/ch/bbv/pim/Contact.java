@@ -156,6 +156,14 @@ public class Contact implements DataObject {
 /* %% USER DEFINED CONSTRUCTORS END %% */
 
 /* %% USER DEFINED CODE START %% */
+  public String getDistinguishedName() {
+    return AddressUtilities.createDistinguishedName(this);
+  }
+
+  public String getPrefix() {
+    return AddressUtilities.createPrefix(this);
+  }
+
 /* %% USER DEFINED CODE END %% */
 
   /** 

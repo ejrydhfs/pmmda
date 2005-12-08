@@ -16,7 +16,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jdom.JDOMException;
 
-import ch.bbv.pim.*;
+import ch.bbv.pim.Address;
+import ch.bbv.pim.AddressBook;
+import ch.bbv.pim.Contact;
+import ch.bbv.pim.PhoneNumber;
 import ch.bbv.utilities.ReflectUtilities;
 
 /**
@@ -145,19 +148,9 @@ public class LdifParser extends ContactParser {
             } else if (isUrl(prefix) && (value != null)) {
               ReflectUtilities.setProperty(contact, property, new URL(value));
             } else if ("o:".equals(prefix)) {
-              if (contact.getOrganization() == null) {
-                Organization organization = book.findOrganization(value);
-                if (organization == null) {
-                  organization = new Organization();
-                  organization.setName(value);
-                  book.addOrganization(organization);
-                }
-                organization.addContact(contact);
-                contact.setOrganization(organization);
-              }
+              addToOrganization(contact, value);
             } else {
-              ReflectUtilities.setProperty(contact, property,
-                  value != null ? value.trim() : value);
+              setProperty(contact, property, value);
             }
           }
         }
@@ -196,7 +189,7 @@ public class LdifParser extends ContactParser {
   /**
    * Returns true if the tag represents a phone number otherwise false.
    * @param key tag to check.
-   * @return Flag indicating if the tag is a phone number.
+   * @return flag indicating if the tag is a phone number.
    */
   private boolean isPhoneNumber(String key) {
     return "telephoneNumber:".equals(key) || "homePhone:".equals(key)
@@ -206,7 +199,7 @@ public class LdifParser extends ContactParser {
   /**
    * Returns true if the tag represents a home address otherwise false.
    * @param key tag to check.
-   * @return Flag indicating if the tag is a home address.
+   * @return flag indicating if the tag is a home address.
    */
   private boolean isHomeAddress(String key) {
     return "homePostalAddresss:".equals(key)
@@ -218,7 +211,7 @@ public class LdifParser extends ContactParser {
   /**
    * Returns true if the tag represents a work address otherwise false.
    * @param key tag to check.
-   * @return Flag indicating if the tag is a work address.
+   * @return flag indicating if the tag is a work address.
    */
   private boolean isWorkAddress(String key) {
     return "postalAddress:".equals(key) || "mozillaPostalAddress2:".equals(key)
@@ -229,12 +222,18 @@ public class LdifParser extends ContactParser {
   /**
    * Returns true if the tag represents a URL otherwise false.
    * @param key tag to check.
-   * @return Flag indicating if the tag is a URL.
+   * @return flag indicating if the tag is a URL.
    */
   private boolean isUrl(String key) {
     return "workurl:".equals(key);
   }
 
+  /**
+   * Returns true if the field is UTF-8 Base64 encoded. LDIF defines an encoded
+   * line as the ones with a double semi colon.
+   * @param line line to check.
+   * @return flag indicating if the tag is encoded.
+   */
   private boolean isBase64Encoded(String line) {
     return line.indexOf(":: ") != -1;
   }

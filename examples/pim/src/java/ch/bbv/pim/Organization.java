@@ -242,6 +242,9 @@ public class Organization implements DataObject {
    */
   public boolean addContacts(Collection<Contact> c) {
     setModified(true);
+    for(Contact item : c) {
+      item.setOrganization(this);
+    }
     return contacts.addAll(c);
   }  
   
@@ -254,6 +257,13 @@ public class Organization implements DataObject {
    */
   public void setContact(int index, Contact element) {
     setModified(true);
+    Contact item = contacts.get(index);
+    if (item != null) {
+      item.setOrganization(null);
+    }
+    if (element != null) {
+      element.setOrganization(this);
+    }
     contacts.add(index, element);
   }
 
@@ -267,7 +277,11 @@ public class Organization implements DataObject {
    */
   public boolean addContact(Contact element) {
     setModified(true);
-    return contacts.add(element);
+    boolean result = contacts.add(element);
+    if (result) {
+      element.setOrganization(this);
+    }
+    return result;
   }
   
   /** 
@@ -283,6 +297,9 @@ public class Organization implements DataObject {
     boolean removed = contacts.remove(element);
     if (removed) {
       setModified(true);
+      if (element != null) {
+        element.setOrganization(null);
+      }
     }
     return removed;
   }

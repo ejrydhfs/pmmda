@@ -59,9 +59,21 @@ public class PhoneNumber implements DataObject {
   }
 
 /* %% USER DEFINED CONSTRUCTORS START %% */
+  /**
+   * Constructor of the class.
+   * @param number number to initialize with.
+   */
+  public PhoneNumber(String number) {
+    this.number = number;
+  }
+
 /* %% USER DEFINED CONSTRUCTORS END %% */
 
 /* %% USER DEFINED CODE START %% */
+  public String toString() {
+    return number;
+  }
+
 /* %% USER DEFINED CODE END %% */
 
   /** 

@@ -9,10 +9,18 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+
 import org.apache.velocity.app.Velocity;
+
 import ch.bbv.application.Component;
 import ch.bbv.application.ComponentImpl;
 
+/**
+ * The format manager associates parsers and emitters with the extensions of the
+ * files they support.
+ * @author MarcelBaumann
+ * @version $Revision$
+ */
 public class FormatManager extends ComponentImpl implements Component {
   /**
    * Name of the component.
@@ -39,7 +47,7 @@ public class FormatManager extends ComponentImpl implements Component {
     parsers = new HashMap<String, ContactParser>();
     Properties properties = new Properties();
     properties.setProperty("file.resource.cache", "false");
-    properties.setProperty("file.resource.loader.path", "./src/pim/resources");
+    properties.setProperty("file.resource.loader.path", "./classes");
     properties.setProperty("parser.pool.size", "10");
     Velocity.init(properties);
   }

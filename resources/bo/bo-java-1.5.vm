@@ -2,9 +2,9 @@
 #set($dollar="$")
 #set($__="")
 #set($____="")
-#macro(getOwner $property $owner)
+#macro(getOwner $item $owner)
 #set($owner=false)
-#set($owner=$property.valueOfTag("bo-navigable"))
+#set($owner=${item.valueOfTag("bo-navigable")})
 #if($owner && ${owner.length()} > 0)
 #set($owner=${utilities.identifierFirstUpper(${owner})})
 #else
@@ -460,7 +460,7 @@ $line
 #end  
 #end
 #if(${aggregation.canBeWritten()})
-#getOwner($property $owner)	
+#getOwner($aggregation $owner)	
 #if(${cartridge.isOrdered(${aggregation})})
 
   /** 
@@ -543,9 +543,9 @@ $line
     setForeignKey(element, "${keyName}", getId());
 #end
 #if($owner)
-    $itemType} item = ${lName}.get(index);
+    ${itemType} item = ${lName}.get(index);
     if (item != null) {
-      item.set${owner}(this);
+      item.set${owner}(null);
     }
     if (element != null) {
       element.set${owner}(this);
@@ -567,7 +567,15 @@ $line
 #if($isPersistentAggregation)
     setForeignKey(element, "${keyName}", getId());
 #end
+#if($owner)
+    boolean result = ${lName}.add(element);
+    if (result) {
+      element.set${owner}(this);
+    }
+    return result;
+#else
     return ${lName}.add(element);
+#end
   }
   
   /** 
@@ -584,12 +592,12 @@ $line
     if (removed) {
       setModified(true);
 #if($isPersistentAggregation)
+      setForeignKey(element, "${keyName}", getId());
+#end
 #if($owner)
       if (element != null) {
-        item.set${owner}(null);
+        element.set${owner}(null);
       }
-#end
-      setForeignKey(element, "${keyName}", getId());
 #end
     }
     return removed;

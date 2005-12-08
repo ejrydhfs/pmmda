@@ -21,6 +21,7 @@ import org.jdom.input.SAXBuilder;
 
 import ch.bbv.dog.reference.ReferenceCodeUtilities;
 import ch.bbv.pim.*;
+import ch.bbv.utilities.ReflectUtilities;
 
 /**
  * The abstract class for all parsers of contacts descriptions.
@@ -135,6 +136,7 @@ public abstract class ContactParser {
    * @param book address book to synchronize with.
    * @throws IOException if an error occured when reading the contact from the
    *           file.
+   * @pre book != null
    */
   protected abstract void parseContact(AddressBook book) throws IOException;
 
@@ -167,12 +169,43 @@ public abstract class ContactParser {
   }
 
   /**
+   * Sets the string property with the new value. Empty strings default to null
+   * @param object object which property should be set.
+   * @param property property to set.
+   * @param value new value of the property.
+   */
+  protected void setProperty(Object object, String property, String value) {
+    if (value != null) {
+      value = value.trim();
+      if (value.length() == 0) {
+        value = null;
+      }
+    }
+    ReflectUtilities.setProperty(object, property, value);
+
+  }
+
+  protected void addToOrganization(Contact contact, String name) {
+    if (contact.getOrganization() == null) {
+      Organization organization = book.findOrganization(name);
+      if (organization == null) {
+        organization = new Organization();
+        organization.setName(name);
+        book.addOrganization(organization);
+      }
+      organization.addContact(contact);
+    }
+  }
+
+  /**
    * The language and gender of the contact is inferred based on the prefix he
    * is given.
    * @param contact contact to complete.
    * @param line line containing the prefix information.
+   * @pre contact != null
    */
   protected void setLanguageAndGender(Contact contact, String line) {
+    assert contact != null;
     if (line != null) {
       if (line.indexOf("Frau ") != -1) {
         contact.setMale(false);
@@ -218,6 +251,7 @@ public abstract class ContactParser {
    * @throws IOException if an IO problem occurs.
    * @throws JDOMException if a XML parsing error occurs.
    * @throws ParseException if a date format is erroneous.
+   * @pre contact != null
    */
   protected void parseDescription(Contact contact, String line)
       throws JDOMException, IOException, ParseException {
@@ -231,7 +265,7 @@ public abstract class ContactParser {
       JournalEntry entry = new JournalEntry();
       entry.setType(JournalEntryType.NOTE);
       entry.setCreation(now);
-      entry.setCreation(getDate(element.getAttributeValue("date")));
+      entry.setCreation(transform(element.getAttributeValue("date")));
       Attribute duration = element.getAttribute("duration");
       if (duration != null) {
         entry.setDuration(duration.getIntValue());
@@ -242,11 +276,17 @@ public abstract class ContactParser {
     }
   }
 
-  private Date getDate(String representation) throws ParseException {
+  /**
+   * transforms the string representation into a date.
+   * @param text text to transform.
+   * @return the transformed date.
+   * @throws ParseException if the text has a wrong format.
+   */
+  private Date transform(String text) throws ParseException {
     try {
-      return format1.parse(representation);
+      return format1.parse(text);
     } catch (ParseException e) {
-      return format2.parse(representation);
+      return format2.parse(text);
     }
   }
 }

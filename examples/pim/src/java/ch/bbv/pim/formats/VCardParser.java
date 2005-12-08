@@ -125,19 +125,9 @@ public class VCardParser extends ContactParser {
             } else if (isUrl(prefix) && (value != null)) {
               ReflectUtilities.setProperty(contact, property, new URL(value));
             } else if ("org:".equals(prefix)) {
-              if (contact.getOrganization() == null) {
-                Organization organization = book.findOrganization(value);
-                if (organization == null) {
-                  organization = new Organization();
-                  organization.setName(value);
-                  book.addOrganization(organization);
-                }
-                organization.addContact(contact);
-                contact.setOrganization(organization);
-              }
+              addToOrganization(contact, value);
             } else {
-              ReflectUtilities.setProperty(contact, property,
-                  value != null ? value.trim() : value);
+              setProperty(contact, property, value);
             }
           }
         }

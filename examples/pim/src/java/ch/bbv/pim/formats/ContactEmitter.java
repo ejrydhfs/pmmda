@@ -44,6 +44,7 @@ public abstract class ContactEmitter {
    * @param book address book to emit.
    * @param records file in which the records should be written.
    * @throws IOException if an error occured when writing the file.
+   * @pre (book != null) && (records != null)
    */
   public abstract void emit(AddressBook book, File records) throws IOException;
 
@@ -59,6 +60,7 @@ public abstract class ContactEmitter {
    * representation.
    * @param entries entries to transform.
    * @return the XML representation of the journal entries.
+   * @pre entries != null
    */
   public String transform(List<JournalEntry> entries) {
     StringBuilder buffer = new StringBuilder();
@@ -84,7 +86,7 @@ public abstract class ContactEmitter {
    * @param template template to process.
    * @param context context of the template to process.
    * @return the result of the template processing as string.
-   * @pre template != null && context != null
+   * @pre (template != null) && (context != null)
    */
   protected String processTemplate(Template template, VelocityContext context) {
     assert (template != null) && (context != null);
@@ -107,6 +109,7 @@ public abstract class ContactEmitter {
    * Loads the velocity template with the given name.
    * @param name name of the template to load.
    * @return the template if found otherwise null.
+   * @pre name != null
    */
   protected Template loadTemplate(String name) {
     Template template = null;
