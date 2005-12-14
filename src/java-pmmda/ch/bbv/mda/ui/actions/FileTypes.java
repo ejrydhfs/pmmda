@@ -93,10 +93,9 @@ public class FileTypes {
    * @param chooser file chooser to which the file filters must be added.
    */
   public static void addFileFilters(JFileChooser chooser) {
-    chooser.addChoosableFileFilter(new SimpleFileFilter(
-        FileTypes.RATIONAL_ROSE_EXT, FileTypes.RATIONAL_ROSE_TEXT));
-    chooser.addChoosableFileFilter(new SimpleFileFilter(
-        FileTypes.RATIONAL_ROSE_CAT_EXT, FileTypes.RATIONAL_ROSE_CAT_TEXT));
+    Class[] types = { JFileChooser.class };
+    Object[] params = { chooser };
+    ch.bbv.utilities.ReflectUtilities.execute("ch.bbv.mda.ui.eclipse.EclipseUtilities", "addEclipseFileFilters", types, params);
     chooser.addChoosableFileFilter(new SimpleFileFilter(FileTypes.POSEIDON_EXT,
         FileTypes.POSEIDON_TEXT));
     chooser.addChoosableFileFilter(new SimpleFileFilter(
