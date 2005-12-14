@@ -61,11 +61,50 @@ public final class ReflectUtilities {
     } catch (NoSuchMethodException e) {
       returns = executeInherited(bean, name, types, params);
     } catch (IllegalArgumentException e) {
-      executeInherited(bean, name, types, params);
+      returns = executeInherited(bean, name, types, params);
     } catch (IllegalAccessException e) {
       log.error(e);
     } catch (InvocationTargetException e) {
       log.error(e);
+    }
+    return returns;
+  }
+
+  /**
+   * Executes a static method on a class with the help of reflection. First it
+   * attempts directly declared methods then it attempts inherited metods.
+   * @param className class on which the static method should be called.
+   * @param name name of the method.
+   * @param types types of the method signature.
+   * @param params parameters of the call.
+   * @return the return result of the called method if sucessful otherwise null.
+   * @pre (clazz != null) && (name != null)
+   */
+  public static Object execute(String className, String name, Class[] types,
+      Object[] params) {
+    assert ((className != null) && (name != null));
+    Object returns = null;
+    Class clazz = null;
+    try {
+      clazz = Class.forName(className);
+    } catch (ClassNotFoundException e) {
+      log.fatal(e);
+    }
+    if(clazz != null){
+      try{
+        Method method = clazz.getDeclaredMethod(name, types);
+        method.invoke(clazz, params);
+      } catch (SecurityException e) {
+        log.fatal(e);
+      } catch (NoSuchMethodException e) {
+        returns = executeInherited(className, name, types, params);
+      } catch (IllegalArgumentException e) {
+        returns = executeInherited(className, name, types, params);
+      } catch (IllegalAccessException e) {
+        log.fatal(e);
+      } catch (InvocationTargetException e) {
+        log.fatal(e);
+      } 
     }
     return returns;
   }
@@ -292,4 +331,44 @@ public final class ReflectUtilities {
     }
     return returns;
   }
+
+  /**
+   * Executes a static method on a class with the help of reflection. It
+   * attempts all metods.
+   * @param className class on which the static method should be called.
+   * @param name name of the method.
+   * @param types types of the method signature.
+   * @param params parameters of the call.
+   * @return the return result of the called method if sucessful otherwise null.
+   * @pre (clazz != null) && (name != null)
+   */
+  private static Object executeInherited(String className, String name,
+      Class[] types, Object[] params) {
+    assert ((className != null) && (name != null));
+    Object returns = null;
+    Class clazz = null;
+    try {
+      clazz = Class.forName(className);
+    } catch (ClassNotFoundException e) {
+      log.fatal(e);
+    }
+    if(clazz != null){
+      try{
+        Method method = clazz.getMethod(name, types);
+        method.invoke(clazz, params);
+      } catch (SecurityException e) {
+        log.fatal(e);
+      } catch (NoSuchMethodException e) {
+        log.fatal(e);
+      } catch (IllegalArgumentException e) {
+        log.fatal(e);
+      } catch (IllegalAccessException e) {
+        log.fatal(e);
+      } catch (InvocationTargetException e) {
+        log.fatal(e);
+      } 
+    }
+    return returns;
+  }
+
 }
