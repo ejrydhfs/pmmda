@@ -544,12 +544,22 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
     return super.retrieveTemplate(name, getContext().getProperty(LANGUAGE_KEY));
   }
 
+  /**
+   * Preprocesses the classifier of an element.
+   * @param element element to preprocess.
+   * @param tag tag which type should be infer against the data type translation
+   *          table associated with the cartridge.
+   * @param interfaces flag indicating if the translation is for an interface or
+   *          a concrete class.
+   */
   private void preProcessClassifier(MetaElement element, String tag,
       boolean interfaces) {
     String qualifiedName = element.valueOfTag(tag);
-    MetaDatatype datatype = packages.getModel().findDatatype(qualifiedName);
-    if (datatype != null) {
-      qualifiedName = translateDatatype(datatype, "", interfaces);
+    if (qualifiedName != null) {
+      MetaDatatype datatype = packages.getModel().findDatatype(qualifiedName);
+      if (datatype != null) {
+        qualifiedName = translateDatatype(datatype, "", interfaces);
+      }
     }
     qualifiedName = ModelOperators.getComponentName(qualifiedName);
     element.addAttribute(tag, qualifiedName);

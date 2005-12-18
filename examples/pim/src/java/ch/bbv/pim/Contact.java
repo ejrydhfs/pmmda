@@ -8,6 +8,7 @@ package ch.bbv.pim;
 
 import ch.bbv.dog.DataObject;
 import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.beans.VetoableChangeListener;
 import java.lang.reflect.Field;
 import java.net.URL;
@@ -145,11 +146,17 @@ public class Contact implements DataObject {
   private Timestamp timestamp;   
 
   /** 
+   * Helper class for managing changeable properties and associated listeners.
+   */
+  protected transient PropertyChangeSupport changeSupport;
+
+  /** 
    * Default constructor of the class necessary for Java bean convention. The 
    * object identifier is set to null to indicate it is a new object.
    */
   public Contact() {
     entries = new ArrayList<JournalEntry>();
+    changeSupport = new PropertyChangeSupport(this);
   }
 
 /* %% USER DEFINED CONSTRUCTORS START %% */
@@ -167,11 +174,12 @@ public class Contact implements DataObject {
 /* %% USER DEFINED CODE END %% */
 
   /** 
-   * Returns the unique identifier of the data object instance.
+   * Returns the unique identifier of the data object instance. A new object has
+   * the value null.
    * @return the identifier of the instance.
    * @see #setId(Integer)
    */
-  public Integer getId() {
+  public final Integer getId() {
     return id;
   }
   
@@ -180,7 +188,7 @@ public class Contact implements DataObject {
    * @param id new identifier of the instance.
    * @see #getId()
    */
-  public void setId(Integer id) {
+  public final void setId(Integer id) {
     this.id = id;
   }
 
@@ -189,7 +197,7 @@ public class Contact implements DataObject {
    * @return true if the object was modified otherwise false.
    * @see #setModified
    */
-  public boolean isModified() {
+  public final boolean isModified() {
     return modified;
   }
   
@@ -198,15 +206,16 @@ public class Contact implements DataObject {
    * @param modified new value of the flag.
    * @see #isModified
    */
-  public void setModified(boolean modified) {
+  public final void setModified(boolean modified) {
     this.modified = modified;
   }
   
   /** 
    * Convenience method indicating if the instance is a new one or not.
    * @return true if the object is new otherwise false.
+   * @see #getId()
    */
-  public boolean isNew()  {
+  public final boolean isNew()  {
     return (getId() == null);
   }
   
@@ -215,7 +224,7 @@ public class Contact implements DataObject {
    * @return the timestamp of the last persistent modification.
    * @see #setTimestamp(Timestamp)
    */
-  public Timestamp getTimestamp() {
+  public final Timestamp getTimestamp() {
     return timestamp;
   }
   
@@ -224,7 +233,7 @@ public class Contact implements DataObject {
    * @param timestamp timestamp of the instance.
    * @see #getTimestamp()
    */
-   public void setTimestamp(Timestamp timestamp) {
+   public final void setTimestamp(Timestamp timestamp) {
      this.timestamp = timestamp;
    }
 
@@ -658,7 +667,7 @@ public class Contact implements DataObject {
    * entries.
    * @param index index of element to return. 
    * @return the element at the specified position in this list.
-   * @see #setEntry(int, JournalEntry)
+   * @see #addEntry(int, JournalEntry)
    * @see java.util.List#get(int)
    */
   public JournalEntry getEntry(int index) {
@@ -686,9 +695,10 @@ public class Contact implements DataObject {
    * @see #getEntry(int)
    * @see java.util.List#add(int, Object)
    */
-  public void setEntry(int index, JournalEntry element) {
-    setModified(true);
+  public void addEntry(int index, JournalEntry element) {
     entries.add(index, element);
+    changeSupport.fireIndexedPropertyChange("entries", index, null, element);
+    setModified(true);
   }
 
   /** 
@@ -700,13 +710,17 @@ public class Contact implements DataObject {
    * @pre element != null
    */
   public boolean addEntry(JournalEntry element) {
-    setModified(true);
-    return entries.add(element);
+    boolean result = entries.add(element);
+    if (result) {	
+      changeSupport.firePropertyChange("entries", null, element);
+      setModified(true);
+    }
+    return result;
   }
   
   /** 
-   * Removes the first occurrence in this list of the specified element 
-   * If this list does not contain the element, it is unchanged. More formally, 
+   * Removes the first occurrence in this list of the specified element. If 
+   * the list does not contain the element, it is unchanged. More formally, 
    * removes the element with the lowest index i such that 
    * (o==null ? get(i)==null : o.equals(get(i))) (if such an element exists). 
    * @param element element to be removed from this list, if present. 
@@ -716,6 +730,7 @@ public class Contact implements DataObject {
   public boolean removeEntry(JournalEntry element) {
     boolean removed = entries.remove(element);
     if (removed) {
+      changeSupport.fireIndexedPropertyChange("entries", -1, element, null);
       setModified(true);
     }
     return removed;
@@ -755,21 +770,21 @@ public class Contact implements DataObject {
   }
 
   public void addPropertyChangeListener(PropertyChangeListener listener) {
-    throw new UnsupportedOperationException();
+    changeSupport.addPropertyChangeListener(listener);
   }
   
   public void addPropertyChangeListener(String propertyName, 
       PropertyChangeListener listener) {
-    throw new UnsupportedOperationException();
+    changeSupport.addPropertyChangeListener(propertyName, listener);
   }
   
   public void removePropertyChangeListener(PropertyChangeListener listener) {
-    throw new UnsupportedOperationException();
+    changeSupport.removePropertyChangeListener(listener);
   }
   
   public void removePropertyChangeListener(String propertyName, 
       PropertyChangeListener listener) {
-    throw new UnsupportedOperationException();
+    changeSupport.removePropertyChangeListener(propertyName, listener);
   }
   
   public void addVetoableChangeListener(VetoableChangeListener listener) {
@@ -797,7 +812,7 @@ public class Contact implements DataObject {
    * @param key key identifier to set.
    * @pre (bean != null) && (property != null) && (key != null)
    */
-  final protected void setForeignKey(DataObject bean, String property,
+   protected final void setForeignKey(DataObject bean, String property,
       Integer key) {
     assert((bean != null) && (property != null));
     try {

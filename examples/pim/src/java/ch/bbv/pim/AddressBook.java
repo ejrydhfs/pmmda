@@ -113,11 +113,12 @@ public class AddressBook implements DataObject {
 /* %% USER DEFINED CODE END %% */
 
   /** 
-   * Returns the unique identifier of the data object instance.
+   * Returns the unique identifier of the data object instance. A new object has
+   * the value null.
    * @return the identifier of the instance.
    * @see #setId(Integer)
    */
-  public Integer getId() {
+  public final Integer getId() {
     return id;
   }
   
@@ -126,7 +127,7 @@ public class AddressBook implements DataObject {
    * @param id new identifier of the instance.
    * @see #getId()
    */
-  public void setId(Integer id) {
+  public final void setId(Integer id) {
     this.id = id;
   }
 
@@ -135,7 +136,7 @@ public class AddressBook implements DataObject {
    * @return true if the object was modified otherwise false.
    * @see #setModified
    */
-  public boolean isModified() {
+  public final boolean isModified() {
     return modified;
   }
   
@@ -144,15 +145,16 @@ public class AddressBook implements DataObject {
    * @param modified new value of the flag.
    * @see #isModified
    */
-  public void setModified(boolean modified) {
+  public final void setModified(boolean modified) {
     this.modified = modified;
   }
   
   /** 
    * Convenience method indicating if the instance is a new one or not.
    * @return true if the object is new otherwise false.
+   * @see #getId()
    */
-  public boolean isNew()  {
+  public final boolean isNew()  {
     return (getId() == null);
   }
   
@@ -161,7 +163,7 @@ public class AddressBook implements DataObject {
    * @return the timestamp of the last persistent modification.
    * @see #setTimestamp(Timestamp)
    */
-  public Timestamp getTimestamp() {
+  public final Timestamp getTimestamp() {
     return timestamp;
   }
   
@@ -170,7 +172,7 @@ public class AddressBook implements DataObject {
    * @param timestamp timestamp of the instance.
    * @see #getTimestamp()
    */
-   public void setTimestamp(Timestamp timestamp) {
+   public final void setTimestamp(Timestamp timestamp) {
      this.timestamp = timestamp;
    }
 
@@ -209,7 +211,7 @@ public class AddressBook implements DataObject {
    * organizations.
    * @param index index of element to return. 
    * @return the element at the specified position in this list.
-   * @see #setOrganization(int, Organization)
+   * @see #addOrganization(int, Organization)
    * @see java.util.List#get(int)
    */
   public Organization getOrganization(int index) {
@@ -237,9 +239,9 @@ public class AddressBook implements DataObject {
    * @see #getOrganization(int)
    * @see java.util.List#add(int, Object)
    */
-  public void setOrganization(int index, Organization element) {
-    setModified(true);
+  public void addOrganization(int index, Organization element) {
     organizations.add(index, element);
+    setModified(true);
   }
 
   /** 
@@ -251,13 +253,12 @@ public class AddressBook implements DataObject {
    * @pre element != null
    */
   public boolean addOrganization(Organization element) {
-    setModified(true);
     return organizations.add(element);
   }
   
   /** 
-   * Removes the first occurrence in this list of the specified element 
-   * If this list does not contain the element, it is unchanged. More formally, 
+   * Removes the first occurrence in this list of the specified element. If 
+   * the list does not contain the element, it is unchanged. More formally, 
    * removes the element with the lowest index i such that 
    * (o==null ? get(i)==null : o.equals(get(i))) (if such an element exists). 
    * @param element element to be removed from this list, if present. 
@@ -348,7 +349,7 @@ public class AddressBook implements DataObject {
    * @param key key identifier to set.
    * @pre (bean != null) && (property != null) && (key != null)
    */
-  final protected void setForeignKey(DataObject bean, String property,
+   protected final void setForeignKey(DataObject bean, String property,
       Integer key) {
     assert((bean != null) && (property != null));
     try {

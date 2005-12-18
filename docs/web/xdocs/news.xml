@@ -55,7 +55,8 @@
           Effort was put in the serie to use only actual versions of external
           components and document all dependencies. The web site was updated to
           better support forrest capabilities. The documents were updated to use
-          the capabilities of forrest 0.6.
+          the capabilities of forrest 0.6. Upon release of version 0.7 the web
+          site documentation was migrated to forrest 0.7.
         </li>
         <li>
           The application can be run with JDK 1.5. The source code will be

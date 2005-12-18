@@ -7,8 +7,7 @@
 package ch.bbv.pim;
 
 import ch.bbv.dog.DataObject;
-import java.beans.PropertyChangeListener;
-import java.beans.VetoableChangeListener;
+import java.beans.*;
 import java.lang.reflect.Field;
 import java.sql.Timestamp;
 import java.util.*;
@@ -70,11 +69,17 @@ public class Organization implements DataObject {
   private Timestamp timestamp;   
 
   /** 
+   * Helper class for managing vetoable properties and associated listeners.
+   */
+  protected transient VetoableChangeSupport vetoSupport;
+
+  /** 
    * Default constructor of the class necessary for Java bean convention. The 
    * object identifier is set to null to indicate it is a new object.
    */
   public Organization() {
     contacts = new ArrayList<Contact>();
+    vetoSupport = new VetoableChangeSupport(this);
   }
 
 /* %% USER DEFINED CONSTRUCTORS START %% */
@@ -84,11 +89,12 @@ public class Organization implements DataObject {
 /* %% USER DEFINED CODE END %% */
 
   /** 
-   * Returns the unique identifier of the data object instance.
+   * Returns the unique identifier of the data object instance. A new object has
+   * the value null.
    * @return the identifier of the instance.
    * @see #setId(Integer)
    */
-  public Integer getId() {
+  public final Integer getId() {
     return id;
   }
   
@@ -97,7 +103,7 @@ public class Organization implements DataObject {
    * @param id new identifier of the instance.
    * @see #getId()
    */
-  public void setId(Integer id) {
+  public final void setId(Integer id) {
     this.id = id;
   }
 
@@ -106,7 +112,7 @@ public class Organization implements DataObject {
    * @return true if the object was modified otherwise false.
    * @see #setModified
    */
-  public boolean isModified() {
+  public final boolean isModified() {
     return modified;
   }
   
@@ -115,15 +121,16 @@ public class Organization implements DataObject {
    * @param modified new value of the flag.
    * @see #isModified
    */
-  public void setModified(boolean modified) {
+  public final void setModified(boolean modified) {
     this.modified = modified;
   }
   
   /** 
    * Convenience method indicating if the instance is a new one or not.
    * @return true if the object is new otherwise false.
+   * @see #getId()
    */
-  public boolean isNew()  {
+  public final boolean isNew()  {
     return (getId() == null);
   }
   
@@ -132,7 +139,7 @@ public class Organization implements DataObject {
    * @return the timestamp of the last persistent modification.
    * @see #setTimestamp(Timestamp)
    */
-  public Timestamp getTimestamp() {
+  public final Timestamp getTimestamp() {
     return timestamp;
   }
   
@@ -141,7 +148,7 @@ public class Organization implements DataObject {
    * @param timestamp timestamp of the instance.
    * @see #getTimestamp()
    */
-   public void setTimestamp(Timestamp timestamp) {
+   public final void setTimestamp(Timestamp timestamp) {
      this.timestamp = timestamp;
    }
 
@@ -224,7 +231,7 @@ public class Organization implements DataObject {
    * contacts.
    * @param index index of element to return. 
    * @return the element at the specified position in this list.
-   * @see #setContact(int, Contact)
+   * @see #addContact(int, Contact)
    * @see java.util.List#get(int)
    */
   public Contact getContact(int index) {
@@ -252,19 +259,25 @@ public class Organization implements DataObject {
    * Inserts the given child at the select position in the relation contacts.
    * @param index index at which the specified element is to be inserted.
    * @param element element to be inserted.
+   * @throws PropertyVetoException if a listener refuses the published change.
    * @see #getContact(int)
    * @see java.util.List#add(int, Object)
    */
-  public void setContact(int index, Contact element) {
-    setModified(true);
-    Contact item = contacts.get(index);
-    if (item != null) {
-      item.setOrganization(null);
-    }
+  public void addContact(int index, Contact element) throws PropertyVetoException {
+    contacts.add(index, element);
     if (element != null) {
       element.setOrganization(this);
     }
-    contacts.add(index, element);
+    try {
+      vetoSupport.fireVetoableChange("contacts", null, element);
+    } catch (PropertyVetoException e) {
+      contacts.remove(index);
+      if (element != null) {
+        element.setOrganization(null);
+      }
+      throw e;
+    }
+    setModified(true);
   }
 
   /** 
@@ -272,34 +285,56 @@ public class Organization implements DataObject {
    * contacts.
    * @param element to be appended to this list.
    * @return true (as per the general contract of the Collection.add method).   
+   * @throws PropertyVetoException if a listener refuses the published change.
    * @see java.util.List#add(Object)
    * @pre element != null
    */
-  public boolean addContact(Contact element) {
-    setModified(true);
+  public boolean addContact(Contact element) throws PropertyVetoException {
     boolean result = contacts.add(element);
-    if (result) {
-      element.setOrganization(this);
+    if (result) {	
+      if (result) {
+        element.setOrganization(this);
+      }
+      try {
+        vetoSupport.fireVetoableChange("contacts", null, element);
+      } catch (PropertyVetoException e) {
+        contacts.remove(element);
+        if (element != null) {
+          element.setOrganization(null);
+        }
+        throw e;
+      }
+      setModified(true);
     }
     return result;
   }
   
   /** 
-   * Removes the first occurrence in this list of the specified element 
-   * If this list does not contain the element, it is unchanged. More formally, 
+   * Removes the first occurrence in this list of the specified element. If 
+   * the list does not contain the element, it is unchanged. More formally, 
    * removes the element with the lowest index i such that 
    * (o==null ? get(i)==null : o.equals(get(i))) (if such an element exists). 
    * @param element element to be removed from this list, if present. 
    * @return true if this list contained the specified element. 
+   * @throws PropertyVetoException if a listener refuses the published change.
    * @see java.util.List#remove(Object)
    */
-  public boolean removeContact(Contact element) {
+  public boolean removeContact(Contact element) throws PropertyVetoException {
     boolean removed = contacts.remove(element);
     if (removed) {
-      setModified(true);
       if (element != null) {
         element.setOrganization(null);
       }
+      try {
+        vetoSupport.fireVetoableChange("contacts", element, null);
+      } catch (PropertyVetoException e) {
+        contacts.add(element);
+        if (element != null) {
+          element.setOrganization(this);
+        }
+        throw e;
+      }
+      setModified(true);
     }
     return removed;
   }
@@ -354,23 +389,23 @@ public class Organization implements DataObject {
       PropertyChangeListener listener) {
     throw new UnsupportedOperationException();
   }
-  
+
   public void addVetoableChangeListener(VetoableChangeListener listener) {
-    throw new UnsupportedOperationException();
+    vetoSupport.addVetoableChangeListener(listener);
   }
   
-  public void addVetoableChangeListener(String propertyName,
+  public void addVetoableChangeListener(String propertyName, 
       VetoableChangeListener listener) {
-    throw new UnsupportedOperationException();
+    vetoSupport.addVetoableChangeListener(propertyName, listener);
   }
   
   public void removeVetoableChangeListener(VetoableChangeListener listener) {
-    throw new UnsupportedOperationException();
+    vetoSupport.removeVetoableChangeListener(listener);
   }
   
-  public void removeVetoableChangeListener(String propertyName,
+  public void removeVetoableChangeListener(String propertyName, 
       VetoableChangeListener listener) {
-    throw new UnsupportedOperationException();
+    vetoSupport.removeVetoableChangeListener(propertyName, listener);
   }
 
   /**
@@ -380,7 +415,7 @@ public class Organization implements DataObject {
    * @param key key identifier to set.
    * @pre (bean != null) && (property != null) && (key != null)
    */
-  final protected void setForeignKey(DataObject bean, String property,
+   protected final void setForeignKey(DataObject bean, String property,
       Integer key) {
     assert((bean != null) && (property != null));
     try {

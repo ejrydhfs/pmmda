@@ -30,8 +30,8 @@
         <ul>
           <li>
             A complete Java development environment - we recommend to install
-            Sun JDK 1.4 and JDK 1.5 -. Compatibility to other Java environments,
-            e.g. IBM Jikes are not tested.
+            Sun JDK 1.5 -. Compatibility to other Java environments, e.g. IBM
+            Jikes are not tested.
           </li>
           <li>
             The Eclipse IDE - the actual project files are defined for versions
@@ -151,18 +151,11 @@
       <answer>
         <p>
           Yes. As discribed in the developer's installation guide you must
-          configure a set of JDK and variables. This approach is the recommended
+          configure the used JDK and a set of variables. This approach is the recommended
           way to define portable projects under Eclipse.
         </p>
         <dl>
-          <dt>jdk1.4</dt>
-          <dd>
-            Defines the root directory to your JDK 1.4. Java development or
-            runtime kits are defined under
-            <em>Windows/Preferences/Java/Installed JRE</em>
-            .
-          </dd>
-          <dt>jdk1.5</dt>
+          <dt>jdk 1.5/5.0</dt>
           <dd>
             Defines the root directory to your JDK 5.0. Java development or
             runtime kits are defined under

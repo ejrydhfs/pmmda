@@ -11,12 +11,16 @@ import java.util.List;
 import java.util.Locale;
 import java.util.prefs.Preferences;
 
+import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 import org.apache.commons.cli.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.flexdock.docking.Dockable;
+import org.flexdock.docking.DockingConstants;
+import org.flexdock.docking.DockingManager;
 
 import ch.bbv.application.Library;
 import ch.bbv.application.ProjectInfo;
@@ -31,7 +35,6 @@ import ch.bbv.explorer.ExplorerMenuBar.Names;
 import ch.bbv.explorer.about.Contributor;
 import ch.bbv.explorer.about.Licences;
 import ch.bbv.explorer.actions.*;
-import ch.bbv.explorer.components.DockingArea;
 import ch.bbv.explorer.components.ValidationPanel;
 import ch.bbv.mda.MetaModel;
 import ch.bbv.mda.generators.Cartridge;
@@ -78,6 +81,8 @@ public class MdaExplorer extends Explorer {
   private String[] arguments;
 
   private ExplorerGlobalAction generateAllAction;
+
+  private ValidationPanel validationPanel;
 
   /**
    * Creates a new MDA explorer.
@@ -138,7 +143,7 @@ public class MdaExplorer extends Explorer {
     TreeConstructor constructor = new TreeConstructor(getNodeTypeFactory());
     model.accept(constructor);
     setRoot(constructor.getRoot());
-    getValidationPanel().clear();
+    validationPanel.clear();
     getMenuBar().documentChanged(document.getState());
   }
 
@@ -147,7 +152,7 @@ public class MdaExplorer extends Explorer {
    * @return the requested validation panel.
    */
   public ValidationPanel getValidationPanel() {
-    return (ValidationPanel) getDockingArea().getTab(VALIDATION_PANEL_NAME);
+    return validationPanel;
   }
 
   /**
@@ -169,8 +174,12 @@ public class MdaExplorer extends Explorer {
     projectInfo.setVersion(new VersionId(0, 3, 0, "dev"));
     projectInfo.setContributors(getContributors());
     projectInfo.setLibraries(getLibrairies());
-    DockingArea dockingArea = getDockingArea();
-    dockingArea.addTab(VALIDATION_PANEL_NAME, new ValidationPanel());
+    validationPanel = new ValidationPanel();
+    validationPanel.setName(VALIDATION_PANEL_NAME);
+    Dockable dockable = DockingManager.registerDockable(
+        (JComponent) validationPanel, validationPanel.getName());
+    DockingManager
+        .dock(dockable, getMainPort(), DockingConstants.CENTER_REGION);
 
     JMenu menu = menuBar.getMenu(ExplorerMenuBar.HELP_MENU);
     ExplorerAboutAction aboutAction = new ExplorerAboutAction(this);

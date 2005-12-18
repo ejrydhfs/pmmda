@@ -19,12 +19,17 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import org.flexdock.docking.Dockable;
+import org.flexdock.docking.DockingConstants;
+import org.flexdock.docking.DockingManager;
+import org.flexdock.docking.DockingPort;
+import org.flexdock.docking.defaults.DefaultDockingPort;
+
 import ch.bbv.dog.AbstractVisitorFunctor;
 import ch.bbv.dog.DataObjectManager;
 import ch.bbv.dog.DataObjectType;
 import ch.bbv.dog.LightweightObject;
 import ch.bbv.explorer.ExplorerDocument.State;
-import ch.bbv.explorer.components.DockingArea;
 import ch.bbv.utilities.ReflectUtilities;
 
 /**
@@ -45,9 +50,9 @@ import ch.bbv.utilities.ReflectUtilities;
  * <li>The display method shows the explorer on the screen.</li>
  * </ol>
  * <p>
- * The right pane provide two panels. The top panel provides a detailed view of
+ * The right pane provide two panels. The top panel provides detailed views of
  * the selected node in the navigator. The bottom panel is a docking panel where
- * additional information view can be displayed.
+ * additional utilities views can be displayed.
  * </p>
  * @author Marcel Baumann
  * @version $Revision$
@@ -71,29 +76,36 @@ public abstract class Explorer {
   private JFrame frame;
 
   /**
-   * Swing component of the explorer view.
+   * Docking port for the explorer.
    */
-  private JSplitPane splitPane;
+  private DefaultDockingPort viewPort;
+
+  /**
+   * Docking port for the explorer.
+   */
+  private DefaultDockingPort navigationPort;
+
+  /**
+   * Docking port for the explorer.
+   */
+  private DefaultDockingPort utilitiesPort;
+
+  /**
+   * The split pane for the vertical seperation between navigation and the
+   * views.
+   */
+  private JSplitPane treeViewPane;
+
+  /**
+   * The split pane for the horizontal seperation between the views and the
+   * utilities.
+   */
+  private JSplitPane viewUtilitiesPane;
 
   /**
    * Swing component of the explorer view.
    */
-  private JScrollPane leftPane;
-
-  /**
-   * Swing component of the explorer view.
-   */
-  private JSplitPane rightPane;
-
-  /**
-   * Swing component of the explorer view.
-   */
-  private DockingArea topRightPane;
-
-  /**
-   * Swing component of the explorer view.
-   */
-  private DockingArea dockingArea;
+  private JScrollPane treePane;
 
   /**
    * Status bar of the explorer view.
@@ -115,6 +127,9 @@ public abstract class Explorer {
    */
   private DefaultTreeModel treeModel;
 
+  /**
+   * The selection listener for the explorer frame.
+   */
   private ExplorerViewTreeSelectionListener selectionListener;
 
   /**
@@ -145,6 +160,9 @@ public abstract class Explorer {
    * @version $Revision$
    */
   private static class GuiTask implements Runnable {
+    /**
+     * The explorer which runs in this thread.
+     */
     private Explorer explorer;
 
     /**
@@ -222,20 +240,28 @@ public abstract class Explorer {
     this.factory = factory;
     this.manager = manager;
     this.datasource = datasource;
+    // create the explorer docking structure
+    viewPort = new DefaultDockingPort();
+    navigationPort = new DefaultDockingPort();
+    utilitiesPort = new DefaultDockingPort();
+    viewUtilitiesPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, viewPort,
+        utilitiesPort);
+    viewUtilitiesPane.setDividerSize(5);
+    viewUtilitiesPane.setResizeWeight(0.8);
+    treeViewPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, navigationPort,
+        viewUtilitiesPane);
+    treeViewPane.setDividerSize(5);
+    treeViewPane.setResizeWeight(0.3);
+    treePane = new JScrollPane(tree);
+    Dockable tree = DockingManager.registerDockable(treePane, treePane
+        .getName());
+    navigationPort.dock(tree, DockingConstants.CENTER_REGION);
+
+    // create the status bar and construct the frame
     frame = new JFrame("Explorer");
-    leftPane = new JScrollPane(tree);
-    topRightPane = new DockingArea();
-    dockingArea = new DockingArea();
-    rightPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, topRightPane,
-        dockingArea);
-    rightPane.setDividerSize(5);
-    rightPane.setResizeWeight(0.8);
-    splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPane, rightPane);
-    splitPane.setDividerSize(5);
-    splitPane.setResizeWeight(0.3);
-    frame.getContentPane().add(BorderLayout.CENTER, splitPane);
+    frame.add(treeViewPane, BorderLayout.CENTER);
     statusBar = new StatusBar();
-    frame.getContentPane().add(BorderLayout.SOUTH, statusBar);
+    frame.add(statusBar, BorderLayout.SOUTH);
     frame.addWindowListener(new ExplorerWindowListener(this));
     selectionListener = new ExplorerViewTreeSelectionListener();
   }
@@ -281,12 +307,8 @@ public abstract class Explorer {
     frame.setTitle(title);
   }
 
-  /**
-   * Returns the docking area of the explorer.
-   * @return the docking area of the explorer.
-   */
-  public DockingArea getDockingArea() {
-    return dockingArea;
+  public DockingPort getMainPort() {
+    return viewPort;
   }
 
   /**
@@ -365,7 +387,6 @@ public abstract class Explorer {
     frame.setLocation(100, 100);
     frame.pack();
     frame.setSize(800, 600);
-    splitPane.setDividerLocation(-1);
     frame.setVisible(true);
   }
 
@@ -380,7 +401,7 @@ public abstract class Explorer {
     tree.setCellRenderer(new ExplorerTreeCellRenderer());
     tree.addTreeSelectionListener(selectionListener);
     tree.addMouseListener(new ExplorerMouseListener());
-    leftPane.setViewportView(tree);
+    treePane.setViewportView(tree);
   }
 
   /**
@@ -436,14 +457,6 @@ public abstract class Explorer {
   public void close() {
     frame.setVisible(false);
     frame.dispose();
-  }
-
-  /**
-   * Returns the top right pane of the explorer.
-   * @return the top right pane of the explorer.
-   */
-  protected DockingArea getTopRightPane() {
-    return topRightPane;
   }
 
   /**
@@ -513,11 +526,14 @@ public abstract class Explorer {
      * @param node node which data object should be displayed.
      */
     public void displayViews(ExplorerNode node) {
-      DockingArea area = getTopRightPane();
       views = getFactory().getNodeViews(node);
-      area.removeAll();
+      DefaultDockingPort centerPort = (DefaultDockingPort) getMainPort();
+      centerPort.removeAll();
       for (NodeView view : views) {
-        area.addTab(view.getName(), (JComponent) view);
+        Dockable dockable = DockingManager.registerDockable((JComponent) view,
+            view.getName());
+        DockingManager.dock(dockable, getMainPort(),
+            DockingConstants.CENTER_REGION);
       }
     }
   }

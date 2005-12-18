@@ -11,7 +11,6 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.util.*;
 
-import javax.swing.CellEditor;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -44,7 +43,7 @@ public class TaggedValuesView extends NodePropertiesView {
   /**
    * Map of specialized cell editors with the classes they edit.
    */
-  private static Map<Class, CellEditor> editors;
+  private static Map<Class, TableCellEditor> editors;
 
   /**
    * Cells defining the columns displayed in the tagged value list.
@@ -52,7 +51,7 @@ public class TaggedValuesView extends NodePropertiesView {
   private static final TableCell.Cell[] CELLS;
 
   static {
-    editors = new HashMap<Class, CellEditor>();
+    editors = new HashMap<Class, TableCellEditor>();
     ReferenceCodeComboBox comboBox = new ReferenceCodeComboBox(
         BooleanCode.class, BooleanCode.getCodes());
     comboBox.setCaseSensitive(false);
@@ -97,7 +96,8 @@ public class TaggedValuesView extends NodePropertiesView {
    */
   static TableCellEditor getEditor(Class clazz) {
     assert clazz != null;
-    return (TableCellEditor) editors.get(clazz);
+    TableCellEditor editor = editors.get(clazz);
+    return editor;
   }
 
   /**
@@ -157,6 +157,7 @@ public class TaggedValuesView extends NodePropertiesView {
     tablePanel.setModel(tags);
   }
 
+  @Override
   public void setViewEditable(boolean editable) {
     boolean[] editableColumns = { false, editable };
     tableCell.setEditableColumns(editableColumns);
@@ -210,11 +211,6 @@ public class TaggedValuesView extends NodePropertiesView {
     public TaggedValuesTable(TableModel model, TablePanel tablePanel) {
       super(model);
       this.tablePanel = tablePanel;
-      TableCellEditor tce = new FocusCellEditor(new JTextField());
-      for (Enumeration i = this.defaultEditorsByColumnClass.keys(); i
-          .hasMoreElements();) {
-        this.setDefaultEditor(i.nextElement().getClass(), tce);
-      }
     }
 
     /**
@@ -235,6 +231,7 @@ public class TaggedValuesView extends NodePropertiesView {
       if (editor == null) {
         editor = super.getCellEditor(row, column);
       }
+      editor.cancelCellEditing();
       return editor;
     }
 

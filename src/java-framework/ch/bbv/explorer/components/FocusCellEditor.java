@@ -12,7 +12,7 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.JTextField;
 
 /**
- * Customized Editor stopping editing in text field when focus is lost.
+ * Customized editor stopping editing in text field when focus is lost.
  * @author MarcelBaumann
  * @version $Revision$
  */
@@ -24,11 +24,14 @@ public class FocusCellEditor extends DefaultCellEditor {
 
   /**
    * Constructor of the class.
-   * @param textField text field which editor should be focus aware.
+   * @param field text field which editor should be focus aware.
    */
-  public FocusCellEditor(JTextField textField) {
-    super(textField);
-    textField.addFocusListener(new FocusListener(this));
+  public FocusCellEditor(JTextField field) {
+    super(field);
+    // setting the click count to start with 0 solved a editor refresh problem
+    // when an edited value is leaved with the dialog cancel button.
+    setClickCountToStart(0);
+    field.addFocusListener(new FocusListener(this));
   }
 
   /**
@@ -48,9 +51,7 @@ public class FocusCellEditor extends DefaultCellEditor {
       this.editor = editor;
     }
 
-    public void focusGained(FocusEvent e) {
-    }
-
+    @Override
     public void focusLost(FocusEvent e) {
       editor.stopCellEditing();
     }

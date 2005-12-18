@@ -119,7 +119,8 @@ public class MetaClassView extends NodePropertiesView {
   public void populateView() {
     MetaClass model = (MetaClass) getDataObject();
     if (this.isNewObject()) {
-      CartridgeFactory.getInstance().getItemFactory().initialize(model, MetaClass.class);
+      CartridgeFactory.getInstance().getItemFactory().initialize(model,
+          MetaClass.class);
     }
     nameText.setText(model.getName());
     stereotypeText.setText(model.getStereotype());
@@ -128,13 +129,8 @@ public class MetaClassView extends NodePropertiesView {
     interfaces.setSelected(model.isInterface());
     statics.setSelected(model.isStatic());
     finals.setSelected(model.isFinal());
-
     MetaElement context = model.getContext();
-    if (context != null) {
-      contextText.setText(context.qualifiedName());
-    } else {
-      contextText.setText(null);
-    }
+    contextText.setText(context != null ? context.qualifiedName() : null);
     descriptionText.setText(model.getDescription());
   }
 
@@ -146,13 +142,9 @@ public class MetaClassView extends NodePropertiesView {
       model.setName(text.trim());
     }
     text = descriptionText.getText();
-    if (text != null) {
-      model.setDescription(text.trim());
-    }
+    model.setDescription(text != null ? text.trim() : null);
     text = stereotypeText.getText();
-    if (text != null) {
-      model.setStereotype(text.trim());
-    }
+    model.setStereotype(text != null ? text.trim() : null);
 
     model.setVisibility((VisibilityCode) visibility.getSelectedCode());
     model.setAbstract(abstracts.isSelected());

@@ -5,6 +5,7 @@
  */
 package ch.bbv.pim.formats;
 
+import java.beans.PropertyVetoException;
 import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -193,7 +194,11 @@ public abstract class ContactParser {
         organization.setName(name);
         book.addOrganization(organization);
       }
-      organization.addContact(contact);
+      try {
+        organization.addContact(contact);
+      } catch (PropertyVetoException e) {
+        log.error("Programming error", e);
+      }
     }
   }
 

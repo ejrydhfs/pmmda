@@ -68,10 +68,8 @@
           <li>
             Define a JDK installation named
             <em>jdk1.5</em>
-            and another named
-            <em>jdk1.4</em>
             in Eclipse (Windows/Preferences/Java/Installed JRE) and mapped them
-            to your local installation of JDK 1.4.x and JDK 1.5.x.
+            to your local installation of JDK 1.5.x.
           </li>
           <li>
             Define a classpath variable named

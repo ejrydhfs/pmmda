@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry excluding="**/*CVS*.*" kind="src" path="properties"/>
-	<classpathentry including="**/*.java;**/*.properties" excluding="**/*.html" kind="src" path="examples/pim/src/java"/>
 	<classpathentry kind="src" path="examples/pim/src/resources"/>
+	<classpathentry excluding="**/*.html" kind="src" path="examples/pim/src/java"/>
 	<classpathentry excluding="**/Entries|**/Repository|**/Root" kind="src" path="src/etc/properties/unmanaged"/>
 	<classpathentry including="**/*.java|**/*.properties" excluding="**/*.html" kind="src" path="gendir/rich-client"/>
 	<classpathentry including="**/*.java|**/*.properties" excluding="**/*.html" kind="src" path="test-java/unit-tests"/>
@@ -58,5 +58,6 @@
 	<classpathentry kind="var" path="JDK_TOOLS"/>
 	<classpathentry kind="lib" path="lib/commons-codec-1.3.jar"/>
 	<classpathentry kind="lib" path="lib/jdom-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/flexdock-0.4.0.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>

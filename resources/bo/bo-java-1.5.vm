@@ -200,11 +200,12 @@ $line
 
 #if (!${hasAncestors})
   /** 
-   * Returns the unique identifier of the data object instance.
+   * Returns the unique identifier of the data object instance. A new object has
+   * the value null.
    * @return the identifier of the instance.
    * @see ${sign}setId(Integer)
    */
-  public Integer getId() {
+  public final Integer getId() {
     return id;
   }
   
@@ -213,7 +214,7 @@ $line
    * @param id new identifier of the instance.
    * @see ${sign}getId()
    */
-  public void setId(Integer id) {
+  public final void setId(Integer id) {
     this.id = id;
   }
 
@@ -222,7 +223,7 @@ $line
    * @return true if the object was modified otherwise false.
    * @see ${sign}setModified
    */
-  public boolean isModified() {
+  public final boolean isModified() {
     return modified;
   }
   
@@ -231,15 +232,16 @@ $line
    * @param modified new value of the flag.
    * @see ${sign}isModified
    */
-  public void setModified(boolean modified) {
+  public final void setModified(boolean modified) {
     this.modified = modified;
   }
   
   /** 
    * Convenience method indicating if the instance is a new one or not.
    * @return true if the object is new otherwise false.
+   * @see ${sign}getId()
    */
-  public boolean isNew()  {
+  public final boolean isNew()  {
     return (getId() == null);
   }
   
@@ -248,7 +250,7 @@ $line
    * @return the timestamp of the last persistent modification.
    * @see ${sign}setTimestamp(Timestamp)
    */
-  public Timestamp getTimestamp() {
+  public final Timestamp getTimestamp() {
     return timestamp;
   }
   
@@ -257,7 +259,7 @@ $line
    * @param timestamp timestamp of the instance.
    * @see ${sign}getTimestamp()
    */
-   public void setTimestamp(Timestamp timestamp) {
+   public final void setTimestamp(Timestamp timestamp) {
      this.timestamp = timestamp;
    }
 #end
@@ -303,7 +305,7 @@ $line
 #else
   ${visibility} void ${setter}(${datatype} ${lName}) {
 #end
-#if(${vetoable} || ${changeable})
+#if(${vetoable} || ${changeable} || ${owner})
     ${datatype} old${uName} = this.${lName};
 #end
 #if(${cartridge.isTypePrimitive($property)})
@@ -351,9 +353,17 @@ $line
 #end
       } catch (PropertyVetoException e) {
         this.${lName} = old${uName};
+#if($owner)
+        if (element != null) {
+	      element.set${owner}(null);
+	    }
+        if (this.${lName} != null) {
+          this.${lName}.set${owner}(this);
+        }
+#end        
         throw e;
       }
-#elseif (${changeable})
+#elseif(${changeable})
       changeSupport.firePropertyChange("${lName}", old${uName}, ${lName});
 #end
       setModified(true);
@@ -450,7 +460,7 @@ $line
    * @param index index of element to return. 
    * @return the element at the specified position in this list.
 #if(${aggregation.canBeWritten()})
-   * @see ${sign}set${usName}(int, ${itemType})
+   * @see ${sign}add${usName}(int, ${itemType})
 #end   
    * @see java.util.List${sign}get(int)
    */
@@ -461,6 +471,8 @@ $line
 #end
 #if(${aggregation.canBeWritten()})
 #getOwner($aggregation $owner)	
+#set($vetoable=${aggregation.booleanValueOfTag("bo-veto-event")})
+#set($changeable=${aggregation.booleanValueOfTag("bo-change-event")})
 #if(${cartridge.isOrdered(${aggregation})})
 
   /** 
@@ -468,34 +480,80 @@ $line
    * property ${lName}.
    * @param key key at which the specified element is to be inserted.
    * @param value value to be inserted.
+#if(${vetoable})
+   * @throws PropertyVetoException if a listener refuses the published change.
+#end
 #if(${aggregation.canBeRead()})
    * @see ${sign}get${usName}(${keyType})
 #end   
    */
+#if(${vetoable})
+  ${visibility} void set${usName}(${keyType} key, ${itemType} value) throws PropertyVetoException {
+#else
   ${visibility} void set${usName}(${keyType} key, ${itemType} value) {
-    setModified(true);
+#end  
+#if(${changeable} || ${vetoable} || ${owner})
+    ${itemType} item = ${lName}.get(key);
+#if($owner)
+    if (item != null) {
+      item.set${owner}(null);
+    }
+#end
+#end
     ${lName}.put(key, value);
 #if($owner)
     if (value != null) {
       value.set${owner}(this);
     }
 #end
+#if($vetoable)
+    try {
+	  vetoSupport.fireVetoableChange("${lName}", old${uName}, ${lName});
+#if (${changeable})
+      changeSupport.firePropertyChange("${lName}", old${uName}, ${lName});
+#end
+    } catch (PropertyVetoException e) {
+      this.${lName} = old${uName};
+#if($owner)
+      if (element != null) {
+	    element.set${owner}(null);
+	  }
+      if (this.${lName} != null) {
+        this.${lName}.set${owner}(this);
+      }
+#end        
+#elseif($changeable)
+    changeSupport.firePropertyChange("${lName}", item, element);    
+#end	
+	setModified(true);
   }
   
   /** 
    * Removes the element with the specified key.
-   * @param key key whose mappingis to be removed from the map. 
-   * @return true if this list contained the specified element. 
+   * @param key key whose value should be removed from the map. 
+   * @return the removed object if found otherwise null. 
+#if(${vetoable})
+   * @throws PropertyVetoException if a listener refuses the published change.
+#end
    * @see java.util.Map${sign}remove(Object)
    */
+#if(${vetoable})
+  ${visibility} ${itemType} remove${usName}(${keyType} key) throws PropertyVetoException {
+#else
   ${visibility} ${itemType} remove${usName}(${keyType} key) {
-    setModified(true);
+#end
+	setModified(true);
+#if(${changeable} || ${vetoable} || ${owner})
+    ${itemType} item = ${lName}.remove(key);
 #if($owner)
-    ${itemType} object = ${lName}.remove(key);
-    if (object != null) {
-      object.set${owner}(null);
+    if (item != null) {
+      item.set${owner}(null);
     }
-    return object;
+#end
+#if($changeable)
+    changeSupport.firePropertyChange("${lName}", item, null);    
+#end	
+	return item;
 #else
     return ${lName}.remove(key);
 #end
@@ -532,26 +590,47 @@ $line
    * Inserts the given child at the select position in the relation ${lName}.
    * @param index index at which the specified element is to be inserted.
    * @param element element to be inserted.
+#if(${vetoable})
+   * @throws PropertyVetoException if a listener refuses the published change.
+#end
 #if(${aggregation.canBeRead()})
    * @see ${sign}get${usName}(int)
 #end   
    * @see java.util.List${sign}add(int, Object)
    */
-  ${visibility} void set${usName}(int index, ${itemType} element) {
-    setModified(true);
-#if($isPersistentAggregation)
-    setForeignKey(element, "${keyName}", getId());
+#if(${vetoable})
+  ${visibility} void add${usName}(int index, ${itemType} element) throws PropertyVetoException {
+#else
+  ${visibility} void add${usName}(int index, ${itemType} element) {
 #end
+    ${lName}.add(index, element);
 #if($owner)
-    ${itemType} item = ${lName}.get(index);
-    if (item != null) {
-      item.set${owner}(null);
-    }
     if (element != null) {
       element.set${owner}(this);
     }
+#end	
+#if(${vetoable})
+    try {
+      vetoSupport.fireVetoableChange("${lName}", null, element);
+#if (${changeable})
+      changeSupport.fireIndexedPropertyChange("${lName}", index, null, element);
 #end
-    ${lName}.add(index, element);
+    } catch (PropertyVetoException e) {
+      ${lName}.remove(index);
+#if(${owner})
+      if (element != null) {
+        element.set${owner}(null);
+      }
+#end        
+      throw e;
+    }
+#elseif (${changeable})
+    changeSupport.fireIndexedPropertyChange("${lName}", index, null, element);
+#end
+    setModified(true);
+#if(${isPersistentAggregation})
+    setForeignKey(element, "${keyName}", getId());
+#end
   }
 
   /** 
@@ -559,18 +638,47 @@ $line
    * ${lName}.
    * @param element to be appended to this list.
    * @return true (as per the general contract of the Collection.add method).   
+#if(${vetoable})
+   * @throws PropertyVetoException if a listener refuses the published change.
+#end
    * @see java.util.List${sign}add(Object)
    * @pre element != null
    */
+#if(${vetoable})
+  ${visibility} boolean add${usName}(${itemType} element) throws PropertyVetoException {
+#else
   ${visibility} boolean add${usName}(${itemType} element) {
-    setModified(true);
-#if($isPersistentAggregation)
-    setForeignKey(element, "${keyName}", getId());
 #end
-#if($owner)
+#if (${changeable} || ${vetoable} || ${owner})
     boolean result = ${lName}.add(element);
-    if (result) {
-      element.set${owner}(this);
+    if (result) {	
+#if(${owner})
+      if (result) {
+        element.set${owner}(this);
+      }
+#end	
+#if(${vetoable})
+      try {
+        vetoSupport.fireVetoableChange("${lName}", null, element);
+#if (${changeable})
+        changeSupport.firePropertyChange("${lName}", null, element);
+#end
+      } catch (PropertyVetoException e) {
+        ${lName}.remove(element);
+#if(${owner})
+        if (element != null) {
+          element.set${owner}(null);
+        }
+#end        
+        throw e;
+      }
+#elseif (${changeable})
+      changeSupport.firePropertyChange("${lName}", null, element);
+#end
+      setModified(true);
+#if(${isPersistentAggregation})
+      setForeignKey(element, "${keyName}", getId());
+#end
     }
     return result;
 #else
@@ -579,25 +687,50 @@ $line
   }
   
   /** 
-   * Removes the first occurrence in this list of the specified element 
-   * If this list does not contain the element, it is unchanged. More formally, 
+   * Removes the first occurrence in this list of the specified element. If 
+   * the list does not contain the element, it is unchanged. More formally, 
    * removes the element with the lowest index i such that 
    * (o==null ? get(i)==null : o.equals(get(i))) (if such an element exists). 
    * @param element element to be removed from this list, if present. 
    * @return true if this list contained the specified element. 
+#if(${vetoable})
+   * @throws PropertyVetoException if a listener refuses the published change.
+#end
    * @see java.util.List${sign}remove(Object)
    */
+#if(${vetoable})
+  ${visibility} boolean remove${usName}(${itemType} element) throws PropertyVetoException {
+#else
   ${visibility} boolean remove${usName}(${itemType} element) {
+#end
     boolean removed = ${lName}.remove(element);
     if (removed) {
-      setModified(true);
-#if($isPersistentAggregation)
-      setForeignKey(element, "${keyName}", getId());
-#end
 #if($owner)
       if (element != null) {
         element.set${owner}(null);
       }
+#end
+#if($vetoable)
+      try {
+        vetoSupport.fireVetoableChange("${lName}", element, null);
+#if (${changeable})
+        changeSupport.firePropertyChange("${lName}", element, null);
+#end
+      } catch (PropertyVetoException e) {
+        ${lName}.add(element);
+#if($owner)
+        if (element != null) {
+          element.set${owner}(this);
+        }
+#end        
+        throw e;
+      }
+#elseif (${changeable})
+      changeSupport.fireIndexedPropertyChange("${lName}", -1, element, null);
+#end
+      setModified(true);
+#if($isPersistentAggregation)
+      setForeignKey(element, "${keyName}", null);
 #end
     }
     return removed;
@@ -725,7 +858,7 @@ $line
    * @param key key identifier to set.
    * @pre (bean != null) && (property != null) && (key != null)
    */
-  final protected void setForeignKey(DataObject bean, String property,
+   protected final void setForeignKey(DataObject bean, String property,
       Integer key) {
     assert((bean != null) && (property != null));
     try {

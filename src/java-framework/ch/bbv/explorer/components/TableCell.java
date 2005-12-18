@@ -142,7 +142,8 @@ public class TableCell implements TableFormat, WritableTableFormat,
    */
   public static Cell[] create(String[] properties, String[] columns,
       Class[] types, boolean[] editables) {
-    assert ((properties != null) && (columns != null) && (properties.length == columns.length));
+    assert (properties != null) && (columns != null)
+        && (properties.length == columns.length);
     Cell[] cells = new Cell[properties.length];
     for (int i = 0; i < cells.length; i++) {
       cells[i] = new Cell(properties[i], columns[i], types[i], editables[i]);
@@ -187,7 +188,7 @@ public class TableCell implements TableFormat, WritableTableFormat,
    * @pre (editables == null) || (editables.length == cells.length)
    */
   public void setEditableColumns(boolean[] editables) {
-    assert ((editables == null) || (editables.length == cells.length));
+    assert (editables == null) || (editables.length == cells.length);
     for (int i = 0; i < cells.length; i++) {
       cells[i].editable = editables[i];
     }
@@ -208,7 +209,7 @@ public class TableCell implements TableFormat, WritableTableFormat,
    * @pre (0 <= column) && (column <= cells.length)
    */
   public String getColumnName(int column) {
-    assert ((0 <= column) && (column <= cells.length));
+    assert (0 <= column) && (column <= cells.length);
     return cells[column].column;
   }
 
@@ -220,7 +221,7 @@ public class TableCell implements TableFormat, WritableTableFormat,
    * @pre (0 <= column) && (column <= cells.length)
    */
   public boolean isEditable(Object object, int column) {
-    assert ((0 <= column) && (column <= cells.length));
+    assert (0 <= column) && (column <= cells.length);
     return cells[column].editable;
   }
 
@@ -233,7 +234,7 @@ public class TableCell implements TableFormat, WritableTableFormat,
    * @see #setColumnValue(Object, Object, int)
    */
   public Object getColumnValue(Object bean, int column) {
-    assert ((0 <= column) && (column <= cells.length) && (bean != null));
+    assert (0 <= column) && (column <= cells.length) && (bean != null);
     Object value = null;
     try {
       return PropertyUtils.getProperty(bean, cells[column].property);
@@ -258,8 +259,7 @@ public class TableCell implements TableFormat, WritableTableFormat,
    * @see #getColumnValue(Object, int)
    */
   public Object setColumnValue(Object bean, Object value, int column) {
-    assert ((0 <= column) && (column <= cells.length) && (bean != null));
-
+    assert (0 <= column) && (column <= cells.length) && (bean != null);
     try {
       PropertyUtils.setProperty(bean, cells[column].property, value);
       return bean;
