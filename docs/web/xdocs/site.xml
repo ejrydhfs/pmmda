@@ -97,17 +97,22 @@
       <commons href="commons/" />
       <commons-beanutils href="commons/beanutils/" />
       <commons-cli href="commons/cli/" />
+      <commons-codec href="commons/codec/" />
       <commons-collections href="commons/collections/" />
       <commons-configuration href="commons/configuration/" />
       <commons-dbcp href="commons/dbcp/" />
       <commons-digester href="commons/digester/" />
       <commons-lang href="commons/lang/" />
       <commons-logging href="commons/logging/" />
+      <commons-math href="commons/math/" />
       <commons-pool href="commons/pool/" />
+      <commons-resources href="commons/resources/" />
       <velocity href="velocity/" />
     </jakarta>
     <forrest href="http://forrest.apache.org/" />
     <omg href="http://www.omg.org" />
     <argoUML href="http://argouml.tigris.org" />
+    <java href="http://java.sun.com" />
+    <ant href="http://ant.apache.org" />
   </external-refs>
 </site>

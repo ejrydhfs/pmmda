@@ -67,7 +67,7 @@ public abstract class MetaMember extends MetaElement {
   public MetaClassifier getClassifier() {
     return retrieveClassifier();
   }
-  
+
   /**
    * Sets the classifier of the member.
    * @param classifier new classifier of the member.
@@ -77,6 +77,7 @@ public abstract class MetaMember extends MetaElement {
     this.classifier = classifier;
     typeName = null;
   }
+
   /**
    * Returns the flag indicating if the member is static or not.
    * @return value of the static flag.
@@ -121,6 +122,12 @@ public abstract class MetaMember extends MetaElement {
     return ModelOperators.getComponentName(getTypeName());
   }
 
+  /**
+   * Returns the classifier instance of the member. The algorithm first looks at
+   * the datatypes and if not found at the classes.
+   * @return the classifier associated with the typename of the member if found
+   *         otherwise null.
+   */
   public MetaClassifier retrieveClassifier() {
     if (classifier == null) {
       MetaModel model = getModel();

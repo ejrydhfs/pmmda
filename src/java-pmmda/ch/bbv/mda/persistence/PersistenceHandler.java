@@ -26,7 +26,7 @@ public interface PersistenceHandler {
    * @param file file containing the MDA model to extract.
    * @return the read meta model graph.
    * @throws PersistenceException A input/output error occured. The exception
-   *         contains the original thrown exception.
+   *           contains the original thrown exception.
    */
   MetaModel readModel(File file) throws PersistenceException;
 
@@ -34,9 +34,9 @@ public interface PersistenceHandler {
    * Writes a model to a file. The previous content of the file is discarded.
    * @param model mode to persist in the file.
    * @param file file which should contain the persistent representation of the
-   *        model.
+   *          model.
    * @throws PersistenceException A input/output error occured. The exception
-   *         contains the original thrown exception.
+   *           contains the original thrown exception.
    */
   void writeModel(MetaModel model, File file) throws PersistenceException;
 
@@ -45,7 +45,7 @@ public interface PersistenceHandler {
    * @param model meta model used to update the UML model stored in the file.
    * @param file file containing the model to update.
    * @throws PersistenceException A input/output error occured. The exception
-   *         contains the original thrown exception.
+   *           contains the original thrown exception.
    */
   void updateModel(MetaModel model, File file) throws PersistenceException;
 }

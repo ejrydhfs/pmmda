@@ -253,6 +253,7 @@ public abstract class Explorer {
     treeViewPane.setDividerSize(5);
     treeViewPane.setResizeWeight(0.3);
     treePane = new JScrollPane(tree);
+    treePane.setName("Tree");
     Dockable tree = DockingManager.registerDockable(treePane, treePane
         .getName());
     navigationPort.dock(tree, DockingConstants.CENTER_REGION);
@@ -307,8 +308,28 @@ public abstract class Explorer {
     frame.setTitle(title);
   }
 
+  /**
+   * Returns the main port in the docking framework defined for the explorer.
+   * @return the requested docking port.
+   */
   public DockingPort getMainPort() {
     return viewPort;
+  }
+
+  /**
+   * Returns the navigation port in the docking framework defined for the explorer.
+   * @return the requested docking port.
+   */
+  public DockingPort getNavigationPort() {
+    return navigationPort;
+  }
+
+  /**
+   * Returns the utilities port in the docking framework defined for the explorer.
+   * @return the requested docking port.
+   */
+  public DockingPort getUtilitiesPort() {
+    return utilitiesPort;
   }
 
   /**
@@ -496,7 +517,10 @@ public abstract class Explorer {
       TreeSelectionListener {
     private ExplorerNode currentNode;
 
-    List<NodeView> views;
+    /**
+     * The views currently displayed for the selected node.
+     */
+    private List<NodeView> views;
 
     /**
      * Reacts on a tree selection event. Each time a node is selected its
@@ -526,10 +550,14 @@ public abstract class Explorer {
      * @param node node which data object should be displayed.
      */
     public void displayViews(ExplorerNode node) {
-      views = getFactory().getNodeViews(node);
-      DefaultDockingPort centerPort = (DefaultDockingPort) getMainPort();
-      centerPort.removeAll();
-      for (NodeView view : views) {
+      List<NodeView> newViews = getFactory().getNodeViews(node);
+      if ((views != null) && !views.containsAll(newViews)) {
+        for (NodeView view : views) {
+          DockingManager.undock((JComponent) view);
+        }
+      }
+      views = newViews;
+      for (NodeView view : newViews) {
         Dockable dockable = DockingManager.registerDockable((JComponent) view,
             view.getName());
         DockingManager.dock(dockable, getMainPort(),

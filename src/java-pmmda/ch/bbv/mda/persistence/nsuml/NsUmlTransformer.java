@@ -40,16 +40,16 @@ import ch.bbv.mda.*;
  */
 public class NsUmlTransformer {
   /**
+   * Encoding rule of the XML file containing the XMI data.
+   */
+  public static final String XML_ENCODING = "UTF-8";
+
+  /**
    * UML modeling tool using NSUML library stores the documentation of an item
    * in a tagged value named documentation. This tag is the standard one defined
    * in the UML 1.4 notation.
    */
   public static final String DOCUMENTATION_TAG = "documentation";
-
-  /**
-   * Encoding rule of the XML file containing the XMI data.
-   */
-  public static final String XML_ENCODING = "UTF-8";
 
   /**
    * Logger of the class.
@@ -117,7 +117,7 @@ public class NsUmlTransformer {
   public void writeArgoModel(MModel mModel, File file)
       throws FileNotFoundException, IOException, IncompleteXMIException {
     Writer writer = new BufferedWriter(new OutputStreamWriter(
-        new FileOutputStream(file), XML_ENCODING));
+        new FileOutputStream(file), "UTF-8"));
     XMIWriter xmiWriter = new XMIWriter(mModel, writer);
     xmiWriter.gen();
     xmiWriter.close();

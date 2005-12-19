@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.prefs.Preferences;
 
-import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
@@ -51,8 +50,14 @@ import ch.bbv.utilities.ResourceUtility;
  */
 public class MdaExplorer extends Explorer {
 
+  /**
+   * key to infer the set of project lately opened.
+   */
   public static final String PREFERENCES_OPENED_PROJECT = "mda.opened-project";
 
+  /**
+   * The name of the validation panel.
+   */
   public static final String VALIDATION_PANEL_NAME = "Validator";
 
   /**
@@ -176,10 +181,10 @@ public class MdaExplorer extends Explorer {
     projectInfo.setLibraries(getLibrairies());
     validationPanel = new ValidationPanel();
     validationPanel.setName(VALIDATION_PANEL_NAME);
-    Dockable dockable = DockingManager.registerDockable(
-        (JComponent) validationPanel, validationPanel.getName());
-    DockingManager
-        .dock(dockable, getMainPort(), DockingConstants.CENTER_REGION);
+    Dockable dockable = DockingManager.registerDockable(validationPanel,
+        validationPanel.getName());
+    DockingManager.dock(dockable, getUtilitiesPort(),
+        DockingConstants.CENTER_REGION);
 
     JMenu menu = menuBar.getMenu(ExplorerMenuBar.HELP_MENU);
     ExplorerAboutAction aboutAction = new ExplorerAboutAction(this);

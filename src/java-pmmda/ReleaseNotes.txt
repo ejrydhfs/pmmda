@@ -15,11 +15,6 @@ TODO
   classname, prefix, loaded, active, dependants
 - Have a self contained jar file running with java -jar pmMDA
 
-The following errors and change requests are closed 
-  Errors: 1271421, 1271409
-  CR: 1305596
-  (see Sourceforge site RFE and Tracker for detailed description)
-
 Version 0.3.0-RC2 (30 November 2005)
 ------------------------------------
 The following new features were added.
@@ -49,8 +44,8 @@ The following errors were corrected.
 - Typos were corrected in the validation messages.
 
 The following errors and change requests are closed 
-  Errors: 127412, 1271409
-  CR: 1305596
+  Errors: 1271421, 1271409, 1380522, 1379485, 1376242, 1285910 
+  CR: 1305596, 1382323
   (see Sourceforge site RFE and Tracker for detailed description)
   
 Version 0.3.0-RC1 (15 September 2005)

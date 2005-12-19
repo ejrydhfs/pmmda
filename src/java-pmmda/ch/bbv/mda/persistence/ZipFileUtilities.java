@@ -11,6 +11,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import org.xml.sax.InputSource;
+
 import ch.bbv.utilities.SystemUtilities;
 
 /**
@@ -38,8 +40,8 @@ public class ZipFileUtilities {
    * @param stream new content of the entry to update.
    * @throws PersistenceException an I/O error occurred during processing.
    */
-  public void replaceEntry(File file, String entryName, InputStream stream)
-      throws PersistenceException {
+  public static void replaceEntry(File file, String entryName,
+      InputStream stream) throws PersistenceException {
     try {
       File temporaryFile = File.createTempFile("pmMDA_zargo", ".zargo");
       temporaryFile.deleteOnExit();

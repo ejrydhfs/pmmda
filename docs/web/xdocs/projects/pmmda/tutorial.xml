@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   Copyright 2000-2005 The Apache Software Foundation
-
+  
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-
-      http://www.apache.org/licenses/LICENSE-2.0
-
+  
+  http://www.apache.org/licenses/LICENSE-2.0
+  
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,123 +21,316 @@
     <title>pmMDA Tutorials</title>
   </header>
   <body>
-    <section>
+    <section id="minutes2">
       <title>Two Minutes Tutorial</title>
-      <section>
+      <section id="installPmMda">
         <title>Install pmMDA</title>
-        <p>The binary distribution of <em>pmMDA</em> is delivered as a 
-          compressed file. Unzip the file at your preferred location. ZIP files 
-          can be opened using various open source tools. All required libraries 
-          are contained in the archive file. The installation does not need any 
-          additional steps. No environment variables or registry modifications 
-          are required. Here the steps in details.</p>
+        <p>
+          The binary distribution of
+          <em>pmMDA</em>
+          is delivered as a compressed file. Unzip the file at your preferred
+          location. ZIP files can be opened using various open source tools. All
+          required libraries are contained in the archive file. The installation
+          does not need any additional steps. No environment variables or
+          registry modifications are required. Here the steps in details.
+        </p>
         <ol>
-          <li>Download the <em>pmMDA</em> distribution. The file has a name 
-            with the structure <em>pmMDA-&lt;version&gt;.tar.gz</em>. Follow 
-            the download link of this site to the location of the 
-            distribution <a href="site:pmmda">pmMDA</a>.</li>
-          <li>Extract the distribution and store the files into a directory. To 
-            extract the files you can use free tools such as <em>7-zip</em> or 
-            <em>winzip</em>. No need to modify startup scripts or set environment
-            variables.</li>
-          <li>In the directory where you stored the file you will find a batch 
-            file to start the application. Simply execute the 
-            <em>pmMDA.bat</em> batch file by double clicking it under 
-            Windows operating system.</li>
+          <li>
+            Download the
+            <em>pmMDA</em>
+            distribution. The file has a name with the structure
+            <em>pmMDA-&lt;version&gt;.tar.gz</em>
+            . Follow the download link of this site to the location of the
+            distribution
+            <a href="site:pmmda">pmMDA</a>
+            .
+          </li>
+          <li>
+            Extract the distribution and store the files into a directory. To
+            extract the files you can use free tools such as
+            <em>7-zip</em>
+            or
+            <em>winzip</em>
+            . No need to modify startup scripts or set environment variables.
+          </li>
+          <li>
+            In the directory where you stored the file you will find a batch
+            file to start the application. Simply execute the
+            <em>pmMDA.bat</em>
+            batch file by double clicking it under Windows operating system.
+          </li>
         </ol>
-        <p>If you want to uninstall <em>pmMDA</em> distribution simply delete 
-          the directory containing the files. The installation process does not 
-          insert any data in the registry or in system directories.</p>
-        <note>You must have an installed <em>Java Runtime Environment JRE 
-          1.5</em> or <em>Java Development Environment JDK 1.5</em> to run the 
-          <em>pmMDA</em> application. The JRE can be downloaded from <a 
-          href="http://java.sun.com">Java Sun home page</a>.</note>
+        <p>
+          If you want to uninstall
+          <em>pmMDA</em>
+          distribution simply delete the directory containing the files. The
+          installation process does not insert any data in the registry or in
+          system directories.
+        </p>
+        <note>
+          You must have an installed
+          <em>Java Runtime Environment JRE 1.5</em>
+          or
+          <em>Java Development Environment JDK 1.5</em>
+          to run the
+          <em>pmMDA</em>
+          application. The JRE can be downloaded from
+          <a href="ext:java">Java Sun home page</a>
+          .
+        </note>
       </section>
-      <section>
+      <section id="runPmMda">
         <title>Run pmMDA</title>
-        <p>The script file <em>pmMDA.bat</em> starts the application. The user 
-          interface allows the user to open an existing model and edit it.</p>
-        <p>The example part of the <em>pmMDA</em> distribution provides a 
-          model. Select the open menu item in the files menu and open the file 
-          <code>work/example/model/test-model.zargo</code>.</p>
-        <p>You can use the context menus to modify the model and set values for 
-          tagged values.</p>
-        <note>You must have an installed <em>Java Runtime Environment JRE 
-          1.5</em> or <em>Java Development Environment JDK 1.5</em>.</note>
+        <p>
+          The script file
+          <em>pmMDA.bat</em>
+          starts the application. The user interface allows the user to open an
+          existing model and edit it.
+        </p>
+        <p>
+          The example part of the
+          <em>pmMDA</em>
+          distribution provides a model. Select the open menu item in the files
+          menu and open the file
+          <code>work/example/model/test-model.zargo</code>
+          .
+        </p>
+        <p>
+          You can use the context menus to modify the model and set values for
+          tagged values. Once you are satisfied with the changes generate new
+          code artifacts using the supplied code generator cartridges. The
+          global menu entry
+          <code>generate</code>
+          contains the entries to call the generation routines of any configured
+          cartridge.
+        </p>
+        <note>
+          You must have an installed
+          <em>Java Runtime Environment JRE 1.5</em>
+          or
+          <em>Java Development Environment JDK 1.5</em>
+          . You can download the environment form
+          <a href="ext:java">Java Sun home page</a>
+          . Define the
+          <em>JAVA_HOME</em>
+          environment variable and add the location of the java executable to
+          your path. The environment document describes how to perform these
+          tasks for the operation system you are using.
+        </note>
       </section>
-      <section>
-        <title>Generate Code</title>
-        <p>Select the the menu item <em>Generate/Generate All</em>. The logging 
-          information shows the progress of the artifacts generation.</p>
+      <section id="generateTests">
+        <title>Generate Tests Code Artifacts</title>
+        <p>
+          Select the the menu item
+          <em>Generate/Generate All</em>
+          . The logging information shows the progress of the artifacts
+          generation.
+        </p>
       </section>
-      <section>
-        <title>Compile Artifacts</title>
-        <p>Ant scripts to compile the artifacts are provided with the example 
-          under <code>work/example/build-examples.xml</code>. To compile the 
-          examples the following targets are provided.</p>
+      <section id="compileTests">
+        <title>Compile Tests Artifacts</title>
+        <p>
+          Ant scripts to compile the artifacts are provided with the example
+          under
+          <code>work/example/build-examples.xml</code>
+          . To compile the examples the following targets are provided.
+        </p>
         <dl>
           <dt>build-rich-client-tests</dt>
-          <dd>builds the 2-tiers client using the explorer framework and 
+          <dd>
+            builds the 2-tiers client using the explorer framework and
             connecting to the database. The client connects to the database
-            through the O/R mapping tools.</dd>
+            through the O/R mapping tools.
+          </dd>
           <dt>build-corba-tests</dt>
-          <dd>builds the 3-tiers CORBA application with a CORBA server and a 
-            CORBA client. The client uses the explorer framework. The server
-            connects to the database through the O/R mapping tools.</dd>
+          <dd>
+            builds the 3-tiers CORBA application with a CORBA server and a CORBA
+            client. The client uses the explorer framework. The server connects
+            to the database through the O/R mapping tools.
+          </dd>
           <dt>build-jboss-tests</dt>
-          <dd>builds the 3-tiers J2EE application with a J2EE JBoss server and 
-            a J2EE client. The client uses the explorer framework. The J2EE 
-            server conects to the database through the O/R mapping tools.</dd>
+          <dd>
+            builds the 3-tiers J2EE application with a J2EE JBoss server and a
+            J2EE client. The client uses the explorer framework. The J2EE server
+            conects to the database through the O/R mapping tools.
+          </dd>
         </dl>
-        <p>The ant script is called on the command line <code>ant -f 
-          build-examples.xml &lt;target&gt;</code> where the target is one of 
-          the above mentioned ones. You must have installed JDK1.5 and ant. The 
-          environment variables <code>JAVA_HOME</code> and 
-          <code>ANT_HOME</code> must be defined.</p>
-        <note>You must have an installed <em>Java Development Environment 
-          JDK 1.5</em> to compile the examples.</note>
-        <note>You must install <em>Ant 1.6</em> or higher to run the 
-          compilation scripts.</note>
+        <p>
+          The ant script is called on the command line
+          <code>ant -f build-examples.xml &lt;target&gt;</code>
+          where the target is one of the above mentioned ones. You must have
+          installed JDK1.5 and ant. The environment variables
+          <code>JAVA_HOME</code>
+          and
+          <code>ANT_HOME</code>
+          must be defined.
+        </p>
+        <note>
+          You must have an installed
+          <em>Java Development Environment JDK 1.5</em>
+          to compile the examples.
+        </note>
+        <note>
+          You must install
+          <em>Ant 1.6</em>
+          or higher to run the compilation scripts. You can download the
+          application form
+          <a href="ext:ant">Apache Ant home page</a>
+          .
+        </note>
+      </section>
+      <section id="runExamples">
+        <title>Run Examples</title>
+        <p>
+          Scripts are provided to run the examples. The provided scripts allow
+          you to run the examples in the following modes.
+        </p>
+        <ul>
+          <li>
+            Rich client scripts to run the 2-tiers application.
+            <dl>
+              <dt>test-rich-client</dt>
+              <dd>
+                starts the 2-tiers rich client explorer application and the
+                connection to the database.
+              </dd>
+            </dl>
+          </li>
+          <li>
+            CORBA application scripts to run the 3-tiers CORBA application. The
+            order of the scripts is the one of the list.
+            <dl>
+              <dt>orb-start</dt>
+              <dd>starts the CORBA ORB broker.</dd>
+              <dt>test-corba-server</dt>
+              <dd>
+                starts the CORBA server which implements the business logic and
+                the database connection.
+              </dd>
+              <dt>test-corba-client</dt>
+              <dd>
+                starts the CORBA client with the rich client explorer user
+                interface.
+              </dd>
+            </dl>
+          </li>
+          <li>
+            J2EE application scripts to run the 3-tiers J2EE application.
+            <dl>
+              <dt>
+                <em>J2EE server EJB</em>
+              </dt>
+              <dd>
+                No script file exists. The entreprise beans are generated in the
+                <em>deploy</em>
+                directory and copied to the deployment directory of
+                <em>JBoss</em>
+                server. The beans are copied when the artifacts are generated.
+                So you do not need to perform any additional task.
+              </dd>
+              <dt>test-j2ee-client</dt>
+              <dd>
+                starts the J2EE client with the rich client explorer user
+                interface.
+              </dd>
+            </dl>
+          </li>
+        </ul>
+        <note>
+          You must have an installed
+          <em>Java Runtime Environment JRE 1.5</em>
+          or
+          <em>Java Development Environment JDK 1.5</em>
+          .
+        </note>
+        <note>
+          To run the J2EE JBoss mode you must have an installed version of
+          JBoss.
+        </note>
+      </section>
+    </section>
+    <section id="minutes5">
+      <title>Five Minutes Tutorial</title>
+      <section>
+        <title>Prerequesites</title>
+        <p>
+          Please read the two minutes tutorial to learn how to
+          <a href="#installPmMda" title="Install pmMDA">install pmMDA</a>
+          and
+          <a href="#runPmMda" title="Run pmMDA">run pmMDA</a>
+          application. Upon completion of these steps you are able to start the
+          MDA application and generates artifacts.
+        </p>
       </section>
       <section>
-        <title>Run Examples</title>
-        <p>Scripts are provided to run the examples. The provided scripts allow 
-          you to run the examples in the following modes.</p>
-        <ul>
-          <li>Rich client scripts to run the 2-tiers application. <dl> 
-            <dt>test-rich-client</dt><dd>starts the 2-tiers rich client 
-            explorer application and the connection to the database.</dd> 
-            </dl></li>
-          <li>CORBA application scripts to run the 3-tiers CORBA application. 
-            The order of the scripts is the one of the list.<dl> 
-            <dt>orb-start</dt><dd>starts the CORBA ORB broker.</dd> 
-            <dt>test-corba-server</dt><dd>starts the CORBA server which 
-            implements the business logic and the database 
-            connection.</dd><dt>test-corba-client</dt><dd>starts the CORBA 
-            client with the rich client explorer user interface.</dd></dl></li>
-          <li>J2EE application scripts to run the 3-tiers J2EE application.<dl> 
-            <dt><em>J2EE server EJB</em></dt><dd>are not a script file. The EJB 
-            are copied in the <em>deploy</em> directory and copied to the 
-            deployment directory of <em>JBoss</em> server.</dd> 
-            <dt>test-j2ee-client</dt><dd>starts t he J233 client with the rich 
-            client explorer user interface.</dd></dl></li>
-        </ul>
-        <note>You must have an installed <em>Java Runtime Environment JRE 
-          1.5</em> or <em>Java Development Environment JDK 1.5</em>.</note>
-        <note>To run the J2EE JBoss mode you must have an installed version 
-          of JBoss.</note>
+        <title>Personal Information Manager - LDIF2VCARD converter -</title>
+        <p>
+          The provided UML model PIM stored in
+          <code>models/pim-model</code>
+          defines the business model for a contact management application. The
+          model contains properties, indexed properties, owned relations,
+          changeable and vetoable properties. The stereotypes
+          <em>businessObject</em>
+          amd
+          <em>referenceCode</em>
+          are used. Examples how to define reference code values are provided.
+          These abstractions are mapped to sophisticated Java code with the help
+          of provided code generators.
+        </p>
+        <p>
+          Use
+          <em>ArgoUML</em>
+          to edit the PIM model and extend the business object model. You are
+          free to add new abstractions or extend existing classes.
+        </p>
+        <p>
+          Use
+          <em>pmMDA</em>
+          to edit the tagged values used on the code generator cartridges. Do
+          not forget to validate your changes with the build-in validator. The
+          validator is accessible through the context menu under
+          <code>actions</code>
+          . You can generate the Java representation of the business model using
+          the global menu
+          <code>Generate</code>
+          and the submenu
+          <code>bo generate</code>
+          . The hand coded source code defined in the protected areas of the
+          source file is preserved.
+        </p>
+        <p>
+          Compile the business object classes with the service classes. If you
+          are using
+          <code>Eclipse</code>
+          the project configuration contains all the necessary information.
+        </p>
+      </section>
+      <section>
+        <title>Use PIM LDIF2VCARD converter</title>
+        <p>
+          Starts the application using the command line parameters to translate
+          your address books from LDIF format to VCARD format. Copy the VCARD
+          file on your
+          <em>iPod</em>
+          and enjoy.
+        </p>
       </section>
     </section>
     <section>
       <title>Customise Generator Templates</title>
-      <p>All generator templates are written in <em>Velocity</em>. All features 
-        of Velocity can be used. The items available in the context are 
-        documented in the generators documentation. Each cartridge roles, 
-        supported tagged values, attributes and properties are documented. This 
-        description is also available on the project web site.</p>
-      <warning>The runtime engine only handles correctly English identifiers. 
-        The implemented rules can only infer the singular and plural form of 
-        regular English nouns.</warning>
+      <p>
+        All generator templates are written in
+        <em>Velocity</em>
+        . All features of Velocity can be used. The items available in the
+        context are documented in the generators documentation. Each cartridge
+        roles, supported tagged values, attributes and properties are
+        documented. This description is also available on the project web site.
+      </p>
+      <warning>
+        The runtime engine only handles correctly English identifiers. The
+        implemented rules can only infer the singular and plural form of regular
+        English nouns.
+      </warning>
     </section>
     <section>
       <title>Develop Own Cartridge</title>

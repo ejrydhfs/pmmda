@@ -70,12 +70,12 @@ public class NsUmlPersistenceHandler implements PersistenceHandler {
         return null;
       }
       nsUmlTransformer.synchronize(mModel, metaModel);
-    } catch (IOException ioe) {
-      log.error(ioe);
-    } catch (ParserConfigurationException pce) {
-      log.error(pce);
-    } catch (SAXException saxe) {
-      log.error(saxe);
+    } catch (IOException e) {
+      log.error(e);
+    } catch (ParserConfigurationException e) {
+      log.error(e);
+    } catch (SAXException e) {
+      log.error(e);
     }
     return metaModel;
   }
@@ -120,8 +120,7 @@ public class NsUmlPersistenceHandler implements PersistenceHandler {
       } else {
         temporaryFile.deleteOnExit();
         InputStream input = new FileInputStream(temporaryFile);
-        ZipFileUtilities utilities = new ZipFileUtilities();
-        utilities.replaceEntry(file, getArgoModelFileName(file), input);
+        ZipFileUtilities.replaceEntry(file, getArgoModelFileName(file), input);
         temporaryFile.delete();
       }
     } catch (IOException ioe) {

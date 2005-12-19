@@ -74,7 +74,7 @@ public class MetaModel extends MetaPackage {
   /**
    * Sets the filename of the model.
    * @param filename new filename where the model is stored.
-   * @see #setFilename(String)
+   * @see #getFilename()
    */
   public void setFilename(String filename) {
     this.filename = filename;
@@ -181,10 +181,20 @@ public class MetaModel extends MetaPackage {
 
   // %% BEGIN USER CODE
 
+  /**
+   * Finds the package with the given qualified name.
+   * @param qualifiedName the qualified name of the package to find.
+   * @return the requested package if found otherwise null.
+   */
   public MetaPackage findPackage(String qualifiedName) {
     return (MetaPackage) findElement(packages, qualifiedName);
   }
 
+  /**
+   * Finds the datatype with the given qualified name.
+   * @param qualifiedName the qualified name of the datatype to find.
+   * @return the requested datatype if found otherwise null.
+   */
   public MetaDatatype findDatatype(String qualifiedName) {
     return (MetaDatatype) findElement(datatypes, qualifiedName);
   }
