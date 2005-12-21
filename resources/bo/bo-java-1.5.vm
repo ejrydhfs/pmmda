@@ -1,7 +1,5 @@
 #set($sign="#")
 #set($dollar="$")
-#set($__="")
-#set($____="")
 #macro(getOwner $item $owner)
 #set($owner=false)
 #set($owner=${item.valueOfTag("bo-navigable")})

@@ -28,7 +28,7 @@
       <ul>
         <li>The developers use the applications to debug and test their 
           frameworks. The example must be integrated in the development 
-          environemnt and support fast develop, compile, debug cycles.</li>
+          environment and support fast develop, compile, debug cycles.</li>
         <li>Sanity checks and nightly build checks use the applications to test 
           the latest release. The nightly checks should be run unattended.</li>
         <li>The integration team use the applications to test the release 
