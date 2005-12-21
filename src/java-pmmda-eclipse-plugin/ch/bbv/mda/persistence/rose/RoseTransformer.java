@@ -6,19 +6,12 @@
  */
 package ch.bbv.mda.persistence.rose;
 
-import java.io.File;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
 import org.eclipse.emf.importer.rose.builder.UnitTreeNode;
-import org.eclipse.emf.importer.rose.builder.RoseWalker;
-import org.eclipse.emf.importer.rose.parser.RoseLexer;
-import org.eclipse.emf.importer.rose.parser.RoseLoader;
-import org.eclipse.emf.importer.rose.parser.RoseNode;
-import org.eclipse.emf.importer.rose.parser.RoseParser;
 
 import ch.bbv.mda.MetaModel;
 
