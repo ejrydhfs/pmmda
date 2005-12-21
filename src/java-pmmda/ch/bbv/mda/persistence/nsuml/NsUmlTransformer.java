@@ -117,7 +117,7 @@ public class NsUmlTransformer {
   public void writeArgoModel(MModel mModel, File file)
       throws FileNotFoundException, IOException, IncompleteXMIException {
     Writer writer = new BufferedWriter(new OutputStreamWriter(
-        new FileOutputStream(file), "UTF-8"));
+        new FileOutputStream(file), XML_ENCODING));
     XMIWriter xmiWriter = new XMIWriter(mModel, writer);
     xmiWriter.gen();
     xmiWriter.close();
