@@ -66,98 +66,110 @@ public class NsumlXmiReader extends ru.novosoft.uml.xmi.XMIReader {
   public NsumlXmiReader(File file) throws SAXException,
       ParserConfigurationException {
     source = file;
-    SAXParserFactory saxpf = SAXParserFactory.newInstance();
-    saxpf.setValidating(false);
-    saxpf.setNamespaceAware(false);
-    setParser(saxpf.newSAXParser().getXMLReader());
+    SAXParserFactory saxpf = SAXParserFactory.newInstance(); 
+    saxpf.setNamespaceAware(true); 
+    saxpf.setValidating(true); 
+
+    setParser(saxpf.newSAXParser().getXMLReader()); 
+
+    getParser().setDTDHandler(this);
+    getParser().setErrorHandler(this); 
+    getParser().setContentHandler(new DefaultHandler2()); 
+    //getParser().setContentHandler(new MyDefaultHandler2()); 
+    getParser().setEntityResolver(this); 
     getParser().setFeature("http://xml.org/sax/features/namespaces", true);
-    getParser().setErrorHandler(this);
-    getParser().setContentHandler(new DefaultHandler2());
-    getParser().setEntityResolver(this);
+    getParser().setFeature("http://xml.org/sax/features/namespace-prefixes", true);
+    getParser().setFeature("http://xml.org/sax/features/resolve-dtd-uris", true);
+    getParser().setFeature("http://apache.org/xml/features/validation/schema", true);
+   } 
+ 
+   /** 
+    * Constructor for XMIReader. 
+    * @param pFactory the factory 
+    * @throws SAXException if there is a XML problem 
+    * @throws ParserConfigurationException if a parser cannot 
+    * be created which satisfies the requested configuration 
+    */ 
+   public NsumlXmiReader(MFactory pFactory, File file) 
+       throws SAXException, ParserConfigurationException { 
+       super(pFactory);
+       source = file;
+       SAXParserFactory saxpf = SAXParserFactory.newInstance(); 
+       saxpf.setNamespaceAware(true); 
+       saxpf.setValidating(true); 
+ 
+       setParser(saxpf.newSAXParser().getXMLReader()); 
+ 
+       getParser().setDTDHandler(this);
+       getParser().setErrorHandler(this); 
+       getParser().setContentHandler(new DefaultHandler2()); 
+       //getParser().setContentHandler(new MyDefaultHandler2()); 
+       getParser().setEntityResolver(this); 
+       getParser().setFeature("http://xml.org/sax/features/namespaces", true);
+       getParser().setFeature("http://xml.org/sax/features/namespace-prefixes", true);
+       getParser().setFeature("http://xml.org/sax/features/resolve-dtd-uris", true);
+       getParser().setFeature("http://apache.org/xml/features/validation/schema", true);
+   } 
 
-  }
-
-  /**
-   * Constructor for XMIReader.
-   * @param factory the factory of the reader.
-   * @param file file containing the model to read.
-   * @throws SAXException if there is a XML problem
-   * @throws ParserConfigurationException if a parser cannot be created which
-   *           satisfies the requested configuration
-   */
-  public NsumlXmiReader(MFactory factory, File file) throws SAXException,
-      ParserConfigurationException {
-    super(factory);
-    source = file;
-    SAXParserFactory saxpf = SAXParserFactory.newInstance();
-    saxpf.setValidating(false);
-    saxpf.setNamespaceAware(false);
-
-    setParser(saxpf.newSAXParser().getXMLReader());
-
-    getParser().setFeature("http://xml.org/sax/features/namespaces", true);
-    getParser().setErrorHandler(this);
-    getParser().setContentHandler(new DefaultHandler2());
-    getParser().setEntityResolver(this);
-
-  }
-
-  /**
-   * Parses an xmi inputsource. Sets errors to true if an exception is thrown.
-   * Could not change the API from the superclass. Therefore this strange
-   * construction.
-   * @param source input source to parse.
-   * @throws SAXException if XML parsing encounters an error.
-   * @throws IOException if an IO error is encountered when reading the source.
-   * @see ru.novosoft.uml.xmi.XMIReader#parseStream(InputSource)
-   */
-  protected void parseSourceStream(InputSource source) throws SAXException,
-      IOException {
-
-    cleanup();
-
-    try {
-      getParser().parse(source);
-      performLinking();
-    } catch (IOException e) {
-      log
-          .error(
-              "NsumlXmiReader#parseSourceStream IOException while trying to read inputsource "
-                  + source.getSystemId(), e);
-      throw e;
-    } catch (SAXException e) {
-      log
-          .error(
-              "NsumlXmiReader#parseSourceStream Parsing error while trying to parse inputsource "
-                  + source.getSystemId(), e);
-      throw e;
-    } catch (ClassCastException e) {
-      log
-          .error(
-              "NsumlXmiReader#parseSourceStream Parsing error while trying to parse inputsource "
-                  + source.getSystemId(), e);
-      throw new SAXException(e);
+   /** 
+    * Parses an xmi inputsource. Sets errors to true if an exception is 
+    * thrown. Could not change the API from the superclass. Therefore this 
+    * strange construction. 
+     * @see ru.novosoft.uml.xmi.XMIReader#parseStream(InputSource) 
+     */ 
+    protected void parseSourceStream(InputSource source) 
+        throws SAXException, IOException { 
+  
+        cleanup(); 
+  
+        try { 
+             getParser().parse(source); 
+             performLinking(); 
+        } catch (IOException e) { 
+            log.error("NsumlXmiReader#parseSourceStream IOException while trying to read inputsource " 
+                + source.getSystemId(), e); 
+            throw e; 
+        } catch (SAXException e) { 
+            log.error("NsumlXmiReader#parseSourceStream Parsing error while trying to parse inputsource " 
+                + source.getSystemId(), e); 
+            throw e; 
+        } catch (ClassCastException e) { 
+            log.error("NsumlXmiReader#parseSourceStream Parsing error while trying to parse inputsource " 
+                + source.getSystemId(), e); 
+            throw new SAXException(e); 
+         } 
+  
+     } 
+  
+    public InputSource resolveEntity (String publicId, String systemId)
+    {
+      //System.out.println("NsumlXmiReader#resolveEntity: "+publicId+", "+systemId);
+      String path = source.getParent();
+      int idx = systemId.lastIndexOf("/");
+      if(idx == -1){
+        idx = systemId.lastIndexOf("\\");
+      }
+      path += File.separator+systemId.substring(idx+1);
+      File file = new File(path);
+      try{
+        return new InputSource(new FileInputStream(file));
+      }
+      catch(FileNotFoundException e){
+        // don't do anything
+      }
+      log.error("NsumlXmiReader#resolveEntity Could not resolve: "+publicId+", "+systemId+", "+path);
+      return null;
     }
 
-  }
-
-  public InputSource resolveEntity(String publicId, String systemId) {
-    String path = source.getParent();
-    int idx = systemId.lastIndexOf("/");
-    if (idx == -1) {
-      idx = systemId.lastIndexOf("\\");
+    public void notationDecl(String name, String publicId, String systemId)
+    {
+      System.out.println("notationDecl");
     }
-    path += File.separator + systemId.substring(idx + 1);
-    File file = new File(path);
-    try {
-      return new InputSource(new FileInputStream(file));
-    } catch (FileNotFoundException e) {
-      // don't do anything
+    
+    public void unparsedEntityDecl(String name, String publicId, String systemId, String notationName)
+    {
+      System.out.println("unparsedEntityDecl");
     }
-    // System.out.println("NsumlXmiReader#resolveEntity: "+publicId+",
-    // "+systemId+", "+path);
-    return null;
-  }
 
   /*
    * Please do not delete this commented out code. Bob Tarling 3 Mar 2004. //
@@ -224,23 +236,23 @@ public class NsumlXmiReader extends ru.novosoft.uml.xmi.XMIReader {
   // }
   // super.performLinking();
   // }
-  /**
-   * Parses a given inputsource to a model. Does not override the novosoft parse
-   * method since that does not have the right signature.
-   * @param pIs the input source for parsing
-   * @return MModel the UML model
-   * @throws SAXException if there is an XML problem
-   * @throws IOException if there is a file I/O problem
-   */
-  public MModel parseToModel(InputSource pIs) throws SAXException, IOException {
-    parseSourceStream(pIs);
-    MModel model = getParsedModel();
-    if (errors) {
-      throw new SAXException("Errors parsing XMI");
-    }
-    return model;
-  }
-
+    /** 
+     * Parses a given inputsource to a model. Does not override the novosoft 
+     * parse method since that does not have the right signature. 
+     * @param pIs the input source for parsing 
+     * @return MModel the UML model 
+     * @throws SAXException if there is an XML problem 
+     * @throws IOException if there is a file I/O problem 
+     */ 
+    public MModel parseToModel(InputSource pIs) throws SAXException, IOException { 
+         parseSourceStream(pIs); 
+         MModel model = getParsedModel(); 
+         if (errors) { 
+            throw new SAXException("Errors parsing XMI"); 
+        } 
+         return model; 
+    } 
+  
   /**
    * @param e true if there are errors
    */
