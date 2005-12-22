@@ -64,9 +64,15 @@ import org.eclipse.emf.importer.rose.parser.RoseNode;
 import org.eclipse.emf.importer.rose.parser.Util;
 import org.eclipse.emf.importer.rose.builder.*;
 
+import ru.novosoft.uml.foundation.core.MAttribute;
+import ru.novosoft.uml.foundation.core.MClassifier;
+import ru.novosoft.uml.foundation.data_types.MExpression;
+import ru.novosoft.uml.foundation.data_types.MMultiplicity;
+
 import ch.bbv.mda.MetaClass;
 import ch.bbv.mda.MetaDatatype;
 import ch.bbv.mda.generators.ItemFactory;
+import ch.bbv.mda.persistence.nsuml.NsUmlUtilities;
 import ch.bbv.mda.MetaIndexedProperty;
 import ch.bbv.mda.MetaModel;
 import ch.bbv.mda.MetaPackage;
@@ -1935,20 +1941,24 @@ public class MdaRoseVisitor implements RoseVisitor
           //System.out.println("          "+eReference.getLowerBound()+", "+eReference.getUpperBound());
           if(mClass != null && myClass != null){
             MetaProperty property = null;
-            if (eReference.getUpperBound() == Multiplicity.N_MULTIPLICITY){
+            if (eReference.getUpperBound() == 1){
+              property = new MetaProperty();
+              // factory.initialize(property); TODO check
+              mClass.addProperty(property);
+            } else {
               MetaIndexedProperty metaIndexedProperty = new MetaIndexedProperty();
               // factory.initialize(metaIndexedProperty); TODO check
               property = metaIndexedProperty;
               mClass.addIndexedProperty((MetaIndexedProperty) metaIndexedProperty);
-            } else {
-              property = new MetaProperty();
-              // factory.initialize(property); TODO check
-              mClass.addProperty(property);
             }
+            
+            property.setContext(mClass);
             property.setName(eReference.getName());
             property.setTypeName(myClass.getName());
-            property.setAggregation(true);
             property.setMultiplicity(new Multiplicity(eReference.getLowerBound(), eReference.getUpperBound()));
+            // TODO set static, description, annotation, default value
+            property.setDescription("");
+            property.setInitialValue("");
             property.setTransient(eReference.isTransient());
             property.setVolatile(eReference.isVolatile());
           }
