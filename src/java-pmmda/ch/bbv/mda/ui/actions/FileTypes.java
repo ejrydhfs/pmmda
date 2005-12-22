@@ -9,6 +9,7 @@ package ch.bbv.mda.ui.actions;
 import javax.swing.JFileChooser;
 
 import ch.bbv.explorer.actions.SimpleFileFilter;
+import ch.bbv.utilities.ReflectUtilities;
 
 /**
  * The interface defines all the file extensions and descriptive text for the
@@ -95,7 +96,10 @@ public class FileTypes {
   public static void addFileFilters(JFileChooser chooser) {
     Class[] types = { JFileChooser.class };
     Object[] params = { chooser };
-    ch.bbv.utilities.ReflectUtilities.execute("ch.bbv.mda.ui.eclipse.EclipseUtilities", "addEclipseFileFilters", types, params);
+    if (ReflectUtilities.exists("ch.bbv.mda.ui.eclipse.EclipseUtilities")) {
+      ReflectUtilities.execute("ch.bbv.mda.ui.eclipse.EclipseUtilities",
+          "addEclipseFileFilters", types, params);
+    }
     chooser.addChoosableFileFilter(new SimpleFileFilter(FileTypes.POSEIDON_EXT,
         FileTypes.POSEIDON_TEXT));
     chooser.addChoosableFileFilter(new SimpleFileFilter(

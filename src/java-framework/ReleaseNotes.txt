@@ -1,9 +1,8 @@
 TODO
 ----
-- Evaluate FlexDock
 - Integrate navigation buttons in properties dialog to traverse all siblings
 
-Version 0.2.2-RC2 (30 November 2005)
+Version 0.2.2-RC2 (25 December 2005)
 -----------------------------------
 - Moved the newest JDK 1.5.0-06 to check compatibility.
 

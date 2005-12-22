@@ -170,7 +170,7 @@ public class Provider extends NamedEntity implements DataObject {
    * domains.
    * @param index index of element to return. 
    * @return the element at the specified position in this list.
-   * @see #setDomain(int, Domain)
+   * @see #addDomain(int, Domain)
    * @see java.util.List#get(int)
    */
   public Domain getDomain(int index) {
@@ -201,10 +201,10 @@ public class Provider extends NamedEntity implements DataObject {
    * @see #getDomain(int)
    * @see java.util.List#add(int, Object)
    */
-  public void setDomain(int index, Domain element) {
+  public void addDomain(int index, Domain element) {
+    domains.add(index, element);
     setModified(true);
     setForeignKey(element, "providerDomainsHandle", getId());
-    domains.add(index, element);
   }
 
   /** 
@@ -216,14 +216,12 @@ public class Provider extends NamedEntity implements DataObject {
    * @pre element != null
    */
   public boolean addDomain(Domain element) {
-    setModified(true);
-    setForeignKey(element, "providerDomainsHandle", getId());
     return domains.add(element);
   }
   
   /** 
-   * Removes the first occurrence in this list of the specified element 
-   * If this list does not contain the element, it is unchanged. More formally, 
+   * Removes the first occurrence in this list of the specified element. If 
+   * the list does not contain the element, it is unchanged. More formally, 
    * removes the element with the lowest index i such that 
    * (o==null ? get(i)==null : o.equals(get(i))) (if such an element exists). 
    * @param element element to be removed from this list, if present. 
@@ -234,7 +232,7 @@ public class Provider extends NamedEntity implements DataObject {
     boolean removed = domains.remove(element);
     if (removed) {
       setModified(true);
-      setForeignKey(element, "providerDomainsHandle", getId());
+      setForeignKey(element, "providerDomainsHandle", null);
     }
     return removed;
   }

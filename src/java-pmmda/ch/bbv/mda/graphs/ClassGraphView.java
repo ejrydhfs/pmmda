@@ -44,8 +44,14 @@ public class ClassGraphView extends JPanel implements NodeView {
    */
   private JScrollPane pane;
 
+  /**
+   * graph model to display.
+   */
   private GraphModel model;
 
+  /**
+   * The graph view on the graph model.
+   */
   private JGraph graph;
 
   private Map<GraphCell, Map> attributes;
@@ -74,6 +80,9 @@ public class ClassGraphView extends JPanel implements NodeView {
     return new ClassGraphView();
   }
 
+  /**
+   * Default constructor of the class.
+   */
   public ClassGraphView() {
     super(new BorderLayout());
     attributes = new HashMap<GraphCell, Map>();
@@ -86,17 +95,18 @@ public class ClassGraphView extends JPanel implements NodeView {
   }
 
   public void nodeChanged(ExplorerNode node) {
-
   }
 
   public void nodeInserted(ExplorerNode node, int index) {
-
   }
 
   public void nodeRemoved(ExplorerNode parent, ExplorerNode node, int index) {
-
   }
 
+  /**
+   * Sets the model associated whith the node.
+   * @param node node which model should be set.
+   */
   public void setModel(ExplorerNode node) {
     attributes.clear();
     model = new DefaultGraphModel();
@@ -109,11 +119,9 @@ public class ClassGraphView extends JPanel implements NodeView {
   }
 
   public void viewClosed() {
-
   }
 
   public void setViewEditable(boolean editable) {
-
   }
 
   /**
@@ -122,7 +130,6 @@ public class ClassGraphView extends JPanel implements NodeView {
    * @param packages package which dependencies should be drawn.
    */
   protected void generateDependencies(MetaPackage packages) {
-
   }
 
   /**

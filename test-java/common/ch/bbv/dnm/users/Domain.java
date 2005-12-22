@@ -132,7 +132,7 @@ public class Domain extends NamedEntity implements DataObject {
    * units.
    * @param index index of element to return. 
    * @return the element at the specified position in this list.
-   * @see #setUnit(int, Unit)
+   * @see #addUnit(int, Unit)
    * @see java.util.List#get(int)
    */
   public Unit getUnit(int index) {
@@ -163,10 +163,10 @@ public class Domain extends NamedEntity implements DataObject {
    * @see #getUnit(int)
    * @see java.util.List#add(int, Object)
    */
-  public void setUnit(int index, Unit element) {
+  public void addUnit(int index, Unit element) {
+    units.add(index, element);
     setModified(true);
     setForeignKey(element, "domainUnitsHandle", getId());
-    units.add(index, element);
   }
 
   /** 
@@ -178,14 +178,12 @@ public class Domain extends NamedEntity implements DataObject {
    * @pre element != null
    */
   public boolean addUnit(Unit element) {
-    setModified(true);
-    setForeignKey(element, "domainUnitsHandle", getId());
     return units.add(element);
   }
   
   /** 
-   * Removes the first occurrence in this list of the specified element 
-   * If this list does not contain the element, it is unchanged. More formally, 
+   * Removes the first occurrence in this list of the specified element. If 
+   * the list does not contain the element, it is unchanged. More formally, 
    * removes the element with the lowest index i such that 
    * (o==null ? get(i)==null : o.equals(get(i))) (if such an element exists). 
    * @param element element to be removed from this list, if present. 
@@ -196,7 +194,7 @@ public class Domain extends NamedEntity implements DataObject {
     boolean removed = units.remove(element);
     if (removed) {
       setModified(true);
-      setForeignKey(element, "domainUnitsHandle", getId());
+      setForeignKey(element, "domainUnitsHandle", null);
     }
     return removed;
   }
@@ -214,7 +212,7 @@ public class Domain extends NamedEntity implements DataObject {
    * resources.
    * @param index index of element to return. 
    * @return the element at the specified position in this list.
-   * @see #setResource(int, ResourceType)
+   * @see #addResource(int, ResourceType)
    * @see java.util.List#get(int)
    */
   public ResourceType getResource(int index) {
@@ -242,9 +240,9 @@ public class Domain extends NamedEntity implements DataObject {
    * @see #getResource(int)
    * @see java.util.List#add(int, Object)
    */
-  public void setResource(int index, ResourceType element) {
-    setModified(true);
+  public void addResource(int index, ResourceType element) {
     resources.add(index, element);
+    setModified(true);
   }
 
   /** 
@@ -256,13 +254,12 @@ public class Domain extends NamedEntity implements DataObject {
    * @pre element != null
    */
   public boolean addResource(ResourceType element) {
-    setModified(true);
     return resources.add(element);
   }
   
   /** 
-   * Removes the first occurrence in this list of the specified element 
-   * If this list does not contain the element, it is unchanged. More formally, 
+   * Removes the first occurrence in this list of the specified element. If 
+   * the list does not contain the element, it is unchanged. More formally, 
    * removes the element with the lowest index i such that 
    * (o==null ? get(i)==null : o.equals(get(i))) (if such an element exists). 
    * @param element element to be removed from this list, if present. 

@@ -50,17 +50,18 @@
     <property name="commons-cli.lib" value="commons-cli-1.0.jar" />
     <property name="commons-codec.lib" value="commons-code-1.3.jar" />
     <property name="commons-collections.lib" value="commons-collections-3.1.jar" />
-    <property name="commons-configuration.lib" value="commons-configuration-1.1.jar" />
+    <property name="commons-configuration.lib" value="commons-configuration-1.2.jar" />
     <property name="commons-dbcp.lib" value="commons-dbcp-1.1.jar" />
     <property name="commons-lang.lib" value="commons-lang-2.1.jar" />
     <property name="commons-logging.lib" value="commons-logging-1.0.4.jar" />
     <property name="commons-logging-api.lib" value="commons-logging-api-1.0.4.jar" />
     <property name="commons-pool.lib" value="commons-pool-1.1.jar" />
     <property name="dog.lib" value="DoG-${dog.version}.jar" />
+    <property name="flexdock.lib" value="flexdock-0.4.0.jar" />
     <property name="forms.lib" value="forms-1.0.5.jar" />
     <property name="glazedlists.lib" value="glazedlists-1.0.0.jar" />
     <property name="jcalendar.lib" value="jcalendar-1.2.2.jar" />
-    <property name="jgraph.lib" value="jgraph-5.7.3.1.jar" />
+    <property name="jgraph.lib" value="jgraph-5.7.4.4.jar" />
     <property name="jgraphaddons.lib" value="jgraphaddons-1.0.8.jar" />
     <property name="nsuml.lib" value="nsuml.jar" />
     <property name="mysql-connector.lib" value="mysql-connector-3.0.15.jar" />

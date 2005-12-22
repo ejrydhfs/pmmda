@@ -69,6 +69,22 @@ public final class ReflectUtilities {
     }
     return returns;
   }
+  
+  /**
+   * Returns true if the class exists otherwise false.
+   * @param qualifiedName qualified class name of the class to retrive.
+   * @return flag indicating if the class could be found and loaded or not.
+   */
+  public static boolean exists(String qualifiedName) {
+    boolean exists;
+    try {
+      Class.forName(qualifiedName);
+      exists = true;
+    } catch (ClassNotFoundException e) {
+      exists = false;
+    }    
+    return exists;
+  }
 
   /**
    * Executes a static method on a class with the help of reflection. First it

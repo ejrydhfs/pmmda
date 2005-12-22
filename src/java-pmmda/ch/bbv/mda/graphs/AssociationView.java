@@ -12,6 +12,7 @@ import org.jgraph.graph.EdgeView;
 import org.jgraph.graph.GraphConstants;
 
 /**
+ * The view to display a UML association in a class diagram.
  * @author MarcelBaumann
  * @version $Revision$
  */
@@ -21,6 +22,9 @@ public class AssociationView extends EdgeView {
    */
   private static final long serialVersionUID = 20041201;
 
+  /**
+   * The renderer for the associations to display.
+   */
   static AssociationRenderer renderer = new AssociationRenderer();
 
   /**
@@ -32,7 +36,7 @@ public class AssociationView extends EdgeView {
     setAttributes(createAttributes());
   }
 
-  /** 
+  /**
    * Creates the graphical attributes of the associaton.
    * @return the map of graphical attributes discribing the association.
    */
@@ -54,21 +58,17 @@ public class AssociationView extends EdgeView {
       // aggregation, composition
       if (edge.isStartNavigable() && edge.isEndNavigable()) {
         GraphConstants.setLineEnd(attributes, GraphConstants.ARROW_NONE);
-        GraphConstants
-            .setLineBegin(attributes, GraphConstants.ARROW_NONE);
+        GraphConstants.setLineBegin(attributes, GraphConstants.ARROW_NONE);
       } else if (edge.isStartNavigable()) {
-        GraphConstants.setLineBegin(attributes,
-            GraphConstants.ARROW_SIMPLE);
+        GraphConstants.setLineBegin(attributes, GraphConstants.ARROW_SIMPLE);
         GraphConstants.setBeginSize(attributes, 10);
       } else {
-        GraphConstants
-            .setLineEnd(attributes, GraphConstants.ARROW_SIMPLE);
+        GraphConstants.setLineEnd(attributes, GraphConstants.ARROW_SIMPLE);
         GraphConstants.setEndSize(attributes, 10);
       }
 
       if (edge.isAggregate() || edge.isComposite()) {
-        GraphConstants.setLineEnd(attributes,
-            GraphConstants.ARROW_DIAMOND);
+        GraphConstants.setLineEnd(attributes, GraphConstants.ARROW_DIAMOND);
         GraphConstants.setEndSize(attributes, 16);
 
         if (edge.isAggregate()) {

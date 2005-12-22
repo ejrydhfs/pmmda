@@ -41,11 +41,11 @@ public class Unit extends NamedEntity implements DataObject {
   /**
    * Mapping for 1: N relationship units as reverse foreign key.
    */
-  private Integer unitUnitsHandle;
+  private Integer domainUnitsHandle;
   /**
    * Mapping for 1: N relationship units as reverse foreign key.
    */
-  private Integer domainUnitsHandle;
+  private Integer unitUnitsHandle;
 
   /** 
    * Default constructor of the class necessary for Java bean convention. The 
@@ -76,7 +76,7 @@ public class Unit extends NamedEntity implements DataObject {
    * users.
    * @param index index of element to return. 
    * @return the element at the specified position in this list.
-   * @see #setUser(int, User)
+   * @see #addUser(int, User)
    * @see java.util.List#get(int)
    */
   public User getUser(int index) {
@@ -107,10 +107,10 @@ public class Unit extends NamedEntity implements DataObject {
    * @see #getUser(int)
    * @see java.util.List#add(int, Object)
    */
-  public void setUser(int index, User element) {
+  public void addUser(int index, User element) {
+    users.add(index, element);
     setModified(true);
     setForeignKey(element, "unitUsersHandle", getId());
-    users.add(index, element);
   }
 
   /** 
@@ -122,14 +122,12 @@ public class Unit extends NamedEntity implements DataObject {
    * @pre element != null
    */
   public boolean addUser(User element) {
-    setModified(true);
-    setForeignKey(element, "unitUsersHandle", getId());
     return users.add(element);
   }
   
   /** 
-   * Removes the first occurrence in this list of the specified element 
-   * If this list does not contain the element, it is unchanged. More formally, 
+   * Removes the first occurrence in this list of the specified element. If 
+   * the list does not contain the element, it is unchanged. More formally, 
    * removes the element with the lowest index i such that 
    * (o==null ? get(i)==null : o.equals(get(i))) (if such an element exists). 
    * @param element element to be removed from this list, if present. 
@@ -140,7 +138,7 @@ public class Unit extends NamedEntity implements DataObject {
     boolean removed = users.remove(element);
     if (removed) {
       setModified(true);
-      setForeignKey(element, "unitUsersHandle", getId());
+      setForeignKey(element, "unitUsersHandle", null);
     }
     return removed;
   }
@@ -158,7 +156,7 @@ public class Unit extends NamedEntity implements DataObject {
    * units.
    * @param index index of element to return. 
    * @return the element at the specified position in this list.
-   * @see #setUnit(int, Unit)
+   * @see #addUnit(int, Unit)
    * @see java.util.List#get(int)
    */
   public Unit getUnit(int index) {
@@ -189,10 +187,10 @@ public class Unit extends NamedEntity implements DataObject {
    * @see #getUnit(int)
    * @see java.util.List#add(int, Object)
    */
-  public void setUnit(int index, Unit element) {
+  public void addUnit(int index, Unit element) {
+    units.add(index, element);
     setModified(true);
     setForeignKey(element, "unitUnitsHandle", getId());
-    units.add(index, element);
   }
 
   /** 
@@ -204,14 +202,12 @@ public class Unit extends NamedEntity implements DataObject {
    * @pre element != null
    */
   public boolean addUnit(Unit element) {
-    setModified(true);
-    setForeignKey(element, "unitUnitsHandle", getId());
     return units.add(element);
   }
   
   /** 
-   * Removes the first occurrence in this list of the specified element 
-   * If this list does not contain the element, it is unchanged. More formally, 
+   * Removes the first occurrence in this list of the specified element. If 
+   * the list does not contain the element, it is unchanged. More formally, 
    * removes the element with the lowest index i such that 
    * (o==null ? get(i)==null : o.equals(get(i))) (if such an element exists). 
    * @param element element to be removed from this list, if present. 
@@ -222,7 +218,7 @@ public class Unit extends NamedEntity implements DataObject {
     boolean removed = units.remove(element);
     if (removed) {
       setModified(true);
-      setForeignKey(element, "unitUnitsHandle", getId());
+      setForeignKey(element, "unitUnitsHandle", null);
     }
     return removed;
   }

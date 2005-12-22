@@ -89,11 +89,12 @@ public class UserRole implements DataObject {
 /* %% USER DEFINED CODE END %% */
 
   /** 
-   * Returns the unique identifier of the data object instance.
+   * Returns the unique identifier of the data object instance. A new object has
+   * the value null.
    * @return the identifier of the instance.
    * @see #setId(Integer)
    */
-  public Integer getId() {
+  public final Integer getId() {
     return id;
   }
   
@@ -102,7 +103,7 @@ public class UserRole implements DataObject {
    * @param id new identifier of the instance.
    * @see #getId()
    */
-  public void setId(Integer id) {
+  public final void setId(Integer id) {
     this.id = id;
   }
 
@@ -111,7 +112,7 @@ public class UserRole implements DataObject {
    * @return true if the object was modified otherwise false.
    * @see #setModified
    */
-  public boolean isModified() {
+  public final boolean isModified() {
     return modified;
   }
   
@@ -120,15 +121,16 @@ public class UserRole implements DataObject {
    * @param modified new value of the flag.
    * @see #isModified
    */
-  public void setModified(boolean modified) {
+  public final void setModified(boolean modified) {
     this.modified = modified;
   }
   
   /** 
    * Convenience method indicating if the instance is a new one or not.
    * @return true if the object is new otherwise false.
+   * @see #getId()
    */
-  public boolean isNew()  {
+  public final boolean isNew()  {
     return (getId() == null);
   }
   
@@ -137,7 +139,7 @@ public class UserRole implements DataObject {
    * @return the timestamp of the last persistent modification.
    * @see #setTimestamp(Timestamp)
    */
-  public Timestamp getTimestamp() {
+  public final Timestamp getTimestamp() {
     return timestamp;
   }
   
@@ -146,7 +148,7 @@ public class UserRole implements DataObject {
    * @param timestamp timestamp of the instance.
    * @see #getTimestamp()
    */
-   public void setTimestamp(Timestamp timestamp) {
+   public final void setTimestamp(Timestamp timestamp) {
      this.timestamp = timestamp;
    }
 
@@ -293,7 +295,7 @@ public class UserRole implements DataObject {
    * @param key key identifier to set.
    * @pre (bean != null) && (property != null) && (key != null)
    */
-  final protected void setForeignKey(DataObject bean, String property,
+   protected final void setForeignKey(DataObject bean, String property,
       Integer key) {
     assert((bean != null) && (property != null));
     try {

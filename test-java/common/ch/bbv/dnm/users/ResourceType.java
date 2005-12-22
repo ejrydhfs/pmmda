@@ -27,6 +27,9 @@ public class ResourceType extends NamedEntity implements DataObject {
    */
   private static final long serialVersionUID = 99990101;
 
+  /**
+   * The roles associated with a resource type.
+   */
   private List<Role> roles;
   /**
    * Mapping for 1: N relationship resources as reverse foreign key.
@@ -61,7 +64,7 @@ public class ResourceType extends NamedEntity implements DataObject {
    * roles.
    * @param index index of element to return. 
    * @return the element at the specified position in this list.
-   * @see #setRole(int, Role)
+   * @see #addRole(int, Role)
    * @see java.util.List#get(int)
    */
   public Role getRole(int index) {
@@ -89,9 +92,9 @@ public class ResourceType extends NamedEntity implements DataObject {
    * @see #getRole(int)
    * @see java.util.List#add(int, Object)
    */
-  public void setRole(int index, Role element) {
-    setModified(true);
+  public void addRole(int index, Role element) {
     roles.add(index, element);
+    setModified(true);
   }
 
   /** 
@@ -103,13 +106,12 @@ public class ResourceType extends NamedEntity implements DataObject {
    * @pre element != null
    */
   public boolean addRole(Role element) {
-    setModified(true);
     return roles.add(element);
   }
   
   /** 
-   * Removes the first occurrence in this list of the specified element 
-   * If this list does not contain the element, it is unchanged. More formally, 
+   * Removes the first occurrence in this list of the specified element. If 
+   * the list does not contain the element, it is unchanged. More formally, 
    * removes the element with the lowest index i such that 
    * (o==null ? get(i)==null : o.equals(get(i))) (if such an element exists). 
    * @param element element to be removed from this list, if present. 

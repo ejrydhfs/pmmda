@@ -95,6 +95,7 @@ public class GenericNodePropertiesView extends NodePropertiesView {
     mappedPropertyViews = new ArrayList<MappedPropertyView>();
   }
 
+  @Override
   public void populateView() {
     DataObject bean = getModel().getDataObject();
     if (type == null) {
@@ -118,22 +119,28 @@ public class GenericNodePropertiesView extends NodePropertiesView {
     }
   }
 
+  @Override
   public void commitChanges() {
     for (PropertyView view : primitivePropertyViews) {
       view.update();
     }
   }
 
+  @Override
   public void cancelChanges() {
     // no operations
   }
 
+  @Override
   public void setViewEditable(boolean editable) {
     for (PropertyView view : primitivePropertyViews) {
       view.setEditable(editable);
     }
   }
 
+  /**
+   * Initializes the form layout of the generic view.
+   */
   protected void initialize() {
     FormLayout layout = new FormLayout("right:pref, 3dlu, pref", "");
     DefaultFormBuilder builder = new DefaultFormBuilder(layout);
@@ -146,6 +153,12 @@ public class GenericNodePropertiesView extends NodePropertiesView {
     add(panel);
   }
 
+  /**
+   * Generates the rows for the form layout of the generic view.
+   * @param builder form builder to use.
+   * @param seperator the human readable seperators for a sub form.
+   * @param properties properties to display in the form.
+   */
   protected void generateRows(DefaultFormBuilder builder, String seperator,
       List< ? extends PropertyView> properties) {
     int size = properties.size();

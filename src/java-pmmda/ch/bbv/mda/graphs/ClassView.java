@@ -23,6 +23,7 @@ import ch.bbv.mda.MetaProperty;
 import ch.bbv.mda.operators.ModelOperators;
 
 /**
+ * The view to display a UML class in a class diagram.
  * @author MarcelBaumann
  * @version $Revision$
  */

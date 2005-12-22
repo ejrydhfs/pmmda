@@ -22,6 +22,9 @@ public class ClassCell extends DefaultGraphCell {
    */
   private static final long serialVersionUID = 20041201;
 
+  /**
+   * The meta model to display
+   */
   private MetaClass model;
 
   /**
@@ -31,11 +34,19 @@ public class ClassCell extends DefaultGraphCell {
     this(null);
   }
 
+  /** 
+   * Constructor of the class.
+   * @param model model to display.
+   */
   public ClassCell(MetaClass model) {
     super(model);
     this.model = model;
   }
 
+  /**
+   * Returns the model displayed.
+   * @return the model displayed.
+   */
   public MetaClass getModel() {
     return model;
   }

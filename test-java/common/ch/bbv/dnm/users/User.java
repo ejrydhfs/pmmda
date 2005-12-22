@@ -234,7 +234,7 @@ public class User extends NamedEntity implements DataObject {
    * roles.
    * @param index index of element to return. 
    * @return the element at the specified position in this list.
-   * @see #setRole(int, UserRole)
+   * @see #addRole(int, UserRole)
    * @see java.util.List#get(int)
    */
   public UserRole getRole(int index) {
@@ -265,10 +265,10 @@ public class User extends NamedEntity implements DataObject {
    * @see #getRole(int)
    * @see java.util.List#add(int, Object)
    */
-  public void setRole(int index, UserRole element) {
+  public void addRole(int index, UserRole element) {
+    roles.add(index, element);
     setModified(true);
     setForeignKey(element, "userRolesHandle", getId());
-    roles.add(index, element);
   }
 
   /** 
@@ -280,14 +280,12 @@ public class User extends NamedEntity implements DataObject {
    * @pre element != null
    */
   public boolean addRole(UserRole element) {
-    setModified(true);
-    setForeignKey(element, "userRolesHandle", getId());
     return roles.add(element);
   }
   
   /** 
-   * Removes the first occurrence in this list of the specified element 
-   * If this list does not contain the element, it is unchanged. More formally, 
+   * Removes the first occurrence in this list of the specified element. If 
+   * the list does not contain the element, it is unchanged. More formally, 
    * removes the element with the lowest index i such that 
    * (o==null ? get(i)==null : o.equals(get(i))) (if such an element exists). 
    * @param element element to be removed from this list, if present. 
@@ -298,7 +296,7 @@ public class User extends NamedEntity implements DataObject {
     boolean removed = roles.remove(element);
     if (removed) {
       setModified(true);
-      setForeignKey(element, "userRolesHandle", getId());
+      setForeignKey(element, "userRolesHandle", null);
     }
     return removed;
   }
