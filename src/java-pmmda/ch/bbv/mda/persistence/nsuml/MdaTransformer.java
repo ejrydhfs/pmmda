@@ -142,7 +142,7 @@ public class MdaTransformer {
    * @param context NSUML context containing the package to synchronize.
    */
   protected void extractPackage(MetaPackage source, MModel context) {
-    assert ((source != null) && (context != null));
+    assert (source != null) && (context != null);
     String qualifiedName = source.getName();
     MPackage mPackage = createPackage(context, qualifiedName);
     elements.put(source, mPackage);
@@ -207,8 +207,8 @@ public class MdaTransformer {
    */
   protected void extractRelation(MetaClass source, MPackage context) {
     assert (source != null) && (context != null);
-    MClassifier mClass;
-    mClass = findClassQualified(context, source.getName());
+    // find class the relations relate to
+    MClassifier mClass = findClassifierQualified(context, source.getQualifiedName());
     for (MetaProperty item : source.getProperties()) {
       extractProperty(item, mClass);
     }
@@ -222,7 +222,7 @@ public class MdaTransformer {
       extractInterface(ancestorIf, mClass);
     }
     for (MetaClass item : source.getNestedClasses()) {
-      //extractRelation(item, mClass); // TODO process relations
+      extractRelation(item, context);
     }
   }
 
@@ -234,8 +234,11 @@ public class MdaTransformer {
    * @param child of the generalization relation
    */
   protected void extractAncestor(MetaClass ancestor, MClassifier child) {
+    MClassifier mAncestor = findClassifierQualified(mModel, ancestor.getQualifiedName());
     MPackage ancestorContext = findPackageQualified(mModel, ancestor.retrievePackage().getName());
-    MClass mAncestor = createClass(ancestorContext, ancestor.getName());
+    if(mAncestor == null) {
+      mAncestor = createClass(ancestorContext, ancestor.getName());
+    }
     MGeneralization generalization = findGeneralization(mModel, mAncestor, child);
     if (generalization == null) {
       generalization = new MGeneralizationImpl();
@@ -256,8 +259,11 @@ public class MdaTransformer {
    */
   
   protected void extractInterface(MetaClass ancestorIf, MClassifier child) {
+    MClassifier parent = findClassifierQualified(mModel, ancestorIf.getQualifiedName());
     MPackage ancestorContext = findPackageQualified(mModel, ancestorIf.retrievePackage().getName());
-    MInterface parent = createInterface(ancestorContext, ancestorIf.getName());
+    if(parent == null) {
+      parent = createInterface(ancestorContext, ancestorIf.getName());
+    }
     MAbstraction abstraction = findAbstraction(mModel, parent, child);
     if(abstraction == null) {
       abstraction = new MAbstractionImpl();
@@ -294,22 +300,8 @@ public class MdaTransformer {
     mClass.setAbstract(source.isAbstract());
     extractTags(source, mClass);
     extractStereotypeAndVisibility(source, mClass);
-    
-    // TODO move into extract relations, because at the time this is processed not all classes are available and hence some relations point to the Nirvana
-    for (MetaProperty item : source.getProperties()) {
-      extractProperty(item, mClass);
-    }
-    for (MetaIndexedProperty item : source.getIndexedProperties()) {
-      extractIndexedProperty(item, mClass);
-    }
     for (MetaClass item : source.getNestedClasses()) {
       extractNestedClass(item, mClass);
-    }
-    for (MetaClass ancestor : source.retrieveAncestors()) {
-      extractAncestor(ancestor, mClass);
-    }
-    for (MetaClass ancestorIf : source.retrieveInterfaces()) {
-      extractInterface(ancestorIf, mClass);
     }
   }
 
@@ -476,24 +468,6 @@ public class MdaTransformer {
   }
 
   /**
-   * Finds the tag with the given name.
-   * @param item item to look for the tag.
-   * @param tagName name of the tag to find.
-   * @return the requested tag if found otherwise null
-   * @pre (item != null) && (tagName != null)
-   */
-  private MTaggedValue findTag(MModelElement item, String tagName) {
-    assert (item != null) && (tagName != null);
-    for (Iterator i = item.getTaggedValues().iterator(); i.hasNext();) {
-      MTaggedValue tag = (MTaggedValue) i.next();
-      if (tagName.equals(tag.getTag())) {
-        return tag;
-      }
-    }
-    return null;
-  }
-
-  /**
    * Creates the package with the given qualified name. All necessary surounding
    * packages are created. If the package already exists no creation action is
    * performed.
@@ -519,100 +493,6 @@ public class MdaTransformer {
     return mPackage;
   }
 
-  /**
-   * Returns the package with the given name member of the context.
-   * @param context context in which to search the package.
-   * @param name name of the requested package.
-   * @return the requested package if found otherwise null.
-   */
-  public MPackage findPackage(MPackage context, String name) {
-    assert (context != null) && (name != null);
-
-    if (name.equals(context.getName())) {
-      return context;
-    }
-    for (Iterator<MPackage> i = new FilterIterator<MPackage>(context
-        .getOwnedElements(), MPackage.class); i.hasNext();) {
-      MPackage mPackage = i.next();
-      if (name.equals(mPackage.getName())) {
-        return mPackage;
-      }
-    }
-    return null;
-  }
-
-  /**
-   * Returns a package within the context specified with qualified name.
-   * If you set the context different from the entire model please take care to omitt leading package names within the qualified name.
-   * @param context the entire model or a package to look for the package specified with the qualified name
-   * @param qualifiedName of the package
-   * @return null if no package found or otherwise the specified package
-   */
-  public MPackage findPackageQualified(MPackage context, String qualifiedName) {
-    MPackage mPackage = null;
-    StringTokenizer tokenizer = new StringTokenizer(qualifiedName, ".");
-    while (tokenizer.hasMoreTokens()) {
-      String name = tokenizer.nextToken();
-      mPackage = findPackage(context, name);
-      if (mPackage == null) {
-        return null;
-      }
-      context = mPackage;
-    }
-    return mPackage;
-  }
-  
-  private MClass findClass(MPackage context, String name) {
-    assert (context != null) && (name != null);
-    MClass mClass = null;
-    for (Iterator<MClass> i = new FilterIterator<MClass>(context
-        .getOwnedElements(), MClass.class); i.hasNext();) {
-      mClass = i.next();
-      if (name.equals(mClass.getName())) {
-        break;
-      }
-      mClass = null;
-    }
-    return mClass;
-  }
-
-  /**
-   * Returns a class within the context specified with qualified name.
-   * If you set the context different from the entire model please take care to omitt leading package names within the qualified name.
-   * @param context the entire model or a package to look for the class specified with the qualified name
-   * @param qualifiedName of the class
-   * @return null if no corresponding class found or the class found
-   */
-  public MClass findClassQualified(MPackage context, String qualifiedName) {
-    int pos = qualifiedName.lastIndexOf('.');
-    if(pos > -1){
-      context = findPackageQualified(mModel, qualifiedName.substring(0, pos));
-      return findClass(context, qualifiedName.substring(pos+1));
-    } else {
-      return findClass(context, qualifiedName);
-    }
-  }
-  
-  /**
-   * Finds a class within a class (nested class) or, because the model supports it, within an interface
-   * @param context class or interface to search
-   * @param name unqualified name of the class to look up
-   * @return null if not found or the contained class
-   */
-  private MClass findClass(MClassifier context, String name) {
-    assert (context != null) && (name != null);
-    MClass mClass = null;
-    for (Iterator<MClass> i = new FilterIterator<MClass>(context
-        .getOwnedElements(), MClass.class); i.hasNext();) {
-      mClass = i.next();
-      if (name.equals(mClass.getName())) {
-        break;
-      }
-      mClass = null;
-    }
-    return mClass;
-  }
-
   private MClass createClass(MPackage context, String name) {
     assert (context != null) && (name != null);
     MClass item = findClass(context, name);
@@ -633,34 +513,6 @@ public class MdaTransformer {
       context.addOwnedElement(item);
     }
     return item;
-  }
-
-  private MInterface findInterface(MPackage context, String name) {
-    assert (context != null) && (name != null);
-    MInterface mInterface = null;
-    for (Iterator<MInterface> i = new FilterIterator<MInterface>(context
-        .getOwnedElements(), MInterface.class); i.hasNext();) {
-      mInterface = i.next();
-      if (name.equals(mInterface.getName())) {
-        break;
-      }
-      mInterface = null;
-    }
-    return mInterface;
-  }
-
-  private MInterface findInterface(MClassifier context, String name) {
-    assert (context != null) && (name != null);
-    MInterface mClass = null;
-    for (Iterator<MInterface> i = new FilterIterator<MInterface>(context
-        .getOwnedElements(), MInterface.class); i.hasNext();) {
-      mClass = i.next();
-      if (name.equals(mClass.getName())) {
-        break;
-      }
-      mClass = null;
-    }
-    return mClass;
   }
 
   private MInterface createInterface(MPackage context, String name) {
@@ -685,6 +537,220 @@ public class MdaTransformer {
     return item;
   }
 
+  /**
+   * Finds an attribute with the given name. If not found creates an attribute
+   * in the given class.
+   * @param context class in which the attribute should be created.
+   * @param name name of the attribute to create.
+   * @return the requested attribute.
+   */
+  private MAttribute createAttribute(MClassifier context, String name) {
+    assert (context != null) && (name != null);
+    MAttribute item = findAttribute(context, name);
+    if (item == null) {
+      item = new MAttributeImpl();
+      item.setName(name);
+      context.addFeature(item);
+    }
+    return item;
+  }
+
+  /**
+   * Returns a package within the context specified with qualified name.
+   * If you set the context different from the entire model please take care to omitt leading package names within the qualified name.
+   * @param context the entire model or a package to look for the package specified with the qualified name
+   * @param qualifiedName of the package
+   * @return null if no package found or otherwise the specified package
+   */
+  public MPackage findPackageQualified(MPackage context, String qualifiedName) {
+    assert (context != null) && (qualifiedName != null);
+    MPackage mPackage = null;
+    StringTokenizer tokenizer = new StringTokenizer(qualifiedName, ".");
+    while (tokenizer.hasMoreTokens()) {
+      String name = tokenizer.nextToken();
+      mPackage = findPackage(context, name);
+      if (mPackage == null) {
+        return null;
+      }
+      context = mPackage;
+    }
+    return mPackage;
+  }
+  
+  /**
+   * Returns a class within the context specified with qualified name.
+   * If you set the context different from the entire model please take care to omitt leading package names within the qualified name.
+   * @param context the entire model or a package to look for the class specified with the qualified name
+   * @param qualifiedName of the class
+   * @return null if no corresponding class found or the class found
+   */
+  public MClassifier findClassifierQualified(MPackage context, String qualifiedName) {
+    assert (context != null) && (qualifiedName != null);
+    // test whether context qualified name is at the beginning of qualifiedName
+    String qualifiedContext = NsUmlUtilities.getQualifiedName(context);
+    if(qualifiedName.startsWith(qualifiedContext)) {
+      qualifiedName = qualifiedName.substring(qualifiedContext.length());
+      if(qualifiedName.startsWith(".")) qualifiedName = qualifiedName.substring(1);
+    }
+    StringTokenizer tokenizer = new StringTokenizer(qualifiedName, ".");
+    MPackage currentPackage = null;
+    MClassifier currentClassifier = null;
+    String residuum = "";
+    while (tokenizer.hasMoreTokens()) {
+      String name = tokenizer.nextToken();
+      residuum += name+".";
+      if(context instanceof MPackage) currentPackage = findPackage((MPackage)context, name);
+      if(currentPackage == null) currentClassifier = findClass(context, name);
+      if(currentPackage == null && currentClassifier == null) return null;
+      if(currentPackage != null) {
+        context = currentPackage;
+      } else {
+        if(tokenizer.hasMoreTokens()) {
+          qualifiedName = qualifiedName.substring(residuum.length());
+          return findClassifierQualified(currentClassifier, qualifiedName);
+        }
+      }
+    }
+    return currentClassifier;
+  }
+  
+  public MClassifier findClassifierQualified(MClassifier context, String qualifiedName) {
+    assert (context != null) && (qualifiedName != null);
+    String qualifiedContext = NsUmlUtilities.getQualifiedName(context);
+    if(qualifiedName.startsWith(qualifiedContext)) {
+      qualifiedName = qualifiedName.substring(qualifiedContext.length());
+    }
+    StringTokenizer tokenizer = new StringTokenizer(qualifiedName, ".");
+    MClassifier currentClassifier = null;
+    while (tokenizer.hasMoreTokens()) {
+      String name = tokenizer.nextToken();
+      currentClassifier = findClass(context, name);
+      if(currentClassifier == null) return null;
+      context = currentClassifier;
+    }
+    return context;
+  }
+  
+  /**
+   * Finds the tag with the given name.
+   * @param item item to look for the tag.
+   * @param tagName name of the tag to find.
+   * @return the requested tag if found otherwise null
+   * @pre (item != null) && (tagName != null)
+   */
+  private MTaggedValue findTag(MModelElement item, String tagName) {
+    assert (item != null) && (tagName != null);
+    for (Iterator i = item.getTaggedValues().iterator(); i.hasNext();) {
+      MTaggedValue tag = (MTaggedValue) i.next();
+      if (tagName.equals(tag.getTag())) {
+        return tag;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Returns the package with the given name member of the context.
+   * @param context context in which to search the package.
+   * @param name name of the requested package.
+   * @return the requested package if found otherwise null.
+   */
+  public MPackage findPackage(MPackage context, String unqualifiedName) {
+    assert (context != null) && (unqualifiedName != null);
+
+    if (unqualifiedName.equals(context.getName())) {
+      return context;
+    }
+    for (Iterator<MPackage> i = new FilterIterator<MPackage>(context
+        .getOwnedElements(), MPackage.class); i.hasNext();) {
+      MPackage mPackage = i.next();
+      if (unqualifiedName.equals(mPackage.getName())) {
+        return mPackage;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Finds a class within a package.
+   * @param context package to search
+   * @param unqualifiedName unqualified name of the class to look up
+   * @return null if not found or the contained class
+   */
+  private MClass findClass(MPackage context, String unqualifiedName) {
+    assert (context != null) && (unqualifiedName != null);
+    MClass mClass = null;
+    for (Iterator<MClass> i = new FilterIterator<MClass>(context
+        .getOwnedElements(), MClass.class); i.hasNext();) {
+      mClass = i.next();
+      if (unqualifiedName.equals(mClass.getName())) {
+        break;
+      }
+      mClass = null;
+    }
+    return mClass;
+  }
+
+  /**
+   * Finds a class within a class (nested class) or, because the model supports it, within an interface
+   * @param context class or interface to search
+   * @param unqualifiedName unqualified name of the class to look up
+   * @return null if not found or the contained class
+   */
+  private MClass findClass(MClassifier context, String unqualifiedName) {
+    assert (context != null) && (unqualifiedName != null);
+    MClass mClass = null;
+    for (Iterator<MClass> i = new FilterIterator<MClass>(context
+        .getOwnedElements(), MClass.class); i.hasNext();) {
+      mClass = i.next();
+      if (unqualifiedName.equals(mClass.getName())) {
+        break;
+      }
+      mClass = null;
+    }
+    return mClass;
+  }
+
+  /**
+   * Searches an interface directly contained within the passed context
+   * @param context to be searched for the interface
+   * @param unqualifiedName of the interface searched
+   * @return MInterface if found otherwise null
+   */
+  private MInterface findInterface(MPackage context, String unqualifiedName) {
+    assert (context != null) && (unqualifiedName != null);
+    MInterface mInterface = null;
+    for (Iterator<MInterface> i = new FilterIterator<MInterface>(context
+        .getOwnedElements(), MInterface.class); i.hasNext();) {
+      mInterface = i.next();
+      if (unqualifiedName.equals(mInterface.getName())) {
+        break;
+      }
+      mInterface = null;
+    }
+    return mInterface;
+  }
+
+  /**
+   * Searches an interface directly contained within the passed context
+   * @param context to be searched for the interface
+   * @param unqualifiedName of the interface searched
+   * @return MInterface if found otherwise null
+   */
+  private MInterface findInterface(MClassifier context, String unqualifiedName) {
+    assert (context != null) && (unqualifiedName != null);
+    MInterface mClass = null;
+    for (Iterator<MInterface> i = new FilterIterator<MInterface>(context
+        .getOwnedElements(), MInterface.class); i.hasNext();) {
+      mClass = i.next();
+      if (unqualifiedName.equals(mClass.getName())) {
+        break;
+      }
+      mClass = null;
+    }
+    return mClass;
+  }
+
   private MAttribute findAttribute(MClassifier context, String name) {
     assert (context != null) && (name != null);
     MAttribute mAttribute = null;
@@ -707,24 +773,6 @@ public class MdaTransformer {
       }
     }
     return mAttribute;
-  }
-
-  /**
-   * Finds an attribute with the given name. If not found creates an attribute
-   * in the given class.
-   * @param context class in which the attribute should be created.
-   * @param name name of the attribute to create.
-   * @return the requested attribute.
-   */
-  private MAttribute createAttribute(MClassifier context, String name) {
-    assert (context != null) && (name != null);
-    MAttribute item = findAttribute(context, name);
-    if (item == null) {
-      item = new MAttributeImpl();
-      item.setName(name);
-      context.addFeature(item);
-    }
-    return item;
   }
 
   private MClassifier findDataType(String name) {
@@ -795,8 +843,8 @@ public class MdaTransformer {
         if (name.equals(associationName)) {
           break;
         }
-        association = null;
       }
+      association = null;
     }
     return association;
   }
