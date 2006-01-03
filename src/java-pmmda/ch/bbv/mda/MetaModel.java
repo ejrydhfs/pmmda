@@ -203,7 +203,9 @@ public class MetaModel extends MetaPackage {
    * Finds the class with the given qualified name.
    * @param qualifiedName qualified name of the class to find.
    * @return the requested class if found otherwise null.
+   *
    */
+  // TODO Adrian: does not find classes directly added to the model. Does not find nested classes.
   public MetaClass findClass(String qualifiedName) {
     MetaClass clazz = null;
     if (qualifiedName != null) {
