@@ -37,6 +37,7 @@ public class NewAction extends ExplorerNewAction {
     MdaDocument document = new MdaDocument();
     MetaModel model = document.getModel();
     model.setName("default");
+    model.setFilename("");
     model.accept(new TreeChecker());
     explorer.setDocument(document);
     return true;
