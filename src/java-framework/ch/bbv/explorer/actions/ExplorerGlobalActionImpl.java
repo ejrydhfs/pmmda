@@ -120,9 +120,20 @@ public abstract class ExplorerGlobalActionImpl extends AbstractAction implements
    * @return the option selected from the user.
    */
   protected int displayMessage(String messageKey) {
+    return displayMessage(messageKey, getExplorer().getDocument().getFile());
+  }
+  
+  /**
+   * Displays a confirmation message for a document with a defined persistent
+   * storage.
+   * @param messageKey key of the resource for the message of the dialog.
+   * @param file the message is related to.
+   * @return the option selected from the user.
+   */
+  protected int displayMessage(String messageKey, File file) {
     ResourceBundle bundle = ResourceBundle
         .getBundle("ch.bbv.explorer.Messages");
-    String filename = getExplorer().getDocument().getFile().getName();
+    String filename = file.getName();
     String message = MessageFormat.format(bundle.getString(messageKey),
         new Object[] { filename });
     return JOptionPane.showConfirmDialog(getExplorer().getFrame(), message,
