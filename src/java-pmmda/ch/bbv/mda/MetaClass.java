@@ -462,6 +462,7 @@ public class MetaClass extends MetaClassifier {
    * @return the package owning the class.
    */
   public MetaPackage retrievePackage() {
+    if(this.isNestedClass()) return ((MetaClass)getContext()).retrievePackage();
     return (MetaPackage) getContext();
   }
 
