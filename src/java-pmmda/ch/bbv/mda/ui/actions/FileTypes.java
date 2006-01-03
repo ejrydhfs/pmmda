@@ -112,4 +112,21 @@ public class FileTypes {
         FileTypes.ARGOUML_TEXT));
 
   }
+  
+  /** Returns the first extension in the list of a filter description.
+   * 
+   * @param filterDescription to search for an extension.
+   * @return extension (without '.' at the beginning) or null if none found.
+   */
+  public static String getBestMatchingExtension(String filterDescription) {
+    if(filterDescription == null) return null;
+    if(filterDescription.equals(FileTypes.POSEIDON_TEXT)) return FileTypes.POSEIDON_EXT[0];
+    if(filterDescription.equals(FileTypes.SERIALIZE_TEXT)) return FileTypes.SERIALIZE_EXT[0];
+    if(filterDescription.equals(FileTypes.XMI_TEXT)) return FileTypes.XMI_EXT[0];
+    if(filterDescription.equals(FileTypes.XML_TEXT)) return FileTypes.XML_EXT[0];
+    if(filterDescription.equals(FileTypes.ARGOUML_TEXT)) return FileTypes.ARGOUML_EXT[0];
+    if(filterDescription.equals(FileTypes.RATIONAL_ROSE_TEXT)) return FileTypes.RATIONAL_ROSE_EXT[0];
+    if(filterDescription.equals(FileTypes.RATIONAL_ROSE_CAT_TEXT)) return FileTypes.RATIONAL_ROSE_CAT_EXT[0];
+    return null;
+  }
 }
