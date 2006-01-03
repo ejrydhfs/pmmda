@@ -113,6 +113,7 @@ public class ModelOperators {
 
   /**
    * Returns the context part of a qualified class name.
+   * !!!! For a nested class the context is its parent class
    * @param qualifiedName qualified name to process.
    * @return the context name or null if qualified name is null.
    */
@@ -132,6 +133,7 @@ public class ModelOperators {
 
   /**
    * Returns the component name of a qualified name.
+   * !!!! For a nested class the component name is without parent classes
    * @param qualifiedName qualified name to process.
    * @return the component name or null if qualified name is null.
    */
@@ -156,23 +158,6 @@ public class ModelOperators {
   public static String qualifiedNameToIdentifier(String qualifiedName) {
     assert qualifiedName != null;
     return qualifiedName.replaceAll(".", "_");
-  }
-
-  /**
-   * finds the classifier with the given qualified name.
-   * @param model model containing the requested classifier.
-   * @param qualifiedName the qualified name of the requested classifier.
-   * @return the requested classifier if found otherwise null
-   * @pre (model != null) && (qualifiedName != null)
-   */
-  public static MetaClassifier findClassifier(MetaModel model,
-      String qualifiedName) {
-    assert (model != null) && (qualifiedName != null);
-    MetaClassifier classifier = model.findDatatype(qualifiedName);
-    if (classifier == null) {
-      classifier = model.findClass(qualifiedName);
-    }
-    return classifier;
   }
 
   /**
