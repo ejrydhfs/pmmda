@@ -126,9 +126,9 @@ public class MdaDocument implements ExplorerDocument {
     }
     codeTypeMgr.setRoot(new File(newRoot, CODES_DIRECTORY));
     codeTypeMgr.saveAll();
-    model.setFilename(file.getAbsolutePath());
     PersistenceHandler handler = factory.getHandler(file);
     handler.writeModel(model, file);
+    model.setFilename(file.getAbsolutePath());
     state = State.CLEAN;
     this.file = file;
   }
