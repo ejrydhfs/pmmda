@@ -101,7 +101,7 @@ public class TypeFactory extends AbstractTypeFactory {
     addRelation(nodeType, "properties", MetaProperty.class, true, true);
     addRelation(nodeType, "indexedProperties", MetaIndexedProperty.class, true,
         true);
-    addRelation(nodeType, "classes", MetaClass.class, true, true);
+    addRelation(nodeType, "nestedClasses", MetaClass.class, true, true);
 
     List<UiField> params = new ArrayList<UiField>();
     addField(params, "name", String.class, true);
@@ -154,7 +154,7 @@ public class TypeFactory extends AbstractTypeFactory {
         MetaDatatype.class, MetaDatatype.class,
         VisitorFunctor.class, VisitorFunctor.class, null);
     UiNodeTypeImpl nodeType = new UiNodeTypeImpl(type, "name",
-        MetaDatatype.class);
+        MetaDatatypeView.class); // Adrian
     nodeType.registerView(new UiNodeViewType("default", nodeType,
         NodeTableView.class, null, true));
     register(type, nodeType, new PopupSelectorDefault(nodeType),
