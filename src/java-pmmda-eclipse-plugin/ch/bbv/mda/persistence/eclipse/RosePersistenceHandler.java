@@ -4,25 +4,18 @@ package ch.bbv.mda.persistence.eclipse;
 import java.io.*;
 
 import javax.swing.JOptionPane;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.emf.importer.rose.builder.UnitTreeNode;
 import org.eclipse.emf.importer.rose.parser.RoseWriter;
-import org.xml.sax.SAXException;
+import org.eclipse.emf.importer.rose.parser.RoseNode;
 
-import ru.novosoft.uml.model_management.MModel;
-
-import ch.bbv.explorer.ExplorerDocument.State;
-import ch.bbv.mda.generators.ItemFactory;
-import ch.bbv.mda.generators.TreeChecker;
 import ch.bbv.mda.MetaModel;
 import ch.bbv.mda.persistence.PersistenceException;
 import ch.bbv.mda.persistence.PersistenceHandler;
-import ch.bbv.mda.persistence.PersistenceHandlerFactory;
-import ch.bbv.mda.persistence.rose.MdaRoseUtil;
 import ch.bbv.mda.persistence.rose.RoseTransformer;
+import ch.bbv.mda.persistence.rose.MdaTransformer;
 import ch.bbv.utilities.ResourceUtility;
 
 
@@ -32,47 +25,83 @@ import ch.bbv.utilities.ResourceUtility;
  * Reads *.mdl (Rational Rose) files and creates the MetaModel
  */
 public class RosePersistenceHandler implements PersistenceHandler {
+  public static String TaggedValueToolIdentifier = "pmMDA";
   private static Log log = LogFactory.getLog(RosePersistenceHandler.class);
-  protected MdaRoseUtil roseUtil;
+
   protected UnitTreeNode unitTree;
   protected RoseTransformer roseTransformer;
+  protected MdaTransformer mdaTransformer;
 
   public RosePersistenceHandler(){
     roseTransformer = new RoseTransformer();
+    mdaTransformer = new MdaTransformer();
   }
   
   public MetaModel readModel(File file) throws PersistenceException {
     MetaModel metaModel = new MetaModel();
-    //MetaFactory.getInstance().initialize(metaModel); TODO verify whether it works correctly
-    unitTree = roseTransformer.loadRoseModel(file.toString());
-    if (unitTree == null) {
-      log.error("NsUmlPersistenceHandler#readModel: illegal file - " + file);
-      JOptionPane.showMessageDialog(null, ResourceUtility
-          .getString("mda.ui.sorryMsg.INVALID_FORMAT"), ResourceUtility
-          .getString("mda.ui.sorryMsg.SORRY"), JOptionPane.ERROR_MESSAGE);
-      return null;
+    try {
+      unitTree = roseTransformer.loadRoseModel(file.toString(), metaModel);
+      if (unitTree == null) {
+        log.error("RosePersistenceHandler#readModel: illegal file - " + file);
+        JOptionPane.showMessageDialog(null, ResourceUtility
+            .getString("mda.ui.sorryMsg.INVALID_FORMAT"), ResourceUtility
+            .getString("mda.ui.sorryMsg.SORRY"), JOptionPane.ERROR_MESSAGE);
+        return null;
+      }
     }
-    roseTransformer.synchronize(unitTree, metaModel);
-  	return metaModel;
+    catch(Exception e){
+      throw new PersistenceException(e);
+    }
+    return metaModel;
   }
   
   public void writeModel(MetaModel model, File file) throws PersistenceException {
-	  if (file.exists()) {
-	    updateModel(model, file);
-	  }
-  }
-
-  public void importPackage(MetaModel targetProject, File file, String packageName) {
+    if (model.getFilename() != null && model.getFilename().equals(file.toString()) && file.exists()) {
+      updateModel(model, file);
+    } else {
+      try {
+        // TODO in case of a rose model within model I could read it and then use for synchronizing diagrams
+        // I have to load the file again, remove everything from the root category except the logical_presentations node and use this for synchronization.
+        RoseNode vT = mdaTransformer.createVersionTree();
+        RoseNode mT = mdaTransformer.createModelTree();
+        mdaTransformer.synchronize(model, mT);
+        RoseWriter roseWriter = new RoseWriter(file.toString(), vT, mT);
+        roseWriter.write();
+        String name = file.getName();
+        int idx = name.lastIndexOf(".");
+        if(idx > 0) name = name.substring(0, idx);
+        model.setName(name);
+      } catch (FileNotFoundException e){
+        log.warn("RosePersistenceHandler#updateModel: " + e.getLocalizedMessage()+ " - " + file);
+        JOptionPane.showMessageDialog(null, e.getLocalizedMessage(), ResourceUtility
+            .getString("mda.ui.sorryMsg.SORRY"), JOptionPane.ERROR_MESSAGE);
+      } catch (Exception e){
+        throw new PersistenceException(e);
+      }
+    }
   }
 
   public void updateModel(MetaModel model, File file) throws PersistenceException {
-    roseTransformer = new RoseTransformer();
-    UnitTreeNode uTree = roseTransformer.loadRoseModel(file.toString());
-    roseTransformer.synchronize(uTree, model);
-    // TODO write synchronized model
     try{
-      new RoseWriter(file.toString(), null, uTree.getRoseNode());
+      MetaModel metaModel = new MetaModel();
+      unitTree = roseTransformer.loadRoseModel(file.toString(), metaModel);
+      if (unitTree == null) {
+        log.error("RosePersistenceHandler#updateModel: illegal file - " + file);
+        JOptionPane.showMessageDialog(null, ResourceUtility
+            .getString("mda.ui.sorryMsg.INVALID_FORMAT"), ResourceUtility
+            .getString("mda.ui.sorryMsg.SORRY"), JOptionPane.ERROR_MESSAGE);
+        return;
+      }
+      mdaTransformer.synchronize(model, roseTransformer.getRoseUtil().getModelTree());
+      RoseWriter roseWriter = new RoseWriter(file.toString(), roseTransformer.getRoseUtil().getVersionTree(), roseTransformer.getRoseUtil().getModelTree());
+      roseWriter.write();
+      model.setName(unitTree.getName());
+    } catch (FileNotFoundException e){
+      log.warn("RosePersistenceHandler#updateModel: " + e.getLocalizedMessage()+ " - " + file);
+      JOptionPane.showMessageDialog(null, e.getLocalizedMessage(), ResourceUtility
+          .getString("mda.ui.sorryMsg.SORRY"), JOptionPane.ERROR_MESSAGE);
     } catch (Exception e){
+      throw new PersistenceException(e);
     }
   }
   

@@ -18,24 +18,28 @@ import ch.bbv.mda.MetaModel;
 /**
  * @author AdrianBachofen
  *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
+ * Loads and transforms a rose model into a MDA model
  */
 public class RoseTransformer {
 	private static Log log = LogFactory.getLog(RoseTransformer.class);
 	protected MdaRoseUtil roseUtil;
-	
+    
     public RoseTransformer(){ 
+      ResourceSet result = new ResourceSetImpl();
+      result.getURIConverter().getURIMap().putAll(EcorePlugin.computePlatformURIMap());
+      roseUtil = new MdaRoseUtil(result.getURIConverter());
+      roseUtil.getRoseEcoreBuilder().noQualify = false;
+      roseUtil.getRoseEcoreBuilder().unsettablePrimitive = false;
     }
 	
+    public UnitTreeNode loadRoseModel(String fileName, MetaModel model) throws Exception{
+      roseUtil.loadTree(fileName, model);
+      return roseUtil.getUnitTree();
+    }
+    
 	public UnitTreeNode loadRoseModel(String file){
     	UnitTreeNode unitTree = null;
     	try{
-            ResourceSet result = new ResourceSetImpl();
-            result.getURIConverter().getURIMap().putAll(EcorePlugin.computePlatformURIMap());
-            roseUtil = new MdaRoseUtil(result.getURIConverter());
-            roseUtil.getRoseEcoreBuilder().noQualify = false;
-            roseUtil.getRoseEcoreBuilder().unsettablePrimitive = false;
             unitTree = roseUtil.createRoseUnitTreeAndTable(file.toString(), null);
             roseUtil.createExtent4RoseUnitTree(unitTree);
             // TODO Comment next line out for release version 
@@ -47,13 +51,7 @@ public class RoseTransformer {
         return unitTree;
 	}
 
-	public void synchronize(UnitTreeNode source, MetaModel target) {
-		try{
-			roseUtil.processUnitTree(source, target);
-		}
-		catch(Exception e){
-	    	log.error(e);
-		}
-	}
-
+    public MdaRoseUtil getRoseUtil() {
+      return roseUtil;
+    }
 }

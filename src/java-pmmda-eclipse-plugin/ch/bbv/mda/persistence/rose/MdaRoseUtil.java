@@ -16,23 +16,27 @@
  */
 package ch.bbv.mda.persistence.rose;
 
-import java.io.File;
-import java.util.Iterator;
 import java.util.Map;
-
+import org.eclipse.emf.importer.rose.builder.RoseStrings;
 import org.eclipse.emf.importer.rose.builder.RoseUtil;
 import org.eclipse.emf.importer.rose.builder.RoseWalker;
+import org.eclipse.emf.importer.rose.builder.TableObject;
+import org.eclipse.emf.importer.rose.builder.UnitTreeBuilder;
 import org.eclipse.emf.importer.rose.builder.UnitTreeNode;
 import org.eclipse.emf.importer.rose.parser.RoseLexer;
 import org.eclipse.emf.importer.rose.parser.RoseLoader;
 import org.eclipse.emf.importer.rose.parser.RoseNode;
 import org.eclipse.emf.importer.rose.parser.RoseParser;
+import org.eclipse.emf.importer.rose.parser.Util;
 import org.eclipse.emf.ecore.resource.URIConverter;
 
 import ch.bbv.mda.MetaModel;
 
 /**
- * Provide functions to process a rose file.
+ * @author AdrianBachofen
+ *
+ * Adds support functions to the currently available RoseUtil functions.
+ * These support functions are handier to me than those already available.
  */
 public class MdaRoseUtil extends RoseUtil
 {
@@ -48,79 +52,103 @@ public class MdaRoseUtil extends RoseUtil
   public Map getRefTable() { return refTable;}
   public Map getTypeTable() { return typeTable;}
 
-  public void processUnitTree(UnitTreeNode unitTree, MetaModel target) throws Exception
-  {
-    if (unitTree != null) 
-    {
-      MdaRoseVisitor mdaRoseVisitor = loadTree(null, unitTree, target);
-      String packageName = unitTree.getEcoreFileName();
-      int fileSeparatorIndex = packageName.lastIndexOf(File.separator);
-      if (fileSeparatorIndex != -1)
-      {
-        packageName = packageName.substring(fileSeparatorIndex + 1);
-      }
-      int dotIndex = packageName.lastIndexOf(".");
-      if (dotIndex != -1)
-      {
-        packageName = packageName.substring(0, dotIndex);
-      }
-      mdaRoseVisitor.getMetaModel().setName(packageName);
-      mdaRoseVisitor.createEPackageForRootClasses(unitTree.getExtent(), unitTree.getRoseNode(), packageName);
-      mdaRoseVisitor.setEEnums();
-      mdaRoseVisitor.setEReferences();
-      mdaRoseVisitor.setSuper();
-      mdaRoseVisitor.setETypeClassifier();
-      setIDs(unitTree);
-      validate(unitTree);
-    }
+  private RoseNode versionTree = null;
+  private RoseNode modelTree = null;
+  private UnitTreeNode unitTreeRoot = null;
+  
+  public RoseNode getVersionTree(){
+    return versionTree;
   }
-
-  protected MdaRoseVisitor loadTree(RoseNode containingNode, UnitTreeNode node, MetaModel target) throws Exception
+  
+  public RoseNode getModelTree(){
+    return modelTree;
+  }
+  
+  public UnitTreeNode getUnitTree(){
+    return unitTreeRoot;
+  }
+  
+  public MdaRoseVisitor loadTree(String fileName, MetaModel target) throws Exception
   {
     MdaRoseVisitor mdaRoseVisitor = new MdaRoseVisitor(this, target);
     
     // Load the Rose .mdl or .cat file, and create mappings for the objects.
     //
-    String name = node.getName();
-    String roseFile = node.getRoseFileName();
-    RoseLoader loader = new RoseLoader(roseFile, null);
+    String roseFile = fileName;
+    RoseLoader loader = new RoseLoader(roseFile, uriConverter);
     try
     {
       if (loader.isValid())
       {
         RoseLexer  lexer = new RoseLexer(loader);
-        RoseParser parser = new RoseParser(lexer, true, true);
+        RoseParser parser = new RoseParser(lexer, false, false);
         parser.parse();
-        RoseNode modelTree = parser.getModelTree();
-        modelTree.setNode(node.getExtent());
-    
-        // This sets the parent so that the nodes can traverse to the root to find default eCore settings.
-        //
-        if (containingNode != null)
-        {
-          modelTree.setParent(containingNode);
-        }
-    
-        containingNode = modelTree;
-    
+        versionTree = parser.getVersionTree();
+        modelTree = parser.getModelTree();
+        UnitTreeBuilder unitTreeBuilder = new UnitTreeBuilder(this);
+        unitTreeRoot = createUnitTreeNode(fileName);
+        target.setName(unitTreeRoot.getName());
+        unitTreeBuilder.traverse(getQualifier(), modelTree, unitTreeRoot);
+        createExtent4RoseUnitTree(unitTreeRoot);
+
         // Start second traverse to create mapping objects in memory.
         //
         RoseWalker roseWalker = new RoseWalker(modelTree);
         roseWalker.traverse(mdaRoseVisitor);
+        
+        mdaRoseVisitor.createEPackageForRootClasses(unitTreeRoot.getExtent(), unitTreeRoot.getRoseNode(), unitTreeRoot.getName());
+        mdaRoseVisitor.setEEnums();
+        mdaRoseVisitor.setEReferences();
+        mdaRoseVisitor.setSuper();
+        mdaRoseVisitor.setETypeClassifier();
+        setIDs(unitTreeRoot);
+        validate(unitTreeRoot);
       }
     }
     finally 
     {
       loader.close();
     }
-
-    // Process the children of the UnitTreeNode recursively.
-    //
-    for (Iterator i = node.getNodes().iterator(); i.hasNext();)
-    {
-      UnitTreeNode subNode = (UnitTreeNode)i.next();
-      loadTree(containingNode, subNode, target);
-    }
     return mdaRoseVisitor;
+  }
+  
+  public String getModelName(String fileName) {
+    int ind_1 = fileName.lastIndexOf(System.getProperty("file.separator"));
+    int ind_2 = fileName.lastIndexOf(".");
+    String modelName;
+    if (ind_2 != -1)
+      modelName = fileName.substring(ind_1 + 1, ind_2);
+    else
+      modelName = fileName.substring(ind_1 + 1, fileName.length());
+    return modelName;
+  }
+  
+  private UnitTreeNode createUnitTreeNode(String fileName) {
+    String quid = modelTree.getRoseId();
+    if (quid != null)
+    {
+      if(modelTree.getValue() != null && modelTree.getKey() != null && modelTree.getKey().equals("") && (Util.getType(modelTree.getValue())).equals(RoseStrings.CLASS_CATEGORY)) {
+        String objName = Util.getName(modelTree.getValue());
+        UnitTreeNode unitTree = new UnitTreeNode(Util.getName(modelTree.getValue()), quid, fileName);
+        TableObject obj = new TableObject(objName, quid, unitTree);
+        quidTable.put(quid, obj);
+        nameTable.put(objName, obj);
+        return unitTree;
+      }
+      quid = quid.substring(1, quid.length() - 1);
+      return new UnitTreeNode(getModelName(fileName), quid, fileName);
+    }
+    return new UnitTreeNode(getModelName(fileName), "", fileName);
+  }
+  
+  private String getQualifier() {
+    String quid = modelTree.getRoseId();
+    if (quid != null)
+    {
+      if(modelTree.getValue() != null) {
+        return Util.getName(modelTree.getValue());
+      }
+    }
+    return null;
   }
 }

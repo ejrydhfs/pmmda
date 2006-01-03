@@ -64,21 +64,16 @@ import org.eclipse.emf.importer.rose.parser.RoseNode;
 import org.eclipse.emf.importer.rose.parser.Util;
 import org.eclipse.emf.importer.rose.builder.*;
 
-import ru.novosoft.uml.foundation.core.MAttribute;
-import ru.novosoft.uml.foundation.core.MClassifier;
-import ru.novosoft.uml.foundation.data_types.MExpression;
-import ru.novosoft.uml.foundation.data_types.MMultiplicity;
-
 import ch.bbv.mda.MetaClass;
 import ch.bbv.mda.MetaDatatype;
-import ch.bbv.mda.generators.ItemFactory;
-import ch.bbv.mda.persistence.nsuml.NsUmlUtilities;
 import ch.bbv.mda.MetaIndexedProperty;
 import ch.bbv.mda.MetaModel;
 import ch.bbv.mda.MetaPackage;
 import ch.bbv.mda.MetaElement;
 import ch.bbv.mda.MetaProperty;
 import ch.bbv.mda.Multiplicity;
+import ch.bbv.mda.TaggedValue;
+import ch.bbv.mda.persistence.eclipse.RosePersistenceHandler;
 
 /**
  * Traverses the Rose file and create eCore object in memory.
@@ -96,13 +91,15 @@ public class MdaRoseVisitor implements RoseVisitor
   private MetaPackage metaPackage = null;
   private MetaClass metaClass = null;
   private MetaDatatype metaDataType = null;
-  // private MetaFactory factory; TODO check after change
   private String associationName;
   /** Maps between the source objects used as keys and the target objects used
    * as values. Source objects are NSUML entities, target objects are MDA
    * instances.
    */
   private Map elements;
+  /** Holds the association RoseNode for EReferences
+   */
+  private Map associationRoseNodes;
 
 
   protected Map eStructuralFeatureToXMLNamespaceMap = new HashMap();
@@ -130,8 +127,8 @@ public class MdaRoseVisitor implements RoseVisitor
     ecoreFactory = EcoreFactory.eINSTANCE;
     this.metaModel = metaModel;
     this.metaPackage = metaModel;
-    // factory = MetaFactory.getInstance(); TODO check
     elements = new HashMap();
+    associationRoseNodes = new HashMap();
   }
 
   public void visitList(RoseNode roseNode)
@@ -154,6 +151,7 @@ public class MdaRoseVisitor implements RoseVisitor
     while (parent == null)
     {
       currentNode = currentNode.getParent();
+      if(currentNode == null) break;
       parent = currentNode.getNode();
     }
 
@@ -210,7 +208,6 @@ public class MdaRoseVisitor implements RoseVisitor
 		metaPackage = metaModel.findPackage(objectName);
 		if (metaPackage == null) {
 		  metaPackage = new MetaPackage();
-		  // factory.initialize(metaPackage); TODO check after change
           setCommonElementAspects(metaPackage, roseNode);
 		}
 		metaModel.addPackage(metaPackage);
@@ -225,7 +222,8 @@ public class MdaRoseVisitor implements RoseVisitor
       {
         ((EList)parent).add(ePackage);
       }
-      setEPackageProperties(roseNode, ePackage, objectName.toLowerCase());
+      // Adrian setEPackageProperties(roseNode, ePackage, objectName.toLowerCase());
+      setEPackageProperties(roseNode, ePackage, objectName);
     }
     else
     {
@@ -272,7 +270,7 @@ public class MdaRoseVisitor implements RoseVisitor
         // Adrian - added for pmMDA mapping
         if(parent instanceof EClass){
           metaClass.setContext((MetaClass)elements.get(parent));
-          ((MetaClass)elements.get(parent)).addNestedClass(metaClass); // TODO check changed to nested class
+          ((MetaClass)elements.get(parent)).addNestedClass(metaClass);
         }
         metaClass.setAbstract(true);
         metaClass.setInterface(true);
@@ -459,7 +457,7 @@ public class MdaRoseVisitor implements RoseVisitor
       // Adrian - added for pmMDA mapping
       if(parent instanceof EClass){
           metaClass.setContext((MetaClass)elements.get(parent));
-          ((MetaClass)elements.get(parent)).addNestedClass(metaClass); // TODO check changed to nested class
+          ((MetaClass)elements.get(parent)).addNestedClass(metaClass);
       }
       setEClassProperties(roseNode, eClass);
       build(roseNode, parent, eClass);
@@ -608,11 +606,9 @@ public class MdaRoseVisitor implements RoseVisitor
           MetaProperty property;
           if (eAttribute.getUpperBound() == 1) {
             property = new MetaProperty();
-            // factory.initialize(property); TODO check
             metaClass.addProperty(property);
           } else {
             MetaIndexedProperty metaIndexedProperty = new MetaIndexedProperty();
-            // factory.initialize(metaIndexedProperty); TODO check
             property = metaIndexedProperty;
             metaClass.addIndexedProperty(metaIndexedProperty);
           }
@@ -622,7 +618,8 @@ public class MdaRoseVisitor implements RoseVisitor
           property.setTransient(eAttribute.isTransient());
           property.setStatic(eAttribute.isUnsettable());
           property.setVolatile(eAttribute.isVolatile());
-          String type = (String)roseUtil.getTypeTable().get(eAttribute);
+          property.setInitialValue(eAttribute.getDefaultValueLiteral());
+          String type = trimType((String)roseUtil.getTypeTable().get(eAttribute));
           if(type != null) property.setTypeName(type);
 
           Multiplicity multiplicity = new Multiplicity(eAttribute.getLowerBound(), eAttribute.getUpperBound());
@@ -690,11 +687,16 @@ public class MdaRoseVisitor implements RoseVisitor
       }
       boolean ref1Navigable = role1.isNavigable();
       boolean ref2Navigable = role2.isNavigable();
+      // Adrian - tell user that an association is not added in case of no navigation set
+      if(!(ref1Navigable || ref2Navigable)) {
+        warning("AssociationNotNavigable_message: "+referenceName);
+      }
       if (ref1Navigable)
       {
         ref2.setEOpposite(ref1);
         setEReferenceIsContainment(ref1, role1, role2);
         roseUtil.getRefTable().put(ref1, ref2Quidu);
+        associationRoseNodes.put(ref1, role1.getParent().getParent());
         TableObject obj = (TableObject)roseUtil.getQuidTable().get(ref1Quidu);
         if (obj != null)
         {
@@ -713,6 +715,7 @@ public class MdaRoseVisitor implements RoseVisitor
         ref1.setEOpposite(ref2);
         setEReferenceIsContainment(ref2, role2, role1);
         roseUtil.getRefTable().put(ref2, ref1Quidu);
+        associationRoseNodes.put(ref2, role1.getParent().getParent());
         TableObject obj = (TableObject)roseUtil.getQuidTable().get(ref2Quidu);
         if (obj != null)
         {
@@ -1928,40 +1931,10 @@ public class MdaRoseVisitor implements RoseVisitor
           ((EClass)struct).getEStructuralFeatures().add(
             -1 - Collections.binarySearch(((EClass)struct).getEStructuralFeatures(), eReference, eStructuralFeatureComparator),
             eReference);
-          
+
           // MDA mapping - get Class of this reference (side where this navigable role points to)
-          String myClassName = (String)roseUtil.getTypeTable().get(eReference);
-          TableObject myClass = null;
-          if(myClassName != null){
-            myClass = (TableObject)roseUtil.getNameTable().get(myClassName);
-          }
-          // MDA mapping - get Class of opposite side
-          MetaClass mClass = (MetaClass)elements.get((EClass)struct);
-          //System.out.println("Relation: "+eReference.getName()+", from "+mClass.getName()+", to "+myClass.getName());
-          //System.out.println("          "+eReference.getLowerBound()+", "+eReference.getUpperBound());
-          if(mClass != null && myClass != null){
-            MetaProperty property = null;
-            if (eReference.getUpperBound() == 1){
-              property = new MetaProperty();
-              // factory.initialize(property); TODO check
-              mClass.addProperty(property);
-            } else {
-              MetaIndexedProperty metaIndexedProperty = new MetaIndexedProperty();
-              // factory.initialize(metaIndexedProperty); TODO check
-              property = metaIndexedProperty;
-              mClass.addIndexedProperty((MetaIndexedProperty) metaIndexedProperty);
-            }
-            
-            property.setContext(mClass);
-            property.setName(eReference.getName());
-            property.setTypeName(myClass.getName());
-            property.setMultiplicity(new Multiplicity(eReference.getLowerBound(), eReference.getUpperBound()));
-            // TODO set static, description, annotation, default value
-            property.setDescription("");
-            property.setInitialValue("");
-            property.setTransient(eReference.isTransient());
-            property.setVolatile(eReference.isVolatile());
-          }
+          RoseNode association = (RoseNode)associationRoseNodes.get(eReference);
+          createMetaProperty(eReference, struct, association);
         }
         else
         {
@@ -2257,7 +2230,8 @@ public class MdaRoseVisitor implements RoseVisitor
     if (!list.isEmpty())
     {
       EPackage ePackage = ecoreFactory.createEPackage();
-      setEPackageProperties(roseNode, ePackage, packageName.toLowerCase());
+      // Adrian setEPackageProperties(roseNode, ePackage, packageName.toLowerCase());
+      setEPackageProperties(roseNode, ePackage, packageName);
 
       extent.add(ePackage);
       for (Iterator i = list.iterator(); i.hasNext();)
@@ -2369,11 +2343,45 @@ public class MdaRoseVisitor implements RoseVisitor
     return qualifiedType;
   }
 
+  private MetaProperty createMetaProperty(EReference eReference, Object struct, RoseNode association) {
+    // MDA mapping - get Class of this reference (side where this navigable role points to)
+    String myClassName = (String)roseUtil.getTypeTable().get(eReference);
+    TableObject myClass = null;
+    if(myClassName != null){
+      myClass = (TableObject)roseUtil.getNameTable().get(myClassName);
+    }
+    MetaClass mClass = (MetaClass)elements.get((EClass)struct);
+    //System.out.println("Relation: "+eReference.getName()+", from "+mClass.getName()+", to "+myClass.getName());
+    //System.out.println("          "+eReference.getLowerBound()+", "+eReference.getUpperBound());
+    if(mClass != null && myClass != null){
+      MetaProperty property = null;
+      if (eReference.getUpperBound() == 1){
+        property = new MetaProperty();
+        mClass.addProperty(property);
+      } else {
+        MetaIndexedProperty metaIndexedProperty = new MetaIndexedProperty();
+        property = metaIndexedProperty;
+        mClass.addIndexedProperty((MetaIndexedProperty) metaIndexedProperty);
+      }
+      
+      setCommonElementAspects(property, association);
+      property.setContext(mClass);
+      property.setName(eReference.getName());
+      property.setTypeName(trimType(myClass.getName()));
+      property.setMultiplicity(new Multiplicity(eReference.getLowerBound(), eReference.getUpperBound()));
+      property.setInitialValue(eReference.getDefaultValueLiteral());
+      property.setTransient(eReference.isTransient());
+      property.setVolatile(eReference.isVolatile());
+      property.setStatic(eReference.isUnsettable());
+      return property;
+    }
+    return null;
+  }
+  
   private MetaClass createMetaClass(RoseNode roseNode, EModelElement eElement, String objectName, Object parent, String stereoTypeValue){
     MetaClass metaClass = metaPackage.findClass(objectName);
     if (metaClass == null) {
       metaClass = new MetaClass();
-      // factory.initialize(metaClass); TODO check
       setCommonElementAspects(metaClass, roseNode);
       metaClass.setName(objectName);
       if(!(parent instanceof EClass)){
@@ -2388,12 +2396,12 @@ public class MdaRoseVisitor implements RoseVisitor
   }
 
   private MetaDatatype createMetaDataType(RoseNode roseNode, EModelElement eElement, String objectName, String stereoTypeValue){
-    MetaDatatype metaDatatype = metaModel.findDatatype(objectName);
+    MetaDatatype metaDataType = metaModel.findDatatype(objectName);
     if (metaDataType == null) {
       metaDataType = new MetaDatatype();
       setCommonElementAspects(metaDataType, roseNode);
       metaDataType.setName(objectName);
-      metaModel.addDatatype(metaDatatype);
+      metaModel.addDatatype(metaDataType);
       if(stereoTypeValue != null){
         metaDataType.setStereotype(stereoTypeValue);
       }
@@ -2407,19 +2415,35 @@ public class MdaRoseVisitor implements RoseVisitor
     if(documentation != null) metaElement.setDescription(documentation);
     String stereotype = roseNode.getStereotype();
     if(stereotype != null) metaElement.setStereotype(stereotype);
-    String annotation = roseNode.getAnnotation();
-    if (annotation != null)
-    {
-      for (Matcher matcher = ANNOTATION_PATTERN.matcher(annotation); matcher.find();)
+
+    // rose global to isSystem
+    RoseNode global = roseNode.findNodeWithKey("global");
+    if(global != null) {
+      if(global.getValue().equalsIgnoreCase(Boolean.TRUE.toString())) {
+        metaElement.setSystem(true);
+      } else {
+        metaElement.setSystem(false);
+      }
+    }
+    
+    // read tagged values
+    RoseNode attrSet = roseNode.findNodeWithKey(RoseStrings.ATTRIBUTES);
+    if(attrSet != null && attrSet.getValue().equals(RoseStrings.ATTRIBUTE_SET)){
+      List attributes = attrSet.getNodes();
+      for (int i = 0; i < attributes.size(); i++)
       {
-        EAnnotation eAnnotation = EcoreFactory.eINSTANCE.createEAnnotation();
-        eAnnotation.setSource(CodeGenUtil.parseString(matcher.group(1)));
-        for (Matcher detailMatcher = ANNOTATION_DETAIL_PATTERN.matcher(matcher.group(2)); detailMatcher.find();)
-        {
-          eAnnotation.getDetails().put(CodeGenUtil.parseString(detailMatcher.group(1)), CodeGenUtil.parseString(detailMatcher.group(4)));
+        RoseNode attr = (RoseNode)attributes.get(i);
+        if(attr.getValue().equals(RoseStrings.ATTRIBUTE)) {
+          // tool, name, value
+          RoseNode tool = attr.findNodeWithKey(RoseStrings.TOOL);
+          RoseNode name = attr.findNodeWithKey(RoseStrings.NAME);
+          RoseNode value = attr.findNodeWithKey(RoseStrings.VALUE);
+          if(value.getNodes() != null && value.getNodes().size() > 0) value = (RoseNode)value.getNodes().get(0);
+          if(tool != null && Util.getName(tool.getValue()).equals(RosePersistenceHandler.TaggedValueToolIdentifier) && name != null && value != null) {
+            TaggedValue tv = new TaggedValue(Util.getName(name.getValue()), Util.getName(value.getValue()));
+            metaElement.addTaggedValue(tv);
+          }
         }
-        // TODO - copy tagged values
-        //metaElement.setTaggedValue();
       }
     }
   }
@@ -2440,5 +2464,12 @@ public class MdaRoseVisitor implements RoseVisitor
    */
   public MetaModel getMetaModel(){
     return metaModel;
+  }
+  
+  protected String trimType(String type) {
+    if(type.startsWith(RoseStrings.LOGICAL_VIEW)) {
+      return type.substring(RoseStrings.LOGICAL_VIEW.length()+1);
+    }
+    return type;
   }
 }
