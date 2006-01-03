@@ -68,7 +68,12 @@ public class SaveAsAction extends ExplorerFileAction {
       return false;
     }
     File file = getSelectedFile();
-    String extension = SystemUtilities.getFileExtension(file).toLowerCase();
+    String extension = SystemUtilities.getFileExtension(file);
+    if(extension == null) { // in case where user thinks that the extension comes from the file filter we get the first match from the filter.
+      extension = FileTypes.getBestMatchingExtension(getFileChooser().getFileFilter().getDescription());
+      if(extension != null) file = new File(file.getPath()+"."+extension);
+    }
+    extension = extension.toLowerCase();
     try {
       if (Arrays.binarySearch(FileTypes.ARGOUML_EXT, extension) >= 0) {
         writeModel(file);
@@ -82,6 +87,8 @@ public class SaveAsAction extends ExplorerFileAction {
         writeModel(file);
       } else if (Arrays.binarySearch(FileTypes.XMI_EXT, extension) >= 0) {
         writeModel(file);
+      } else if (Arrays.binarySearch(FileTypes.RATIONAL_ROSE_EXT, extension) >= 0) {
+        writeModel(file);
       } else {
         JOptionPane.showMessageDialog(getExplorer().getFrame(), ResourceUtility
             .getString("mda.ui.sorryMsg.ILLEGAL_FILE_NAME_OR_TYPE"),
@@ -92,6 +99,7 @@ public class SaveAsAction extends ExplorerFileAction {
       log.error(e);
       return false;
     }
+    getExplorer().getMenuBar().documentChanged(ExplorerDocument.State.CLEAN);
     return true;
   }
 
@@ -106,7 +114,6 @@ public class SaveAsAction extends ExplorerFileAction {
       MdaExplorer explorer = (MdaExplorer) getExplorer();
       MdaDocument document = explorer.getDocument();
       document.saveAs(file);
-      explorer.getMenuBar().documentChanged(ExplorerDocument.State.CLEAN);
     } catch (PersistenceException e) {
       log.error(e);
     }
