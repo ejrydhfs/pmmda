@@ -82,7 +82,7 @@ public class NsUmlPersistenceHandler implements PersistenceHandler {
 
   public void writeModel(MetaModel model, File file)
       throws PersistenceException {
-    if (file.exists()) {
+    if (model.getFilename() != null && model.getFilename().equals(file.toString()) && file.exists()) {
       updateModel(model, file);
     } else if (file.getName().endsWith(".xmi")
         || file.getName().endsWith(".zargo")) {
