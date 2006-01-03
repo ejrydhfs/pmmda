@@ -67,11 +67,17 @@ public class MetaModelView extends NodePropertiesView {
 
   @Override
   public void populateView() {
+    String emptyFileName = "....";
     MetaModel model = (MetaModel) getDataObject();
     name.setText(model.getName());
-    File file = new File(model.getFilename());
-    root.setText(file.getParent());
-    filename.setText(file.getAbsolutePath());
+    if(model.getFilename() == null || model.getFilename().equals("") || model.getFilename().equals(emptyFileName)) {
+      root.setText("\"Unnamed model\"");
+      filename.setText(emptyFileName);
+    } else {
+      File file = new File(model.getFilename());
+      root.setText(file.getParent());
+      filename.setText(file.getAbsolutePath());
+    }
   }
 
   @Override
