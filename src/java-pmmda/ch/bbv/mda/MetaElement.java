@@ -554,7 +554,7 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
   }
 
   /**
-   * Finds the first element with the given name if the list.
+   * Finds the first element with the given name in the list.
    * @param list list to search for.
    * @param name name of element to find.
    * @return the requested element if found otherwise null.
