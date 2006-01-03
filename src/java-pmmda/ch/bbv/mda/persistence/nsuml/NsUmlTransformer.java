@@ -140,7 +140,6 @@ public class NsUmlTransformer {
     for (Iterator<MClassifier> i = new FilterIterator<MClassifier>(source
         .getOwnedElements(), MClassifier.class); i.hasNext();) {
       MClassifier mClass = i.next();
-      extractDataType(mClass, target);
     }
     flagSystemPackages(target);
     for (Iterator<MClass> i = new FilterIterator<MClass>(source
