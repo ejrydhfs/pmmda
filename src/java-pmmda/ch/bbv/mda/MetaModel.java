@@ -7,6 +7,9 @@ package ch.bbv.mda;
 
 import java.util.*;
 
+import ru.novosoft.uml.foundation.core.MClassifier;
+import ru.novosoft.uml.model_management.MPackage;
+
 import ch.bbv.mda.operators.ModelOperators;
 import ch.bbv.mda.pim.CodeTypeMgr;
 
@@ -200,25 +203,61 @@ public class MetaModel extends MetaPackage {
   }
 
   /**
-   * Finds the class with the given qualified name.
+   * Finds the class with the given qualified name. If no package is specified then directly in the model is searched.
+   * Nested classes are also found. The qualified name is e.g. package1.package2.class.nestedClass1
    * @param qualifiedName qualified name of the class to find.
    * @return the requested class if found otherwise null.
    *
    */
-  // TODO Adrian: does not find classes directly added to the model. Does not find nested classes.
   public MetaClass findClass(String qualifiedName) {
-    MetaClass clazz = null;
-    if (qualifiedName != null) {
-      String packageName = ModelOperators.getContextName(qualifiedName);
-      if (packageName != null) {
-        MetaPackage metaPackage = findPackage(packageName);
-        if (metaPackage != null) {
-          clazz = metaPackage.findClass(ModelOperators
-              .getComponentName(qualifiedName));
+    assert(qualifiedName != null) && (!qualifiedName.equals("")) && (!qualifiedName.endsWith("."));
+    
+    // if there is no package specified look within the classes of the meta model
+    if(qualifiedName.indexOf(".") == -1) return super.findClass(qualifiedName);
+    
+    // find best matching packet
+    MetaPackage currentPackage = null;
+    String lastIdentifierMatched = "";
+    for(MetaPackage metaPackage : packages) {
+      if(qualifiedName.startsWith(metaPackage.getName())) {
+        if(metaPackage.getName().length() > lastIdentifierMatched.length()) {
+          currentPackage = metaPackage;
+          lastIdentifierMatched = metaPackage.getName();
         }
       }
     }
-    return clazz;
+    if(currentPackage == null) return null;
+    if(currentPackage.getName().equals(qualifiedName)) return null;
+
+    // find class or nested class
+    qualifiedName = qualifiedName.substring(lastIdentifierMatched.length()+1);
+    StringTokenizer tokenizer = new StringTokenizer(qualifiedName, ".");
+    MetaClass metaClass = currentPackage.findClass(tokenizer.nextToken());
+    if(metaClass == null) return null;
+    
+    while (tokenizer.hasMoreTokens()) {
+      String name = tokenizer.nextToken();
+      metaClass = (MetaClass)metaClass.findElement(metaClass.getNestedClasses(), name);
+      if(metaClass == null) return null;
+    }
+    return metaClass;
+  }
+
+  /**
+   * finds the classifier with the given qualified name.
+   * @param model model containing the requested classifier.
+   * @param qualifiedName the qualified name of the requested classifier.
+   * @return the requested classifier if found otherwise null
+   * @pre (model != null) && (qualifiedName != null)
+   */
+  public static MetaClassifier findClassifier(MetaModel model,
+      String qualifiedName) {
+    assert (model != null) && (qualifiedName != null);
+    MetaClassifier classifier = model.findDatatype(qualifiedName);
+    if (classifier == null) {
+      classifier = model.findClass(qualifiedName);
+    }
+    return classifier;
   }
 
   /**
