@@ -16,6 +16,7 @@ import org.apache.commons.logging.LogFactory;
 
 import ch.bbv.explorer.Explorer;
 import ch.bbv.explorer.ExplorerDocument;
+import ch.bbv.utilities.SystemUtilities;
 
 /**
  * The save as action starts the file selection dialog. Upon sucessful selection
@@ -93,8 +94,6 @@ public abstract class ExplorerFileAction extends ExplorerGlobalActionImpl {
       if (selectedFile != null) {
         log.trace("File Selected " + selectedFile);
         execute();
-        getExplorer().getMenuBar()
-            .documentChanged(ExplorerDocument.State.CLEAN);
         try {
           StringBuilder buffer = new StringBuilder();
           buffer.append(getName()).append(" ").append(
@@ -115,7 +114,7 @@ public abstract class ExplorerFileAction extends ExplorerGlobalActionImpl {
    */
   protected boolean shouldOverwriteFile() {
     if (getSelectedFile().exists()) {
-      int selection = displayMessage("actions.FILE_OVERWRITE");
+      int selection = displayMessage("actions.FILE_OVERWRITE", getSelectedFile());
       return (selection != 1);
     }
     return true;
