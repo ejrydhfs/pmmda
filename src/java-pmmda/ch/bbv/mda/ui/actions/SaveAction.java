@@ -62,7 +62,6 @@ public class SaveAction extends ExplorerSaveAction {
               JOptionPane.ERROR_MESSAGE);
         }
       }
-      explorer.getMenuBar().documentChanged(ExplorerDocument.State.CLEAN);
     } catch (PersistenceException e) {
       log.error(e);
       JOptionPane.showMessageDialog(explorer.getFrame(), ResourceUtility
@@ -81,6 +80,7 @@ public class SaveAction extends ExplorerSaveAction {
       log.error(e);
       return false;
     }
+    explorer.getMenuBar().documentChanged(ExplorerDocument.State.CLEAN);
     return true;
   }
 
