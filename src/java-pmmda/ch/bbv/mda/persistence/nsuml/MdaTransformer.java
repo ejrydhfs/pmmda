@@ -17,6 +17,11 @@ import ru.novosoft.uml.MFactory;
 import ru.novosoft.uml.foundation.core.*;
 import ru.novosoft.uml.foundation.data_types.MExpression;
 import ru.novosoft.uml.foundation.data_types.MMultiplicity;
+import ru.novosoft.uml.foundation.data_types.MAggregationKind;
+import ru.novosoft.uml.foundation.data_types.MOrderingKind;
+import ru.novosoft.uml.foundation.data_types.MChangeableKind;
+import ru.novosoft.uml.foundation.data_types.MScopeKind;
+import ru.novosoft.uml.foundation.data_types.MVisibilityKind;
 import ru.novosoft.uml.foundation.extension_mechanisms.MStereotype;
 import ru.novosoft.uml.foundation.extension_mechanisms.MTaggedValue;
 import ru.novosoft.uml.foundation.extension_mechanisms.MTaggedValueImpl;
@@ -115,8 +120,17 @@ public class MdaTransformer {
     for (MetaPackage item : source.getPackages()) {
       extractPackage(item, target);
     }
+    for (MetaPackage item : source.getPackages()) {
+      processPackage(item, target);
+    }
     for (MetaClass item : source.getClasses()) {
       extractClass(item, target);
+    }
+    for (MetaPackage item : source.getPackages()) {
+      processAllRelations(item, target);
+    }
+    for (MetaClass item : source.getClasses()) {
+      extractRelation(item, target);
     }
     processMissingAttributeTypes();
   }
@@ -134,11 +148,34 @@ public class MdaTransformer {
     elements.put(source, mPackage);
     extractTags(source, mPackage);
     extractStereotypeAndVisibility(source, mPackage);
+  }
+
+  /**
+   * Processes childeren (classes) of a package
+   * @param source MDA package to be processed
+   * @param context NSUML context containing the package to be processed.
+   */
+  protected void processPackage(MetaPackage source, MModel context) {
+    MPackage mPackage = findPackageQualified(context, source.getName());
+    if(mPackage == null) return;
     for (MetaClass item : source.getClasses()) {
       extractClass(item, mPackage);
     }
   }
-
+  
+  /**
+   * Processes relations within a package
+   * @param source MDA package to be processed
+   * @param context NSUML context containing the package to be processed.
+   */
+  protected void processAllRelations(MetaPackage source, MModel context) {
+    MPackage mPackage = findPackageQualified(context, source.getName());
+    if(mPackage == null) return;
+    for (MetaClass item : source.getClasses()) {
+      extractRelation(item, mPackage);
+    }
+  }
+  
   /**
    * Extracts the information from the MDA class and overwrites the ones of the
    * NSUML class defined in the given context.
@@ -147,35 +184,118 @@ public class MdaTransformer {
    */
   protected void extractClass(MetaClass source, MPackage context) {
     assert (source != null) && (context != null);
-    MClass mClass = createClass(context, source.getName());
+    MClassifier mClass;
+    if(source.isInterface()) {
+      mClass = createInterface(context, source.getName());
+    }
+    else {
+      mClass = createClass(context, source.getName());
+    }
     elements.put(source, mClass);
     mClass.setAbstract(source.isAbstract());
     extractTags(source, mClass);
     extractStereotypeAndVisibility(source, mClass);
-    for (MetaProperty item : source.getProperties()) {
-      extractProperty(item, mClass);
-    }
-    for (MetaIndexedProperty item : source.getIndexedProperties()) {
-      extractIndexedProperty(item, mClass);
-    }
     for (MetaClass item : source.getNestedClasses()) {
       extractNestedClass(item, mClass);
     }
   }
 
   /**
+   * Extracts aggregations, indexed properties, properties, realizes and specializes relations from a classifier
+   * @param source MDA class used as source of the synchronization.
+   * @param context NSUML context containing the class to synchronize.
+   */
+  protected void extractRelation(MetaClass source, MPackage context) {
+    assert (source != null) && (context != null);
+    MClassifier mClass;
+    mClass = findClassQualified(context, source.getName());
+    for (MetaProperty item : source.getProperties()) {
+      extractProperty(item, mClass);
+    }
+    for (MetaIndexedProperty item : source.getIndexedProperties()) {
+      extractIndexedProperty(item, mClass);
+    }
+    for (MetaClass ancestor : source.retrieveAncestors()) {
+      extractAncestor(ancestor, mClass);
+    }
+    for (MetaClass ancestorIf : source.retrieveInterfaces()) {
+      extractInterface(ancestorIf, mClass);
+    }
+    for (MetaClass item : source.getNestedClasses()) {
+      //extractRelation(item, mClass); // TODO process relations
+    }
+  }
+
+  /**
+   * Creates a generalization relation within the NSUML model. If ancestor class is already
+   * defined then it will be found. If not it will be created. Detailed information of the
+   * ancestor class will be added during processing the corresponding extractClass method
+   * @param ancestor of the generalization relation
+   * @param child of the generalization relation
+   */
+  protected void extractAncestor(MetaClass ancestor, MClassifier child) {
+    MPackage ancestorContext = findPackageQualified(mModel, ancestor.retrievePackage().getName());
+    MClass mAncestor = createClass(ancestorContext, ancestor.getName());
+    MGeneralization generalization = findGeneralization(mModel, mAncestor, child);
+    if (generalization == null) {
+      generalization = new MGeneralizationImpl();
+      generalization.setNamespace(mModel);
+      generalization.setChild(child);
+      generalization.setParent(mAncestor);
+      ancestorContext.addOwnedElement(generalization);
+    }
+  }
+
+  /**
+   * Creates a generalization relation within the NSUML model. If ancestor interface is already
+   * defined then it will be found. If not it will be created. Detailed information of the ancestor 
+   * interface will be added during the corresponding extractInterface method.
+   * Note: A realize relation will be mapped to a generalization relation
+   * @param ancestorIf of the generalization relation
+   * @param child implements the interface
+   */
+  
+  protected void extractInterface(MetaClass ancestorIf, MClassifier child) {
+    MPackage ancestorContext = findPackageQualified(mModel, ancestorIf.retrievePackage().getName());
+    MInterface parent = createInterface(ancestorContext, ancestorIf.getName());
+    MAbstraction abstraction = findAbstraction(mModel, parent, child);
+    if(abstraction == null) {
+      abstraction = new MAbstractionImpl();
+      abstraction.setNamespace(mModel);
+      abstraction.addClient(child);
+      abstraction.addSupplier(parent);
+      ancestorContext.addOwnedElement(abstraction);
+      MStereotype mStereotype = findStereotype("realize");
+      if(mStereotype == null){
+        mStereotype = MFactory.getDefaultFactory().createStereotype();
+        mStereotype.setName("realize");
+        mModel.addOwnedElement(mStereotype);
+      }
+      abstraction.setStereotype(mStereotype);
+    }
+  }
+  
+  /**
    * Extracts the information from the MDA class and overwrites the ones of the
    * NSUML nested classes defined in the given context.
    * @param source MDA class used as source of the synchronization.
    * @param context NSUML context containing the class to synchronize.
    */
-  protected void extractNestedClass(MetaClass source, MClass context) {
+  protected void extractNestedClass(MetaClass source, MClassifier context) {
     assert (source != null) && (context != null);
-    MClass mClass = createClass(context, source.getName());
+    MClassifier mClass;
+    if(source.isInterface()) {
+      mClass = createInterface(context, source.getName());
+    }
+    else {
+      mClass = createClass(context, source.getName());
+    }
     elements.put(source, mClass);
     mClass.setAbstract(source.isAbstract());
     extractTags(source, mClass);
     extractStereotypeAndVisibility(source, mClass);
+    
+    // TODO move into extract relations, because at the time this is processed not all classes are available and hence some relations point to the Nirvana
     for (MetaProperty item : source.getProperties()) {
       extractProperty(item, mClass);
     }
@@ -184,6 +304,12 @@ public class MdaTransformer {
     }
     for (MetaClass item : source.getNestedClasses()) {
       extractNestedClass(item, mClass);
+    }
+    for (MetaClass ancestor : source.retrieveAncestors()) {
+      extractAncestor(ancestor, mClass);
+    }
+    for (MetaClass ancestorIf : source.retrieveInterfaces()) {
+      extractInterface(ancestorIf, mClass);
     }
   }
 
@@ -193,7 +319,7 @@ public class MdaTransformer {
    * @param source MDA property used as source of the synchronization.
    * @param context NSUML context containing the property to synchronize.
    */
-  protected void extractProperty(MetaProperty source, MClass context) {
+  protected void extractProperty(MetaProperty source, MClassifier context) {
     assert (source != null) && (context != null);
     if (source.isAggregation()) {
       MetaElement mElement = source.getContext().getContext();
@@ -208,6 +334,9 @@ public class MdaTransformer {
         updatePropertyFlags(source, association);
         extractTags(source, association);
         extractStereotypeAndVisibility(source, association);
+      }
+      else {
+        association = createAssociation(source, mPackage);
       }
     } else {
       MAttribute mAttribute = createAttribute(context, source.getName());
@@ -237,11 +366,14 @@ public class MdaTransformer {
    * @param context NSUML context containing the property to synchronize.
    */
   protected void extractIndexedProperty(MetaIndexedProperty source,
-      MClass context) {
+      MClassifier context) {
     assert (source != null) && (context != null);
     if (source.isAggregation()) {
-      MetaPackage metaPackage = (MetaPackage) source.getContext().getContext();
-      MPackage mPackage = (MPackage) elements.get(metaPackage);
+      MetaElement mElement = source.getContext().getContext();
+      while (!(mElement instanceof MetaPackage)) {
+        mElement = mElement.getContext();
+      }
+      MPackage mPackage = (MPackage) elements.get(mElement);
       MAssociation association = findAssociation(mPackage, context, source
           .getName());
       if (association != null) {
@@ -249,16 +381,26 @@ public class MdaTransformer {
         extractTags(source, association);
         extractStereotypeAndVisibility(source, association);
       }
+      else {
+        association = createAssociation(source, mPackage);
+      }
     } else {
-      MAttribute attribute = createAttribute(context, source.getName());
-      MMultiplicity multiplicity = attribute.getMultiplicity();
+      MAttribute mAttribute = createAttribute(context, source.getName());
+      MClassifier mClassifier = mAttribute.getType();
+      if (mClassifier == null
+          || !NsUmlUtilities.getQualifiedName(mClassifier).equals(
+              source.getTypeName())) {
+        mClassifier = createClassifier(source.getTypeName(), mAttribute);
+        mAttribute.setType(mClassifier);
+      }
+      MMultiplicity multiplicity = mAttribute.getMultiplicity();
       MMultiplicity newMultiplicity = convert(source.getMultiplicity());
       if ((newMultiplicity != null) && (multiplicity != newMultiplicity)) {
-        attribute.setMultiplicity(newMultiplicity);
+        mAttribute.setMultiplicity(newMultiplicity);
       }
-      updatePropertyFlags(source, attribute);
-      extractTags(source, attribute);
-      extractStereotypeAndVisibility(source, attribute);
+      updatePropertyFlags(source, mAttribute);
+      extractTags(source, mAttribute);
+      extractStereotypeAndVisibility(source, mAttribute);
     }
   }
 
@@ -316,24 +458,6 @@ public class MdaTransformer {
   }
 
   /**
-   * Finds the tag with the given name.
-   * @param item item to look for the tag.
-   * @param tagName name of the tag to find.
-   * @return the requested tag if found otherwise null
-   * @pre (item != null) && (tagName != null)
-   */
-  private MTaggedValue findTag(MModelElement item, String tagName) {
-    assert (item != null) && (tagName != null);
-    for (Iterator i = item.getTaggedValues().iterator(); i.hasNext();) {
-      MTaggedValue tag = (MTaggedValue) i.next();
-      if (tagName.equals(tag.getTag())) {
-        return tag;
-      }
-    }
-    return null;
-  }
-
-  /**
    * Creates a tag with the given name in the item.
    * @param item item in which the tag should be created.
    * @param tagName the name of the tag.
@@ -349,6 +473,24 @@ public class MdaTransformer {
       item.addTaggedValue(taggedValue);
     }
     return taggedValue;
+  }
+
+  /**
+   * Finds the tag with the given name.
+   * @param item item to look for the tag.
+   * @param tagName name of the tag to find.
+   * @return the requested tag if found otherwise null
+   * @pre (item != null) && (tagName != null)
+   */
+  private MTaggedValue findTag(MModelElement item, String tagName) {
+    assert (item != null) && (tagName != null);
+    for (Iterator i = item.getTaggedValues().iterator(); i.hasNext();) {
+      MTaggedValue tag = (MTaggedValue) i.next();
+      if (tagName.equals(tag.getTag())) {
+        return tag;
+      }
+    }
+    return null;
   }
 
   /**
@@ -399,6 +541,27 @@ public class MdaTransformer {
     return null;
   }
 
+  /**
+   * Returns a package within the context specified with qualified name.
+   * If you set the context different from the entire model please take care to omitt leading package names within the qualified name.
+   * @param context the entire model or a package to look for the package specified with the qualified name
+   * @param qualifiedName of the package
+   * @return null if no package found or otherwise the specified package
+   */
+  public MPackage findPackageQualified(MPackage context, String qualifiedName) {
+    MPackage mPackage = null;
+    StringTokenizer tokenizer = new StringTokenizer(qualifiedName, ".");
+    while (tokenizer.hasMoreTokens()) {
+      String name = tokenizer.nextToken();
+      mPackage = findPackage(context, name);
+      if (mPackage == null) {
+        return null;
+      }
+      context = mPackage;
+    }
+    return mPackage;
+  }
+  
   private MClass findClass(MPackage context, String name) {
     assert (context != null) && (name != null);
     MClass mClass = null;
@@ -413,7 +576,30 @@ public class MdaTransformer {
     return mClass;
   }
 
-  private MClass findClass(MClass context, String name) {
+  /**
+   * Returns a class within the context specified with qualified name.
+   * If you set the context different from the entire model please take care to omitt leading package names within the qualified name.
+   * @param context the entire model or a package to look for the class specified with the qualified name
+   * @param qualifiedName of the class
+   * @return null if no corresponding class found or the class found
+   */
+  public MClass findClassQualified(MPackage context, String qualifiedName) {
+    int pos = qualifiedName.lastIndexOf('.');
+    if(pos > -1){
+      context = findPackageQualified(mModel, qualifiedName.substring(0, pos));
+      return findClass(context, qualifiedName.substring(pos+1));
+    } else {
+      return findClass(context, qualifiedName);
+    }
+  }
+  
+  /**
+   * Finds a class within a class (nested class) or, because the model supports it, within an interface
+   * @param context class or interface to search
+   * @param name unqualified name of the class to look up
+   * @return null if not found or the contained class
+   */
+  private MClass findClass(MClassifier context, String name) {
     assert (context != null) && (name != null);
     MClass mClass = null;
     for (Iterator<MClass> i = new FilterIterator<MClass>(context
@@ -438,7 +624,7 @@ public class MdaTransformer {
     return item;
   }
 
-  private MClass createClass(MClass context, String name) {
+  private MClass createClass(MClassifier context, String name) {
     assert (context != null) && (name != null);
     MClass item = findClass(context, name);
     if (item == null) {
@@ -449,7 +635,57 @@ public class MdaTransformer {
     return item;
   }
 
-  private MAttribute findAttribute(MClass context, String name) {
+  private MInterface findInterface(MPackage context, String name) {
+    assert (context != null) && (name != null);
+    MInterface mInterface = null;
+    for (Iterator<MInterface> i = new FilterIterator<MInterface>(context
+        .getOwnedElements(), MInterface.class); i.hasNext();) {
+      mInterface = i.next();
+      if (name.equals(mInterface.getName())) {
+        break;
+      }
+      mInterface = null;
+    }
+    return mInterface;
+  }
+
+  private MInterface findInterface(MClassifier context, String name) {
+    assert (context != null) && (name != null);
+    MInterface mClass = null;
+    for (Iterator<MInterface> i = new FilterIterator<MInterface>(context
+        .getOwnedElements(), MInterface.class); i.hasNext();) {
+      mClass = i.next();
+      if (name.equals(mClass.getName())) {
+        break;
+      }
+      mClass = null;
+    }
+    return mClass;
+  }
+
+  private MInterface createInterface(MPackage context, String name) {
+    assert (context != null) && (name != null);
+    MInterface item = findInterface(context, name);
+    if (item == null) {
+      item = new MInterfaceImpl();
+      item.setName(name);
+      context.addOwnedElement(item);
+    }
+    return item;
+  }
+
+  private MInterface createInterface(MClassifier context, String name) {
+    assert (context != null) && (name != null);
+    MInterface item = findInterface(context, name);
+    if (item == null) {
+      item = new MInterfaceImpl();
+      item.setName(name);
+      context.addOwnedElement(item);
+    }
+    return item;
+  }
+
+  private MAttribute findAttribute(MClassifier context, String name) {
     assert (context != null) && (name != null);
     MAttribute mAttribute = null;
     for (Iterator<MAttribute> i = new FilterIterator<MAttribute>(context
@@ -480,7 +716,7 @@ public class MdaTransformer {
    * @param name name of the attribute to create.
    * @return the requested attribute.
    */
-  private MAttribute createAttribute(MClass context, String name) {
+  private MAttribute createAttribute(MClassifier context, String name) {
     assert (context != null) && (name != null);
     MAttribute item = findAttribute(context, name);
     if (item == null) {
@@ -506,12 +742,11 @@ public class MdaTransformer {
     assert (name != null);
 
     MClassifier item = null;
-    MClass tempMClass = null;
 
     MetaClass mc = metaModel.findClass(name);
     if (mc != null) {
-      tempMClass = (MClass) elements.get(mc);
-      if (tempMClass == null) {
+      item = (MClassifier) elements.get(mc);
+      if (item == null) {
         missingAttributeTypes.put(mAttribute, mc);
       }
     } else {
@@ -542,7 +777,7 @@ public class MdaTransformer {
    * @param name name of the requested association
    * @return the requested association if found otherwise null.
    */
-  private MAssociation findAssociation(MPackage context, MClass clazz,
+  private MAssociation findAssociation(MPackage context, MClassifier clazz,
       String name) {
     assert (context != null) && (clazz != null) && (name != null);
     MAssociation association = null;
@@ -564,6 +799,115 @@ public class MdaTransformer {
       }
     }
     return association;
+  }
+
+  private MAssociation createAssociation(MetaProperty source, MPackage context) {
+    assert (source != null) && (context != null);
+    
+    MAssociation association = new MAssociationImpl();
+    association.setNamespace(mModel);
+    MAssociationEnd myClass = new MAssociationEndImpl();
+    MAssociationEnd otherEnd = new MAssociationEndImpl();
+    association.addConnection(0, myClass);
+    association.addConnection(1, otherEnd);
+
+    association.setName(source.getName());
+    context.addOwnedElement(association);
+
+    myClass.setNavigable(false);
+    myClass.setVisibility(MVisibilityKind.PUBLIC);
+    myClass.setOrdering(MOrderingKind.UNORDERED);
+    myClass.setAggregation(MAggregationKind.AGGREGATE);
+    myClass.setChangeability(MChangeableKind.CHANGEABLE);
+    myClass.setTargetScope(MScopeKind.INSTANCE);
+    myClass.setMultiplicity(MMultiplicity.M1_1);
+    
+    myClass.setType((MClassifier)elements.get(source.getContext()));
+    Object o = elements.get(source.getModel().findClass(source.getTypeName()));
+    if(o == null) {
+      o = findDataType(source.getTypeName());
+    }
+    otherEnd.setType((MClassifier)o);
+    otherEnd.setNavigable(true);
+    otherEnd.setVisibility(MVisibilityKind.PUBLIC);
+    otherEnd.setOrdering(MOrderingKind.UNORDERED);
+    otherEnd.setAggregation(MAggregationKind.NONE);
+    otherEnd.setChangeability(MChangeableKind.CHANGEABLE);
+    otherEnd.setTargetScope(MScopeKind.INSTANCE);
+    updatePropertyFlags(source, association);
+    extractTags(source, association);
+    extractStereotypeAndVisibility(source, association);
+    MMultiplicity newMultiplicity = convert(source.getMultiplicity());
+    otherEnd.setMultiplicity(newMultiplicity);
+    return association;
+  }
+  
+  /**
+   * finds the generalization between passed ancestor and child. It searches within the passed package.
+   * @param context context where to look for the generalization.
+   * @param ancestor class of the generalization relation to be searched.
+   * @param child class of the generalization.
+   * @return the requested generalization if found otherwise null.
+   */
+  private MGeneralization findGeneralization(MPackage context, MClassifier ancestor, MClassifier child){
+    assert (context != null) && (ancestor != null) && (child != null);
+    MGeneralization generalization = null;
+    
+    for (Iterator<MPackage> p = new FilterIterator<MPackage>(context
+        .getOwnedElements(), MPackage.class); p.hasNext();) {
+      MPackage mPackage = p.next();
+      for (Iterator<MGeneralization> i = new FilterIterator<MGeneralization>(mPackage
+          .getOwnedElements(), MGeneralization.class); i.hasNext();) {
+        generalization = i.next();
+        if(generalization.getChild().equals(child) && generalization.getParent().equals(ancestor)) {
+          return generalization;
+        } 
+        generalization = findGeneralization(mPackage, ancestor, child);
+        if (generalization != null) return generalization;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * finds the specialization between passed ancestor interface and child. It searches within the passed package.
+   * @param context context where to look for the generalization.
+   * @param ancestor class of the generalization relation to be searched.
+   * @param child class of the generalization.
+   * @return the requested generalization if found otherwise null.
+   */
+  private MAbstraction findAbstraction(MPackage context, MClassifier ancestor, MClassifier child){
+    assert (context != null) && (ancestor != null) && (child != null);
+    MAbstraction abstraction = null;
+    
+    for (Iterator<MPackage> p = new FilterIterator<MPackage>(context
+        .getOwnedElements(), MPackage.class); p.hasNext();) {
+      MPackage mPackage = p.next();
+      for (Iterator<MAbstraction> i = new FilterIterator<MAbstraction>(mPackage
+          .getOwnedElements(), MAbstraction.class); i.hasNext();) {
+        abstraction = i.next();
+        Boolean foundSupplier = false;
+        for (Iterator<MClassifier> s = new FilterIterator<MClassifier>(abstraction
+            .getSuppliers(), MClassifier.class); s.hasNext();) {
+          if(s.next().equals(ancestor)){
+            foundSupplier = true;
+            break;
+          }
+        }
+        Boolean foundChild = false;
+        for (Iterator<MClassifier> c = new FilterIterator<MClassifier>(abstraction
+            .getClients(), MClassifier.class); c.hasNext();) {
+          if(c.next().equals(child)){
+            foundChild = true;
+            break;
+          }
+        }
+        if(foundSupplier && foundChild) {
+          return abstraction;
+        } 
+      }
+    }
+    return null;
   }
 
   private void updatePropertyFlags(MetaProperty property, MModelElement item) {
@@ -637,19 +981,14 @@ public class MdaTransformer {
       MModelElement context) {
     String stereotype = source.getStereotype();
     MStereotype mStereotype = context.getStereotype();
-    if (stereotype != null) {
-      if (mStereotype == null)
+    if (stereotype != null && !stereotype.equals("")) {
+      mStereotype = findStereotype(stereotype);
+      if (mStereotype == null) {
         mStereotype = MFactory.getDefaultFactory().createStereotype();
-      mStereotype.setName(stereotype);
-      context.setStereotype(mStereotype);
-      if (context instanceof MClassifier) {
-        ((MClassifier) context).addOwnedElement(mStereotype);
-      } else if (context instanceof MPackage) {
-        ((MPackage) context).addOwnedElement(mStereotype);
-      } else {
-        log.info("Cannot associate stereotype '" + stereotype + "' to "
-            + context.getName() + " : " + context.getClass());
+        mStereotype.setName(stereotype);
+        mModel.addOwnedElement(mStereotype);
       }
+      context.setStereotype(mStereotype);
     } else if (mStereotype != null) {
       mStereotype.setName("");
     }
@@ -657,4 +996,19 @@ public class MdaTransformer {
     NsUmlUtilities.setVisibility(context, source.getVisibility());
   }
 
+  /**
+   * Finds a stereotype with given name at model level
+   * @param name of the stereotype to look up
+   * @return the stereotype or null if not found
+   */
+  private MStereotype findStereotype(String name){
+    for (Iterator<MStereotype> i = new FilterIterator<MStereotype>(mModel
+        .getOwnedElements(), MStereotype.class); i.hasNext();) {
+      MStereotype mStereotype = i.next();
+      if(mStereotype.getName().equals(name)){
+        return mStereotype;
+      }
+    }
+    return null;
+  }
 }
