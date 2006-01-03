@@ -6,6 +6,9 @@
 package ch.bbv.mda.ui;
 
 import javax.swing.*;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.Color;
 
 import ch.bbv.dog.ui.ReferenceCodeComboBox;
 import ch.bbv.explorer.NodePropertiesView;
@@ -59,6 +62,7 @@ public class MetaPackageView extends NodePropertiesView {
    */
   public MetaPackageView() {
     nameText = new JTextField(TEXT_FIELD_SIZE);
+    nameText.addFocusListener(new VerificationActions());
     stereotypeText = new JTextField(TEXT_FIELD_SIZE);
     contextText = new JTextField(TEXT_FIELD_SIZE);
     contextText.setEditable(false);
@@ -84,6 +88,7 @@ public class MetaPackageView extends NodePropertiesView {
     descriptionText.setEditable(editable);
     tagsView.setViewEditable(editable);
     visibility.setEnabled(editable);
+    system.setEnabled(editable);
   }
 
   @Override
@@ -122,6 +127,7 @@ public class MetaPackageView extends NodePropertiesView {
       model.setStereotype(text.trim());
     }
     model.setVisibility((VisibilityCode) visibility.getSelectedCode());
+    model.setSystem(system.isSelected());
 
     tagsView.commitChanges();
     getModel().nodeChanged();
@@ -153,5 +159,25 @@ public class MetaPackageView extends NodePropertiesView {
     builder.append(tagsView, 7);
     JPanel panel = builder.getPanel();
     add(panel);
+  }
+  
+  /**
+   * Action listeners for verification of input. It applies input rules.
+   * @author AdrianBachofen
+   *
+   */
+  private class VerificationActions implements FocusListener {
+    public void focusLost(FocusEvent e) {
+      if (e.getSource() == nameText) {
+        if(nameText.getText().indexOf(' ') != -1) {
+          nameText.setBackground(Color.RED);
+        } else {
+          nameText.setBackground(Color.WHITE);
+        }
+      }
+    }
+    public void focusGained(FocusEvent e) {
+      // don't do anything
+    }
   }
 }
