@@ -27,7 +27,7 @@ public final class MdaUtilities {
   /**
    * String representation of the package private visibility.
    */
-  public static final String PACKAGE_TEXT = "";
+  public static final String PACKAGE_TEXT = "package";
 
   /**
    * String representation of the private visibility.
