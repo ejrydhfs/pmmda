@@ -44,6 +44,9 @@ public class UserExplorer extends Explorer {
    */
   private static DataObjectManager manager;
 
+  /**
+   * The document displayed in the explorer.
+   */
   private ExplorerDocument document;
 
   /**
@@ -84,6 +87,10 @@ public class UserExplorer extends Explorer {
     typeFactory.registerAllTypes();
   }
 
+  /**
+   * Returns the document of the explorer.
+   * @return the document of the explorer.
+   */
   public ExplorerDocument getDocument() {
     return document;
   }
