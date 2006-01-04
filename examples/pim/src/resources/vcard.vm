@@ -66,6 +66,6 @@ tel;type=cell:${workMobileNumber}
 #set($entries=false)
 #set($entries=${contact.getEntries()})
 #if(${entries} && ${entries.size()} > 0)
-note: ${emitter.transform(${entries})}
+note: ${emitter.transform(${entries}, false)}
 #end
 end:vcard

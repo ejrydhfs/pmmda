@@ -59,12 +59,17 @@ public abstract class ContactEmitter {
    * Transforms a list of journal entries into their corresponding XML
    * representation.
    * @param entries entries to transform.
+   * @param prettyPrinting flag indicating if notes should be printed printed.
+   *          If the flag is false the content of the notes does not contain any
+   *          new lines. These characters are also removed from the note text.
    * @return the XML representation of the journal entries.
    * @pre entries != null
    */
-  public String transform(List<JournalEntry> entries) {
+  public String transform(List<JournalEntry> entries, boolean prettyPrinting) {
+    assert entries != null;
+    char separator = prettyPrinting ? '\n' : ' ';
     StringBuilder buffer = new StringBuilder();
-    buffer.append("<notes>").append("\n");
+    buffer.append("<notes>").append(separator);
     for (JournalEntry entry : entries) {
       buffer.append("<note");
       append(buffer, "date", format.format(entry.getCreation()));
@@ -74,8 +79,8 @@ public abstract class ContactEmitter {
         append(buffer, "duration", Integer.toString(duration));
       }
       append(buffer, "author", entry.getAuthor());
-      buffer.append(">").append(entry.getText());
-      buffer.append("</note>").append("\n");
+      buffer.append(">").append(entry.getText().replace("\n", " "));
+      buffer.append("</note>").append(separator);
     }
     buffer.append("</notes>");
     return buffer.toString();

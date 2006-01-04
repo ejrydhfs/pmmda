@@ -76,6 +76,6 @@ modifytimestamp: 0Z
 #set($entries=false)
 #set($entries=${contact.getEntries()})
 #if(${entries} && ${entries.size()} > 0)
-description:: ${emitter.transform(${emitter.transform(${entries})})}
+description:: ${emitter.transform(${emitter.transform(${entries})}, true)}
 #end
 

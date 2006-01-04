@@ -80,8 +80,8 @@ public class LdifParser extends ContactParser {
     tokens.put("o:", "organization");
     tokens.put("ou:", "department");
     tokens.put("workurl:", "workUrl");
-    // tokens.put("custom1", "organization.phoneNumber");
-    // tokens.put("custom2", "birthday");
+    tokens.put("custom1", "organization.phoneNumber");
+    tokens.put("custom2", "birthday");
     // tokens.put("custom3", "partnerName");
     // tokens.put("custom4", "boss");
   }

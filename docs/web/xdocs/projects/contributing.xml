@@ -325,6 +325,31 @@
     <section>
       <title>Contributing Tips</title>
       <p>
+        Change requests are the way to enhance the quality of the actual
+        solution and to solve existing drawbacks. Below the four rules each
+        change request is scanned with to insure that the request adds value.
+      </p>
+      <ul>
+        <li>
+          Does the proposed change address an issue that is not already
+          substantially covered by existing guidance or product?
+        </li>
+        <li>
+          Is a change to the guidance or the product the most appropriate way to
+          address the issue concerned?
+        </li>
+        <li>
+          Would any proposed change materially improve internal control and risk
+          management at a reasonable cost? Would the proposed change improve the
+          product at a reasonable cost?
+        </li>
+        <li>
+          Would any proposed change restrict a company's ability to apply the
+          guideance or solution in amanner suitable to its own particular
+          circumstances?
+        </li>
+      </ul>
+      <p>
         This is a collection of tips for contributing to the project in a manner
         that is productive for all parties.
       </p>
