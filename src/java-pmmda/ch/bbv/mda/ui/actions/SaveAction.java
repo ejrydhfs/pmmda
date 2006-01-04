@@ -20,7 +20,7 @@ import ch.bbv.explorer.actions.ExplorerSaveAction;
 import ch.bbv.mda.persistence.PersistenceException;
 import ch.bbv.mda.ui.MdaDocument;
 import ch.bbv.mda.ui.MdaExplorer;
-import ch.bbv.utilities.ResourceUtility;
+import ch.bbv.utilities.ResourceUtilities;
 
 /**
  * The save action for the user interface of <em>pmMDA</em> application.
@@ -56,24 +56,24 @@ public class SaveAction extends ExplorerSaveAction {
         if (filename.length() > 0) {
           explorer.getDocument().save();
         } else {
-          JOptionPane.showMessageDialog(explorer.getFrame(), ResourceUtility
+          JOptionPane.showMessageDialog(explorer.getFrame(), ResourceUtilities
               .getString("mda.ui.errorMsg.NO_FILE_DEFINED_ERROR"),
-              ResourceUtility.getString("mda.ui.errorMsg.ERROR"),
+              ResourceUtilities.getString("mda.ui.errorMsg.ERROR"),
               JOptionPane.ERROR_MESSAGE);
         }
       }
     } catch (PersistenceException e) {
       log.error(e);
-      JOptionPane.showMessageDialog(explorer.getFrame(), ResourceUtility
+      JOptionPane.showMessageDialog(explorer.getFrame(), ResourceUtilities
           .getString("mda.ui.sorryMsg.UNSUPPORTED_FILE_TYPE_FOR_SAVE"),
-          ResourceUtility.getString("mda.ui.sorryMsg.SORRY"),
+          ResourceUtilities.getString("mda.ui.sorryMsg.SORRY"),
           JOptionPane.ERROR_MESSAGE);
       return false;
     } catch (NullPointerException e) {
       log.error(e);
-      JOptionPane.showMessageDialog(explorer.getFrame(), ResourceUtility
+      JOptionPane.showMessageDialog(explorer.getFrame(), ResourceUtilities
           .getString("mda.ui.sorryMsg.UNSUPPORTED_FILE_TYPE_FOR_SAVE"),
-          ResourceUtility.getString("mda.ui.sorryMsg.SORRY"),
+          ResourceUtilities.getString("mda.ui.sorryMsg.SORRY"),
           JOptionPane.ERROR_MESSAGE);
       return false;
     } catch (IOException e) {

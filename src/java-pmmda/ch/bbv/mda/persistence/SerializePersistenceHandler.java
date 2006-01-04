@@ -14,7 +14,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ch.bbv.mda.MetaModel;
-import ch.bbv.utilities.ResourceUtility;
+import ch.bbv.utilities.ResourceUtilities;
 
 /**
  * The serialize persistency handler uses the serialize mechanism of the Java
@@ -41,8 +41,8 @@ public class SerializePersistenceHandler implements PersistenceHandler {
       in.close();
     } catch (InvalidClassException ice) {
       log.error(ice);
-      JOptionPane.showMessageDialog(null, ResourceUtility
-          .getString("mda.ui.sorryMsg.OLD_FORMAT"), ResourceUtility
+      JOptionPane.showMessageDialog(null, ResourceUtilities
+          .getString("mda.ui.sorryMsg.OLD_FORMAT"), ResourceUtilities
           .getString("mda.ui.sorryMsg.SORRY"), JOptionPane.ERROR_MESSAGE);
     } catch (IOException ioe) {
       log.error(ioe);

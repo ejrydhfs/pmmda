@@ -21,7 +21,7 @@ import ch.bbv.explorer.actions.ExplorerFileAction;
 import ch.bbv.mda.persistence.PersistenceException;
 import ch.bbv.mda.ui.MdaDocument;
 import ch.bbv.mda.ui.MdaExplorer;
-import ch.bbv.utilities.ResourceUtility;
+import ch.bbv.utilities.ResourceUtilities;
 import ch.bbv.utilities.SystemUtilities;
 
 /**
@@ -90,9 +90,9 @@ public class SaveAsAction extends ExplorerFileAction {
       } else if (Arrays.binarySearch(FileTypes.RATIONAL_ROSE_EXT, extension) >= 0) {
         writeModel(file);
       } else {
-        JOptionPane.showMessageDialog(getExplorer().getFrame(), ResourceUtility
+        JOptionPane.showMessageDialog(getExplorer().getFrame(), ResourceUtilities
             .getString("mda.ui.sorryMsg.ILLEGAL_FILE_NAME_OR_TYPE"),
-            ResourceUtility.getString("mda.ui.sorryMsg.SORRY"),
+            ResourceUtilities.getString("mda.ui.sorryMsg.SORRY"),
             JOptionPane.ERROR_MESSAGE);
       }
     } catch (IOException e) {

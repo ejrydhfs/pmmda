@@ -39,7 +39,7 @@ import ch.bbv.mda.MetaModel;
 import ch.bbv.mda.generators.Cartridge;
 import ch.bbv.mda.generators.CartridgeFactory;
 import ch.bbv.mda.ui.actions.*;
-import ch.bbv.utilities.ResourceUtility;
+import ch.bbv.utilities.ResourceUtilities;
 
 /**
  * The MDA explorer provides a user interface to view and manipulate model
@@ -165,7 +165,7 @@ public class MdaExplorer extends Explorer {
    */
   @Override
   protected void initialize() {
-    new ResourceUtility("ch.bbv.mda.ui.Messages", Locale.US);
+    new ResourceUtilities("ch.bbv.mda.ui.Messages", Locale.US);
     ExplorerMenuBar menuBar = new ExplorerMenuBar(this);
     setMenuBar(menuBar);
 

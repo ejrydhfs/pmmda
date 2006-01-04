@@ -25,7 +25,7 @@ import ch.bbv.mda.MetaModel;
 import ch.bbv.mda.persistence.nsuml.ArgoWriter;
 import ch.bbv.mda.persistence.nsuml.MdaTransformer;
 import ch.bbv.mda.persistence.nsuml.NsUmlTransformer;
-import ch.bbv.utilities.ResourceUtility;
+import ch.bbv.utilities.ResourceUtilities;
 
 /**
  * The NSUML handler manipulates XMI 1.0 / UML 1.3 based models. These models
@@ -64,8 +64,8 @@ public class NsUmlPersistenceHandler implements PersistenceHandler {
       MModel mModel = nsUmlTransformer.loadArgoModel(file);
       if (mModel == null) {
         log.error("NsUmlPersistenceHandler#readModel: illegal file - " + file);
-        JOptionPane.showMessageDialog(null, ResourceUtility
-            .getString("mda.ui.sorryMsg.INVALID_FORMAT"), ResourceUtility
+        JOptionPane.showMessageDialog(null, ResourceUtilities
+            .getString("mda.ui.sorryMsg.INVALID_FORMAT"), ResourceUtilities
             .getString("mda.ui.sorryMsg.SORRY"), JOptionPane.ERROR_MESSAGE);
         return null;
       }
@@ -82,7 +82,8 @@ public class NsUmlPersistenceHandler implements PersistenceHandler {
 
   public void writeModel(MetaModel model, File file)
       throws PersistenceException {
-    if (model.getFilename() != null && model.getFilename().equals(file.toString()) && file.exists()) {
+    if (model.getFilename() != null
+        && model.getFilename().equals(file.toString()) && file.exists()) {
       updateModel(model, file);
     } else if (file.getName().endsWith(".xmi")
         || file.getName().endsWith(".zargo")) {
