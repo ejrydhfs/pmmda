@@ -9,6 +9,8 @@
  * 
  * Contributors: 
  *   IBM - Initial API and implementation
+ *   bbv - Adrian Bachofen
+ *
  *
  * </copyright>
  *

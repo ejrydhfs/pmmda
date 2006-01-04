@@ -1,8 +1,7 @@
-/*
- * Created on Aug 1, 2004
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
+/* copyright 2005 Adrian Bachofen
+ * Licensed under the Apache License, Version 2.0 (the "Licence");
+ * you may not use this file except in compliance with the License.
+ * $Id$
  */
 package ch.bbv.mda.persistence.rose;
 

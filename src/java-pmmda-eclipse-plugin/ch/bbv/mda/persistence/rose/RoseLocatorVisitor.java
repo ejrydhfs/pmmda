@@ -1,3 +1,8 @@
+/* copyright 2005 Adrian Bachofen
+ * Licensed under the Apache License, Version 2.0 (the "Licence");
+ * you may not use this file except in compliance with the License.
+ * $Id$
+ */
 package ch.bbv.mda.persistence.rose;
 
 import java.util.StringTokenizer;
