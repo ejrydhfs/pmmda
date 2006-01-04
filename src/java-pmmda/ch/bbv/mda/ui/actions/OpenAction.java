@@ -6,6 +6,8 @@
  */
 package ch.bbv.mda.ui.actions;
 
+import java.io.File;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -14,6 +16,7 @@ import ch.bbv.explorer.actions.ExplorerFileAction;
 import ch.bbv.mda.persistence.PersistenceException;
 import ch.bbv.mda.ui.MdaDocument;
 import ch.bbv.mda.ui.MdaExplorer;
+import ch.bbv.utilities.SystemUtilities;
 
 /**
  * The open action implements the loading of a complete meta model. The model is
@@ -54,7 +57,13 @@ public class OpenAction extends ExplorerFileAction {
     try {
       MdaExplorer explorer = (MdaExplorer) getExplorer();
       MdaDocument document = new MdaDocument();
-      document.load(getSelectedFile());
+      File file = getSelectedFile();
+      String extension = SystemUtilities.getFileExtension(file);
+      if(extension == null) { // in case where user thinks that the extension comes from the file filter we get the first match from the filter.
+        extension = FileTypes.getBestMatchingExtension(getFileChooser().getFileFilter().getDescription());
+        if(extension != null) file = new File(file.getPath()+"."+extension);
+      }
+      document.load(file);
       explorer.setDocument(document);
     } catch (PersistenceException e) {
       log.debug("File Not Found", e);
