@@ -5,6 +5,7 @@
  */
 package ch.bbv.explorer;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +25,12 @@ import ch.bbv.dog.DataObject;
  * @version $Revision$
  */
 public abstract class NodePropertiesView extends JPanel {
+  
+  /**
+   * Color to display illegal input into text fields.
+   */
+  public final static Color ALERT_COLOR = new Color(255, 100, 100);
+  
   /**
    * Node being displayed in the property view.
    */

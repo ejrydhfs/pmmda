@@ -5,6 +5,12 @@
  */
 package ch.bbv.mda.ui;
 
+import java.awt.Color;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import javax.swing.*;
 
 import ch.bbv.dog.ui.ReferenceCodeComboBox;
@@ -39,6 +45,11 @@ public class MetaDatatypeView extends NodePropertiesView {
   private final static int TEXT_AREA_SIZE = 40;
 
   /**
+   * Pattern for validating identifiers
+   */
+  private static Pattern validName;
+
+  /**
    * Swing component to display the associated property.
    */
   private JTextField nameText;
@@ -70,6 +81,7 @@ public class MetaDatatypeView extends NodePropertiesView {
    */
   public MetaDatatypeView() {
     nameText = new JTextField(TEXT_FIELD_SIZE);
+    nameText.addFocusListener(new VerificationActions());
     contextText = new JTextField(TEXT_FIELD_SIZE);
     contextText.setEditable(false);
     visibility = new ReferenceCodeComboBox(VisibilityCode.class, VisibilityCode
@@ -145,5 +157,29 @@ public class MetaDatatypeView extends NodePropertiesView {
     builder.append(tagsView, 7);
     JPanel panel = builder.getPanel();
     add(panel);
+
+    validName = Pattern.compile("^[0-9]"         // no number at the beginning of the identifier
+                                +"|[^\\w]");     // no special characters
+  }
+  
+  /**
+   * Focus listeners for verification of input. It applies input rules.
+   * @author AdrianBachofen
+   *
+   */
+  private class VerificationActions implements FocusListener {
+    public void focusLost(FocusEvent e) {
+      if (e.getSource() == nameText) {
+        Matcher matcher = validName.matcher(nameText.getText());
+        if (matcher.find()) {
+          nameText.setBackground(ALERT_COLOR);
+        } else {
+          nameText.setBackground(Color.WHITE);
+        }
+      }
+    }
+    public void focusGained(FocusEvent e) {
+      // don't do anything
+    }
   }
 }

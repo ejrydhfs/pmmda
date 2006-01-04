@@ -10,6 +10,9 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.Color;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import ch.bbv.dog.ui.ReferenceCodeComboBox;
 import ch.bbv.explorer.NodePropertiesView;
 import ch.bbv.mda.MetaElement;
@@ -40,6 +43,11 @@ public class MetaPackageView extends NodePropertiesView {
    * The size of a text area in the view.
    */
   private final static int TEXT_AREA_SIZE = 40;
+
+  /**
+   * Pattern for validating identifiers
+   */
+  private static Pattern validName;
 
   private JTextField nameText;
 
@@ -159,18 +167,23 @@ public class MetaPackageView extends NodePropertiesView {
     builder.append(tagsView, 7);
     JPanel panel = builder.getPanel();
     add(panel);
+    
+    validName = Pattern.compile("^[0-9\\.]"         // no number and no dot at the beginning of the identifier
+                                +"|[^\\w&&[^\\.]]"  // no special characters other than dot
+                                +"|\\.[0-9]");      // no number after a dot
   }
   
   /**
-   * Action listeners for verification of input. It applies input rules.
+   * Focus listeners for verification of input. It applies input rules.
    * @author AdrianBachofen
    *
    */
   private class VerificationActions implements FocusListener {
     public void focusLost(FocusEvent e) {
       if (e.getSource() == nameText) {
-        if(nameText.getText().indexOf(' ') != -1) {
-          nameText.setBackground(Color.RED);
+        Matcher matcher = validName.matcher(nameText.getText());
+        if (matcher.find()) {
+          nameText.setBackground(ALERT_COLOR);
         } else {
           nameText.setBackground(Color.WHITE);
         }
