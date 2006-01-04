@@ -176,7 +176,7 @@ public class MdaRoseVisitor implements RoseVisitor
     {
       visitParameter(roseNode, roseNodeValue, objectKey, objectName, parent);
     }
-    else if (objectType.equals(RoseStrings.INHERITANCE_RELATIONSHIP))
+    else if (objectType.equals(RoseStrings.INHERITANCE_RELATIONSHIP) || objectType.equals(RoseStrings.REALIZE_RELATIONSHIP))
     {
       visitInheritanceRelationship(roseNode, roseNodeValue, objectKey, objectName, parent);
     }
@@ -517,24 +517,6 @@ public class MdaRoseVisitor implements RoseVisitor
     }
     superList.add(quidu);
     superList.add(roseNode.getStereotype());
-    
-    // Adrian - added for pmMDA mapping
-    // parent is child class
-    MetaClass child = (MetaClass)elements.get(parent);
-    // quidu is anchestor/parent class
-    MetaClass anchestor = null;
-    TableObject tableObject = (TableObject)roseUtil.getQuidTable().get(quidu);
-    if (tableObject != null)
-    {
-      Object struct = tableObject.getObject();
-      if (struct != null && struct instanceof EClass){
-        anchestor = (MetaClass)elements.get((EClass)struct);
-      }
-    }
-    // create relations
-    if(anchestor != null && child != null){
-      child.addAncestor(anchestor);
-    }
   }
 
   protected void visitClassattribute(RoseNode roseNode, String roseNodeValue, String objectKey, String objectName, Object parent)
@@ -2364,6 +2346,7 @@ public class MdaRoseVisitor implements RoseVisitor
         mClass.addIndexedProperty((MetaIndexedProperty) metaIndexedProperty);
       }
       
+      property.setAggregation(true);
       setCommonElementAspects(property, association);
       property.setContext(mClass);
       property.setName(eReference.getName());

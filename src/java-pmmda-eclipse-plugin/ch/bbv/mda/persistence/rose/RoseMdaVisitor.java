@@ -93,7 +93,7 @@ public class RoseMdaVisitor implements RoseVisitor {
     {
       visitParameter(roseNode, roseNodeValue, objectKey, objectName, parent);
     }
-    else if (objectType.equals(RoseStrings.INHERITANCE_RELATIONSHIP))
+    else if (objectType.equals(RoseStrings.INHERITANCE_RELATIONSHIP) || objectType.equals(RoseStrings.REALIZE_RELATIONSHIP))
     {
       visitInheritanceRelationship(roseNode, roseNodeValue, objectKey, objectName, parent);
     }
