@@ -588,9 +588,8 @@ public class MdaTransformer {
     assert (context != null) && (qualifiedName != null);
     // test whether context qualified name is at the beginning of qualifiedName
     String qualifiedContext = NsUmlUtilities.getQualifiedName(context);
-    if(qualifiedName.startsWith(qualifiedContext)) {
-      qualifiedName = qualifiedName.substring(qualifiedContext.length());
-      if(qualifiedName.startsWith(".")) qualifiedName = qualifiedName.substring(1);
+    if(qualifiedName.startsWith(qualifiedContext) && qualifiedName.charAt(qualifiedContext.length()) == '.') {
+      qualifiedName = qualifiedName.substring(qualifiedContext.length()+1);
     }
     StringTokenizer tokenizer = new StringTokenizer(qualifiedName, ".");
     MPackage currentPackage = null;
@@ -617,8 +616,8 @@ public class MdaTransformer {
   public MClassifier findClassifierQualified(MClassifier context, String qualifiedName) {
     assert (context != null) && (qualifiedName != null);
     String qualifiedContext = NsUmlUtilities.getQualifiedName(context);
-    if(qualifiedName.startsWith(qualifiedContext)) {
-      qualifiedName = qualifiedName.substring(qualifiedContext.length());
+    if(qualifiedName.startsWith(qualifiedContext) && qualifiedName.charAt(qualifiedContext.length()) == '.') {
+      qualifiedName = qualifiedName.substring(qualifiedContext.length()+1);
     }
     StringTokenizer tokenizer = new StringTokenizer(qualifiedName, ".");
     MClassifier currentClassifier = null;
