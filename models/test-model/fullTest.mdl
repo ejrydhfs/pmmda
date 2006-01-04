@@ -1,0 +1,4791 @@
+
+(object Petal
+    version    	45
+    _written   	"Rose 7.5.0103.1920"
+    charSet    	0)
+
+(object Design "Logical View"
+    is_unit    	TRUE
+    is_loaded  	TRUE
+    quid       	"43BA586600FD"
+    defaults   	(object defaults
+	rightMargin 	0.250000
+	leftMargin 	0.250000
+	topMargin  	0.250000
+	bottomMargin 	0.500000
+	pageOverlap 	0.250000
+	clipIconLabels 	TRUE
+	autoResize 	TRUE
+	snapToGrid 	TRUE
+	gridX      	16
+	gridY      	16
+	defaultFont 	(object Font
+	    size       	10
+	    face       	"Arial"
+	    bold       	FALSE
+	    italics    	FALSE
+	    underline  	FALSE
+	    strike     	FALSE
+	    color      	0
+	    default_color 	TRUE)
+	showMessageNum 	1
+	showClassOfObject 	TRUE
+	notation   	"Unified")
+    root_usecase_package 	(object Class_Category "Use Case View"
+	quid       	"43BA586600FF"
+	exportControl 	"Public"
+	global     	TRUE
+	logical_models 	(list unit_reference_list)
+	logical_presentations 	(list unit_reference_list
+	    (object UseCaseDiagram "Main"
+		quid       	"43BA58660108"
+		title      	"Main"
+		zoom       	100
+		max_height 	28350
+		max_width  	21600
+		origin_x   	0
+		origin_y   	0
+		items      	(list diagram_item_list))))
+    root_category 	(object Class_Category "Logical View"
+	quid       	"43BA586600FE"
+	exportControl 	"Public"
+	global     	TRUE
+	subsystem  	"Component View"
+	quidu      	"43BA58660100"
+	logical_models 	(list unit_reference_list
+	    (object Class "I"
+		quid       	"43BA5943001B"
+		stereotype 	"Interface")
+	    (object Class "String"
+		quid       	"43BA622A0174"
+		stereotype 	"datatype")
+	    (object Association "aaa2bbb"
+		quid       	"43BA59130088"
+		roles      	(list role_list
+		    (object Role "$UNNAMED$0"
+			quid       	"43BA59150077"
+			supplier   	"Logical View::de::bbv::B::BB::BBB"
+			quidu      	"43BA58D100F0"
+			client_cardinality 	(value cardinality "0..*")
+			is_navigable 	TRUE)
+		    (object Role "$UNNAMED$1"
+			quid       	"43BA59150082"
+			supplier   	"Logical View::ch::bbv::A::AA::AAA"
+			quidu      	"43BA58AB0307"
+			is_aggregate 	TRUE)))
+	    (object Association "bbb2aaa"
+		quid       	"43BA5922027F"
+		roles      	(list role_list
+		    (object Role "$UNNAMED$2"
+			quid       	"43BA592401CE"
+			supplier   	"Logical View::ch::bbv::A::AA::AAA"
+			quidu      	"43BA58AB0307"
+			client_cardinality 	(value cardinality "0..*")
+			is_navigable 	TRUE)
+		    (object Role "$UNNAMED$3"
+			quid       	"43BA592401D0"
+			supplier   	"Logical View::de::bbv::B::BB::BBB"
+			quidu      	"43BA58D100F0"
+			is_aggregate 	TRUE)))
+	    (object Association "b2a"
+		quid       	"43BA728F0292"
+		roles      	(list role_list
+		    (object Role "$UNNAMED$4"
+			quid       	"43BA729100E7"
+			supplier   	"Logical View::ch::bbv::A"
+			quidu      	"43BA589B02A9"
+			client_cardinality 	(value cardinality "0..*")
+			is_navigable 	TRUE)
+		    (object Role "$UNNAMED$5"
+			quid       	"43BA729100E9"
+			supplier   	"Logical View::de::bbv::B"
+			quidu      	"43BA58C502DD"
+			is_aggregate 	TRUE)))
+	    (object Association "a2b"
+		quid       	"43BA72A20092"
+		roles      	(list role_list
+		    (object Role "$UNNAMED$6"
+			quid       	"43BA72A40076"
+			supplier   	"Logical View::de::bbv::B"
+			quidu      	"43BA58C502DD"
+			client_cardinality 	(value cardinality "0..*")
+			is_navigable 	TRUE)
+		    (object Role "$UNNAMED$7"
+			quid       	"43BA72A40078"
+			supplier   	"Logical View::ch::bbv::A"
+			quidu      	"43BA589B02A9"
+			is_aggregate 	TRUE)))
+	    (object Class_Category "ch"
+		quid       	"43BA586E0195"
+		exportControl 	"Public"
+		logical_models 	(list unit_reference_list
+		    (object Class_Category "bbv"
+			quid       	"43BA587F00EF"
+			exportControl 	"Public"
+			logical_models 	(list unit_reference_list
+			    (object Class "A"
+				quid       	"43BA589B02A9"
+				realized_interfaces 	(list realize_rel_list
+				    (object Realize_Relationship
+					quid       	"43BA5970007B"
+					supplier   	"Logical View::I"
+					quidu      	"43BA5943001B"))
+				class_attributes 	(list class_attribute_list
+				    (object ClassAttribute "b"
+					quid       	"43BA6224013A"
+					type       	"B"
+					quidu      	"43BA58C502DD")
+				    (object ClassAttribute "s"
+					quid       	"43BA62710331"
+					type       	"String"
+					quidu      	"43BA622A0174")
+				    (object ClassAttribute "aaa"
+					quid       	"43BA6402035D"
+					type       	"AAA"
+					quidu      	"43BA58AB0307")
+				    (object ClassAttribute "a"
+					quid       	"43BA64E30213"
+					type       	"A"
+					quidu      	"43BA589B02A9"))
+				nestedClasses 	(list nestedClasses
+				    (object Class "AA"
+					quid       	"43BA58A5027C"
+					class_attributes 	(list class_attribute_list
+					    (object ClassAttribute "bb"
+						quid       	"43BA624E03DA"
+						type       	"BB"
+						quidu      	"43BA58CA03B6")
+					    (object ClassAttribute "s"
+						quid       	"43BA6277020E"
+						type       	"String"
+						quidu      	"43BA622A0174"))
+					nestedClasses 	(list nestedClasses
+					    (object Class "AAA"
+						quid       	"43BA58AB0307"
+						superclasses 	(list inheritance_relationship_list
+						    (object Inheritance_Relationship
+							quid       	"43BA595E0179"
+							supplier   	"Logical View::de::bbv::B"
+							quidu      	"43BA58C502DD")
+						    (object Inheritance_Relationship
+							quid       	"43BA6320037E"
+							supplier   	"Logical View::ch::bbv::A::AA"
+							quidu      	"43BA58A5027C"))
+						class_attributes 	(list class_attribute_list
+						    (object ClassAttribute "bbb"
+							quid       	"43BA58B3013C"
+							type       	"BBB"
+							quidu      	"43BA58D100F0")
+						    (object ClassAttribute "s"
+							quid       	"43BA627B0228"
+							type       	"String"
+							quidu      	"43BA622A0174")
+						    (object ClassAttribute "i"
+							quid       	"43BA6330006B"
+							type       	"I"
+							quidu      	"43BA5943001B")
+						    (object ClassAttribute "a"
+							quid       	"43BA63F00144"
+							type       	"A"
+							quidu      	"43BA589B02A9"))))))))
+			logical_presentations 	(list unit_reference_list)))
+		logical_presentations 	(list unit_reference_list))
+	    (object Class_Category "de"
+		quid       	"43BA5877029C"
+		exportControl 	"Public"
+		logical_models 	(list unit_reference_list
+		    (object Class_Category "bbv"
+			quid       	"43BA58870282"
+			exportControl 	"Public"
+			logical_models 	(list unit_reference_list
+			    (object Class "B"
+				quid       	"43BA58C502DD"
+				realized_interfaces 	(list realize_rel_list
+				    (object Realize_Relationship
+					quid       	"43BA596D0103"
+					supplier   	"Logical View::I"
+					quidu      	"43BA5943001B"))
+				class_attributes 	(list class_attribute_list
+				    (object ClassAttribute "a"
+					quid       	"43BA6257021B"
+					type       	"A"
+					quidu      	"43BA589B02A9")
+				    (object ClassAttribute "s"
+					quid       	"43BA62830215"
+					type       	"String"
+					quidu      	"43BA622A0174")
+				    (object ClassAttribute "bbb"
+					quid       	"43BA63BD0199"
+					type       	"BBB"
+					quidu      	"43BA58D100F0")
+				    (object ClassAttribute "b"
+					quid       	"43BA64BB0228"
+					type       	"B"
+					quidu      	"43BA58C502DD"))
+				nestedClasses 	(list nestedClasses
+				    (object Class "BB"
+					quid       	"43BA58CA03B6"
+					class_attributes 	(list class_attribute_list
+					    (object ClassAttribute "aa"
+						quid       	"43BA625B027B"
+						type       	"AA"
+						quidu      	"43BA58A5027C")
+					    (object ClassAttribute "s"
+						quid       	"43BA6287026B"
+						type       	"String"
+						quidu      	"43BA622A0174"))
+					nestedClasses 	(list nestedClasses
+					    (object Class "BBB"
+						quid       	"43BA58D100F0"
+						superclasses 	(list inheritance_relationship_list
+						    (object Inheritance_Relationship
+							quid       	"43BA59650115"
+							supplier   	"Logical View::ch::bbv::A"
+							quidu      	"43BA589B02A9")
+						    (object Inheritance_Relationship
+							quid       	"43BA63240185"
+							supplier   	"Logical View::de::bbv::B::BB"
+							quidu      	"43BA58CA03B6"))
+						class_attributes 	(list class_attribute_list
+						    (object ClassAttribute "aaa"
+							quid       	"43BA58D700C6"
+							type       	"AAA"
+							quidu      	"43BA58AB0307")
+						    (object ClassAttribute "s"
+							quid       	"43BA628C00F6"
+							type       	"String"
+							quidu      	"43BA622A0174")
+						    (object ClassAttribute "i"
+							quid       	"43BA63630255"
+							type       	"I"
+							quidu      	"43BA5943001B")
+						    (object ClassAttribute "b"
+							quid       	"43BA63D3005B"
+							type       	"B"
+							quidu      	"43BA58C502DD"))))))))
+			logical_presentations 	(list unit_reference_list)))
+		logical_presentations 	(list unit_reference_list)))
+	logical_presentations 	(list unit_reference_list
+	    (object ClassDiagram "Main"
+		quid       	"43BA58660104"
+		title      	"Main"
+		zoom       	100
+		max_height 	28350
+		max_width  	21600
+		origin_x   	0
+		origin_y   	0
+		items      	(list diagram_item_list
+		    (object ClassView "Class" "Logical View::ch::bbv::A::AA::AAA" @1
+			ShowCompartmentStereotypes 	TRUE
+			IncludeAttribute 	TRUE
+			IncludeOperation 	TRUE
+			location   	(1664, 1296)
+			font       	(object Font
+			    size       	10
+			    face       	"Arial"
+			    bold       	FALSE
+			    italics    	FALSE
+			    underline  	FALSE
+			    strike     	FALSE
+			    color      	0
+			    default_color 	TRUE)
+			label      	(object ItemLabel
+			    Parent_View 	@1
+			    location   	(1543, 1117)
+			    fill_color 	13434879
+			    nlines     	1
+			    max_width  	242
+			    justify    	0
+			    label      	"AAA")
+			icon_style 	"Icon"
+			line_color 	3342489
+			fill_color 	13434879
+			quidu      	"43BA58AB0307"
+			compartment 	(object Compartment
+			    Parent_View 	@1
+			    location   	(1543, 1222)
+			    font       	(object Font
+				size       	10
+				face       	"Arial"
+				bold       	FALSE
+				italics    	FALSE
+				underline  	FALSE
+				strike     	FALSE
+				color      	0
+				default_color 	TRUE)
+			    icon_style 	"Icon"
+			    fill_color 	13434879
+			    anchor     	2
+			    nlines     	5
+			    max_width  	246)
+			width      	260
+			height     	382
+			annotation 	8
+			autoResize 	TRUE)
+		    (object ClassView "Class" "Logical View::de::bbv::B::BB::BBB" @2
+			ShowCompartmentStereotypes 	TRUE
+			IncludeAttribute 	TRUE
+			IncludeOperation 	TRUE
+			location   	(608, 1280)
+			font       	(object Font
+			    size       	10
+			    face       	"Arial"
+			    bold       	FALSE
+			    italics    	FALSE
+			    underline  	FALSE
+			    strike     	FALSE
+			    color      	0
+			    default_color 	TRUE)
+			label      	(object ItemLabel
+			    Parent_View 	@2
+			    location   	(487, 1101)
+			    fill_color 	13434879
+			    nlines     	1
+			    max_width  	242
+			    justify    	0
+			    label      	"BBB")
+			icon_style 	"Icon"
+			line_color 	3342489
+			fill_color 	13434879
+			quidu      	"43BA58D100F0"
+			compartment 	(object Compartment
+			    Parent_View 	@2
+			    location   	(487, 1206)
+			    font       	(object Font
+				size       	10
+				face       	"Arial"
+				bold       	FALSE
+				italics    	FALSE
+				underline  	FALSE
+				strike     	FALSE
+				color      	0
+				default_color 	TRUE)
+			    icon_style 	"Icon"
+			    fill_color 	13434879
+			    anchor     	2
+			    nlines     	5
+			    max_width  	246)
+			width      	260
+			height     	382
+			annotation 	8
+			autoResize 	TRUE)
+		    (object AssociationViewNew "aaa2bbb" @3
+			location   	(1133, 1172)
+			font       	(object Font
+			    size       	10
+			    face       	"Arial"
+			    bold       	FALSE
+			    italics    	FALSE
+			    underline  	FALSE
+			    strike     	FALSE
+			    color      	0
+			    default_color 	TRUE)
+			label      	(object SegLabel @4
+			    Parent_View 	@3
+			    location   	(1133, 1113)
+			    font       	(object Font
+				size       	10
+				face       	"Arial"
+				bold       	FALSE
+				italics    	TRUE
+				underline  	FALSE
+				strike     	FALSE
+				color      	0
+				default_color 	TRUE)
+			    anchor     	1
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	172
+			    justify    	0
+			    label      	"aaa2bbb"
+			    pctDist    	0.500000
+			    height     	60
+			    orientation 	0)
+			stereotype 	TRUE
+			line_color 	3342489
+			quidu      	"43BA59130088"
+			roleview_list 	(list RoleViews
+			    (object RoleView "$UNNAMED$0" @5
+				Parent_View 	@3
+				location   	(557, 868)
+				font       	(object Font
+				    size       	10
+				    face       	"Arial"
+				    bold       	FALSE
+				    italics    	FALSE
+				    underline  	FALSE
+				    strike     	FALSE
+				    color      	0
+				    default_color 	TRUE)
+				stereotype 	TRUE
+				line_color 	3342489
+				quidu      	"43BA59150077"
+				client     	@3
+				supplier   	@2
+				vertices   	(list Points
+				    (1133, 1172)
+				    (1038, 1150)
+				    (738, 1240))
+				line_style 	0
+				label      	(object SegLabel @6
+				    Parent_View 	@5
+				    location   	(762, 1177)
+				    font       	(object Font
+					size       	10
+					face       	"Arial"
+					bold       	FALSE
+					italics    	FALSE
+					underline  	FALSE
+					strike     	FALSE
+					color      	0
+					default_color 	TRUE)
+				    anchor     	2
+				    anchor_loc 	1
+				    nlines     	1
+				    max_width  	15
+				    justify    	0
+				    label      	"0..*"
+				    pctDist    	0.900000
+				    height     	54
+				    orientation 	1))
+			    (object RoleView "$UNNAMED$1" @7
+				Parent_View 	@3
+				location   	(557, 868)
+				stereotype 	TRUE
+				line_color 	3342489
+				quidu      	"43BA59150082"
+				client     	@3
+				supplier   	@1
+				line_style 	0)))
+		    (object AssociationViewNew "bbb2aaa" @8
+			location   	(1131, 1400)
+			font       	(object Font
+			    size       	10
+			    face       	"Arial"
+			    bold       	FALSE
+			    italics    	FALSE
+			    underline  	FALSE
+			    strike     	FALSE
+			    color      	0
+			    default_color 	TRUE)
+			label      	(object SegLabel @9
+			    Parent_View 	@8
+			    location   	(1131, 1341)
+			    font       	(object Font
+				size       	10
+				face       	"Arial"
+				bold       	FALSE
+				italics    	TRUE
+				underline  	FALSE
+				strike     	FALSE
+				color      	0
+				default_color 	TRUE)
+			    anchor     	1
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	160
+			    justify    	0
+			    label      	"bbb2aaa"
+			    pctDist    	0.500000
+			    height     	60
+			    orientation 	0)
+			stereotype 	TRUE
+			line_color 	3342489
+			quidu      	"43BA5922027F"
+			roleview_list 	(list RoleViews
+			    (object RoleView "$UNNAMED$2" @10
+				Parent_View 	@8
+				location   	(-293, 1112)
+				font       	(object Font
+				    size       	10
+				    face       	"Arial"
+				    bold       	FALSE
+				    italics    	FALSE
+				    underline  	FALSE
+				    strike     	FALSE
+				    color      	0
+				    default_color 	TRUE)
+				stereotype 	TRUE
+				line_color 	3342489
+				quidu      	"43BA592401CE"
+				client     	@8
+				supplier   	@1
+				line_style 	0
+				label      	(object SegLabel @11
+				    Parent_View 	@10
+				    location   	(1483, 1277)
+				    font       	(object Font
+					size       	10
+					face       	"Arial"
+					bold       	FALSE
+					italics    	FALSE
+					underline  	FALSE
+					strike     	FALSE
+					color      	0
+					default_color 	TRUE)
+				    anchor     	2
+				    anchor_loc 	1
+				    nlines     	1
+				    max_width  	15
+				    justify    	0
+				    label      	"0..*"
+				    pctDist    	0.900000
+				    height     	54
+				    orientation 	0))
+			    (object RoleView "$UNNAMED$3" @12
+				Parent_View 	@8
+				location   	(-293, 1112)
+				stereotype 	TRUE
+				line_color 	3342489
+				quidu      	"43BA592401D0"
+				client     	@8
+				supplier   	@2
+				vertices   	(list Points
+				    (1131, 1400)
+				    (1022, 1422)
+				    (738, 1324))
+				line_style 	0)))
+		    (object ClassView "Class" "Logical View::I" @13
+			ShowCompartmentStereotypes 	TRUE
+			IncludeAttribute 	TRUE
+			IncludeOperation 	TRUE
+			location   	(1072, 80)
+			font       	(object Font
+			    size       	10
+			    face       	"Arial"
+			    bold       	FALSE
+			    italics    	FALSE
+			    underline  	FALSE
+			    strike     	FALSE
+			    color      	0
+			    default_color 	TRUE)
+			label      	(object ItemLabel
+			    Parent_View 	@13
+			    location   	(1071, 188)
+			    anchor_loc 	1
+			    nlines     	2
+			    max_width  	271
+			    justify    	0
+			    label      	"I")
+			icon       	"Interface"
+			icon_style 	"Icon"
+			line_color 	3342489
+			fill_color 	13434879
+			quidu      	"43BA5943001B"
+			width      	58
+			height     	58
+			annotation 	8
+			autoResize 	TRUE)
+		    (object ClassView "Class" "Logical View::ch::bbv::A::AA" @14
+			ShowCompartmentStereotypes 	TRUE
+			IncludeAttribute 	TRUE
+			IncludeOperation 	TRUE
+			location   	(2064, 688)
+			font       	(object Font
+			    size       	10
+			    face       	"Arial"
+			    bold       	FALSE
+			    italics    	FALSE
+			    underline  	FALSE
+			    strike     	FALSE
+			    color      	0
+			    default_color 	TRUE)
+			label      	(object ItemLabel
+			    Parent_View 	@14
+			    location   	(1955, 559)
+			    fill_color 	13434879
+			    nlines     	1
+			    max_width  	218
+			    justify    	0
+			    label      	"AA")
+			icon_style 	"Icon"
+			line_color 	3342489
+			fill_color 	13434879
+			quidu      	"43BA58A5027C"
+			compartment 	(object Compartment
+			    Parent_View 	@14
+			    location   	(1955, 664)
+			    font       	(object Font
+				size       	10
+				face       	"Arial"
+				bold       	FALSE
+				italics    	FALSE
+				underline  	FALSE
+				strike     	FALSE
+				color      	0
+				default_color 	TRUE)
+			    icon_style 	"Icon"
+			    fill_color 	13434879
+			    anchor     	2
+			    nlines     	3
+			    max_width  	225)
+			width      	236
+			height     	282
+			annotation 	8
+			autoResize 	TRUE)
+		    (object ClassView "Class" "Logical View::de::bbv::B::BB" @15
+			ShowCompartmentStereotypes 	TRUE
+			IncludeAttribute 	TRUE
+			IncludeOperation 	TRUE
+			location   	(240, 704)
+			font       	(object Font
+			    size       	10
+			    face       	"Arial"
+			    bold       	FALSE
+			    italics    	FALSE
+			    underline  	FALSE
+			    strike     	FALSE
+			    color      	0
+			    default_color 	TRUE)
+			label      	(object ItemLabel
+			    Parent_View 	@15
+			    location   	(131, 575)
+			    fill_color 	13434879
+			    nlines     	1
+			    max_width  	218
+			    justify    	0
+			    label      	"BB")
+			icon_style 	"Icon"
+			line_color 	3342489
+			fill_color 	13434879
+			quidu      	"43BA58CA03B6"
+			compartment 	(object Compartment
+			    Parent_View 	@15
+			    location   	(131, 680)
+			    font       	(object Font
+				size       	10
+				face       	"Arial"
+				bold       	FALSE
+				italics    	FALSE
+				underline  	FALSE
+				strike     	FALSE
+				color      	0
+				default_color 	TRUE)
+			    icon_style 	"Icon"
+			    fill_color 	13434879
+			    anchor     	2
+			    nlines     	3
+			    max_width  	225)
+			width      	236
+			height     	282
+			annotation 	8
+			autoResize 	TRUE)
+		    (object ClassView "Class" "Logical View::String" @16
+			ShowCompartmentStereotypes 	TRUE
+			IncludeAttribute 	TRUE
+			IncludeOperation 	TRUE
+			location   	(2352, 368)
+			font       	(object Font
+			    size       	10
+			    face       	"Arial"
+			    bold       	FALSE
+			    italics    	FALSE
+			    underline  	FALSE
+			    strike     	FALSE
+			    color      	0
+			    default_color 	TRUE)
+			label      	(object ItemLabel
+			    Parent_View 	@16
+			    location   	(2223, 339)
+			    fill_color 	13434879
+			    nlines     	1
+			    max_width  	258
+			    justify    	0
+			    label      	"String")
+			stereotype 	(object ItemLabel
+			    Parent_View 	@16
+			    location   	(2223, 289)
+			    fill_color 	13434879
+			    anchor     	10
+			    nlines     	1
+			    max_width  	256
+			    justify    	0
+			    label      	"<<datatype>>")
+			icon_style 	"Icon"
+			line_color 	3342489
+			fill_color 	13434879
+			quidu      	"43BA622A0174"
+			width      	276
+			height     	182
+			annotation 	8
+			autoResize 	TRUE)
+		    (object InheritView "" @17
+			stereotype 	TRUE
+			line_color 	3342489
+			quidu      	"43BA6320037E"
+			client     	@1
+			supplier   	@14
+			line_style 	0)
+		    (object InheritView "" @18
+			stereotype 	TRUE
+			line_color 	3342489
+			quidu      	"43BA63240185"
+			client     	@2
+			supplier   	@15
+			line_style 	0)
+		    (object ClassView "Class" "Logical View::ch::bbv::A" @19
+			ShowCompartmentStereotypes 	TRUE
+			IncludeAttribute 	TRUE
+			IncludeOperation 	TRUE
+			location   	(1584, 384)
+			font       	(object Font
+			    size       	10
+			    face       	"Arial"
+			    bold       	FALSE
+			    italics    	FALSE
+			    underline  	FALSE
+			    strike     	FALSE
+			    color      	0
+			    default_color 	TRUE)
+			label      	(object ItemLabel
+			    Parent_View 	@19
+			    location   	(1464, 205)
+			    fill_color 	13434879
+			    nlines     	1
+			    max_width  	240
+			    justify    	0
+			    label      	"A")
+			icon_style 	"Icon"
+			line_color 	3342489
+			fill_color 	13434879
+			quidu      	"43BA589B02A9"
+			compartment 	(object Compartment
+			    Parent_View 	@19
+			    location   	(1464, 310)
+			    font       	(object Font
+				size       	10
+				face       	"Arial"
+				bold       	FALSE
+				italics    	FALSE
+				underline  	FALSE
+				strike     	FALSE
+				color      	0
+				default_color 	TRUE)
+			    icon_style 	"Icon"
+			    fill_color 	16777215
+			    anchor     	2
+			    nlines     	5
+			    max_width  	246)
+			width      	258
+			height     	382
+			annotation 	8
+			autoResize 	TRUE)
+		    (object InheritView "" @20
+			stereotype 	TRUE
+			line_color 	3342489
+			quidu      	"43BA59650115"
+			client     	@2
+			supplier   	@19
+			line_style 	0)
+		    (object RealizeView "" @21
+			stereotype 	TRUE
+			line_color 	3342489
+			quidu      	"43BA5970007B"
+			client     	@19
+			supplier   	@13
+			line_style 	0)
+		    (object ClassView "Class" "Logical View::de::bbv::B" @22
+			ShowCompartmentStereotypes 	TRUE
+			IncludeAttribute 	TRUE
+			IncludeOperation 	TRUE
+			location   	(624, 400)
+			font       	(object Font
+			    size       	10
+			    face       	"Arial"
+			    bold       	FALSE
+			    italics    	FALSE
+			    underline  	FALSE
+			    strike     	FALSE
+			    color      	0
+			    default_color 	TRUE)
+			label      	(object ItemLabel
+			    Parent_View 	@22
+			    location   	(504, 221)
+			    fill_color 	13434879
+			    nlines     	1
+			    max_width  	240
+			    justify    	0
+			    label      	"B")
+			icon_style 	"Icon"
+			line_color 	3342489
+			fill_color 	13434879
+			quidu      	"43BA58C502DD"
+			compartment 	(object Compartment
+			    Parent_View 	@22
+			    location   	(504, 326)
+			    font       	(object Font
+				size       	10
+				face       	"Arial"
+				bold       	FALSE
+				italics    	FALSE
+				underline  	FALSE
+				strike     	FALSE
+				color      	0
+				default_color 	TRUE)
+			    icon_style 	"Icon"
+			    fill_color 	16777215
+			    anchor     	2
+			    nlines     	5
+			    max_width  	246)
+			width      	258
+			height     	382
+			annotation 	8
+			autoResize 	TRUE)
+		    (object InheritView "" @23
+			stereotype 	TRUE
+			line_color 	3342489
+			quidu      	"43BA595E0179"
+			client     	@1
+			supplier   	@22
+			line_style 	0)
+		    (object RealizeView "" @24
+			stereotype 	TRUE
+			line_color 	3342489
+			quidu      	"43BA596D0103"
+			client     	@22
+			supplier   	@13
+			line_style 	0)
+		    (object AssociationViewNew "b2a" @25
+			location   	(1153, 299)
+			font       	(object Font
+			    size       	10
+			    face       	"Arial"
+			    bold       	FALSE
+			    italics    	FALSE
+			    underline  	FALSE
+			    strike     	FALSE
+			    color      	0
+			    default_color 	TRUE)
+			label      	(object SegLabel @26
+			    Parent_View 	@25
+			    location   	(1153, 240)
+			    font       	(object Font
+				size       	10
+				face       	"Arial"
+				bold       	FALSE
+				italics    	TRUE
+				underline  	FALSE
+				strike     	FALSE
+				color      	0
+				default_color 	TRUE)
+			    anchor     	1
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	80
+			    justify    	0
+			    label      	"b2a"
+			    pctDist    	0.500000
+			    height     	60
+			    orientation 	0)
+			stereotype 	TRUE
+			line_color 	3342489
+			quidu      	"43BA728F0292"
+			roleview_list 	(list RoleViews
+			    (object RoleView "$UNNAMED$4" @27
+				Parent_View 	@25
+				location   	(529, -101)
+				font       	(object Font
+				    size       	10
+				    face       	"Arial"
+				    bold       	FALSE
+				    italics    	FALSE
+				    underline  	FALSE
+				    strike     	FALSE
+				    color      	0
+				    default_color 	TRUE)
+				stereotype 	TRUE
+				line_color 	3342489
+				quidu      	"43BA729100E7"
+				client     	@25
+				supplier   	@19
+				line_style 	0
+				label      	(object SegLabel @28
+				    Parent_View 	@27
+				    location   	(1416, 405)
+				    font       	(object Font
+					size       	10
+					face       	"Arial"
+					bold       	FALSE
+					italics    	FALSE
+					underline  	FALSE
+					strike     	FALSE
+					color      	0
+					default_color 	TRUE)
+				    anchor     	2
+				    anchor_loc 	1
+				    nlines     	1
+				    max_width  	15
+				    justify    	0
+				    label      	"0..*"
+				    pctDist    	0.900000
+				    height     	54
+				    orientation 	1))
+			    (object RoleView "$UNNAMED$5" @29
+				Parent_View 	@25
+				location   	(529, -101)
+				stereotype 	TRUE
+				line_color 	3342489
+				quidu      	"43BA729100E9"
+				client     	@25
+				supplier   	@22
+				vertices   	(list Points
+				    (1153, 299)
+				    (1094, 288)
+				    (753, 368))
+				line_style 	0)))
+		    (object AssociationViewNew "a2b" @30
+			location   	(1149, 508)
+			font       	(object Font
+			    size       	10
+			    face       	"Arial"
+			    bold       	FALSE
+			    italics    	FALSE
+			    underline  	FALSE
+			    strike     	FALSE
+			    color      	0
+			    default_color 	TRUE)
+			label      	(object SegLabel @31
+			    Parent_View 	@30
+			    location   	(1149, 449)
+			    font       	(object Font
+				size       	10
+				face       	"Arial"
+				bold       	FALSE
+				italics    	TRUE
+				underline  	FALSE
+				strike     	FALSE
+				color      	0
+				default_color 	TRUE)
+			    anchor     	1
+			    anchor_loc 	1
+			    nlines     	1
+			    max_width  	80
+			    justify    	0
+			    label      	"a2b"
+			    pctDist    	0.500000
+			    height     	60
+			    orientation 	0)
+			stereotype 	TRUE
+			line_color 	3342489
+			quidu      	"43BA72A20092"
+			roleview_list 	(list RoleViews
+			    (object RoleView "$UNNAMED$6" @32
+				Parent_View 	@30
+				location   	(-435, 124)
+				font       	(object Font
+				    size       	10
+				    face       	"Arial"
+				    bold       	FALSE
+				    italics    	FALSE
+				    underline  	FALSE
+				    strike     	FALSE
+				    color      	0
+				    default_color 	TRUE)
+				stereotype 	TRUE
+				line_color 	3342489
+				quidu      	"43BA72A40076"
+				client     	@30
+				supplier   	@22
+				vertices   	(list Points
+				    (1149, 508)
+				    (1091, 525)
+				    (753, 433))
+				line_style 	0
+				label      	(object SegLabel @33
+				    Parent_View 	@32
+				    location   	(780, 496)
+				    font       	(object Font
+					size       	10
+					face       	"Arial"
+					bold       	FALSE
+					italics    	FALSE
+					underline  	FALSE
+					strike     	FALSE
+					color      	0
+					default_color 	TRUE)
+				    anchor     	2
+				    anchor_loc 	1
+				    nlines     	1
+				    max_width  	15
+				    justify    	0
+				    label      	"0..*"
+				    pctDist    	0.900000
+				    height     	54
+				    orientation 	0))
+			    (object RoleView "$UNNAMED$7" @34
+				Parent_View 	@30
+				location   	(-435, 124)
+				stereotype 	TRUE
+				line_color 	3342489
+				quidu      	"43BA72A40078"
+				client     	@30
+				supplier   	@19
+				line_style 	0)))))))
+    root_subsystem 	(object SubSystem "Component View"
+	quid       	"43BA58660100"
+	physical_models 	(list unit_reference_list)
+	physical_presentations 	(list unit_reference_list
+	    (object Module_Diagram "Main"
+		quid       	"43BA58660107"
+		title      	"Main"
+		zoom       	100
+		max_height 	28350
+		max_width  	21600
+		origin_x   	0
+		origin_y   	0
+		items      	(list diagram_item_list))))
+    process_structure 	(object Processes
+	quid       	"43BA58660101"
+	ProcsNDevs 	(list
+	    (object Process_Diagram "Deployment View"
+		quid       	"43BA58660103"
+		title      	"Deployment View"
+		zoom       	100
+		max_height 	28350
+		max_width  	21600
+		origin_x   	0
+		origin_y   	0
+		items      	(list diagram_item_list))))
+    properties 	(object Properties
+	attributes 	(list Attribute_Set
+	    (object Attribute
+		tool       	"Cplusplus"
+		name       	"propertyId"
+		value      	"809135966")
+	    (object Attribute
+		tool       	"Cplusplus"
+		name       	"default__Role"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"Cplusplus"
+			name       	"Synchronize"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"Cplusplus"
+			name       	"CodeName"
+			value      	"")
+		    (object Attribute
+			tool       	"Cplusplus"
+			name       	"Const"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"Cplusplus"
+			name       	"InitialValue"
+			value      	"")))
+	    (object Attribute
+		tool       	"Cplusplus"
+		name       	"default__Inherit"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"Cplusplus"
+			name       	"Synchronize"
+			value      	TRUE)))
+	    (object Attribute
+		tool       	"Cplusplus"
+		name       	"default__Module-Spec"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"Cplusplus"
+			name       	"Synchronize"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"Cplusplus"
+			name       	"Copyright"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"Cplusplus"
+			name       	"RootPackage"
+			value      	"C++ Reverse Engineered")
+		    (object Attribute
+			tool       	"Cplusplus"
+			name       	"InitialHeaderIncludes"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"Cplusplus"
+			name       	"InitialBodyIncludes"
+			value      	(value Text ""))))
+	    (object Attribute
+		tool       	"Cplusplus"
+		name       	"default__Param"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"Cplusplus"
+			name       	"CodeName"
+			value      	"")))
+	    (object Attribute
+		tool       	"Cplusplus"
+		name       	"default__Attribute"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"Cplusplus"
+			name       	"Synchronize"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"Cplusplus"
+			name       	"CodeName"
+			value      	"")))
+	    (object Attribute
+		tool       	"Cplusplus"
+		name       	"default__Operation"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"Cplusplus"
+			name       	"Synchronize"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"Cplusplus"
+			name       	"CodeName"
+			value      	"")
+		    (object Attribute
+			tool       	"Cplusplus"
+			name       	"InitialCodeBody"
+			value      	"")
+		    (object Attribute
+			tool       	"Cplusplus"
+			name       	"Inline"
+			value      	FALSE)))
+	    (object Attribute
+		tool       	"Cplusplus"
+		name       	"default__Class"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"Cplusplus"
+			name       	"Synchronize"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"Cplusplus"
+			name       	"CodeName"
+			value      	"")
+		    (object Attribute
+			tool       	"Cplusplus"
+			name       	"ImplementationType"
+			value      	"")
+		    (object Attribute
+			tool       	"Cplusplus"
+			name       	"HeaderSourceFile"
+			value      	"")
+		    (object Attribute
+			tool       	"Cplusplus"
+			name       	"BodySourceFile"
+			value      	"")))
+	    (object Attribute
+		tool       	"Cplusplus"
+		name       	"default__Category"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"Cplusplus"
+			name       	"CodeName"
+			value      	"")
+		    (object Attribute
+			tool       	"Cplusplus"
+			name       	"IsNamespace"
+			value      	FALSE)))
+	    (object Attribute
+		tool       	"Cplusplus"
+		name       	"HiddenTool"
+		value      	FALSE)
+	    (object Attribute
+		tool       	"ANSI C++ Event Watcher"
+		name       	"HiddenTool"
+		value      	FALSE)
+	    (object Attribute
+		tool       	"ANSIConvert"
+		name       	"HiddenTool"
+		value      	FALSE)
+	    (object Attribute
+		tool       	"CORBA"
+		name       	"propertyId"
+		value      	"809135966")
+	    (object Attribute
+		tool       	"CORBA"
+		name       	"default__Project"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"CreateMissingDirectories"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"Editor"
+			value      	("EditorType" 100))
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"IncludePath"
+			value      	"")
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"StopOnError"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"EditorType"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"CORBA"
+				name       	"BuiltIn"
+				value      	100)
+			    (object Attribute
+				tool       	"CORBA"
+				name       	"WindowsShell"
+				value      	101)))
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"PathSeparator"
+			value      	"")))
+	    (object Attribute
+		tool       	"CORBA"
+		name       	"default__Class"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"ArrayDimensions"
+			value      	"")
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"ConstValue"
+			value      	"")
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"ImplementationType"
+			value      	"")))
+	    (object Attribute
+		tool       	"CORBA"
+		name       	"default__Module-Spec"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"AdditionalIncludes"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"CmIdentification"
+			value      	(value Text "  %X% %Q% %Z% %W%"))
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"CopyrightNotice"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"InclusionProtectionSymbol"
+			value      	"AUTO GENERATE")))
+	    (object Attribute
+		tool       	"CORBA"
+		name       	"default__Module-Body"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"AdditionalIncludes"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"CmIdentification"
+			value      	(value Text "  %X% %Q% %Z% %W%"))
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"CopyrightNotice"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"InclusionProtectionSymbol"
+			value      	"AUTO GENERATE")))
+	    (object Attribute
+		tool       	"CORBA"
+		name       	"default__Operation"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"Context"
+			value      	"")
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"OperationIsOneWay"
+			value      	FALSE)))
+	    (object Attribute
+		tool       	"CORBA"
+		name       	"default__Attribute"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"ArrayDimensions"
+			value      	"")
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"CaseSpecifier"
+			value      	"")
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"IsReadOnly"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"Order"
+			value      	"")))
+	    (object Attribute
+		tool       	"CORBA"
+		name       	"default__Role"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"ArrayDimensions"
+			value      	"")
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"CaseSpecifier"
+			value      	"")
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"GenerateForwardReference"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"IsReadOnly"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"Order"
+			value      	"")
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"BoundedRoleType"
+			value      	("AssocTypeSet" 47))
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"AssocTypeSet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"CORBA"
+				name       	"Array"
+				value      	24)
+			    (object Attribute
+				tool       	"CORBA"
+				name       	"Sequence"
+				value      	47)))))
+	    (object Attribute
+		tool       	"CORBA"
+		name       	"default__Uses"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"GenerateForwardReference"
+			value      	FALSE)))
+	    (object Attribute
+		tool       	"CORBA"
+		name       	"HiddenTool"
+		value      	FALSE)
+	    (object Attribute
+		tool       	"framework"
+		name       	"HiddenTool"
+		value      	FALSE)
+	    (object Attribute
+		tool       	"MOF"
+		name       	"propertyId"
+		value      	"809135966")
+	    (object Attribute
+		tool       	"JCR"
+		name       	"propertyId"
+		value      	"809135966")
+	    (object Attribute
+		tool       	"MOF"
+		name       	"default__Category"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"MOF"
+			name       	"uml2mof.hasImplicitReferences"
+			value      	"true")
+		    (object Attribute
+			tool       	"MOF"
+			name       	"uml2mof.clusteredImport"
+			value      	"")
+		    (object Attribute
+			tool       	"MOF"
+			name       	"rose2mof.supertypes"
+			value      	"")
+		    (object Attribute
+			tool       	"MOF"
+			name       	"mof.idl_prefix"
+			value      	"")
+		    (object Attribute
+			tool       	"MOF"
+			name       	"mof.idl_substitute_name"
+			value      	"")
+		    (object Attribute
+			tool       	"MOF"
+			name       	"mof.idl_version"
+			value      	"")
+		    (object Attribute
+			tool       	"MOF"
+			name       	"xmi.namespace"
+			value      	"")))
+	    (object Attribute
+		tool       	"JCR"
+		name       	"default__Category"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"JCR"
+			name       	"java_prefix"
+			value      	"")
+		    (object Attribute
+			tool       	"JCR"
+			name       	"java_substitute_name"
+			value      	"")
+		    (object Attribute
+			tool       	"JCR"
+			name       	"c_substitute_name"
+			value      	"")
+		    (object Attribute
+			tool       	"JCR"
+			name       	"uuid"
+			value      	"")
+		    (object Attribute
+			tool       	"JCR"
+			name       	"versioning.package"
+			value      	"")))
+	    (object Attribute
+		tool       	"MOF"
+		name       	"default__Class"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"MOF"
+			name       	"uml2mof.corbaType"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"MOF"
+			name       	"uml2mof.repositoryId"
+			value      	"")
+		    (object Attribute
+			tool       	"MOF"
+			name       	"mof.idl_substitute_name"
+			value      	"")
+		    (object Attribute
+			tool       	"MOF"
+			name       	"mof.idl_version"
+			value      	"")
+		    (object Attribute
+			tool       	"MOF"
+			name       	"xmi.enumerationUnprefix"
+			value      	"")
+		    (object Attribute
+			tool       	"MOF"
+			name       	"uml2mof.evaluationPolicy"
+			value      	"deferred")
+		    (object Attribute
+			tool       	"MOF"
+			name       	"rose2mof.constrainedElements"
+			value      	"")))
+	    (object Attribute
+		tool       	"JCR"
+		name       	"default__Class"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"JCR"
+			name       	"java_substitute_name"
+			value      	"")
+		    (object Attribute
+			tool       	"JCR"
+			name       	"c_substitute_name"
+			value      	"")
+		    (object Attribute
+			tool       	"JCR"
+			name       	"cpp_substitute_type"
+			value      	"")
+		    (object Attribute
+			tool       	"JCR"
+			name       	"cpp_substitute_base"
+			value      	"")
+		    (object Attribute
+			tool       	"JCR"
+			name       	"uuid"
+			value      	"")
+		    (object Attribute
+			tool       	"JCR"
+			name       	"xmi.externalizeOK"
+			value      	"true")))
+	    (object Attribute
+		tool       	"MOF"
+		name       	"default__Role"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"MOF"
+			name       	"rose2mof.isChangeable"
+			value      	"true")
+		    (object Attribute
+			tool       	"MOF"
+			name       	"mof.idl_substitute_name"
+			value      	"")
+		    (object Attribute
+			tool       	"MOF"
+			name       	"mof.idl_version"
+			value      	"")))
+	    (object Attribute
+		tool       	"JCR"
+		name       	"default__Role"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"JCR"
+			name       	"java_substitute_name"
+			value      	"")
+		    (object Attribute
+			tool       	"JCR"
+			name       	"c_substitute_name"
+			value      	"")
+		    (object Attribute
+			tool       	"JCR"
+			name       	"uuid"
+			value      	"")))
+	    (object Attribute
+		tool       	"MOF"
+		name       	"default__Association"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"MOF"
+			name       	"rose2mof.visibility"
+			value      	"public_vis")
+		    (object Attribute
+			tool       	"MOF"
+			name       	"mof.idl_substitute_name"
+			value      	"")
+		    (object Attribute
+			tool       	"MOF"
+			name       	"mof.idl_version"
+			value      	"")))
+	    (object Attribute
+		tool       	"JCR"
+		name       	"default__Association"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"JCR"
+			name       	"java_substitute_name"
+			value      	"")
+		    (object Attribute
+			tool       	"JCR"
+			name       	"c_substitute_name"
+			value      	"")
+		    (object Attribute
+			tool       	"JCR"
+			name       	"uuid"
+			value      	"")))
+	    (object Attribute
+		tool       	"MOF"
+		name       	"default__Attribute"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"MOF"
+			name       	"rose2mof.multiplicity"
+			value      	"1")
+		    (object Attribute
+			tool       	"MOF"
+			name       	"uml2mof.isOrdered"
+			value      	"false")
+		    (object Attribute
+			tool       	"MOF"
+			name       	"uml2mof.isUnique"
+			value      	"false")
+		    (object Attribute
+			tool       	"MOF"
+			name       	"rose2mof.isChangeable"
+			value      	"true")
+		    (object Attribute
+			tool       	"MOF"
+			name       	"uml2mof.referencedEnd"
+			value      	"")
+		    (object Attribute
+			tool       	"MOF"
+			name       	"mof.idl_substitute_name"
+			value      	"")
+		    (object Attribute
+			tool       	"MOF"
+			name       	"mof.idl_version"
+			value      	"")
+		    (object Attribute
+			tool       	"MOF"
+			name       	"xmi.defaultValue"
+			value      	"")))
+	    (object Attribute
+		tool       	"JCR"
+		name       	"default__Attribute"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"JCR"
+			name       	"java_substitute_name"
+			value      	"")
+		    (object Attribute
+			tool       	"JCR"
+			name       	"c_substitute_name"
+			value      	"")
+		    (object Attribute
+			tool       	"JCR"
+			name       	"uuid"
+			value      	"")
+		    (object Attribute
+			tool       	"JCR"
+			name       	"mof.object_name"
+			value      	"false")
+		    (object Attribute
+			tool       	"JCR"
+			name       	"xmi.externalizeOK"
+			value      	"true")))
+	    (object Attribute
+		tool       	"MOF"
+		name       	"default__Operation"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"MOF"
+			name       	"rose2mof.scope"
+			value      	"instance_level")
+		    (object Attribute
+			tool       	"MOF"
+			name       	"rose2mof.isQuery"
+			value      	"false")
+		    (object Attribute
+			tool       	"MOF"
+			name       	"rose2mof.return.multiplicity"
+			value      	"1")
+		    (object Attribute
+			tool       	"MOF"
+			name       	"rose2mof.return.isOrdered"
+			value      	"false")
+		    (object Attribute
+			tool       	"MOF"
+			name       	"rose2mof.return.isUnique"
+			value      	"false")
+		    (object Attribute
+			tool       	"MOF"
+			name       	"mof.idl_substitute_name"
+			value      	"")
+		    (object Attribute
+			tool       	"MOF"
+			name       	"mof.idl_version"
+			value      	"")))
+	    (object Attribute
+		tool       	"JCR"
+		name       	"default__Operation"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"JCR"
+			name       	"java_substitute_name"
+			value      	"")
+		    (object Attribute
+			tool       	"JCR"
+			name       	"c_substitute_name"
+			value      	"")
+		    (object Attribute
+			tool       	"JCR"
+			name       	"uuid"
+			value      	"")
+		    (object Attribute
+			tool       	"JCR"
+			name       	"cpp_virtual"
+			value      	"false")))
+	    (object Attribute
+		tool       	"MOF"
+		name       	"default__Param"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"MOF"
+			name       	"uml2mof.multiplicity"
+			value      	"1")
+		    (object Attribute
+			tool       	"MOF"
+			name       	"uml2mof.isOrdered"
+			value      	"false")
+		    (object Attribute
+			tool       	"MOF"
+			name       	"uml2mof.isUnique"
+			value      	"false")
+		    (object Attribute
+			tool       	"MOF"
+			name       	"rose2mof.direction"
+			value      	"in_dir")
+		    (object Attribute
+			tool       	"MOF"
+			name       	"mof.idl_substitute_name"
+			value      	"")
+		    (object Attribute
+			tool       	"MOF"
+			name       	"mof.idl_version"
+			value      	"")))
+	    (object Attribute
+		tool       	"JCR"
+		name       	"default__Param"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"JCR"
+			name       	"java_substitute_name"
+			value      	"")
+		    (object Attribute
+			tool       	"JCR"
+			name       	"c_substitute_name"
+			value      	"")
+		    (object Attribute
+			tool       	"JCR"
+			name       	"uuid"
+			value      	"")))
+	    (object Attribute
+		tool       	"JCRMOF"
+		name       	"HiddenTool"
+		value      	FALSE)
+	    (object Attribute
+		tool       	"UML"
+		name       	"propertyId"
+		value      	"809135966")
+	    (object Attribute
+		tool       	"UML"
+		name       	"default__Category"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"UML"
+			name       	"uuid"
+			value      	"")
+		    (object Attribute
+			tool       	"UML"
+			name       	"useJavaExceptions"
+			value      	"true")
+		    (object Attribute
+			tool       	"UML"
+			name       	"requiredItem"
+			value      	"")
+		    (object Attribute
+			tool       	"UML"
+			name       	"requiredItemType"
+			value      	"")
+		    (object Attribute
+			tool       	"UML"
+			name       	"DependencyStereotype"
+			value      	"")
+		    (object Attribute
+			tool       	"UML"
+			name       	"DependencyName"
+			value      	"")
+		    (object Attribute
+			tool       	"UML"
+			name       	"useSeparateDependencies"
+			value      	"true")
+		    (object Attribute
+			tool       	"UML"
+			name       	"exportableUnit"
+			value      	"true")
+		    (object Attribute
+			tool       	"UML"
+			name       	"hasImportedUUIDs"
+			value      	"false")))
+	    (object Attribute
+		tool       	"UML"
+		name       	"default__Class"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"UML"
+			name       	"uuid"
+			value      	"")
+		    (object Attribute
+			tool       	"UML"
+			name       	"useJavaExceptions"
+			value      	"true")
+		    (object Attribute
+			tool       	"UML"
+			name       	"secondaryStereotype"
+			value      	"")
+		    (object Attribute
+			tool       	"UML"
+			name       	"requiredItem"
+			value      	"")
+		    (object Attribute
+			tool       	"UML"
+			name       	"requiredItemType"
+			value      	"")
+		    (object Attribute
+			tool       	"UML"
+			name       	"DependencyStereotype"
+			value      	"")
+		    (object Attribute
+			tool       	"UML"
+			name       	"DependencyName"
+			value      	"")
+		    (object Attribute
+			tool       	"UML"
+			name       	"useSeparateDependencies"
+			value      	"true")))
+	    (object Attribute
+		tool       	"UML"
+		name       	"default__Role"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"UML"
+			name       	"uuid"
+			value      	"")
+		    (object Attribute
+			tool       	"UML"
+			name       	"changeability"
+			value      	"changeable")))
+	    (object Attribute
+		tool       	"UML"
+		name       	"default__Association"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"UML"
+			name       	"uuid"
+			value      	"")))
+	    (object Attribute
+		tool       	"UML"
+		name       	"default__Attribute"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"UML"
+			name       	"uuid"
+			value      	"")
+		    (object Attribute
+			tool       	"UML"
+			name       	"multiplicity"
+			value      	"1")
+		    (object Attribute
+			tool       	"UML"
+			name       	"DependencySupplier"
+			value      	"")
+		    (object Attribute
+			tool       	"UML"
+			name       	"DependencyStereotype"
+			value      	"")
+		    (object Attribute
+			tool       	"UML"
+			name       	"DependencyName"
+			value      	"")
+		    (object Attribute
+			tool       	"UML"
+			name       	"useSeparateDependencies"
+			value      	"true")
+		    (object Attribute
+			tool       	"UML"
+			name       	"changeability"
+			value      	"changeable")))
+	    (object Attribute
+		tool       	"UML"
+		name       	"default__Param"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"UML"
+			name       	"uuid"
+			value      	"")
+		    (object Attribute
+			tool       	"UML"
+			name       	"direction"
+			value      	"")))
+	    (object Attribute
+		tool       	"UML"
+		name       	"default__Operation"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"UML"
+			name       	"uuid"
+			value      	"")
+		    (object Attribute
+			tool       	"UML"
+			name       	"returnDefaultValue"
+			value      	"")
+		    (object Attribute
+			tool       	"UML"
+			name       	"MethodLanguage"
+			value      	"")
+		    (object Attribute
+			tool       	"UML"
+			name       	"MethodBody"
+			value      	"")
+		    (object Attribute
+			tool       	"UML"
+			name       	"useSeparateDependencies"
+			value      	"true")
+		    (object Attribute
+			tool       	"UML"
+			name       	"DependencyName"
+			value      	"")))
+	    (object Attribute
+		tool       	"UML"
+		name       	"default__Module"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"UML"
+			name       	"uuid"
+			value      	"")))
+	    (object Attribute
+		tool       	"UML"
+		name       	"default__Subsystem"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"UML"
+			name       	"uuid"
+			value      	"")
+		    (object Attribute
+			tool       	"UML"
+			name       	"exportableUnit"
+			value      	"true")))
+	    (object Attribute
+		tool       	"UML"
+		name       	"default__Link"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"UML"
+			name       	"uuid"
+			value      	"")))
+	    (object Attribute
+		tool       	"UML"
+		name       	"default__ObjectInstance"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"UML"
+			name       	"uuid"
+			value      	"")))
+	    (object Attribute
+		tool       	"UML"
+		name       	"default__StateMachine"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"UML"
+			name       	"uuid"
+			value      	"")))
+	    (object Attribute
+		tool       	"UML"
+		name       	"default__ActivityModel"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"UML"
+			name       	"uuid"
+			value      	"")))
+	    (object Attribute
+		tool       	"UML"
+		name       	"default__SwimLane"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"UML"
+			name       	"uuid"
+			value      	"")))
+	    (object Attribute
+		tool       	"UML"
+		name       	"default__UseCase"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"UML"
+			name       	"uuid"
+			value      	"")
+		    (object Attribute
+			tool       	"UML"
+			name       	"requiredItem"
+			value      	"")
+		    (object Attribute
+			tool       	"UML"
+			name       	"requiredItemType"
+			value      	"")
+		    (object Attribute
+			tool       	"UML"
+			name       	"DependencyStereotype"
+			value      	"")
+		    (object Attribute
+			tool       	"UML"
+			name       	"DependencyName"
+			value      	"")
+		    (object Attribute
+			tool       	"UML"
+			name       	"useSeparateDependencies"
+			value      	"true")))
+	    (object Attribute
+		tool       	"UML"
+		name       	"default__StateTransition"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"UML"
+			name       	"uuid"
+			value      	"")
+		    (object Attribute
+			tool       	"UML"
+			name       	"SendActionName"
+			value      	"")
+		    (object Attribute
+			tool       	"UML"
+			name       	"ActionScriptLanguage"
+			value      	"")
+		    (object Attribute
+			tool       	"UML"
+			name       	"ActionScriptBody"
+			value      	"")))
+	    (object Attribute
+		tool       	"UML"
+		name       	"default__Model"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"UML"
+			name       	"uuid"
+			value      	"")))
+	    (object Attribute
+		tool       	"UML"
+		name       	"default__Dependency"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"UML"
+			name       	"uuid"
+			value      	"")))
+	    (object Attribute
+		tool       	"UML"
+		name       	"default__Generalization"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"UML"
+			name       	"uuid"
+			value      	"")))
+	    (object Attribute
+		tool       	"JCRUML"
+		name       	"HiddenTool"
+		value      	FALSE)
+	    (object Attribute
+		tool       	"RequisitePro"
+		name       	"HiddenTool"
+		value      	FALSE)
+	    (object Attribute
+		tool       	"cg"
+		name       	"propertyId"
+		value      	"809135966")
+	    (object Attribute
+		tool       	"cg"
+		name       	"default__Project"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"cg"
+			name       	"AllowGenerateOverNewerAnnotations"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"AllowGenerateOverNewerVersion"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"UseMSVC"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"HeaderFileExtension"
+			value      	"h")
+		    (object Attribute
+			tool       	"cg"
+			name       	"HeaderFileBackupExtension"
+			value      	"h~")
+		    (object Attribute
+			tool       	"cg"
+			name       	"HeaderFileTemporaryExtension"
+			value      	"h#")
+		    (object Attribute
+			tool       	"cg"
+			name       	"CodeFileExtension"
+			value      	"cpp")
+		    (object Attribute
+			tool       	"cg"
+			name       	"CodeFileBackupExtension"
+			value      	"cp~")
+		    (object Attribute
+			tool       	"cg"
+			name       	"CodeFileTemporaryExtension"
+			value      	"cp#")
+		    (object Attribute
+			tool       	"cg"
+			name       	"CreateMissingDirectories"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"StopOnError"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"ErrorLimit"
+			value      	30)
+		    (object Attribute
+			tool       	"cg"
+			name       	"Directory"
+			value      	"$ROSECPP_SOURCE")
+		    (object Attribute
+			tool       	"cg"
+			name       	"PathSeparator"
+			value      	"")
+		    (object Attribute
+			tool       	"cg"
+			name       	"FileNameFormat"
+			value      	"128vx_b")
+		    (object Attribute
+			tool       	"cg"
+			name       	"BooleanType"
+			value      	"int")
+		    (object Attribute
+			tool       	"cg"
+			name       	"AllowTemplates"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"AllowExplicitInstantiations"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"AllowProtectedInheritance"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"CommentWidth"
+			value      	60)
+		    (object Attribute
+			tool       	"cg"
+			name       	"OneByValueContainer"
+			value      	"$targetClass")
+		    (object Attribute
+			tool       	"cg"
+			name       	"OneByReferenceContainer"
+			value      	"$targetClass *")
+		    (object Attribute
+			tool       	"cg"
+			name       	"OptionalByValueContainer"
+			value      	"OptionalByValue<$targetClass>")
+		    (object Attribute
+			tool       	"cg"
+			name       	"OptionalByReferenceContainer"
+			value      	"$targetClass *")
+		    (object Attribute
+			tool       	"cg"
+			name       	"FixedByValueContainer"
+			value      	"$targetClass[$limit]")
+		    (object Attribute
+			tool       	"cg"
+			name       	"UnorderedFixedByValueContainer"
+			value      	"$targetClass[$limit]")
+		    (object Attribute
+			tool       	"cg"
+			name       	"FixedByReferenceContainer"
+			value      	"$targetClass *[$limit]")
+		    (object Attribute
+			tool       	"cg"
+			name       	"UnorderedFixedByReferenceContainer"
+			value      	"$targetClass *[$limit]")
+		    (object Attribute
+			tool       	"cg"
+			name       	"BoundedByValueContainer"
+			value      	"BoundedListByValue<$targetClass,$limit>")
+		    (object Attribute
+			tool       	"cg"
+			name       	"UnorderedBoundedByValueContainer"
+			value      	"BoundedSetByValue<$targetClass,$limit>")
+		    (object Attribute
+			tool       	"cg"
+			name       	"BoundedByReferenceContainer"
+			value      	"BoundedListByReference<$targetClass,$limit>")
+		    (object Attribute
+			tool       	"cg"
+			name       	"UnorderedBoundedByReferenceContainer"
+			value      	"BoundedSetByReference<$targetClass,$limit>")
+		    (object Attribute
+			tool       	"cg"
+			name       	"UnboundedByValueContainer"
+			value      	"UnboundedListByValue<$targetClass>")
+		    (object Attribute
+			tool       	"cg"
+			name       	"UnorderedUnboundedByValueContainer"
+			value      	"UnboundedSetByValue<$targetClass>")
+		    (object Attribute
+			tool       	"cg"
+			name       	"UnboundedByReferenceContainer"
+			value      	"UnboundedListByReference<$targetClass>")
+		    (object Attribute
+			tool       	"cg"
+			name       	"UnorderedUnboundedByReferenceContainer"
+			value      	"UnboundedSetByReference<$targetClass>")
+		    (object Attribute
+			tool       	"cg"
+			name       	"QualifiedByValueContainer"
+			value      	"AssociationByValue<$qualtype, $qualcont>")
+		    (object Attribute
+			tool       	"cg"
+			name       	"UnorderedQualifiedByValueContainer"
+			value      	"DictionaryByValue<$qualtype, $qualcont>")
+		    (object Attribute
+			tool       	"cg"
+			name       	"QualifiedByReferenceContainer"
+			value      	"AssociationByReference<$qualtype, $qualcont>")
+		    (object Attribute
+			tool       	"cg"
+			name       	"UnorderedQualifiedByReferenceContainer"
+			value      	"DictionaryByReference<$qualtype, $qualcont>")
+		    (object Attribute
+			tool       	"cg"
+			name       	"AlwaysKeepOrphanedCode"
+			value      	FALSE)))
+	    (object Attribute
+		tool       	"cg"
+		name       	"compiler2.1__Project"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"cg"
+			name       	"AllowGenerateOverNewerAnnotations"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"AllowGenerateOverNewerVersion"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"HeaderFileExtension"
+			value      	"h")
+		    (object Attribute
+			tool       	"cg"
+			name       	"HeaderFileBackupExtension"
+			value      	"h~")
+		    (object Attribute
+			tool       	"cg"
+			name       	"HeaderFileTemporaryExtension"
+			value      	"h#")
+		    (object Attribute
+			tool       	"cg"
+			name       	"CodeFileExtension"
+			value      	"cpp")
+		    (object Attribute
+			tool       	"cg"
+			name       	"CodeFileBackupExtension"
+			value      	"cp~")
+		    (object Attribute
+			tool       	"cg"
+			name       	"CodeFileTemporaryExtension"
+			value      	"cp#")
+		    (object Attribute
+			tool       	"cg"
+			name       	"CreateMissingDirectories"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"StopOnError"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"ErrorLimit"
+			value      	30)
+		    (object Attribute
+			tool       	"cg"
+			name       	"Directory"
+			value      	"$ROSECPP_SOURCE")
+		    (object Attribute
+			tool       	"cg"
+			name       	"BooleanType"
+			value      	"int")
+		    (object Attribute
+			tool       	"cg"
+			name       	"AllowTemplates"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"AllowExplicitInstantiations"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"AllowProtectedInheritance"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"OneByValueContainer"
+			value      	"$targetClass")
+		    (object Attribute
+			tool       	"cg"
+			name       	"OneByReferenceContainer"
+			value      	"$targetClass *")
+		    (object Attribute
+			tool       	"cg"
+			name       	"OptionalByValueContainer"
+			value      	"OptionalByValue(sizeof($targetClass))")
+		    (object Attribute
+			tool       	"cg"
+			name       	"OptionalByReferenceContainer"
+			value      	"$targetClass *")
+		    (object Attribute
+			tool       	"cg"
+			name       	"FixedByValueContainer"
+			value      	"$targetClass[$limit]")
+		    (object Attribute
+			tool       	"cg"
+			name       	"UnorderedFixedByValueContainer"
+			value      	"$targetClass[$limit]")
+		    (object Attribute
+			tool       	"cg"
+			name       	"FixedByReferenceContainer"
+			value      	"$targetClass *[$limit]")
+		    (object Attribute
+			tool       	"cg"
+			name       	"UnorderedFixedByReferenceContainer"
+			value      	"$targetClass *[$limit]")
+		    (object Attribute
+			tool       	"cg"
+			name       	"BoundedByValueContainer"
+			value      	"BoundedListByValue(sizeof($targetClass),$limit)")
+		    (object Attribute
+			tool       	"cg"
+			name       	"UnorderedBoundedByValueContainer"
+			value      	"BoundedSetByValue(sizeof($targetClass),$limit)")
+		    (object Attribute
+			tool       	"cg"
+			name       	"BoundedByReferenceContainer"
+			value      	"BoundedListByReference($limit)")
+		    (object Attribute
+			tool       	"cg"
+			name       	"UnorderedBoundedByReferenceContainer"
+			value      	"BoundedSetByReference($limit)")
+		    (object Attribute
+			tool       	"cg"
+			name       	"UnboundedByValueContainer"
+			value      	"UnboundedListByValue(sizeof($targetClass))")
+		    (object Attribute
+			tool       	"cg"
+			name       	"UnorderedUnboundedByValueContainer"
+			value      	"UnboundedSetByValue(sizeof($targetClass))")
+		    (object Attribute
+			tool       	"cg"
+			name       	"UnboundedByReferenceContainer"
+			value      	"UnboundedListByReference")
+		    (object Attribute
+			tool       	"cg"
+			name       	"UnorderedUnboundedByReferenceContainer"
+			value      	"UnboundedSetByReference")
+		    (object Attribute
+			tool       	"cg"
+			name       	"QualifiedByValueContainer"
+			value      	"AssociationByValue(sizeof($qualtype), sizeof($qualcont))")
+		    (object Attribute
+			tool       	"cg"
+			name       	"UnorderedQualifiedByValueContainer"
+			value      	"DictionaryByValue(sizeof($qualtype), sizeof($qualcont))")
+		    (object Attribute
+			tool       	"cg"
+			name       	"QualifiedByReferenceContainer"
+			value      	"AssociationByReference(sizeof($qualtype), sizeof($qualcont))")
+		    (object Attribute
+			tool       	"cg"
+			name       	"UnorderedQualifiedByReferenceContainer"
+			value      	"DictionaryByReference(sizeof($qualtype), sizeof($qualcont))")
+		    (object Attribute
+			tool       	"cg"
+			name       	"PathSeparator"
+			value      	"")
+		    (object Attribute
+			tool       	"cg"
+			name       	"FileNameFormat"
+			value      	"128vx_b")
+		    (object Attribute
+			tool       	"cg"
+			name       	"AlwaysKeepOrphanedCode"
+			value      	FALSE)))
+	    (object Attribute
+		tool       	"cg"
+		name       	"compiler3.0__Project"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"cg"
+			name       	"AllowGenerateOverNewerAnnotations"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"AllowGenerateOverNewerVersion"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"HeaderFileExtension"
+			value      	"h")
+		    (object Attribute
+			tool       	"cg"
+			name       	"HeaderFileBackupExtension"
+			value      	"h~")
+		    (object Attribute
+			tool       	"cg"
+			name       	"HeaderFileTemporaryExtension"
+			value      	"h#")
+		    (object Attribute
+			tool       	"cg"
+			name       	"CodeFileExtension"
+			value      	"cpp")
+		    (object Attribute
+			tool       	"cg"
+			name       	"CodeFileBackupExtension"
+			value      	"cp~")
+		    (object Attribute
+			tool       	"cg"
+			name       	"CodeFileTemporaryExtension"
+			value      	"cp#")
+		    (object Attribute
+			tool       	"cg"
+			name       	"CreateMissingDirectories"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"StopOnError"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"ErrorLimit"
+			value      	30)
+		    (object Attribute
+			tool       	"cg"
+			name       	"Directory"
+			value      	"$ROSECPP_SOURCE")
+		    (object Attribute
+			tool       	"cg"
+			name       	"BooleanType"
+			value      	"int")
+		    (object Attribute
+			tool       	"cg"
+			name       	"AllowTemplates"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"AllowExplicitInstantiations"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"AllowProtectedInheritance"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"OneByValueContainer"
+			value      	"$targetClass")
+		    (object Attribute
+			tool       	"cg"
+			name       	"OneByReferenceContainer"
+			value      	"$targetClass *")
+		    (object Attribute
+			tool       	"cg"
+			name       	"OptionalByValueContainer"
+			value      	"OptionalByValue<$targetClass>")
+		    (object Attribute
+			tool       	"cg"
+			name       	"OptionalByReferenceContainer"
+			value      	"$targetClass *")
+		    (object Attribute
+			tool       	"cg"
+			name       	"FixedByValueContainer"
+			value      	"$targetClass[$limit]")
+		    (object Attribute
+			tool       	"cg"
+			name       	"UnorderedFixedByValueContainer"
+			value      	"$targetClass[$limit]")
+		    (object Attribute
+			tool       	"cg"
+			name       	"FixedByReferenceContainer"
+			value      	"$targetClass *[$limit]")
+		    (object Attribute
+			tool       	"cg"
+			name       	"UnorderedFixedByReferenceContainer"
+			value      	"$targetClass *[$limit]")
+		    (object Attribute
+			tool       	"cg"
+			name       	"BoundedByValueContainer"
+			value      	"BoundedListByValue<$targetClass,$limit>")
+		    (object Attribute
+			tool       	"cg"
+			name       	"UnorderedBoundedByValueContainer"
+			value      	"BoundedSetByValue<$targetClass,$limit>")
+		    (object Attribute
+			tool       	"cg"
+			name       	"BoundedByReferenceContainer"
+			value      	"BoundedListByReference<$targetClass,$limit>")
+		    (object Attribute
+			tool       	"cg"
+			name       	"UnorderedBoundedByReferenceContainer"
+			value      	"BoundedSetByReference<$targetClass,$limit>")
+		    (object Attribute
+			tool       	"cg"
+			name       	"UnboundedByValueContainer"
+			value      	"UnboundedListByValue<$targetClass>")
+		    (object Attribute
+			tool       	"cg"
+			name       	"UnorderedUnboundedByValueContainer"
+			value      	"UnboundedSetByValue<$targetClass>")
+		    (object Attribute
+			tool       	"cg"
+			name       	"UnboundedByReferenceContainer"
+			value      	"UnboundedListByReference<$targetClass>")
+		    (object Attribute
+			tool       	"cg"
+			name       	"UnorderedUnboundedByReferenceContainer"
+			value      	"UnboundedSetByReference<$targetClass>")
+		    (object Attribute
+			tool       	"cg"
+			name       	"QualifiedByValueContainer"
+			value      	"AssociationByValue<$qualtype, $qualcont>")
+		    (object Attribute
+			tool       	"cg"
+			name       	"UnorderedQualifiedByValueContainer"
+			value      	"DictionaryByValue<$qualtype, $qualcont>")
+		    (object Attribute
+			tool       	"cg"
+			name       	"QualifiedByReferenceContainer"
+			value      	"AssociationByReference<$qualtype, $qualcont>")
+		    (object Attribute
+			tool       	"cg"
+			name       	"UnorderedQualifiedByReferenceContainer"
+			value      	"DictionaryByReference<$qualtype, $qualcont>")
+		    (object Attribute
+			tool       	"cg"
+			name       	"PathSeparator"
+			value      	"")
+		    (object Attribute
+			tool       	"cg"
+			name       	"FileNameFormat"
+			value      	"128vx_b")
+		    (object Attribute
+			tool       	"cg"
+			name       	"AlwaysKeepOrphanedCode"
+			value      	FALSE)))
+	    (object Attribute
+		tool       	"cg"
+		name       	"default__Class"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"cg"
+			name       	"CodeName"
+			value      	"")
+		    (object Attribute
+			tool       	"cg"
+			name       	"ImplementationType"
+			value      	"")
+		    (object Attribute
+			tool       	"cg"
+			name       	"ClassKey"
+			value      	"class")
+		    (object Attribute
+			tool       	"cg"
+			name       	"GenerateEmptyRegions"
+			value      	("GenerateEmptyRegionSet" 3))
+		    (object Attribute
+			tool       	"cg"
+			name       	"GenerateEmptyRegionSet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"cg"
+				name       	"None"
+				value      	0)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Preserved"
+				value      	1)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Unpreserved"
+				value      	2)
+			    (object Attribute
+				tool       	"cg"
+				name       	"All"
+				value      	3)))
+		    (object Attribute
+			tool       	"cg"
+			name       	"PutBodiesInSpec"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"GenerateDefaultConstructor"
+			value      	("GenerateSet" 199))
+		    (object Attribute
+			tool       	"cg"
+			name       	"DefaultConstructorVisibility"
+			value      	("VisibilitySet" 45))
+		    (object Attribute
+			tool       	"cg"
+			name       	"InlineDefaultConstructor"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"ExplicitDefaultConstructor"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"GenerateCopyConstructor"
+			value      	("GenerateSet" 199))
+		    (object Attribute
+			tool       	"cg"
+			name       	"CopyConstructorVisibility"
+			value      	("VisibilitySet" 45))
+		    (object Attribute
+			tool       	"cg"
+			name       	"InlineCopyConstructor"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"ExplicitCopyConstructor"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"GenerateDestructor"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"DestructorVisibility"
+			value      	("VisibilitySet" 45))
+		    (object Attribute
+			tool       	"cg"
+			name       	"DestructorKind"
+			value      	("ThreeKindSet" 200))
+		    (object Attribute
+			tool       	"cg"
+			name       	"InlineDestructor"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"GenerateAssignmentOperation"
+			value      	("GenerateSet" 199))
+		    (object Attribute
+			tool       	"cg"
+			name       	"AssignmentVisibility"
+			value      	("VisibilitySet" 45))
+		    (object Attribute
+			tool       	"cg"
+			name       	"AssignmentKind"
+			value      	("ThreeKindSet" 200))
+		    (object Attribute
+			tool       	"cg"
+			name       	"InlineAssignmentOperation"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"GenerateEqualityOperations"
+			value      	("GenerateSet" 199))
+		    (object Attribute
+			tool       	"cg"
+			name       	"EqualityVisibility"
+			value      	("VisibilitySet" 45))
+		    (object Attribute
+			tool       	"cg"
+			name       	"EqualityKind"
+			value      	("FriendKindSet" 200))
+		    (object Attribute
+			tool       	"cg"
+			name       	"InlineEqualityOperations"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"GenerateRelationalOperations"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"RelationalVisibility"
+			value      	("VisibilitySet" 45))
+		    (object Attribute
+			tool       	"cg"
+			name       	"RelationalKind"
+			value      	("FriendKindSet" 200))
+		    (object Attribute
+			tool       	"cg"
+			name       	"InlineRelationalOperations"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"GenerateStorageMgmtOperations"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"StorageMgmtVisibility"
+			value      	("VisibilitySet" 45))
+		    (object Attribute
+			tool       	"cg"
+			name       	"InlineStorageMgmtOperations"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"GenerateSubscriptOperation"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"SubscriptVisibility"
+			value      	("VisibilitySet" 45))
+		    (object Attribute
+			tool       	"cg"
+			name       	"SubscriptKind"
+			value      	("ThreeKindSet" 200))
+		    (object Attribute
+			tool       	"cg"
+			name       	"SubscriptResultType"
+			value      	"")
+		    (object Attribute
+			tool       	"cg"
+			name       	"InlineSubscriptOperation"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"GenerateDereferenceOperation"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"DereferenceVisibility"
+			value      	("VisibilitySet" 45))
+		    (object Attribute
+			tool       	"cg"
+			name       	"DereferenceKind"
+			value      	("ThreeKindSet" 200))
+		    (object Attribute
+			tool       	"cg"
+			name       	"DereferenceResultType"
+			value      	"")
+		    (object Attribute
+			tool       	"cg"
+			name       	"InlineDereferenceOperation"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"GenerateIndirectionOperation"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"IndirectionVisibility"
+			value      	("VisibilitySet" 45))
+		    (object Attribute
+			tool       	"cg"
+			name       	"IndirectionKind"
+			value      	("ThreeKindSet" 200))
+		    (object Attribute
+			tool       	"cg"
+			name       	"IndirectionResultType"
+			value      	"")
+		    (object Attribute
+			tool       	"cg"
+			name       	"InlineIndirectionOperation"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"GenerateStreamOperations"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"StreamVisibility"
+			value      	("VisibilitySet" 45))
+		    (object Attribute
+			tool       	"cg"
+			name       	"InlineStreamOperations"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"ThreeKindSet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"cg"
+				name       	"Common"
+				value      	200)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Virtual"
+				value      	201)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Abstract"
+				value      	202)))
+		    (object Attribute
+			tool       	"cg"
+			name       	"KindSet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"cg"
+				name       	"Common"
+				value      	200)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Virtual"
+				value      	201)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Abstract"
+				value      	202)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Static"
+				value      	203)))
+		    (object Attribute
+			tool       	"cg"
+			name       	"FriendKindSet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"cg"
+				name       	"Common"
+				value      	200)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Virtual"
+				value      	201)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Abstract"
+				value      	202)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Friend"
+				value      	204)))
+		    (object Attribute
+			tool       	"cg"
+			name       	"GenerateSet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"cg"
+				name       	"DeclareAndDefine"
+				value      	199)
+			    (object Attribute
+				tool       	"cg"
+				name       	"DeclareOnly"
+				value      	205)
+			    (object Attribute
+				tool       	"cg"
+				name       	"DoNotDeclare"
+				value      	206)))
+		    (object Attribute
+			tool       	"cg"
+			name       	"VisibilitySet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"cg"
+				name       	"Public"
+				value      	45)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Protected"
+				value      	44)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Private"
+				value      	43)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Implementation"
+				value      	14)))))
+	    (object Attribute
+		tool       	"cg"
+		name       	"default__Module-Spec"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"cg"
+			name       	"Generate"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"GenerateEmptyRegions"
+			value      	("GenerateEmptyRegionSet" 3))
+		    (object Attribute
+			tool       	"cg"
+			name       	"GenerateEmptyRegionSet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"cg"
+				name       	"None"
+				value      	0)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Preserved"
+				value      	1)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Unpreserved"
+				value      	2)
+			    (object Attribute
+				tool       	"cg"
+				name       	"All"
+				value      	3)))
+		    (object Attribute
+			tool       	"cg"
+			name       	"CmIdentification"
+			value      	(value Text "  %X% %Q% %Z% %W%"))
+		    (object Attribute
+			tool       	"cg"
+			name       	"CopyrightNotice"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"cg"
+			name       	"FileName"
+			value      	"AUTO GENERATE")
+		    (object Attribute
+			tool       	"cg"
+			name       	"AllowExtensionlessFileName"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"InclusionProtectionSymbol"
+			value      	"AUTO GENERATE")
+		    (object Attribute
+			tool       	"cg"
+			name       	"IncludeFormat"
+			value      	(value Text 
+|// $package
+|#include "$file"
+|
+			))
+		    (object Attribute
+			tool       	"cg"
+			name       	"IncludeBySimpleName"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"IncludePrecompiledHeader"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"IncludeOrder"
+			value      	"AMIR")
+		    (object Attribute
+			tool       	"cg"
+			name       	"AdditionalIncludes"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"cg"
+			name       	"InliningStyle"
+			value      	("InliningStyleSet" 207))
+		    (object Attribute
+			tool       	"cg"
+			name       	"InliningStyleSet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"cg"
+				name       	"InClassDeclaration"
+				value      	208)
+			    (object Attribute
+				tool       	"cg"
+				name       	"FollowingClassDeclaration"
+				value      	207)))
+		    (object Attribute
+			tool       	"cg"
+			name       	"TypesDefined"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"cg"
+			name       	"IncludeClosure"
+			value      	(value Text ""))))
+	    (object Attribute
+		tool       	"cg"
+		name       	"default__Module-Body"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"cg"
+			name       	"Generate"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"GenerateEmptyRegions"
+			value      	("GenerateEmptyRegionSet" 3))
+		    (object Attribute
+			tool       	"cg"
+			name       	"GenerateEmptyRegionSet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"cg"
+				name       	"None"
+				value      	0)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Preserved"
+				value      	1)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Unpreserved"
+				value      	2)
+			    (object Attribute
+				tool       	"cg"
+				name       	"All"
+				value      	3)))
+		    (object Attribute
+			tool       	"cg"
+			name       	"CmIdentification"
+			value      	(value Text "  %X% %Q% %Z% %W%"))
+		    (object Attribute
+			tool       	"cg"
+			name       	"CopyrightNotice"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"cg"
+			name       	"FileName"
+			value      	"AUTO GENERATE")
+		    (object Attribute
+			tool       	"cg"
+			name       	"AllowExtensionlessFileName"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"IncludeFormat"
+			value      	(value Text 
+|// $package
+|#include "$file"
+|
+			))
+		    (object Attribute
+			tool       	"cg"
+			name       	"IncludeBySimpleName"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"IncludePrecompiledHeader"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"IncludeOrder"
+			value      	"AMIR")
+		    (object Attribute
+			tool       	"cg"
+			name       	"AdditionalIncludes"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"cg"
+			name       	"InliningStyle"
+			value      	("InliningStyleSet" 207))
+		    (object Attribute
+			tool       	"cg"
+			name       	"InliningStyleSet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"cg"
+				name       	"InClassDeclaration"
+				value      	208)
+			    (object Attribute
+				tool       	"cg"
+				name       	"FollowingClassDeclaration"
+				value      	207)))
+		    (object Attribute
+			tool       	"cg"
+			name       	"TypesDefined"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"cg"
+			name       	"IncludeClosure"
+			value      	(value Text ""))))
+	    (object Attribute
+		tool       	"cg"
+		name       	"default__Operation"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"cg"
+			name       	"CodeName"
+			value      	"")
+		    (object Attribute
+			tool       	"cg"
+			name       	"OperationKind"
+			value      	("OperationKindSet" 200))
+		    (object Attribute
+			tool       	"cg"
+			name       	"OperationKindSet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"cg"
+				name       	"Common"
+				value      	200)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Virtual"
+				value      	201)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Abstract"
+				value      	202)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Static"
+				value      	203)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Friend"
+				value      	204)))
+		    (object Attribute
+			tool       	"cg"
+			name       	"GenerateAbstractBody"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"GenerateFriendBody"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"GenerateFriendDecl"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"SpecialDeclReturnType"
+			value      	"")
+		    (object Attribute
+			tool       	"cg"
+			name       	"OperationIsConst"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"OperationIsExplicit"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"Inline"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"EntryCode"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"cg"
+			name       	"ExitCode"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"cg"
+			name       	"CCRegion"
+			value      	"")
+		    (object Attribute
+			tool       	"cg"
+			name       	"GenerateEmptyRegions"
+			value      	("GenerateEmptyRegionSet" 3))
+		    (object Attribute
+			tool       	"cg"
+			name       	"GenerateEmptyRegionSet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"cg"
+				name       	"None"
+				value      	0)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Preserved"
+				value      	1)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Unpreserved"
+				value      	2)
+			    (object Attribute
+				tool       	"cg"
+				name       	"All"
+				value      	3)))
+		    (object Attribute
+			tool       	"cg"
+			name       	"BodyAnnotations"
+			value      	"")))
+	    (object Attribute
+		tool       	"cg"
+		name       	"default__Has"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"cg"
+			name       	"CodeName"
+			value      	"")
+		    (object Attribute
+			tool       	"cg"
+			name       	"Ordered"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"NameIfUnlabeled"
+			value      	"the_$supplier")
+		    (object Attribute
+			tool       	"cg"
+			name       	"GenerateDataMember"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"DataMemberName"
+			value      	"$relationship")
+		    (object Attribute
+			tool       	"cg"
+			name       	"DataMemberVisibility"
+			value      	("DataMemberVisibilitySet" 14))
+		    (object Attribute
+			tool       	"cg"
+			name       	"DataMemberVisibilitySet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"cg"
+				name       	"Public"
+				value      	45)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Protected"
+				value      	44)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Private"
+				value      	43)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Implementation"
+				value      	14)
+			    (object Attribute
+				tool       	"cg"
+				name       	"AtRelationshipVisibility"
+				value      	210)))
+		    (object Attribute
+			tool       	"cg"
+			name       	"DataMemberMutability"
+			value      	("DataMemberMutabilitySet" 0))
+		    (object Attribute
+			tool       	"cg"
+			name       	"DataMemberMutabilitySet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"cg"
+				name       	"Unrestricted"
+				value      	0)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Mutable"
+				value      	1)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Const"
+				value      	2)))
+		    (object Attribute
+			tool       	"cg"
+			name       	"DataMemberIsVolatile"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"DataMemberFieldSize"
+			value      	"")
+		    (object Attribute
+			tool       	"cg"
+			name       	"InitialValue"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"cg"
+			name       	"GenerateGetOperation"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"GenerateSetOperation"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"GetName"
+			value      	"get_$relationship")
+		    (object Attribute
+			tool       	"cg"
+			name       	"SetName"
+			value      	"set_$relationship")
+		    (object Attribute
+			tool       	"cg"
+			name       	"GetSetKinds"
+			value      	("GetSetKindsSet" 200))
+		    (object Attribute
+			tool       	"cg"
+			name       	"GetSetKindsSet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"cg"
+				name       	"Common"
+				value      	200)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Virtual"
+				value      	201)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Abstract"
+				value      	202)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Static"
+				value      	203)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Friend"
+				value      	204)))
+		    (object Attribute
+			tool       	"cg"
+			name       	"ContainerClass"
+			value      	"")
+		    (object Attribute
+			tool       	"cg"
+			name       	"SelectorName"
+			value      	"")
+		    (object Attribute
+			tool       	"cg"
+			name       	"SelectorType"
+			value      	"")
+		    (object Attribute
+			tool       	"cg"
+			name       	"GetIsConst"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"GetResultIsConst"
+			value      	("GetResultIsConstSet" 2))
+		    (object Attribute
+			tool       	"cg"
+			name       	"GetResultIsConstSet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"cg"
+				name       	"False"
+				value      	0)
+			    (object Attribute
+				tool       	"cg"
+				name       	"True"
+				value      	1)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Same_As_Function"
+				value      	2)))
+		    (object Attribute
+			tool       	"cg"
+			name       	"GetSetByReference"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"InlineGet"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"SetReturnsValue"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"InlineSet"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"ForwardReferenceOnly"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"HasRelTypeSet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"cg"
+				name       	"Array"
+				value      	24)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Sequence"
+				value      	47)))))
+	    (object Attribute
+		tool       	"cg"
+		name       	"default__Association"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"cg"
+			name       	"NameIfUnlabeled"
+			value      	"the_$targetClass")))
+	    (object Attribute
+		tool       	"cg"
+		name       	"default__Inherit"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"cg"
+			name       	"InstanceArguments"
+			value      	"")))
+	    (object Attribute
+		tool       	"cg"
+		name       	"default__Role"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"cg"
+			name       	"CodeName"
+			value      	"")
+		    (object Attribute
+			tool       	"cg"
+			name       	"ForwardReferenceOnly"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"NameIfUnlabeled"
+			value      	"the_$targetClass")
+		    (object Attribute
+			tool       	"cg"
+			name       	"GenerateDataMember"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"DataMemberName"
+			value      	"$target")
+		    (object Attribute
+			tool       	"cg"
+			name       	"DataMemberVisibility"
+			value      	("DataMemberVisibilitySet" 14))
+		    (object Attribute
+			tool       	"cg"
+			name       	"DataMemberVisibilitySet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"cg"
+				name       	"Public"
+				value      	45)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Protected"
+				value      	44)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Private"
+				value      	43)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Implementation"
+				value      	14)
+			    (object Attribute
+				tool       	"cg"
+				name       	"AtRelationshipVisibility"
+				value      	210)))
+		    (object Attribute
+			tool       	"cg"
+			name       	"DataMemberMutability"
+			value      	("DataMemberMutabilitySet" 0))
+		    (object Attribute
+			tool       	"cg"
+			name       	"DataMemberMutabilitySet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"cg"
+				name       	"Unrestricted"
+				value      	0)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Mutable"
+				value      	1)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Const"
+				value      	2)))
+		    (object Attribute
+			tool       	"cg"
+			name       	"DataMemberIsVolatile"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"DataMemberFieldSize"
+			value      	"")
+		    (object Attribute
+			tool       	"cg"
+			name       	"InitialValue"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"cg"
+			name       	"ContainerClass"
+			value      	"")
+		    (object Attribute
+			tool       	"cg"
+			name       	"ContainerGet"
+			value      	"$data.get($keys)")
+		    (object Attribute
+			tool       	"cg"
+			name       	"ContainerSet"
+			value      	"$data.set($keys,$value)")
+		    (object Attribute
+			tool       	"cg"
+			name       	"QualifiedContainer"
+			value      	"")
+		    (object Attribute
+			tool       	"cg"
+			name       	"AssocClassContainer"
+			value      	"$supplier *")
+		    (object Attribute
+			tool       	"cg"
+			name       	"AssocClassInitialValue"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"cg"
+			name       	"GetSetKinds"
+			value      	("GetSetKindsSet" 200))
+		    (object Attribute
+			tool       	"cg"
+			name       	"GetSetKindsSet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"cg"
+				name       	"Common"
+				value      	200)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Virtual"
+				value      	201)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Abstract"
+				value      	202)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Static"
+				value      	203)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Friend"
+				value      	204)))
+		    (object Attribute
+			tool       	"cg"
+			name       	"GetSetByReference"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"GenerateGetOperation"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"GetName"
+			value      	"get_$target")
+		    (object Attribute
+			tool       	"cg"
+			name       	"GetIsConst"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"GetResultIsConst"
+			value      	("GetResultIsConstSet" 2))
+		    (object Attribute
+			tool       	"cg"
+			name       	"GetResultIsConstSet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"cg"
+				name       	"False"
+				value      	0)
+			    (object Attribute
+				tool       	"cg"
+				name       	"True"
+				value      	1)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Same_As_Function"
+				value      	2)))
+		    (object Attribute
+			tool       	"cg"
+			name       	"InlineGet"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"GenerateSetOperation"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"SetName"
+			value      	"set_$target")
+		    (object Attribute
+			tool       	"cg"
+			name       	"SetReturnsValue"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"InlineSet"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"QualifiedGetSetByReference"
+			value      	("QualifiedGetSetByReferenceSet" 2))
+		    (object Attribute
+			tool       	"cg"
+			name       	"QualifiedGetSetByReferenceSet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"cg"
+				name       	"False"
+				value      	0)
+			    (object Attribute
+				tool       	"cg"
+				name       	"True"
+				value      	1)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Same_As_GetSetByReference"
+				value      	2)))
+		    (object Attribute
+			tool       	"cg"
+			name       	"GenerateQualifiedGetOperation"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"QualifiedGetName"
+			value      	"get_$target")
+		    (object Attribute
+			tool       	"cg"
+			name       	"QualifiedGetIsConst"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"QualifiedGetResultIsConst"
+			value      	("GetResultIsConstSet" 2))
+		    (object Attribute
+			tool       	"cg"
+			name       	"InlineQualifiedGet"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"GenerateQualifiedSetOperation"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"QualifiedSetName"
+			value      	"set_$target")
+		    (object Attribute
+			tool       	"cg"
+			name       	"QualifiedSetReturnsValue"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"InlineQualifiedSet"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"GenerateAssocClassDataMember"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"AssocClassDataMemberName"
+			value      	"$target")
+		    (object Attribute
+			tool       	"cg"
+			name       	"AssocClassDataMemberVisibility"
+			value      	("DataMemberVisibilitySet" 14))
+		    (object Attribute
+			tool       	"cg"
+			name       	"DataMemberVisibilitySet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"cg"
+				name       	"Public"
+				value      	45)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Protected"
+				value      	44)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Private"
+				value      	43)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Implementation"
+				value      	14)
+			    (object Attribute
+				tool       	"cg"
+				name       	"AtRelationshipVisibility"
+				value      	210)))
+		    (object Attribute
+			tool       	"cg"
+			name       	"AssocClassDataMemberMutability"
+			value      	("DataMemberMutabilitySet" 0))
+		    (object Attribute
+			tool       	"cg"
+			name       	"DataMemberMutabilitySet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"cg"
+				name       	"Unrestricted"
+				value      	0)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Mutable"
+				value      	1)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Const"
+				value      	2)))
+		    (object Attribute
+			tool       	"cg"
+			name       	"AssocClassDataMemberIsVolatile"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"AssocClassGetSetKinds"
+			value      	("GetSetKindsSet" 200))
+		    (object Attribute
+			tool       	"cg"
+			name       	"GenerateAssocClassGetOperation"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"AssocClassGetName"
+			value      	"get_$target")
+		    (object Attribute
+			tool       	"cg"
+			name       	"AssocClassGetIsConst"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"AssocClassGetResultIsConst"
+			value      	("GetResultIsConstSet" 2))
+		    (object Attribute
+			tool       	"cg"
+			name       	"InlineAssocClassGet"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"GenerateAssocClassSetOperation"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"AssocClassSetName"
+			value      	"set_$target")
+		    (object Attribute
+			tool       	"cg"
+			name       	"AssocClassSetReturnsValue"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"InlineAssocClassSet"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"AssocClassForwardReferenceOnly"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"AssocTypeSet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"cg"
+				name       	"Array"
+				value      	24)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Sequence"
+				value      	47)))))
+	    (object Attribute
+		tool       	"cg"
+		name       	"default__Attribute"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"cg"
+			name       	"CodeName"
+			value      	"")
+		    (object Attribute
+			tool       	"cg"
+			name       	"GenerateDataMember"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"DataMemberName"
+			value      	"$attribute")
+		    (object Attribute
+			tool       	"cg"
+			name       	"DataMemberVisibility"
+			value      	("DataMemberVisibilitySet" 14))
+		    (object Attribute
+			tool       	"cg"
+			name       	"DataMemberVisibilitySet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"cg"
+				name       	"Public"
+				value      	45)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Protected"
+				value      	44)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Private"
+				value      	43)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Implementation"
+				value      	14)
+			    (object Attribute
+				tool       	"cg"
+				name       	"AtAttributeVisibility"
+				value      	211)))
+		    (object Attribute
+			tool       	"cg"
+			name       	"DataMemberMutability"
+			value      	("DataMemberMutabilitySet" 0))
+		    (object Attribute
+			tool       	"cg"
+			name       	"DataMemberMutabilitySet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"cg"
+				name       	"Unrestricted"
+				value      	0)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Mutable"
+				value      	1)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Const"
+				value      	2)))
+		    (object Attribute
+			tool       	"cg"
+			name       	"DataMemberIsVolatile"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"DataMemberFieldSize"
+			value      	"")
+		    (object Attribute
+			tool       	"cg"
+			name       	"GenerateGetOperation"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"GenerateSetOperation"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"GetName"
+			value      	"get_$attribute")
+		    (object Attribute
+			tool       	"cg"
+			name       	"SetName"
+			value      	"set_$attribute")
+		    (object Attribute
+			tool       	"cg"
+			name       	"GetSetKinds"
+			value      	("GetSetKindsSet" 200))
+		    (object Attribute
+			tool       	"cg"
+			name       	"GetSetKindsSet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"cg"
+				name       	"Common"
+				value      	200)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Virtual"
+				value      	201)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Abstract"
+				value      	202)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Static"
+				value      	203)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Friend"
+				value      	204)))
+		    (object Attribute
+			tool       	"cg"
+			name       	"GetIsConst"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"GetResultIsConst"
+			value      	("GetResultIsConstSet" 2))
+		    (object Attribute
+			tool       	"cg"
+			name       	"GetResultIsConstSet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"cg"
+				name       	"False"
+				value      	0)
+			    (object Attribute
+				tool       	"cg"
+				name       	"True"
+				value      	1)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Same_As_Function"
+				value      	2)))
+		    (object Attribute
+			tool       	"cg"
+			name       	"GetSetByReference"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"InlineGet"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"SetReturnsValue"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"InlineSet"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"CCRegion"
+			value      	"")))
+	    (object Attribute
+		tool       	"cg"
+		name       	"default__Uses"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"cg"
+			name       	"ForwardReferenceOnly"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"BodyReferenceOnly"
+			value      	FALSE)))
+	    (object Attribute
+		tool       	"cg"
+		name       	"default__Subsystem"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"cg"
+			name       	"Directory"
+			value      	"AUTO GENERATE")
+		    (object Attribute
+			tool       	"cg"
+			name       	"DirectoryIsOnSearchList"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"PrecompiledHeader"
+			value      	"")))
+	    (object Attribute
+		tool       	"cg"
+		name       	"default__Category"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"cg"
+			name       	"IsNamespace"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"cg"
+			name       	"Indent"
+			value      	2)
+		    (object Attribute
+			tool       	"cg"
+			name       	"CodeName"
+			value      	"")
+		    (object Attribute
+			tool       	"cg"
+			name       	"GenerateEmptyRegions"
+			value      	("GenerateEmptyRegionSet" 3))
+		    (object Attribute
+			tool       	"cg"
+			name       	"GenerateEmptyRegionSet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"cg"
+				name       	"None"
+				value      	0)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Preserved"
+				value      	1)
+			    (object Attribute
+				tool       	"cg"
+				name       	"Unpreserved"
+				value      	2)
+			    (object Attribute
+				tool       	"cg"
+				name       	"All"
+				value      	3)))))
+	    (object Attribute
+		tool       	"MSVC"
+		name       	"propertyId"
+		value      	"809135966")
+	    (object Attribute
+		tool       	"MSVC"
+		name       	"default__Project"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"Version"
+			value      	"5.0")))
+	    (object Attribute
+		tool       	"MSVC"
+		name       	"default__Class"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"Type"
+			value      	("MSVCClassTypeSet" 0))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"MSVCClassTypeSet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"MSVC"
+				name       	"Normal"
+				value      	0)
+			    (object Attribute
+				tool       	"MSVC"
+				name       	"Interface_Part"
+				value      	1)
+			    (object Attribute
+				tool       	"MSVC"
+				name       	"Connection_Part"
+				value      	2)
+			    (object Attribute
+				tool       	"MSVC"
+				name       	"Class_Factory"
+				value      	3)))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"CObjectFunctionality"
+			value      	("CObjectFunctionalitySet" 0))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"CObjectFunctionalitySet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"MSVC"
+				name       	"None"
+				value      	0)
+			    (object Attribute
+				tool       	"MSVC"
+				name       	"Dynamic"
+				value      	1)
+			    (object Attribute
+				tool       	"MSVC"
+				name       	"Dyncreate"
+				value      	2)
+			    (object Attribute
+				tool       	"MSVC"
+				name       	"Serial"
+				value      	3)))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"GenerateOverrideGroup"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"GenerateDataGroup"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"AFX_DATA_Entries"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"GenerateFieldGroup"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"AFX_FIELD_Entries"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"GenerateMessageGroup"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"GenerateMessageMap"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"AFX_MSG_MAP_Entries"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"MESSAGE_MAP_Entries"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"OLEFactory"
+			value      	("OLEFactorySet" 0))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"OLEFactorySet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"MSVC"
+				name       	"None"
+				value      	0)
+			    (object Attribute
+				tool       	"MSVC"
+				name       	"Built_in"
+				value      	1)
+			    (object Attribute
+				tool       	"MSVC"
+				name       	"Simple"
+				value      	2)
+			    (object Attribute
+				tool       	"MSVC"
+				name       	"Licensed"
+				value      	3)))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"OLEName"
+			value      	"")
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"OLEClassID"
+			value      	"")
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"GenerateOLECtlType"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"OLECtlType"
+			value      	"")
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"GenerateOLETypeLib"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"OLETypeLibID"
+			value      	"")
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"OLETypeLibMajor"
+			value      	"")
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"OLETypeLibMinor"
+			value      	"")
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"GeneratePropPageIDs"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"OLEPropPageIDs"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"GenerateDispatchMap"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"AFX_DISPATCH_Entries"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"AFX_DISPATCH_MAP_Entries"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"DISPATCH_MAP_Entries"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"StockProperties"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"StockFunctions"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"DispatchDefValue"
+			value      	"")
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"GenerateDispIdEnum"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"AFX_DISP_ID_Entries"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"GenerateInterfaceMap"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"INTERFACE_MAP_Entries"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"InitInterface"
+			value      	"")
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"GenerateEventMap"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"AFX_EVENT_Entries"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"AFX_EVENT_MAP_Entries"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"EVENT_MAP_Entries"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"StockEvents"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"GenerateEventSinkMap"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"AFX_EVENTSINK_Entries"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"AFX_EVENTSINK_MAP_Entries"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"EVENTSINK_MAP_Entries"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"PropNotifySinks"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"GenerateConnectionMap"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"CONNECTION_MAP_Entries"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"ConnectionPointIID"
+			value      	"")
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"InheritanceType"
+			value      	"")
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"DeclSpec"
+			value      	"")
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"OLECommands"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"MFCDeclares"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"MFCImplements"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"ATL_Declares"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"GenerateCOMMap"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"COM_MAP_Entries"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"GenerateConnectionPointMap"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"CONNECTION_POINT_MAP_Entries"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"GenerateMsgMap"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"MSG_MAP_Entries"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"GeneratePropertyMap"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"PROPERTY_MAP_Entries"
+			value      	(value Text ""))))
+	    (object Attribute
+		tool       	"MSVC"
+		name       	"default__Operation"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"Type"
+			value      	("MSVCOperationTypeSet" 0))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"MSVCOperationTypeSet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"MSVC"
+				name       	"Normal"
+				value      	0)
+			    (object Attribute
+				tool       	"MSVC"
+				name       	"Virtual_Override"
+				value      	1)
+			    (object Attribute
+				tool       	"MSVC"
+				name       	"Message_Handler"
+				value      	2)
+			    (object Attribute
+				tool       	"MSVC"
+				name       	"Dispatch_Handler"
+				value      	3)
+			    (object Attribute
+				tool       	"MSVC"
+				name       	"Event_Firing_Function"
+				value      	4)
+			    (object Attribute
+				tool       	"MSVC"
+				name       	"Event_Sink_Handler"
+				value      	5)
+			    (object Attribute
+				tool       	"MSVC"
+				name       	"Std_OLE_Method"
+				value      	6)
+			    (object Attribute
+				tool       	"MSVC"
+				name       	"Command_Parser"
+				value      	7)
+			    (object Attribute
+				tool       	"MSVC"
+				name       	"Property_Get_Function"
+				value      	8)
+			    (object Attribute
+				tool       	"MSVC"
+				name       	"Property_Set_Function"
+				value      	9)
+			    (object Attribute
+				tool       	"MSVC"
+				name       	"Property_Notify_Function"
+				value      	10)
+			    (object Attribute
+				tool       	"MSVC"
+				name       	"Macro_Generated_Function"
+				value      	11)))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"AFX_MSG_MAP_Entries"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"MESSAGE_MAP_Entries"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"AFX_DISPATCH_MAP_Entries"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"DISPATCH_MAP_Entries"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"AFX_EVENT_MAP_Entries"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"EVENT_MAP_Entries"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"AFX_EVENTSINK_MAP_Entries"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"EVENTSINK_MAP_Entries"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"CallType"
+			value      	"")
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"DeclSpec"
+			value      	"")
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"BodyImage"
+			value      	(value Text ""))))
+	    (object Attribute
+		tool       	"MSVC"
+		name       	"default__Role"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"Type"
+			value      	("MSVCAttributeTypeSet" 0))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"MSVCAttributeTypeSet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"MSVC"
+				name       	"Normal"
+				value      	0)
+			    (object Attribute
+				tool       	"MSVC"
+				name       	"Member_Property"
+				value      	1)
+			    (object Attribute
+				tool       	"MSVC"
+				name       	"Get_Set_Property"
+				value      	2)
+			    (object Attribute
+				tool       	"MSVC"
+				name       	"Dialog_Data"
+				value      	3)
+			    (object Attribute
+				tool       	"MSVC"
+				name       	"Field_Data"
+				value      	4)
+			    (object Attribute
+				tool       	"MSVC"
+				name       	"Stock_Property"
+				value      	5)))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"AFX_DISPATCH_MAP_Entries"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"DISPATCH_MAP_Entries"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"DeclSpec"
+			value      	"")
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"PointerBase"
+			value      	"")
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"CallType"
+			value      	"")
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"StockPropertyImplementation"
+			value      	"")))
+	    (object Attribute
+		tool       	"MSVC"
+		name       	"default__Has"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"Type"
+			value      	("MSVCAttributeTypeSet" 0))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"MSVCAttributeTypeSet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"MSVC"
+				name       	"Normal"
+				value      	0)
+			    (object Attribute
+				tool       	"MSVC"
+				name       	"Member_Property"
+				value      	1)
+			    (object Attribute
+				tool       	"MSVC"
+				name       	"Get_Set_Property"
+				value      	2)
+			    (object Attribute
+				tool       	"MSVC"
+				name       	"Dialog_Data"
+				value      	3)
+			    (object Attribute
+				tool       	"MSVC"
+				name       	"Field_Data"
+				value      	4)
+			    (object Attribute
+				tool       	"MSVC"
+				name       	"Stock_Property"
+				value      	5)))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"AFX_DISPATCH_MAP_Entries"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"DISPATCH_MAP_Entries"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"DeclSpec"
+			value      	"")
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"PointerBase"
+			value      	"")
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"CallType"
+			value      	"")
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"StockPropertyImplementation"
+			value      	"")))
+	    (object Attribute
+		tool       	"MSVC"
+		name       	"default__Attribute"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"Type"
+			value      	("MSVCAttributeTypeSet" 0))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"MSVCAttributeTypeSet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"MSVC"
+				name       	"Normal"
+				value      	0)
+			    (object Attribute
+				tool       	"MSVC"
+				name       	"Member_Property"
+				value      	1)
+			    (object Attribute
+				tool       	"MSVC"
+				name       	"Get_Set_Property"
+				value      	2)
+			    (object Attribute
+				tool       	"MSVC"
+				name       	"Dialog_Data"
+				value      	3)
+			    (object Attribute
+				tool       	"MSVC"
+				name       	"Field_Data"
+				value      	4)
+			    (object Attribute
+				tool       	"MSVC"
+				name       	"Stock_Property"
+				value      	5)))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"AFX_DISPATCH_MAP_Entries"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"DISPATCH_MAP_Entries"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"DeclSpec"
+			value      	"")
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"PointerBase"
+			value      	"")
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"CallType"
+			value      	"")
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"StockPropertyImplementation"
+			value      	"")))
+	    (object Attribute
+		tool       	"MSVC"
+		name       	"default__Module-Spec"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"GenerateIncludesGroup"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"AFX_INCLUDES_Entries"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"GenerateInsertLocation"
+			value      	FALSE)))
+	    (object Attribute
+		tool       	"MSVC"
+		name       	"default__Module-Body"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"GenerateIncludesGroup"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"AFX_INCLUDES_Entries"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"MSVC"
+			name       	"GenerateInsertLocation"
+			value      	FALSE)))
+	    (object Attribute
+		tool       	"cg"
+		name       	"HiddenTool"
+		value      	FALSE)
+	    (object Attribute
+		tool       	"Rose Model Integrator"
+		name       	"HiddenTool"
+		value      	FALSE)
+	    (object Attribute
+		tool       	"Rose Web Publisher"
+		name       	"HiddenTool"
+		value      	FALSE)
+	    (object Attribute
+		tool       	"COM"
+		name       	"propertyId"
+		value      	"783606378")
+	    (object Attribute
+		tool       	"COM"
+		name       	"default__Class"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"COM"
+			name       	"TypeKinds"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"COM"
+				name       	"enum"
+				value      	100)
+			    (object Attribute
+				tool       	"COM"
+				name       	"record"
+				value      	101)
+			    (object Attribute
+				tool       	"COM"
+				name       	"module"
+				value      	102)
+			    (object Attribute
+				tool       	"COM"
+				name       	"interface"
+				value      	103)
+			    (object Attribute
+				tool       	"COM"
+				name       	"dispinterface"
+				value      	104)
+			    (object Attribute
+				tool       	"COM"
+				name       	"coclass"
+				value      	105)
+			    (object Attribute
+				tool       	"COM"
+				name       	"alias"
+				value      	106)
+			    (object Attribute
+				tool       	"COM"
+				name       	"union"
+				value      	107)
+			    (object Attribute
+				tool       	"COM"
+				name       	"max"
+				value      	108)
+			    (object Attribute
+				tool       	"COM"
+				name       	"(none)"
+				value      	109)))
+		    (object Attribute
+			tool       	"COM"
+			name       	"Generate"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"COM"
+			name       	"kind"
+			value      	("TypeKinds" 109))
+		    (object Attribute
+			tool       	"COM"
+			name       	"uuid"
+			value      	"")
+		    (object Attribute
+			tool       	"COM"
+			name       	"version"
+			value      	"")
+		    (object Attribute
+			tool       	"COM"
+			name       	"helpstring"
+			value      	"")
+		    (object Attribute
+			tool       	"COM"
+			name       	"helpcontext"
+			value      	"")
+		    (object Attribute
+			tool       	"COM"
+			name       	"attributes"
+			value      	"")
+		    (object Attribute
+			tool       	"COM"
+			name       	"dllname"
+			value      	"")
+		    (object Attribute
+			tool       	"COM"
+			name       	"alias"
+			value      	"")))
+	    (object Attribute
+		tool       	"COM"
+		name       	"default__Operation"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"COM"
+			name       	"Generate"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"COM"
+			name       	"id"
+			value      	"")
+		    (object Attribute
+			tool       	"COM"
+			name       	"helpstring"
+			value      	"")
+		    (object Attribute
+			tool       	"COM"
+			name       	"attributes"
+			value      	"")))
+	    (object Attribute
+		tool       	"COM"
+		name       	"default__Attribute"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"COM"
+			name       	"Generate"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"COM"
+			name       	"id"
+			value      	"")
+		    (object Attribute
+			tool       	"COM"
+			name       	"helpstring"
+			value      	"")
+		    (object Attribute
+			tool       	"COM"
+			name       	"attributes"
+			value      	"")))
+	    (object Attribute
+		tool       	"COM"
+		name       	"default__Module-Spec"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"COM"
+			name       	"Generate"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"COM"
+			name       	"filename"
+			value      	"")
+		    (object Attribute
+			tool       	"COM"
+			name       	"library"
+			value      	"")
+		    (object Attribute
+			tool       	"COM"
+			name       	"uuid"
+			value      	"")
+		    (object Attribute
+			tool       	"COM"
+			name       	"version"
+			value      	"")
+		    (object Attribute
+			tool       	"COM"
+			name       	"helpstring"
+			value      	"")
+		    (object Attribute
+			tool       	"COM"
+			name       	"helpfile"
+			value      	"")
+		    (object Attribute
+			tool       	"COM"
+			name       	"helpcontext"
+			value      	"")
+		    (object Attribute
+			tool       	"COM"
+			name       	"lcid"
+			value      	"")
+		    (object Attribute
+			tool       	"COM"
+			name       	"attributes"
+			value      	"")))
+	    (object Attribute
+		tool       	"COM"
+		name       	"default__Param"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"COM"
+			name       	"attributes"
+			value      	"")))
+	    (object Attribute
+		tool       	"COM"
+		name       	"HiddenTool"
+		value      	FALSE)
+	    (object Attribute
+		tool       	"Version Control"
+		name       	"HiddenTool"
+		value      	FALSE)
+	    (object Attribute
+		tool       	"VisualStudio"
+		name       	"HiddenTool"
+		value      	FALSE))
+	quid       	"43BA58660102"))
