@@ -86,7 +86,12 @@ public class ValidationRuleImpl implements ValidationRule {
     result.setSeverity(severity);
     result.setKey(key);
     Object[] parameters = { bean.toString(), property, oldValue, newValue };
-    result.setText(resources.getString(key), parameters);
+    try {
+      result.setText(resources.getString(key), parameters);
+    }
+    catch(java.util.MissingResourceException e) {
+      result.setText("Sorry, no message yet defined. Message key: "+key+"; parameters {0}, {1}, {2}, {3}", parameters);
+    }
     results.add(result);
   }
 }

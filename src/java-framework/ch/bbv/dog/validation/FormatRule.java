@@ -7,6 +7,7 @@
 package ch.bbv.dog.validation;
 
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,6 +20,21 @@ import ch.bbv.utilities.ReflectUtilities;
  * @version $Revision$
  */
 public class FormatRule extends ValidationRuleImpl implements ValidationRule {
+  /**
+   * Key for validation result message.
+   */
+  private static final String NO_FORMAT_COMPLIANCE = "ch.bbv.dog.no-format-compliance-error";
+
+  /**
+   * The resource bundle containing the messages for the validation messages.
+   */
+  private ResourceBundle resources;
+
+  /**
+   * Holds the key for the key for the message from the ResourceBundle 
+   */
+  private String resourceKey;
+  
   /**
    * The pattern to validate.
    */
@@ -36,20 +52,36 @@ public class FormatRule extends ValidationRuleImpl implements ValidationRule {
    * @param format format to validate.
    */
   public FormatRule(boolean immediate, int severity, String format) {
+    this(immediate, severity, format, ResourceBundle.getBundle("ch.bbv.dog.validation.RulesMessages"), NO_FORMAT_COMPLIANCE);
+  }
+  
+  public FormatRule(boolean immediate, int severity, String format, ResourceBundle resourceBundle, String resourceKey) {
     super(immediate, severity);
     pattern = Pattern.compile(format);
     matcher = pattern.matcher("");
+    resources = resourceBundle;
+    this.resourceKey = resourceKey;
   }
 
   public boolean execute(Object bean, String property,
       List<ValidationRuleResult> results) {
     Object value = ReflectUtilities.getProperty(bean, property);
-    return validate(value, results);
+    if(!validate(value, results)) {
+      addMessage(results, resources, resourceKey, getSeverity(), bean, property,
+          null, null);
+      return false;
+    }
+    return true;
   }
 
   public boolean execute(Object bean, String property, Object oldValue,
       Object newValue, List<ValidationRuleResult> results) {
-    return validate(newValue, results);
+    if(!validate(newValue, results)) {
+      addMessage(results, resources, resourceKey, getSeverity(), bean, property,
+          oldValue, newValue);
+      return false;
+    }
+    return true;
   }
 
   /**
@@ -62,7 +94,6 @@ public class FormatRule extends ValidationRuleImpl implements ValidationRule {
     if (value != null) {
       matcher.reset((String) value);
       if (!matcher.matches()) {
-        // TODO add message
         return false;
       }
     }
