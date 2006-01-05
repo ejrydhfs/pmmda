@@ -135,6 +135,7 @@ public class MetaClassView extends NodePropertiesView {
           MetaClass.class);
     }
     nameText.setText(model.getName());
+    nameText.setBackground(Color.WHITE);
     stereotypeText.setText(model.getStereotype());
     visibility.setSelectedCode(model.getVisibility());
     abstracts.setSelected(model.isAbstract());
