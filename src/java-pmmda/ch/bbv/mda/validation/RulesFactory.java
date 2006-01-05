@@ -90,7 +90,6 @@ public class RulesFactory {
     Validator validator = getValidator();
     validator.registerRule(descriptionNotNullRule, MetaElement.class,
         DESCRIPTION);
-    validator.registerRule(nameTypeNotNullOrNotEmptyRule, MetaElement.class, NAME);
   }
 
   /**
@@ -128,7 +127,7 @@ public class RulesFactory {
     Validator validator = getValidator();
     validator.registerRule(new NotNullRule(true, ValidationRule.ERROR),
         MetaProperty.class, "typeName");
-    //validator.registerRule(identifierRule, MetaProperty.class, NAME);
+    validator.registerRule(identifierRule, MetaProperty.class, NAME);
     validator.registerRule(nameTypeNotNullOrNotEmptyRule, MetaProperty.class, "typeName");
   }
 
@@ -139,7 +138,7 @@ public class RulesFactory {
     Validator validator = getValidator();
     validator.registerRule(new NotNullRule(true, ValidationRule.ERROR),
         MetaIndexedProperty.class, "typeName");
-    //validator.registerRule(identifierRule, MetaIndexedProperty.class, NAME);
+    validator.registerRule(identifierRule, MetaIndexedProperty.class, NAME);
     validator.registerRule(nameTypeNotNullOrNotEmptyRule, MetaIndexedProperty.class, "typeName");
   }
 
