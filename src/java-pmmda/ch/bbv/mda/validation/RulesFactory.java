@@ -7,6 +7,8 @@
 
 package ch.bbv.mda.validation;
 
+import java.util.ResourceBundle;
+
 import ch.bbv.application.Locator;
 import ch.bbv.dog.validation.*;
 import ch.bbv.mda.*;
@@ -20,6 +22,15 @@ import ch.bbv.mda.*;
  */
 public class RulesFactory {
   /**
+   * The resource bundle containing the messages for the validation messages.
+   */
+  public static ResourceBundle resources;
+
+  static {
+    resources = ResourceBundle.getBundle("ch.bbv.mda.validation.RulesMessages");
+  }
+
+  /**
    * Name of the name property of the meta element.
    */
   private static final String NAME = "name";
@@ -31,16 +42,28 @@ public class RulesFactory {
 
   /**
    * Defines the regular format for a Java identifier. An identifier is used to
-   * name packages, classes, properties and methods.
+   * name classes, properties and methods.
    */
   private static final String JAVA_IDENTIFIER_PATTERN = "[a-zA-Z$_][a-zA-Z0-9$_]*";
 
+  /**
+   * Defines the regular format for a package identifier. A package identifier is used to
+   * name packages.
+   */
+  private static final String PACKAGE_OR_TYPE_IDENTIFIER_PATTERN = JAVA_IDENTIFIER_PATTERN+"(\\."+JAVA_IDENTIFIER_PATTERN+")*";
+
+  /**
+   * Validation message in case of invalid package identifier
+   */
+  private static final String WRONG_PACKAGE_IDENTIFIER = "ch.bbv.mda.package-identifier-error";
   /**
    * The rule to verify the format of an identifier in the model.
    */
   private FormatRule identifierRule;
 
-  private NotNullRule nameNotNullRule;
+  private FormatRule packageIdentifierRule;
+
+  private StringNotNullOrNotEmptyRule nameTypeNotNullOrNotEmptyRule;
 
   private DescriptionRule descriptionNotNullRule;
 
@@ -48,12 +71,13 @@ public class RulesFactory {
    * Registers all rules constraining the MDA model.
    */
   public void registerAllRules() {
-    identifierRule = new FormatRule(false, ValidationRule.ERROR,
-        JAVA_IDENTIFIER_PATTERN);
-    nameNotNullRule = new NotNullRule(true, ValidationRule.ERROR);
+    identifierRule = new FormatRule(false, ValidationRule.ERROR, JAVA_IDENTIFIER_PATTERN);
+    packageIdentifierRule = new FormatRule(false, ValidationRule.ERROR, PACKAGE_OR_TYPE_IDENTIFIER_PATTERN, resources, WRONG_PACKAGE_IDENTIFIER);
+    nameTypeNotNullOrNotEmptyRule = new StringNotNullOrNotEmptyRule(true, ValidationRule.ERROR);
     descriptionNotNullRule = new DescriptionRule(false, ValidationRule.WARNING);
     createRulesForMetaElement();
     createRulesForMetaModel();
+    createRulesForMetaPackage();
     createRulesForMetaClass();
     createRulesForMetaProperty();
     createRulesForMetaIndexedProperty();
@@ -64,10 +88,9 @@ public class RulesFactory {
    */
   public void createRulesForMetaElement() {
     Validator validator = getValidator();
-    validator.registerRule(nameNotNullRule, MetaPackage.class, NAME);
-    validator.registerRule(identifierRule, MetaPackage.class, NAME);
-    validator.registerRule(descriptionNotNullRule, MetaPackage.class,
+    validator.registerRule(descriptionNotNullRule, MetaElement.class,
         DESCRIPTION);
+    validator.registerRule(nameTypeNotNullOrNotEmptyRule, MetaElement.class, NAME);
   }
 
   /**
@@ -84,6 +107,7 @@ public class RulesFactory {
   public void createRulesForMetaPackage() {
     Validator validator = getValidator();
     validator.registerRule(new UniqueRule(NAME), MetaPackage.class, "classes");
+    validator.registerRule(packageIdentifierRule, MetaPackage.class, NAME);
   }
 
   /**
@@ -94,6 +118,7 @@ public class RulesFactory {
     validator.registerRule(new UniqueRule(NAME), MetaClass.class, "properties");
     validator.registerRule(new UniqueRule(NAME), MetaClass.class,
         "indexedProperties");
+    validator.registerRule(identifierRule, MetaClass.class, NAME);
   }
 
   /**
@@ -103,6 +128,8 @@ public class RulesFactory {
     Validator validator = getValidator();
     validator.registerRule(new NotNullRule(true, ValidationRule.ERROR),
         MetaProperty.class, "typeName");
+    //validator.registerRule(identifierRule, MetaProperty.class, NAME);
+    validator.registerRule(nameTypeNotNullOrNotEmptyRule, MetaProperty.class, "typeName");
   }
 
   /**
@@ -112,6 +139,8 @@ public class RulesFactory {
     Validator validator = getValidator();
     validator.registerRule(new NotNullRule(true, ValidationRule.ERROR),
         MetaIndexedProperty.class, "typeName");
+    //validator.registerRule(identifierRule, MetaIndexedProperty.class, NAME);
+    validator.registerRule(nameTypeNotNullOrNotEmptyRule, MetaIndexedProperty.class, "typeName");
   }
 
   /**

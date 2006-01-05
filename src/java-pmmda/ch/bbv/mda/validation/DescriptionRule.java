@@ -31,16 +31,6 @@ public class DescriptionRule extends ValidationRuleImpl implements
   private static final String PROPERTY_DESCRIPTION_WARNING = "ch.bbv.mda.property-description-warning";
 
   /**
-   * The resource bundle containing the messages for the validation messages.
-   */
-  private static ResourceBundle resources;
-
-  static {
-    resources = ResourceBundle.getBundle("ch.bbv.mda.validation.RulesMessages");
-
-  }
-
-  /**
    * Constructor of the class.
    * @param immediate true if the rule is immediate otherwise false.
    * @param severity the severity level of the rule.
@@ -56,7 +46,7 @@ public class DescriptionRule extends ValidationRuleImpl implements
       MetaPackage element = (MetaPackage) bean;
       if (!element.isSystem() && (element.getClasses().size() > 0)
           && element.getDescription() == null) {
-        addMessage(results, resources, PACKAGE_DESCRIPTION_WARNING,
+        addMessage(results, RulesFactory.resources, PACKAGE_DESCRIPTION_WARNING,
             getSeverity(), bean, property, null, null);
         success = (getSeverity() == ERROR);
 
@@ -64,7 +54,7 @@ public class DescriptionRule extends ValidationRuleImpl implements
     } else if (bean instanceof MetaClass) {
       MetaClass element = (MetaClass) bean;
       if (!element.isSystem() && element.getDescription() == null) {
-        addMessage(results, resources, CLASS_DESCRIPTION_WARNING,
+        addMessage(results, RulesFactory.resources, CLASS_DESCRIPTION_WARNING,
             getSeverity(), bean, property, null, null);
         success = (getSeverity() == ERROR);
       }
@@ -72,7 +62,7 @@ public class DescriptionRule extends ValidationRuleImpl implements
       MetaProperty element = (MetaProperty) bean;
       MetaClass clazz = (MetaClass) element.getContext();
       if (!clazz.isSystem() && element.getDescription() == null) {
-        addMessage(results, resources, PROPERTY_DESCRIPTION_WARNING,
+        addMessage(results, RulesFactory.resources, PROPERTY_DESCRIPTION_WARNING,
             getSeverity(), bean, property, null, null);
         success = (getSeverity() == ERROR);
       }
