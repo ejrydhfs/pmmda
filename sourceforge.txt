@@ -9,13 +9,22 @@
 
 1. Prepare distribution
    --------------------
-- Verify that the version of all used components is the one of the
-  component stored in the lib directory.
+- Verify that the version of all used components is the one of the component
+  stored in the lib directory. 
 - Run "sourceforge" target to generate distribution. Verify that the 
   completness of the web site with its references to metrics and JavaDoc.
 - Run "build-all-tests" target to generate the test examples.
 - Run each test application with the provided shell scripts.
 - Execute the sanity test cases - 2-tiers, CORBA, and J2EE -.
+
+1.1 Update web site
+    ---------------
+The list of external libraries used in the project must be updated in the site.
+Do not forget to update the version of the libraries.
+
+The latest news for each subproject should be updated.
+
+Upon completion the web site should be regenerated with forrest.
 
 2. Binary and source distribution
    ------------------------------

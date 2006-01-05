@@ -1,12 +1,24 @@
 TODO
 ----
 - Create user interface with tabs for journal entry
+- Support custom tags with their mapping
+- Support filter of notes based on their date to minimize the size of
+  the exported file for iPod
+
+Version 0.0.2 (30 January 2006)
+-------------------------------
+The following new features were added.
+- None
+
+The following errors were corrected.
+- Export of notes in VCARD do not contain any new line to respect the VCARD 
+  specification.
 
 Version 0.0.1 (30 November 2005)
--------------------------------
-This version is the first release of the PIM application. It was tested
-against Thunderbird 1.0.7 and iPod third and fourth generation. Care was taken 
-that only dependencies to Apache Jakarta libraries exist.
+--------------------------------
+This version is the first release of the PIM application. It was tested against
+Thunderbird 1.0.7 and iPod third and fourth generation. Care was taken that 
+only dependencies to Apache Jakarta libraries exist.
 
 The following new features were added.
 - Import and export the LIDF contact format of Thunderbird. The UTF-8 base64 

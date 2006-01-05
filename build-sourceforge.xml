@@ -223,6 +223,7 @@
     <copy file="${lib.dir}/${commons-logging-api.lib}" todir="${pmmda-ex-lib.dir}" />
     <copy file="${lib.dir}/${commons-pool.lib}" todir="${pmmda-ex-lib.dir}" />
     <copy file="${lib.dir}/${forms.lib}" todir="${pmmda-ex-lib.dir}" />
+    <copy file="${lib.dir}/${flexdock.lib}" todir="${pmmda-ex-lib.dir}" />
     <copy file="${lib.dir}/${jcalendar.lib}" todir="${pmmda-ex-lib.dir}" />
     <copy file="${lib.dir}/${glazedlists.lib}" todir="${pmmda-ex-lib.dir}" />
     <copy file="${lib.dir}/${ojb.lib}" todir="${pmmda-ex-lib.dir}" />
