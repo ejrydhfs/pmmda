@@ -118,7 +118,9 @@ public class MetaPropertyView extends NodePropertiesView {
           model.getClass());
     }
     nameText.setText(model.getName());
+    nameText.setBackground(Color.WHITE);
     typeText.setText(model.getTypeName());
+    typeText.setBackground(Color.WHITE);
     visibility.setSelectedCode(model.getVisibility());
     volatiles.setSelected(model.isVolatile());
     transients.setSelected(model.isTransient());

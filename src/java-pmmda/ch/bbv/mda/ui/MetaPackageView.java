@@ -92,6 +92,7 @@ public class MetaPackageView extends NodePropertiesView {
   @Override
   public void setViewEditable(boolean editable) {
     nameText.setEditable(editable);
+    nameText.setBackground(Color.WHITE);
     stereotypeText.setEditable(editable);
     descriptionText.setEditable(editable);
     tagsView.setViewEditable(editable);

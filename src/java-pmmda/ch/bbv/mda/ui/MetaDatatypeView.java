@@ -105,6 +105,7 @@ public class MetaDatatypeView extends NodePropertiesView {
           MetaDatatype.class);
     }
     nameText.setText(model.getName());
+    nameText.setBackground(Color.WHITE);
     visibility.setSelectedCode(model.getVisibility());
     MetaElement context = model.getContext();
     contextText.setText(context != null ? context.qualifiedName() : null);
