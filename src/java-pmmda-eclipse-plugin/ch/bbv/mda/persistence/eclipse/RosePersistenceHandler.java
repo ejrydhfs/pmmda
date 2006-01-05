@@ -21,7 +21,7 @@ import ch.bbv.mda.persistence.PersistenceException;
 import ch.bbv.mda.persistence.PersistenceHandler;
 import ch.bbv.mda.persistence.rose.RoseTransformer;
 import ch.bbv.mda.persistence.rose.MdaTransformer;
-import ch.bbv.utilities.ResourceUtility;
+import ch.bbv.utilities.ResourceUtilities;
 
 
 /**
@@ -48,8 +48,8 @@ public class RosePersistenceHandler implements PersistenceHandler {
       unitTree = roseTransformer.loadRoseModel(file.toString(), metaModel);
       if (unitTree == null) {
         log.error("RosePersistenceHandler#readModel: illegal file - " + file);
-        JOptionPane.showMessageDialog(null, ResourceUtility
-            .getString("mda.ui.sorryMsg.INVALID_FORMAT"), ResourceUtility
+        JOptionPane.showMessageDialog(null, ResourceUtilities
+            .getString("mda.ui.sorryMsg.INVALID_FORMAT"), ResourceUtilities
             .getString("mda.ui.sorryMsg.SORRY"), JOptionPane.ERROR_MESSAGE);
         return null;
       }
@@ -78,7 +78,7 @@ public class RosePersistenceHandler implements PersistenceHandler {
         model.setName(name);
       } catch (FileNotFoundException e){
         log.warn("RosePersistenceHandler#updateModel: " + e.getLocalizedMessage()+ " - " + file);
-        JOptionPane.showMessageDialog(null, e.getLocalizedMessage(), ResourceUtility
+        JOptionPane.showMessageDialog(null, e.getLocalizedMessage(), ResourceUtilities
             .getString("mda.ui.sorryMsg.SORRY"), JOptionPane.ERROR_MESSAGE);
       } catch (Exception e){
         throw new PersistenceException(e);
@@ -92,8 +92,8 @@ public class RosePersistenceHandler implements PersistenceHandler {
       unitTree = roseTransformer.loadRoseModel(file.toString(), metaModel);
       if (unitTree == null) {
         log.error("RosePersistenceHandler#updateModel: illegal file - " + file);
-        JOptionPane.showMessageDialog(null, ResourceUtility
-            .getString("mda.ui.sorryMsg.INVALID_FORMAT"), ResourceUtility
+        JOptionPane.showMessageDialog(null, ResourceUtilities
+            .getString("mda.ui.sorryMsg.INVALID_FORMAT"), ResourceUtilities
             .getString("mda.ui.sorryMsg.SORRY"), JOptionPane.ERROR_MESSAGE);
         return;
       }
@@ -103,7 +103,7 @@ public class RosePersistenceHandler implements PersistenceHandler {
       model.setName(unitTree.getName());
     } catch (FileNotFoundException e){
       log.warn("RosePersistenceHandler#updateModel: " + e.getLocalizedMessage()+ " - " + file);
-      JOptionPane.showMessageDialog(null, e.getLocalizedMessage(), ResourceUtility
+      JOptionPane.showMessageDialog(null, e.getLocalizedMessage(), ResourceUtilities
           .getString("mda.ui.sorryMsg.SORRY"), JOptionPane.ERROR_MESSAGE);
     } catch (Exception e){
       throw new PersistenceException(e);
