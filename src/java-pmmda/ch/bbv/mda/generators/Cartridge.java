@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann 
+/* copyright 2000-2006 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$
@@ -154,7 +154,7 @@ public interface Cartridge {
    * @pre datatype != null
    */
   void preProcessDatatype(MetaDatatype datatype);
-  
+
   /**
    * Preprocesses the package and computes all the attributes used in the
    * cartridge for the package. The context of the package is also computed.

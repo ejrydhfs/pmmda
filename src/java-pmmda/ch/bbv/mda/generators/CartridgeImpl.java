@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann
+/* copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -211,6 +211,12 @@ public abstract class CartridgeImpl implements Cartridge {
   public void processClass(MetaClass clazz) {
   }
 
+  /**
+   * Initializes the cartridges with the given properties. The XML cartridge
+   * configuration file must be in the loader path of velocity in the directory
+   * named with the prefix of the cartridge.
+   * @param properties properties used to initialize the cartridge.
+   */
   public void initialize(Properties properties) {
     this.properties = properties;
     this.configuration.addConfiguration(ConfigurationConverter
@@ -273,10 +279,6 @@ public abstract class CartridgeImpl implements Cartridge {
 
   public Properties getContext() {
     return properties;
-  }
-
-  public ModelOperators getModelOperators() {
-    return modelOperators;
   }
 
   /**
