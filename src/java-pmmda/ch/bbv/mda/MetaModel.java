@@ -7,10 +7,6 @@ package ch.bbv.mda;
 
 import java.util.*;
 
-import ru.novosoft.uml.foundation.core.MClassifier;
-import ru.novosoft.uml.model_management.MPackage;
-
-import ch.bbv.mda.operators.ModelOperators;
 import ch.bbv.mda.pim.CodeTypeMgr;
 
 /**
@@ -203,42 +199,48 @@ public class MetaModel extends MetaPackage {
   }
 
   /**
-   * Finds the class with the given qualified name. If no package is specified then directly in the model is searched.
-   * Nested classes are also found. The qualified name is e.g. package1.package2.class.nestedClass1
+   * Finds the class with the given qualified name. If no package is specified
+   * then directly in the model is searched. Nested classes are also found. The
+   * qualified name is e.g. package1.package2.class.nestedClass1
    * @param qualifiedName qualified name of the class to find.
    * @return the requested class if found otherwise null.
-   *
    */
   public MetaClass findClass(String qualifiedName) {
-    assert(qualifiedName != null) && (!qualifiedName.equals("")) && (!qualifiedName.endsWith("."));
-    
-    // if there is no package specified look within the classes of the meta model
-    if(qualifiedName.indexOf(".") == -1) return super.findClass(qualifiedName);
-    
-    // find best matching packet
+    assert (qualifiedName != null) && (!qualifiedName.equals(""))
+        && (!qualifiedName.endsWith("."));
+    // if there is no package specified look within the classes of the meta
+    // model
+    if (qualifiedName.indexOf(".") == -1)
+      return super.findClass(qualifiedName);
+    // find best matching package
     MetaPackage currentPackage = null;
     String lastIdentifierMatched = "";
-    for(MetaPackage metaPackage : packages) {
-      if(qualifiedName.startsWith(metaPackage.getName())) {
-        if(metaPackage.getName().length() > lastIdentifierMatched.length()) {
+    for (MetaPackage metaPackage : packages) {
+      if (qualifiedName.startsWith(metaPackage.getName())) {
+        if (metaPackage.getName().length() > lastIdentifierMatched.length()) {
           currentPackage = metaPackage;
           lastIdentifierMatched = metaPackage.getName();
         }
       }
     }
-    if(currentPackage == null) return null;
-    if(currentPackage.getName().equals(qualifiedName)) return null;
-
+    if ((currentPackage == null)
+        || (currentPackage.getName().equals(qualifiedName))) {
+      return null;
+    }
     // find class or nested class
-    qualifiedName = qualifiedName.substring(lastIdentifierMatched.length()+1);
+    qualifiedName = qualifiedName.substring(lastIdentifierMatched.length() + 1);
     StringTokenizer tokenizer = new StringTokenizer(qualifiedName, ".");
     MetaClass metaClass = currentPackage.findClass(tokenizer.nextToken());
-    if(metaClass == null) return null;
-    
+    if (metaClass == null) {
+      return null;
+    }
     while (tokenizer.hasMoreTokens()) {
       String name = tokenizer.nextToken();
-      metaClass = (MetaClass)metaClass.findElement(metaClass.getNestedClasses(), name);
-      if(metaClass == null) return null;
+      metaClass = (MetaClass) metaClass.findElement(metaClass
+          .getNestedClasses(), name);
+      if (metaClass == null) {
+        return null;
+      }
     }
     return metaClass;
   }
