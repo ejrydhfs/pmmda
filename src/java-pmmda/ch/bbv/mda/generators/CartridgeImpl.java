@@ -99,7 +99,7 @@ public abstract class CartridgeImpl implements Cartridge {
   public static final String AGGREGATIONS_KEY = "aggregations";
 
   /**
-   * logger for the catridge class.
+   * logger for all instances of the class.
    */
   private static Log log = LogFactory.getLog(CartridgeImpl.class);
 
@@ -219,7 +219,7 @@ public abstract class CartridgeImpl implements Cartridge {
    */
   public void initialize(Properties properties) {
     this.properties = properties;
-    this.configuration.addConfiguration(ConfigurationConverter
+    configuration.addConfiguration(ConfigurationConverter
         .getConfiguration(properties));
     try {
       StringBuilder buffer = new StringBuilder();
