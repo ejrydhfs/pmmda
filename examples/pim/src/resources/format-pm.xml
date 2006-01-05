@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<format separator=";" language="ge_de">
+  <contact>
+    <property property="organization.name" column="company-name" />
+    <property property="organization.mainNumber" column="company-phone-number" />
+    <property property="organization.mainEmail" column="company-email" />
+    <property property="organization.mainUrl" column="company-url" />
+    <property property="workAddress.street" column="company-street" />
+    <property property="workAddress.postalCode" column="company-postalcode" />
+    <property property="workAddress.poBox" column="company-pobox" />
+    <property property="workAddress.city" column="company-city" />
+    <property property="workAddress.state" column="company-state" />
+    <property property="workAddress.country" column="company-country" />
+    <property property="firstname" column="firstname" />
+    <property property="middlename" column="middlename" />
+    <property property="lastname" column="lastname" />
+    <property property="title" column="title" />
+    <property property="department" column="department" />
+    <property property="language" column="language" />
+    <property property="birthday" column="birthday" />
+    <property property="workNumber" column="workNumber" />
+    <property property="workFaxNumber" column="workFaxNumber" />
+    <property property="workMobileNumber" column="workMobileNumber" />
+    <property property="homeNumber" column="homeNumber" />
+    <property property="workEmail" column="workEmail" />
+    <property property="homeEmail" column="homeEmail" />
+    <property property="workUrl" column="workUrl" />
+    <property property="birthday" column="birthday" format="dd.MM.yyyy" />
+  </contact>
+</format>

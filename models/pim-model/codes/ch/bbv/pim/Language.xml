@@ -36,9 +36,17 @@
     </code>
     <code>
       <name>Japanese</name>
-      <sortOrder>5</sortOrder>
+      <sortOrder>10</sortOrder>
       <shortDescription>Japanese</shortDescription>
       <description>Japanese</description>
+      <codeId>10</codeId>
+      <modified>false</modified>
+    </code>
+    <code>
+      <name>Spanish</name>
+      <sortOrder>5</sortOrder>
+      <shortDescription>Spanish</shortDescription>
+      <description>Spanish</description>
       <codeId>5</codeId>
       <modified>false</modified>
     </code>

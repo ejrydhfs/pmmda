@@ -91,6 +91,11 @@ public class Contact implements DataObject {
   private String department;
 
   /**
+   * The birthday of the contact.
+   */
+  private Date birthday;
+
+  /**
    * The work address of the contact.
    */
   private Address workAddress;
@@ -120,8 +125,15 @@ public class Contact implements DataObject {
    */
   private PhoneNumber workFaxNumber;
 
+  /**
+   * The organization to which the contact belongs. Together with the contacts 
+   * relations this relation implements a bi-directional relationship.
+   */
   private Organization organization;
 
+  /**
+   * The primary language used to communicate with the contact.
+   */
   private Language language;
 
   /**
@@ -474,6 +486,28 @@ public class Contact implements DataObject {
     if (((this.department != null) && !this.department.equals(department)) || 
         ((this.department == null) && (department != null)))  {    
       this.department = department;
+      setModified(true);
+    }
+  }    
+
+  /** 
+   * Returns the current value of the simple property birthday.
+   * @return the value of the simple property birthday.
+   * @see #setBirthday(Date)
+   */
+  public Date getBirthday() {
+    return birthday;
+  }
+
+  /** 
+   * Sets the new value of the simple property birthday.
+   * @param birthday new value of the property.
+   * @see #getBirthday()
+   */    
+  public void setBirthday(Date birthday) {
+    if (((this.birthday != null) && !this.birthday.equals(birthday)) || 
+        ((this.birthday == null) && (birthday != null)))  {    
+      this.birthday = birthday;
       setModified(true);
     }
   }    

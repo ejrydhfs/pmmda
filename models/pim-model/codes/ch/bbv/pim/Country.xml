@@ -59,17 +59,51 @@
       <modified>false</modified>
     </code>
     <code>
-      <name>UNITED_STATES</name>
-      <sortOrder>8</sortOrder>
-      <shortDescription>United States</shortDescription>
+      <name>USA</name>
+      <sortOrder>20</sortOrder>
+      <shortDescription>USA</shortDescription>
       <description>United States of America</description>
-      <codeId>8</codeId>
+      <codeId>20</codeId>
       <modified>false</modified>
     </code>
     <code>
       <name>CANADA</name>
+      <sortOrder>21</sortOrder>
+      <shortDescription>Canada</shortDescription>
+      <description>Canada</description>
+      <codeId>21</codeId>
+      <modified>false</modified>
+    </code>
+    <code>
+      <name>LICHTENSTEIN</name>
+      <sortOrder>8</sortOrder>
+      <shortDescription>Lichtenstein</shortDescription>
+      <description>Lichtenstein</description>
+      <codeId>8</codeId>
+      <modified>false</modified>
+    </code>
+    <code>
+      <name>POLAN</name>
       <sortOrder>9</sortOrder>
+      <shortDescription>Polan</shortDescription>
+      <description>Polan</description>
       <codeId>9</codeId>
+      <modified>false</modified>
+    </code>
+    <code>
+      <name>GREAT_BRITAIN</name>
+      <sortOrder>10</sortOrder>
+      <shortDescription>UK</shortDescription>
+      <description>Great Britain</description>
+      <codeId>10</codeId>
+      <modified>false</modified>
+    </code>
+    <code>
+      <name>ISRAEL</name>
+      <sortOrder>11</sortOrder>
+      <shortDescription>Israel</shortDescription>
+      <description>Isreal</description>
+      <codeId>11</codeId>
       <modified>false</modified>
     </code>
   </values>

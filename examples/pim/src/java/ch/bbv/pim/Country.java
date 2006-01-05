@@ -52,11 +52,27 @@ public class Country extends ReferenceCodeImpl {
   /**
    * The code value associated with the reference code.
    */
-  public static final int UNITED_STATES_ID = 8;
+  public static final int USA_ID = 20;
   /**
    * The code value associated with the reference code.
    */
-  public static final int CANADA_ID = 9;
+  public static final int CANADA_ID = 21;
+  /**
+   * The code value associated with the reference code.
+   */
+  public static final int LICHTENSTEIN_ID = 8;
+  /**
+   * The code value associated with the reference code.
+   */
+  public static final int POLAN_ID = 9;
+  /**
+   * The code value associated with the reference code.
+   */
+  public static final int GREAT_BRITAIN_ID = 10;
+  /**
+   * The code value associated with the reference code.
+   */
+  public static final int ISRAEL_ID = 11;
 
   /**
    * The code value associated with the reference code.
@@ -89,11 +105,27 @@ public class Country extends ReferenceCodeImpl {
   /**
    * The code value associated with the reference code.
    */
-  public static final Country UNITED_STATES;
+  public static final Country USA;
   /**
    * The code value associated with the reference code.
    */
   public static final Country CANADA;
+  /**
+   * The code value associated with the reference code.
+   */
+  public static final Country LICHTENSTEIN;
+  /**
+   * The code value associated with the reference code.
+   */
+  public static final Country POLAN;
+  /**
+   * The code value associated with the reference code.
+   */
+  public static final Country GREAT_BRITAIN;
+  /**
+   * The code value associated with the reference code.
+   */
+  public static final Country ISRAEL;
 
   /**
    * Serial version identifier coded as back compatibility date.
@@ -124,10 +156,18 @@ public class Country extends ReferenceCodeImpl {
     codes.put(SPAIN_ID, SPAIN);
     PORTUGAL = new Country(PORTUGAL_ID, 7, "Portugal", "Portugal");
     codes.put(PORTUGAL_ID, PORTUGAL);
-    UNITED_STATES = new Country(UNITED_STATES_ID, 8, "United States", "United States of America");
-    codes.put(UNITED_STATES_ID, UNITED_STATES);
-    CANADA = new Country(CANADA_ID, 9, "${code.getShortDescription()}", "${code.getDescription()}");
+    USA = new Country(USA_ID, 20, "USA", "United States of America");
+    codes.put(USA_ID, USA);
+    CANADA = new Country(CANADA_ID, 21, "Canada", "Canada");
     codes.put(CANADA_ID, CANADA);
+    LICHTENSTEIN = new Country(LICHTENSTEIN_ID, 8, "Lichtenstein", "Lichtenstein");
+    codes.put(LICHTENSTEIN_ID, LICHTENSTEIN);
+    POLAN = new Country(POLAN_ID, 9, "Polan", "Polan");
+    codes.put(POLAN_ID, POLAN);
+    GREAT_BRITAIN = new Country(GREAT_BRITAIN_ID, 10, "UK", "Great Britain");
+    codes.put(GREAT_BRITAIN_ID, GREAT_BRITAIN);
+    ISRAEL = new Country(ISRAEL_ID, 11, "Israel", "Isreal");
+    codes.put(ISRAEL_ID, ISRAEL);
   }
   
 /* %% USER DEFINED DECLARATION START %% */

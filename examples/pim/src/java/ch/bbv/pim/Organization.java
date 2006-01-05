@@ -9,6 +9,7 @@ package ch.bbv.pim;
 import ch.bbv.dog.DataObject;
 import java.beans.*;
 import java.lang.reflect.Field;
+import java.net.URL;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -34,6 +35,16 @@ public class Organization implements DataObject {
    * The name of the organization.
    */
   private String name;
+
+  /**
+   * The main email address used to send messages to the company.
+   */
+  private String mainEmail;
+
+  /**
+   * The main URL to the web site of the organization.
+   */
+  private URL mainUrl;
 
   /**
    * The main voice phone number of the organization is also called the 
@@ -170,6 +181,50 @@ public class Organization implements DataObject {
     if (((this.name != null) && !this.name.equals(name)) || 
         ((this.name == null) && (name != null)))  {    
       this.name = name;
+      setModified(true);
+    }
+  }    
+
+  /** 
+   * Returns the current value of the simple property mainEmail.
+   * @return the value of the simple property mainEmail.
+   * @see #setMainEmail(String)
+   */
+  public String getMainEmail() {
+    return mainEmail;
+  }
+
+  /** 
+   * Sets the new value of the simple property mainEmail.
+   * @param mainEmail new value of the property.
+   * @see #getMainEmail()
+   */    
+  public void setMainEmail(String mainEmail) {
+    if (((this.mainEmail != null) && !this.mainEmail.equals(mainEmail)) || 
+        ((this.mainEmail == null) && (mainEmail != null)))  {    
+      this.mainEmail = mainEmail;
+      setModified(true);
+    }
+  }    
+
+  /** 
+   * Returns the current value of the simple property mainUrl.
+   * @return the value of the simple property mainUrl.
+   * @see #setMainUrl(URL)
+   */
+  public URL getMainUrl() {
+    return mainUrl;
+  }
+
+  /** 
+   * Sets the new value of the simple property mainUrl.
+   * @param mainUrl new value of the property.
+   * @see #getMainUrl()
+   */    
+  public void setMainUrl(URL mainUrl) {
+    if (((this.mainUrl != null) && !this.mainUrl.equals(mainUrl)) || 
+        ((this.mainUrl == null) && (mainUrl != null)))  {    
+      this.mainUrl = mainUrl;
       setModified(true);
     }
   }    

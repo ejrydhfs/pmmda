@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann 
+/* copyright 2000-2006 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$ 
@@ -78,12 +78,17 @@ public class Pim extends Locator {
     manager.register(new VCardEmitter(), ".vcf");
     manager.register(new LdifParser(), ".ldif");
     manager.register(new VCardParser(), ".vcf");
+    manager.register(new TextEmitter(new File("./classes/format-pm.xml")), ".pm.txt");
 
     register(manager);
     initialize();
     processCommandLine();
   }
 
+  /**
+   * Returns the format manager of the PIM application.
+   * @return the format manager of the application.
+   */
   public FormatManager getFormatManager() {
     return (FormatManager) getApplication().getComponent(FormatManager.NAME);
   }

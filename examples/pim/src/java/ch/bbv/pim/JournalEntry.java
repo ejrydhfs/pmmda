@@ -31,10 +31,19 @@ public class JournalEntry implements DataObject {
    */
   private static final long serialVersionUID = 99990101;
 
+  /**
+   * The author of the journal entry.
+   */
   private String author;
 
+  /**
+   * The creation date of the journal entry.
+   */
   private Date creation;
 
+  /**
+   * The text of the journal entry.
+   */
   private String text;
 
   /**
@@ -42,6 +51,9 @@ public class JournalEntry implements DataObject {
    */
   private int duration;
 
+  /**
+   * The type of the journal entry.
+   */
   private JournalEntryType type;
 
   /** 

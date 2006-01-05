@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann 
+/* copyright 2000-2006 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$ 
@@ -80,14 +80,14 @@ public class LdifParser extends ContactParser {
     tokens.put("o:", "organization");
     tokens.put("ou:", "department");
     tokens.put("workurl:", "workUrl");
-    tokens.put("custom1", "organization.phoneNumber");
+    tokens.put("custom1", "organization.mainNumber");
     tokens.put("custom2", "birthday");
     // tokens.put("custom3", "partnerName");
     // tokens.put("custom4", "boss");
   }
 
   /**
-   * The currently process contact.
+   * The currently processed contact.
    */
   private Contact contact;
 
@@ -193,7 +193,8 @@ public class LdifParser extends ContactParser {
    */
   private boolean isPhoneNumber(String key) {
     return "telephoneNumber:".equals(key) || "homePhone:".equals(key)
-        || "mobile:".equals(key) || "facsimileTelephoneNumber:".equals(key);
+        || "mobile:".equals(key) || "facsimileTelephoneNumber:".equals(key)
+        || "custom1:".equals(key);
   }
 
   /**

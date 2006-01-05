@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann 
+/* copyright 2000-2006 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$ 
@@ -22,11 +22,6 @@ public class LdifEmitter extends ContactEmitter {
   private Template template;
 
   /**
-   * The writer of the file to export.
-   */
-  private BufferedWriter writer;
-
-  /**
    * Default constructor of the class.
    */
   public LdifEmitter() {
@@ -37,8 +32,8 @@ public class LdifEmitter extends ContactEmitter {
   public void emit(AddressBook book, File records) throws IOException {
     assert (book != null)
         && ((records != null) && (!records.exists() || records.canWrite()));
-    writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(
-        records)));
+    BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
+        new FileOutputStream(records)));
     VelocityContext context = new VelocityContext();
     context.put("emitter", this);
     context.put("addressBook", book);

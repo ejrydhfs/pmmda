@@ -40,6 +40,9 @@ public class Address implements DataObject {
    */
   private String poBox;
 
+  /**
+   * The city of the address is written in the city.
+   */
   private String city;
 
   /**
@@ -52,6 +55,10 @@ public class Address implements DataObject {
    */
   private String postalCode;
 
+  /**
+   * The country of the address meaning the country in which the city is 
+   * located.
+   */
   private Country country;
 
   /** 

@@ -33,7 +33,7 @@ fn:${distinguishedName}
 n:${lastname};${firstname};${middlename};$prefix;;
 #emit("title:" $title)
 org:${organizationName}
-#emit("url:" $workUrl)
+#emit("url;type=work:" $workUrl)
 #set($address=false)
 #set($address=${contact.getWorkAddress()})
 #if($address)
@@ -43,8 +43,8 @@ org:${organizationName}
 #call($address.getState() $state)
 #call($address.getPostalCode() $postalCode)
 #call($address.getCountry().getShortDescription() $country)
-adr;type=work:${poBox};;${street};${city};${state};${postalCode};${country}
-label;type=work:${street} \n${postalCode} ${city} \n ${country} 
+adr;type=work;type=pref:${poBox};;${street};${city};${state};${postalCode};${country}
+label;type=work;type=pref:${street}\n${city}, ${postalCode} ${city}\n${country} 
 #end
 #set($address=false)
 #set($address=${contact.getHomeAddress()})
@@ -56,7 +56,7 @@ label;type=work:${street} \n${postalCode} ${city} \n ${country}
 #call($address.getPostalCode() $postalCode)
 #call($address.getCountry().getShortDescription() $country)
 adr;type=home:${poBox};;${street};${city};${state};${postalCode};${country}
-label;type=home:${street} \n${postalCode} ${city} \n ${country} 
+label;type=home:${street}\n${city}, ${postalCode} ${city}\n${country} 
 #end
 tel;type=work:${workNumber}
 tel;type=home:${homeNumber}

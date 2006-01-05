@@ -40,7 +40,11 @@ public class Language extends ReferenceCodeImpl {
   /**
    * The code value associated with the reference code.
    */
-  public static final int JAPANESE_ID = 5;
+  public static final int JAPANESE_ID = 10;
+  /**
+   * The code value associated with the reference code.
+   */
+  public static final int SPANISH_ID = 5;
 
   /**
    * The code value associated with the reference code.
@@ -62,6 +66,10 @@ public class Language extends ReferenceCodeImpl {
    * The code value associated with the reference code.
    */
   public static final Language JAPANESE;
+  /**
+   * The code value associated with the reference code.
+   */
+  public static final Language SPANISH;
 
   /**
    * Serial version identifier coded as back compatibility date.
@@ -86,8 +94,10 @@ public class Language extends ReferenceCodeImpl {
     codes.put(FRENCH_ID, FRENCH);
     ITALIAN = new Language(ITALIAN_ID, 4, "Italian", "Italian");
     codes.put(ITALIAN_ID, ITALIAN);
-    JAPANESE = new Language(JAPANESE_ID, 5, "Japanese", "Japanese");
+    JAPANESE = new Language(JAPANESE_ID, 10, "Japanese", "Japanese");
     codes.put(JAPANESE_ID, JAPANESE);
+    SPANISH = new Language(SPANISH_ID, 5, "Spanish", "Spanish");
+    codes.put(SPANISH_ID, SPANISH);
   }
   
 /* %% USER DEFINED DECLARATION START %% */
