@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann
+/* copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -10,6 +10,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import org.apache.commons.beanutils.NestedNullException;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -311,19 +312,19 @@ public final class ReflectUtilities {
    * @see #setProperty(Object, String, Object)
    */
   public static Object getProperty(Object bean, String property) {
-    assert ((bean != null) && (property != null));
-
+    assert (bean != null) && (property != null);
     Object value = null;
     try {
       value = PropertyUtils.getProperty(bean, property);
     } catch (InvocationTargetException e) {
-      log.fatal(e);
+      log.error(e);
     } catch (NoSuchMethodException e) {
-      log.fatal(e);
+      log.error(e);
     } catch (IllegalAccessException e) {
-      log.fatal(e);
+      log.error(e);
+    } catch (NestedNullException e) {
+      log.error(e);
     }
-
     return value;
   }
 

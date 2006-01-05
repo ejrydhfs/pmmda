@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann
+/* copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -48,8 +48,14 @@ public class ReferenceCodeImpl implements ReferenceCode {
    */
   private String shortDescription;
 
+  /**
+   * Start of the validity of the code instance.
+   */
   private Date fromDate;
 
+  /**
+   * End of the validity of the code instance.
+   */
   private Date toDate;
 
   /**
@@ -137,6 +143,7 @@ public class ReferenceCodeImpl implements ReferenceCode {
     throw new ClassCastException();
   }
 
+  @Override
   public boolean equals(Object object) {
     if (object == null || !(object.getClass() == getClass())) {
       return false;
@@ -145,7 +152,13 @@ public class ReferenceCodeImpl implements ReferenceCode {
     return (code == referenceCode.getCode());
   }
 
+  @Override
   public int hashCode() {
     return getClass().hashCode() ^ code;
+  }
+
+  @Override
+  public String toString() {
+    return shortDescription;
   }
 }
