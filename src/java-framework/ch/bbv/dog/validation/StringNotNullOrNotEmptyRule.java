@@ -47,7 +47,7 @@ public class StringNotNullOrNotEmptyRule extends ValidationRuleImpl implements V
     if (value == null || value.equals("")) {
       addMessage(results, resources, IS_STRING_NULL_OR_EMPTY, getSeverity(), bean, property,
           null, null);
-      return (getSeverity() == ERROR);
+      return false;
     }
     return true;
   }
@@ -58,7 +58,7 @@ public class StringNotNullOrNotEmptyRule extends ValidationRuleImpl implements V
     if (value == null || value.equals("")) {
       addMessage(results, resources, IS_STRING_NULL_OR_EMPTY, getSeverity(), bean, property,
           oldValue, newValue);
-      return (getSeverity() == ERROR);
+      return false;
     }
     return true;
   }

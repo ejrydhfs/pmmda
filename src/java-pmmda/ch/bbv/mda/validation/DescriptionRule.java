@@ -48,7 +48,7 @@ public class DescriptionRule extends ValidationRuleImpl implements
           && element.getDescription() == null) {
         addMessage(results, RulesFactory.resources, PACKAGE_DESCRIPTION_WARNING,
             getSeverity(), bean, property, null, null);
-        success = (getSeverity() == ERROR);
+        success = false;
 
       }
     } else if (bean instanceof MetaClass) {
@@ -56,7 +56,7 @@ public class DescriptionRule extends ValidationRuleImpl implements
       if (!element.isSystem() && element.getDescription() == null) {
         addMessage(results, RulesFactory.resources, CLASS_DESCRIPTION_WARNING,
             getSeverity(), bean, property, null, null);
-        success = (getSeverity() == ERROR);
+        success = false;
       }
     } else if (bean instanceof MetaProperty) {
       MetaProperty element = (MetaProperty) bean;
@@ -64,7 +64,7 @@ public class DescriptionRule extends ValidationRuleImpl implements
       if (!clazz.isSystem() && element.getDescription() == null) {
         addMessage(results, RulesFactory.resources, PROPERTY_DESCRIPTION_WARNING,
             getSeverity(), bean, property, null, null);
-        success = (getSeverity() == ERROR);
+        success = false;
       }
     }
     return success;

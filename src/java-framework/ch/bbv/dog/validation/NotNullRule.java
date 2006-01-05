@@ -47,7 +47,7 @@ public class NotNullRule extends ValidationRuleImpl implements ValidationRule {
     if (value == null) {
       addMessage(results, resources, IS_NULL, getSeverity(), bean, property,
           null, null);
-      return (getSeverity() == ERROR);
+      return false;
     }
     return true;
   }
@@ -58,7 +58,7 @@ public class NotNullRule extends ValidationRuleImpl implements ValidationRule {
     if (value == null) {
       addMessage(results, resources, IS_NULL, getSeverity(), bean, property,
           oldValue, newValue);
-      return (getSeverity() == ERROR);
+      return false;
     }
     return true;
   }
