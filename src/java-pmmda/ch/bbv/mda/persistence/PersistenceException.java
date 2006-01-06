@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann 
+/* copyright 2000-2006 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$ 
@@ -8,7 +8,7 @@ package ch.bbv.mda.persistence;
 /**
  * The exception class for all exceptions thrown when reading or writing a UML
  * model.
- * @author marcelbaumann
+ * @author Marcel Baumann
  * @version $Revision$
  */
 public class PersistenceException extends Exception {
@@ -29,5 +29,22 @@ public class PersistenceException extends Exception {
    */
   public PersistenceException(Exception exception) {
     super(exception);
+  }
+
+  /**
+   * Constructor of the class.
+   * @param message message of the exception.
+   * @param exception the exception cause of the persistence exception.
+   */
+  public PersistenceException(String message, Exception exception) {
+    super(message, exception);
+  }
+
+  /**
+   * Constructor of the class.
+   * @param message message of the exception.
+   */
+  public PersistenceException(String message) {
+    super(message);
   }
 }
