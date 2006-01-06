@@ -30,6 +30,38 @@ LIDF contact list into a VCARD list. The supported options are as follow.</p>
   parameter is option. The default is Switzerland. Users can specify the countrz
   they are working.</dd>
 </dl>
+<p>The following extensions are supported and the expected parser or emitter is
+automatically activated.</p>
+<dl>
+  <dt>ldif</dt>
+  <dd>identifies files containing LDIF records.</dd>
+  <dt>vcard</dt>
+  <dd>identifies files containing VCARD 3.0 records.</dd>
+  <dt>pm.txt</dt>
+  <dd>identifies files containing <em>Project Manager</em>tab seperated records.</dd>
+</dl>
+<h2>User Interface</h2>
+<p>The user interface of the PIM application uses the explorer framework with
+dockable views of the <em>pmMDA</em> project.</p>
+<p>The file menu supports the following actions.</p>
+<dl>
+  <dt>New</dt>
+  <dd>Creates a new address book.</dd>
+  <dt>Open</dt>
+  <dd>Opens an open dialog. Upon selection of the name and the extension the
+  correct format is used to read the address book.</dd>
+  <dt>Save</dt>
+  <dd>Saves the address book. The item is only active if an address book exists
+  and was modified.</dd>
+  <dt>Save As</dt>
+  <dd>Opens a save dialog. Upon selection of the name and the extension the
+  correct format is used to save the address book. If the extension is unknown
+  an error message is displayed. The item is only active if an address book
+  exists.</dd>
+  <dt>Exit</dt>
+  <dd>Quits the application. If an address book is opened and unmodified a
+  dialog box asks if the changes should be saved.</dd>
+</dl>
 <h2>Dependencies</h2>
 <p>The following external librairies are used.
 <table>
