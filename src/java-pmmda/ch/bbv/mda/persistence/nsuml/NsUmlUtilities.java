@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann
+/* copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -27,7 +27,7 @@ public class NsUmlUtilities {
    * @pre element != null
    */
   public static String getQualifiedName(MModelElement element) {
-    assert (element != null);
+    assert element != null;
     MModelElement context = element;
     StringBuilder buffer = new StringBuilder();
     if ((context != null) && (context.getModelElementContainer() != null)) {
@@ -45,8 +45,10 @@ public class NsUmlUtilities {
    * Sets the visibility of the item.
    * @param item item which visibility should be set.
    * @param visibility new visibility of the item.
+   * @pre (item != null) && (visibility != null)
    */
   public static void setVisibility(MModelElement item, VisibilityCode visibility) {
+    assert (item != null) && (visibility != null);
     if (VisibilityCode.PUBLIC_ID == visibility.getCode()) {
       item.setVisibility(MVisibilityKind.PUBLIC);
     } else if (VisibilityCode.PROTECTED_ID == visibility.getCode()) {
