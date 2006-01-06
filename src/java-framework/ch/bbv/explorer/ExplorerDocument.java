@@ -9,6 +9,8 @@ import java.io.File;
 
 /**
  * The interface defines the contract of any document loaded in an explorer.
+ * The state property is used to determine the status of general menu action
+ * such as exit, open, open as, and save.
  * @author MarcelBaumann
  * @version $Revision$
  */
