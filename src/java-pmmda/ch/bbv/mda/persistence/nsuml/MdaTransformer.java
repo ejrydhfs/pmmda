@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann
+/* copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -32,7 +32,7 @@ import ch.bbv.mda.*;
  * removed can be specified and passed to the transformer. During the
  * synchronization all tags with such names will be removed from the NSUML
  * model.
- * @author marcelbaumann
+ * @author Marcel Baumann
  * @version $Revision$
  */
 public class MdaTransformer {
