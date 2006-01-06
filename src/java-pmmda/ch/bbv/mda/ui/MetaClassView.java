@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann 
+/* copyright 2000-2006 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence); 
  * you may not use this file except in compliance with the License. 
  * $Id$
@@ -25,7 +25,7 @@ import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * The meta class view defines the view of a MDA class.
- * @author marcelbaumann
+ * @author Marcel Baumann
  * @version $Revision$
  */
 public class MetaClassView extends NodePropertiesView {
@@ -47,12 +47,12 @@ public class MetaClassView extends NodePropertiesView {
   /**
    * Pattern for validating identifiers
    */
-  private static Pattern validName;
+  static Pattern validName;
 
   /**
    * Swing component to display the associated property.
    */
-  private JTextField nameText;
+  JTextField nameText;
 
   /**
    * Swing component to display the associated property.
@@ -209,15 +209,16 @@ public class MetaClassView extends NodePropertiesView {
     builder.append(tagsView, 7);
     JPanel panel = builder.getPanel();
     add(panel);
-    
-    validName = Pattern.compile("^[0-9]"         // no number at the beginning of the identifier
-                                +"|[^\\w]");     // no special characters
+
+    validName = Pattern.compile("^[0-9]" // no number at the beginning of the
+                                          // identifier
+        + "|[^\\w]"); // no special characters
   }
 
   /**
    * Focus listeners for verification of input. It applies input rules.
    * @author AdrianBachofen
-   *
+   * @version $Revision$
    */
   private class VerificationActions implements FocusListener {
     public void focusLost(FocusEvent e) {
@@ -230,6 +231,7 @@ public class MetaClassView extends NodePropertiesView {
         }
       }
     }
+
     public void focusGained(FocusEvent e) {
       // don't do anything
     }

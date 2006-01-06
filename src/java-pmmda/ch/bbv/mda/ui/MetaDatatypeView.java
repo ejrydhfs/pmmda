@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann 
+/* copyright 2000-2006 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence); 
  * you may not use this file except in compliance with the License. 
  * $Id$
@@ -11,7 +11,10 @@ import java.awt.event.FocusListener;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.*;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 import ch.bbv.dog.ui.ReferenceCodeComboBox;
 import ch.bbv.explorer.NodePropertiesView;
@@ -47,12 +50,12 @@ public class MetaDatatypeView extends NodePropertiesView {
   /**
    * Pattern for validating identifiers
    */
-  private static Pattern validName;
+  static Pattern validName;
 
   /**
    * Swing component to display the associated property.
    */
-  private JTextField nameText;
+  JTextField nameText;
 
   /**
    * Swing component to display the associated property.
@@ -152,21 +155,22 @@ public class MetaDatatypeView extends NodePropertiesView {
     builder.appendSeparator("General");
     builder.append("&Name", nameText);
     builder.append("&Context", contextText);
-    //builder.append("&Visibility", visibility);
+    // builder.append("&Visibility", visibility);
     builder.append("&Description", descriptionPane, 5);
     builder.appendSeparator("Tagged Values");
     builder.append(tagsView, 7);
     JPanel panel = builder.getPanel();
     add(panel);
 
-    validName = Pattern.compile("^[0-9]"         // no number at the beginning of the identifier
-                                +"|[^\\w]");     // no special characters
+    validName = Pattern.compile("^[0-9]" // no number at the beginning of the
+                                          // identifier
+        + "|[^\\w]"); // no special characters
   }
-  
+
   /**
    * Focus listeners for verification of input. It applies input rules.
    * @author AdrianBachofen
-   *
+   * @version $Revision$
    */
   private class VerificationActions implements FocusListener {
     public void focusLost(FocusEvent e) {
@@ -179,6 +183,7 @@ public class MetaDatatypeView extends NodePropertiesView {
         }
       }
     }
+
     public void focusGained(FocusEvent e) {
       // don't do anything
     }

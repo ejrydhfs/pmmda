@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann 
+/* copyright 2000-2006 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence); 
  * you may not use this file except in compliance with the License. 
  * $Id$
@@ -45,16 +45,16 @@ public class MetaPropertyView extends NodePropertiesView {
   /**
    * Pattern for validating identifiers
    */
-  private static Pattern validName;
+  static Pattern validName;
 
   /**
    * Pattern for validating types
    */
-  private static Pattern validType;
+  static Pattern validType;
 
-  private JTextField nameText;
+  JTextField nameText;
 
-  private JTextField typeText;
+  JTextField typeText;
 
   private JTextField contextText;
 
@@ -223,18 +223,20 @@ public class MetaPropertyView extends NodePropertiesView {
     JPanel panel = builder.getPanel();
     add(panel);
 
-    validName = Pattern.compile("^[0-9]"            // no number at the beginning of the identifier
-                                +"|[^\\w]");        // no special characters
-    
-    validType = Pattern.compile("^[0-9\\.]"         // no number and no dot at the beginning of the identifier
-                                +"|[^\\w&&[^\\.]]"  // no special characters other than dot
-                                +"|\\.[0-9]");      // no number after a dot
+    validName = Pattern.compile("^[0-9]" // no number at the beginning of the
+                                          // identifier
+        + "|[^\\w]"); // no special characters
+
+    validType = Pattern.compile("^[0-9\\.]" // no number and no dot at the
+                                            // beginning of the identifier
+        + "|[^\\w&&[^\\.]]" // no special characters other than dot
+        + "|\\.[0-9]"); // no number after a dot
   }
-  
+
   /**
    * Focus listeners for verification of input. It applies input rules.
    * @author AdrianBachofen
-   *
+   * @version $Revision$
    */
   private class VerificationActions implements FocusListener {
     public void focusLost(FocusEvent e) {
@@ -255,6 +257,7 @@ public class MetaPropertyView extends NodePropertiesView {
         }
       }
     }
+
     public void focusGained(FocusEvent e) {
       // don't do anything
     }

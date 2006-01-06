@@ -1,17 +1,17 @@
-/* copyright 2000-2005 Marcel Baumann 
+/* copyright 2000-2006 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence); 
  * you may not use this file except in compliance with the License. 
  * $Id$
  */
 package ch.bbv.mda.ui;
 
-import javax.swing.*;
+import java.awt.Color;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.awt.Color;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.swing.*;
 
 import ch.bbv.dog.ui.ReferenceCodeComboBox;
 import ch.bbv.explorer.NodePropertiesView;
@@ -47,9 +47,9 @@ public class MetaPackageView extends NodePropertiesView {
   /**
    * Pattern for validating identifiers
    */
-  private static Pattern validName;
+  static Pattern validName;
 
-  private JTextField nameText;
+  JTextField nameText;
 
   private JTextField stereotypeText;
 
@@ -168,16 +168,17 @@ public class MetaPackageView extends NodePropertiesView {
     builder.append(tagsView, 7);
     JPanel panel = builder.getPanel();
     add(panel);
-    
-    validName = Pattern.compile("^[0-9\\.]"         // no number and no dot at the beginning of the identifier
-                                +"|[^\\w&&[^\\.]]"  // no special characters other than dot
-                                +"|\\.[0-9]");      // no number after a dot
+
+    validName = Pattern.compile("^[0-9\\.]" // no number and no dot at the
+                                            // beginning of the identifier
+        + "|[^\\w&&[^\\.]]" // no special characters other than dot
+        + "|\\.[0-9]"); // no number after a dot
   }
-  
+
   /**
    * Focus listeners for verification of input. It applies input rules.
    * @author AdrianBachofen
-   *
+   * @version $Revision$
    */
   private class VerificationActions implements FocusListener {
     public void focusLost(FocusEvent e) {
@@ -190,6 +191,7 @@ public class MetaPackageView extends NodePropertiesView {
         }
       }
     }
+
     public void focusGained(FocusEvent e) {
       // don't do anything
     }
