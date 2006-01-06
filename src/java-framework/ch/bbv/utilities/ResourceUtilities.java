@@ -501,7 +501,7 @@ public class ResourceUtilities {
         final int patternNumber = patterns.length;
         for (int ctr = 0; ctr < patternNumber; ctr++) {
           final String pattern = patterns[ctr];
-          if (PathMatcher.wildcardMatch(path, pattern)) {
+          if (ReflectUtilities.wildcardMatch(path, pattern)) {
             matches = true;
             break;
           }

@@ -9,6 +9,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.regex.PatternSyntaxException;
 
 import org.apache.commons.beanutils.NestedNullException;
 import org.apache.commons.beanutils.PropertyUtils;
@@ -433,9 +434,42 @@ public final class ReflectUtilities {
   }
 
   /**
-   * <p>
+   * Provides matching of simple wildcards. (i.e. '*.java' etc.)
+   * @param path the path to match against.
+   * @param pattern the pattern to check if the path matches.
+   * @return true if the <code>path</code> matches the given
+   *         <code>pattern</code>, false otherwise.
+   */
+  public static boolean wildcardMatch(String path, String pattern) {
+    path = StringUtils.trimToEmpty(path);
+    boolean matches = false;
+    final String doubleStar = "**/";
+    final String slash = "/";
+    pattern = StringUtils.replace(pattern, ".", "\\.");
+    boolean matchAll = pattern.startsWith(doubleStar);
+    if (matchAll) {
+      String replacement = ".*/";
+      if (path.indexOf(slash) == -1) {
+        replacement = ".*";
+      }
+      pattern = StringUtils.replaceOnce(pattern, doubleStar, replacement);
+    }
+    pattern = StringUtils.replace(pattern, "*", ".*");
+    try {
+      matches = path.matches(pattern);
+    } catch (final PatternSyntaxException exception) {
+      matches = false;
+    }
+    if (!matchAll) {
+      matches = matches
+          && StringUtils.countMatches(pattern, slash) == StringUtils
+              .countMatches(path, slash);
+    }
+    return matches;
+  }
+
+  /**
    * Returns the type class name for a Java primitive.
-   * </p>
    * @param name a <code>String</code> with the name of the type
    * @param loader the loader to use.
    * @return a <code>String</code> with the name of the corresponding
