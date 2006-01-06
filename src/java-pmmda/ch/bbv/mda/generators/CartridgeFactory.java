@@ -98,19 +98,6 @@ public class CartridgeFactory extends ComponentImpl implements Component {
     format.setParseIntegerOnly(true);
     format.setMinimumIntegerDigits(2);
     format.setMaximumIntegerDigits(2);
-    properties.setProperty("file.resource.loader.path", properties
-        .getProperty("file.resource.loader.path"));
-    properties.setProperty("file.resource.loader.cache", properties
-        .getProperty("file.resource.cache", "false"));
-    properties.setProperty("file.resource.loader.modificationCheckInterval",
-        properties.getProperty(
-            "file.resource.loader.modificationCheckInterval", "0"));
-    properties.setProperty("velocimacro.permissions.allow.inline", properties
-        .getProperty("velocimacro.permissions.allow.inline"));
-    properties.setProperty("velocimacro.library", properties
-        .getProperty("velocimacro.library"));
-    properties.setProperty("parser.pool.size", properties.getProperty(
-        "parser.pool.size", "10"));
     try {
       Velocity.init(properties);
     } catch (ParseErrorException e) {
