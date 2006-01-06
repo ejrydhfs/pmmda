@@ -1,3 +1,7 @@
+## copyright 2000-2006 Marcel Baumann
+## Licensed under the Apache License, Version 2.0 (the "Licence");
+## you may not use this file except in compliance with the License.
+## $Id$ 
 <!DOCTYPE ejb-jar PUBLIC
    "-//Sun Microsystems, Inc.//DTD Enterprise JavaBeans 2.0//EN"
    "http://java.sun.com/dtd/ejb-jar_2_0.dtd">
