@@ -12,15 +12,12 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import javax.swing.JOptionPane;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.xml.sax.SAXException;
 
 import ru.novosoft.uml.MFactory;
 import ru.novosoft.uml.model_management.MModel;
-import ru.novosoft.uml.xmi.IncompleteXMIException;
 import ch.bbv.mda.MetaModel;
 import ch.bbv.mda.persistence.nsuml.ArgoWriter;
 import ch.bbv.mda.persistence.nsuml.MdaTransformer;
@@ -70,12 +67,8 @@ public class NsUmlPersistenceHandler implements PersistenceHandler {
         return null;
       }
       nsUmlTransformer.synchronize(mModel, metaModel);
-    } catch (IOException e) {
-      log.error(e);
-    } catch (ParserConfigurationException e) {
-      log.error(e);
-    } catch (SAXException e) {
-      log.error(e);
+    } catch(Exception e){
+      throw new PersistenceException(e);
     }
     return metaModel;
   }
@@ -100,10 +93,8 @@ public class NsUmlPersistenceHandler implements PersistenceHandler {
           ArgoWriter.writeEntry(file, temporaryFile);
           temporaryFile.delete();
         }
-      } catch (IOException ioe) {
-        log.error(ioe);
-      } catch (IncompleteXMIException ixmie) {
-        log.error(ixmie);
+      } catch(Exception e) {
+        throw new PersistenceException(e);
       }
     }
   }
@@ -124,14 +115,8 @@ public class NsUmlPersistenceHandler implements PersistenceHandler {
         ZipFileUtilities.replaceEntry(file, getArgoModelFileName(file), input);
         temporaryFile.delete();
       }
-    } catch (IOException ioe) {
-      log.error(ioe);
-    } catch (ParserConfigurationException pce) {
-      log.error(pce);
-    } catch (SAXException saxe) {
-      log.error(saxe);
-    } catch (IncompleteXMIException ixmie) {
-      log.error(ixmie);
+    } catch(Exception e) {
+      throw new PersistenceException(e);
     }
   }
 

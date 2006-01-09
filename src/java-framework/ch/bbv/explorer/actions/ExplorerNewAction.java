@@ -6,7 +6,6 @@
 package ch.bbv.explorer.actions;
 
 import java.awt.event.ActionEvent;
-import java.io.IOException;
 
 import ch.bbv.explorer.Explorer;
 import ch.bbv.explorer.ExplorerDocument;

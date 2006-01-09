@@ -33,7 +33,7 @@ public class SerializePersistenceHandler implements PersistenceHandler {
    */
   private static Log log = LogFactory.getLog(SerializePersistenceHandler.class);
 
-  public MetaModel readModel(File file) {
+  public MetaModel readModel(File file) throws PersistenceException {
     MetaModel project = null;
     try {
       ObjectInput in = new ObjectInputStream(new FileInputStream(file));
@@ -44,24 +44,23 @@ public class SerializePersistenceHandler implements PersistenceHandler {
       JOptionPane.showMessageDialog(null, ResourceUtilities
           .getString("mda.ui.sorryMsg.OLD_FORMAT"), ResourceUtilities
           .getString("mda.ui.sorryMsg.SORRY"), JOptionPane.ERROR_MESSAGE);
-    } catch (IOException ioe) {
-      log.error(ioe);
-    } catch (ClassNotFoundException cnfe) {
-      log.error(cnfe);
+    } catch(Exception e){
+      throw new PersistenceException(e);
     }
     return project;
   }
 
-  public void writeModel(MetaModel project, File file) {
+  public void writeModel(MetaModel project, File file) throws PersistenceException {
     try {
       ObjectOutput out = new ObjectOutputStream(new FileOutputStream(file));
       out.writeObject(project);
       out.close();
-    } catch (IOException ioe) {
-      log.error(ioe);
+    } catch(Exception e){
+      throw new PersistenceException(e);
     }
   }
 
-  public void updateModel(MetaModel project, File file) {
+  public void updateModel(MetaModel project, File file) throws PersistenceException {
+    throw new PersistenceException();
   }
 }

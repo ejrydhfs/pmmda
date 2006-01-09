@@ -44,10 +44,12 @@ public class MdrPersistenceHandler implements PersistenceHandler {
 
   public void writeModel(MetaModel model, File file)
       throws PersistenceException {
+    throw new PersistenceException();
   }
 
   public void updateModel(MetaModel model, File file)
       throws PersistenceException {
+    throw new PersistenceException();
   }
 
 }
