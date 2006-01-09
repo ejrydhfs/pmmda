@@ -7,6 +7,7 @@
 package ch.bbv.mda.ui.actions;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -73,6 +74,13 @@ public class SaveAsAction extends ExplorerFileAction {
       extension = FileTypes.getBestMatchingExtension(getFileChooser().getFileFilter().getDescription());
       if(extension != null) file = new File(file.getPath()+"."+extension);
     }
+    if(extension == null) {
+      JOptionPane.showMessageDialog(getExplorer().getFrame(), ResourceUtilities
+          .getString("mda.ui.errorMsg.ILLEGAL_FILE_NAME_OR_TYPE"),
+          ResourceUtilities.getString("mda.ui.errorMsg.ERROR"),
+          JOptionPane.ERROR_MESSAGE);
+      return false;
+    }
     extension = extension.toLowerCase();
     try {
       if (Arrays.binarySearch(FileTypes.ARGOUML_EXT, extension) >= 0) {
@@ -95,8 +103,7 @@ public class SaveAsAction extends ExplorerFileAction {
             ResourceUtilities.getString("mda.ui.sorryMsg.SORRY"),
             JOptionPane.ERROR_MESSAGE);
       }
-    } catch (IOException e) {
-      log.error(e);
+    } catch (PersistenceException e) {
       return false;
     }
     getExplorer().getMenuBar().documentChanged(ExplorerDocument.State.CLEAN);
@@ -109,13 +116,33 @@ public class SaveAsAction extends ExplorerFileAction {
    * @param file new file for the model.
    * @throws IOException if the model could not be saved.
    */
-  private void writeModel(File file) throws IOException {
+  private void writeModel(File file) throws PersistenceException {
     try {
       MdaExplorer explorer = (MdaExplorer) getExplorer();
       MdaDocument document = explorer.getDocument();
       document.saveAs(file);
     } catch (PersistenceException e) {
       log.error(e);
+      if(e.getCause() instanceof FileNotFoundException) { // This cause indicates that writter attempt to write a locked file.
+        JOptionPane.showMessageDialog(null, e.getLocalizedMessage(), ResourceUtilities
+            .getString("mda.ui.sorryMsg.SORRY"), JOptionPane.ERROR_MESSAGE);
+      } else {
+        JOptionPane.showMessageDialog(getExplorer().getFrame(), ResourceUtilities
+            .getString("mda.ui.sorryMsg.UNSUPPORTED_FILE_TYPE_FOR_SAVE"),
+            ResourceUtilities.getString("mda.ui.sorryMsg.SORRY"),
+            JOptionPane.ERROR_MESSAGE);
+      }
+      throw e;
+    } catch (NullPointerException e) {
+      log.error(e);
+      JOptionPane.showMessageDialog(getExplorer().getFrame(), ResourceUtilities
+          .getString("mda.ui.sorryMsg.UNSUPPORTED_FILE_TYPE_FOR_SAVE"),
+          ResourceUtilities.getString("mda.ui.sorryMsg.SORRY"),
+          JOptionPane.ERROR_MESSAGE);
+      throw new PersistenceException(e);
+    } catch (IOException e) {
+      log.error(e);
+      throw new PersistenceException(e);
     }
   }
 

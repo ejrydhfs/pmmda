@@ -8,6 +8,7 @@ package ch.bbv.mda.ui.actions;
 
 import java.awt.event.ActionEvent;
 import java.io.IOException;
+import java.io.FileNotFoundException;
 
 import javax.swing.JOptionPane;
 
@@ -57,13 +58,18 @@ public class SaveAction extends ExplorerSaveAction {
           explorer.getDocument().save();
         } else {
           JOptionPane.showMessageDialog(explorer.getFrame(), ResourceUtilities
-              .getString("mda.ui.errorMsg.NO_FILE_DEFINED_ERROR"),
+              .getString("mda.ui.sorryMsg.ILLEGAL_FILE_NAME_OR_TYPE"),
               ResourceUtilities.getString("mda.ui.errorMsg.ERROR"),
               JOptionPane.ERROR_MESSAGE);
         }
       }
     } catch (PersistenceException e) {
       log.error(e);
+      if(e.getCause() instanceof FileNotFoundException) {
+        JOptionPane.showMessageDialog(null, e.getLocalizedMessage(), ResourceUtilities
+            .getString("mda.ui.sorryMsg.SORRY"), JOptionPane.ERROR_MESSAGE);
+        return false; // This cause indicates that writter attempt to write a locked file.
+      }
       JOptionPane.showMessageDialog(explorer.getFrame(), ResourceUtilities
           .getString("mda.ui.sorryMsg.UNSUPPORTED_FILE_TYPE_FOR_SAVE"),
           ResourceUtilities.getString("mda.ui.sorryMsg.SORRY"),

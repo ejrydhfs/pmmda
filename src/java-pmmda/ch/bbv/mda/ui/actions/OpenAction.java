@@ -7,6 +7,9 @@
 package ch.bbv.mda.ui.actions;
 
 import java.io.File;
+import java.text.MessageFormat;
+
+import javax.swing.JOptionPane;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -16,7 +19,7 @@ import ch.bbv.explorer.actions.ExplorerFileAction;
 import ch.bbv.mda.persistence.PersistenceException;
 import ch.bbv.mda.ui.MdaDocument;
 import ch.bbv.mda.ui.MdaExplorer;
-import ch.bbv.utilities.SystemUtilities;
+import ch.bbv.utilities.ResourceUtilities;
 
 /**
  * The open action implements the loading of a complete meta model. The model is
@@ -54,19 +57,36 @@ public class OpenAction extends ExplorerFileAction {
   }
 
   public boolean execute() {
+    File file = getSelectedFile();
     try {
       MdaExplorer explorer = (MdaExplorer) getExplorer();
       MdaDocument document = new MdaDocument();
-      File file = getSelectedFile();
-      String extension = SystemUtilities.getFileExtension(file);
-      if(extension == null) { // in case where user thinks that the extension comes from the file filter we get the first match from the filter.
-        extension = FileTypes.getBestMatchingExtension(getFileChooser().getFileFilter().getDescription());
-        if(extension != null) file = new File(file.getPath()+"."+extension);
+      String name = file.getName();
+      if(name != null && (name.lastIndexOf('.') == -1 || name.endsWith("."))) { // in case where user thinks that the extension comes from the file filter we get the first match from the filter.
+        name = FileTypes.getBestMatchingExtension(getFileChooser().getFileFilter().getDescription());
+        if(name != null && !file.getName().endsWith(".")) { name = "." + name; }
+        if(name != null) file = new File(file.getPath()+name);
+      }
+      if(name == null) {
+        JOptionPane.showMessageDialog(explorer.getFrame(), ResourceUtilities
+            .getString("mda.ui.sorryMsg.ILLEGAL_FILE_NAME_OR_TYPE"),
+            ResourceUtilities.getString("mda.ui.errorMsg.ERROR"),
+            JOptionPane.ERROR_MESSAGE);
+        return false;
       }
       document.load(file);
       explorer.setDocument(document);
     } catch (PersistenceException e) {
-      log.debug("File Not Found", e);
+      JOptionPane.showMessageDialog(getExplorer().getFrame(), MessageFormat.format(ResourceUtilities
+          .getString("mda.ui.errorMsg.ILLEGAL_FILENAME_ERROR"), file.getName()),
+          ResourceUtilities.getString("mda.ui.errorMsg.ERROR"),
+          JOptionPane.ERROR_MESSAGE);
+      return false;
+    } catch (NullPointerException e) {
+      JOptionPane.showMessageDialog(getExplorer().getFrame(), MessageFormat.format(ResourceUtilities
+          .getString("mda.ui.errorMsg.ILLEGAL_FILENAME_ERROR"), file.getName()),
+          ResourceUtilities.getString("mda.ui.errorMsg.ERROR"),
+          JOptionPane.ERROR_MESSAGE);
       return false;
     }
     return true;
