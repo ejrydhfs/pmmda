@@ -316,7 +316,7 @@ public class MdaTransformer {
    */
   protected void extractProperty(MetaProperty source, MClassifier context) {
     assert (source != null) && (context != null);
-    if (source.isAggregation()) {
+    if (source.isAggregation() || source.isComposition()) {
       MetaElement mElement = source.getContext().getContext();
       while (!(mElement instanceof MetaPackage)) {
         mElement = mElement.getContext();
@@ -329,6 +329,12 @@ public class MdaTransformer {
         updatePropertyFlags(source, association);
         extractTags(source, association);
         extractStereotypeAndVisibility(source, association);
+        if(source.isAggregation()) {
+          association.getConnection(0).setAggregation(MAggregationKind.AGGREGATE);
+        }
+        if(source.isComposition()) {
+          association.getConnection(0).setAggregation(MAggregationKind.COMPOSITE);
+        }
       } else {
         association = createAssociation(source, mPackage);
       }
@@ -362,7 +368,7 @@ public class MdaTransformer {
   protected void extractIndexedProperty(MetaIndexedProperty source,
       MClassifier context) {
     assert (source != null) && (context != null);
-    if (source.isAggregation()) {
+    if (source.isAggregation() || source.isComposition()) {
       MetaElement mElement = source.getContext().getContext();
       while (!(mElement instanceof MetaPackage)) {
         mElement = mElement.getContext();
@@ -878,7 +884,12 @@ public class MdaTransformer {
     myClass.setNavigable(false);
     myClass.setVisibility(MVisibilityKind.PUBLIC);
     myClass.setOrdering(MOrderingKind.UNORDERED);
-    myClass.setAggregation(MAggregationKind.AGGREGATE);
+    if(source.isAggregation()) {
+      myClass.setAggregation(MAggregationKind.AGGREGATE);
+    }
+    if(source.isComposition()) {
+      myClass.setAggregation(MAggregationKind.COMPOSITE);
+    }
     myClass.setChangeability(MChangeableKind.CHANGEABLE);
     myClass.setTargetScope(MScopeKind.INSTANCE);
     myClass.setMultiplicity(MMultiplicity.M1_1);

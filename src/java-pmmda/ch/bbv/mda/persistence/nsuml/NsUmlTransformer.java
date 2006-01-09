@@ -19,6 +19,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import ru.novosoft.uml.foundation.core.*;
+import ru.novosoft.uml.foundation.data_types.MAggregationKind;
 import ru.novosoft.uml.foundation.data_types.MExpression;
 import ru.novosoft.uml.foundation.data_types.MMultiplicity;
 import ru.novosoft.uml.foundation.data_types.MVisibilityKind;
@@ -459,7 +460,12 @@ public class NsUmlTransformer {
       if (owned != null) {
         property.setTypeName(owned.qualifiedName());
       }
-      property.setAggregation(true);
+      if(e1.getAggregation() == MAggregationKind.AGGREGATE) {
+        property.setAggregation(true);
+      }
+      if(e1.getAggregation() == MAggregationKind.COMPOSITE) {
+        property.setComposition(true);
+      }
       extractStereotypeAndTags(association, property);
       if (multiplicity != null) {
         property.setMultiplicity(multiplicity);
