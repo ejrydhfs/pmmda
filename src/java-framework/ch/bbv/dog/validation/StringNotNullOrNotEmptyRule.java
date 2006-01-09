@@ -28,7 +28,7 @@ public class StringNotNullOrNotEmptyRule extends ValidationRuleImpl implements V
   private static ResourceBundle resources;
 
   static {
-    resources = ResourceBundle.getBundle("ch.bbv.mda.validation.RulesMessages");
+    resources = ResourceBundle.getBundle("ch.bbv.dog.validation.RulesMessages");
 
   }
 

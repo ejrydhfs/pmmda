@@ -10,6 +10,7 @@ package ch.bbv.dog.validation;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.Set;
 
 import ch.bbv.utilities.ReflectUtilities;
@@ -20,6 +21,22 @@ import ch.bbv.utilities.ReflectUtilities;
  * @version $Revision$
  */
 public class UniqueRule extends ValidationRuleImpl implements ValidationRule {
+  /**
+   * Key for validation result message.
+   */
+  private static final String IS_NOT_UNIQUE = "ch.bbv.dog.is-not-unique";
+ 
+
+  /**
+   * The resource bundle containing the messages for the validation messages.
+   */
+  private static ResourceBundle resources;
+
+  static {
+    resources = ResourceBundle.getBundle("ch.bbv.dog.validation.RulesMessages");
+
+  }
+
   /**
    * Indicates if null values should be considered for uniqueness check. private
    */
@@ -60,16 +77,16 @@ public class UniqueRule extends ValidationRuleImpl implements ValidationRule {
       List<ValidationRuleResult> results) {
     Collection objects = (Collection) ReflectUtilities.getProperty(bean,
         property);
-    return validate(objects, results);
+    return validate(objects, results, bean);
   }
 
   public boolean execute(Object bean, String property, Object oldValue,
       Object newValue, List<ValidationRuleResult> results) {
-    return validate((Collection) newValue, results);
+    return validate((Collection) newValue, results, bean);
   }
 
   private boolean validate(Collection objects,
-      List<ValidationRuleResult> results) {
+      List<ValidationRuleResult> results, Object bean) {
     Set<Object> values = new HashSet<Object>();
     for (Object object : objects) {
       Object value = ReflectUtilities.getProperty(object, indexedProperty);
@@ -77,6 +94,8 @@ public class UniqueRule extends ValidationRuleImpl implements ValidationRule {
         continue;
       }
       if (values.contains(value)) {
+        addMessage(results, resources, IS_NOT_UNIQUE, getSeverity(), bean, value.toString(),
+            null, null);
         return false;
       }
       values.add(value);
