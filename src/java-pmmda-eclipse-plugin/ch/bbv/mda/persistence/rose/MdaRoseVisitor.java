@@ -680,7 +680,8 @@ public class MdaRoseVisitor implements RoseVisitor
         ref2.setEOpposite(ref1);
         setEReferenceIsContainment(ref1, role1, role2);
         roseUtil.getRefTable().put(ref1, ref2Quidu);
-        associationRoseNodes.put(ref1, role1.getParent().getParent());
+        RoseNode[] roles = new RoseNode[] { role1, role2 };
+        associationRoseNodes.put(ref1, roles);
         TableObject obj = (TableObject)roseUtil.getQuidTable().get(ref1Quidu);
         if (obj != null)
         {
@@ -699,7 +700,8 @@ public class MdaRoseVisitor implements RoseVisitor
         ref1.setEOpposite(ref2);
         setEReferenceIsContainment(ref2, role2, role1);
         roseUtil.getRefTable().put(ref2, ref1Quidu);
-        associationRoseNodes.put(ref2, role1.getParent().getParent());
+        Object[] roles = new Object[] { role2, role1 };
+        associationRoseNodes.put(ref2, roles);
         TableObject obj = (TableObject)roseUtil.getQuidTable().get(ref2Quidu);
         if (obj != null)
         {
@@ -1917,8 +1919,8 @@ public class MdaRoseVisitor implements RoseVisitor
             eReference);
 
           // MDA mapping - get Class of this reference (side where this navigable role points to)
-          RoseNode association = (RoseNode)associationRoseNodes.get(eReference);
-          createMetaProperty(eReference, struct, association);
+          RoseNode[] roles = (RoseNode[])associationRoseNodes.get(eReference);
+          createMetaProperty(eReference, (EClass)struct, roles);
         }
         else
         {
@@ -2327,14 +2329,14 @@ public class MdaRoseVisitor implements RoseVisitor
     return qualifiedType;
   }
 
-  private MetaProperty createMetaProperty(EReference eReference, Object struct, RoseNode association) {
+  private MetaProperty createMetaProperty(EReference eReference, EClass struct, RoseNode[] roles) {
     // MDA mapping - get Class of this reference (side where this navigable role points to)
     String myClassName = (String)roseUtil.getTypeTable().get(eReference);
     TableObject myClass = null;
     if(myClassName != null){
       myClass = (TableObject)roseUtil.getNameTable().get(myClassName);
     }
-    MetaClass mClass = (MetaClass)elements.get((EClass)struct);
+    MetaClass mClass = (MetaClass)elements.get(struct);
     //System.out.println("Relation: "+eReference.getName()+", from "+mClass.getName()+", to "+myClass.getName());
     //System.out.println("          "+eReference.getLowerBound()+", "+eReference.getUpperBound());
     if(mClass != null && myClass != null){
@@ -2348,8 +2350,8 @@ public class MdaRoseVisitor implements RoseVisitor
         mClass.addIndexedProperty((MetaIndexedProperty) metaIndexedProperty);
       }
       
-      property.setAggregation(true);
-      setCommonElementAspects(property, association);
+      determineAggregationType(property, roles);
+      setCommonElementAspects(property, ((RoseNode)roles[0]).getParent().getParent());
       property.setContext(mClass);
       property.setName(eReference.getName());
       property.setTypeName(trimType(myClass.getName()));
@@ -2361,6 +2363,29 @@ public class MdaRoseVisitor implements RoseVisitor
       return property;
     }
     return null;
+  }
+  
+  private MetaProperty determineAggregationType(MetaProperty metaProperty, RoseNode[] roles) {
+    RoseNode navigableSide = (RoseNode)roles[0];
+    RoseNode aggregationSide = (RoseNode)roles[1];
+    // set aggregation type (by value -> containment, by reference aggregate)
+    RoseNode containment = navigableSide.findNodeWithKey(RoseStrings.CONTAINMENT);
+    if(containment != null) {
+      if(Util.getName(containment.getValue()).equals(RoseStrings.BY_VALUE)) {
+        metaProperty.setAggregation(true);
+        metaProperty.setComposition(true);
+      } else if (Util.getName(containment.getValue()).equals("by reference")) {
+        metaProperty.setAggregation(false);
+        metaProperty.setComposition(true);
+      } else {
+        metaProperty.setAggregation(true);
+        metaProperty.setComposition(false);
+      }
+    } else {
+      metaProperty.setAggregation(true);
+      metaProperty.setComposition(false);
+    }
+    return metaProperty;
   }
   
   private MetaClass createMetaClass(RoseNode roseNode, EModelElement eElement, String objectName, Object parent, String stereoTypeValue){

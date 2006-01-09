@@ -90,34 +90,18 @@ public class RoseLocatorVisitor implements RoseVisitor {
   }
   
   protected void visitClassCategory(RoseNode roseNode, String roseNodeValue, String objectKey, String objectName) {
-    String qualifiedName = this.getQualifiedName(roseNode);
-    if(qualifiedName.equals(searchCriteria)) {
-      found = true;
-      result = roseNode;
-      return;
-    }
-    String c = compareQualifiedNames(searchCriteria, qualifiedName);
-    if(c.length() > closestQualifiedName.length() && c.equals(qualifiedName)) {
-      closestQualifiedName = c;
-      closestMatch = roseNode;
-    }
+    doMatch(roseNode);
   }
 
   protected void visitClass(RoseNode roseNode, String roseNodeValue, String objectKey, String objectName) {
-    String qualifiedName = this.getQualifiedName(roseNode);
-    if(qualifiedName.equals(searchCriteria)) {
-      found = true;
-      result = roseNode;
-      return;
-    }
-    String c = compareQualifiedNames(searchCriteria, qualifiedName);
-    if(c.length() > closestQualifiedName.length() && c.equals(qualifiedName)) {
-      closestQualifiedName = c;
-      closestMatch = roseNode;
-    }
+    doMatch(roseNode);
   }
 
   protected void visitClassattribute(RoseNode roseNode, String roseNodeValue, String objectKey, String objectName) {
+    doMatch(roseNode);
+  }
+
+  protected void doMatch(RoseNode roseNode) {
     String qualifiedName = this.getQualifiedName(roseNode);
     if(qualifiedName.equals(searchCriteria)) {
       found = true;
@@ -130,7 +114,7 @@ public class RoseLocatorVisitor implements RoseVisitor {
       closestMatch = roseNode;
     }
   }
-
+  
   protected String compareQualifiedNames(String searchCriteria, String currentName) {
     assert(searchCriteria != null && currentName != null);
     if(searchCriteria.equals(currentName)) return searchCriteria;

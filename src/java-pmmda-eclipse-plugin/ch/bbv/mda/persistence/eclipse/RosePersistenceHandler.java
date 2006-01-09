@@ -76,10 +76,6 @@ public class RosePersistenceHandler implements PersistenceHandler {
         int idx = name.lastIndexOf(".");
         if(idx > 0) name = name.substring(0, idx);
         model.setName(name);
-      } catch (FileNotFoundException e){
-        log.warn("RosePersistenceHandler#updateModel: " + e.getLocalizedMessage()+ " - " + file);
-        JOptionPane.showMessageDialog(null, e.getLocalizedMessage(), ResourceUtilities
-            .getString("mda.ui.sorryMsg.SORRY"), JOptionPane.ERROR_MESSAGE);
       } catch (Exception e){
         throw new PersistenceException(e);
       }
@@ -101,10 +97,6 @@ public class RosePersistenceHandler implements PersistenceHandler {
       RoseWriter roseWriter = new RoseWriter(file.toString(), roseTransformer.getRoseUtil().getVersionTree(), roseTransformer.getRoseUtil().getModelTree());
       roseWriter.write();
       model.setName(unitTree.getName());
-    } catch (FileNotFoundException e){
-      log.warn("RosePersistenceHandler#updateModel: " + e.getLocalizedMessage()+ " - " + file);
-      JOptionPane.showMessageDialog(null, e.getLocalizedMessage(), ResourceUtilities
-          .getString("mda.ui.sorryMsg.SORRY"), JOptionPane.ERROR_MESSAGE);
     } catch (Exception e){
       throw new PersistenceException(e);
     }

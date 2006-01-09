@@ -489,6 +489,31 @@ public class RoseMdaVisitor implements RoseVisitor {
     updateGeneralRoseElements(association, metaProperty, defaultMetaElement);
     setOrAddAttribute(aggregateSide, RoseStrings.EXPORTCONTROL, toRoseVisibility(metaProperty.getVisibility()));
 
+    // update containment type
+    RoseNode containment = navigableSide.findNodeWithKey(RoseStrings.CONTAINMENT);
+    RoseNode is_aggregate = aggregateSide.findNodeWithKey(RoseStrings.IS_AGGREGATE);
+    if(!metaProperty.isAggregation() && !metaProperty.isComposition() && containment != null) {
+      navigableSide.deleteNode(containment);
+    }
+    if(is_aggregate == null && (metaProperty.isAggregation() || metaProperty.isComposition())) {
+      aggregateSide.addNode(new RoseNode(RoseStrings.IS_AGGREGATE, "TRUE", RoseNode.STRING));
+    }
+    if(metaProperty.isComposition()) {
+      if( containment == null) {
+        navigableSide.addNode(new RoseNode(RoseStrings.CONTAINMENT, formatAttributeValue(RoseStrings.BY_VALUE), RoseNode.STRING));
+      } else {
+        containment.setValue(formatAttributeValue(RoseStrings.BY_VALUE));
+      }
+    } else if(metaProperty.isAggregation()) {
+      if( containment == null) {
+        navigableSide.addNode(new RoseNode(RoseStrings.CONTAINMENT, formatAttributeValue("By Reference"), RoseNode.STRING));
+      } else {
+        containment.setValue(formatAttributeValue("By Reference"));
+      }
+    } else if (containment != null) {
+      navigableSide.deleteNode(containment);
+    }
+    
     // set type of property
     String quid = (String)quidTable.get(metaProperty.getTypeName());
     RoseNode type = navigableSide.findNodeWithKey(RoseStrings.SUPPLIER);
@@ -963,7 +988,7 @@ public class RoseMdaVisitor implements RoseVisitor {
     
     role1.addNode(new RoseNode(RoseStrings.QUID, formatAttributeValue(getNewQuid()), RoseNode.STRING));
     role1.addNode(new RoseNode(RoseStrings.SUPPLIER, formatAttributeValue(((MetaClass)property.getContext()).getQualifiedName()), RoseNode.STRING));
-    role1.addNode(new RoseNode(RoseStrings.IS_AGGREGATE, "TRUE", RoseNode.STRING));
+
     String quid = (String)quidTable.get(((MetaClass)property.getContext()).getQualifiedName());
     if(quid != null) role1.addNode(new RoseNode(RoseStrings.QUIDU, quid, RoseNode.STRING));
     role1.addNode(new RoseNode(RoseStrings.EXPORTCONTROL, formatAttributeValue(toRoseVisibility(property.getVisibility())), RoseNode.STRING));
@@ -978,6 +1003,15 @@ public class RoseMdaVisitor implements RoseVisitor {
     if(quid != null) role2.addNode(new RoseNode(RoseStrings.QUIDU, quid, RoseNode.STRING));
     role2.addNode(new RoseNode(RoseStrings.IS_NAVIGABLE, "TRUE", RoseNode.STRING));
     roles.addNode(role2);
+    
+    if(property.isAggregation() || property.isComposition()) {
+      if(property.isComposition()) {
+        role2.addNode(new RoseNode(RoseStrings.CONTAINMENT, formatAttributeValue(RoseStrings.BY_VALUE), RoseNode.STRING));
+      } else {
+        role2.addNode(new RoseNode(RoseStrings.CONTAINMENT, formatAttributeValue("By Reference"), RoseNode.STRING));
+      }
+      role1.addNode(new RoseNode(RoseStrings.IS_AGGREGATE, "TRUE", RoseNode.STRING));
+    }
     
     return roseAssociation;
   }
