@@ -3,7 +3,6 @@ package ch.bbv.notification.server.registration;
 import java.rmi.RemoteException;
 
 import javax.ejb.EJBException;
-import javax.ejb.SessionBean;
 import javax.ejb.SessionContext;
 
 import ch.bbv.notification.communication.ClientProfile;
@@ -13,7 +12,7 @@ import ch.bbv.notification.server.SubjectObserverPool;
  * This SessionBean is the central entering point for register clients
  * @author Bruno Persi
  */
-public class RegisterHandlerBean implements SessionBean, RegisterHandlerBusiness{
+public class RegisterHandlerBean implements RegisterHandlerBusiness{
 
 	public void ejbActivate() throws EJBException, RemoteException {}
 	public void ejbPassivate() throws EJBException, RemoteException {}
