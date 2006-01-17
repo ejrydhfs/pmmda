@@ -13,6 +13,8 @@ import java.util.prefs.Preferences;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import org.apache.commons.cli.*;
 import org.apache.commons.logging.Log;
@@ -27,6 +29,7 @@ import ch.bbv.application.VersionId;
 import ch.bbv.cmdlineparser.CmdLineBuilder;
 import ch.bbv.dog.DataObjectManager;
 import ch.bbv.explorer.Explorer;
+import ch.bbv.explorer.ExplorerDocument.State;
 import ch.bbv.explorer.ExplorerMenuBar;
 import ch.bbv.explorer.ExplorerUtilities;
 import ch.bbv.explorer.UiNodeTypeFactory;
@@ -203,6 +206,7 @@ public class MdaExplorer extends Explorer {
     createGenerateMenu();
     createToolsMenu();
     processCommandLine();
+    getFrame().addWindowListener(new MyWindowAdapter(this));
   }
 
   /**
@@ -352,5 +356,21 @@ public class MdaExplorer extends Explorer {
     librairies.add(new Library("xstream", new VersionId(1, 1, 2),
         "BSD License", "http://xtream.codehaus.org"));
     return librairies;
+  }
+  
+  private class MyWindowAdapter extends WindowAdapter {
+    
+    private Explorer explorer = null;
+    
+    public MyWindowAdapter(Explorer explorer) {
+      this.explorer = explorer;
+    }
+    
+    public void windowClosing(WindowEvent e) {
+      super.windowClosing(e);
+      ExplorerGlobalAction action = explorer.getMenuBar().getStandardAction(Names.EXIT);
+      action.execute();
+    }
+    
   }
 }
