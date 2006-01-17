@@ -7,7 +7,6 @@
 package ch.bbv.mda.validation;
 
 import java.util.List;
-import java.util.ResourceBundle;
 
 import ch.bbv.dog.validation.ValidationRule;
 import ch.bbv.dog.validation.ValidationRuleImpl;
