@@ -2,5 +2,33 @@
 The package contains the set of default cartridge provided with the application.
 <h2>Introduction</h2>
 <p>To Be written.</p>
+<h2>Cartridge XML Description</h2>
+<p>The capabilities of a cartridge are described in a XML file and read in the
+framework when the cartridge is loaded. The following information can be
+configured.</p>
+<dl>
+  <dt>Stereotype</dt>
+  <dd>Each stereotype can be described with the name, the context where it is
+  used and a description.</dd>
+  <dt>Tag</dt>
+  <dd>Each tag of the cartridge can be described with the name, the type and
+  default value of the tag, the context where it is used, and a description.</dd>
+  <dt>Obsolete Tag</dt>
+  <dd>Each tag once defined in the cartridge and no more used can be described
+  to allow the framework to remove them from older models. The obsolete tag can
+  be described with the name, the type and default value of the tag, the context
+  where it is used.</dd>
+  <dt>Property</dt>
+  <dd>Each property of the cartridge can be described with its name and default
+  value. This mechanism provides a default value for properites not defined in
+  the application property file read at startup time.</dd>
+  <dt>Datatype</dt>
+  <dd>Each datatype defined in a model can be mapped to an implementation type
+  used in the cartridge. The datatype has the name used in the model and the
+  mapping type. A concrete class allows the definition of an interface and a
+  concrete implementation class.</dd>
+</dl>
+<p>The context of an element can be package, class, property or
+indexed-property.</p>
 @since Java 2 Platform, Standard Edition, version 1.5
 </body>
