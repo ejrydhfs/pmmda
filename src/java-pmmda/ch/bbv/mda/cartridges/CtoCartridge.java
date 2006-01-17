@@ -180,6 +180,9 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
     }
     File javaRoot = getRoot(ROOT_JAVA_KEY, BoConstants.ROOT_COMMON_FOLDER_KEY);
     File idlRoot = new File(getContext().getProperty(ROOT_IDL_KEY));
+    if (!idlRoot.exists()) {
+      idlRoot.mkdirs();
+    }
     try {
       if (BoConstants.DATA_OBJECT_STEREOTYPE.equals(clazz.getStereotype())) {
         MetaPackage metaPackage = (MetaPackage) clazz.getContext();

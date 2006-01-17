@@ -82,10 +82,19 @@ public class EjbCartridge extends JavaCartridge implements Cartridge {
       if (getContext().getProperty(GENERATE_CORBA_KEY).equals("true")) {
         File serverRoot = getRoot(ROOT_SERVER_CORBA_KEY,
             BoConstants.ROOT_SERVER_FOLDER_KEY);
+        if (!serverRoot.exists()) {
+          serverRoot.mkdirs();
+        }
         File clientRoot = getRoot(ROOT_CLIENT_CORBA_KEY,
             BoConstants.ROOT_CLIENT_FOLDER_KEY);
+        if (!clientRoot.exists()) {
+          clientRoot.mkdirs();
+        }
         File IdlRoot = new File(getContext().getProperty(
             CtoConstants.ROOT_IDL_KEY));
+        if (!IdlRoot.exists()) {
+          IdlRoot.mkdirs();
+        }
         processTemplate(IdlRoot, packages
             .valueOfTag(CtoConstants.CTO_PACKAGE_IDL), packages
             .valueOfTag(SERVER_NAME)
@@ -101,10 +110,19 @@ public class EjbCartridge extends JavaCartridge implements Cartridge {
       if (getContext().getProperty(GENERATE_BEAN_KEY).equals("true")) {
         File serverRoot = getRoot(ROOT_SERVER_J2EE_KEY,
             BoConstants.ROOT_SERVER_FOLDER_KEY);
+        if (!serverRoot.exists()) {
+          serverRoot.mkdirs();
+        }
         File clientRoot = getRoot(ROOT_CLIENT_J2EE_KEY,
             BoConstants.ROOT_CLIENT_FOLDER_KEY);
+        if (!clientRoot.exists()) {
+          clientRoot.mkdirs();
+        }
         File commonRoot = getRoot(ROOT_COMMON_J2EE_KEY,
             BoConstants.ROOT_COMMON_FOLDER_KEY);
+        if (!commonRoot.exists()) {
+          commonRoot.mkdirs();
+        }
         processJavaTemplate(commonRoot, packages.getAttribute(SERVER_PACKAGE),
             packages.valueOfTag(SERVER_NAME) + "Session", retrieveTemplate(
                 "server-session-if", null), context);

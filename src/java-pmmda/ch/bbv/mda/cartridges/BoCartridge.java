@@ -218,6 +218,9 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
       rootDirectory = getContext().getProperty(ROOT_COMMON_FOLDER_KEY);
     }
     root = new File(rootDirectory);
+    if (!root.exists()) {
+      root.mkdirs();
+    }
     hasDataObjects = false;
     hasCodes = false;
     if (!packages.booleanValueOfTag(GENERATE)) {

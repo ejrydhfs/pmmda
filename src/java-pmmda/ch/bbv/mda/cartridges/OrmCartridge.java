@@ -117,6 +117,9 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
   public void processModel(MetaModel model) {
     assert model != null;
     root = new File(getContext().getProperty(SOURCE_ROOT_FOLDER_KEY));
+    if (!root.exists()) {
+      root.mkdirs();
+    }
     String target = getContext().getProperty(DATABASE_KEY);
     orm = getContext().getProperty(ORM_KEY);
     try {

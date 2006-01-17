@@ -108,6 +108,9 @@ public class OexCartridge extends JavaCartridge implements Cartridge {
     assert packages != null;
     File sourceRoot = getRoot(ROOT_RICH_CLIENT_KEY,
         BoConstants.ROOT_CLIENT_FOLDER_KEY);
+    if (!sourceRoot.exists()) {
+      sourceRoot.mkdirs();
+    }
     if (packages.booleanValueOfTag(BoConstants.GENERATE)
         && hasLightweightClasses(packages)) {
       VelocityContext context = createContext(packages);
