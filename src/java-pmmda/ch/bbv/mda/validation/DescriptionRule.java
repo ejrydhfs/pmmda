@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann
+/* copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -45,8 +45,9 @@ public class DescriptionRule extends ValidationRuleImpl implements
       MetaPackage element = (MetaPackage) bean;
       if (!element.isSystem() && (element.getClasses().size() > 0)
           && element.getDescription() == null) {
-        addMessage(results, RulesFactory.resources, PACKAGE_DESCRIPTION_WARNING,
-            getSeverity(), bean, property, null, null);
+        addMessage(results, RulesFactory.resources,
+            PACKAGE_DESCRIPTION_WARNING, getSeverity(), bean, property, null,
+            null);
         success = false;
 
       }
@@ -61,8 +62,9 @@ public class DescriptionRule extends ValidationRuleImpl implements
       MetaProperty element = (MetaProperty) bean;
       MetaClass clazz = (MetaClass) element.getContext();
       if (!clazz.isSystem() && element.getDescription() == null) {
-        addMessage(results, RulesFactory.resources, PROPERTY_DESCRIPTION_WARNING,
-            getSeverity(), bean, property, null, null);
+        addMessage(results, RulesFactory.resources,
+            PROPERTY_DESCRIPTION_WARNING, getSeverity(), bean, property, null,
+            null);
         success = false;
       }
     }
