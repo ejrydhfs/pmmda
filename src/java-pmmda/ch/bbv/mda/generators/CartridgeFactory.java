@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann
+/* copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -26,6 +26,8 @@ import ch.bbv.mda.*;
  * The cartridge factory handles all registered cartridges and provides support
  * methods to execute the cartridge on a subgraph of a meta model. All
  * processing of models should be performed through the services of the factory.
+ * Validation rules independant of a specific catridge are defined and
+ * registered in the factory.
  * @author MarcelBaumann
  * @version $Revision$
  */
@@ -181,8 +183,10 @@ public class CartridgeFactory extends ComponentImpl implements Component {
    * Returns the cartridge with the given abbreviation.
    * @param abbreviation abbreviation of the requested cartridge.
    * @return the requested cartridge if found otherwise null.
+   * @pre abbreviation != null
    */
   public Cartridge getCartridge(String abbreviation) {
+    assert abbreviation != null;
     return cartridges.get(abbreviation);
   }
 
@@ -192,6 +196,7 @@ public class CartridgeFactory extends ComponentImpl implements Component {
    * read elements will contains all mandatory tagged values either with the
    * default value or the one defined by the user. Obsolete tags are removed.
    * @param cartridge cartridge to register.
+   * @pre cartridge != null
    */
   public void register(Cartridge cartridge) {
     assert cartridge != null;
