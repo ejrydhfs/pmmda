@@ -71,6 +71,10 @@ public abstract class SimpleDialog extends JDialog implements ActionListener {
     panel.add(okButton);
     getContentPane().add(panel, BorderLayout.SOUTH);
     ExplorerUtilities.centerOnParent(this);
+    KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+    panel.registerKeyboardAction(new EscListener(), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+    panel.registerKeyboardAction(new EnterListener(), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
   }
 
   /**
@@ -114,7 +118,7 @@ public abstract class SimpleDialog extends JDialog implements ActionListener {
    * @param enabled new status of the button.
    */
   public void setApplyButtonEnabled(boolean enabled) {
-    okButton.setEnabled(enabled);
+    applyButton.setEnabled(enabled);
   }
 
   /**
@@ -151,6 +155,26 @@ public abstract class SimpleDialog extends JDialog implements ActionListener {
      */
     public void windowClosing(WindowEvent event) {
       processCancel();
+      setVisible(false);
+    }
+  }
+  
+  /**
+   * Listener for escape keys -> cancel action
+   */
+  private class EscListener implements ActionListener {
+    public void actionPerformed(ActionEvent actionEvent) {
+      processCancel();
+      setVisible(false);
+    }
+  }
+
+  /**
+   * Listener for enter key -> ok action 
+   */
+  private class EnterListener implements ActionListener {
+    public void actionPerformed(ActionEvent actionEvent) {
+      processOk();
       setVisible(false);
     }
   }
