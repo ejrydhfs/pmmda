@@ -140,4 +140,14 @@ public final class OrmConstants {
    * Database identifier for a database product.
    */
   public static final String DB_TORQUE = "TORQUE";
+
+  /**
+   * Database identifier for a database product.
+   */
+  public static final String DB_ORACLE = "ORACLE";
+
+  /**
+   * Database identifier for a database product.
+   */
+  public static final String DB_MS_SQL_SERVER = "MSSQLSERVER";
 }
