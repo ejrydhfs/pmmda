@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann
+/* copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -41,6 +41,7 @@ public class NotNullRule extends ValidationRuleImpl implements ValidationRule {
     super(immediate, severity);
   }
 
+  @Override
   public boolean execute(Object bean, String property,
       List<ValidationRuleResult> results) {
     Object value = ReflectUtilities.getProperty(bean, property);
@@ -52,6 +53,7 @@ public class NotNullRule extends ValidationRuleImpl implements ValidationRule {
     return true;
   }
 
+  @Override
   public boolean execute(Object bean, String property, Object oldValue,
       Object newValue, List<ValidationRuleResult> results) {
     Object value = ReflectUtilities.getProperty(bean, property);

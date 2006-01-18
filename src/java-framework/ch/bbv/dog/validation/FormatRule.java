@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann
+/* copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -31,10 +31,10 @@ public class FormatRule extends ValidationRuleImpl implements ValidationRule {
   private ResourceBundle resources;
 
   /**
-   * Holds the key for the key for the message from the ResourceBundle 
+   * Holds the key for the key for the message from the ResourceBundle
    */
   private String resourceKey;
-  
+
   /**
    * The pattern to validate.
    */
@@ -52,10 +52,12 @@ public class FormatRule extends ValidationRuleImpl implements ValidationRule {
    * @param format format to validate.
    */
   public FormatRule(boolean immediate, int severity, String format) {
-    this(immediate, severity, format, ResourceBundle.getBundle("ch.bbv.dog.validation.RulesMessages"), NO_FORMAT_COMPLIANCE);
+    this(immediate, severity, format, ResourceBundle
+        .getBundle("ch.bbv.dog.validation.RulesMessages"), NO_FORMAT_COMPLIANCE);
   }
-  
-  public FormatRule(boolean immediate, int severity, String format, ResourceBundle resourceBundle, String resourceKey) {
+
+  public FormatRule(boolean immediate, int severity, String format,
+      ResourceBundle resourceBundle, String resourceKey) {
     super(immediate, severity);
     pattern = Pattern.compile(format);
     matcher = pattern.matcher("");
@@ -63,22 +65,24 @@ public class FormatRule extends ValidationRuleImpl implements ValidationRule {
     this.resourceKey = resourceKey;
   }
 
+  @Override
   public boolean execute(Object bean, String property,
       List<ValidationRuleResult> results) {
     Object value = ReflectUtilities.getProperty(bean, property);
-    if(!validate(value, results)) {
-      addMessage(results, resources, resourceKey, getSeverity(), bean, property,
-          null, null);
+    if (!validate(value, results)) {
+      addMessage(results, resources, resourceKey, getSeverity(), bean,
+          property, null, null);
       return false;
     }
     return true;
   }
 
+  @Override
   public boolean execute(Object bean, String property, Object oldValue,
       Object newValue, List<ValidationRuleResult> results) {
-    if(!validate(newValue, results)) {
-      addMessage(results, resources, resourceKey, getSeverity(), bean, property,
-          oldValue, newValue);
+    if (!validate(newValue, results)) {
+      addMessage(results, resources, resourceKey, getSeverity(), bean,
+          property, oldValue, newValue);
       return false;
     }
     return true;

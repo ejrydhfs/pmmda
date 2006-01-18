@@ -1,5 +1,5 @@
 /* 
- * copyright 2000-2005 Marcel Baumann
+ * copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -7,11 +7,7 @@
 
 package ch.bbv.dog.validation;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.Set;
+import java.util.*;
 
 import ch.bbv.utilities.ReflectUtilities;
 
@@ -25,7 +21,6 @@ public class UniqueRule extends ValidationRuleImpl implements ValidationRule {
    * Key for validation result message.
    */
   private static final String IS_NOT_UNIQUE = "ch.bbv.dog.is-not-unique";
- 
 
   /**
    * The resource bundle containing the messages for the validation messages.
@@ -73,6 +68,7 @@ public class UniqueRule extends ValidationRuleImpl implements ValidationRule {
     this.considerNull = considerNull;
   }
 
+  @Override
   public boolean execute(Object bean, String property,
       List<ValidationRuleResult> results) {
     Collection objects = (Collection) ReflectUtilities.getProperty(bean,
@@ -80,6 +76,7 @@ public class UniqueRule extends ValidationRuleImpl implements ValidationRule {
     return validate(objects, results, bean);
   }
 
+  @Override
   public boolean execute(Object bean, String property, Object oldValue,
       Object newValue, List<ValidationRuleResult> results) {
     return validate((Collection) newValue, results, bean);
@@ -94,8 +91,8 @@ public class UniqueRule extends ValidationRuleImpl implements ValidationRule {
         continue;
       }
       if (values.contains(value)) {
-        addMessage(results, resources, IS_NOT_UNIQUE, getSeverity(), bean, value.toString(),
-            null, null);
+        addMessage(results, resources, IS_NOT_UNIQUE, getSeverity(), bean,
+            value.toString(), null, null);
         return false;
       }
       values.add(value);

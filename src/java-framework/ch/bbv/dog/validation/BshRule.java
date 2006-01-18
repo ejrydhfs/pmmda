@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann
+/* copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -44,10 +44,12 @@ public class BshRule extends ValidationRuleImpl implements ValidationRule {
     interpreter = new Interpreter();
   }
 
+  @Override
   public boolean execute(Object bean, String property, List results) {
     return process(bean, property, null, null, results);
   }
 
+  @Override
   public boolean execute(Object bean, String property, Object oldValue,
       Object newValue, List results) {
     return process(bean, property, oldValue, newValue, results);

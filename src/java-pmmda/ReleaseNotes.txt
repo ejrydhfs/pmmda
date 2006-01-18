@@ -15,6 +15,12 @@ TODO
   classname, prefix, loaded, active, dependants
 - Have a self contained jar file running with java -jar pmMDA
 
+Version 0.3.0-RC3 (31 Janvier 2005)
+------------------------------------
+The following new features were added.
+- Moved to MySQL 5.0 and OJB 1.0.4.
+- The Velocity templates were reworked to better reflect Sun coding guidelines.
+
 Version 0.3.0-RC2 (25 December 2005)
 ------------------------------------
 The following new features were added.

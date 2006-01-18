@@ -18,7 +18,7 @@
     <property property="title" column="title" />
     <property property="department" column="department" />
     <property property="language" column="language" />
-    <property property="birthday" column="birthday" />
+    <property property="birthday" column="birthday" format="dd.MM.yyyy" />
     <property property="workNumber" column="workNumber" />
     <property property="workFaxNumber" column="workFaxNumber" />
     <property property="workMobileNumber" column="workMobileNumber" />
@@ -26,6 +26,5 @@
     <property property="workEmail" column="workEmail" />
     <property property="homeEmail" column="homeEmail" />
     <property property="workUrl" column="workUrl" />
-    <property property="birthday" column="birthday" format="dd.MM.yyyy" />
   </contact>
 </format>

@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann
+/* copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -16,7 +16,8 @@ import ch.bbv.utilities.ReflectUtilities;
  * @author Adrian Bachofen
  * @version $Revision$
  */
-public class StringNotNullOrNotEmptyRule extends ValidationRuleImpl implements ValidationRule {
+public class StringNotNullOrNotEmptyRule extends ValidationRuleImpl implements
+    ValidationRule {
   /**
    * Key for validation result message.
    */
@@ -41,23 +42,25 @@ public class StringNotNullOrNotEmptyRule extends ValidationRuleImpl implements V
     super(immediate, severity);
   }
 
+  @Override
   public boolean execute(Object bean, String property,
       List<ValidationRuleResult> results) {
-    String value = (String)ReflectUtilities.getProperty(bean, property);
+    String value = (String) ReflectUtilities.getProperty(bean, property);
     if (value == null || value.equals("")) {
-      addMessage(results, resources, IS_STRING_NULL_OR_EMPTY, getSeverity(), bean, property,
-          null, null);
+      addMessage(results, resources, IS_STRING_NULL_OR_EMPTY, getSeverity(),
+          bean, property, null, null);
       return false;
     }
     return true;
   }
 
+  @Override
   public boolean execute(Object bean, String property, Object oldValue,
       Object newValue, List<ValidationRuleResult> results) {
     Object value = ReflectUtilities.getProperty(bean, property);
     if (value == null || value.equals("")) {
-      addMessage(results, resources, IS_STRING_NULL_OR_EMPTY, getSeverity(), bean, property,
-          oldValue, newValue);
+      addMessage(results, resources, IS_STRING_NULL_OR_EMPTY, getSeverity(),
+          bean, property, oldValue, newValue);
       return false;
     }
     return true;

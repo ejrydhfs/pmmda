@@ -1,5 +1,5 @@
 /* 
- * copyright 2000-2005 Marcel Baumann
+ * copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -88,9 +88,9 @@ public class ValidationRuleImpl implements ValidationRule {
     Object[] parameters = { bean.toString(), property, oldValue, newValue };
     try {
       result.setText(resources.getString(key), parameters);
-    }
-    catch(java.util.MissingResourceException e) {
-      result.setText("Sorry, no message yet defined. Message key: "+key+"; parameters {0}, {1}, {2}, {3}", parameters);
+    } catch (java.util.MissingResourceException e) {
+      result.setText("Sorry, no message yet defined. Message key: " + key
+          + "; parameters {0}, {1}, {2}, {3}", parameters);
     }
     results.add(result);
   }

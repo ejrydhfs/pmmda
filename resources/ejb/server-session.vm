@@ -165,7 +165,7 @@ public class ${className} implements javax.ejb.SessionBean {
 #end
 #end
   public void heartbeat() {
-    assert(Locator.getInstance() != null);
+    assert Locator.getInstance() != null;
   }
 
   public void ejbCreate() {

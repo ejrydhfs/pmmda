@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann
+/* copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -45,6 +45,7 @@ public class CollectionRule extends ValidationRuleImpl implements
     this.rule = rule;
   }
 
+  @Override
   public boolean execute(Object bean, String property,
       List<ValidationRuleResult> results) {
     boolean sucess = true;
@@ -56,6 +57,7 @@ public class CollectionRule extends ValidationRuleImpl implements
     return sucess;
   }
 
+  @Override
   public boolean execute(Object bean, String property, Object oldValue,
       Object newValue, List<ValidationRuleResult> results) {
     return execute(bean, property, results);

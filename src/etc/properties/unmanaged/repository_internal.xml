@@ -18,21 +18,16 @@
 <!-- The OJB HIGH/LOW SequenceManagerTable -->
    <class-descriptor
       class="org.apache.ojb.broker.util.sequence.HighLowSequence"
-      table="OJB.HL_SEQ"
+      table="OJB_HL_SEQ"
    >
 
        <object-cache class="org.apache.ojb.broker.cache.ObjectCacheEmptyImpl">
        </object-cache>
 
-       <field-descriptor
-         name="tableName"
-         column="TABLENAME"
-         jdbc-type="VARCHAR"
-         primarykey="true"
-      />
+       <!-- TODO: Rename column TABLENAME to NAME or SEQ_NAME -->
       <field-descriptor
-         name="fieldName"
-         column="FIELDNAME"
+         name="name"
+         column="TABLENAME"
          jdbc-type="VARCHAR"
          primarykey="true"
       />
@@ -58,7 +53,7 @@
 <!-- THIS IS THE OJB NAMED ROOTS TABLE, DO NOT EDIT-->
    <class-descriptor
    	  class="org.apache.ojb.odmg.NamedRootsMap$NamedEntry"
-   	  table="OJB.NRM"
+   	  table="OJB_NRM"
    >
       <field-descriptor
          name="name"
@@ -76,7 +71,7 @@
 <!-- THIS IS THE OJB DLIST IMPLEMENTATION, DO NOT EDIT-->
    <class-descriptor
    	  class="org.apache.ojb.odmg.collections.DListImpl"
-   	  table="OJB.DLIST"
+   	  table="OJB_DLIST"
    >
       <field-descriptor
          name="id"
@@ -100,7 +95,7 @@
 <!-- THIS IS THE OJB DLIST ENTRY IMPLEMENTATION, DO NOT EDIT-->
    <class-descriptor
       class="org.apache.ojb.odmg.collections.DListEntry"
-      table="OJB.DLIST_ENTRIES"
+      table="OJB_DLIST_ENTRIES"
    >
       <field-descriptor
          name="id"
@@ -130,7 +125,7 @@
    <!-- THIS IS THE OJB DBAG IMPLEMENTATION, DO NOT EDIT-->
    <class-descriptor
    	  class="org.apache.ojb.odmg.collections.DBagImpl"
-   	  table="OJB.DLIST"
+   	  table="OJB_DLIST"
    >
       <field-descriptor
          name="id"
@@ -153,7 +148,7 @@
 <!-- THIS IS THE OJB DSET IMPLEMENTATION, DO NOT EDIT-->
    <class-descriptor
    	  class="org.apache.ojb.odmg.collections.DSetImpl"
-   	  table="OJB.DSET"
+   	  table="OJB_DSET"
    >
       <field-descriptor
          name="id"
@@ -176,7 +171,7 @@
 <!-- THIS IS THE OJB DSET ENTRY IMPLEMENTATION, DO NOT EDIT-->
    <class-descriptor
    	  class="org.apache.ojb.odmg.collections.DSetEntry"
-   	  table="OJB.DSET_ENTRIES"
+   	  table="OJB_DSET_ENTRIES"
    >
       <field-descriptor
          name="id"
@@ -206,7 +201,7 @@
 <!-- THIS IS THE OJB DMAP IMPLEMENTATION, DO NOT EDIT-->
    <class-descriptor
    	  class="org.apache.ojb.odmg.collections.DMapImpl"
-   	  table="OJB.DMAP"
+   	  table="OJB_DMAP"
    >
       <field-descriptor
          name="id"
@@ -230,7 +225,7 @@
 <!-- THIS IS THE OJB DMAP ENTRY IMPLEMENTATION, DO NOT EDIT-->
    <class-descriptor
    	  class="org.apache.ojb.odmg.collections.DMapEntry"
-   	  table="OJB.DMAP_ENTRIES"
+   	  table="OJB_DMAP_ENTRIES"
    >
       <field-descriptor
          name="id"
@@ -258,4 +253,6 @@
       />
    </class-descriptor>
 
- <!-- END OF OJB INTERNAL MAPPINGS-->
+
+
+   <!-- END OF OJB INTERNAL MAPPINGS-->

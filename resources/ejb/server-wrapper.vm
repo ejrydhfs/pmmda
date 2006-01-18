@@ -108,12 +108,12 @@ public class ${className} extends ComponentImpl implements DataObjectHandler {
   }  
    
   public void openDatasource(String datasource, boolean readonly) {
-    assert (datasource != null);
+    assert datasource != null;
     // operation ignored because it is under control of the server.
   }
   
   public void closeDatasource(String datasource) {
-    assert (datasource != null);
+    assert datasource != null;
     // operation ignored because it is under control of the server.
   }
   
@@ -124,7 +124,7 @@ public class ${className} extends ComponentImpl implements DataObjectHandler {
 #end
 #end
   public DataObject retrieve(String datasource, Class clazz, Integer id) {
-    assert ((datasource != null) && (clazz != null) && (id != null));
+    assert (datasource != null) && (clazz != null) && (id != null);
     List objects;
     DataObject object = null;
 #if(!$isEmpty)
@@ -159,7 +159,7 @@ public class ${className} extends ComponentImpl implements DataObjectHandler {
   }
   
   public List retrieve(String datasource, Class clazz, String constraints) {
-    assert ((datasource != null) && (clazz != null));
+    assert (datasource != null) && (clazz != null);
     List objects = null;
     
 #if(!$isEmpty)
@@ -197,7 +197,7 @@ public class ${className} extends ComponentImpl implements DataObjectHandler {
 #end
 
   public LightweightObject retrieveLw(String datasource, Class clazz, Integer id) {
-    assert ((datasource != null) && (clazz != null) && (id != null));
+    assert (datasource != null) && (clazz != null) && (id != null);
     List objects;
     LightweightObject object = null;
 
@@ -233,7 +233,7 @@ public class ${className} extends ComponentImpl implements DataObjectHandler {
   }
 
   public List retrieveLw(String datasource, Class clazz, String constraints) {
-    assert ((datasource != null) && (clazz != null));
+    assert (datasource != null) && (clazz != null);
     List objects = null;
     
 #if(!$isEmpty)
@@ -271,7 +271,7 @@ public class ${className} extends ComponentImpl implements DataObjectHandler {
 #end
 #end
   public List store(String datasource, Class clazz, DataObject root) {
-    assert ((datasource != null) && (clazz != null) && (root != null));
+    assert (datasource != null) && (clazz != null) && (root != null);
     List infos = null;
     
 #if(!$isEmpty)
@@ -303,7 +303,7 @@ public class ${className} extends ComponentImpl implements DataObjectHandler {
   }
   
   public void remove(String datasource, Class clazz, DataObject root) {
-    assert ((datasource != null) && (clazz != null) && (root != null));
+    assert (datasource != null) && (clazz != null) && (root != null);
 #if(!$isEmpty)
     try {
 #set($firstCase=true)
@@ -332,7 +332,7 @@ public class ${className} extends ComponentImpl implements DataObjectHandler {
   }
   
   public void remove(String datasource, Class clazz, Integer id) {
-    assert ((datasource != null) && (clazz != null) && (id != null));
+    assert (datasource != null) && (clazz != null) && (id != null);
 #if(!$isEmpty)
     try {
 #set($firstCase=true)
