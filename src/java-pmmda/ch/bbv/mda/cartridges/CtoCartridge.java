@@ -179,6 +179,9 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
       return;
     }
     File javaRoot = getRoot(ROOT_JAVA_KEY, BoConstants.ROOT_COMMON_FOLDER_KEY);
+    if (!javaRoot.exists()) {
+      javaRoot.mkdirs();
+    }
     File idlRoot = new File(getContext().getProperty(ROOT_IDL_KEY));
     if (!idlRoot.exists()) {
       idlRoot.mkdirs();
