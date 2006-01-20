@@ -69,11 +69,13 @@ public class SaveAsAction extends ExplorerFileAction {
       return false;
     }
     File file = getSelectedFile();
-    String extension = SystemUtilities.getFileExtension(file);
-    if(extension == null) { // in case where user thinks that the extension comes from the file filter we get the first match from the filter.
-      extension = FileTypes.getBestMatchingExtension(getFileChooser().getFileFilter().getDescription());
-      if(extension != null) file = new File(file.getPath()+"."+extension);
+    String name = file.getName();
+    if(name != null && (name.lastIndexOf('.') == -1 || name.endsWith("."))) { // in case where user thinks that the extension comes from the file filter we get the first match from the filter.
+      name = FileTypes.getBestMatchingExtension(getFileChooser().getFileFilter().getDescription());
+      if(name != null && !file.getName().endsWith(".")) { name = "." + name; }
+      if(name != null) file = new File(file.getPath()+name);
     }
+    String extension = SystemUtilities.getFileExtension(file);
     if(extension == null) {
       JOptionPane.showMessageDialog(getExplorer().getFrame(), ResourceUtilities
           .getString("mda.ui.errorMsg.ILLEGAL_FILE_NAME_OR_TYPE"),

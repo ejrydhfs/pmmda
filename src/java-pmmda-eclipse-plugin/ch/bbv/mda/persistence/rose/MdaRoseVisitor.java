@@ -1919,8 +1919,12 @@ public class MdaRoseVisitor implements RoseVisitor
             eReference);
 
           // MDA mapping - get Class of this reference (side where this navigable role points to)
-          RoseNode[] roles = (RoseNode[])associationRoseNodes.get(eReference);
-          createMetaProperty(eReference, (EClass)struct, roles);
+          Object[] roles = (Object[])associationRoseNodes.get(eReference);
+          RoseNode[] typedRoles = new RoseNode[roles.length];
+          for(int j=0, l=roles.length; j<l; j++) {
+            typedRoles[j] = (RoseNode)roles[j];
+          }
+          createMetaProperty(eReference, (EClass)struct, typedRoles);
         }
         else
         {

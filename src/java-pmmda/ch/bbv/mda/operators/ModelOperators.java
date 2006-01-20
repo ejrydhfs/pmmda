@@ -39,6 +39,7 @@ public class ModelOperators {
   public static String identifierFirstUpper(String identifier) {
     assert (identifier != null) && (identifier.length() > 0);
 
+    if(identifier.length() == 0) return identifier;
     StringBuilder buffer = new StringBuilder(identifier);
     buffer.setCharAt(0, Character.toUpperCase(buffer.charAt(0)));
     return buffer.toString();
