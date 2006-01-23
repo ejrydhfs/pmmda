@@ -9,6 +9,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.PatternSyntaxException;
 
 import org.apache.commons.beanutils.NestedNullException;
@@ -31,11 +33,25 @@ public final class ReflectUtilities {
    */
   public static final String CREATE_METHOD = "create";
 
+  public static final Map<String, Class> PRIMITIVES_TYPES;
+
   /**
    * Logger of the application class.
    */
   private static Log log = LogFactory.getLog(ReflectUtilities.class);
 
+  static {
+    PRIMITIVES_TYPES = new HashMap<String, Class>();
+    PRIMITIVES_TYPES.put("boolean", Boolean.TYPE);
+    PRIMITIVES_TYPES.put("byte", Byte.TYPE);
+    PRIMITIVES_TYPES.put("short", Short.TYPE);
+    PRIMITIVES_TYPES.put("int", Integer.TYPE);
+    PRIMITIVES_TYPES.put("long", Long.TYPE);
+    PRIMITIVES_TYPES.put("float", Float.TYPE);
+    PRIMITIVES_TYPES.put("double", Double.TYPE);
+    PRIMITIVES_TYPES.put("char", Character.TYPE);
+  }
+  
   /**
    * Default private constructor to implement static method pattern.
    */

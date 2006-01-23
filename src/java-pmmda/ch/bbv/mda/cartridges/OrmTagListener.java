@@ -14,6 +14,7 @@ import org.apache.commons.configuration.CompositeConfiguration;
 
 import ch.bbv.mda.*;
 import ch.bbv.mda.generators.CartridgeImpl;
+import ch.bbv.mda.generators.UmlConstants;
 import ch.bbv.utilities.PropertyUtilities;
 
 /**

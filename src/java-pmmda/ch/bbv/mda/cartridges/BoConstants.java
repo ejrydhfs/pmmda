@@ -283,7 +283,7 @@ public final class BoConstants {
    * Attribute containing the mapping of the classifier to the primitive type or
    * class of the target language.
    */
-  public static final String BO_DATATYPE = "bo-datatype";
+  public static final String BO_TYPE_JAVA = "bo-type-java";
 
   /**
    * Attribute containing the qualified package name containing the interfaces

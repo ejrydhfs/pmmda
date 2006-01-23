@@ -22,9 +22,11 @@ import ch.bbv.mda.*;
 import ch.bbv.mda.generators.Cartridge;
 import ch.bbv.mda.generators.CartridgeFactory;
 import ch.bbv.mda.generators.CartridgeImpl;
+import ch.bbv.mda.generators.UmlConstants;
 import ch.bbv.mda.generators.validation.OrmTagRule;
 import ch.bbv.mda.generators.validation.TagRule;
 import ch.bbv.mda.operators.FileOperators;
+import ch.bbv.mda.operators.ModelOperators;
 import ch.bbv.mda.ui.TaggedValuesView;
 
 /**
@@ -114,6 +116,14 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
   }
 
   @Override
+  public void preProcessDatatype(MetaDatatype datatype) {
+    datatype.addAttribute(ORM_TYPE_SQL, translateDatatype(datatype, "SQL",
+        false));
+    datatype.addAttribute(ORM_TYPE_JDBC, translateDatatype(datatype,
+        "JDBC", false));
+  }
+
+  @Override
   public void processModel(MetaModel model) {
     assert model != null;
     root = new File(getContext().getProperty(SOURCE_ROOT_FOLDER_KEY));
@@ -141,7 +151,7 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
     assert packages != null;
     isFirstClassOfPackage = true;
   }
-  
+
   @Override
   public void preProcessClass(MetaClass clazz) {
     assert clazz != null;
@@ -183,7 +193,7 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
       return;
     }
     if (isFirstClassOfPackage) {
-      VelocityContext context = createContext((MetaPackage)clazz.getContext());
+      VelocityContext context = createContext((MetaPackage) clazz.getContext());
       context.put("prefix", Boolean.TRUE);
       ormBoWriter.print(processTemplate(retrieveTemplate(orm
           + "-xml-bo-repository", null), context));
@@ -215,6 +225,33 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
     FileOperators.closePrintWriter(ddlIntegrityWriter);
   }
 
+  /**
+   * Returns the Java type name of the type of the property. The translation of
+   * datatypes is handled.
+   * @param property property to infer.
+   * @param language language of the requested mapping.
+   * @return the component name of the property type.
+   * @pre (property != null) && (language != null)
+   */
+  public String getDatatype(MetaProperty property, String language) {
+    assert (property != null) && (language != null);
+    String attribute = null;
+    if (language.equalsIgnoreCase("JDBC")) {
+      attribute = ORM_TYPE_JDBC;
+    } else if (language.equalsIgnoreCase("SQL")) {
+      attribute = ORM_TYPE_SQL;
+    }
+    String qualifiedName = null;
+    if (attribute != null) {
+      qualifiedName = property.getClassifier().getAttribute(attribute);
+    }
+    if (qualifiedName == null) {
+      qualifiedName = property.getTypeName();
+      qualifiedName = ModelOperators.getComponentName(qualifiedName); 
+    }
+    return qualifiedName;
+  }
+  
   /**
    * Flag indicating if the class is the first one being processed in the
    * package.

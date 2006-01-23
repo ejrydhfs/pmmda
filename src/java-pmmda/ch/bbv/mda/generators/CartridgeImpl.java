@@ -6,10 +6,7 @@
 package ch.bbv.mda.generators;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 import org.apache.commons.configuration.CompositeConfiguration;
 import org.apache.commons.configuration.ConfigurationConverter;
@@ -30,6 +27,7 @@ import ch.bbv.mda.*;
 import ch.bbv.mda.operators.FileOperators;
 import ch.bbv.mda.operators.ModelOperators;
 import ch.bbv.utilities.PropertyUtilities;
+import ch.bbv.utilities.ReflectUtilities;
 
 /**
  * The default cartridge implementation provides a set of utility methods to
@@ -524,27 +522,50 @@ public abstract class CartridgeImpl implements Cartridge {
    * Returns the mapping for the type to the target language. A mapping exists
    * only for datatypes.
    * @param type type to map to a language construct.
-   * @param language language to map to.
+   * @param language language to map to. A cartridge can define multiple
+   *          mappings of datatypes and model types to target programming
+   *          language.
    * @param concrete flag indicating if the implementation class should be
    *          retrieve or not.
    * @return the requested mapping if found otherwise the qualified name of the
    *         type.
+   * @pre (type != null) && (language != null)
    */
   protected String translateDatatype(MetaDatatype type, String language,
       boolean concrete) {
     String typename = type.qualifiedName();
     StringBuilder buffer = new StringBuilder();
-    buffer.append("datatypes.datatype");
-    for (int i = 0;; i++) {
-      String name = PropertyUtilities.getAttributeAt(configuration, buffer, i,
-          "name");
-      if (name == null) {
-        break;
+    Object collection = configuration.getProperty("datatypes[@language]");
+    if (collection instanceof Collection) {
+      StringBuilder path = new StringBuilder();
+      path.append("datatypes");
+      for (int i = 0;; i++) {
+        String attribute = PropertyUtilities.getAttributeAt(configuration,
+            path, i, "language");
+        if (language.equalsIgnoreCase(attribute)) {
+          buffer.append("datatypes(").append(i).append(").datatype");
+          break;
+        }
       }
-      if (typename.equals(name)) {
-        typename = PropertyUtilities.getAttributeAt(configuration, buffer, i,
-            "type");
-        break;
+    } else {
+      String attribute = (String) configuration
+          .getProperty("datatypes[@language]");
+      if (language.equalsIgnoreCase(attribute)) {
+        buffer.append("datatypes.datatype");
+      }
+    }
+    if (buffer.length() > 0) {
+      for (int i = 0;; i++) {
+        String name = PropertyUtilities.getAttributeAt(configuration, buffer,
+            i, "name");
+        if (name == null) {
+          break;
+        }
+        if (typename.equals(name)) {
+          typename = PropertyUtilities.getAttributeAt(configuration, buffer, i,
+              "type");
+          break;
+        }
       }
     }
     return typename;
@@ -587,12 +608,16 @@ public abstract class CartridgeImpl implements Cartridge {
 
   }
 
+  /**
+   * Converts the mapping type to the class representing it.
+   * @param type type to convert.
+   * @return the class representing the type if found otherwise null.
+   * @pre type != null
+   */
   private Class convertType(String type) {
     Class clazz = null;
-    if ("boolean".equals(type)) {
-      clazz = Boolean.TYPE;
-    } else if ("int".equals(type)) {
-      clazz = Integer.TYPE;
+    if (ReflectUtilities.PRIMITIVES_TYPES.containsKey(type)) {
+      clazz = ReflectUtilities.PRIMITIVES_TYPES.get(type);
     } else {
       try {
         clazz = Class.forName(type);
@@ -604,6 +629,12 @@ public abstract class CartridgeImpl implements Cartridge {
     return clazz;
   }
 
+  /**
+   * Converts the mapping context to the class representing it
+   * @param context context to convert.
+   * @return the class representing the context if defined otherwise null.
+   * @pre context != null
+   */
   private Class convertContext(String context) {
     Class clazz = null;
     if ("model".equals(context)) {

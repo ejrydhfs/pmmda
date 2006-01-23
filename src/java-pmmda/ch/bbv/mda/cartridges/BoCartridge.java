@@ -68,6 +68,10 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
   public static final String PREFIX = "bo";
 
   /**
+   * The name of the generated programming language.
+   */
+  public static final String LANGUAGE = "java"; 
+  /**
    * Log instance for all instatnces of the class.
    */
   private static Log log = LogFactory.getLog(BoCartridge.class);
@@ -116,7 +120,7 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
 
   @Override
   public void preProcessDatatype(MetaDatatype datatype) {
-    datatype.addAttribute(BO_DATATYPE, translateDatatype(datatype, "", false));
+    datatype.addAttribute(BO_TYPE_JAVA, translateDatatype(datatype, LANGUAGE, false));
   }
 
   /**
@@ -310,12 +314,13 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
   }
 
   /**
-   * Returns the component name of the type of the property.
+   * Returns the Java type name of the type of the property. The translation
+   * of datatypes is handled.
    * @param property property to infer.
    * @return the component name of the property type.
    */
   public String getDatatype(MetaProperty property) {
-    String qualifiedName = property.getClassifier().getAttribute(BO_DATATYPE);
+    String qualifiedName = property.getClassifier().getAttribute(BO_TYPE_JAVA);
     if (qualifiedName == null) {
       qualifiedName = property.getTypeName();
     }
@@ -452,7 +457,7 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
       MetaModel model = clazz.getModel();
       MetaDatatype datatype = model.findDatatype(qualifiedName);
       if (datatype != null) {
-        statements.addClassName(datatype.getAttribute(BO_DATATYPE));
+        statements.addClassName(datatype.getAttribute(BO_TYPE_JAVA));
       } else {
         MetaClass type = model.findClass(qualifiedName);
         if (type != null) {
@@ -561,7 +566,7 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
     if (qualifiedName != null) {
       MetaDatatype datatype = packages.getModel().findDatatype(qualifiedName);
       if (datatype != null) {
-        qualifiedName = translateDatatype(datatype, "", interfaces);
+        qualifiedName = translateDatatype(datatype, LANGUAGE, interfaces);
       }
     }
     qualifiedName = ModelOperators.getComponentName(qualifiedName);

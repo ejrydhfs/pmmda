@@ -3,7 +3,7 @@
  * you may not use this file except in compliance with the License. 
  * $Id$ 
  */
-package ch.bbv.mda.cartridges;
+package ch.bbv.mda.generators;
 
 /**
  * The class provides access to standard tags and stereotype defined in the UML
@@ -12,7 +12,16 @@ package ch.bbv.mda.cartridges;
  * @version $Revision$
  */
 public final class UmlConstants {
-
+  /**
+   * The UML standard volatile tag.
+   */
+  public static final String VOLATILE_TAG = "volatile";
+  
+  /**
+   * The UML standard transient tag;
+   */
+  public static final String TRANSIENT_TAG = "transient";
+  
   /**
    * The UML standard persistence tag.
    */

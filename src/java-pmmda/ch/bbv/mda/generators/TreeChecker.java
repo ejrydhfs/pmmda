@@ -1,5 +1,5 @@
 /* 
- * copyright 2000-2005 Marcel Baumann 
+ * copyright 2000-2006 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$ 
@@ -13,7 +13,10 @@ import ch.bbv.mda.*;
  * model. This mechanism is used to dynamically support new cartridges or to
  * migrate models created with older versions of the application. It also
  * completes the tagged values received from the external model and extend them
- * with their tagged value type information.
+ * with their tagged value type information. As additional function the checker
+ * insures that the standard UML tags - persistence, transient, and volatile -
+ * are defined. The persistence check is updated to guarantee that if a class
+ * has a persistent property when the class is persistent.
  * @author marcelbaumann
  * @version $Revision$
  */
@@ -22,6 +25,21 @@ public class TreeChecker implements Visitor {
    * The item factory used to initialize the MDA model tag values.
    */
   private ItemFactory itemFactory;
+
+  private static TagDefinition persistence;
+
+  private static TagDefinition volatiles;
+
+  private static TagDefinition transients;
+  static {
+    persistence = new TagDefinition(UmlConstants.PERSISTENCE_TAG, "false",
+        Boolean.TYPE);
+    volatiles = new TagDefinition(UmlConstants.VOLATILE_TAG, "false",
+        Boolean.TYPE);
+    transients = new TagDefinition(UmlConstants.TRANSIENT_TAG, "false",
+        Boolean.TYPE);
+
+  }
 
   /**
    * Default constructor of the class.
@@ -40,6 +58,7 @@ public class TreeChecker implements Visitor {
 
   public void visit(MetaClass metaClass) {
     itemFactory.initialize(metaClass, MetaClass.class);
+    complete(metaClass);
   }
 
   public void visit(MetaIndexedProperty property) {
@@ -56,5 +75,58 @@ public class TreeChecker implements Visitor {
 
   public void visit(TaggedValue taggedValue) {
     // no MDA initialization for such items
+  }
+
+  /**
+   * Registers all standard defined UML tags in the model. The persistence flag,
+   * the volatile flag and the transient flag are handled.
+   * @param clazz clazz which tags should be completed.
+   */
+  private void complete(MetaClass clazz) {
+    getOrAddTag(clazz, persistence);
+    boolean isPersistent = false;
+    for (MetaProperty property : clazz.getProperties()) {
+      isPersistent |= complete(property);
+    }
+    for (MetaIndexedProperty property : clazz.getIndexedProperties()) {
+      isPersistent |= complete(property);
+    }
+    if (isPersistent) {
+      clazz.setTaggedValue(UmlConstants.PERSISTENCE_TAG, isPersistent);
+    }
+  }
+
+  /**
+   * Registers all standard defined UML tags in the model. The persistence flag,
+   * the volatile flag and the transient flag are handled.
+   * @param property property which tags should be completed.
+   * @return flag indication if the property is persistent.
+   */
+  private boolean complete(MetaProperty property) {
+    TaggedValue value = getOrAddTag(property, persistence);
+    boolean isPersistent = Boolean.parseBoolean(value.getValue());
+    value = getOrAddTag(property, volatiles);
+    property.setTaggedValue(UmlConstants.VOLATILE_TAG, !isPersistent
+        || Boolean.parseBoolean(value.getValue()));
+    value = getOrAddTag(property, transients);
+    property.setTaggedValue(UmlConstants.TRANSIENT_TAG, !isPersistent
+        || Boolean.parseBoolean(value.getValue()));
+    return isPersistent;
+  }
+
+  /**
+   * Returns the required tag. If not defined the tag is first added.
+   * @param element element from which the tag should be retrieved.
+   * @param definition tag defintion of the requested tag.
+   * @return the requested tag.
+   * @pre (element != null) || (definition != null)
+   */
+  private TaggedValue getOrAddTag(MetaElement element, TagDefinition definition) {
+    TaggedValue tag = element.getTaggedValue(definition.getName());
+    if (tag == null) {
+      tag = new TaggedValue("false", definition);
+      element.addTaggedValue(tag);
+    }
+    return tag;
   }
 }

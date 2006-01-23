@@ -15,7 +15,7 @@ import ch.bbv.mda.MetaPackage;
 import ch.bbv.mda.MetaProperty;
 import ch.bbv.mda.cartridges.BoCartridge;
 import ch.bbv.mda.cartridges.BoConstants;
-import ch.bbv.mda.cartridges.UmlConstants;
+import ch.bbv.mda.generators.UmlConstants;
 
 /**
  * The DOG tag rule implements all validation rules for the tag values defined
