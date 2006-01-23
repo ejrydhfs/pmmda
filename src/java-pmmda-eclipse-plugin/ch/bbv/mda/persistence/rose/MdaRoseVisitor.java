@@ -34,7 +34,6 @@ import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-
 import org.eclipse.emf.codegen.ecore.genmodel.GenModelPackage;
 import org.eclipse.emf.codegen.util.CodeGenUtil;
 import org.eclipse.emf.common.util.BasicEList;
@@ -62,20 +61,24 @@ import org.eclipse.emf.ecore.util.EcoreSwitch;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.util.ExtendedMetaData;
 import org.eclipse.emf.importer.rose.RoseImporterPlugin;
+import org.eclipse.emf.importer.rose.builder.RoseStrings;
+import org.eclipse.emf.importer.rose.builder.RoseVisitor;
+import org.eclipse.emf.importer.rose.builder.TableObject;
 import org.eclipse.emf.importer.rose.parser.RoseNode;
 import org.eclipse.emf.importer.rose.parser.Util;
-import org.eclipse.emf.importer.rose.builder.*;
 
 import ch.bbv.mda.MetaClass;
 import ch.bbv.mda.MetaDatatype;
+import ch.bbv.mda.MetaElement;
 import ch.bbv.mda.MetaIndexedProperty;
 import ch.bbv.mda.MetaModel;
 import ch.bbv.mda.MetaPackage;
-import ch.bbv.mda.MetaElement;
 import ch.bbv.mda.MetaProperty;
 import ch.bbv.mda.Multiplicity;
+import ch.bbv.mda.TagDefinition;
 import ch.bbv.mda.TaggedValue;
 import ch.bbv.mda.persistence.eclipse.RosePersistenceHandler;
+import ch.bbv.mda.generators.UmlConstants;
 
 /**
  * Traverses the Rose file and create eCore object in memory.
@@ -2403,6 +2406,10 @@ public class MdaRoseVisitor implements RoseVisitor
       }
       if(stereoTypeValue != null){
         metaClass.setStereotype(stereoTypeValue);
+      }
+      RoseNode persist = roseNode.findNodeWithKey(RoseStrings.PERSISTENCE); 
+      if(persist != null && Util.getName(persist.getValue()).equals(RoseStrings.PERSISTENT)) {
+        metaClass.addTaggedValue(new TaggedValue("true", new TagDefinition(UmlConstants.PERSISTENCE_TAG, "false", Boolean.class)));
       }
     }
     elements.put(eElement, metaClass);

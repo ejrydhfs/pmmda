@@ -25,12 +25,13 @@ import ch.bbv.mda.MetaIndexedProperty;
 import ch.bbv.mda.MetaModel;
 import ch.bbv.mda.MetaPackage;
 import ch.bbv.mda.MetaProperty;
+import ch.bbv.mda.Multiplicity;
 import ch.bbv.mda.TaggedValue;
 import ch.bbv.mda.VisibilityCode;
-import ch.bbv.mda.Multiplicity;
 import ch.bbv.mda.generators.CartridgeFactory;
 import ch.bbv.mda.generators.ItemFactory;
 import ch.bbv.mda.persistence.eclipse.RosePersistenceHandler;
+import ch.bbv.mda.generators.UmlConstants;
 
 public class RoseMdaVisitor implements RoseVisitor {
 
@@ -162,14 +163,18 @@ public class RoseMdaVisitor implements RoseVisitor {
       RoseNode value = defaultCategory.findNodeWithKey(RoseStrings.VALUE); 
       // now add the tagged values
       for(TaggedValue tag : metaElement.getTags()) {
-        value.addNode(createTaggedValue(tag));
+        if(!(tag.getTag().equals(UmlConstants.PERSISTENCE_TAG) && defaultType.equals(RoseStrings.CLASS))) {
+          value.addNode(createTaggedValue(tag));
+        }
       }
-    } else {
+    } else { // if there is already a default category attribute set then only add missing tagged values
       RoseNode value = defaultCategory.findNodeWithKey(RoseStrings.VALUE); 
       for(TaggedValue tag : metaElement.getTags()) {
         RoseNode tv = findTaggedValue(defaultCategory, RoseStrings.VALUE, tag.getTag());
         if(tv == null) {
-          value.addNode(createTaggedValue(tag));
+          if(!(tag.getTag().equals(UmlConstants.PERSISTENCE_TAG) && defaultType.equals(RoseStrings.CLASS))) {
+            value.addNode(createTaggedValue(tag));
+          }
         } else {
           RoseNode v = tv.findNodeWithKey(RoseStrings.VALUE);
           if(tv.getNodes() != null && tv.getNodes().size() > 0) v = (RoseNode)tv.getNodes().get(0);
@@ -184,7 +189,7 @@ public class RoseMdaVisitor implements RoseVisitor {
         RoseNode tv = (RoseNode)tags.get(i);
         RoseNode name = tv.findNodeWithKey(RoseStrings.NAME); // there is no need to check for correct tool, because all tagged values in here belong to pmMDA.
         TaggedValue tag = metaElement.getTaggedValue(Util.getName(name.getValue()));
-        if(tag == null) {
+        if(tag == null || (tag.getTag().equals(UmlConstants.PERSISTENCE_TAG) && defaultType.equals(RoseStrings.CLASS))) {
           itemsToDelete.add(new ItemToDelete(tv, value));
         }
       }
@@ -252,6 +257,17 @@ public class RoseMdaVisitor implements RoseVisitor {
       itemFactory.initialize(defaultMetaElement, MetaClass.class);
     }
     updateGeneralRoseElements(roseNode, metaElement, defaultMetaElement);
+    
+    // persistence tag
+    TaggedValue tag = metaElement.getTaggedValue(UmlConstants.PERSISTENCE_TAG);
+    if(tag != null && tag.getValue().equals("true")) {
+      setOrAddAttribute(roseNode, RoseStrings.PERSISTENCE, RoseStrings.PERSISTENT);
+    } else {
+      RoseNode attribute = roseNode.findNodeWithKey(RoseStrings.PERSISTENCE);
+      if(attribute != null) {
+        roseNode.deleteNode(attribute);
+      }
+    }
   }
   
   protected void updateRoseInheritanceRelations(MetaClassifier clazz, RoseNode roseClass) {
@@ -860,11 +876,18 @@ public class RoseMdaVisitor implements RoseVisitor {
         itemsToDelete.add(new ItemToDelete(tv, attributes));
         continue;
       }
+      if(tag.getTag().equals(UmlConstants.PERSISTENCE_TAG) && element instanceof MetaClass) { // Rose has a dedicated persistence information on class level
+        continue;
+      }
       String defaultValue = defaultTag.getValue();
-      Boolean isDefault = false; 
+      Boolean isDefault = false;
       if(tagValue == null && defaultValue == null) {
         isDefault = true;
       } else if(tagValue != null && defaultValue != null && tagValue.equals(defaultValue)) {
+        isDefault = true;
+      } else if(tagValue == null && defaultValue.equals("")) {
+        isDefault = true;
+      } else if(defaultValue == null && tagValue.equals("")) {
         isDefault = true;
       }
       if(tv != null) {
@@ -890,14 +913,14 @@ public class RoseMdaVisitor implements RoseVisitor {
         RoseNode name = tv.findNodeWithKey(RoseStrings.NAME);
         if(Util.getName(tool.getValue()).equals(RosePersistenceHandler.TaggedValueToolIdentifier)) {
           TaggedValue tag = defaultMetaElement.getTaggedValue(Util.getName(name.getValue()));
-          if(tag == null) {
+          if(tag == null || tag.getTag().equals(UmlConstants.PERSISTENCE_TAG)) {
             itemsToDelete.add(new ItemToDelete(tv, attributes));
           }
         }
       }
     }
   }
-
+  
   public RoseNode addRosePackage(RoseNode node, String packageName) {
     node = addUnitReferenceList(node);
     node = addRoseCategory(node, packageName);
