@@ -97,7 +97,7 @@
       <property name="orm-cartridge.column-postfix" default-value="" />
     </properties>
   </configuration>
-  <datatypes language="mySQL">
+  <datatypes language="SQL">
     <datatype name="boolean" type="BOOLEAN" null="false" param="0" />
     <datatype name="byte" type="TINYINT" null="false" param="0" />
     <datatype name="char" type="CHAR" null="false" param="0" />
@@ -134,5 +134,48 @@
     <class name="java.math.BigDecimal" type="DECIMAL" null="true" param="2" default="7.2"/>
     <class name="java.util.Date" type="DATE" null="true" param="0" />
     <class name="java.sql.Date" type="DATE" null="true" param="0" />
+  </datatypes>
+  <datatypes language="JDBC">
+    <datatype name="boolean" type="BOOLEAN" null="false" param="0" />
+    <datatype name="byte" type="TINYINT" null="false" param="0" />
+    <datatype name="char" type="CHAR" null="false" param="0" />
+    <datatype name="short" type="SMALLINT" null="false" param="0" />
+    <datatype name="int" type="INTEGER" null="false" param="0" />
+    <datatype name="long" type="BIGINT" null="false" param="0" />
+    <datatype name="float" type="REAL" null="false" param="0" />
+    <datatype name="double" type="DOUBLE" null="false" param="0" />
+
+    <datatype name="Boolean" type="BOOLEAN" null="true" />
+    <datatype name="Byte" type="TINYINT" null="true" param="0" />
+    <datatype name="Char" type="CHAR" null="true" param="0" />
+    <datatype name="Short" type="SMALLINT" null="true" param="0" />
+    <datatype name="Integer" type="INTEGER" null="true" param="0" />
+    <datatype name="Long" type="BIGINT" null="true" param="0" />
+    <datatype name="Float" type="REAL" null="true" param="0" />
+    <datatype name="Double" type="DOUBLE" null="true" param="0" />
+
+    <datatype name="object" type="JAVA_OBJECT" null="true" param="1" default="1024"/>
+    <datatype name="string" type="VARCHAR" null="true" param="1" default="255"/>
+    <datatype name="date" type="DATE" null="true" param="0" />
+    <datatype name="time" type="TIME" null="true" param="0" />
+    <datatype name="timestamp" type="TIMESTAMP" null="true" param="0" />
+    <datatype name="decimal" type="DECIMAL" null="true" param="2" default="7.2"/>
+    <datatype name="natural" type="DECIMAL" null="true" param="1" default="7"/>
+
+    <class name="java.lang.String" type="VARCHAR" null="true" param="1" default="255"/>
+    <class name="java.lang.Boolean" type="BOOLEAN" null="true" param="0" />
+    <class name="java.lang.Char" type="CHAR" null="true" param="0" />
+    <class name="java.lang.Byte" type="TINYINT" null="true" param="0" />
+    <class name="java.lang.Integer" type="INTEGER" null="true" param="0" />
+    <class name="java.lang.Long" type="BIGINT" null="true" param="0" />
+    <class name="java.lang.Float" type="REAL" null="true" param="0" />
+    <class name="java.lang.Double" type="DOUBLE" null="true" param="0" />
+    <class name="java.math.BigDecimal" type="DECIMAL" null="true" param="2" default="7.2"/>
+    <class name="java.util.Date" type="DATE" null="true" param="0" />
+    <class name="java.sql.Date" type="DATE" null="true" param="0" />
+    <class name="java.sql.Time" type="TIME" null="true" param="0" />
+    <class name="java.sql.Timestamp" type="TIMESTAMP" null="true" param="0" />
+    <class name="java.sql.Blob" type="BLOB" null="true" param="0" />
+    <class name="java.sql.Clob" type="CLOB" null="true" param="0" />
   </datatypes>
 </cartridge>

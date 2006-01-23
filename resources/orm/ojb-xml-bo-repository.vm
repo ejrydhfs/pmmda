@@ -33,7 +33,7 @@
 ## having as type a class not being a data object.
 #foreach($property in $properties)
 #if(!${property.isTransient()})
-#set($columnType=${property.valueOfTag("orm-column-type").toUpperCase()})
+#set($columnType=${cartridge.getDatatype(${property}, "JDBC")})	
 #set($columnName=${property.getAttribute("orm-column-name").toUpperCase()})
 #getType($model $property $type)
 #isPersistentDataObject($type $isPersistentDataObject)
