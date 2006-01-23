@@ -120,7 +120,7 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
   public void preProcessDatatype(MetaDatatype datatype) {
     assert datatype != null;
     String idlType = java2idl.get(datatype
-        .getAttribute(BoConstants.BO_DATATYPE));
+        .getAttribute(BoConstants.BO_TYPE_JAVA));
     if (idlType != null) {
       datatype.addAttribute(CTO_IDL_TYPE, idlType);
     }
@@ -352,7 +352,7 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
 
   private String getJavaType(MetaProperty property) {
     MetaClassifier classifier = property.getClassifier();
-    String typename = classifier.getAttribute(BoConstants.BO_DATATYPE);
+    String typename = classifier.getAttribute(BoConstants.BO_TYPE_JAVA);
     if (typename == null) {
       typename = classifier.qualifiedName();
     }

@@ -117,6 +117,43 @@ public final class OrmConstants {
   public static final String ORDER_BY = "orm-order-by";
 
   /**
+   * The attribute for the classifier representation for the SQL language.
+   */
+  public static final String ORM_TYPE_SQL = "orm-type-sql";
+
+  /**
+   * The attribute for the classifier representation for the JDBC language.
+   */
+  public static final String ORM_TYPE_JDBC = "orm-type-jdbc";
+
+  /**
+   * The attribute for the classifier indicating if he can be null when read
+   * from the persistent storage.
+   */
+  public static final String ORM_TYPE_SQL_CAN_BE_NULL = "orm-type-sql-null";
+
+  /**
+   * The attribute for the classifier indicating the number of parameters for
+   * the SQL definition.
+   */
+  public static final String ORM_TYPE_SQL_PARAMETERS = "orm-type-sql-parameters";
+
+  /**
+   * The default value for the parameters of the SQL definition.
+   */
+  public static final String ORM_TYPE_DEFAULT_VALUE = "orm-type-default-value";
+
+  /**
+   * Database identifier for a database product.
+   */
+  public static final String DB_ORACLE = "ORACLE";
+
+  /**
+   * Database identifier for a database product.
+   */
+  public static final String DB_MS_SQL_SERVER = "MSSQLSERVER";
+
+  /**
    * Database identifier for a database product.
    */
   public static final String DB_MYSQL = "MySQL";
@@ -140,14 +177,4 @@ public final class OrmConstants {
    * Database identifier for a database product.
    */
   public static final String DB_TORQUE = "TORQUE";
-
-  /**
-   * Database identifier for a database product.
-   */
-  public static final String DB_ORACLE = "ORACLE";
-
-  /**
-   * Database identifier for a database product.
-   */
-  public static final String DB_MS_SQL_SERVER = "MSSQLSERVER";
 }
