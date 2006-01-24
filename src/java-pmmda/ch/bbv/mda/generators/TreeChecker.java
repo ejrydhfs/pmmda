@@ -26,11 +26,21 @@ public class TreeChecker implements Visitor {
    */
   private ItemFactory itemFactory;
 
+  /**
+   * The persistence tag definition for the model.
+   */
   private static TagDefinition persistence;
 
+  /**
+   * The volatile tag definition for the model.
+   */
   private static TagDefinition volatiles;
 
+  /**
+   * The transient tag definition for the model.
+   */
   private static TagDefinition transients;
+  
   static {
     persistence = new TagDefinition(UmlConstants.PERSISTENCE_TAG, "false",
         Boolean.TYPE);
