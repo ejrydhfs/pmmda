@@ -244,9 +244,30 @@
           .
         </note>
         <note>
-          To run the J2EE JBoss mode you must have an installed version of
-          JBoss.
+          To run the J2EE JBoss mode you must have an installed version of JBoss
+          and must configure MySQL access as follow. The needed configuration file
+          is provided with the test distribution.
         </note>
+
+        <section>
+          <title>MySQL Database Configuration in JBoss 4.x</title>
+          <p>
+            MySQL is an open source database used by many open source projects
+            and small organizations. To use JBoss 4.0 with MySQL, we first need
+            to put the MySQL driver classes into the CLASSPATH. Copy the .jar
+            file mysql-connector-java-3.0.9-stable-bin.jar to the
+            /server/default/lib directory.
+          </p>
+          <p>
+            To use the MySQL data source, copy /docs/examples/jca/mysql-ds.xml
+            to the /server/default/deploy directory. Modify the mysql-ds.xml
+            configuration file by setting &lt;driver-class/&gt; to
+            com.mysql.jdbc.Driver and &lt;connection-url/&gt; to
+            jdbc:mysql://&lt;mysqlhost&gt;/&lt;database&gt;, where
+            &lt;mysqlhost&gt; is the MySQL host server and &lt;database&gt; is
+            the MySQL database.
+          </p>
+        </section>
       </section>
     </section>
     <section id="minutes5">
