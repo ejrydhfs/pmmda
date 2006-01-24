@@ -22,7 +22,7 @@
         default-value="false"
         description="flag specifies if a class is a root class in data object graph." />
       <tag name="bo-is-hierarchical" type="boolean" context="class"
-	default-value="false"
+        default-value="false"
         description="True defines that reference codes are hierarchically structured." />
       <tag name="bo-mode" type="ch.bbv.mda.PropertyModeCode" context="property"
         default-value="READ_WRITE"
