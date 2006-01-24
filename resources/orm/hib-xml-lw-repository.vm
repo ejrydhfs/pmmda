@@ -4,7 +4,7 @@
 ## $Id$ 
 #set($dollar="$")
 #set($schema=${package.valueOfTag("orm-schema")})
-#if(${schema})#set($schema="${schema}")#else#set($schema="")#end
+#if(${schema})#set($schema=${schema.toUpperCase()})#set($schema=${schema} + ".")#else#set($schema="")#end
 #if(${prefix})
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
