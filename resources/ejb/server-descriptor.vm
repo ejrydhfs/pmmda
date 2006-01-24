@@ -11,8 +11,8 @@
 <ejb-jar>
   <enterprise-beans>
     <session>
-      <ejb-name>dog/${serverName}</ejb-name>
       <display-name>${serverName} BOG Handler</display-name>
+      <ejb-name>dog/${serverName}</ejb-name>
       <home>${serverPackage}.${serverName}Home</home>
       <remote>${serverPackage}.${serverName}Session</remote>
       <ejb-class>${serverPackage}.${serverName}SessionBean</ejb-class>
@@ -23,8 +23,10 @@
   
   <assembly-descriptor>
     <container-transaction>
-      <ejb-name>dog/${serverName}</ejb-name>
-      <method-name>*</method-name>
+      <method>
+        <ejb-name>dog/${serverName}</ejb-name>
+        <method-name>*</method-name>
+      </method>
       <trans-attribute>Required</trans-attribute>
     </container-transaction>    
   </assembly-descriptor>  
