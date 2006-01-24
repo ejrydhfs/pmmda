@@ -51,7 +51,7 @@ public final class ReflectUtilities {
     PRIMITIVES_TYPES.put("double", Double.TYPE);
     PRIMITIVES_TYPES.put("char", Character.TYPE);
   }
-  
+
   /**
    * Default private constructor to implement static method pattern.
    */
@@ -71,7 +71,7 @@ public final class ReflectUtilities {
    */
   public static Object execute(Object bean, String name, Class[] types,
       Object[] params) {
-    assert ((bean != null) && (name != null));
+    assert (bean != null) && (name != null);
     Object returns = null;
     try {
       Method method = bean.getClass().getDeclaredMethod(name, types);
@@ -107,35 +107,6 @@ public final class ReflectUtilities {
   }
 
   /**
-   * Loads and returns the class having the className. Will load but normal
-   * classes and the classes representing primatives.
-   * @param className the name of the class to load.
-   * @return Class the loaded class
-   */
-  public static Class loadClass(String className) {
-    final String methodName = "ClassUtils.loadClass";
-    ExceptionUtils.checkEmpty(methodName, "className", className);
-    className = StringUtils.trimToNull(className);
-
-    // get rid of any array notation
-    className = StringUtils.replace(className, "[]", "");
-
-    final ClassLoader loader = getClassLoader();
-    Class loadedClass = null;
-    try {
-      // check and see if its a primitive and if so convert it
-      if (isPrimitiveType(className)) {
-        loadedClass = getPrimitiveClass(className, loader);
-      } else {
-        loadedClass = loader.loadClass(className);
-      }
-    } catch (final Throwable e) {
-      log.error(e);
-    }
-    return loadedClass;
-  }
-
-  /**
    * Executes a static method on a class with the help of reflection. First it
    * attempts directly declared methods then it attempts inherited metods.
    * @param className class on which the static method should be called.
@@ -147,7 +118,7 @@ public final class ReflectUtilities {
    */
   public static Object execute(String className, String name, Class[] types,
       Object[] params) {
-    assert ((className != null) && (name != null));
+    assert (className != null) && (name != null);
     Object returns = null;
     Class clazz = null;
     try {
@@ -181,7 +152,7 @@ public final class ReflectUtilities {
    * @pre clazz != null
    */
   public static Object newInstance(String classname) {
-    assert (classname != null);
+    assert classname != null;
     Object object = null;
     try {
       Class clazz = Class.forName(classname);
@@ -204,7 +175,7 @@ public final class ReflectUtilities {
    * @pre clazz != null
    */
   public static Object newInstance(Class clazz) {
-    assert (clazz != null);
+    assert clazz != null;
     Object object = null;
     try {
       object = clazz.newInstance();
@@ -226,7 +197,7 @@ public final class ReflectUtilities {
    * @pre clazz != null
    */
   public static Object newInstance(Class clazz, Class[] types, Object[] objects) {
-    assert (clazz != null);
+    assert clazz != null;
     Object instance = null;
     try {
       Constructor constructor = clazz.getConstructor(types);
@@ -277,7 +248,7 @@ public final class ReflectUtilities {
    */
   public static Object createInstance(String qualifiedName, Class[] types,
       Object[] objects) {
-    assert (qualifiedName != null);
+    assert qualifiedName != null;
     Object instance = null;
     try {
       Class clazz = Class.forName(qualifiedName);
@@ -378,7 +349,7 @@ public final class ReflectUtilities {
 
   private static Object executeInherited(Object bean, String name,
       Class[] types, Object[] params) {
-    assert ((bean != null) && (name != null));
+    assert (bean != null) && (name != null);
     Object returns = null;
     try {
       Method method = bean.getClass().getMethod(name, types);
@@ -409,7 +380,7 @@ public final class ReflectUtilities {
    */
   private static Object executeInherited(String className, String name,
       Class[] types, Object[] params) {
-    assert ((className != null) && (name != null));
+    assert (className != null) && (name != null);
     Object returns = null;
     Class clazz = null;
     try {
