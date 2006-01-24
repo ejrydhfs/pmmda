@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann
+/* copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -138,10 +138,35 @@ public class ItemFactory {
   }
 
   /**
+   * Finds the first tagged value type with the given name defined for items of
+   * the given class.
+   * @param name name of the tagged value type to find.
+   * @param clazz class of the items for which the tag definition should be
+   *          retrieved.
+   * @return the requested tagged value type if found otherwise null.
+   * @pre name != null && (name.length() > 0) && (clazz != null)
+   */
+  public TagDefinition findType(String name, Class clazz) {
+    assert (name != null) && (name.length() > 0) && (clazz != null);
+    List<TagDefinition> types = tagDefinitions.get(clazz);
+    if (types != null) {
+      for (TagDefinition type : types) {
+        if (type.getTag().equals(name)) {
+          return type;
+        }
+      }
+    }
+    return null;
+  }
+
+  /**
    * Initializes the element with the defined tagged value types. All missing
    * tagged values are added with their default value and all obsolete ones are
    * removed. Existing tags are completed with their tagged value type. Finally
-   * the tag initialization routines of the cartridge are applied.
+   * the tag initialization routines of the cartridge are applied. The default
+   * value of the tag definition is used to update the tag value. If the default
+   * value is null and the tag value is an empty string the value is updated to
+   * null.
    * @param element meta element to initialize.
    * @param clazz class of the meta element to initialize.
    * @pre (element != null) && (clazz != null)
@@ -155,14 +180,18 @@ public class ItemFactory {
     List<TagDefinition> types = tagDefinitions.get(clazz);
     if (types != null) {
       for (TagDefinition type : types) {
-        TaggedValue value = element.getTaggedValue(type.getTag());
-        if (value == null) {
-          value = new TaggedValue(type);
-          element.addTaggedValue(value);
+        TaggedValue tag = element.getTaggedValue(type.getTag());
+        if (tag == null) {
+          tag = new TaggedValue(type);
+          element.addTaggedValue(tag);
         } else {
-          value.setType(type);
+          tag.setType(type);
+          if ((type.getDefaultValue() == null) && (tag.getValue() != null)
+              && (tag.getValue().trim().length() == 0)) {
+            tag.setValue(null);
+          }
         }
-        register(TaggedValue.class, value);
+        register(TaggedValue.class, tag);
       }
     }
     types = obsoleteTaggedValueTypes.get(clazz);
