@@ -8,6 +8,7 @@ package ch.bbv.mda.persistence.nsuml;
 
 import ru.novosoft.uml.foundation.core.MModelElement;
 import ru.novosoft.uml.foundation.data_types.MVisibilityKind;
+import ru.novosoft.uml.model_management.MPackage;
 import ch.bbv.mda.VisibilityCode;
 
 /**
@@ -39,6 +40,21 @@ public class NsUmlUtilities {
       }
     }
     return buffer.toString();
+  }
+
+  /**
+   * Returns the context of the package.
+   * @param packages packages which context should be returned.
+   * @return the package context if defined otherwise null.
+   * @pre packages != null
+   */
+  public static MPackage getContext(MPackage packages) {
+    assert packages != null;
+    MModelElement context = packages.getModelElementContainer();
+    if ((context == null) || context.getModelElementContainer() == null) {
+      context = null;
+    }
+    return (MPackage) context;
   }
 
   /**

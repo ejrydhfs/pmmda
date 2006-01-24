@@ -46,13 +46,6 @@ public class NsUmlTransformer {
   public static final String XML_ENCODING = "UTF-8";
 
   /**
-   * UML modeling tool using NSUML library stores the documentation of an item
-   * in a tagged value named documentation. This tag is the standard one defined
-   * in the UML 1.4 notation.
-   */
-  public static final String DOCUMENTATION_TAG = "documentation";
-
-  /**
    * Logger of the class.
    */
   private static Log log = LogFactory.getLog(NsUmlTransformer.class);
@@ -347,7 +340,7 @@ public class NsUmlTransformer {
           ((MetaProperty) item).setVolatile(booleanValue(tag.getValue()));
         }
       }
-      if (DOCUMENTATION_TAG.equals(tagName)) {
+      if (UmlConstants.DOCUMENTATION_TAG.equals(tagName)) {
         item.setDescription(tag.getValue());
       } else {
         TaggedValue taggedValue = item.getTaggedValue(tagName);
