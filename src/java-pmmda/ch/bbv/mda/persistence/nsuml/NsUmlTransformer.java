@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann
+/* copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -325,6 +325,12 @@ public class NsUmlTransformer {
     extractStereotypeAndTags(attribute, property);
   }
 
+  /**
+   * Extracts tags and stereotypes from the NSUML element and add them the meta
+   * element. The visibility of the item is also set.
+   * @param source NSUML element to parse.
+   * @param item meta item to synchronize.
+   */
   private void extractStereotypeAndTags(MModelElement source, MetaElement item) {
     MStereotype stereotype = source.getStereotype();
     if (stereotype != null) {
@@ -460,10 +466,10 @@ public class NsUmlTransformer {
       if (owned != null) {
         property.setTypeName(owned.qualifiedName());
       }
-      if(e1.getAggregation() == MAggregationKind.AGGREGATE) {
+      if (e1.getAggregation() == MAggregationKind.AGGREGATE) {
         property.setAggregation(true);
       }
-      if(e1.getAggregation() == MAggregationKind.COMPOSITE) {
+      if (e1.getAggregation() == MAggregationKind.COMPOSITE) {
         property.setComposition(true);
       }
       extractStereotypeAndTags(association, property);
