@@ -92,6 +92,7 @@ public class TaggedValue extends DataObjectImpl implements Comparable {
    * Constructor of the class.
    * @param tag tag name of the tagged value.
    * @param value value of the tagged value.
+   * @pre tag != null
    */
   public TaggedValue(String tag, String value) {
     this.tag = tag;
@@ -101,6 +102,7 @@ public class TaggedValue extends DataObjectImpl implements Comparable {
   /**
    * Creates a new tagged value of the given tagged value type.
    * @param type type of the tagged value to create.
+   * @pre type != null
    */
   public TaggedValue(TagDefinition type) {
     this(type.getDefaultValue(), type);
@@ -109,6 +111,7 @@ public class TaggedValue extends DataObjectImpl implements Comparable {
   /**
    * Copy constructor.
    * @param taggedValue tagged value used as prototype.
+   * @pre taggedValue != null
    */
   public TaggedValue(TaggedValue taggedValue) {
     this.tag = taggedValue.tag;
