@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann 
+/* copyright 2000-2006 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$
@@ -96,7 +96,7 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
 
   /**
    * List of computed attributes of the meta elements. These derived values are
-   * transient.
+   * transient. Null values are allowed.
    */
   private transient Map<String, String> attributes;
 
@@ -197,10 +197,10 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
    * it is overwritten.
    * @param key key of the attribute.
    * @param attribute the value of the attribute.
-   * @pre (key != null) && (attribute != null)
+   * @pre key != null
    */
   public void addAttribute(String key, String attribute) {
-    assert ((key != null) && (attribute != null));
+    assert key != null;
     attributes.put(key, attribute);
   }
 
