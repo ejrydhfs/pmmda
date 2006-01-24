@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann
+/* copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -9,7 +9,10 @@ import java.util.List;
 
 import org.apache.ojb.odmg.NarrowTransaction;
 import org.apache.ojb.odmg.TransactionExt;
-import org.odmg.*;
+import org.odmg.Database;
+import org.odmg.OQLQuery;
+import org.odmg.QueryException;
+import org.odmg.QueryInvalidException;
 
 import ch.bbv.dog.DataObject;
 
@@ -31,6 +34,8 @@ class HandlerPolicyManagedOjb extends HandlerPolicyOjb {
   void update(Database database, List<DataObject> originals,
       List<DataObject> copies, List deletedObjects,
       List<DataObject> insertedObjects, List<DataObject> updatedObjects) {
+    assert (originals != null) && (copies != null) && (deletedObjects != null)
+        && (updatedObjects != null);
     TransactionExt tx = (TransactionExt) getDatabaseMgr().currentTransaction(
         database);
     flushCache(tx, originals);
@@ -56,16 +61,17 @@ class HandlerPolicyManagedOjb extends HandlerPolicyOjb {
    * @param queryString the OQL query string used to retrieve the elements.
    * @return the list of objects respecting the search criteria.
    */
-  protected List retrieve(Database database, String queryString) {
-    List items = null;
+  protected List<Object> retrieve(Database database, String queryString) {
+    assert (database != null) && (queryString != null);
+    List<Object> items = null;
     try {
       OQLQuery query = getDatabaseMgr().createOQLQuery(database);
       query.create(queryString);
-      items = (DList) query.execute();
-    } catch (QueryInvalidException qie) {
-      log.error(qie);
-    } catch (QueryException qe) {
-      log.error(qe);
+      items = (List<Object>) query.execute();
+    } catch (QueryInvalidException e) {
+      log.error(e);
+    } catch (QueryException e) {
+      log.error(e);
     }
     return items;
   }

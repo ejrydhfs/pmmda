@@ -92,16 +92,19 @@ class HandlerPolicyOjb {
    * @param deletedObjects objects to delete in the database.
    * @param insertedObjects objects to insert in the database.
    * @param updatedObjects objects to update in the database.
+   * @pre (originals != null) && (copies != null) && (deletedObjects != null) &&
+   *      (insertedObjects != null) && (updatedObjects != null)
    */
   void update(Database database, List<DataObject> originals,
       List<DataObject> copies, List deletedObjects,
       List<DataObject> insertedObjects, List<DataObject> updatedObjects) {
+    assert (originals != null) && (copies != null) && (deletedObjects != null)
+        && (insertedObjects != null) && (updatedObjects != null);
     TransactionExt tx = (TransactionExt) databaseMgr
         .createTransaction(database);
     try {
       tx.begin();
       flushCache(tx, originals);
-
       for (Object item : deletedObjects) {
         database.deletePersistent(item);
       }
@@ -145,9 +148,11 @@ class HandlerPolicyOjb {
    * @param constraints constraints for the searched object. The constraints can
    *          be null.
    * @return The OQL select statement.
+   * @pre clazz != null
    */
   protected final String createRetrieveQuery(Class clazz, Integer id,
       String constraints) {
+    assert clazz != null;
     StringBuilder query = new StringBuilder();
     query.append("select item from ").append(clazz.getName());
     if (id != null) {
@@ -200,10 +205,10 @@ class HandlerPolicyOjb {
    * @param database database containing the requested objects.
    * @param queryString the OQL query string used to retrieve the elements.
    * @return the list of objects respecting the search criteria.
-   * @pre database != null
+   * @pre (database != null) && (queryString != null) 
    */
   protected List<Object> retrieve(Database database, String queryString) {
-    assert database != null;
+    assert (database != null) && (queryString != null);
     Transaction tx = databaseMgr.createTransaction(database);
     List<Object> items = null;
     try {
