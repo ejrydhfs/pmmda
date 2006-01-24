@@ -22,7 +22,6 @@ import ch.bbv.mda.*;
 import ch.bbv.mda.generators.Cartridge;
 import ch.bbv.mda.generators.CartridgeFactory;
 import ch.bbv.mda.generators.CartridgeImpl;
-import ch.bbv.mda.generators.UmlConstants;
 import ch.bbv.mda.generators.validation.OrmTagRule;
 import ch.bbv.mda.generators.validation.TagRule;
 import ch.bbv.mda.operators.FileOperators;
@@ -119,8 +118,8 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
   public void preProcessDatatype(MetaDatatype datatype) {
     datatype.addAttribute(ORM_TYPE_SQL, translateDatatype(datatype, "SQL",
         false));
-    datatype.addAttribute(ORM_TYPE_JDBC, translateDatatype(datatype,
-        "JDBC", false));
+    datatype.addAttribute(ORM_TYPE_JDBC, translateDatatype(datatype, "JDBC",
+        false));
   }
 
   @Override
@@ -225,8 +224,8 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
   }
 
   /**
-   * Returns the Java type name of the type of the property. The translation of
-   * datatypes is handled.
+   * Returns the translated type name of the type of the property. The
+   * translation of datatypes is handled.
    * @param property property to infer.
    * @param language language of the requested mapping.
    * @return the component name of the property type.
@@ -246,11 +245,11 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
     }
     if (qualifiedName == null) {
       qualifiedName = property.getTypeName();
-      qualifiedName = ModelOperators.getComponentName(qualifiedName); 
+      qualifiedName = ModelOperators.getComponentName(qualifiedName);
     }
     return qualifiedName;
   }
-  
+
   /**
    * Flag indicating if the class is the first one being processed in the
    * package.

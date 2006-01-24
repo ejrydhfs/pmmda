@@ -15,7 +15,6 @@ import java.util.List;
 import ch.bbv.dog.validation.ValidationRuleResult;
 import ch.bbv.mda.*;
 import ch.bbv.mda.cartridges.*;
-import ch.bbv.mda.generators.UmlConstants;
 
 /**
  * The orm tag rule implements all validation rules for the tag values defined
