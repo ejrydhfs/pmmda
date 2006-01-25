@@ -99,10 +99,11 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
     super("Object Relational Mapper Cartridge", PREFIX, new VersionId(0, 3, 0));
   }
 
+  @Override
   public void initialize(Properties properties) {
     super.initialize(properties);
     TaggedValuesView.registerReferenceCode(JdbcTypeCode.class, JdbcTypeCode
-        .getCodes(), false);
+        .getCodes(), false, true);
     CartridgeFactory factory = CartridgeFactory.getInstance();
     factory.getItemFactory().registerListener(TaggedValue.class,
         new OrmTagListener(this));
@@ -210,6 +211,7 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
         null), context));
   }
 
+  @Override
   public void postProcessModel(MetaModel model) {
     VelocityContext context = new VelocityContext();
     context.put("postfix", Boolean.TRUE);
@@ -248,6 +250,22 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
       qualifiedName = ModelOperators.getComponentName(qualifiedName);
     }
     return qualifiedName;
+  }
+
+  /**
+   * Returns the SQL type representation of the type of the property. The
+   * translation of datatypes is handled.
+   * @param property property to infer.
+   * @return the component name of the property type.
+   * @pre property != null
+   */
+  public String getSqlType(MetaProperty property) {
+    assert property != null;
+    String type = property.valueOfTag(OrmConstants.COLUMN_TYPE);
+    if (type == null) {
+      type = getDatatype(property, "SQL");
+    }
+    return type;
   }
 
   /**

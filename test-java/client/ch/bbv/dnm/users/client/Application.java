@@ -100,22 +100,24 @@ public class Application extends Locator {
       throws ComponentException {
     DataObjectManager manager = null;
     register(this);
-    if (mode.equalsIgnoreCase(USE_DIRECT)) {
+    if (USE_DIRECT.equalsIgnoreCase(mode)) {
       log.info("Application started in direct mode");
       manager = new DataObjectManager(new CacheHandler(new PersistenceHandler(
           false), true, true), new LightweightObjectHandlerImpl(), null);
-    } else if (mode.equalsIgnoreCase(USE_CORBA)) {
+    } else if (USE_CORBA.equalsIgnoreCase(mode)) {
       log.info("Application started in CORBA mode");
       register(ORB.init(args, null), ORB_NAME);
       manager = new DataObjectManager(new CacheHandler(
           createHandler("ch.bbv.dnm.users.client.UsersServerCorbaWrapper"),
           true, false), new LightweightObjectHandlerImpl(), null);
-    } else if (mode.equalsIgnoreCase(USE_J2EE)) {
+    } else if (USE_J2EE.equalsIgnoreCase(mode)) {
       log.info("Application started in J2EE mode");
       manager = new DataObjectManager(new CacheHandler(
           createHandler("ch.bbv.dnm.users.client.UsersServerWrapper"), true,
           false), new LightweightObjectHandlerImpl(), null);
     }
+    // if manager is null the command line parameters were erroneous
+    assert manager != null;
     register(manager);
     UserExplorer.registerNodeTypes();
     initialize();
