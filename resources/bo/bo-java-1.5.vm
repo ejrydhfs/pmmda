@@ -677,13 +677,14 @@ $line
 #elseif (${changeable})
       changeSupport.firePropertyChange("${lName}", null, element);
 #end
-      setModified(true);
 #if(${isPersistentAggregation})
       setForeignKey(element, "${keyName}", getId());
 #end
     }
+    setModified(true);
     return result;
 #else
+    setModified(true);
     return ${lName}.add(element);
 #end
   }
