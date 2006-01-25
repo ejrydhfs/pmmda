@@ -78,7 +78,7 @@ import ch.bbv.mda.Multiplicity;
 import ch.bbv.mda.TagDefinition;
 import ch.bbv.mda.TaggedValue;
 import ch.bbv.mda.persistence.eclipse.RosePersistenceHandler;
-import ch.bbv.mda.generators.UmlConstants;
+import ch.bbv.mda.UmlConstants;
 
 /**
  * Traverses the Rose file and create eCore object in memory.

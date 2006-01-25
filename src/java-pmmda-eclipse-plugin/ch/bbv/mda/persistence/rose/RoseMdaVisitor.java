@@ -31,7 +31,7 @@ import ch.bbv.mda.VisibilityCode;
 import ch.bbv.mda.generators.CartridgeFactory;
 import ch.bbv.mda.generators.ItemFactory;
 import ch.bbv.mda.persistence.eclipse.RosePersistenceHandler;
-import ch.bbv.mda.generators.UmlConstants;
+import ch.bbv.mda.UmlConstants;
 
 public class RoseMdaVisitor implements RoseVisitor {
 
