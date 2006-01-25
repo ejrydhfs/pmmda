@@ -19,10 +19,9 @@
       <tag name="orm-column-name" type="java.lang.String" context="property"
         description="the column name of the property" />
       <tag name="orm-column-type" type="ch.bbv.mda.cartridges.JdbcTypeCode"
-        context="property" default-value="String"
-        description="JDBC type of the property" />
+        context="property" description="JDBC type of the property" />
       <tag name="orm-column-size" type="java.math.BigInteger" context="property"
-        default-value="255" description="the size of the JDBC type" />
+        description="the size of the JDBC type" />
       <tag name="orm-can-be-null" type="boolean" context="property"
         default-value="false"
         description="defines if the property persistent representation can be null" />

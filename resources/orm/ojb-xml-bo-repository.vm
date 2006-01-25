@@ -12,7 +12,7 @@
 #set($shouldGenerateFkIndex=${configuration.getProperty("orm-cartridge.generate-fk-index").equalsIgnoreCase("true")})
 #set($inheritanceMode=${configuration.getProperty("orm-cartridge.inheritance")})
 #set($schema=${package.valueOfTag("orm-schema")})
-#if(${schema})#set($schema=${schema.toUpperCase()})#set($schema=${schema} + ".")#else#set($schema="")#end
+#if(${schema})#set($schema=${schema.toUpperCase()})#set($schema="${schema}.")#else#set($schema="")#end
 #set($table=${class.getAttribute("orm-table-name")})
 <class-descriptor class="${package.getAttribute("bo-mo-package")}.${class.getAttribute("bo-mo-class")}"
   table="${schema}${table}">
