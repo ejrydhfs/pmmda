@@ -41,11 +41,11 @@ public class Unit extends NamedEntity implements DataObject {
   /**
    * Mapping for 1: N relationship units as reverse foreign key.
    */
-  private Integer domainUnitsHandle;
+  private Integer unitUnitsHandle;
   /**
    * Mapping for 1: N relationship units as reverse foreign key.
    */
-  private Integer unitUnitsHandle;
+  private Integer domainUnitsHandle;
 
   /** 
    * Default constructor of the class necessary for Java bean convention. The 
@@ -122,6 +122,7 @@ public class Unit extends NamedEntity implements DataObject {
    * @pre element != null
    */
   public boolean addUser(User element) {
+    setModified(true);
     return users.add(element);
   }
   
@@ -202,6 +203,7 @@ public class Unit extends NamedEntity implements DataObject {
    * @pre element != null
    */
   public boolean addUnit(Unit element) {
+    setModified(true);
     return units.add(element);
   }
   

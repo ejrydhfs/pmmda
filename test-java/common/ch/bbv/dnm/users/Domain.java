@@ -178,6 +178,7 @@ public class Domain extends NamedEntity implements DataObject {
    * @pre element != null
    */
   public boolean addUnit(Unit element) {
+    setModified(true);
     return units.add(element);
   }
   
@@ -254,6 +255,7 @@ public class Domain extends NamedEntity implements DataObject {
    * @pre element != null
    */
   public boolean addResource(ResourceType element) {
+    setModified(true);
     return resources.add(element);
   }
   

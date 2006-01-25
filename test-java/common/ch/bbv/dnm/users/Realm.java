@@ -217,6 +217,7 @@ public class Realm implements DataObject {
    * @pre element != null
    */
   public boolean addProvider(Provider element) {
+    setModified(true);
     return providers.add(element);
   }
   

@@ -106,6 +106,7 @@ public class ResourceType extends NamedEntity implements DataObject {
    * @pre element != null
    */
   public boolean addRole(Role element) {
+    setModified(true);
     return roles.add(element);
   }
   

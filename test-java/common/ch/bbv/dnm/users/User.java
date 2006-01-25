@@ -280,6 +280,7 @@ public class User extends NamedEntity implements DataObject {
    * @pre element != null
    */
   public boolean addRole(UserRole element) {
+    setModified(true);
     return roles.add(element);
   }
   

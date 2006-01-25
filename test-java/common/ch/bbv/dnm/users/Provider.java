@@ -216,6 +216,7 @@ public class Provider extends NamedEntity implements DataObject {
    * @pre element != null
    */
   public boolean addDomain(Domain element) {
+    setModified(true);
     return domains.add(element);
   }
   
