@@ -1,5 +1,5 @@
 /* 
- * copyright 2000-2005 Marcel Baumann
+ * copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence);
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -60,9 +60,9 @@ public class TaggedValuesView extends NodePropertiesView {
     editors.put(String.class, new FocusCellEditor(new JTextField()));
     // used to resolve issue of stop cell editing in case of focus lost.
     registerReferenceCode(VisibilityCode.class, VisibilityCode.getCodes(),
-        false);
+        false, false);
     registerReferenceCode(PropertyModeCode.class, PropertyModeCode.getCodes(),
-        false);
+        false, false);
     CELLS = new TableCell.Cell[2];
     CELLS[0] = new TableCell.Cell("tag", "tag", String.class, false);
     CELLS[1] = new TableCell.Cell("value", "value", String.class, true);
@@ -106,14 +106,16 @@ public class TaggedValuesView extends NodePropertiesView {
    * @param codes the code values of the reference code type.
    * @param caseSensitive flag indicating if the combo box is case sensitive or
    *          not.
+   * @param hasEmptyValue flag defining if null value is supported or not.
    * @pre (referenceCode != null) && (codes != null)
    */
   public static void registerReferenceCode(
       Class< ? extends ReferenceCode> referenceCode,
-      List< ? extends ReferenceCode> codes, boolean caseSensitive) {
-    assert ((referenceCode != null) && (codes != null));
+      List< ? extends ReferenceCode> codes, boolean caseSensitive,
+      boolean hasEmptyValue) {
+    assert (referenceCode != null) && (codes != null);
     ReferenceCodeComboBox comboBox = new ReferenceCodeComboBox(referenceCode,
-        codes);
+        codes, hasEmptyValue);
     comboBox.setCaseSensitive(caseSensitive);
     editors.put(referenceCode, new DefaultCellEditor(comboBox));
   }
@@ -191,6 +193,11 @@ public class TaggedValuesView extends NodePropertiesView {
     }
   }
 
+  /**
+   * The table containing the tagged values to display in the view.
+   * @author Marcel Baumann
+   * @version $Revision$
+   */
   static class TaggedValuesTable extends JTable {
     /**
      * Serial version identifier coded as back compatibility date.
