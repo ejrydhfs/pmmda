@@ -40,7 +40,7 @@ public class TreeChecker implements Visitor {
    * The transient tag definition for the model.
    */
   private static TagDefinition transients;
-  
+
   static {
     persistence = new TagDefinition(UmlConstants.PERSISTENCE_TAG, "false",
         Boolean.TYPE);
@@ -111,16 +111,20 @@ public class TreeChecker implements Visitor {
    * the volatile flag and the transient flag are handled.
    * @param property property which tags should be completed.
    * @return flag indication if the property is persistent.
+   * @pre property != null
    */
   private boolean complete(MetaProperty property) {
     TaggedValue value = getOrAddTag(property, persistence);
     boolean isPersistent = Boolean.parseBoolean(value.getValue());
-    value = getOrAddTag(property, volatiles);
-    property.setTaggedValue(UmlConstants.VOLATILE_TAG, !isPersistent
-        || Boolean.parseBoolean(value.getValue()));
-    value = getOrAddTag(property, transients);
-    property.setTaggedValue(UmlConstants.TRANSIENT_TAG, !isPersistent
-        || Boolean.parseBoolean(value.getValue()));
+    getOrAddTag(property, volatiles);
+    getOrAddTag(property, transients);
+    if (isPersistent) {
+      property.setTaggedValue(UmlConstants.VOLATILE_TAG, false);
+      property.setTaggedValue(UmlConstants.TRANSIENT_TAG, false);
+    }
+    property.setVolatile(property.booleanValueOfTag(UmlConstants.VOLATILE_TAG));
+    property.setTransient(property
+        .booleanValueOfTag(UmlConstants.TRANSIENT_TAG));
     return isPersistent;
   }
 
