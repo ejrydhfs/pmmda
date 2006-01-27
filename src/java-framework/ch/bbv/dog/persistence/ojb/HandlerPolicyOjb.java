@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann
+/* copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -104,7 +104,7 @@ class HandlerPolicyOjb {
         .createTransaction(database);
     try {
       tx.begin();
-      flushCache(tx, originals);
+      // flushCache(tx, originals);
       for (Object item : deletedObjects) {
         database.deletePersistent(item);
       }
@@ -116,7 +116,7 @@ class HandlerPolicyOjb {
         item.setModified(false);
         tx.markDirty(item);
       }
-      cache(tx, copies);
+      // cache(tx, copies);
       tx.commit();
     } catch (RuntimeException e) {
       log.error(e);
@@ -194,8 +194,10 @@ class HandlerPolicyOjb {
     PersistenceBroker broker = getBroker(tx);
     ObjectCache cache = broker.serviceObjectCache();
     for (DataObject object : objects) {
-      Identity identity = new Identity(object, broker);
-      cache.cache(identity, object);
+      if (object.getId() != null) {
+        Identity identity = new Identity(object, broker);
+        cache.cache(identity, object);
+      }
     }
   }
 
@@ -205,7 +207,7 @@ class HandlerPolicyOjb {
    * @param database database containing the requested objects.
    * @param queryString the OQL query string used to retrieve the elements.
    * @return the list of objects respecting the search criteria.
-   * @pre (database != null) && (queryString != null) 
+   * @pre (database != null) && (queryString != null)
    */
   protected List<Object> retrieve(Database database, String queryString) {
     assert (database != null) && (queryString != null);

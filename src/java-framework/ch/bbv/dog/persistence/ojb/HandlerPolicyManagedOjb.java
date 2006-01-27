@@ -39,7 +39,6 @@ class HandlerPolicyManagedOjb extends HandlerPolicyOjb {
     TransactionExt tx = (TransactionExt) getDatabaseMgr().currentTransaction(
         database);
     flushCache(tx, originals);
-
     for (Object item : deletedObjects) {
       database.deletePersistent(item);
     }
