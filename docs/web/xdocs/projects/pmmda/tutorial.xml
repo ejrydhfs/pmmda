@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2000-2005 The Apache Software Foundation
+  Copyright 2000-2006 The Apache Software Foundation
   
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -78,6 +78,13 @@
           <a href="ext:java">Java Sun home page</a>
           .
         </note>
+        <warning>
+          Do not copy a new version of
+          <em>pmMDA</em>
+          over an older one. Remove the old distribution or deploy the new one
+          in another directory. Otherwise multiple versions of libraries can be
+          mixed up.
+        </warning>
       </section>
       <section id="runPmMda">
         <title>Run pmMDA</title>
@@ -245,8 +252,8 @@
         </note>
         <note>
           To run the J2EE JBoss mode you must have an installed version of JBoss
-          and must configure MySQL access as follow. The needed configuration file
-          is provided with the test distribution.
+          and must configure MySQL access as follow. The needed configuration
+          file is provided with the test distribution.
         </note>
 
         <section>
