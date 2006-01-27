@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann 
+/* copyright 2000-20056 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$
@@ -69,14 +69,12 @@ public class OexCartridge extends JavaCartridge implements Cartridge {
       if (className == null) {
         continue;
       }
-
       MetaClass objectClass = clazz.getModel().findClass(className);
       if ((objectClass == null)
           || !BoConstants.DATA_OBJECT_STEREOTYPE.equals(objectClass
               .getStereotype())) {
         continue;
       }
-
       for (MetaProperty property : objectClass.getProperties()) {
         if (property.booleanValueOfTag(IS_VISIBLE)) {
           fields.put(property.getName(), property);
