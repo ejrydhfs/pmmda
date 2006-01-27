@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry excluding="**/*CVS*.*" kind="src" path="properties"/>
+	<classpathentry kind="src" path="gendir/orm-server"/>
 	<classpathentry kind="src" path="examples/pim/src/resources"/>
 	<classpathentry excluding="**/*.html" kind="src" path="examples/pim/src/java"/>
 	<classpathentry excluding="**/Entries|**/Repository|**/Root" kind="src" path="src/etc/properties/unmanaged"/>
@@ -27,15 +28,12 @@
 	<classpathentry kind="lib" path="lib/hsqldb.jar"/>
 	<classpathentry kind="lib" path="lib/velocity-1.4.jar"/>
 	<classpathentry kind="lib" path="lib/velocity-dep-1.4.jar"/>
-	<classpathentry kind="lib" path="lib/antlr-2.7.3.jar"/>
 	<classpathentry kind="lib" path="lib/commons-dbcp-1.1.jar"/>
-	<classpathentry kind="lib" path="lib/commons-pool-1.1.jar"/>
 	<classpathentry kind="lib" path="lib/antlr_compiletime-2.7.3.jar"/>
 	<classpathentry kind="lib" path="lib/jbossall-client.jar"/>
 	<classpathentry kind="lib" path="lib/junit-3.8.1.jar"/>
 	<classpathentry kind="lib" path="lib/jakarta-regexp-1.3.jar"/>
 	<classpathentry kind="lib" path="lib/p6spy.jar"/>
-	<classpathentry kind="lib" path="lib/mysql-connector-3.0.15.jar"/>
 	<classpathentry kind="lib" path="lib/forms-1.0.5.jar"/>
 	<classpathentry kind="lib" path="lib/commons-functor.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
@@ -45,7 +43,6 @@
 	<classpathentry kind="lib" path="lib/xstream-1.1.2.jar"/>
 	<classpathentry kind="lib" path="lib/jcalendar-1.2.2.jar"/>
 	<classpathentry kind="lib" path="lib/commons-collections-3.1.jar"/>
-	<classpathentry sourcepath="C:/bin/db-ojb-1.0.3/src/java" kind="lib" path="lib/db-ojb-1.0.3.jar"/>
 	<classpathentry kind="lib" path="lib/glazedlists-1.0.0.jar"/>
 	<classpathentry kind="lib" path="lib/bsh-2.0b4.jar"/>
 	<classpathentry kind="lib" path="lib/commons-beanutils-1.7.0.jar"/>
@@ -60,5 +57,9 @@
 	<classpathentry kind="lib" path="lib/jgraph-5.7.4.4.jar"/>
 	<classpathentry kind="lib" path="lib/commons-configuration-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/uml-1.4.jar"/>
+	<classpathentry kind="lib" path="lib/antlr-2.7.5.jar"/>
+	<classpathentry kind="lib" path="lib/commons-pool-1.2.jar"/>
+	<classpathentry sourcepath="C:/bin/db-ojb-1.0.4/src/java" kind="lib" path="lib/db-ojb-1.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/mysql-connector-3.1.12.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
