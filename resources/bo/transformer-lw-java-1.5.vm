@@ -23,8 +23,37 @@ public class LwTransformer {
 #if($isLightweightDataObject)
 #set($boClass=${class.getAttribute("bo-mo-class")})
 #set($lwClass=${class.getAttribute("bo-lw-class")})
+  /** 
+   * Transforms a data object specific class into its lightweight representation.
+   * @param item data object instance to synchronize.
+   * @return the lightweight representation of the data object instance.
+   */
   public static ${lwClass} transform(${boClass} item) {
     ${lwClass} lw = new ${lwClass}(item.getId());
+    synchronize(item, lw);
+    return lw;
+  }
+  
+#end
+#end
+#foreach($class in $classes)
+#isLightweightDataObject($class $isLightweightDataObject)
+#if($isLightweightDataObject)
+#set($boClass=${class.getAttribute("bo-mo-class")})
+#set($lwClass=${class.getAttribute("bo-lw-class")})
+  /** 
+   * Synchronizes a data object specific class into its lightweight representation.
+   * @param item data object instance to synchronize.
+   * @param lw the lightweight representation to synchronize.
+   */
+  public static void synchronize(${boClass} item, ${lwClass} lw) {
+#set($ancestors=${class.retrieveAncestors()})
+#foreach($ancestor in $ancestors)
+#isLightweightDataObject($ancestor $isAncestorLw)
+#if($isAncestorLw)
+    synchronize((${ancestor.getAttribute("bo-mo-class")})item, (${ancestor.getAttribute("bo-lw-class")})lw); 
+#end	
+#end	
 #set($properties=${class.getProperties()})
 #foreach ($property in $properties)
 #if(${property.booleanValueOfTag("bo-lightweight")})
@@ -51,7 +80,6 @@ public class LwTransformer {
 #end
 #end
 #end
-    return lw;
   }
   
 #end
