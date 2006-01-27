@@ -41,11 +41,11 @@ public class Unit extends NamedEntity implements DataObject {
   /**
    * Mapping for 1: N relationship units as reverse foreign key.
    */
-  private Integer unitUnitsHandle;
+  private Integer domainUnitsHandle;
   /**
    * Mapping for 1: N relationship units as reverse foreign key.
    */
-  private Integer domainUnitsHandle;
+  private Integer unitUnitsHandle;
 
   /** 
    * Default constructor of the class necessary for Java bean convention. The 
