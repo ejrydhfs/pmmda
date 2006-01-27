@@ -1,5 +1,5 @@
 /* 
- * copyright 2000-2005 Marcel Baumann
+ * copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -56,12 +56,15 @@ public class TreeConstructFunctor implements DoFunctor, LwFunctor {
    */
   private UiNodeTypeFactory factory;
 
+  /**
+   * The visitor functor using the functor to process the graph.
+   */
   private AbstractVisitorFunctor visitor;
 
   /**
    * Constructor of the class.
    * @param factory factory managing the user interfacer node type.
-   * @param visitor visitor to apply.
+   * @param visitor visitor applying the functor.
    */
   public TreeConstructFunctor(UiNodeTypeFactory factory,
       AbstractVisitorFunctor visitor) {
@@ -89,7 +92,7 @@ public class TreeConstructFunctor implements DoFunctor, LwFunctor {
    * @pre object != null
    */
   public ExplorerNode retrieveNode(LightweightObject object) {
-    assert (object != null);
+    assert object != null;
     return lwNodes.get(object);
   }
 
@@ -100,7 +103,7 @@ public class TreeConstructFunctor implements DoFunctor, LwFunctor {
    * @pre object != null
    */
   public ExplorerNode retrieveNode(DataObject object) {
-    assert (object != null);
+    assert object != null;
     return doNodes.get(object);
   }
 
@@ -112,13 +115,13 @@ public class TreeConstructFunctor implements DoFunctor, LwFunctor {
    * @see DataObjectId
    */
   public ExplorerNode retrieveNodeById(HasId object) {
-    assert (object != null);
+    assert object != null;
     DataObjectId id = new DataObjectId(object.getClass(), object.getId());
     return nodes.get(id);
   }
 
   public void execute(DataObject object) {
-    assert (object != null);
+    assert object != null;
     UiNodeType nodeType = factory.getNodeTypeForBo(object.getClass());
     Class lwClass = nodeType.getDataObjectType().getLwClass();
 
@@ -133,7 +136,7 @@ public class TreeConstructFunctor implements DoFunctor, LwFunctor {
   }
 
   public void execute(LightweightObject object) {
-    assert (object != null);
+    assert object != null;
     Class clazz = object.getClass();
     UiNodeType nodeType = factory.getNodeTypeForLw(clazz);
     ExplorerNode node = new ExplorerNode(nodeType, object, null);
