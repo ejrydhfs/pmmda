@@ -278,10 +278,12 @@ public class MdaExplorer extends Explorer {
       }
       if (!success) {
         menuBar.getStandardAction(Names.NEW).execute();
+        this.getDocument().setState(State.CLEAN);
       }
     } catch (ParseException e) {
       log.error("parse arguments exception", e);
       menuBar.getStandardAction(Names.NEW).execute();
+      this.getDocument().setState(State.CLEAN);
     }
   }
 

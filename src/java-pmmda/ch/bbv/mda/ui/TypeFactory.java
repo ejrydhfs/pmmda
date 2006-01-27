@@ -113,7 +113,7 @@ public class TypeFactory extends AbstractTypeFactory {
     nodeType.registerView(new UiNodeViewType("code values", nodeType,
         CodesView.class, null, false));
     register(type, nodeType, new PopupSelectorDefault(nodeType),
-        new SimpleIconSelector("class-regular"));
+        new MetaClassIconSelector(getIconFactory(), "class"));
   }
 
   /**
