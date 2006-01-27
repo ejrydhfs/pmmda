@@ -1,5 +1,5 @@
 /* 
- * copyright 2000-2005 Marcel Baumann
+ * copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -42,9 +42,10 @@ public final class TextUtilities {
    * Returns the identifier with its first letter in uppercase.
    * @param identifier identifier to manipulate.
    * @return new representation of the identifier.
+   * @pre (identifier != null) && (identifier.length() > 0)
    */
   public static String identifierFirstUpper(String identifier) {
-    assert ((identifier != null) && (identifier.length() > 0));
+    assert (identifier != null) && (identifier.length() > 0);
 
     StringBuilder buffer = new StringBuilder(identifier);
     buffer.setCharAt(0, Character.toUpperCase(buffer.charAt(0)));
@@ -55,10 +56,10 @@ public final class TextUtilities {
    * Returns the identifier in the singular form.
    * @param identifier identifier to manipulate.
    * @return new representation of the identifier.
+   * @pre identifier != null
    */
   public static String identifierSingular(String identifier) {
-    assert (identifier != null);
-
+    assert identifier != null;
     String name;
     if (identifier.endsWith("ies")) {
       name = identifier.substring(0, identifier.length() - 3) + "y";
