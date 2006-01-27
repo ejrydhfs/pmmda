@@ -3,7 +3,6 @@
 ## you may not use this file except in compliance with the License.
 ## $Id$ 
 #set($sign="#")
-#set($dollar="$")
 #emitFileHeader()
 
 #if (${package})
@@ -15,7 +14,6 @@ import ${package.getAttribute("bo-mo-package")}.*;
 /** 
  * The transformer is responsible to transform a tree of data objects into its
  * lighthweight tree representation.
- * @version ${dollar}Revision${dollar}
  */
 public class LwTransformer {
 #foreach($class in $classes)

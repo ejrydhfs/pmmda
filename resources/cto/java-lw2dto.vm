@@ -3,7 +3,6 @@
 ## you may not use this file except in compliance with the License.
 ## $Id$ 
 #set($sign="#")
-#set($dollar="$")
 #emitFileHeader()
 package ${package.getAttribute("cto-bo2dto-package")};
 
@@ -24,7 +23,6 @@ import $importStatement;
  * Transformer helper class responsible for the transformation of data 
  * objects between their data object and data transfer object 
  * representation.
- * @version ${dollar}Revision${dollar}
  */
 public final class ${classname} {
   /** 

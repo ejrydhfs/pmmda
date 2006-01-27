@@ -3,7 +3,6 @@
 ## you may not use this file except in compliance with the License.
 ## $Id$ 
 #set($sign="#")
-#set($dollar="$")
 #emitFileHeader()
    
 #set($hasInterface=(${class.getAttribute("bo-has-interface")} == "true"))   
@@ -19,7 +18,6 @@ import ch.bbv.dog.LightweightObject;
  * The cyclic visitor is a wrapper class allowing to use visitors with graph
  * containing cycles. The list of all relevant classes is generated from the 
  * MDA model.
- * @version ${dollar}Revision${dollar}
  */
 public class LwCyclicVisitor implements LwVisitor {  
   /** 

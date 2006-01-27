@@ -1,7 +1,6 @@
 /* This code was generated automatically with the pmMDA generator. Please do 
    NOT add code outside the marked zones. All changes outside the marked areas 
    will be discarded during the next execution of the MDA generator. 
-   $Id$
 */
 
 package ch.bbv.dnm.users;
@@ -16,7 +15,6 @@ import java.util.*;
  * A unit is a logical group of resources inside a domain. In Internet 
  * terminology it is a sub address modeling e.g. a subsudiary of a company. A 
  * unit can have sub units.
- * @version $Revision$
  * @author Marcel Baumann
  */
 public class Unit extends NamedEntity implements DataObject {
@@ -41,11 +39,11 @@ public class Unit extends NamedEntity implements DataObject {
   /**
    * Mapping for 1: N relationship units as reverse foreign key.
    */
-  private Integer unitUnitsHandle;
+  private Integer domainUnitsHandle;
   /**
    * Mapping for 1: N relationship units as reverse foreign key.
    */
-  private Integer domainUnitsHandle;
+  private Integer unitUnitsHandle;
 
   /** 
    * Default constructor of the class necessary for Java bean convention. The 

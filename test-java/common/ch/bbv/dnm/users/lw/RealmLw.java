@@ -1,7 +1,6 @@
 /* This code was generated automatically with the pmMDA generator. Please do 
    NOT add code outside the marked zones. All changes outside the marked areas 
    will be discarded during the next execution of the MDA generator. 
-   $Id$
 */
 
 package ch.bbv.dnm.users.lw;
@@ -19,7 +18,6 @@ import java.util.*;
  * applications and an enumeration of the list of roles associated with each 
  * valid user. You can think of roles as similar to groups in Unix like 
  * operating systems.
- * @version $Revision$
  * @author Marcel Baumann
  */
 public class RealmLw  implements LightweightObject {

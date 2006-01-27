@@ -1,7 +1,6 @@
 /* This code was generated automatically with the pmMDA generator. Please do 
    NOT add code outside the marked zones. All changes outside the marked areas 
    will be discarded during the next execution of the MDA generator. 
-   $Id$
 */
 
 package ch.bbv.dnm.users;
@@ -19,7 +18,6 @@ import java.sql.Timestamp;
 /**
  * A role defines a group of functions a user can perform. A user can have 
  * multiple roles.
- * @version $Revision$
  * @author MarcelBaumann
  */
 public class Role implements DataObject {

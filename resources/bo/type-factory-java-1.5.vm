@@ -3,7 +3,6 @@
 ## you may not use this file except in compliance with the License.
 ## $Id$ 
 #set($sign="#")
-#set($dollar="$")
 #emitFileHeader()
    
 #if (${package})
@@ -31,7 +30,6 @@ import $importStatement;
  * The type factory provides meta information about all data objects and
  * reference code defined in the package to which the factory belongs. The 
  * package approach scales for complex system.
- * @version ${dollar}Revision${dollar}
  */
 public class TypeFactory {
 /* %% USER DEFINED DEFINITIONS START %% */

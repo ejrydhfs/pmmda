@@ -3,7 +3,6 @@
 ## you may not use this file except in compliance with the License.
 ## $Id$ 
 #set($sign="#")
-#set($dollar="$")
 #emitFileHeader()
 
 package ${package.getAttribute("ejb-server-package")};
@@ -37,7 +36,6 @@ import $importStatement;
 /** 
  * The class implements the data object graph stateless session bean and
  * implements all the functions defined in the BOG framework.
- * ${dollar}Revision${dollar}
  */
 public class ${className} implements javax.ejb.SessionBean {
   /** 

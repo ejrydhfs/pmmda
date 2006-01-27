@@ -7,7 +7,6 @@
 #elseif(${postfix})
 ## no prefix is necessary for OJB declarative file
 #else
-#set($dollar="$")
 #isLightweightDataObject($class $isLightweightDataObject)
 #if($isLightweightDataObject)
 #set($shouldGenerateFkIndex=${configuration.getProperty("orm-cartridge.generate-fk-index").equalsIgnoreCase("true")})

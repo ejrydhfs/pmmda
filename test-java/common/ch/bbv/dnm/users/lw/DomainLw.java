@@ -1,7 +1,6 @@
 /* This code was generated automatically with the pmMDA generator. Please do 
    NOT add code outside the marked zones. All changes outside the marked areas 
    will be discarded during the next execution of the MDA generator. 
-   $Id$
 */
 
 package ch.bbv.dnm.users.lw;
@@ -16,7 +15,6 @@ import java.util.*;
  * A domain is a set of resources independant from all other domains. In 
  * Internet terminology a domain is a Internet domain identified through its 
  * name.
- * @version $Revision$
  * @author Marcel Baumann
  */
 public class DomainLw  extends NamedEntityLw implements LightweightObject {

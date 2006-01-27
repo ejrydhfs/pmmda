@@ -1,7 +1,6 @@
 /* This code was generated automatically with the pmMDA generator. Please do 
    NOT add code outside the marked zones. All changes outside the marked areas 
    will be discarded during the next execution of the MDA generator. 
-   $Id$
 */
 
 package ch.bbv.dnm.users.lw;
@@ -15,7 +14,6 @@ import java.util.Date;
 /**
  * A user is an entity who can connect to the system. All operations he 
  * performs can be logged.
- * @version $Revision$
  * @author Marcel Baumann
  */
 public class UserLw  extends NamedEntityLw implements LightweightObject {

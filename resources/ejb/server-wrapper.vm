@@ -3,7 +3,6 @@
 ## you may not use this file except in compliance with the License.
 ## $Id$ 
 #set($sign="#")
-#set($dollar="$")
 #emitFileHeader()
 
 package ${package.getAttribute("ejb-client-package")};
@@ -37,7 +36,6 @@ import $importStatement;
 /** 
  * The ${serverName} wrapper wraps the J2EE session beans and hides the J2EE 
  * artifacts from the client application.
- * @version ${dollar}Revision${dollar}
  */
 public class ${className} extends ComponentImpl implements DataObjectHandler {
   /** 

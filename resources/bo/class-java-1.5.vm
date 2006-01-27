@@ -3,9 +3,6 @@
 ## you may not use this file except in compliance with the License.
 ## $Id$ 
 #set($sign="#")
-#set($dollar="$")
-#set($__="")
-#set($____="")
 #emitFileHeader()
    
 #if (${package})

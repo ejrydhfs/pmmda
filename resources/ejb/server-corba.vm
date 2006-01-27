@@ -3,7 +3,6 @@
 ## you may not use this file except in compliance with the License.
 ## $Id$ 
 #set($sign="#")
-#set($dollar="$")
 #emitFileHeader()
 package ${package.getAttribute("ejb-server-package")};
 
@@ -40,7 +39,6 @@ import $importStatement;
 /** 
  * The class implements the data object graph CORBA server and implements all
  * the functions defined in the data object graph framework.
- * ${dollar}Revision${dollar}
  */
 public class $classname extends ${serverName}POA  {
   /** 

@@ -3,7 +3,6 @@
 ## you may not use this file except in compliance with the License.
 ## $Id$ 
 #set($sign="#")
-#set($dollar="$")
 #emitFileHeader()
 
 package ${package.getAttribute("ejb-client-package")};
@@ -40,7 +39,6 @@ import $importStatement;
  * through the data object handler interface. The wrapper implements the 
  * component interface and can be registered in the application framework to 
  * provide IoC - Inversion of Control - pattern.
- * @version ${dollar}Revision${dollar}
  */
 public class ${className} extends ComponentImpl 
   implements DataObjectHandler {

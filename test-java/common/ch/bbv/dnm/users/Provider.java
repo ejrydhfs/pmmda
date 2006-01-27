@@ -1,7 +1,6 @@
 /* This code was generated automatically with the pmMDA generator. Please do 
    NOT add code outside the marked zones. All changes outside the marked areas 
    will be discarded during the next execution of the MDA generator. 
-   $Id$
 */
 
 package ch.bbv.dnm.users;
@@ -17,7 +16,6 @@ import java.util.*;
  * capabilities available in his domains. In our systems the provider is the 
  * commercial entities selling domains to various customers. In the Internet 
  * terminology a provider is often called ISP.
- * @version $Revision$
  * @author Marcel Baumann
  */
 public class Provider extends NamedEntity implements DataObject {

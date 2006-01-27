@@ -1,7 +1,6 @@
 /* This code was generated automatically with the pmMDA generator. Please do 
    NOT add code outside the marked zones. All changes outside the marked areas 
    will be discarded during the next execution of the MDA generator. 
-   $Id$
 */
 
 package ch.bbv.dnm.users.lw;
@@ -11,7 +10,6 @@ import ch.bbv.dnm.users.*;
 /** 
  * The transformer is responsible to transform a tree of data objects into its
  * lighthweight tree representation.
- * @version $Revision$
  */
 public class LwTransformer {
   /** 

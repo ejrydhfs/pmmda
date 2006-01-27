@@ -2,7 +2,6 @@
 ## Licensed under the Apache License, Version 2.0 (the "Licence");
 ## you may not use this file except in compliance with the License.
 ## $Id$ 
-#set($dollar="$")
 #set($schema=${package.valueOfTag("orm-schema")})
 #if(${schema})#set($schema=${schema.toUpperCase()})#set($schema=${schema} + ".")#else#set($schema="")#end
 #if(${prefix})

@@ -3,7 +3,6 @@
 ## you may not use this file except in compliance with the License.
 ## $Id$ 
 #set($sign="#")
-#set($dollar="$")
 #macro(getOwner $item $owner)
 #set($owner=false)
 #set($owner=${item.valueOfTag("bo-navigable")})

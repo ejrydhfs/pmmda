@@ -3,7 +3,6 @@
 ## you may not use this file except in compliance with the License.
 ## $Id$ 
 #set($sign="#")
-#set($dollar="$")
 #emitFileHeader()
 
 package ${package.getAttribute("ejb-server-package")};
@@ -29,7 +28,6 @@ import $importStatement;
 /** 
  * The interface ${serverName} defines the session bean interface for the data
  * object framework service interface.
- * @version ${dollar}Revision${dollar}
  */
 public interface ${serverName}Session extends javax.ejb.EJBObject {
 #foreach($class in $classes)

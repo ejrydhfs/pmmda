@@ -7,7 +7,6 @@
 #elseif(${postfix})
 ## no prefix is necessary for OJB declarative file
 #else
-#set($dollar="$")
 #if(${class.getStereotype().equalsIgnoreCase("dataObject")})
 #set($shouldGenerateFkIndex=${configuration.getProperty("orm-cartridge.generate-fk-index").equalsIgnoreCase("true")})
 #set($inheritanceMode=${configuration.getProperty("orm-cartridge.inheritance")})
