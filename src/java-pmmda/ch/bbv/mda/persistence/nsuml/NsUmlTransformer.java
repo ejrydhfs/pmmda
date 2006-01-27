@@ -131,13 +131,14 @@ public class NsUmlTransformer {
       extractPackage(mSubPackage, target);
     }
     extractRelations(source, target);
-    for (Iterator<MClassifier> i = new FilterIterator<MClassifier>(source
-        .getOwnedElements(), MClassifier.class); i.hasNext();) {
-      MClassifier mClass = i.next();
-    }
     flagSystemPackages(target);
-    for (Iterator<MClassifier> i = new FilterIterator<MClassifier>(source
-        .getOwnedElements(), MClassifier.class); i.hasNext();) {
+    for (Iterator<MClass> i = new FilterIterator<MClass>(source
+        .getOwnedElements(), MClass.class); i.hasNext();) {
+      MClassifier mClass = i.next();
+      extractClass(mClass, target);
+    }
+    for (Iterator<MInterface> i = new FilterIterator<MInterface>(source
+        .getOwnedElements(), MInterface.class); i.hasNext();) {
       MClassifier mClass = i.next();
       extractClass(mClass, target);
     }
