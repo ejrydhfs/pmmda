@@ -42,6 +42,12 @@ import ch.bbv.mda.ui.TaggedValuesView;
  * <li>The DDL integrity rules SQL creation statement for major database. Less
  * used products are supported through the Torque target.</li>
  * </ul>
+ * <p>
+ * The cartridge should not specify the type of the collection used in OJB. The
+ * transfer framework uses the bean collection classes which are different from
+ * OJB's ones. If specified and different OJB mechanisms do not set anymore the
+ * foreign key values.
+ * <p>
  * @author Marcel Baumann
  * @version $Revision$
  */

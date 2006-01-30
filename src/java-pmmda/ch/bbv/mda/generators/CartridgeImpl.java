@@ -329,6 +329,8 @@ public abstract class CartridgeImpl implements Cartridge {
   protected void processTemplate(File root, String packageName,
       String filename, Template template, VelocityContext context)
       throws IOException {
+    assert (root != null) && (packageName != null) && (filename != null)
+        && (template != null) && (context != null);
     File tempFile = File.createTempFile("pmMDA", null, root);
     tempFile.deleteOnExit();
     PrintWriter writer = new PrintWriter(new BufferedOutputStream(

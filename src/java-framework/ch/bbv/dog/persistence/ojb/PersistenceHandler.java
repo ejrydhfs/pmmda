@@ -36,7 +36,7 @@ import ch.bbv.dog.*;
  */
 public class PersistenceHandler implements DataObjectHandler {
   /**
-   * Logger of the instances of the class.
+   * Logger for all instances of the class.
    */
   private static Log log = LogFactory.getLog(PersistenceHandler.class);
 

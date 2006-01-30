@@ -49,6 +49,8 @@
       <javadoc label="JavaDoc" href="../../api/index.html"
         description="JavaDoc" />
       <tutorial label="Tutorials" href="tutorial.html" description="Tutorials" />
+      <propagation label="Propagation" href="changes-progagation.html"
+        description="Changes Propagation" />
       <experiences label="Experiences" href="dog-experiences.html"
         description="Experiences" />
     </dog>
