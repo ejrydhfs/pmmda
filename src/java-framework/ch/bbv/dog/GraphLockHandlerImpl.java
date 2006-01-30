@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann
+/* copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -19,7 +19,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class GraphLockHandlerImpl implements GraphLockHandler {
   /**
-   * Logger of the class.
+   * Logger for all instances of the class.
    */
   protected static Log log = LogFactory.getLog(GraphLockHandlerImpl.class);
 
@@ -102,7 +102,6 @@ public class GraphLockHandlerImpl implements GraphLockHandler {
    */
   private final List<DataObject> collectRoots(DataObject root) {
     functor.reset();
-
     DataObjectType type = manager.getType(root);
     if (type != null) {
       AbstractVisitorFunctor visitor = type.createVisitorInstance();

@@ -83,7 +83,7 @@ public class CollectFunctor implements DoFunctor {
   /**
    * Returns the list of collected data object updates. The identifier and the
    * timestamp are synchronized. All updates have a defined identifier and a
-   * timestamp
+   * timestamp.
    * @return list of collected updates.
    */
   public List getUpdates() {
@@ -91,7 +91,7 @@ public class CollectFunctor implements DoFunctor {
       DataObject object = update.getObject();
       update.setId(object.getId());
       update.setTimestamp(object.getTimestamp());
-      assert ((update.getId() != null) && (update.getTimestamp() != null));
+      assert (update.getId() != null) && (update.getTimestamp() != null);
     }
     return Collections.unmodifiableList(updates);
   }

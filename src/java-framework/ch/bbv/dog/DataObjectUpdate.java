@@ -19,6 +19,9 @@ import java.util.List;
  * @version $Revision$
  */
 public class DataObjectUpdate implements Serializable {
+  /**
+   * Serial version identifier coded as back compatibility date.
+   */
   private static final long serialVersionUID = 20041201;
 
   /**

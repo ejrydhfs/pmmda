@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann 
+/* copyright 2000-2006 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$ 
@@ -15,6 +15,7 @@ public interface DoFunctor {
   /**
    * Execute the functor on the given data object.
    * @param object data object instance to process.
+   * @pre object != null
    */
   void execute(DataObject object);
 }
