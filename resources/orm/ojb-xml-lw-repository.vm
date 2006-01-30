@@ -73,8 +73,11 @@
 #getForwardFk($property $column)
   <reference-descriptor name="${property.nameFirstLower()}"
     class-ref="${typeName}"
+    auto-retrieve="true"
+    auto-update="none"
+    auto-delete="none">
     <foreignkey field-ref="${column}"/>
-  />
+  </reference-descriptor>
 #end
 #end
 #end
@@ -108,7 +111,10 @@
 #set($columnName=${aggregation.getAttribute("orm-column-name")})
   <reference-descriptor
     name="${property.getName()}"
-    class-ref="${type.qualifiedName()}">
+    class-ref="${type.qualifiedName()}"
+    auto-retrieve="true"
+    auto-update="none"
+    auto-delete="none">
     <foreignkey field-ref="${property.nameFirstLower()}Handle"/>
   </reference-descriptor>
 #end    

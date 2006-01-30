@@ -116,7 +116,10 @@
 #if($isDataObject)
   <reference-descriptor
     name="${property.getName()}"
-    class-ref="${type.qualifiedName()}">
+    class-ref="${type.qualifiedName()}"
+    auto-retrieve="true"
+    auto-update="none"
+    auto-delete="none">
     <foreignkey field-ref="${property.getName()}Handle"/>
   </reference-descriptor>
 #end
@@ -129,7 +132,10 @@
 #if($isPersistentDataObject)
   <reference-descriptor
     name="${aggregation.getName()}"
-    class-ref="${type.qualifiedName()}">
+    class-ref="${type.qualifiedName()}"
+    auto-retrieve="true"
+    auto-update="none"
+    auto-delete="none">
     <foreignkey field-ref="${aggregation.nameFirstLower()}Handle"/>
   </reference-descriptor>
 #end
@@ -146,7 +152,6 @@
 #set($typePackage=${type.getContext()})
   <collection-descriptor
     name="${aggregation.getName()}"
-    collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
     element-class-ref="${typePackage.getAttribute("bo-mo-package")}.${type.getAttribute("bo-mo-class")}"
     orderby="id"
     auto-retrieve="true"
