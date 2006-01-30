@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann
+/* copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -58,7 +58,8 @@ public final class MdaUtilities {
    * @param qualifiedName qualified name of the requested element.
    * @return the requested element if found otherwise null.
    */
-  public static boolean containsElementNamed(List<MetaElement> elements, String qualifiedName) {
+  public static boolean containsElementNamed(List<MetaElement> elements,
+      String qualifiedName) {
     assert (elements != null) && (qualifiedName != null);
     boolean containsElementNamed = false;
     for (MetaElement element : elements) {

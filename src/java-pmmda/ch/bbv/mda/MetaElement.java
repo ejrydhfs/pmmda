@@ -412,7 +412,6 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
   public String qualifiedName() {
     StringBuilder qualifiedName = new StringBuilder();
     qualifiedName.append(getName());
-
     MetaElement context = getContext();
     while ((context != null) && (context.getContext() != null)) {
       qualifiedName.insert(0, ".");

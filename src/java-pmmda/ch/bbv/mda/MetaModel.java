@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann 
+/* copyright 2000-2006 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$
@@ -79,25 +79,55 @@ public class MetaModel extends MetaPackage {
     this.filename = filename;
   }
 
+  /**
+   * Returns the package with the given index.
+   * @param index index of the requested class.
+   * @return the requested class.
+   * @see #addPackage(int, MetaPackage)
+   */
   public MetaPackage getPackage(int index) {
     return packages.get(index);
   }
 
-  public void addPackage(MetaPackage metaPackage) {
-    packages.add(metaPackage);
-    metaPackage.setContext(this);
+  /**
+   * Adds the package in the list of packages.
+   * @param packages package to add.
+   * @pre packages != null
+   */
+  public void addPackage(MetaPackage packages) {
+    assert packages != null;
+    this.packages.add(packages);
+    packages.setContext(this);
   }
 
-  public void addPackage(int index, MetaPackage metaPackage) {
-    packages.add(index, metaPackage);
-    metaPackage.setContext(this);
-    Collections.sort(packages, MetaElement.NAME_COMPARATOR);
+  /**
+   * Adds the package in the list of packages.
+   * @param index position where the package should be inserted in the list.
+   * @param packages package to add.
+   * @pre packages != null
+   * @see #getPackage(int)
+   */
+  public void addPackage(int index, MetaPackage packages) {
+    assert packages != null;
+    this.packages.add(index, packages);
+    packages.setContext(this);
+    Collections.sort(this.packages, MetaElement.NAME_COMPARATOR);
   }
 
+  /**
+   * Returns a list of all packages defined in the object.
+   * @return list of all packages.
+   * @see #setPackages(List)
+   */
   public List<MetaPackage> getPackages() {
     return packages;
   }
 
+  /**
+   * Sets the list of packages of the model.
+   * @param packages new list of packages.
+   * @see #getPackages()
+   */
   public void setPackages(List<MetaPackage> packages) {
     removeAllPackages();
     this.packages.addAll(packages);
@@ -106,6 +136,9 @@ public class MetaModel extends MetaPackage {
     }
   }
 
+  /**
+   * Remove all packages of the model.
+   */
   public void removeAllPackages() {
     for (MetaPackage metaPackage : packages) {
       metaPackage.setContext(null);
@@ -115,53 +148,89 @@ public class MetaModel extends MetaPackage {
 
   /**
    * Removes a package from the model.
-   * @param metaPackage to be removed.
+   * @param packages to be removed.
    */
-  public void removePackage(MetaPackage metaPackage) {
-    if (packages.contains(metaPackage)) {
-      packages.remove(metaPackage);
-      metaPackage.setContext(null);
+  public void removePackage(MetaPackage packages) {
+    if (this.packages.contains(packages)) {
+      this.packages.remove(packages);
+      packages.setContext(null);
     }
   }
 
+  /**
+   * Returns the datatype with the given index.
+   * @param index index of the requested datatype.
+   * @return the requested datatype.
+   * @see #addDatatype(int, MetaDatatype)
+   */
   public MetaDatatype getDatatype(int index) {
     return datatypes.get(index);
   }
 
+  /**
+   * Adds the datatype in the list of datatypes.
+   * @param datatype datatype to add.
+   * @pre datatype != null
+   */
   public void addDatatype(MetaDatatype datatype) {
+    assert datatype != null;
     datatypes.add(datatype);
     datatype.setContext(this);
   }
 
+  /**
+   * Adds the datatype in the list of datatypes.
+   * @param index position where the datatype should be inserted in the list.
+   * @param datatype datatype to add.
+   * @pre datatype != null
+   * @see #getDatatype(int)
+   */
   public void addDatatype(int index, MetaDatatype datatype) {
     datatypes.add(index, datatype);
     datatype.setContext(this);
     Collections.sort(packages, MetaElement.NAME_COMPARATOR);
   }
 
+  /**
+   * Returns a list of all datatypes defined in the object.
+   * @return list of all datatypes.
+   * @see #setDatatypes(List)
+   */
   public List<MetaDatatype> getDatatypes() {
     return datatypes;
   }
 
-  public void setDatatypes(List<MetaDatatype> dataTypes) {
+  /**
+   * Sets the list of dataytpes of the model.
+   * @param datatypes new list of datatypes.
+   * @see #getDatatypes()
+   */
+  public void setDatatypes(List<MetaDatatype> datatypes) {
     removeAllDatatypes();
-    dataTypes.addAll(dataTypes);
-    for (MetaDatatype dataType : dataTypes) {
-      dataType.setContext(this);
+    this.datatypes.addAll(datatypes);
+    for (MetaDatatype datatype : datatypes) {
+      datatype.setContext(this);
     }
   }
 
+  /**
+   * Remove all datatypes of the model.
+   */
   public void removeAllDatatypes() {
-    for (MetaDatatype dataType : datatypes) {
-      dataType.setContext(null);
+    for (MetaDatatype datatype : datatypes) {
+      datatype.setContext(null);
     }
     datatypes.clear();
   }
 
-  public void removeDatatype(MetaDatatype dataType) {
-    if (datatypes.contains(dataType)) {
-      datatypes.remove(dataType);
-      dataType.setContext(null);
+  /**
+   * Removes a datatype from the model.
+   * @param datatype to be removed.
+   */
+  public void removeDatatype(MetaDatatype datatype) {
+    if (datatypes.contains(datatype)) {
+      datatypes.remove(datatype);
+      datatype.setContext(null);
     }
   }
 

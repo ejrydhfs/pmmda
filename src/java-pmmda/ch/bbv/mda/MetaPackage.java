@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann 
+/* copyright 2000-2006 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$
@@ -54,13 +54,14 @@ public class MetaPackage extends MetaElement {
    * Returns the class with the given index.
    * @param index index of the requested class.
    * @return the requested class.
+   * @see #addClass(int, MetaClass)
    */
   public MetaClass getClass(int index) {
     return classes.get(index);
   }
 
   /**
-   * Adds the class in the list of classes of the package.
+   * Adds the class in the list of classes.
    * @param clazz class to add.
    * @pre clazz != null
    */
@@ -71,10 +72,11 @@ public class MetaPackage extends MetaElement {
   }
 
   /**
-   * Adds the class in the list of classes of the package.
+   * Adds the class in the list of classes.
    * @param index position where the class should be inserted in the list.
    * @param clazz class to add.
    * @pre clazz != null
+   * @see #getClass(int)
    */
   public void addClass(int index, MetaClass clazz) {
     assert clazz != null;
@@ -83,7 +85,7 @@ public class MetaPackage extends MetaElement {
   }
 
   /**
-   * Returns a list of all classes of the package.
+   * Returns a list of all classes defined in the object.
    * @return list of all classes.
    * @see #setClasses(List)
    */
@@ -92,7 +94,7 @@ public class MetaPackage extends MetaElement {
   }
 
   /**
-   * Set the list of classes of the package.
+   * Sets the list of classes of the package.
    * @param classes new list of classes.
    * @see #getClasses()
    */
