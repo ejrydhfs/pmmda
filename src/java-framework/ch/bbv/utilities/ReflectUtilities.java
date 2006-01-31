@@ -129,7 +129,7 @@ public final class ReflectUtilities {
     if (clazz != null) {
       try {
         Method method = clazz.getDeclaredMethod(name, types);
-        method.invoke(clazz, params);
+        returns = method.invoke(clazz, params);
       } catch (SecurityException e) {
         log.fatal(e);
       } catch (NoSuchMethodException e) {
