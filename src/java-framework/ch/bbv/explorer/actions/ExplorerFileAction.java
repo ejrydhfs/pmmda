@@ -113,7 +113,7 @@ public abstract class ExplorerFileAction extends ExplorerGlobalActionImpl {
    * @return true if the file should be overwriten otherwise false.
    */
   protected boolean shouldOverwriteFile() {
-    if (getSelectedFile().exists()) {
+    if (getSelectedFile() != null && getSelectedFile().exists()) {
       int selection = displayMessage("actions.FILE_OVERWRITE", getSelectedFile());
       return (selection != 1);
     }

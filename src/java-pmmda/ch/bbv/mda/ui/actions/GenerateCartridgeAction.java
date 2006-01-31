@@ -50,7 +50,8 @@ public class GenerateCartridgeAction extends ExplorerGlobalActionImpl {
     if (model != null) {
       factory.execute(cartridge, model);
     }
-    return true;
+    lastResult = true;
+    return lastResult;
   }
 
   /**

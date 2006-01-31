@@ -94,4 +94,10 @@ public class ValidationRuleImpl implements ValidationRule {
     }
     results.add(result);
   }
+  
+  public void validationStart(List<ValidationRuleResult> results) {
+  }
+  
+  public void validationEnd(List<ValidationRuleResult> results) {
+  }
 }

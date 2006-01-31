@@ -61,6 +61,7 @@ public class GenerateAllAction extends ExplorerGlobalActionImpl {
       statusBar.setInfo("Generate All done");
       statusBar.setProgress(0);
     }
-    return true;
+    lastResult = true;
+    return lastResult;
   }
 }

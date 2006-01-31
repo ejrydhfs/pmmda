@@ -54,7 +54,8 @@ public class TypeFactory extends AbstractTypeFactory {
     UiNodeTypeImpl nodeType = new UiNodeTypeImpl(type, "name",
         MetaModelView.class);
     addRelation(nodeType, "packages", MetaPackage.class, true, true);
-    addRelation(nodeType, "dataTypes", MetaDatatype.class, true, true);
+    addRelation(nodeType, "classes", MetaClass.class, true, true);
+    addRelation(nodeType, "datatypes", MetaDatatype.class, true, true);
 
     List<UiField> params = new ArrayList<UiField>();
     addField(params, "name", String.class, true);

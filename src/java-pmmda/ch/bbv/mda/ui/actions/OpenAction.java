@@ -72,7 +72,8 @@ public class OpenAction extends ExplorerFileAction {
             .getString("mda.ui.sorryMsg.ILLEGAL_FILE_NAME_OR_TYPE"),
             ResourceUtilities.getString("mda.ui.errorMsg.ERROR"),
             JOptionPane.ERROR_MESSAGE);
-        return false;
+        lastResult = false;
+        return lastResult;
       }
       document.load(file);
       explorer.setDocument(document);
@@ -81,15 +82,18 @@ public class OpenAction extends ExplorerFileAction {
           .getString("mda.ui.errorMsg.ILLEGAL_FILENAME_ERROR"), file.getName()),
           ResourceUtilities.getString("mda.ui.errorMsg.ERROR"),
           JOptionPane.ERROR_MESSAGE);
-      return false;
+      lastResult = false;
+      return lastResult;
     } catch (NullPointerException e) {
       JOptionPane.showMessageDialog(getExplorer().getFrame(), MessageFormat.format(ResourceUtilities
           .getString("mda.ui.errorMsg.ILLEGAL_FILENAME_ERROR"), file.getName()),
           ResourceUtilities.getString("mda.ui.errorMsg.ERROR"),
           JOptionPane.ERROR_MESSAGE);
-      return false;
+      lastResult = false;
+      return lastResult;
     }
-    return true;
+    lastResult = true;
+    return lastResult;
   }
   
   protected int display() {

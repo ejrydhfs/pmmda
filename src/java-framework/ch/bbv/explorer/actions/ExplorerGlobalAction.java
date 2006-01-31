@@ -42,4 +42,11 @@ public interface ExplorerGlobalAction extends Action {
    * @return true if sucessful otherwise false.
    */
   boolean execute();
+  
+  /**
+   * Returns the result of the last action executed.
+   * The result before the first action executed will be false.
+   * @return result of last action executed.
+   */
+  boolean getLastResult();
 }

@@ -40,6 +40,8 @@ public abstract class ExplorerNewAction extends ExplorerGlobalActionImpl {
       getExplorer().getMenuBar()
           .documentChanged(ExplorerDocument.State.CREATED);
       getExplorer().getStatusBar().setInfo("");
+      lastResult = true;
     }
+    lastResult = false;
   }
 }

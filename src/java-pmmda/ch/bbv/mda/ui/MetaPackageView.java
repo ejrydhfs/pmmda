@@ -11,11 +11,19 @@ import java.awt.event.FocusListener;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.*;
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
+import ch.bbv.dog.DataObjectType;
+import ch.bbv.dog.LightweightObject;
 import ch.bbv.dog.ui.ReferenceCodeComboBox;
+import ch.bbv.explorer.ExplorerNode;
 import ch.bbv.explorer.NodePropertiesView;
 import ch.bbv.mda.MetaElement;
+import ch.bbv.mda.MetaModel;
 import ch.bbv.mda.MetaPackage;
 import ch.bbv.mda.VisibilityCode;
 import ch.bbv.mda.generators.CartridgeFactory;
@@ -123,11 +131,11 @@ public class MetaPackageView extends NodePropertiesView {
   @Override
   public void commitChanges() {
     MetaPackage model = (MetaPackage) getDataObject();
-    String text = nameText.getText();
-    if (text != null) {
-      model.setName(text.trim());
-    }
-    text = descriptionText.getText();
+    MetaModel metaModel = getMetaModel();
+    
+    changePackageName(model);
+
+    String text = descriptionText.getText();
     if (text != null) {
       model.setDescription(text.trim());
     }
@@ -139,9 +147,75 @@ public class MetaPackageView extends NodePropertiesView {
     model.setSystem(system.isSelected());
 
     tagsView.commitChanges();
+    
+    addParentPackages(model);
+
     getModel().nodeChanged();
   }
+  
+  private void changePackageName(MetaPackage metaPackage) {
+    String text = nameText.getText().trim();
+    String oldName = metaPackage.getName();
+    if (text != null) {
+      metaPackage.setName(text);
+    }
+  }
+                                                           
+  
+  /**
+   * If context is not set then this is a new meta package.
+   * If name is qualified then verify whether parent packages exist. If not then 
+   * add them.
+   * @param metaPackage
+   */
+  private void addParentPackages(MetaPackage metaPackage) {
+    if(isNewObject()) {
+      MetaModel metaModel = getMetaModel();
+      if(metaModel == null) return;
+      String name = metaPackage.getName();
+      int idx = ((ExplorerNode)getNode().getParent()).getIndex(getNode());
+      while(name.lastIndexOf(".") > 0) {
+        name = name.substring(0, name.lastIndexOf("."));
+        MetaPackage mPackage = metaModel.findPackage(name);
+        if(mPackage == null) {
+          DataObjectType type = getNode().getNodeType().getDataObjectType();
+          mPackage = (MetaPackage)type.createBoInstance();
+          CartridgeFactory.getInstance().getItemFactory().initialize(mPackage,
+              MetaPackage.class);
+          mPackage.setName(name);
+          mPackage.setVisibility((VisibilityCode) visibility.getSelectedCode());
+          node.setDataObject(mPackage);
+          tagsView.commitChanges();
+          node.setDataObject(metaPackage);
 
+          // add explorer node
+          Class boClass = type.getBoClass();
+          Class lwClass = type.getLwClass();
+          LightweightObject lwObject = null;
+          if (boClass != null) {
+            if ((lwClass != null) && (lwClass != boClass)) {
+              lwObject = type.createLwInstance();
+            } else {
+              lwObject = (LightweightObject) mPackage;
+            }
+            ExplorerNode childNode = new ExplorerNode(getNode().getNodeType(), lwObject, mPackage);
+            childNode.setParent((ExplorerNode)getNode().getParent());
+            ((ExplorerNode)getNode().getParent()).insert(childNode, idx);
+          }
+        }
+      }
+    }
+  }
+  
+  private MetaModel getMetaModel() {
+    ExplorerNode explorerNode = getNode();
+    while(explorerNode.getDataObject() != null && !(explorerNode.getDataObject() instanceof MetaModel)) {
+      explorerNode = (ExplorerNode)explorerNode.getParent();
+    }
+    if(explorerNode != null && explorerNode.getDataObject() != null && explorerNode.getDataObject() instanceof MetaModel) return (MetaModel)explorerNode.getDataObject();
+    return null;
+  }
+  
   @Override
   public void cancelChanges() {
     tagsView.cancelChanges();

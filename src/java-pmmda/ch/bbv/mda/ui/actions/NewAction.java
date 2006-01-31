@@ -40,6 +40,7 @@ public class NewAction extends ExplorerNewAction {
     model.setFilename("");
     model.accept(new TreeChecker());
     explorer.setDocument(document);
-    return true;
+    lastResult = true;
+    return lastResult;
   }
 }

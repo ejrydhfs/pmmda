@@ -58,6 +58,7 @@ public class ExplorerExitAction extends ExplorerGlobalActionImpl {
       break;
     }
     explorer.close();
-    return true;
+    lastResult = true;
+    return lastResult;
   }
 }

@@ -72,4 +72,20 @@ public interface ValidationRule {
    */
   boolean execute(Object bean, String property, Object oldValue,
       Object newValue, List<ValidationRuleResult> results);
+
+  /**
+   * Indicates to a validation rule that validation of the model or part of the model will start
+   * now. This can be used for preprocessing validation.
+   * @param results list where rule results can be added. The result is a
+   *          validation rule result.
+   */
+  void validationStart(List<ValidationRuleResult> results);
+  
+  /**
+   * Indicates to a validation rule that validation of the model or part of the model has ended
+   * now. This can be used for postprocessing validation results.
+   * @param results list where rule results can be added. The result is a
+   *          validation rule result.
+   */
+  void validationEnd(List<ValidationRuleResult> results);
 }

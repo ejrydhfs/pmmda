@@ -66,7 +66,8 @@ public class SaveAsAction extends ExplorerFileAction {
 
   public boolean execute() {
     if (!shouldOverwriteFile()) {
-      return false;
+      lastResult = false;
+      return lastResult;
     }
     File file = getSelectedFile();
     String name = file.getName();
@@ -81,7 +82,8 @@ public class SaveAsAction extends ExplorerFileAction {
           .getString("mda.ui.errorMsg.ILLEGAL_FILE_NAME_OR_TYPE"),
           ResourceUtilities.getString("mda.ui.errorMsg.ERROR"),
           JOptionPane.ERROR_MESSAGE);
-      return false;
+      lastResult = false;
+      return lastResult;
     }
     extension = extension.toLowerCase();
     try {
@@ -106,10 +108,12 @@ public class SaveAsAction extends ExplorerFileAction {
             JOptionPane.ERROR_MESSAGE);
       }
     } catch (PersistenceException e) {
-      return false;
+      lastResult = false;
+      return lastResult;
     }
     getExplorer().getMenuBar().documentChanged(ExplorerDocument.State.CLEAN);
-    return true;
+    lastResult = true;
+    return lastResult;
   }
 
   /**

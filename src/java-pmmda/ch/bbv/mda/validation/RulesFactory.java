@@ -10,8 +10,18 @@ package ch.bbv.mda.validation;
 import java.util.ResourceBundle;
 
 import ch.bbv.application.Locator;
-import ch.bbv.dog.validation.*;
-import ch.bbv.mda.*;
+import ch.bbv.dog.validation.FormatRule;
+import ch.bbv.dog.validation.NotNullRule;
+import ch.bbv.dog.validation.StringNotNullOrNotEmptyRule;
+import ch.bbv.dog.validation.UndefinedTypeRule;
+import ch.bbv.dog.validation.UniqueRule;
+import ch.bbv.dog.validation.ValidationRule;
+import ch.bbv.dog.validation.Validator;
+import ch.bbv.mda.MetaClass;
+import ch.bbv.mda.MetaIndexedProperty;
+import ch.bbv.mda.MetaModel;
+import ch.bbv.mda.MetaPackage;
+import ch.bbv.mda.MetaProperty;
 
 /**
  * The rules factory defines the validation rules the application requires on
@@ -126,6 +136,7 @@ public class RulesFactory {
     validator.registerRule(new UniqueRule(NAME), MetaClass.class,
         "indexedProperties");
     validator.registerRule(identifierRule, MetaClass.class, NAME);
+    validator.registerRule(new NothingToGenerateRule(), MetaClass.class, "");
   }
 
   /**
@@ -139,6 +150,8 @@ public class RulesFactory {
         MetaProperty.class, "typeName");
     validator.registerRule(identifierRule, MetaProperty.class, NAME);
     validator.registerRule(nameTypeNotNullOrNotEmptyRule, MetaProperty.class,
+        "typeName");
+    validator.registerRule(new UndefinedTypeRule(true, ValidationRule.ERROR), MetaProperty.class,
         "typeName");
   }
 
@@ -154,6 +167,8 @@ public class RulesFactory {
     validator.registerRule(identifierRule, MetaIndexedProperty.class, NAME);
     validator.registerRule(nameTypeNotNullOrNotEmptyRule,
         MetaIndexedProperty.class, "typeName");
+    validator.registerRule(new UndefinedTypeRule(true, ValidationRule.ERROR), MetaIndexedProperty.class,
+    "typeName");
   }
 
   /**

@@ -32,6 +32,11 @@ public abstract class ExplorerGlobalActionImpl extends AbstractAction implements
    * Explorer owning the global action.
    */
   private Explorer explorer;
+  
+  /**
+   * result of the last action executed 
+   */
+  protected boolean lastResult = false;
 
   /**
    * Constructor of the class.
@@ -75,7 +80,15 @@ public abstract class ExplorerGlobalActionImpl extends AbstractAction implements
    * @param event event to process.
    */
   public void actionPerformed(ActionEvent event) {
-    execute();
+    lastResult = execute();
+  }
+  
+  /**
+   * Returns the result of the last action executed.
+   * False if no action has been executed before.
+   */
+  public boolean getLastResult() {
+    return lastResult;
   }
 
   /**
@@ -97,7 +110,8 @@ public abstract class ExplorerGlobalActionImpl extends AbstractAction implements
         if (file != null) {
           sucess = menuBar.getStandardAction(Names.SAVE).execute();
         } else {
-          sucess = menuBar.getStandardAction(Names.SAVE_AS).execute();
+          menuBar.getStandardAction(Names.SAVE_AS).actionPerformed(null);
+          sucess = menuBar.getStandardAction(Names.SAVE_AS).getLastResult();
         }
         if (sucess) {
           menuBar.documentChanged(ExplorerDocument.State.CLEAN);
@@ -133,7 +147,10 @@ public abstract class ExplorerGlobalActionImpl extends AbstractAction implements
   protected int displayMessage(String messageKey, File file) {
     ResourceBundle bundle = ResourceBundle
         .getBundle("ch.bbv.explorer.Messages");
-    String filename = file.getName();
+    String filename = "undefined";
+    if(file != null) {
+      filename = file.getName();
+    }
     String message = MessageFormat.format(bundle.getString(messageKey),
         new Object[] { filename });
     return JOptionPane.showConfirmDialog(getExplorer().getFrame(), message,

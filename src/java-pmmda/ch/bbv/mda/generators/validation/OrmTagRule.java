@@ -112,8 +112,8 @@ public class OrmTagRule extends TagRule {
               .qualifiedName());
         }
         String value = property.valueOfTag(COLUMN_TYPE);
-        if (value.equalsIgnoreCase(JdbcTypeCode.VARCHAR.getShortDescription())
-            || value.equalsIgnoreCase(JdbcTypeCode.CHAR.getShortDescription())) {
+        if (value != null && (value.equalsIgnoreCase(JdbcTypeCode.VARCHAR.getShortDescription())
+            || value.equalsIgnoreCase(JdbcTypeCode.CHAR.getShortDescription()))) {
           if (!exists(property, COLUMN_SIZE)) {
             sucess = false;
             addErrorMessage(results, ERROR_MISSING_LENGTH, COLUMN_SIZE,

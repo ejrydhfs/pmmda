@@ -1995,7 +1995,7 @@ public class MdaRoseVisitor implements RoseVisitor
         // It was not found in the model class so check if primitive type.
         //
         eType = getBasicType(type);
-
+        
         if (eType == null)
         {
           warning(RoseImporterPlugin.INSTANCE.getString("_UI_UnresolvedTypeNameFor_message", new Object []{
@@ -2003,6 +2003,9 @@ public class MdaRoseVisitor implements RoseVisitor
             ((ENamedElement)element).getName() }));
           eType = getBasicType("EString");
         }
+        
+        // Adrian
+        createMetaDataType(type);
       }
 
       if (element instanceof EAttribute && eType instanceof EClass)
@@ -2430,6 +2433,17 @@ public class MdaRoseVisitor implements RoseVisitor
     return metaDataType;
   }
   
+  private MetaDatatype createMetaDataType(String type) {
+    MetaDatatype metaDatatype = metaModel.findDatatype(type);
+    if(metaDatatype != null) return metaDatatype;
+    
+    metaDatatype = new MetaDatatype();
+    metaDatatype.setName(type);
+    metaDatatype.setSystem(true);
+    metaModel.addDatatype(metaDatatype);
+    return metaDatatype;
+  }
+  
   private void setCommonElementAspects(MetaElement metaElement, RoseNode roseNode){
     if(metaElement == null || roseNode == null) return;
     String documentation = roseNode.getDocumentation();
@@ -2439,11 +2453,11 @@ public class MdaRoseVisitor implements RoseVisitor
 
     // rose global to isSystem
     RoseNode global = roseNode.findNodeWithKey("global");
-    if(global != null) {
+    if(global != null) { // TODO
       if(global.getValue().equalsIgnoreCase(Boolean.TRUE.toString())) {
-        metaElement.setSystem(true);
+        //metaElement.setSystem(true);
       } else {
-        metaElement.setSystem(false);
+        //metaElement.setSystem(false);
       }
     }
     

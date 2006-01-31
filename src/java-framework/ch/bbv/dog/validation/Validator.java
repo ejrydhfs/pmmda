@@ -12,10 +12,13 @@ import java.util.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import ru.novosoft.uml.foundation.core.MInterface;
+
 import ch.bbv.application.ComponentImpl;
 import ch.bbv.dog.AbstractVisitorFunctor;
 import ch.bbv.dog.DataObject;
 import ch.bbv.dog.DataObjectType;
+import ch.bbv.mda.persistence.nsuml.FilterIterator;
 
 /**
  * The validator component is responsible to apply validation rules on business
@@ -166,7 +169,9 @@ public class Validator extends ComponentImpl {
     }
     ValidateFunctor functor = new ValidateFunctor(this);
     visitor.setFunctor(functor);
+    validationStart(results);
     DataObjectType.invokeVisitor(root, visitor);
+    validationEnd(results);
     results.addAll(functor.getResults());
     if (log.isTraceEnabled()) {
       StringBuilder buffer = new StringBuilder();
@@ -207,5 +212,45 @@ public class Validator extends ComponentImpl {
       infos.put(clazz, info);
     }
     info.registerRule(rule, property);
+  }
+  
+  /**
+   * Indicates that validation starts now. This can be used by rules to perform preprocessing
+   * @param results list to which validation rule results are added.
+   */
+  private void validationStart(List<ValidationRuleResult> results) {
+    for (Iterator<ValidationInfo> i = new FilterIterator<ValidationInfo>(infos.values(),
+        ValidationInfo.class); i.hasNext();) {
+      ValidationInfo info = i.next();
+      for (ValidationRule rule : info.getRules()) {
+        rule.validationStart(results);
+      }
+      Map<String, List<ValidationRule>> rules = info.getPropertyRules();
+      for (String property : rules.keySet()) {
+        for (ValidationRule rule : rules.get(property)) {
+          rule.validationStart(results);
+        }
+      }
+    }
+  }
+  
+  /**
+   * Indicates that validation is complete now. This can be used by rules to perform postprocessing
+   * @param results list to which validation rule results are added.
+   */
+  private void validationEnd(List<ValidationRuleResult> results) {
+    for (Iterator<ValidationInfo> i = new FilterIterator<ValidationInfo>(infos.values(),
+        ValidationInfo.class); i.hasNext();) {
+      ValidationInfo info = i.next();
+      for (ValidationRule rule : info.getRules()) {
+        rule.validationEnd(results);
+      }
+      Map<String, List<ValidationRule>> rules = info.getPropertyRules();
+      for (String property : rules.keySet()) {
+        for (ValidationRule rule : rules.get(property)) {
+          rule.validationEnd(results);
+        }
+      }
+    }
   }
 }

@@ -68,26 +68,31 @@ public class SaveAction extends ExplorerSaveAction {
       if(e.getCause() instanceof FileNotFoundException) {
         JOptionPane.showMessageDialog(null, e.getLocalizedMessage(), ResourceUtilities
             .getString("mda.ui.sorryMsg.SORRY"), JOptionPane.ERROR_MESSAGE);
-        return false; // This cause indicates that writter attempt to write a locked file.
+        lastResult = false; // This cause indicates that writter attempt to write a locked file.
+        return lastResult;
       }
       JOptionPane.showMessageDialog(explorer.getFrame(), ResourceUtilities
           .getString("mda.ui.sorryMsg.UNSUPPORTED_FILE_TYPE_FOR_SAVE"),
           ResourceUtilities.getString("mda.ui.sorryMsg.SORRY"),
           JOptionPane.ERROR_MESSAGE);
-      return false;
+      lastResult = false;
+      return lastResult;
     } catch (NullPointerException e) {
       log.error(e);
       JOptionPane.showMessageDialog(explorer.getFrame(), ResourceUtilities
           .getString("mda.ui.sorryMsg.UNSUPPORTED_FILE_TYPE_FOR_SAVE"),
           ResourceUtilities.getString("mda.ui.sorryMsg.SORRY"),
           JOptionPane.ERROR_MESSAGE);
-      return false;
+      lastResult = false;
+      return lastResult;
     } catch (IOException e) {
       log.error(e);
-      return false;
+      lastResult = false;
+      return lastResult;
     }
     explorer.getMenuBar().documentChanged(ExplorerDocument.State.CLEAN);
-    return true;
+    lastResult = true;
+    return lastResult;
   }
 
   public void actionPerformed(ActionEvent action) {
