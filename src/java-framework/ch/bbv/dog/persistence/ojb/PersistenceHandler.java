@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann
+/* copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -14,7 +14,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.odmg.Database;
 
-import ch.bbv.application.Locator;
 import ch.bbv.dog.*;
 
 /**
@@ -71,13 +70,13 @@ public class PersistenceHandler implements DataObjectHandler {
   }
 
   public void openDatasource(String source, boolean readonly) {
-    assert (source != null);
+    assert source != null;
     int mode = (readonly ? Database.OPEN_READ_ONLY : Database.OPEN_READ_WRITE);
     databaseMgr.openDatabase(source, mode);
   }
 
   public void closeDatasource(String source) {
-    assert (source != null);
+    assert source != null;
     Database database = getDatabase(source);
     databaseMgr.closeDatabase(database);
   }
@@ -114,7 +113,7 @@ public class PersistenceHandler implements DataObjectHandler {
 
   public List<DataObjectUpdate> store(String datasource, Class clazz,
       DataObject root) {
-    assert ((datasource != null) && (clazz != null) && (root != null));
+    assert (datasource != null) && (clazz != null) && (root != null);
     if (log.isTraceEnabled()) {
       StringBuilder text = new StringBuilder();
       text.append("start store operation in ").append(datasource).append(
@@ -125,9 +124,9 @@ public class PersistenceHandler implements DataObjectHandler {
 
     Database database = getDatabase(datasource);
     CollectFunctor collect = new CollectFunctor();
-    AbstractVisitorFunctor visitor = getVisitor(clazz);
-    List<DataObject> originals = Collections.emptyList();
+    AbstractVisitorFunctor visitor = DataObjectManager.getVisitorFor(clazz);
     visitor.setFunctor(collect);
+    List<DataObject> originals = Collections.emptyList();
     if (!root.isNew()) {
       DataObject originalRoot = retrieve(datasource, clazz, root.getId());
       if (originalRoot != null) {
@@ -169,18 +168,6 @@ public class PersistenceHandler implements DataObjectHandler {
   }
 
   /**
-   * Returns the visitor of the class.
-   * @param clazz business object class which visitor is requested.
-   * @return requested visitor if found otherwise false.
-   */
-  private AbstractVisitorFunctor getVisitor(Class clazz) {
-    DataObjectManager manager = (DataObjectManager) Locator.getInstance()
-        .getComponent(DataObjectManager.NAME);
-    DataObjectType type = manager.getType(clazz);
-    return type.createVisitorInstance();
-  }
-
-  /**
    * Returns the database with the given datasource name.
    * @param datasource name of the datasource to be found.
    * @return the database associated with the datasource.
@@ -214,7 +201,7 @@ public class PersistenceHandler implements DataObjectHandler {
     }
     Database database = getDatabase(datasource);
     CollectFunctor collect = new CollectFunctor();
-    AbstractVisitorFunctor visitor = getVisitor(clazz);
+    AbstractVisitorFunctor visitor = DataObjectManager.getVisitorFor(clazz);
     visitor.setFunctor(collect);
     DataObjectType.invokeVisitor(clazz, originalRoot, visitor);
     List<DataObject> deleted = new ArrayList<DataObject>(collect.getObjects());
