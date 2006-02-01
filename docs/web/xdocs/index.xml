@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2000-2005 The Apache Software Foundation
+  Copyright 2000-2006 The Apache Software Foundation
   
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -37,7 +37,8 @@
         <em>pmMDA</em>
         provides extensive support for Java client/server applications using
         JDBC – meaning 2 tiers programs -. CORBA and J2EE middleware - meaning 3
-        tiers programs - are also supported. Work is under way to support C++
+        tiers programs - are also supported. Related projects provides code
+        generator for the .NET environment. Work is under way to support C++
         based applications.
       </p>
       <p>
@@ -122,7 +123,7 @@
         <em>iPod</em>
         compatible contact book. Now you can use your
         <em>iPod</em>
-        as PDA.
+        as PDA to access your contacts and calendar.
       </p>
     </section>
     <section>

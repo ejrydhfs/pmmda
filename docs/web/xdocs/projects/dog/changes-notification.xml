@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2000-2006 The Apache Software Foundation
+  
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+  http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" 
+  "http://forrest.apache.org/dtd/document-v20.dtd">
+<document>
+  <header>
+    <title>Object Conservation in N-tiers applications</title>
+  </header>
+  <body>
+    <section>
+      <title>Introduction</title>
+      <p>
+        The server application can implement complex functions relying on the
+        conservation of object identity in the framework. Such an example is the
+        notification of business object changes to all interested client
+        applications. Therefore the notification framework registers change
+        listeners on the business objects and expect to be notified when a
+        change happens. Therefore the tranfer framework should not replaced
+        existing instances with new instances received from a client.
+      </p>
+      <p>
+        It should be evident that the new instances are not a problem for the
+        persistent framework because the used concept identity is based on the
+        class of the object and an identity property defined for each persistent
+        object. This approach is coherant with all major persistent frameworks
+        such as OJB, Hibernate, JDO, or J2EE enterprise beans.
+      </p>
+      <p>
+        This document will show different approaches to reconciliate the
+        different concepts described above. Two main directions were identified.
+        First a dedicated manager is provided to detect object changes and
+        propagates them. A listener can register his interest to an object or to
+        a property of an object. Each time a changed version of this object is
+        received the manager is informed. The object is identified through the
+        persistent identifier defined as the class of the object and a distinct
+        number identifier managed in the persistent layer. Second instead of
+        transmitting whole object the client could just propagates the changes
+        it did. An interesting question is to determine where this logic should
+        be executed, on client side or on server side.
+      </p>
+    </section>
+    <section>
+      <title>Change Propagation</title>
+      <p>
+        The change propagation is to detect the modifications in a graph of data
+        objects and apply them to the reference data object graph. After
+        executing the transformation both graph should be equivalent. This is
+        only guaranteed if the order of the transformation is not relevant.
+        Therefore as stated in the original description of the DOG framewok it
+        is prohibited to implement business logic in property accessors. The
+        potential changes are the following ones.
+      </p>
+      <dl>
+        <dt>Modify a simple property</dt>
+        <dd>
+          This is the simplest changes. The new value of the property is applied
+          to the reference object. The change is performed using the set
+          operation to insure that registered listeners are called. If a veto
+          exception is thrown an application exceiption is thrown indicating
+          that incompatible business rules are applied. It is the responsibility
+          of the application is define smaller change jobs compatible with its
+          logic.
+        </dd>
+        <dt>Create a new root object</dt>
+        <dd>
+          A new root object was created and perhaps child objects were added to
+          it. The framework checks that all objects are new ones. If not an
+          exception is thrown. The propagation can only consolidate two similar
+          graphs. This restriction is reasonable because the application can
+          always provide a root containing all used objects. The drawback of
+          this approach is the quantity of information to transfer. The
+          application can tune it by deciding where the change collection logic
+          is executed.
+        </dd>
+        <dt>Delete an object</dt>
+        <dd>The object and its children were removed from the graph.</dd>
+        <dt>Add an object to an indexed property</dt>
+        <dd>
+          Two situations arise. The inserted object is a new one. The same rules
+          applies to it as to the situation where a new root is created. The
+          inserted object is an existing one. Therefore the object must first be
+          removed from the indexed property containing it and when added to the
+          new indexed property.
+        </dd>
+      </dl>
+      <p>
+        The whole change propagation mechanisms build on the following
+        assumptions.
+      </p>
+      <ul>
+        <li>
+          A data object is uniquely identified with its programming language
+          class and a numerical identifier
+        </li>
+        <li>
+          A data object is a new one only if the numerical identifier has a null
+          value
+        </li>
+      </ul>
+    </section>
+    <section>
+      <title>Algorithm Description</title>
+      <p>First the data object of the original graph are collected.</p>
+      <p>
+        Second for each visited object in the modified graph the rules are
+        applied.
+      </p>
+      <ul>
+        <li>
+          For each simple or indexed property which type is not an instance of
+          data object we check if the property has changed. If yes the property
+          is synchronized. The update operation is
+          <ul>
+            <li>
+              original.set(simple-property, modified.get(simple-property))
+            </li>
+            <li>
+              original.set(indexed-property, modified.get(indexed-property))
+            </li>
+          </ul>
+        </li>
+        <li>
+          For each simple property which type is an instance of data object we
+          check if the property was set to null. If yes the property is
+          synchronized.
+          <ul>
+            <li>original.set(simple-property, null)</li>
+          </ul>
+        </li>
+        <li>
+          For each indexed property which type is an instance of data object we
+          check if an item was removed. If yes the indexed property is
+          synchronized.
+          <ul>
+            <li>original.remove(data-object)</li>
+          </ul>
+        </li>
+        <li>
+          For each simple property which type is an instance of data object we
+          check if the property was set to another object. If yes the property
+          is synchronized. The object can only be added if it is new or was
+          previously removed.
+          <ul>
+            <li>original.set(data-object)</li>
+          </ul>
+        </li>
+        <li>
+          For each indexed property which type is an instance of data object we
+          check if objects were added to the property. If yes the indexed
+          property is synchronized. The object can only be added if it is new or
+          was previously removed.
+          <ul>
+            <li>original.add(index, data-object)</li>
+          </ul>
+        </li>
+      </ul>
+      <p>
+        The algorithm requires three graph traversals, one of the original
+        graph, and two times the modified graph to first remove objects and
+        second to add some of the removed ones. So the algorithm is O(3n).
+      </p>
+    </section>
+  </body>
+</document>

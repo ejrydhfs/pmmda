@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2000-2005 The Apache Software Foundation
+  Copyright 2000-2006 The Apache Software Foundation
   
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -14,8 +14,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<site label="pmMDA" tab="home" href=""
-  xmlns="http://apache.org/forrest/linkmap/1.0">
+<site label="pmMDA" href="" xmlns="http://apache.org/forrest/linkmap/1.0">
   <about label="About" tab="home">
     <home label="Home" href="index.html" description="Home Page" />
     <news label="News" href="news.html" description="Site News" />
@@ -49,8 +48,8 @@
       <javadoc label="JavaDoc" href="../../api/index.html"
         description="JavaDoc" />
       <tutorial label="Tutorials" href="tutorial.html" description="Tutorials" />
-      <propagation label="Propagation" href="changes-progagation.html"
-        description="Changes Propagation" />
+      <notification label="Changes Notification"
+        href="changes-notification.html" description="Changes Notification" />
       <experiences label="Experiences" href="dog-experiences.html"
         description="Experiences" />
     </dog>
