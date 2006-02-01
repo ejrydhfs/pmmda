@@ -59,7 +59,7 @@
     <property name="dog.lib" value="DoG-${dog.version}.jar" />
     <property name="flexdock.lib" value="flexdock-0.4.0.jar" />
     <property name="forms.lib" value="forms-1.0.5.jar" />
-    <property name="glazedlists.lib" value="glazedlists-1.0.5.jar" />
+    <property name="glazedlists.lib" value="glazedlists-1.5.0.jar" />
     <property name="jcalendar.lib" value="jcalendar-1.2.2.jar" />
     <property name="jgraph.lib" value="jgraph-5.7.4.4.jar" />
     <property name="jgraphaddons.lib" value="jgraphaddons-1.0.8.jar" />
