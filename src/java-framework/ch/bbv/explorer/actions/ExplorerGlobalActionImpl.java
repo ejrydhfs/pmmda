@@ -102,7 +102,7 @@ public abstract class ExplorerGlobalActionImpl extends AbstractAction implements
     ExplorerMenuBar menuBar = getExplorer().getMenuBar();
     ExplorerDocument document = getExplorer().getDocument();
     ExplorerDocument.State state = document.getState();
-    if (state == ExplorerDocument.State.MODIFIED) {
+    if (state == ExplorerDocument.State.MODIFIED || state == ExplorerDocument.State.CREATED) {
       int selection = displayMessage("actions.SAVE_CHANGES");
       switch (selection) {
       case 0:
