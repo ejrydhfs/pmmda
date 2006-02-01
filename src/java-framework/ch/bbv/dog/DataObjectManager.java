@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann
+/* copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -11,15 +11,16 @@ import java.util.Map;
 
 import ch.bbv.application.Component;
 import ch.bbv.application.ComponentImpl;
+import ch.bbv.application.Locator;
 
 /**
  * The data object manager defines a coherant set of handlers responsible to
  * provide all services to manipulate data objects and their lightweigth
  * representations, and to communicate with the underlying layers. The manager
  * provides capabilities for local cache of data object graphs and application
- * wide cache for copies of graphs.These capabilities are useful when the
- * cost of requesting the objects from the underlying layers - for example
- * due to network latency or bandwith - is high.
+ * wide cache for copies of graphs.These capabilities are useful when the cost
+ * of requesting the objects from the underlying layers - for example due to
+ * network latency or bandwith - is high.
  * @author MarcelBaumann
  * @version $Revision$
  */
@@ -49,6 +50,17 @@ public class DataObjectManager extends ComponentImpl implements Component {
    * The map for all the data object types and their associated type.
    */
   private Map<Class, DataObjectType> types;
+
+  /**
+   * Returns the visitor of the class.
+   * @param clazz business object class which visitor is requested.
+   * @return requested visitor if found otherwise false.
+   */
+  public static AbstractVisitorFunctor getVisitorFor(Class clazz) {
+    DataObjectManager manager = (DataObjectManager) Locator.getInstance()
+        .getComponent(DataObjectManager.NAME);
+    return manager.getVisitor(clazz);
+  }
 
   /**
    * Constructor of the class.
@@ -97,7 +109,7 @@ public class DataObjectManager extends ComponentImpl implements Component {
    * @pre object != null
    */
   public DataObjectType getType(DataObject object) {
-    assert (object != null);
+    assert object != null;
     return types.get(object.getClass());
   }
 
@@ -108,7 +120,7 @@ public class DataObjectManager extends ComponentImpl implements Component {
    * @pre clazz != null
    */
   public DataObjectType getType(Class clazz) {
-    assert (clazz != null);
+    assert clazz != null;
     return types.get(clazz);
   }
 
@@ -130,7 +142,7 @@ public class DataObjectManager extends ComponentImpl implements Component {
    * @pre type != null
    */
   public void register(DataObjectType type) {
-    assert (type != null);
+    assert type != null;
     types.put(type.getBoClass(), type);
     if (lwHandler != null) {
       lwHandler.register(type);
@@ -144,12 +156,24 @@ public class DataObjectManager extends ComponentImpl implements Component {
    * @return list of all root objects in the tree.
    * @pre root != null
    */
-  public List<? extends DataObject> getRoots(DataObject root) {
-    assert (root != null);
+  public List< ? extends DataObject> getRoots(DataObject root) {
+    assert root != null;
     AbstractVisitorFunctor visitor = getType(root).createVisitorInstance();
     CollectRootFunctor functor = new CollectRootFunctor(this);
     visitor.setFunctor(functor);
     DataObjectType.invokeVisitor(root.getClass(), root, visitor);
     return functor.getRoots();
   }
- }
+
+  /**
+   * Returns the visitor of the class.
+   * @param clazz business object class which visitor is requested.
+   * @return requested visitor if found otherwise false.
+   * @pre clazz != null
+   */
+  public AbstractVisitorFunctor getVisitor(Class clazz) {
+    assert clazz != null;
+    DataObjectType type = getType(clazz);
+    return type.createVisitorInstance();
+  }
+}
