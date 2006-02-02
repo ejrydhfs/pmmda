@@ -6,6 +6,7 @@
  */
 package ch.bbv.mda.ui.actions;
 
+import java.awt.Cursor;
 import java.io.File;
 import java.text.MessageFormat;
 
@@ -58,8 +59,9 @@ public class OpenAction extends ExplorerFileAction {
 
   public boolean execute() {
     File file = getSelectedFile();
+    MdaExplorer explorer = (MdaExplorer) getExplorer();
+    explorer.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
     try {
-      MdaExplorer explorer = (MdaExplorer) getExplorer();
       MdaDocument document = new MdaDocument();
       String name = file.getName();
       if(name != null && (name.lastIndexOf('.') == -1 || name.endsWith("."))) { // in case where user thinks that the extension comes from the file filter we get the first match from the filter.
@@ -91,6 +93,8 @@ public class OpenAction extends ExplorerFileAction {
           JOptionPane.ERROR_MESSAGE);
       lastResult = false;
       return lastResult;
+    } finally {
+      explorer.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     }
     lastResult = true;
     return lastResult;

@@ -6,6 +6,7 @@
  */
 package ch.bbv.mda.ui.actions;
 
+import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.io.FileNotFoundException;
@@ -49,6 +50,7 @@ public class SaveAction extends ExplorerSaveAction {
 
   public boolean execute() {
     MdaExplorer explorer = (MdaExplorer) getExplorer();
+    explorer.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
     try {
       MdaDocument document = explorer.getDocument();
       String filename = document.getModel().getFilename();
@@ -89,6 +91,8 @@ public class SaveAction extends ExplorerSaveAction {
       log.error(e);
       lastResult = false;
       return lastResult;
+    } finally {
+      explorer.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     }
     explorer.getMenuBar().documentChanged(ExplorerDocument.State.CLEAN);
     lastResult = true;

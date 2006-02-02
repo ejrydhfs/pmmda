@@ -17,15 +17,20 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import ch.bbv.dog.DataObject;
 import ch.bbv.dog.DataObjectType;
+import ch.bbv.dog.DoFunctor;
 import ch.bbv.dog.LightweightObject;
 import ch.bbv.dog.ui.ReferenceCodeComboBox;
 import ch.bbv.explorer.ExplorerNode;
 import ch.bbv.explorer.NodePropertiesView;
 import ch.bbv.mda.MetaElement;
+import ch.bbv.mda.MetaIndexedProperty;
 import ch.bbv.mda.MetaModel;
 import ch.bbv.mda.MetaPackage;
+import ch.bbv.mda.MetaProperty;
 import ch.bbv.mda.VisibilityCode;
+import ch.bbv.mda.VisitorFunctor;
 import ch.bbv.mda.generators.CartridgeFactory;
 
 import com.jgoodies.forms.builder.DefaultFormBuilder;
@@ -132,7 +137,8 @@ public class MetaPackageView extends NodePropertiesView {
   public void commitChanges() {
     MetaPackage model = (MetaPackage) getDataObject();
     MetaModel metaModel = getMetaModel();
-    
+
+    if(!(model.getName() == null) && model.getName().equals(nameText.getText().trim())) return;
     changePackageName(model);
 
     String text = descriptionText.getText();
@@ -153,11 +159,18 @@ public class MetaPackageView extends NodePropertiesView {
     getModel().nodeChanged();
   }
   
+  /**
+   * Changes a package name. It also updates references to classes within this package.
+   */
   private void changePackageName(MetaPackage metaPackage) {
     String text = nameText.getText().trim();
     String oldName = metaPackage.getName();
     if (text != null) {
       metaPackage.setName(text);
+    }
+    MetaModel metaModel = getMetaModel();
+    if(!text.equals(oldName)) {
+      metaModel.accept(new UpdateQualifiedTypeFunctor(oldName, text));
     }
   }
                                                            
@@ -169,44 +182,47 @@ public class MetaPackageView extends NodePropertiesView {
    * @param metaPackage
    */
   private void addParentPackages(MetaPackage metaPackage) {
-    if(isNewObject()) {
-      MetaModel metaModel = getMetaModel();
-      if(metaModel == null) return;
-      String name = metaPackage.getName();
-      int idx = ((ExplorerNode)getNode().getParent()).getIndex(getNode());
-      while(name.lastIndexOf(".") > 0) {
-        name = name.substring(0, name.lastIndexOf("."));
-        MetaPackage mPackage = metaModel.findPackage(name);
-        if(mPackage == null) {
-          DataObjectType type = getNode().getNodeType().getDataObjectType();
-          mPackage = (MetaPackage)type.createBoInstance();
-          CartridgeFactory.getInstance().getItemFactory().initialize(mPackage,
-              MetaPackage.class);
-          mPackage.setName(name);
-          mPackage.setVisibility((VisibilityCode) visibility.getSelectedCode());
-          node.setDataObject(mPackage);
-          tagsView.commitChanges();
-          node.setDataObject(metaPackage);
+    MetaModel metaModel = getMetaModel();
+    if(metaModel == null) return;
+    String name = metaPackage.getName();
+    int idx = ((ExplorerNode)getNode().getParent()).getIndex(getNode());
+    while(name.lastIndexOf(".") > 0) {
+      name = name.substring(0, name.lastIndexOf("."));
+      MetaPackage mPackage = metaModel.findPackage(name);
+      if(mPackage == null) {
+        DataObjectType type = getNode().getNodeType().getDataObjectType();
+        mPackage = (MetaPackage)type.createBoInstance();
+        CartridgeFactory.getInstance().getItemFactory().initialize(mPackage,
+            MetaPackage.class);
+        mPackage.setName(name);
+        mPackage.setVisibility((VisibilityCode) visibility.getSelectedCode());
+        node.setDataObject(mPackage);
+        tagsView.commitChanges();
+        node.setDataObject(metaPackage);
+        metaModel.addPackage(mPackage);
 
-          // add explorer node
-          Class boClass = type.getBoClass();
-          Class lwClass = type.getLwClass();
-          LightweightObject lwObject = null;
-          if (boClass != null) {
-            if ((lwClass != null) && (lwClass != boClass)) {
-              lwObject = type.createLwInstance();
-            } else {
-              lwObject = (LightweightObject) mPackage;
-            }
-            ExplorerNode childNode = new ExplorerNode(getNode().getNodeType(), lwObject, mPackage);
-            childNode.setParent((ExplorerNode)getNode().getParent());
-            ((ExplorerNode)getNode().getParent()).insert(childNode, idx);
+        // add explorer node
+        Class boClass = type.getBoClass();
+        Class lwClass = type.getLwClass();
+        LightweightObject lwObject = null;
+        if (boClass != null) {
+          if ((lwClass != null) && (lwClass != boClass)) {
+            lwObject = type.createLwInstance();
+          } else {
+            lwObject = (LightweightObject) mPackage;
           }
+          ExplorerNode childNode = new ExplorerNode(getNode().getNodeType(), lwObject, mPackage);
+          childNode.setParent((ExplorerNode)getNode().getParent());
+          ((ExplorerNode)getNode().getParent()).insert(childNode, idx);
         }
       }
     }
   }
-  
+
+  /** 
+   * Looks up the associated meta model. If none found then null is returned.
+   * @return null if no meta model found, otherwise the MetaModel associated with this package.
+   */
   private MetaModel getMetaModel() {
     ExplorerNode explorerNode = getNode();
     while(explorerNode.getDataObject() != null && !(explorerNode.getDataObject() instanceof MetaModel)) {
@@ -214,6 +230,10 @@ public class MetaPackageView extends NodePropertiesView {
     }
     if(explorerNode != null && explorerNode.getDataObject() != null && explorerNode.getDataObject() instanceof MetaModel) return (MetaModel)explorerNode.getDataObject();
     return null;
+  }
+  
+  protected boolean validateContent() {
+    return false;
   }
   
   @Override
@@ -268,6 +288,34 @@ public class MetaPackageView extends NodePropertiesView {
 
     public void focusGained(FocusEvent e) {
       // don't do anything
+    }
+  }
+  
+  /**
+   * Functor replacing type references to classes within modified package.
+   * If the name of a packages changes then the qualified of its classes also change. This
+   * functor adapts the qualified name of references to the new name.
+   * @author adrianbachofen
+   *
+   */
+  private class UpdateQualifiedTypeFunctor extends VisitorFunctor implements DoFunctor {
+    
+    private String oldName = "";
+    private String newName = "";
+    
+    public UpdateQualifiedTypeFunctor(String oldName, String newName) {
+      this.oldName = oldName;
+      this.newName = newName;
+      setFunctor(this);
+    }
+    
+    public void execute(DataObject dataObject) {
+      if(dataObject instanceof MetaProperty || dataObject instanceof MetaIndexedProperty) {
+        MetaProperty metaProperty = (MetaProperty)dataObject;
+        if(metaProperty.getTypeName().startsWith(oldName)) {
+          metaProperty.setTypeName(newName + metaProperty.getTypeName().substring(oldName.length()));
+        }
+      }
     }
   }
 }

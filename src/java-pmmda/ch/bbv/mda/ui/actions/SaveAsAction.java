@@ -6,6 +6,7 @@
  */
 package ch.bbv.mda.ui.actions;
 
+import java.awt.Cursor;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -86,6 +87,7 @@ public class SaveAsAction extends ExplorerFileAction {
       return lastResult;
     }
     extension = extension.toLowerCase();
+    getExplorer().getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
     try {
       if (Arrays.binarySearch(FileTypes.ARGOUML_EXT, extension) >= 0) {
         writeModel(file);
@@ -110,6 +112,8 @@ public class SaveAsAction extends ExplorerFileAction {
     } catch (PersistenceException e) {
       lastResult = false;
       return lastResult;
+    } finally {
+      getExplorer().getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     }
     getExplorer().getMenuBar().documentChanged(ExplorerDocument.State.CLEAN);
     lastResult = true;
