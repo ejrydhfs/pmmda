@@ -6,7 +6,7 @@
     <property name="compile.source" value="1.5" />
     <property name="compile.deprecation" value="false" />
     <property name="compile.verbose" value="false" />
-    <property name="src.dir" value="${basedir}/${src.correction}src" />
+    <property name="src.dir" value="${basedir}/../../src" />
     <property name="gen.dir" value="${basedir}/gendir" />
     <property name="test.dir" value="${basedir}/test-java"/>
     <property name="src.corba-framework.dir" value="${src.dir}/corba-framework" />

@@ -15,9 +15,8 @@
     <property name="lib.dir" value="${basedir}/lib" />
     <property name="properties.dir" value="${basedir}/properties" />
     <property name="resources.dir" value="${basedir}/resources" />
-    <property name="test.unit.dir" value="${basedir}/test-java/unit-tests" />
+    <property name="test.unit.dir" value="${basedir}/examples/test/unit-tests" />
     <property name="example.jar.dir" value="${basedir}/test-lib" />
-    <property name="example.build.dir" value="${basedir}/test-classes" />
     <property name="site.dir" value="${basedir}/build/site" />
     <property name="site.api.dir" value="${site.dir}/api" />
     <property name="site.quality.dir" value="${site.dir}/metrics" />
