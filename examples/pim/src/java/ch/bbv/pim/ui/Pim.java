@@ -39,7 +39,9 @@ public class Pim extends Locator {
   private String[] arguments;
 
   /**
+   * The main function of the application.
    * @param args command line arguments of the application
+   * @pre args != null
    */
   public static void main(String[] args) {
     try {
@@ -78,7 +80,8 @@ public class Pim extends Locator {
     manager.register(new VCardEmitter(), ".vcf");
     manager.register(new LdifParser(), ".ldif");
     manager.register(new VCardParser(), ".vcf");
-    manager.register(new TextEmitter(new File("./classes/format-pm.xml")), ".pm.txt");
+    manager.register(new TextEmitter(new File("./classes/format-pm.xml")),
+        ".pm.txt");
 
     register(manager);
     initialize();
@@ -107,6 +110,8 @@ public class Pim extends Locator {
     group.addOption(CmdLineBuilder.createNoArgOption("q", "quiet",
         "set the logging level to quiet", false));
     options.addOptionGroup(group);
+    options.addOption(CmdLineBuilder.createNoArgOption("b", "batch",
+        "run the application in batch mode", false));
     options
         .addOption(CmdLineBuilder.createArgOption("i", "import",
             "import the contacts from the given file", "file", false,
@@ -131,8 +136,7 @@ public class Pim extends Locator {
       }
       if (line.hasOption("v")) {
         log.info("logging level set to verbose");
-      }
-      if (line.hasOption("q")) {
+      } else if (line.hasOption("q")) {
         log.info("logging level set to quiet");
       }
       Language language = Language.GERMAN;
@@ -155,24 +159,27 @@ public class Pim extends Locator {
         item.setDefaultLanguage(language);
         item.setDefaultCountry(country);
       }
-      AddressBook book = new AddressBook();
-      if (line.hasOption("i")) {
-        String filename = line.getOptionValue("i");
-        if (filename != null) {
-          getFormatManager().getParser(filename).synchronize(book,
-              new File(filename));
+      if (line.hasOption("b")) {
+        AddressBook book = new AddressBook();
+        if (line.hasOption("i")) {
+          String filename = line.getOptionValue("i");
+          if (filename != null) {
+            getFormatManager().getParser(filename).synchronize(book,
+                new File(filename));
+          }
         }
-      }
-      if (line.hasOption("e")) {
-        String filename = line.getOptionValue("e");
-        if (filename != null) {
-          getFormatManager().getEmitter(filename)
-              .emit(book, new File(filename));
+        if (line.hasOption("e")) {
+          String filename = line.getOptionValue("e");
+          if (filename != null) {
+            getFormatManager().getEmitter(filename).emit(book,
+                new File(filename));
+          }
         }
+      } else {
+        PimExplorer.create("Pim Explorer");
       }
     } catch (ParseException e) {
       log.error("parse arguments exception", e);
     }
   }
-
 }

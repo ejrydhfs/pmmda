@@ -186,7 +186,15 @@ public abstract class ContactParser {
 
   }
 
+  /**
+   * Adds the contact to the organization with the given name if no organization
+   * is specified. If necessary the organization is created.
+   * @param contact contact to add.
+   * @param name name of the organization associated with the contact.
+   * @pre (contact != null) && (name != null)
+   */
   protected void addToOrganization(Contact contact, String name) {
+    assert (contact != null) && (name != null);
     if (contact.getOrganization() == null) {
       Organization organization = book.findOrganization(name);
       if (organization == null) {
