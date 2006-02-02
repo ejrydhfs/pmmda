@@ -11,6 +11,13 @@ ${sign}define _${className}_BO_CTO_
 
 ${sign}include "NullableTypes.idl"
 ## generate the includes for all used data objects
+#set($ancestors=${class.retrieveAncestors()})
+#foreach($ancestor in $ancestors)
+#isDataObject($ancestor $isDataObject)
+#if($isDataObject)
+${sign}include "${ancestor.getAttribute("cto-mo-class")}.idl"	
+#end	
+#end	
 #set($properties=${class.getProperties()})
 #set($aggregations=${class.getIndexedProperties()})
 #foreach ($property in $properties)
@@ -38,6 +45,12 @@ module ch {
         NullInteger id;
         boolean modified;
         NullTimestamp timestamp;
+#foreach($ancestor in $ancestors)
+#isDataObject($ancestor $isDataObject)
+#if($isDataObject)
+        ${ancestor.getAttribute("cto-mo-class")} ancestor;	
+#end	
+#end	
 #foreach ($property in $properties)
 #if(!${property.isTransient()})
 #getType($model $property $type)

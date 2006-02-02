@@ -33,6 +33,14 @@ public final class ${classname} {
    */
   public static final ${dtoName} transform(${dogName} bo) {
     ${dtoName} dto = new ${dtoName}();
+#set($ancestors=${class.retrieveAncestors()})
+#foreach($ancestor in $ancestors)
+#isDataObject($ancestor $isDataObject)
+#if($isDataObject)
+#set($ancestorname=${ancestor.getAttribute("cto-bo2dto-class")})
+    dto.ancestor = ${ancestorname}.transform(bo);
+#end	
+#end	
 #foreach($property in $properties) 
 #if(!${property.isTransient()})
 #set($typeName=${property.getTypeName()})
@@ -41,12 +49,12 @@ public final class ${classname} {
 #if(${type} && ${type.getStereotype()} == "dataObject")
 #getForwardHdl($property $handle)
     if (bo.get${property.nameFirstUpper()}() != null) {
-	  dto.${property.getName()} = new ${type.getAttribute("cto-mo-class")}[1];
-      dto.${property.getName()}[0] = ${type.getAttribute("bo-mo-class")}Transformer.transform(bo.get${property.nameFirstUpper()}());
-	  dto.${handle} = TransformerCto.getHandle(bo, "${handle}");
+     dto.${property.getName()} = new ${type.getAttribute("cto-mo-class")}[1];
+     dto.${property.getName()}[0] = ${type.getAttribute("bo-mo-class")}Transformer.transform(bo.get${property.nameFirstUpper()}());
+     dto.${handle} = TransformerCto.getHandle(bo, "${handle}");
     } else {
       dto.${property.getName()} = new ${type.getAttribute("cto-mo-class")}[0];
-	  dto.${handle} = TransformerCto.nullInteger;
+      dto.${handle} = TransformerCto.nullInteger;
     }
 #else
     dto.${property.getName()} = ${cartridge.getBo2DtoConversion(${property}, "bo")};
@@ -80,7 +88,7 @@ public final class ${classname} {
 #end
 #end
 #end
-	dto.id = TransformerCto.create(bo.getId());
+    dto.id = TransformerCto.create(bo.getId());
     dto.timestamp = TransformerCto.create(bo.getTimestamp());
     dto.modified = bo.isModified();
     return dto;
@@ -96,8 +104,28 @@ public final class ${classname} {
    */  
   public static final ${dogName} transform(${dtoName} dto) {
     ${dogName} bo = new ${dogName}();
+	synchronize(bo, dto);
+    return bo;
+  }
+  
+  /** 
+   * Transforms a data transfer object into a data object. The children are
+   * recursively transformed. The Java bean conventions are used to set the
+   * attributes.
+   * @param bo business object to synchronize with.
+   * @param dto data transfer object with the property values.
+   */  
+  public static final void synchronize(${dogName} bo, ${dtoName} dto) {
     bo.setId(TransformerCto.extract(dto.id));
     bo.setTimestamp(TransformerCto.extract(dto.timestamp));
+#set($ancestors=${class.retrieveAncestors()})
+#foreach($ancestor in $ancestors)
+#isDataObject($ancestor $isDataObject)
+#if($isDataObject)
+#set($ancestorname=${ancestor.getAttribute("cto-bo2dto-class")})
+    ${ancestorname}.synchronize(bo, dto.ancestor);
+#end	
+#end	
 #foreach($property in $properties) 
 #if(!${property.isTransient()})
 #set($typeName=${property.getTypeName()})
@@ -108,7 +136,7 @@ public final class ${classname} {
     if (dto.${property.nameFirstLower()}.length == 1) {
       bo.set${property.nameFirstUpper()}(${type.getAttribute("bo-mo-class")}Transformer.transform(dto.${property.nameFirstLower()}[0]));
     }
-	TransformerCto.setHandle(bo, "${handle}", dto.${handle});
+    TransformerCto.setHandle(bo, "${handle}", dto.${handle});
 #else
 #setterName($property $setter)
     bo.${setter}(${cartridge.getDto2BoConversion(${property}, "dto")});
@@ -138,7 +166,6 @@ public final class ${classname} {
 #end
 #end
     bo.setModified(dto.modified);
-    return bo;
   }
 
   /** 

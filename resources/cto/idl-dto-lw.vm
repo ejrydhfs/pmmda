@@ -11,6 +11,12 @@ ${sign}define _${className}_LW_CTO_
 
 ${sign}include "NullableTypes.idl"
 ## generate the includes for all used data objects
+#foreach($ancestor in $ancestors)
+#isLightweightDataObject($ancestor $isLightweightDataObject)
+#if($isLightweightDataObject)
+${sign}include "${ancestor.getAttribute("cto-lw-class")}.idl"	
+#end	
+#end	
 #set($properties=${class.getProperties()})
 #set($aggregations=${class.getIndexedProperties()})
 #foreach ($property in $properties)
@@ -38,6 +44,12 @@ module ch {
     module transport {
       struct ${ctoLwClass} {
         NullInteger id;
+#foreach($ancestor in $ancestors)
+#isLightweightDataObject($ancestor $isLightweightDataObject)
+#if($isLightweightDataObject)
+        ${ancestor.getAttribute("cto-lw-class")} ancestor;	
+#end	
+#end	
 #foreach ($property in $properties)
 #if(!${property.isTransient()} && ${property.booleanValueOfTag("bo-lightweight")})
 #getType($model $property $type)

@@ -34,6 +34,13 @@ public final class ${classname} {
    */
   public static final ${dtoName} transform(${dogName} bo) {
     ${dtoName} dto = new ${dtoName}();
+#foreach($ancestor in $ancestors)
+#isLightweightDataObject($ancestor $isLightweightDataObject)
+#if($isLightweightDataObject)
+#set($ancestorname=${ancestor.getAttribute("cto-lw2dto-class")})
+    dto.ancestor = ${ancestorname}.transform(bo);
+#end	
+#end	
 #foreach($property in $properties) 
 #if(!${property.isTransient()} && ${property.booleanValueOfTag("bo-lightweight")})
 #set($typeName=${property.getTypeName()})
@@ -81,6 +88,25 @@ public final class ${classname} {
    */  
   public static final ${dogName} transform(${dtoName} dto) {
     ${dogName} bo = new ${dogName}(TransformerCto.extract(dto.id));
+    synchronize(bo, dto);
+    return bo;
+  }
+  
+  /** 
+   * Transforms a data transfer object into a data object. The children are
+   * recursively transformed.
+   * @param bo business object to synchronize with.
+   * @param dto data transfer object with the property values.
+   */  
+  public static final void synchronize(${dogName} bo, ${dtoName} dto) {
+#set($ancestors=${class.retrieveAncestors()})
+#foreach($ancestor in $ancestors)
+#isLightweightDataObject($ancestor $isLightweightDataObject)
+#if($isLightweightDataObject)
+#set($ancestorname=${ancestor.getAttribute("cto-lw2dto-class")})
+    ${ancestorname}.synchronize(bo, dto.ancestor);
+#end	
+#end	
 #foreach($property in $properties) 
 #if(!${property.isTransient()} && ${property.booleanValueOfTag("bo-lightweight")})
 #set($typeName=${property.getTypeName()})
@@ -109,13 +135,12 @@ public final class ${classname} {
 #end
 #end
 #end
-    return bo;
   }
 
   /** 
    * Transforms an list of data objects into a list of corresponding data transfer
    * objects.
-   * @param bos list of data objects.
+   * @param bos list of lightweight data objects.
    * @return the array of converted data transfer objects.
    */
   public static final ${dtoName}[] transform(List bos) {
@@ -131,7 +156,7 @@ public final class ${classname} {
    * Transforms an array of data transfer objects into a list of corresponding data
    * objects.
    * @param dtos array of data transfer objects.
-   * @return the list of converted data objects.
+   * @return the list of converted lightweight data objects.
    */
   public static final List transform(${dtoName}[] dtos) {
     ArrayList bos = new ArrayList();
