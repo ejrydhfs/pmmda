@@ -1,7 +1,6 @@
 /* This code was generated automatically with the pmMDA generator. Please do 
    NOT add code outside the marked zones. All changes outside the marked areas 
    will be discarded during the next execution of the MDA generator. 
-   $Id$
 */
 
 package ch.bbv.pim;
@@ -20,7 +19,6 @@ import java.util.*;
 
 /**
  * A contact identifies an entity with whom we can communicate.
- * @version $Revision$
  * @author Marcel Baumann
  */
 public class Contact implements DataObject {
@@ -747,8 +745,8 @@ public class Contact implements DataObject {
     boolean result = entries.add(element);
     if (result) {	
       changeSupport.firePropertyChange("entries", null, element);
-      setModified(true);
     }
+    setModified(true);
     return result;
   }
   

@@ -1,7 +1,6 @@
 /* This code was generated automatically with the pmMDA generator. Please do 
    NOT add code outside the marked zones. All changes outside the marked areas 
    will be discarded during the next execution of the MDA generator. 
-   $Id$
 */
 
 package ch.bbv.pim;
@@ -18,7 +17,6 @@ import java.util.*;
 
 /**
  * An organization is a structure grouping a set of contacts.
- * @version $Revision$
  * @author Marcel Baumann
  */
 public class Organization implements DataObject {
@@ -359,8 +357,8 @@ public class Organization implements DataObject {
         }
         throw e;
       }
-      setModified(true);
     }
+    setModified(true);
     return result;
   }
   

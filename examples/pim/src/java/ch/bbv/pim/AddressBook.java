@@ -1,7 +1,6 @@
 /* This code was generated automatically with the pmMDA generator. Please do 
    NOT add code outside the marked zones. All changes outside the marked areas 
    will be discarded during the next execution of the MDA generator. 
-   $Id$
 */
 
 package ch.bbv.pim;
@@ -18,7 +17,6 @@ import java.util.*;
 
 /**
  * The address book contains a set of related contacts.
- * @version $Revision$
  * @author Marcel Baumann
  */
 public class AddressBook implements DataObject {
@@ -253,6 +251,7 @@ public class AddressBook implements DataObject {
    * @pre element != null
    */
   public boolean addOrganization(Organization element) {
+    setModified(true);
     return organizations.add(element);
   }
   

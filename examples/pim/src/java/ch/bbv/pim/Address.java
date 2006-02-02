@@ -1,7 +1,6 @@
 /* This code was generated automatically with the pmMDA generator. Please do 
    NOT add code outside the marked zones. All changes outside the marked areas 
    will be discarded during the next execution of the MDA generator. 
-   $Id$
 */
 
 package ch.bbv.pim;
@@ -17,7 +16,6 @@ import java.sql.Timestamp;
 
 /**
  * The address defines a postal address usable on planet earth.
- * @version $Revision$
  * @author Marcel Baumann
  */
 public class Address implements DataObject {

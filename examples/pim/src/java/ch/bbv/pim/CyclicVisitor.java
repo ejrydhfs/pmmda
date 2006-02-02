@@ -1,7 +1,6 @@
 /* This code was generated automatically with the pmMDA generator. Please do 
    NOT add code outside the marked zones. All changes outside the marked areas 
    will be discarded during the next execution of the MDA generator. 
-   $Id$
 */
    
 package ch.bbv.pim;
@@ -14,7 +13,6 @@ import ch.bbv.dog.DataObject;
  * The cyclic visitor is a wrapper class allowing to use visitors with graph
  * containing cycles. The list of all relevant classes is generated from the 
  * MDA model.
- * @version $Revision$
  */
 public class CyclicVisitor implements Visitor {  
   /** 

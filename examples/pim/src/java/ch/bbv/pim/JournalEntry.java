@@ -1,7 +1,6 @@
 /* This code was generated automatically with the pmMDA generator. Please do 
    NOT add code outside the marked zones. All changes outside the marked areas 
    will be discarded during the next execution of the MDA generator. 
-   $Id$
 */
 
 package ch.bbv.pim;
@@ -18,7 +17,6 @@ import java.util.Date;
 
 /**
  * A entry into the journal of entry associated with an entity.
- * @version $Revision$
  * @author Marcel Baumann
  */
 public class JournalEntry implements DataObject {
