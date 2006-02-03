@@ -10,9 +10,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import ru.novosoft.uml.MFactory;
 import ru.novosoft.uml.foundation.core.*;
 import ru.novosoft.uml.foundation.data_types.*;
@@ -36,11 +33,6 @@ import ch.bbv.mda.*;
  * @version $Revision$
  */
 public class MdaTransformer {
-  /**
-   * Logger of the instances of the class.
-   */
-  private static Log log = LogFactory.getLog(MdaTransformer.class);
-
   /**
    * Boolean true value as stored in a NSUML XMI file.
    */

@@ -12,9 +12,6 @@ import java.text.MessageFormat;
 
 import javax.swing.JOptionPane;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import ch.bbv.explorer.Explorer;
 import ch.bbv.explorer.actions.ExplorerFileAction;
 import ch.bbv.mda.persistence.PersistenceException;
@@ -38,11 +35,6 @@ public class OpenAction extends ExplorerFileAction {
   private static final long serialVersionUID = 20041201;
 
   /**
-   * Logger for all instances of the class.
-   */
-  private static Log log = LogFactory.getLog(OpenAction.class);
-
-  /**
    * Name of the action as displayed in the menu.
    */
   private static final String ACTION = "Open...";
@@ -60,16 +52,41 @@ public class OpenAction extends ExplorerFileAction {
   public boolean execute() {
     File file = getSelectedFile();
     MdaExplorer explorer = (MdaExplorer) getExplorer();
-    explorer.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+    explorer.getFrame().setCursor(
+        Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
     try {
       MdaDocument document = new MdaDocument();
       String name = file.getName();
-      if(name != null && (name.lastIndexOf('.') == -1 || name.endsWith("."))) { // in case where user thinks that the extension comes from the file filter we get the first match from the filter.
-        name = FileTypes.getBestMatchingExtension(getFileChooser().getFileFilter().getDescription());
-        if(name != null && !file.getName().endsWith(".")) { name = "." + name; }
-        if(name != null) file = new File(file.getPath()+name);
+      if (name != null && (name.lastIndexOf('.') == -1 || name.endsWith("."))) { // in
+                                                                                  // case
+                                                                                  // where
+                                                                                  // user
+                                                                                  // thinks
+                                                                                  // that
+                                                                                  // the
+                                                                                  // extension
+                                                                                  // comes
+                                                                                  // from
+                                                                                  // the
+                                                                                  // file
+                                                                                  // filter
+                                                                                  // we
+                                                                                  // get
+                                                                                  // the
+                                                                                  // first
+                                                                                  // match
+                                                                                  // from
+                                                                                  // the
+                                                                                  // filter.
+        name = FileTypes.getBestMatchingExtension(getFileChooser()
+            .getFileFilter().getDescription());
+        if (name != null && !file.getName().endsWith(".")) {
+          name = "." + name;
+        }
+        if (name != null)
+          file = new File(file.getPath() + name);
       }
-      if(name == null) {
+      if (name == null) {
         JOptionPane.showMessageDialog(explorer.getFrame(), ResourceUtilities
             .getString("mda.ui.sorryMsg.ILLEGAL_FILE_NAME_OR_TYPE"),
             ResourceUtilities.getString("mda.ui.errorMsg.ERROR"),
@@ -80,26 +97,31 @@ public class OpenAction extends ExplorerFileAction {
       document.load(file);
       explorer.setDocument(document);
     } catch (PersistenceException e) {
-      JOptionPane.showMessageDialog(getExplorer().getFrame(), MessageFormat.format(ResourceUtilities
-          .getString("mda.ui.errorMsg.ILLEGAL_FILENAME_ERROR"), file.getName()),
+      JOptionPane.showMessageDialog(getExplorer().getFrame(), MessageFormat
+          .format(ResourceUtilities
+              .getString("mda.ui.errorMsg.ILLEGAL_FILENAME_ERROR"), file
+              .getName()),
           ResourceUtilities.getString("mda.ui.errorMsg.ERROR"),
           JOptionPane.ERROR_MESSAGE);
       lastResult = false;
       return lastResult;
     } catch (NullPointerException e) {
-      JOptionPane.showMessageDialog(getExplorer().getFrame(), MessageFormat.format(ResourceUtilities
-          .getString("mda.ui.errorMsg.ILLEGAL_FILENAME_ERROR"), file.getName()),
+      JOptionPane.showMessageDialog(getExplorer().getFrame(), MessageFormat
+          .format(ResourceUtilities
+              .getString("mda.ui.errorMsg.ILLEGAL_FILENAME_ERROR"), file
+              .getName()),
           ResourceUtilities.getString("mda.ui.errorMsg.ERROR"),
           JOptionPane.ERROR_MESSAGE);
       lastResult = false;
       return lastResult;
     } finally {
-      explorer.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+      explorer.getFrame().setCursor(
+          Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     }
     lastResult = true;
     return lastResult;
   }
-  
+
   protected int display() {
     return getFileChooser().showOpenDialog(getExplorer().getFrame());
   }

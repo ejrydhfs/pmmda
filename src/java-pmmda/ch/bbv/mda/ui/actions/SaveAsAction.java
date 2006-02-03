@@ -72,13 +72,37 @@ public class SaveAsAction extends ExplorerFileAction {
     }
     File file = getSelectedFile();
     String name = file.getName();
-    if(name != null && (name.lastIndexOf('.') == -1 || name.endsWith("."))) { // in case where user thinks that the extension comes from the file filter we get the first match from the filter.
-      name = FileTypes.getBestMatchingExtension(getFileChooser().getFileFilter().getDescription());
-      if(name != null && !file.getName().endsWith(".")) { name = "." + name; }
-      if(name != null) file = new File(file.getPath()+name);
+    if (name != null && (name.lastIndexOf('.') == -1 || name.endsWith("."))) { // in
+      // case
+      // where
+      // user
+      // thinks
+      // that
+      // the
+      // extension
+      // comes
+      // from
+      // the
+      // file
+      // filter
+      // we
+      // get
+      // the
+      // first
+      // match
+      // from
+      // the
+      // filter.
+      name = FileTypes.getBestMatchingExtension(getFileChooser()
+          .getFileFilter().getDescription());
+      if (name != null && !file.getName().endsWith(".")) {
+        name = "." + name;
+      }
+      if (name != null)
+        file = new File(file.getPath() + name);
     }
     String extension = SystemUtilities.getFileExtension(file);
-    if(extension == null) {
+    if (extension == null) {
       JOptionPane.showMessageDialog(getExplorer().getFrame(), ResourceUtilities
           .getString("mda.ui.errorMsg.ILLEGAL_FILE_NAME_OR_TYPE"),
           ResourceUtilities.getString("mda.ui.errorMsg.ERROR"),
@@ -87,7 +111,8 @@ public class SaveAsAction extends ExplorerFileAction {
       return lastResult;
     }
     extension = extension.toLowerCase();
-    getExplorer().getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+    getExplorer().getFrame().setCursor(
+        Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
     try {
       if (Arrays.binarySearch(FileTypes.ARGOUML_EXT, extension) >= 0) {
         writeModel(file);
@@ -104,8 +129,9 @@ public class SaveAsAction extends ExplorerFileAction {
       } else if (Arrays.binarySearch(FileTypes.RATIONAL_ROSE_EXT, extension) >= 0) {
         writeModel(file);
       } else {
-        JOptionPane.showMessageDialog(getExplorer().getFrame(), ResourceUtilities
-            .getString("mda.ui.sorryMsg.ILLEGAL_FILE_NAME_OR_TYPE"),
+        JOptionPane.showMessageDialog(getExplorer().getFrame(),
+            ResourceUtilities
+                .getString("mda.ui.sorryMsg.ILLEGAL_FILE_NAME_OR_TYPE"),
             ResourceUtilities.getString("mda.ui.sorryMsg.SORRY"),
             JOptionPane.ERROR_MESSAGE);
       }
@@ -113,7 +139,8 @@ public class SaveAsAction extends ExplorerFileAction {
       lastResult = false;
       return lastResult;
     } finally {
-      getExplorer().getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+      getExplorer().getFrame().setCursor(
+          Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     }
     getExplorer().getMenuBar().documentChanged(ExplorerDocument.State.CLEAN);
     lastResult = true;
@@ -124,7 +151,7 @@ public class SaveAsAction extends ExplorerFileAction {
    * Writes the model to a new ArgoUML file. The file is copied from a template
    * before writing the model into it.
    * @param file new file for the model.
-   * @throws IOException if the model could not be saved.
+   * @throws PersistenceException if the model could not be saved.
    */
   private void writeModel(File file) throws PersistenceException {
     try {
@@ -133,12 +160,15 @@ public class SaveAsAction extends ExplorerFileAction {
       document.saveAs(file);
     } catch (PersistenceException e) {
       log.error(e);
-      if(e.getCause() instanceof FileNotFoundException) { // This cause indicates that writter attempt to write a locked file.
-        JOptionPane.showMessageDialog(null, e.getLocalizedMessage(), ResourceUtilities
-            .getString("mda.ui.sorryMsg.SORRY"), JOptionPane.ERROR_MESSAGE);
+      if (e.getCause() instanceof FileNotFoundException) {
+        // This cause indicates that writter attempt to write a locked file.
+        JOptionPane.showMessageDialog(null, e.getLocalizedMessage(),
+            ResourceUtilities.getString("mda.ui.sorryMsg.SORRY"),
+            JOptionPane.ERROR_MESSAGE);
       } else {
-        JOptionPane.showMessageDialog(getExplorer().getFrame(), ResourceUtilities
-            .getString("mda.ui.sorryMsg.UNSUPPORTED_FILE_TYPE_FOR_SAVE"),
+        JOptionPane.showMessageDialog(getExplorer().getFrame(),
+            ResourceUtilities
+                .getString("mda.ui.sorryMsg.UNSUPPORTED_FILE_TYPE_FOR_SAVE"),
             ResourceUtilities.getString("mda.ui.sorryMsg.SORRY"),
             JOptionPane.ERROR_MESSAGE);
       }
