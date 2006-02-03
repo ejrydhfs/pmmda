@@ -48,6 +48,9 @@ public class SubjectObserver implements PropertyChangeListener{
 	 */
 	public void addProfile(ClientProfile profile){
 		assert profile != null;
+		if (_profiles.contains(profile)){
+			return;
+		}
 		_profiles.add(profile);
 		EventInfo event = profile.getInfo();
 		int id = event.getSubjectId();
