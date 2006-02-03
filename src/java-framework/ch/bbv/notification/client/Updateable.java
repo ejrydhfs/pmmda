@@ -16,10 +16,11 @@ public interface Updateable {
 	
 	/**
 	 * method receivs an <code>EventInfo</code> with the changed values<br>
-	 * its <b>mandatory</b> declare the implementation as <code>synchronized</code>
+	 * its <b>mandatory</b> the execute the code in the implementation with <code>java.awt.EventQueue.invokeLater</code>
 	 * while this method is called by an other thread, and <code>java Swing</code> is not thread safe
 	 * @param info the event as <code>EventInfo</code>
 	 * @pre info != null
+	 * @see java.awt.EventQueue
 	 */
 	public void update(EventInfo info);
 
