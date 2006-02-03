@@ -33,7 +33,15 @@ import ch.bbv.dog.*;
  * @author MarcelBaumann
  * @version $Revision$
  */
+
 public class PersistenceHandler implements DataObjectHandler {
+  /**
+   * The modes of the persistence handler.
+   */
+  public enum Mode {
+    REPLACE, SYNCHRONIZE, DETACH
+  }
+
   /**
    * Logger for all instances of the class.
    */
@@ -41,7 +49,7 @@ public class PersistenceHandler implements DataObjectHandler {
 
   /**
    * Hack due to compiler differences between JDK 1.5 and eclipse. This constant
-   * is used instead of Collections.emptyList()
+   * is used instead of Collections.emptyList().
    */
   private static final List<DataObject> EMPTY_LIST = new ArrayList<DataObject>();
 
@@ -56,17 +64,25 @@ public class PersistenceHandler implements DataObjectHandler {
   private HandlerPolicyOjb policy;
 
   /**
+   * The mode used to synchronize the modified objects with the original ones.
+   */
+  private Mode mode;
+
+  /**
    * Default constructor of the class.
    * @param managed indicates if the managed is used in a managed context or
    *          not.
+   * @param mode mode used to synchronize the modified objects with the ones in
+   *          the cache or the persistent store.
    */
-  public PersistenceHandler(boolean managed) {
+  public PersistenceHandler(boolean managed, Mode mode) {
     databaseMgr = new DatabaseMgr();
     if (managed) {
       policy = new HandlerPolicyManagedOjb(databaseMgr);
     } else {
       policy = new HandlerPolicyOjb(databaseMgr);
     }
+    this.mode = mode;
   }
 
   public void openDatasource(String source, boolean readonly) {
@@ -82,14 +98,14 @@ public class PersistenceHandler implements DataObjectHandler {
   }
 
   public DataObject retrieve(String datasource, Class clazz, Integer id) {
-    assert ((datasource != null) && (clazz != null) && (id != null));
+    assert (datasource != null) && (clazz != null) && (id != null);
     Database database = getDatabase(datasource);
     return (DataObject) policy.retrieve(database, clazz, id);
   }
 
   public List<DataObject> retrieve(String datasource, Class clazz,
       String constraints) {
-    assert ((datasource != null) && (clazz != null) && (constraints != null));
+    assert (datasource != null) && (clazz != null) && (constraints != null);
     Database database = getDatabase(datasource);
     List objects = policy.retrieve(database, clazz, constraints);
     List<DataObject> list = new ArrayList<DataObject>(objects);
@@ -97,14 +113,14 @@ public class PersistenceHandler implements DataObjectHandler {
   }
 
   public LightweightObject retrieveLw(String datasource, Class clazz, Integer id) {
-    assert ((datasource != null) && (clazz != null) && (id != null));
+    assert (datasource != null) && (clazz != null) && (id != null);
     Database database = getDatabase(datasource);
     return (LightweightObject) policy.retrieve(database, clazz, id);
   }
 
   public List<LightweightObject> retrieveLw(String datasource, Class clazz,
       String constraints) {
-    assert ((datasource != null) && (clazz != null));
+    assert (datasource != null) && (clazz != null);
     Database database = getDatabase(datasource);
     List objects = policy.retrieve(database, clazz, constraints);
     List<LightweightObject> list = new ArrayList<LightweightObject>(objects);
@@ -121,7 +137,46 @@ public class PersistenceHandler implements DataObjectHandler {
           root.getId());
       log.trace(text.toString());
     }
+    List<DataObjectUpdate> updates = null;
+    switch (mode) {
+    case DETACH:
+      break;
+    case REPLACE:
+      updates = storeReplace(datasource, clazz, root);
+      break;
+    case SYNCHRONIZE:
+      updates = storeSynchronize(datasource, clazz, root);
+      break;
+    }
+    return updates;
+  }
 
+  public void remove(String datasource, Class clazz, DataObject root) {
+    assert (datasource != null) && (clazz != null) && (root != null);
+    DataObject originalRoot = retrieve(datasource, clazz, root.getId());
+    remove(datasource, clazz, root, originalRoot);
+  }
+
+  public void remove(String datasource, Class clazz, Integer id) {
+    assert (datasource != null) && (clazz != null) && (id != null);
+    DataObject object = retrieve(datasource, clazz, id);
+    if (object != null) {
+      remove(datasource, clazz, null, object);
+    }
+  }
+
+  /**
+   * Stores the data object root with replace mode. Modified objects will
+   * replace the original ones.
+   * @param datasource name of the datasource containing the instances.
+   * @param clazz class of the object to store. Used to store subclasses as
+   *          instances of a super class.
+   * @param root root object of the graph to store.
+   * @return list of update information of the involved object which can be
+   *         propagated to the upper layer.
+   */
+  private List<DataObjectUpdate> storeReplace(String datasource, Class clazz,
+      DataObject root) {
     Database database = getDatabase(datasource);
     CollectFunctor collect = new CollectFunctor();
     AbstractVisitorFunctor visitor = DataObjectManager.getVisitorFor(clazz);
@@ -136,13 +191,11 @@ public class PersistenceHandler implements DataObjectHandler {
     }
     collect.reset();
     DataObjectType.invokeVisitor(clazz, root, visitor);
-
     List<DataObject> objects = collect.getObjects();
     List deleted = collect.getMissingObjectsFrom(originals);
     List<DataObject> inserted = collect.getNewObjects();
     List<DataObject> updated = collect.getUdpatedObjects();
     policy.update(database, originals, objects, deleted, inserted, updated);
-
     if (log.isTraceEnabled()) {
       StringBuilder text = new StringBuilder();
       text.append("end store operation ").append(objects.size()).append(
@@ -153,20 +206,21 @@ public class PersistenceHandler implements DataObjectHandler {
     return collect.getUpdates();
   }
 
-  public void remove(String datasource, Class clazz, DataObject root) {
-    assert ((datasource != null) && (clazz != null) && (root != null));
-    DataObject originalRoot = retrieve(datasource, clazz, root.getId());
-    remove(datasource, clazz, root, originalRoot);
+  /**
+   * Stores the data object root with replace mode. Modified objects will
+   * replace the original ones.
+   * @param datasource name of the datasource containing the instances.
+   * @param clazz class of the object to store. Used to store subclasses as
+   *          instances of a super class.
+   * @param root root object of the graph to store.
+   * @return list of update information of the involved object which can be
+   *         propagated to the upper layer.
+   */
+  private List<DataObjectUpdate> storeSynchronize(String datasource, Class clazz,
+      DataObject root) {
+    return null;
   }
-
-  public void remove(String datasource, Class clazz, Integer id) {
-    assert ((datasource != null) && (clazz != null) && (id != null));
-    DataObject object = retrieve(datasource, clazz, id);
-    if (object != null) {
-      remove(datasource, clazz, null, object);
-    }
-  }
-
+  
   /**
    * Returns the database with the given datasource name.
    * @param datasource name of the datasource to be found.
