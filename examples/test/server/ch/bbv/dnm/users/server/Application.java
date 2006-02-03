@@ -97,21 +97,24 @@ public class Application extends Locator {
     register(this);
     if (mode.equalsIgnoreCase(USE_DIRECT)) {
       log.info("Application started in direct mode");
-      manager = new DataObjectManager(new PersistenceHandler(false),
-          new LightweightObjectHandlerImpl(), null);
+      manager = new DataObjectManager(new PersistenceHandler(false,
+          PersistenceHandler.Mode.REPLACE), new LightweightObjectHandlerImpl(),
+          null);
       register(manager);
     } else if (mode.equalsIgnoreCase(USE_CORBA)) {
       log.info("Application started in CORBA mode");
-      manager = new DataObjectManager(new PersistenceHandler(false),
-          new LightweightObjectHandlerImpl(), null);
+      manager = new DataObjectManager(new PersistenceHandler(false,
+          PersistenceHandler.Mode.REPLACE), new LightweightObjectHandlerImpl(),
+          null);
       register(manager);
       orb = ORB.init(args, null);
       register(orb, ORB_NAME);
       createCorbaServer("ch.bbv.dnm.users.server.UsersServerCorba");
     } else if (mode.equalsIgnoreCase(USE_J2EE)) {
       log.info("Application started in J2EE mode");
-      manager = new DataObjectManager(new PersistenceHandler(true),
-          new LightweightObjectHandlerImpl(), null);
+      manager = new DataObjectManager(new PersistenceHandler(true,
+          PersistenceHandler.Mode.REPLACE), new LightweightObjectHandlerImpl(),
+          null);
       register(manager);
     }
     TypeFactory factory = new TypeFactory(manager);
@@ -127,7 +130,7 @@ public class Application extends Locator {
 
   /**
    * Returns the client application singleton instance. The application uses the
-   * locator pattern.   
+   * locator pattern.
    * @return the client application unique instance.
    */
   public static Application getApplication() {

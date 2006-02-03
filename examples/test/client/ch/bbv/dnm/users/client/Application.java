@@ -103,7 +103,8 @@ public class Application extends Locator {
     if (USE_DIRECT.equalsIgnoreCase(mode)) {
       log.info("Application started in direct mode");
       manager = new DataObjectManager(new CacheHandler(new PersistenceHandler(
-          false), true, true), new LightweightObjectHandlerImpl(), null);
+          false, PersistenceHandler.Mode.REPLACE), true, true),
+          new LightweightObjectHandlerImpl(), null);
     } else if (USE_CORBA.equalsIgnoreCase(mode)) {
       log.info("Application started in CORBA mode");
       register(ORB.init(args, null), ORB_NAME);
