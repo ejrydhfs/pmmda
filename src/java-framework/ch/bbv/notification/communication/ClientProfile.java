@@ -16,6 +16,27 @@ public class ClientProfile implements Serializable{
 	private String _clientIdentification;
 	private EventInfo _info;
 	
+	@Override public String toString(){
+		StringBuilder builder = new StringBuilder(1100);
+		builder.append(_clientIdentification);
+		builder.append(_info);
+		return builder.toString();
+	}
+	
+	
+	@Override public boolean equals(Object obj){
+		if (obj == null) return false;
+		if (obj == this) return true;
+		if (!(obj instanceof ClientProfile)) return false;
+		ClientProfile p = (ClientProfile)obj;
+		return this._clientIdentification.equals(p._clientIdentification) 
+			&& this._info.equals(p._info);
+	}
+	
+	@Override public int hashCode(){
+		return _clientIdentification.hashCode() ^ _info.hashCode();
+	}
+	
 	/**
 	 * returns a new <code>ClientProfile</code>
 	 * @param clientIdentification the client name as <code>String</code> these value is needed to creating the jms queue which has the same name as the client
