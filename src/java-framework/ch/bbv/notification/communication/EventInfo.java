@@ -20,6 +20,38 @@ public class EventInfo implements Serializable{
 	private Object[] _originalValues;
 	private int _subjectId;
 	private String _qualifiedSubjectName;
+	
+	@Override public String toString(){
+		StringBuilder builder = new StringBuilder(1000);
+		builder.append("\n");
+		builder.append("/******************************");
+		builder.append("\n");
+		builder.append(" *Action: ").append(_eventAction).append("\n");
+		builder.append(" *Subject: ").append(_subjectId).append("\n");
+		if( _newValues != null && _newValues.length > 0){
+			builder.append(" *New Values: ");
+			for (Object obj : _newValues) {
+				builder.append(obj);
+			}
+		}
+		builder.append("\n");
+		if( _newValues != null && _originalValues.length > 0){
+			builder.append(" *Original Values: ");
+			for (Object obj : _originalValues){
+				builder.append(obj);
+			}
+		}
+		builder.append("\n");
+		if( _newValues != null && _changedProperties.length > 0){
+			builder.append(" *Changed Properties ");
+			for (Object obj : _changedProperties){
+				builder.append(obj);
+			}
+		}
+		builder.append("\n");
+		builder.append("/******************************");
+		return builder.toString();	
+	}
 
 	/**
 	 * create a new instance
@@ -87,10 +119,8 @@ public class EventInfo implements Serializable{
 		if (this == obj) return true;
 		if (!(obj instanceof EventInfo)) return false;
 		EventInfo info = (EventInfo)obj;
-		if (info._subjectId == this._subjectId && info._eventAction == this._eventAction){
-			return true;
-		}
-		return false;
+		return info._subjectId == this._subjectId && info._eventAction.equals(this._eventAction);
+			
 	}
 	
 	@Override public int hashCode(){
