@@ -33,8 +33,8 @@ import ch.bbv.notification.communication.EventInfo;
  * 			//after this line, events will be send to the update method from Updateable interface
  * 		}
  * 
- * 		//attention: is required to declare this method as synchronized
- * 		public synchronized void update(EventInfo info) {
+ * 		
+ * 		public void update(EventInfo info) {
  * 			assert info != null;
  * 			//do somthing with the incoming eventinfo
  * 		}
@@ -62,8 +62,8 @@ public class QueueReceiver implements Runnable{
 	 */
 	public QueueReceiver(String queueName, Updateable obj) {
 		assert queueName != null && obj != null;
-		_queueName = queueName;
 		_obj = obj;
+		_queueName = queueName;
 		initalizeJMS();
 		Thread thread = new Thread(this);
 		thread.start();
@@ -80,7 +80,7 @@ public class QueueReceiver implements Runnable{
         try {
             _connectionFactory =
                 (QueueConnectionFactory) _jndiContext.lookup("QueueConnectionFactory");
-            _queue = (Queue)_jndiContext.lookup(_queueName);
+            _queue = (Queue)_jndiContext.lookup("queue/"+ _queueName);
         	_connection = _connectionFactory.createQueueConnection();
         	_session = _connection.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
         	_consumer = _session.createReceiver(_queue);
@@ -91,14 +91,20 @@ public class QueueReceiver implements Runnable{
         }
 	}
 	
+	private boolean run = true;
 	
+	public void stoppReceiving(){
+		run = false;
+	}
 
 	public void run() {
 		try{
 			try{
-				ObjectMessage msg = (ObjectMessage)_consumer.receive();
-				msg.acknowledge();
-				_obj.update((EventInfo)msg.getObject());
+				while(run){
+					ObjectMessage msg = (ObjectMessage)_consumer.receive();
+					msg.acknowledge();
+					_obj.update((EventInfo)msg.getObject());
+				}
 			} catch( JMSException jmse){
 				jmse.printStackTrace();
 				throw new IllegalStateException("problems occured on JMS operations: " + jmse.getMessage());
