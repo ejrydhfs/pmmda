@@ -24,7 +24,9 @@ import ch.bbv.notification.communication.EventInfo;
  * example usage:<br><pre>
  * public class Client extends JFrame implements Updateable {
  * 		//some code
- * 		public void doSomthing(){
+ * 
+ * 		
+ * 		public void registerThisClient(){
  * 			RegisterHandlerWrapper regHandler = new RegisterHandlerWrapper();
  * 			regHandler.register(clientProfile);
  * 			//client is now registered, but none events can be received at the moment
@@ -32,12 +34,26 @@ import ch.bbv.notification.communication.EventInfo;
  * 			new QueueReceiver(queueName,this);
  * 			//after this line, events will be send to the update method from Updateable interface
  * 		}
- * 
  * 		
  * 		public void update(EventInfo info) {
  * 			assert info != null;
- * 			//do somthing with the incoming eventinfo
+ * 			java.awt.EventQueue.invokeLater(new ActionExecutor(e,this));
  * 		}
+ * 	
+ * 		private class ActionExecutor implements Runnable{
+ * 			private EventInfo e;
+ * 			private Client client;
+ * 
+ * 			public void run(){
+ * 				//do somthing wie e
+ * 			}
+ * 
+ * 			public ActionExecutor(EventInfo e, Client outerClass){
+ * 				this.e = e;
+ * 				this.client = outerClass;
+ * 			}
+ * 		}
+ * 
  * }
  * </pre>
  * @see ch.bbv.notification.client.Updateable
