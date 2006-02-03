@@ -214,8 +214,9 @@ public class ResourceUtilities {
   }
 
   /**
-   * Returns true/false on whether or not this <code>resource</code>
-   * represents an archive or not (i.e. jar, or zip, etc).
+   * Returns true/false on whether or not this resource represents an archive or
+   * not (i.e. jar, or zip, etc).
+   * @param resource resource to check.
    * @return true if its an archive, false otherwise.
    */
   public static boolean isArchive(final URL resource) {
@@ -223,9 +224,10 @@ public class ResourceUtilities {
   }
 
   /**
-   * If this <code>resource</code> is an archive file, it will return the
-   * resource as an archive.
-   * @return the archive as a ZipFile
+   * If this resource is an archive file, it will return the resource as an
+   * archive.
+   * @param resource resource to return as zip file.
+   * @return the archive as a ZipFile.
    */
   public static ZipFile getArchive(final URL resource) {
     try {
@@ -275,37 +277,32 @@ public class ResourceUtilities {
   }
 
   /**
-   * <p/> Retrieves a resource from an optionally given <code>directory</code>
-   * or from the package on the classpath.
-   * </p>
-   * <p/> If the directory is specified and is a valid directory then an attempt
-   * at finding the resource by appending the <code>resourceName</code> to the
-   * given <code>directory</code> will be made, otherwise an attempt to find
-   * the <code>resourceName</code> directly on the classpath will be
-   * initiated.
-   * </p>
-   * @param resource the name of a resource
-   * @param directory the directory location
-   * @return the resource url
+   * Retrieves a resource from an optionally given directory or from the package
+   * on the classpath. If the directory is specified and is a valid directory
+   * then an attempt at finding the resource by appending the resource to the
+   * given directorywill be made, otherwise an attempt to find the
+   * resourceNamedirectly on the classpath will be initiated.
+   * @param resource the name of a resource.
+   * @param directory the directory location.
+   * @return the resource url.
    */
-  public static URL getResource(final String resourceName,
-      final String directory) {
+  public static URL getResource(final String resource, final String directory) {
     final String methodName = "ResourceUtils.getResource";
-    ExceptionUtils.checkEmpty(methodName, "resourceName", resourceName);
+    ExceptionUtils.checkEmpty(methodName, "resourceName", resource);
 
     if (directory != null) {
-      final File file = new File(directory, resourceName);
+      final File file = new File(directory, resource);
       if (file.exists()) {
         try {
           return file.toURL();
         } catch (final MalformedURLException exception) {
           log.warn("'" + file
               + "' is an invalid resource, attempting to find resource '"
-              + resourceName + "' on classpath");
+              + resource + "' on classpath");
         }
       }
     }
-    return getResource(resourceName);
+    return getResource(resource);
   }
 
   /**
@@ -350,26 +347,21 @@ public class ResourceUtilities {
   }
 
   /**
-   * <p>
-   * Retrieves a resource from an optionally given <code>directory</code> or
-   * from the package on the classpath.
-   * </p>
-   * If the directory is specified and is a valid directory then an attempt at
-   * finding the resource by appending the <code>resourceName</code> to the
-   * given <code>directory</code> will be made, otherwise an attempt to find
-   * the <code>resourceName</code> directly on the classpath will be
-   * initiated.
-   * </p>
-   * @param resource the name of a resource
-   * @param directory the directory location
-   * @return the resource url
+   * Retrieves a resource from an optionally given directory or from the package
+   * on the classpath. If the directory is specified and is a valid directory
+   * then an attempt at finding the resource by appending the resource name to
+   * the given directory will be made, otherwise an attempt to find the
+   * resourceName directly on the classpath will be initiated.
+   * @param resource the name of a resource.
+   * @param directory the directory location.
+   * @return the resource url.
    */
-  public static URL getResource(final String resourceName, final URL directory) {
+  public static URL getResource(final String resource, final URL directory) {
     String directoryLocation = null;
     if (directory != null) {
       directoryLocation = directory.getFile();
     }
-    return getResource(resourceName, directoryLocation);
+    return getResource(resource, directoryLocation);
   }
 
   /**
