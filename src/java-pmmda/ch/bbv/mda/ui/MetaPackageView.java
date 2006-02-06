@@ -126,10 +126,7 @@ public class MetaPackageView extends NodePropertiesView {
   @Override
   public void commitChanges() {
     MetaPackage model = (MetaPackage) getDataObject();
-    if (!(model.getName() == null)
-        && model.getName().equals(nameText.getText().trim()))
-      return;
-    changePackageName(model);
+    MetaModel metaModel = getMetaModel();
 
     String text = descriptionText.getText();
     if (text != null) {
@@ -143,8 +140,11 @@ public class MetaPackageView extends NodePropertiesView {
     model.setSystem(system.isSelected());
 
     tagsView.commitChanges();
-
-    addParentPackages(model);
+    
+    if(model.getName() != null && !model.getName().equals(nameText.getText().trim())) {
+      changePackageName(model);
+      addParentPackages(model);
+    }
 
     getModel().nodeChanged();
   }

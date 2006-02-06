@@ -5,15 +5,26 @@
  */
 package ch.bbv.mda.ui.actions;
 
+import java.awt.Cursor;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
+import ch.bbv.application.Locator;
+import ch.bbv.dog.AbstractVisitorFunctor;
+import ch.bbv.dog.DataObjectManager;
+import ch.bbv.dog.validation.ValidationRule;
+import ch.bbv.dog.validation.ValidationRuleResults;
+import ch.bbv.dog.validation.Validator;
 import ch.bbv.explorer.Explorer;
 import ch.bbv.explorer.StatusBar;
 import ch.bbv.explorer.actions.ExplorerGlobalActionImpl;
 import ch.bbv.mda.MetaModel;
 import ch.bbv.mda.generators.Cartridge;
 import ch.bbv.mda.generators.CartridgeFactory;
+import ch.bbv.mda.ui.MdaExplorer;
+import ch.bbv.utilities.ResourceUtilities;
 
 /**
  * Generate the artifacts for all registered and active catridges. If the
@@ -45,9 +56,26 @@ public class GenerateAllAction extends ExplorerGlobalActionImpl {
    * @see ch.bbv.explorer.actions.ExplorerGlobalAction#execute()
    */
   public boolean execute() {
+    getExplorer().getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
     MetaModel model = (MetaModel) getExplorer().getRoot().getDataObject();
     CartridgeFactory factory = CartridgeFactory.getInstance();
     if (model != null) {
+      Validator validator = (Validator) Locator.getInstance().getComponent(
+          Validator.NAME);
+        ValidationRuleResults results = new ValidationRuleResults();
+        AbstractVisitorFunctor visitor = DataObjectManager.getVisitorFor(model.getClass());
+        validator.validate(model, visitor, results);
+        ((MdaExplorer)getExplorer()).getValidationPanel().setResults(results);
+        // TODO
+        if(false && results.getCount(ValidationRule.ERROR) > 0) {
+          JOptionPane.showMessageDialog(getExplorer().getFrame(), ResourceUtilities
+              .getString("mda.ui.errorMsg.MODEL_HAS_ERRORS"),
+              ResourceUtilities.getString("mda.ui.errorMsg.ERROR"),
+              JOptionPane.ERROR_MESSAGE);
+          getExplorer().getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+          lastResult = false;
+          return lastResult;
+        }
       List<Cartridge> cartridges = new ArrayList<Cartridge>(factory
           .getCartridges());
       StatusBar statusBar = getExplorer().getStatusBar();
@@ -61,6 +89,7 @@ public class GenerateAllAction extends ExplorerGlobalActionImpl {
       statusBar.setInfo("Generate All done");
       statusBar.setProgress(0);
     }
+    getExplorer().getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     lastResult = true;
     return lastResult;
   }

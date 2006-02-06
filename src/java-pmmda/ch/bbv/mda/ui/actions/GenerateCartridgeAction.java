@@ -4,11 +4,23 @@
  */
 package ch.bbv.mda.ui.actions;
 
+import java.awt.Cursor;
+
+import javax.swing.JOptionPane;
+
+import ch.bbv.application.Locator;
+import ch.bbv.dog.AbstractVisitorFunctor;
+import ch.bbv.dog.DataObjectManager;
+import ch.bbv.dog.validation.ValidationRule;
+import ch.bbv.dog.validation.ValidationRuleResults;
+import ch.bbv.dog.validation.Validator;
 import ch.bbv.explorer.Explorer;
 import ch.bbv.explorer.actions.ExplorerGlobalActionImpl;
 import ch.bbv.mda.MetaModel;
 import ch.bbv.mda.generators.Cartridge;
 import ch.bbv.mda.generators.CartridgeFactory;
+import ch.bbv.mda.ui.MdaExplorer;
+import ch.bbv.utilities.ResourceUtilities;
 
 /**
  * The generate data object action generates the data objects for the model
@@ -45,17 +57,36 @@ public class GenerateCartridgeAction extends ExplorerGlobalActionImpl {
   }
 
   public boolean execute() {
+    getExplorer().getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
     MetaModel model = (MetaModel) getExplorer().getRoot().getDataObject();
     CartridgeFactory factory = CartridgeFactory.getInstance();
     if (model != null) {
+      Validator validator = (Validator) Locator.getInstance().getComponent(
+        Validator.NAME);
+      ValidationRuleResults results = new ValidationRuleResults();
+      AbstractVisitorFunctor visitor = DataObjectManager.getVisitorFor(model.getClass());
+      validator.validate(model, visitor, results);
+      ((MdaExplorer)getExplorer()).getValidationPanel().setResults(results);
+      // TODO
+      if(false && results.getCount(ValidationRule.ERROR) > 0) {
+        JOptionPane.showMessageDialog(getExplorer().getFrame(), ResourceUtilities
+            .getString("mda.ui.errorMsg.MODEL_HAS_ERRORS"),
+            ResourceUtilities.getString("mda.ui.errorMsg.ERROR"),
+            JOptionPane.ERROR_MESSAGE);
+        getExplorer().getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        lastResult = false;
+        return lastResult;
+      }
+
       factory.execute(cartridge, model);
     }
+    getExplorer().getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     lastResult = true;
     return lastResult;
   }
 
   /**
-   * Creates tha action name for the given cartridge.
+   * Creates the action name for the given cartridge.
    * @param cartridge cartridge which action name should be created.
    * @return the name of the generation action.
    */
