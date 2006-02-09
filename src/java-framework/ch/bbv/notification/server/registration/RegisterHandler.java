@@ -7,6 +7,10 @@ package ch.bbv.notification.server.registration;
 
 import javax.ejb.EJBObject;
 
+/**
+ * the remote interface for RegisterHandlerBean
+ * @author Bruno Persi
+ */
 public interface RegisterHandler extends RegisterHandlerBusiness, EJBObject{
 
 }
