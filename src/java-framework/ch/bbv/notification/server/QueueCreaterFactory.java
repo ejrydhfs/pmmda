@@ -5,6 +5,10 @@
  */
 package ch.bbv.notification.server;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+
 /**
  * This factory encapsulate the applicationserver specific creation of dynamic QueueCreater class.
  * @author Bruno Persi
@@ -18,8 +22,7 @@ public class QueueCreaterFactory {
 	private static final String EXCEPTION_TEXT = " is not supported for dynamic queue creation at the moment";
 
 	private QueueCreaterFactory() {
-		// TODO:PEB read properties, and initailize _applicationServer
-		_applicationServer = ApplicationServer.JBOSS;
+		//use getInstance
 	}
 
 	/**
@@ -42,6 +45,7 @@ public class QueueCreaterFactory {
 	 * @return a QueueCreater instance
 	 */
 	public QueueCreater getQueueCreater() {
+		defineApplicationServer();
 		synchronized (_applicationServer) {
 			if (_applicationServer.equals(ApplicationServer.JBOSS)) {
 				return new JBossQueueCreater();
@@ -56,6 +60,28 @@ public class QueueCreaterFactory {
 				throw new NotSupportedException(ApplicationServer.GERONIMO.name()
 						+ EXCEPTION_TEXT);
 			}
+		}
+	}
+	
+	private synchronized void defineApplicationServer(){
+		try{
+			InitialContext ctx = new InitialContext();
+			Context context = (Context)ctx.lookup("java:comp/env");
+			String s = (String)context.lookup("ApplicationServer");
+			if (s.equalsIgnoreCase(ApplicationServer.JBOSS.name())){
+				_applicationServer = ApplicationServer.JBOSS;
+			} else if(s.equals(ApplicationServer.WEBSPHERE.name())){
+				_applicationServer = ApplicationServer.WEBSPHERE;
+			} else if(s.equals(ApplicationServer.WEBLOGIC.name())){
+				_applicationServer = ApplicationServer.WEBLOGIC;
+			} else if(s.equals(ApplicationServer.GERONIMO.name())){
+				_applicationServer = ApplicationServer.GERONIMO;
+			} else {
+				throw new NotSupportedException("ApplicationServer: " + s + " is not supported at the moment");
+			}
+		} catch(NamingException ne){
+			ne.printStackTrace();
+			throw new IllegalStateException("cant connect to JNDI API: " +ne.getMessage());
 		}
 	}
 
