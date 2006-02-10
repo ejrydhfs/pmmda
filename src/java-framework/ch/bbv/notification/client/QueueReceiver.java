@@ -21,7 +21,7 @@ import ch.bbv.notification.communication.EventInfo;
 
 /**
  * this class wrapps the client side listening to the notification event queues<br>
- * example usage:<br><pre>
+ * example usage:<br><code><pre>
  * public class Client extends JFrame implements Updateable {
  * 		//some code
  * 
@@ -45,7 +45,7 @@ import ch.bbv.notification.communication.EventInfo;
  * 			private Client client;
  * 
  * 			public void run(){
- * 				//do somthing wie e
+ * 				//do somthing with e
  * 			}
  * 
  * 			public ActionExecutor(EventInfo e, Client outerClass){
@@ -55,7 +55,7 @@ import ch.bbv.notification.communication.EventInfo;
  * 		}
  * 
  * }
- * </pre>
+ * </pre></code>
  * @see ch.bbv.notification.client.Updateable
  * @author Bruno Persi
  */
