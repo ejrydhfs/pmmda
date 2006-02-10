@@ -39,6 +39,21 @@ public class SubjectObserver implements PropertyChangeListener{
 		QueueCreaterFactory factory = QueueCreaterFactory.getInstance();
 		QueueCreater creater = factory.getQueueCreater();
 		creater.createQueue(profile.getClientIdentification());
+		//the example
+		if(profile.getClientIdentification().equals("client")){
+			fake(profile);
+		}
+	}
+	
+	//for example
+	private void fake(ClientProfile prof){
+		QueueSender sender = new QueueSender(prof.getClientIdentification());
+		MutableEventInfo info = new MutableEventInfo(prof.getInfo());
+		info.setChangedProperties("changed", "value");
+		info.setNewValues("this is the new Value");
+		info.setOriginalValues("this is the old value");
+		sender.sendEvent(info);
+		new Executor(info,sender);
 	}
 	
 	/**
