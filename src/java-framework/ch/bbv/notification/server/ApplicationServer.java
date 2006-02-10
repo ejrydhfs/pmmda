@@ -7,6 +7,9 @@ package ch.bbv.notification.server;
 
 public enum ApplicationServer {
 	
-	JBOSS, WEBSPHERE, WEBLOGIC, GERONIMO;
+	JBOSS("JBoss"), WEBSPHERE("WebSphere"), WEBLOGIC("Weblogic"), GERONIMO("Geronimo");
+
+	private ApplicationServer(String server){	
+	}
 
 }
