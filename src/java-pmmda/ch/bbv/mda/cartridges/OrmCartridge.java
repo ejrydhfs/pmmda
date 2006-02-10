@@ -83,11 +83,6 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
   private PrintWriter ormLwWriter;
 
   /**
-   * Object relational mapper to use for the artifacts generation.
-   */
-  private String orm;
-
-  /**
    * Root directory of the generated source files.
    */
   private File root;
@@ -136,17 +131,17 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
     if (!root.exists()) {
       root.mkdirs();
     }
-    String target = getContext().getProperty(DATABASE_KEY);
-    orm = getContext().getProperty(ORM_KEY);
+    String database = getContext().getProperty(DATABASE_KEY);
+    String orm = getContext().getProperty(ORM_KEY);
     try {
       ormBoWriter = FileOperators.createPrintWriter(new File(root, orm
           + "_bo_user.xml"));
       ormLwWriter = FileOperators.createPrintWriter(new File(root, orm
           + "_lw_user.xml"));
       ddlWriter = FileOperators.createPrintWriter(new File(root, "createTables"
-          + target + ".sql"));
+          + database + ".sql"));
       ddlIntegrityWriter = FileOperators.createPrintWriter(new File(root,
-          "createIntegrity" + target + ".sql"));
+          "createIntegrity" + database + ".sql"));
     } catch (IOException e) {
       log.error(e);
     }
@@ -198,33 +193,37 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
         || !clazz.booleanValueOfTag(UmlConstants.PERSISTENCE_TAG)) {
       return;
     }
+    String orm = getContext().getProperty(ORM_KEY);
+    String database = getContext().getProperty(DATABASE_KEY);
     if (isFirstClassOfPackage) {
       VelocityContext context = createContext((MetaPackage) clazz.getContext());
       context.put("prefix", Boolean.TRUE);
-      ormBoWriter.print(processTemplate(retrieveTemplate(orm
-          + "-xml-bo-repository", null), context));
-      ormLwWriter.print(processTemplate(retrieveTemplate(orm
-          + "-xml-lw-repository", null), context));
+      ormBoWriter.print(processTemplate(retrieveTemplate("xml-bo-repository",
+          orm), context));
+      ormLwWriter.print(processTemplate(retrieveTemplate("xml-lw-repository",
+          orm), context));
       isFirstClassOfPackage = false;
     }
     VelocityContext context = createPersistencyContext(clazz);
-    ormBoWriter.print(processTemplate(retrieveTemplate(orm
-        + "-xml-bo-repository", null), context));
-    ormLwWriter.print(processTemplate(retrieveTemplate(orm
-        + "-xml-lw-repository", null), context));
-    ddlWriter.print(processTemplate(retrieveTemplate("ddl", null), context));
+    ormBoWriter.print(processTemplate(retrieveTemplate("xml-bo-repository",
+        orm), context));
+    ormLwWriter.print(processTemplate(retrieveTemplate("xml-lw-repository",
+        orm), context));
+    ddlWriter
+        .print(processTemplate(retrieveTemplate("ddl", database), context));
     ddlIntegrityWriter.print(processTemplate(retrieveTemplate("ddl-integrity",
-        null), context));
+        database), context));
   }
 
   @Override
   public void postProcessModel(MetaModel model) {
     VelocityContext context = new VelocityContext();
     context.put("postfix", Boolean.TRUE);
-    ormBoWriter.print(processTemplate(retrieveTemplate(orm
-        + "-xml-bo-repository", null), context));
-    ormLwWriter.print(processTemplate(retrieveTemplate(orm
-        + "-xml-lw-repository", null), context));
+    String orm = getContext().getProperty(ORM_KEY);
+    ormBoWriter.print(processTemplate(retrieveTemplate("xml-bo-repository",
+        orm), context));
+    ormLwWriter.print(processTemplate(retrieveTemplate("xml-lw-repository",
+        orm), context));
     FileOperators.closePrintWriter(ormBoWriter);
     FileOperators.closePrintWriter(ormLwWriter);
     FileOperators.closePrintWriter(ddlWriter);
