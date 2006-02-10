@@ -114,7 +114,9 @@
     </section>
     <section>
       <title>Algorithm Description</title>
-      <p>First the data object of the original graph are collected.</p>
+      <p>First the data object of the original graph are collected. If the
+      root is new, all objects in the graph must be new ones. If this case
+      all objects are persisted and the next steps are not performed.</p>
       <p>
         Second for each visited object in the modified graph the rules are
         applied.

@@ -9,6 +9,8 @@ import java.lang.reflect.Field;
 import java.util.*;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import ch.bbv.dog.persistence.ojb.CollectFunctor;
 import ch.bbv.utilities.ReflectUtilities;
@@ -16,15 +18,19 @@ import ch.bbv.utilities.ReflectUtilities;
 /**
  * The change functor collects all changes in the data objects between two
  * graphs. The algorithm first collects all objects in the original graph to be
- * able to compare with and stores them with the owner.
+ * able to compare with and stores them with the owner. The algorithm ensures
+ * that the original representation of a modified object is synchronized meaning
+ * all its properties are synchronized. If a property contains data object only
+ * the existence and identity are synchronized. The properties of this objects
+ * will be synchronized when the visitor reaches it.
  * @author MarcelBaumann
  * @version $Revision$
  */
 public class ChangeFunctor implements DoFunctor {
   /**
-   * The original graph used to infer the changes against the traversed graph.
+   * Logger for all instances of the class.
    */
-  private DataObject originalGraph;
+  private static Log log = LogFactory.getLog(ChangeFunctor.class);
 
   /**
    * list of collected original objects. The type of the items is data object.
@@ -32,9 +38,11 @@ public class ChangeFunctor implements DoFunctor {
   private List<DataObject> objects;
 
   /**
-   * list of updated objects. The type of the items is data object.
+   * Map between the newly created objects of modified graph with the associated
+   * newly created object in the original graph. New objects have no identifiers
+   * therefore the map must be managed.
    */
-  private List<DataObject> updatedObjects;
+  private Map<DataObject, DataObject> newObjects;
 
   /**
    * List of updates upon sucessful store of a graph of data objects. The type
@@ -47,7 +55,7 @@ public class ChangeFunctor implements DoFunctor {
    */
   public ChangeFunctor() {
     objects = new ArrayList<DataObject>();
-    updatedObjects = new ArrayList<DataObject>();
+    newObjects = new HashMap<DataObject, DataObject>();
     updates = new ArrayList<DataObjectUpdate>();
   }
 
@@ -56,9 +64,8 @@ public class ChangeFunctor implements DoFunctor {
    * @param originalGraph the original graph to compare with.
    */
   public void reset(DataObject originalGraph) {
-    this.originalGraph = originalGraph;
     objects.clear();
-    updatedObjects.clear();
+    newObjects.clear();
     updates.clear();
     CollectFunctor collect = new CollectFunctor();
     Class clazz = originalGraph.getClass();
@@ -66,6 +73,10 @@ public class ChangeFunctor implements DoFunctor {
     visitor.setFunctor(collect);
     DataObjectType.invokeVisitor(clazz, originalGraph, visitor);
     objects = new ArrayList<DataObject>(collect.getObjects());
+  }
+
+  public List<DataObject> getObjects() {
+    return Collections.unmodifiableList(objects);
   }
 
   /**
@@ -102,33 +113,56 @@ public class ChangeFunctor implements DoFunctor {
   }
 
   public void execute(DataObject object) {
-    objects.add(object);
-    if (object.isNew()) {
-      createUpdate(object);
-    } else if (object.isModified()) {
-      updatedObjects.add(object);
-      createUpdate(object);
+    try {
+      if (object.isNew()) {
+        DataObject reference = newObjects.get(object);
+        assert (reference != null)
+            && (object.getClass() == reference.getClass());
+        handle(object, reference);
+        createUpdate(object);
+      } else if (object.isModified()) {
+        DataObject reference = findObject(object);
+        assert (reference != null)
+            && (object.getClass() == reference.getClass())
+            && object.getId().equals(reference.getId());
+        handle(object, reference);
+        createUpdate(object);
+      }
+    } catch (IllegalArgumentException e) {
+      log.error(e);
+    } catch (IllegalAccessException e) {
+      log.error(e);
     }
   }
 
-  private void handle(DataObject modified, DataObject reference)
+  private void handle(DataObject object, DataObject reference)
       throws IllegalArgumentException, IllegalAccessException {
-    assert modified.getClass() == reference.getClass();
     List<Field> fields = retrieveFields(reference.getClass());
     for (Field field : fields) {
       if (isIndexed(field)) {
-        List modifiedItems = getItems(modified, field);
+        List modifiedItems = getItems(object, field);
         List referenceItems = getItems(reference, field);
       } else {
         if (isTypeDataObject(field)) {
-          DataObject modifiedItem = (DataObject) field.get(modified);
+          DataObject modifiedItem = (DataObject) field.get(object);
           DataObject referenceItem = (DataObject) field.get(reference);
+          if (!ObjectUtils.equals(modifiedItem, referenceItem)) {
+            if (modifiedItem == null) {
+              ReflectUtilities
+                  .setProperty(referenceItem, field.getName(), null);
+            } else if (modifiedItem.isNew()) {
+              // TODO: create new instance and insert it.
+            } else {
+              // TODO: remove the item in reference, look if we have the needed
+              // item in the removed list and if yes add it.
+            }
+          }
         } else {
           // handles the case of a simple property with a type not being
           // a data object.
-          Object modifiedItem = field.get(modified);
+          Object modifiedItem = field.get(object);
           Object referenceItem = field.get(reference);
-          if (ObjectUtils.equals(modifiedItem, referenceItem)) {
+          if (!ObjectUtils.equals(modifiedItem, referenceItem)) {
             ReflectUtilities.setProperty(referenceItem, field.getName(),
                 ReflectUtilities.getProperty(modifiedItem, field.getName()));
           }
@@ -189,17 +223,6 @@ public class ChangeFunctor implements DoFunctor {
     return items;
   }
 
-  private Class getComponentType(Field field) {
-    Class componentType = null;
-    Class type = field.getType();
-    if (type.isArray()) {
-      componentType = type.getComponentType();
-    } else {
-      componentType = DataObject.class;
-    }
-    return componentType;
-  }
-
   /**
    * Creates a partial update object of a modified data object. The update is
    * completed after the commit of the transaction.
@@ -210,6 +233,23 @@ public class ChangeFunctor implements DoFunctor {
     update.setObject(object);
     update.setClassname(object.getClass().getName());
     updates.add(update);
+  }
+
+  /**
+   * Finds the original data object associated with the given new data object.
+   * @param object object which original data object should be found.
+   * @return the requested object if found otherwise null.
+   * @pre object != null
+   */
+  private DataObject findObject(DataObject object) {
+    Class clazz = object.getClass();
+    for (DataObject original : objects) {
+      if ((clazz == original.getClass())
+          && (object.getId().equals(original.getId()))) {
+        return original;
+      }
+    }
+    return null;
   }
 
   /**
