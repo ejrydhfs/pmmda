@@ -22,7 +22,7 @@ $key $_result}
 #call($contact.getTitle() $title)
 #call($contact.getWorkNumber() $workNumber)
 #call($contact.getHomeNumber() $homeNumber)
-#call($contact.getMobileWorkNumber() $workMobileNumber)
+#call($contact.getWorkMobileNumber() $workMobileNumber)
 #call($contact.getWorkUrl() $workUrl)
 #call($organization.getName() $organizationName)
 begin:vcard

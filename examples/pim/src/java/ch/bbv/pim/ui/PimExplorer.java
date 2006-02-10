@@ -13,7 +13,20 @@ import ch.bbv.explorer.*;
 
 /**
  * The PIM explorer provides an explorer user interface to manipulate the
- * organizations and contacts.
+ * organizations and contacts. The explorer provides standard actions such as
+ * <dl>
+ * <dt>Open</dt>
+ * <dd>Opens a file containing an address book and loads the address book and
+ * the contacts in the explorer.</dd>
+ * <dt>Save</dt>
+ * <dd>Saves the address book in the file.</dd>
+ * <dt>Save As</dt>
+ * <dd>Saves the address book in the file. The file name and format is inquired
+ * from the user.</dd>
+ * <dt>Exit</dt>
+ * <dd>Exists the application. If some address books are not saved the user is
+ * asked if he wants to save his modifications.</dd>
+ * </dl>
  * @author Marcel Baumann
  * @version $Revision$
  */

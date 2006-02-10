@@ -8,11 +8,14 @@ TODO
 Version 0.0.2 (30 January 2006)
 -------------------------------
 The following new features were added.
-- None
+- Support for the new LDIF format of Thunderbird 1.5 is now provided. The old
+  format is still supported.
 
 The following errors were corrected.
 - Export of notes in VCARD do not contain any new line to respect the VCARD 
   specification.
+- Export of work mobile phone number was not correctly handled in the VCARD
+  export.
 
 Version 0.0.1 (30 November 2005)
 --------------------------------

@@ -52,6 +52,8 @@ public class LdifParser extends ContactParser {
   private static Map<String, String> tokens;
 
   static {
+    // company:, fax: and street: and mozillaWorkStreet2: were added to support
+    // thunderbird 1.5 LDIF export for work address.
     tokens = new HashMap<String, String>();
     tokens.put("dn:", null);
     tokens.put("objectclass:", null);
@@ -66,18 +68,24 @@ public class LdifParser extends ContactParser {
     tokens.put("homePhone:", "homeNumber");
     tokens.put("mobile:", "workMobileNumber");
     tokens.put("facsimileTelephoneNumber:", "workFaxNumber");
+    tokens.put("fax:", "workFaxNumber");
     tokens.put("homePostalAddresss:", "homeAddress.street");
     tokens.put("mozillaHomeLocalityName:", "homeAddress.city");
+    tokens.put("mozillaHomeState:", "homeAddress.state");
     tokens.put("mozillaHomePostalCode:", "homeAddress.postalCode");
     tokens.put("mozillaHomeCountryName:", "homeAddress.country");
     tokens.put("postalAddress:", "workAddress.street");
+    tokens.put("street:", "workAddress.street");
     tokens.put("mozillaPostalAddress2:", "workAddress.poBox");
+    tokens.put("mozillaWorkStreet2:", "workAddress.poBox");
     tokens.put("l:", "workAddress.city");
     tokens.put("st:", "workAddress.state");
     tokens.put("postalCode:", "workAddress.postalCode");
     tokens.put("c:", "workAddress.country");
     tokens.put("title:", "title");
     tokens.put("o:", "organization");
+    tokens.put("department:", "department");
+    tokens.put("company:", "organization");
     tokens.put("ou:", "department");
     tokens.put("workurl:", "workUrl");
     tokens.put("custom1", "organization.mainNumber");
@@ -147,7 +155,7 @@ public class LdifParser extends ContactParser {
               }
             } else if (isUrl(prefix) && (value != null)) {
               ReflectUtilities.setProperty(contact, property, new URL(value));
-            } else if ("o:".equals(prefix)) {
+            } else if ("company:".equals(prefix) || "o:".equals(prefix)) {
               addToOrganization(contact, value);
             } else {
               setProperty(contact, property, value);
@@ -194,7 +202,7 @@ public class LdifParser extends ContactParser {
   private boolean isPhoneNumber(String key) {
     return "telephoneNumber:".equals(key) || "homePhone:".equals(key)
         || "mobile:".equals(key) || "facsimileTelephoneNumber:".equals(key)
-        || "custom1:".equals(key);
+        || "fax:".equals(key) || "custom1:".equals(key);
   }
 
   /**
@@ -206,6 +214,7 @@ public class LdifParser extends ContactParser {
     return "homePostalAddresss:".equals(key)
         || "mozillaHomeLocalityName:".equals(key)
         || "mozillaHomePostalCode:".equals(key)
+        || "mozillaHomeState:".equals(key)
         || "mozillaHomeCountryName:".equals(key);
   }
 
@@ -215,9 +224,10 @@ public class LdifParser extends ContactParser {
    * @return flag indicating if the tag is a work address.
    */
   private boolean isWorkAddress(String key) {
-    return "postalAddress:".equals(key) || "mozillaPostalAddress2:".equals(key)
-        || "l:".equals(key) || "st:".equals(key) || "postalCode:".equals(key)
-        || "c:".equals(key);
+    return "postalAddress:".equals(key) || "street:".equals(key)
+        || "mozillaPostalAddress2:".equals(key)
+        || "mozillaWorkStreet2:".equals(key) || "l:".equals(key)
+        || "st:".equals(key) || "postalCode:".equals(key) || "c:".equals(key);
   }
 
   /**
