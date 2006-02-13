@@ -5,6 +5,7 @@
  */
 package ch.bbv.utilities;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Properties;
 
@@ -95,4 +96,73 @@ public final class PropertyUtilities {
     path.setLength(length);
     return value;
   }
+
+  /**
+   * Returns the mapping for the type to the target language. A mapping exists
+   * only for datatypes.
+   * @param configuration configuration containing the attribue.
+   * @param typename to map to a language construct (qualified name).
+   * @param language language to map to. A cartridge can define multiple
+   *          mappings of datatypes and model types to target programming
+   *          language.
+   * @param dialect of language (e.g. "mssqlserver" for "sql" language).
+   * @param info to provide about the type (e.g. "type", "default", "null").
+   * @param concrete flag indicating if the implementation class should be
+   *          retrieve or not.
+   * @return the requested info about the type.
+   * @pre (typename != null) && (language != null) && (info != null)
+   */
+  public static String getInfoOfType(CompositeConfiguration configuration, String typename, String language, 
+      String dialect, String info, boolean concrete) {
+    StringBuilder buffer = new StringBuilder();
+    Object collection = configuration.getProperty("datatypes[@language]");
+    if (collection instanceof Collection) {
+      int size = ((Collection)collection).size();
+      StringBuilder path = new StringBuilder();
+      path.append("datatypes");
+      int bestMatchingTypeMappings = -1;
+      for (int i = 0; i<size; i++) {
+        String attribute = getAttributeAt(configuration,
+            path, i, "language");
+        if (language.equalsIgnoreCase(attribute)) {
+          String dialectAttribute = getAttributeAt(configuration, path, i, "dialect");
+          if((dialect == null && dialectAttribute == null) ||
+              (dialect != null && dialectAttribute != null && dialect.equals(dialectAttribute))) {
+            buffer.append("datatypes(").append(i).append(").datatype");
+            bestMatchingTypeMappings = -1;
+            break;
+          }
+          if(dialectAttribute == null) {
+            bestMatchingTypeMappings = i;
+          }
+        }
+      }
+      if(bestMatchingTypeMappings > -1) {
+        buffer.append("datatypes(").append(bestMatchingTypeMappings).append(").datatype");
+      }
+    } else {
+      String attribute = (String) configuration
+          .getProperty("datatypes[@language]");
+      if (language.equalsIgnoreCase(attribute)) {
+        buffer.append("datatypes.datatype");
+      }
+    }
+    String result = null;
+    if (buffer.length() > 0) {
+      for (int i = 0;; i++) {
+        String name = getAttributeAt(configuration, buffer,
+            i, "name");
+        if (name == null) {
+          break;
+        }
+        if (typename.equals(name)) {
+          result = getAttributeAt(configuration, buffer, i,
+              info);
+          break;
+        }
+      }
+    }
+    return result;
+  }
+
 }

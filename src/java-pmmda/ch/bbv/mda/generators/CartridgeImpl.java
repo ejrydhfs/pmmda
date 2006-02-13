@@ -5,6 +5,8 @@
  */
 package ch.bbv.mda.generators;
 
+import static ch.bbv.mda.cartridges.OrmConstants.COLUMN_NAME;
+
 import java.io.*;
 import java.util.*;
 
@@ -527,50 +529,17 @@ public abstract class CartridgeImpl implements Cartridge {
    * @param language language to map to. A cartridge can define multiple
    *          mappings of datatypes and model types to target programming
    *          language.
+   * @param dialect of language (e.g. "mssqlserver" for "sql" language).
    * @param concrete flag indicating if the implementation class should be
    *          retrieve or not.
    * @return the requested mapping if found otherwise the qualified name of the
    *         type.
    * @pre (type != null) && (language != null)
    */
-  protected String translateDatatype(MetaDatatype type, String language,
+  protected String translateDatatype(MetaDatatype type, String language, String dialect,
       boolean concrete) {
     String typename = type.qualifiedName();
-    StringBuilder buffer = new StringBuilder();
-    Object collection = configuration.getProperty("datatypes[@language]");
-    if (collection instanceof Collection) {
-      StringBuilder path = new StringBuilder();
-      path.append("datatypes");
-      for (int i = 0;; i++) {
-        String attribute = PropertyUtilities.getAttributeAt(configuration,
-            path, i, "language");
-        if (language.equalsIgnoreCase(attribute)) {
-          buffer.append("datatypes(").append(i).append(").datatype");
-          break;
-        }
-      }
-    } else {
-      String attribute = (String) configuration
-          .getProperty("datatypes[@language]");
-      if (language.equalsIgnoreCase(attribute)) {
-        buffer.append("datatypes.datatype");
-      }
-    }
-    if (buffer.length() > 0) {
-      for (int i = 0;; i++) {
-        String name = PropertyUtilities.getAttributeAt(configuration, buffer,
-            i, "name");
-        if (name == null) {
-          break;
-        }
-        if (typename.equals(name)) {
-          typename = PropertyUtilities.getAttributeAt(configuration, buffer, i,
-              "type");
-          break;
-        }
-      }
-    }
-    return typename;
+    return PropertyUtilities.getInfoOfType(configuration, typename, language, dialect, "type", concrete);
   }
 
   /**
@@ -651,5 +620,23 @@ public abstract class CartridgeImpl implements Cartridge {
       clazz = MetaIndexedProperty.class;
     }
     return clazz;
+  }
+
+  /**
+   * Returns true if the property should be generated, meaning that the persistence tag
+   * is available and true.
+   * @param metaProperty property which persistency flag should be checked.
+   * @return true if the element should be generated otherwise false.
+   */
+  protected boolean isPersistent(MetaProperty metaProperty) {
+    TaggedValue tv = metaProperty.getTaggedValue(UmlConstants.PERSISTENCE_TAG);
+    if(tv != null && tv.getValue().equalsIgnoreCase("true")) {
+      return true;
+    }
+    tv = metaProperty.getTaggedValue(COLUMN_NAME);
+    if(tv != null && tv.getValue() != null && !tv.getValue().equals("")) {
+      return true;
+    }
+    return false;
   }
 }

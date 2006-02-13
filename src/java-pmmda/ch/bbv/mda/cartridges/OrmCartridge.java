@@ -27,6 +27,7 @@ import ch.bbv.mda.generators.validation.TagRule;
 import ch.bbv.mda.operators.FileOperators;
 import ch.bbv.mda.operators.ModelOperators;
 import ch.bbv.mda.ui.TaggedValuesView;
+import ch.bbv.utilities.PropertyUtilities;
 
 /**
  * The OJB persistence handler generates all persistency artifacts to make all
@@ -94,6 +95,18 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
   private boolean isFirstClassOfPackage;
 
   /**
+   * Contains database key: brand of database to gernerate for
+   * @see OrmConstants
+   */
+  private String databaseKey = "";
+  
+  /**
+   * Contains database key: brand of orm to generate for
+   * @see OrmConstants
+   */
+  private String ormKey = "";
+  
+  /**
    * Default constructor of the class.
    */
   public OrmCartridge() {
@@ -108,6 +121,8 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
     CartridgeFactory factory = CartridgeFactory.getInstance();
     factory.getItemFactory().registerListener(TaggedValue.class,
         new OrmTagListener(this));
+    databaseKey = getContext().getProperty(DATABASE_KEY);
+    ormKey = getContext().getProperty(ORM_KEY);
   }
 
   @Override
@@ -118,9 +133,9 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
 
   @Override
   public void preProcessDatatype(MetaDatatype datatype) {
-    datatype.addAttribute(ORM_TYPE_SQL, translateDatatype(datatype, "SQL",
+    datatype.addAttribute(ORM_TYPE_SQL, translateDatatype(datatype, "SQL", databaseKey,
         false));
-    datatype.addAttribute(ORM_TYPE_JDBC, translateDatatype(datatype, "JDBC",
+    datatype.addAttribute(ORM_TYPE_JDBC, translateDatatype(datatype, "JDBC", null,
         false));
   }
 
@@ -131,17 +146,15 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
     if (!root.exists()) {
       root.mkdirs();
     }
-    String database = getContext().getProperty(DATABASE_KEY);
-    String orm = getContext().getProperty(ORM_KEY);
     try {
-      ormBoWriter = FileOperators.createPrintWriter(new File(root, orm
+      ormBoWriter = FileOperators.createPrintWriter(new File(root, ormKey
           + "_bo_user.xml"));
-      ormLwWriter = FileOperators.createPrintWriter(new File(root, orm
+      ormLwWriter = FileOperators.createPrintWriter(new File(root, ormKey
           + "_lw_user.xml"));
       ddlWriter = FileOperators.createPrintWriter(new File(root, "createTables"
-          + database + ".sql"));
+          + databaseKey + ".sql"));
       ddlIntegrityWriter = FileOperators.createPrintWriter(new File(root,
-          "createIntegrity" + database + ".sql"));
+          "createIntegrity" + databaseKey + ".sql"));
     } catch (IOException e) {
       log.error(e);
     }
@@ -168,7 +181,11 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
       for (MetaProperty property : clazz.getProperties()) {
         if (isPersistent(property)) {
           buffer.setLength(0);
-          buffer.append(columnPrefix).append(property.valueOfTag(COLUMN_NAME))
+          String columnName = property.valueOfTag(COLUMN_NAME);
+          if(columnName == null || columnName.equals("")) {
+            columnName = property.getName().toUpperCase();
+          }
+          buffer.append(columnPrefix).append(columnName)
               .append(columnPostfix);
           property.addAttribute(COLUMN_NAME, buffer.toString());
         }
@@ -176,7 +193,11 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
       for (MetaProperty property : clazz.getIndexedProperties()) {
         if (isPersistent(property)) {
           buffer.setLength(0);
-          buffer.append(columnPrefix).append(property.valueOfTag(COLUMN_NAME))
+          String columnName = property.valueOfTag(COLUMN_NAME);
+          if(columnName == null || columnName.equals("")) {
+            columnName = property.getName().toUpperCase();
+          }
+          buffer.append(columnPrefix).append(columnName)
               .append(columnPostfix);
           property.addAttribute(COLUMN_NAME, buffer.toString());
         }
@@ -193,26 +214,24 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
         || !clazz.booleanValueOfTag(UmlConstants.PERSISTENCE_TAG)) {
       return;
     }
-    String orm = getContext().getProperty(ORM_KEY);
-    String database = getContext().getProperty(DATABASE_KEY);
     if (isFirstClassOfPackage) {
       VelocityContext context = createContext((MetaPackage) clazz.getContext());
       context.put("prefix", Boolean.TRUE);
       ormBoWriter.print(processTemplate(retrieveTemplate("xml-bo-repository",
-          orm), context));
+          ormKey), context));
       ormLwWriter.print(processTemplate(retrieveTemplate("xml-lw-repository",
-          orm), context));
+          ormKey), context));
       isFirstClassOfPackage = false;
     }
     VelocityContext context = createPersistencyContext(clazz);
     ormBoWriter.print(processTemplate(retrieveTemplate("xml-bo-repository",
-        orm), context));
+        ormKey), context));
     ormLwWriter.print(processTemplate(retrieveTemplate("xml-lw-repository",
-        orm), context));
+        ormKey), context));
     ddlWriter
-        .print(processTemplate(retrieveTemplate("ddl", database), context));
+        .print(processTemplate(retrieveTemplate("ddl", databaseKey), context));
     ddlIntegrityWriter.print(processTemplate(retrieveTemplate("ddl-integrity",
-        database), context));
+        databaseKey), context));
   }
 
   @Override
@@ -283,25 +302,33 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
   }
 
   /**
-   * Returns the size parameter for the element.
+   * Returns the size parameter for the element. In case where no size is set within the model
+   * then the default size of the type is used.
    * @param element element which size parameter should be returned.
    * @param index the index of the requested parameter.
    * @return the requested size parameter if defined otherwise "0".
    */
   public String getSizeParameter(MetaElement element, int index) {
     String sizes = element.valueOfTag(COLUMN_SIZE);
+    if(sizes == null && element instanceof MetaProperty) {
+      sizes = PropertyUtilities.getInfoOfType(getConfiguration(), ((MetaProperty)element).getTypeName(), "SQL", databaseKey, "default", false);
+    }
     String size;
     if (sizes != null) {
       int position = sizes.indexOf(".");
-      switch (index) {
-      case 0:
-        size = position != -1 ? sizes.substring(0, position) : "0";
-        break;
-      case 1:
-        size = position != -1 ? sizes.substring(position + 1) : "0";
-        break;
-      default:
-        size = "0";
+      if(position > -1) {
+        switch (index) {
+        case 0:
+          size = position != -1 ? sizes.substring(0, position) : "0";
+          break;
+        case 1:
+          size = position != -1 ? sizes.substring(position + 1) : "0";
+          break;
+        default:
+          size = "0";
+        }
+      } else {
+        size = sizes;
       }
     } else {
       size = "0";
@@ -323,7 +350,11 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
         if (buffer.length() > 0) {
           buffer.append(", ");
         }
-        buffer.append(property.valueOfTag(COLUMN_NAME));
+        String columnName = property.valueOfTag(COLUMN_NAME);
+        if(columnName == null || columnName.equals("")) {
+          columnName = property.getName().toUpperCase();
+        }
+        buffer.append(columnName);
         nrOfPrimaryProperties++;
       }
     }
@@ -332,15 +363,5 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
     }
     clazz.setNrOfPrimaryProperties(nrOfPrimaryProperties);
     return context;
-  }
-
-  /**
-   * Returns true if the property should be generated, meaning the column name
-   * of the property is not null.
-   * @param metaProperty property which persistency flag should be checked.
-   * @return true if the element should be generated otherwise false.
-   */
-  private boolean isPersistent(MetaProperty metaProperty) {
-    return (metaProperty.getTaggedValue(COLUMN_NAME) != null);
   }
 }

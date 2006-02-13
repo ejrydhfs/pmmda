@@ -120,7 +120,7 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
 
   @Override
   public void preProcessDatatype(MetaDatatype datatype) {
-    datatype.addAttribute(BO_TYPE_JAVA, translateDatatype(datatype, LANGUAGE, false));
+    datatype.addAttribute(BO_TYPE_JAVA, translateDatatype(datatype, LANGUAGE, null, false));
   }
 
   /**
@@ -566,7 +566,7 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
     if (qualifiedName != null) {
       MetaDatatype datatype = packages.getModel().findDatatype(qualifiedName);
       if (datatype != null) {
-        qualifiedName = translateDatatype(datatype, LANGUAGE, interfaces);
+        qualifiedName = translateDatatype(datatype, LANGUAGE, null, interfaces);
       }
     }
     qualifiedName = ModelOperators.getComponentName(qualifiedName);
