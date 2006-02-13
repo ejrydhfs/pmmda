@@ -101,7 +101,7 @@
     <datatype name="byte" type="TINYINT" null="false" param="0" />
     <datatype name="char" type="CHAR" null="false" param="0" />
     <datatype name="short" type="MEDIUMINT" null="false" param="0" />
-    <datatype name="int" type="INT" null="false" param="0" />
+    <datatype name="int" type="INTEGER" null="false" param="0" />
     <datatype name="long" type="BIGINT" null="false" param="0" />
     <datatype name="float" type="FLOAT" null="false" param="0" />
     <datatype name="double" type="DOUBLE" null="false" param="0" />
@@ -110,7 +110,7 @@
     <datatype name="Byte" type="TINYINT" null="true" param="0" />
     <datatype name="Char" type="CHAR" null="true" param="0" />
     <datatype name="Short" type="MEDIUMINT" null="true" param="0" />
-    <datatype name="Integer" type="INT" null="true" param="0" />
+    <datatype name="Integer" type="INTEGER" null="true" param="0" />
     <datatype name="Long" type="BIGINT" null="true" param="0" />
     <datatype name="Float" type="FLOAT" null="true" param="0" />
     <datatype name="Double" type="DOUBLE" null="true" param="0" />
@@ -119,16 +119,23 @@
       default="1024" />
     <datatype name="string" type="VARCHAR" null="true" param="1" default="255" />
     <datatype name="date" type="DATE" null="true" param="0" />
+    <datatype name="time" type="TIMESTAMP" null="false" param="0" />
+    <datatype name="datetime" type="DATE" null="false" param="0" />
+    <datatype name="timestamp" type="TIMESTAMP" null="true" param="0" />
     <datatype name="decimal" type="DECIMAL" null="true" param="2" default="7.2" />
     <datatype name="natural" type="DECIMAL" null="true" param="1" default="7" />
-    <datatype name="timestamp" type="TIMESTAMP" null="true" param="0" />
+    <datatype name="String" type="VARCHAR" null="true" param="1" default="255" />
+    <datatype name="Date" type="DATE" null="false" param="0" />
+    <datatype name="Time" type="TIMESTAMP" null="false" param="0" />
+    <datatype name="DateTime" type="DATE" null="false" param="0" />
+    <datatype name="TimeStamp" type="TIMESTAMP" null="true" param="0" />
 
     <class name="java.lang.String" type="VARCHAR" null="true" param="1"
       default="255" />
     <class name="java.lang.Boolean" type="BOOLEAN" null="true" param="0" />
     <class name="java.lang.Char" type="CHAR" null="true" param="0" />
     <class name="java.lang.Byte" type="TINYINT" null="true" param="0" />
-    <class name="java.lang.Integer" type="INT" null="true" param="0" />
+    <class name="java.lang.Integer" type="INTEGER" null="true" param="0" />
     <class name="java.lang.Long" type="BIGINT" null="true" param="0" />
     <class name="java.lang.Float" type="FLOAT" null="true" param="0" />
     <class name="java.lang.Double" type="DOUBLE" null="true" param="0" />

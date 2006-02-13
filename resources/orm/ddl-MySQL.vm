@@ -33,13 +33,13 @@ CREATE TABLE ${schema}${table} (
 #if(${columnType.equalsIgnoreCase("BOOLEAN")})
   ${columnName} INTEGER${nullInfo},
 #elseif(${columnType.equalsIgnoreCase("STRING")}) 
-  ${columnName} VARCHAR(${property.valueOfTag("orm-column-size")})${nullInfo},
+  ${columnName} VARCHAR(${cartridge.getSizeParameter(${property}, 0)})${nullInfo},
 #elseif(${columnType.equalsIgnoreCase("VARCHAR")}) 
-  ${columnName} VARCHAR(${property.valueOfTag("orm-column-size")})${nullInfo},
+  ${columnName} VARCHAR(${cartridge.getSizeParameter(${property}, 0)})${nullInfo},
 #elseif(${columnType.equalsIgnoreCase("NUMERIC")}) 
-  ${columnName} DECIMAL(${property.valueOfTag("orm-column-size")})${nullInfo},
+  ${columnName} DECIMAL(${cartridge.getSizeParameter(${property}, 0)})${nullInfo},
 #elseif(${columnType.equalsIgnoreCase("DECIMAL")})
-#set($sizes= ${property.valueOfTag("orm-column-size")})
+#set($sizes= ${cartridge.getSizeParameter(${property}, 0)})
   ${columnName} DECIMAL(${cartridge.getSizeParameter(${property}, 0)}, ${cartridge.getSizeParameter(${property}, 1)})${nullInfo},
 #else
   ${columnName} ${columnType.toUpperCase()}${nullInfo},
