@@ -20,12 +20,13 @@ public class RegisterHandlerWrapperDirect extends ch.bbv.application.ComponentIm
 	}
 		
 	public void register(ClientProfile profile) {
-		System.out.println("not implemented yet");
-
+		SubjectObserverPoolDirect pool = SubjectObserverPoolDirect.getInstance();
+		pool.addProfile(profile);
 	}
 
 	public void deRegister(ClientProfile profile) {
-		System.out.println("not implemented yet");
+		SubjectObserverPoolDirect pool = SubjectObserverPoolDirect.getInstance();
+		pool.removeProfile(profile);
 	}
 
 }
