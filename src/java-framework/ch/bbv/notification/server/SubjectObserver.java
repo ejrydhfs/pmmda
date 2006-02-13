@@ -35,14 +35,15 @@ public class SubjectObserver implements PropertyChangeListener{
 	SubjectObserver(ClientProfile profile){
 		assert profile != null;
 		_profiles = new ArrayList<ClientProfile>(20);
-		_profiles.add(profile);
 		QueueCreaterFactory factory = QueueCreaterFactory.getInstance();
 		QueueCreater creater = factory.getQueueCreater();
 		creater.createQueue(profile.getClientIdentification());
 		//the example
 		if(profile.getClientIdentification().equals("client")){
 			fake(profile);
+			return;
 		}
+		addProfile(profile);
 	}
 	
 	//for example
