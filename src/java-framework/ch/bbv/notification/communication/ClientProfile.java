@@ -14,6 +14,7 @@ import java.io.Serializable;
 public class ClientProfile implements Serializable{
 	
 	private String _clientIdentification;
+	private Object _updateable;
 	private EventInfo _info;
 	
 	@Override public String toString(){
@@ -48,6 +49,19 @@ public class ClientProfile implements Serializable{
 		_clientIdentification = clientIdentification;
 		_info = info;
 	}
+	
+	/**
+	 * returns a new <code>ClientProfile</code> use in constructor in direct mode case
+	 * @param clientIdentification the client name as <code>String</code> these value is needed to creating the jms queue which has the same name as the client
+	 * @param info the information to the event as <code>EventInfo</code>
+	 * @param updateable the reference object to the updateable
+	 * @pre clientIdentification != null && info != null
+	 */
+	public ClientProfile(String clientIdentification, EventInfo info, Object updateable){
+		this(clientIdentification,info);
+		assert updateable != null;
+		_updateable = updateable;
+	}
 
 	/**
 	 * get the client identification
@@ -63,6 +77,14 @@ public class ClientProfile implements Serializable{
 	 */
 	public EventInfo getInfo() {
 		return _info;
+	}
+	
+	/**
+	 * get the updateable object, this method is used only on direct case
+	 * @return the updateable as <code>Object</code>
+	 */
+	public Object getUpdateable(){
+		return _updateable;
 	}
 
 }
