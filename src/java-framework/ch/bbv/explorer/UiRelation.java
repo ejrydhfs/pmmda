@@ -8,9 +8,11 @@ package ch.bbv.explorer;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
+
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import ch.bbv.utilities.ReflectUtilities;
 import ch.bbv.utilities.TextUtilities;
 

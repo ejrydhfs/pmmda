@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann 
+/* copyright 2000-2006 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$
@@ -31,6 +31,8 @@ public abstract class ExplorerSaveAction extends ExplorerGlobalActionImpl {
 
   public void actionPerformed(ActionEvent action) {
     execute();
-    getExplorer().getMenuBar().documentChanged(ExplorerDocument.State.CLEAN);
+    ExplorerDocument document = getExplorer().getDocument();
+    document.setModified(false);
+    getExplorer().getMenuBar().documentChanged(document);
   }
 }

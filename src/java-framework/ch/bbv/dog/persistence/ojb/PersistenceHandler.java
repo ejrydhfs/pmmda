@@ -140,12 +140,14 @@ public class PersistenceHandler implements DataObjectHandler {
     List<DataObjectUpdate> updates = null;
     switch (mode) {
     case DETACH:
+      // not supported in OJB, handled similarly to replace
+      updates = storeReplace(datasource, clazz, root);
       break;
     case REPLACE:
       updates = storeReplace(datasource, clazz, root);
       break;
     case SYNCHRONIZE:
-      updates = storeSynchronize(datasource, clazz, root);
+      updates = storeUpdate(datasource, clazz, root);
       break;
     }
     return updates;
@@ -216,11 +218,39 @@ public class PersistenceHandler implements DataObjectHandler {
    * @return list of update information of the involved object which can be
    *         propagated to the upper layer.
    */
-  private List<DataObjectUpdate> storeSynchronize(String datasource, Class clazz,
+  private List<DataObjectUpdate> storeUpdate(String datasource, Class clazz,
       DataObject root) {
+    if (root.isNew()) {
+      // stores the new graph in the database. All objects must be new.
+      Database database = getDatabase(datasource);
+      CollectFunctor collect = new CollectFunctor();
+      AbstractVisitorFunctor visitor = DataObjectManager.getVisitorFor(clazz);
+      visitor.setFunctor(collect);
+      DataObjectType.invokeVisitor(clazz, root, visitor);
+      List<DataObject> objects = collect.getObjects();
+      // check that all objects are new
+      for (DataObject object : objects) {
+        assert object.isNew();
+      }
+      policy.update(database, EMPTY_LIST, objects, EMPTY_LIST, objects,
+          EMPTY_LIST);
+    } else {
+      // synchronizes the new graph with the original one
+      ChangeFunctor changes = new ChangeFunctor();
+      AbstractVisitorFunctor visitor = DataObjectManager.getVisitorFor(clazz);
+      visitor.setFunctor(changes);
+      DataObject originalRoot = retrieve(datasource, clazz, root.getId());
+      if (originalRoot != null) {
+        changes.reset(originalRoot);
+        // propagate changes and commit them to the database
+        // TODO: implement the function
+      } else {
+        // orginal root was deleted. An optimistic locking error happened.
+      }
+    }
     return null;
   }
-  
+
   /**
    * Returns the database with the given datasource name.
    * @param datasource name of the datasource to be found.

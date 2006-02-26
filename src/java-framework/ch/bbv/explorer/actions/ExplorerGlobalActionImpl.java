@@ -1,10 +1,11 @@
-/* copyright 2000-2005 Marcel Baumann
+/* copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
  */
 package ch.bbv.explorer.actions;
 
+import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.text.MessageFormat;
@@ -12,6 +13,7 @@ import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import ch.bbv.explorer.Explorer;
@@ -32,9 +34,15 @@ public abstract class ExplorerGlobalActionImpl extends AbstractAction implements
    * Explorer owning the global action.
    */
   private Explorer explorer;
-  
+
   /**
-   * result of the last action executed 
+   * The previous value of the cursor if the wait cursor was switched on
+   * otherwise null.
+   */
+  private Cursor cursor;
+
+  /**
+   * result of the last action executed
    */
   protected boolean lastResult = false;
 
@@ -82,10 +90,10 @@ public abstract class ExplorerGlobalActionImpl extends AbstractAction implements
   public void actionPerformed(ActionEvent event) {
     lastResult = execute();
   }
-  
+
   /**
-   * Returns the result of the last action executed.
-   * False if no action has been executed before.
+   * Returns the result of the last action executed. False if no action has been
+   * executed before.
    */
   public boolean getLastResult() {
     return lastResult;
@@ -101,8 +109,10 @@ public abstract class ExplorerGlobalActionImpl extends AbstractAction implements
     boolean sucess = true;
     ExplorerMenuBar menuBar = getExplorer().getMenuBar();
     ExplorerDocument document = getExplorer().getDocument();
-    ExplorerDocument.State state = document.getState();
-    if (state == ExplorerDocument.State.MODIFIED || state == ExplorerDocument.State.CREATED) {
+    if (document == null) {
+      return true;
+    }
+    if (document.isModified()) {
       int selection = displayMessage("actions.SAVE_CHANGES");
       switch (selection) {
       case 0:
@@ -114,7 +124,8 @@ public abstract class ExplorerGlobalActionImpl extends AbstractAction implements
           sucess = menuBar.getStandardAction(Names.SAVE_AS).getLastResult();
         }
         if (sucess) {
-          menuBar.documentChanged(ExplorerDocument.State.CLEAN);
+          document.setModified(false);
+          menuBar.documentChanged(document);
         }
         break;
       case 1:
@@ -136,7 +147,7 @@ public abstract class ExplorerGlobalActionImpl extends AbstractAction implements
   protected int displayMessage(String messageKey) {
     return displayMessage(messageKey, getExplorer().getDocument().getFile());
   }
-  
+
   /**
    * Displays a confirmation message for a document with a defined persistent
    * storage.
@@ -148,12 +159,29 @@ public abstract class ExplorerGlobalActionImpl extends AbstractAction implements
     ResourceBundle bundle = ResourceBundle
         .getBundle("ch.bbv.explorer.Messages");
     String filename = "undefined";
-    if(file != null) {
+    if (file != null) {
       filename = file.getName();
     }
     String message = MessageFormat.format(bundle.getString(messageKey),
         new Object[] { filename });
     return JOptionPane.showConfirmDialog(getExplorer().getFrame(), message,
         "actions.CONFIRMATION", JOptionPane.YES_NO_CANCEL_OPTION);
+  }
+
+  /**
+   * Switches the wait cursor on and off.
+   * @param switchOn true if the wait cursor should be switched on otherwise
+   *          false.
+   */
+  protected void switchWaitCursor(boolean switchOn) {
+    JFrame frame = getExplorer().getFrame();
+    if (switchOn) {
+      cursor = frame.getCursor();
+      frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+    } else {
+      frame.setCursor((cursor != null) ? cursor : Cursor
+          .getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+      cursor = null;
+    }
   }
 }

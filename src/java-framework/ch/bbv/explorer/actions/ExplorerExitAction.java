@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann 
+/* copyright 2000-2006 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$
@@ -8,6 +8,7 @@ package ch.bbv.explorer.actions;
 import javax.swing.JOptionPane;
 
 import ch.bbv.explorer.Explorer;
+import ch.bbv.explorer.ExplorerDocument;
 import ch.bbv.explorer.ExplorerMenuBar;
 
 /**
@@ -37,25 +38,25 @@ public class ExplorerExitAction extends ExplorerGlobalActionImpl {
 
   public boolean execute() {
     Explorer explorer = getExplorer();
-    int choice;
-    switch (explorer.getDocument().getState()) {
-    case CREATED:
-      choice = JOptionPane.showConfirmDialog(null, "Save Changes",
-          "Save Changes", JOptionPane.YES_NO_OPTION);
-      if (choice == JOptionPane.YES_OPTION) {
-        explorer.getMenuBar().getStandardAction(ExplorerMenuBar.Names.SAVE_AS)
-            .actionPerformed(null);
-      }
-      break;
-    case MODIFIED:
-      choice = JOptionPane.showConfirmDialog(null, "Save As Changes",
-          "Save As Changes", JOptionPane.YES_NO_OPTION);
-      if (choice == JOptionPane.YES_OPTION) {
-        if (!explorer.getMenuBar()
-            .getStandardAction(ExplorerMenuBar.Names.SAVE).execute()) {
+    ExplorerDocument document = explorer.getDocument();
+    if ((document != null) && document.isModified()) {
+      if (document.isNew()) {
+        int choice = JOptionPane.showConfirmDialog(null, "Save As Changes",
+            "Save As Changes", JOptionPane.YES_NO_OPTION);
+        if (choice == JOptionPane.YES_OPTION) {
+          if (!explorer.getMenuBar().getStandardAction(
+              ExplorerMenuBar.Names.SAVE).execute()) {
+          }
+        }
+      } else {
+        int choice = JOptionPane.showConfirmDialog(null, "Save Changes",
+            "Save Changes", JOptionPane.YES_NO_OPTION);
+        if (choice == JOptionPane.YES_OPTION) {
+          explorer.getMenuBar()
+              .getStandardAction(ExplorerMenuBar.Names.SAVE_AS)
+              .actionPerformed(null);
         }
       }
-      break;
     }
     explorer.close();
     lastResult = true;

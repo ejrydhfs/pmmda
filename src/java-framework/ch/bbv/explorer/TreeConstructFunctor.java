@@ -6,16 +6,15 @@
  */
 package ch.bbv.explorer;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Stack;
+import java.util.*;
 
 import ch.bbv.dog.*;
 
 /**
  * The tree construct functor constructs the graph of explorer nodes
  * representing a graph of lightweight objects. No constraints exist on the
- * tree.
+ * tree. The algorithm uses the declarative information of the node type factory
+ * to infer if a lightweight node should be mapped to an explorer node or not.
  * @author MarcelBaumann
  * @version $Revision$
  */
@@ -40,6 +39,14 @@ public class TreeConstructFunctor implements DoFunctor, LwFunctor {
    * explorer node containing it.
    */
   private Map<LightweightObject, ExplorerNode> lwNodes;
+
+  /**
+   * The set of all lightweight objects which have an explorer node
+   * representation. This set is used to filter the lightweight objects tree and
+   * selects the visible nodes based on the user interface declarative
+   * configuration stored in the node type factory.
+   */
+  private Set<LightweightObject> explorerNodes;
 
   /**
    * Stack containing the ancestors of the currently visited data object.
@@ -71,6 +78,7 @@ public class TreeConstructFunctor implements DoFunctor, LwFunctor {
     nodes = new HashMap<DataObjectId, ExplorerNode>();
     doNodes = new HashMap<DataObject, ExplorerNode>();
     lwNodes = new HashMap<LightweightObject, ExplorerNode>();
+    explorerNodes = new HashSet<LightweightObject>();
     ancestors = new Stack<LightweightObject>();
     this.factory = factory;
     this.visitor = visitor;
@@ -137,13 +145,17 @@ public class TreeConstructFunctor implements DoFunctor, LwFunctor {
 
   public void execute(LightweightObject object) {
     assert object != null;
-    Class clazz = object.getClass();
-    UiNodeType nodeType = factory.getNodeTypeForLw(clazz);
-    ExplorerNode node = new ExplorerNode(nodeType, object, null);
-    lwNodes.put(object, node);
-    if (object.getId() != null) {
-      DataObjectId id = new DataObjectId(clazz, object.getId());
-      nodes.put(id, node);
+    inferChildren(object);
+    ExplorerNode node = null;
+    if (explorerNodes.contains(object)) {
+      Class clazz = object.getClass();
+      UiNodeType nodeType = factory.getNodeTypeForLw(clazz);
+      node = new ExplorerNode(nodeType, object, null);
+      lwNodes.put(object, node);
+      if (object.getId() != null) {
+        DataObjectId id = new DataObjectId(clazz, object.getId());
+        nodes.put(id, node);
+      }
     }
     int currentDepth = visitor.getDepth();
     if (ancestors.size() >= currentDepth) {
@@ -152,13 +164,33 @@ public class TreeConstructFunctor implements DoFunctor, LwFunctor {
       }
       depth = ancestors.size();
     }
-    if (visitor.getDepth() > 1) {
+    if ((node != null) && (visitor.getDepth() > 1)) {
       ExplorerNode context = retrieveNode(ancestors.peek());
       context.addChild(node);
     }
     if (currentDepth == (depth + 1)) {
       depth++;
       ancestors.push(object);
+    }
+  }
+
+  /**
+   * Infers the children of the object which are displayed as nodes in the
+   * explorer. Only children of relations are displayed and relations have
+   * always lightweight objects.
+   * @param object object which visible lightweight objects should be infered.
+   */
+  private void inferChildren(LightweightObject object) {
+    UiNodeType nodeType = factory.getNodeTypeForLw(object.getClass());
+    if (visitor.getDepth() == 1) {
+      // root object is always displayed
+      explorerNodes.add(object);
+    }
+    for (UiRelation relation : nodeType.getRelations()) {
+      for (LightweightObject child : (Collection<LightweightObject>) relation
+          .getValues(object)) {
+        explorerNodes.add(child);
+      }
     }
   }
 }

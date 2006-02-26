@@ -1,5 +1,5 @@
 /* 
- * copyright 2000-2005 Marcel Baumann
+ * copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -8,9 +8,11 @@ package ch.bbv.explorer;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import ch.bbv.dog.DataObjectType;
 
 /**
@@ -63,6 +65,9 @@ public class UiNodeTypeImpl implements UiNodeType {
 
   private List<UiNodeViewType> uiNodeViews;
 
+  /**
+   * The current view used to display instance of this node type.
+   */
   private UiNodeViewType currentView;
 
   /**
@@ -250,7 +255,7 @@ public class UiNodeTypeImpl implements UiNodeType {
   }
 
   public String findProperty(Object parent, Object object) {
-    assert ((parent != null) && (object != null));
+    assert (parent != null) && (object != null);
     String property = null;
     UiNodeType nodeType = factory.getNodeTypeForLw(parent.getClass());
     for (UiRelation relation : nodeType.getRelations()) {

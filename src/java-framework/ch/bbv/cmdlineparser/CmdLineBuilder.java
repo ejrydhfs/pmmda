@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann
+/* copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -56,6 +56,27 @@ public class CmdLineBuilder {
     return createOption(shortName);
   }
 
+  /**
+   * Creates an command line option with multiple arguments.
+   * @param shortName short name of the option.
+   * @param longName long name of the option.
+   * @param description description of the option for the online help.
+   * @param argName the name of the argument of the option.
+   * @param required flag indicating if the option is mandatory or not.
+   * @param type type of the argument values.
+   * @return the newly created command line option.
+   */
+  public static Option createArgsOption(String shortName, String longName,
+      String description, String argName, boolean required, Object type) {
+    OptionBuilder.withArgName(argName);
+    OptionBuilder.withLongOpt(longName);
+    OptionBuilder.isRequired(required);
+    OptionBuilder.hasArgs();
+    OptionBuilder.withDescription(description);
+    OptionBuilder.withType(type);
+    return createOption(shortName);
+  }
+  
   /**
    * Creates a commnad line option following the conventions of Java command
    * line properties.

@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann 
+/* copyright 2000-2006 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$ 
@@ -13,18 +13,39 @@ import java.io.File;
  * @version $Revision$
  */
 public class ExplorerDocumentImpl implements ExplorerDocument {
+  /**
+   * Flag indicating if the document was modified in the application.
+   */
+  private boolean modified;
 
   /**
-   * State of the document.
+   * Flag indicating if the document was loaded from a persistent store or is a
+   * new one.
    */
-  private State state;
+  private boolean news;
 
-  public State getState() {
-    return state;
+  /**
+   * Default constructor of the class.
+   */
+  public ExplorerDocumentImpl() {
+    modified = false;
+    news = true;
   }
 
-  public void setState(State state) {
-    this.state = state;
+  public boolean isModified() {
+    return modified;
+  }
+
+  public boolean isNew() {
+    return news;
+  }
+
+  public void setModified(boolean modified) {
+    this.modified = modified;
+  }
+
+  public void setNew(boolean news) {
+    this.news = news;
   }
 
   public File getFile() {

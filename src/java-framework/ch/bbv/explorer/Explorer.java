@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann
+/* copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -8,8 +8,6 @@ package ch.bbv.explorer;
 import java.awt.BorderLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.List;
 
 import javax.swing.*;
@@ -29,7 +27,7 @@ import ch.bbv.dog.AbstractVisitorFunctor;
 import ch.bbv.dog.DataObjectManager;
 import ch.bbv.dog.DataObjectType;
 import ch.bbv.dog.LightweightObject;
-import ch.bbv.explorer.ExplorerDocument.State;
+import ch.bbv.explorer.components.ExplorerWindowAdapter;
 import ch.bbv.utilities.ReflectUtilities;
 
 /**
@@ -263,7 +261,7 @@ public abstract class Explorer {
     frame.add(treeViewPane, BorderLayout.CENTER);
     statusBar = new StatusBar();
     frame.add(statusBar, BorderLayout.SOUTH);
-    frame.addWindowListener(new ExplorerWindowListener(this));
+    frame.addWindowListener(new ExplorerWindowAdapter(this));
     selectionListener = new ExplorerViewTreeSelectionListener();
   }
 
@@ -317,7 +315,8 @@ public abstract class Explorer {
   }
 
   /**
-   * Returns the navigation port in the docking framework defined for the explorer.
+   * Returns the navigation port in the docking framework defined for the
+   * explorer.
    * @return the requested docking port.
    */
   public DockingPort getNavigationPort() {
@@ -325,7 +324,8 @@ public abstract class Explorer {
   }
 
   /**
-   * Returns the utilities port in the docking framework defined for the explorer.
+   * Returns the utilities port in the docking framework defined for the
+   * explorer.
    * @return the requested docking port.
    */
   public DockingPort getUtilitiesPort() {
@@ -447,7 +447,9 @@ public abstract class Explorer {
    * @param index index of the removed child node.
    */
   public void nodeRemoved(ExplorerNode parent, ExplorerNode node, int index) {
-    getMenuBar().documentChanged(State.MODIFIED);
+    ExplorerDocument document = getDocument();
+    document.setModified(true);
+    getMenuBar().documentChanged(document);
     int[] childIndices = new int[1];
     Object[] removedChildren = new Object[1];
     childIndices[0] = index;
@@ -464,7 +466,9 @@ public abstract class Explorer {
    * @param node the modified node.
    */
   public void nodeChanged(ExplorerNode node) {
-    getMenuBar().documentChanged(State.MODIFIED);
+    ExplorerDocument document = getDocument();
+    document.setModified(true);
+    getMenuBar().documentChanged(document);
     treeModel.nodeChanged(node);
     if (nodeView != null) {
       nodeView.nodeChanged(node);
@@ -489,12 +493,6 @@ public abstract class Explorer {
   }
 
   /**
-   * The initialize method is called after the construction and before the
-   * explorer is displayed on the screen.
-   */
-  protected abstract void initialize();
-
-  /**
    * Creates the navigator tree representing the lightweight data object graph.
    * @param root root of the data object graph.
    * @return the root node of the navigator tree.
@@ -507,6 +505,12 @@ public abstract class Explorer {
     DataObjectType.invokeVisitor(root.getClass(), root, visitor);
     return functor.retrieveNode(root);
   }
+
+  /**
+   * The initialize method is called after the construction and before the
+   * explorer is displayed on the screen.
+   */
+  protected abstract void initialize();
 
   /**
    * Implements the tree selection listener for the explorer view.
@@ -594,30 +598,6 @@ public abstract class Explorer {
           }
         }
       }
-    }
-  }
-
-  /**
-   * The listener of the window frame for global events.
-   * @author marcelbaumann
-   * @version $Revision$
-   */
-  public static class ExplorerWindowListener extends WindowAdapter {
-    /**
-     * The explorer listened to.
-     */
-    private Explorer explorer;
-
-    /**
-     * Constructor of the class.
-     * @param explorer the explorer the listener should listen.
-     */
-    public ExplorerWindowListener(Explorer explorer) {
-      this.explorer = explorer;
-    }
-
-    public void windowClosing(WindowEvent e) {
-      explorer.close();
     }
   }
 }

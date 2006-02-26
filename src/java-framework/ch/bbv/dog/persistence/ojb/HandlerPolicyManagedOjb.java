@@ -8,6 +8,7 @@ package ch.bbv.dog.persistence.ojb;
 import java.util.List;
 
 import org.apache.ojb.odmg.NarrowTransaction;
+import org.apache.ojb.odmg.TransactionAbortedExceptionOJB;
 import org.apache.ojb.odmg.TransactionExt;
 import org.odmg.Database;
 import org.odmg.OQLQuery;
@@ -69,8 +70,10 @@ class HandlerPolicyManagedOjb extends HandlerPolicyOjb {
       items = (List<Object>) query.execute();
     } catch (QueryInvalidException e) {
       log.error(e);
+      throw new TransactionAbortedExceptionOJB(e);
     } catch (QueryException e) {
       log.error(e);
+      throw new TransactionAbortedExceptionOJB(e);
     }
     return items;
   }

@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann
+/* copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -188,7 +188,6 @@ public class GenericNodePropertiesView extends NodePropertiesView {
    */
   protected void retrieveProperties(DataObject object) {
     type = object.getClass();
-
     PropertyDescriptor[] descriptors = PropertyUtils
         .getPropertyDescriptors(object);
     for (int i = 0; i < descriptors.length; i++) {
@@ -217,12 +216,21 @@ public class GenericNodePropertiesView extends NodePropertiesView {
           } else {
             // handle simple properties with at most one item.
             if (containsInterface(clazz.getInterfaces(), DataObject.class)) {
-              DataObjectType type = getModel().getNodeType().getFactory()
-                  .getNodeTypeForBo(clazz).getDataObjectType();
-              DataObjectPropertyView view = new DataObjectPropertyView(
-                  descriptor.getName(), clazz, descriptor.getDisplayName(),
-                  type);
-              dataPropertyViews.add(view);
+              UiNodeType nodeType = getModel().getNodeType().getFactory()
+                  .getNodeTypeForBo(clazz);
+              if (nodeType != null) {
+                // only registered data object types are added
+                DataObjectType type = nodeType.getDataObjectType();
+                DataObjectPropertyView view = new DataObjectPropertyView(
+                    descriptor.getName(), clazz, descriptor.getDisplayName(),
+                    type);
+                dataPropertyViews.add(view);
+              } else {
+                if (log.isDebugEnabled()) {
+                  log.debug("Data object simple property is not available "
+                      + type.getName() + ":" + descriptor.getName());
+                }
+              }
             } else {
               PrimitivePropertyView view = new PrimitivePropertyView(descriptor
                   .getName(), clazz, descriptor.getDisplayName());

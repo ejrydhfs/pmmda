@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann
+/* copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -10,8 +10,8 @@ import java.util.Map;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 
-import ch.bbv.explorer.ExplorerDocument.State;
 import ch.bbv.explorer.actions.ExplorerGlobalAction;
 
 /**
@@ -132,41 +132,40 @@ public class ExplorerMenuBar extends JMenuBar {
   }
 
   /**
-   * Change event about the status of the current displayed document.
-   * @param state new state of the document.
+   * Adds a standard action to the given menu.
+   * @param menu menu to which the action should be added.
+   * @param name name of the action as defined in the menu bar.
+   * @param action action to add.
    */
-  public void documentChanged(State state) {
-    if (state != null) {
-      explorer.getDocument().setState(state);
+  public void addStandardAction(JMenu menu, Names name,
+      ExplorerGlobalAction action) {
+    menu.add(new JMenuItem(action));
+    putStandardAction(name, action);
+  }
+
+  /**
+   * Change event about the status of the current displayed document.
+   * @param document the document which status changed.
+   */
+  public void documentChanged(ExplorerDocument document) {
+    setActionEnabled(actions.get(Names.NEW), true);
+    setActionEnabled(actions.get(Names.OPEN), true);
+    setActionEnabled(actions.get(Names.CLOSE), true);
+    setActionEnabled(actions.get(Names.EXIT), true);
+    if (document != null) {
+      boolean modified = document.isModified();
+      boolean news = document.isNew();
+      if (news) {
+        explorer.getFrame().setTitle("");
+      } else {
+        explorer.getFrame().setTitle(
+            explorer.getRoot().getName() + (modified ? " * " : ""));
+      }
+      setActionEnabled(actions.get(Names.SAVE), !news && modified);
+      setActionEnabled(actions.get(Names.SAVE_AS), news || modified);
     } else {
-      state = explorer.getDocument().getState();
-    }
-    switch (state) {
-    case NONE:
-      explorer.getFrame().setTitle("");
-      setActionEnabled(actions.get(Names.NEW), true);
-      setActionEnabled(actions.get(Names.OPEN), true);
       setActionEnabled(actions.get(Names.SAVE), false);
-      setActionEnabled(actions.get(Names.SAVE_AS), false);
-      setActionEnabled(actions.get(Names.CLOSE), false);
-      break;
-    case CREATED:
-      explorer.getFrame().setTitle(explorer.getRoot().getName());
-      setActionEnabled(actions.get(Names.NEW), true);
-      setActionEnabled(actions.get(Names.OPEN), true);
-      setActionEnabled(actions.get(Names.SAVE), false);
-      setActionEnabled(actions.get(Names.SAVE_AS), true);
-      setActionEnabled(actions.get(Names.CLOSE), true);
-      break;
-    case CLEAN:
-      explorer.getFrame().setTitle(explorer.getRoot().getName());
-      setActionEnabled(actions.get(Names.SAVE), false);
-      setActionEnabled(actions.get(Names.CLOSE), true);
-      break;
-    case MODIFIED:
-      explorer.getFrame().setTitle(explorer.getRoot().getName() + " * ");
-      setActionEnabled(actions.get(Names.SAVE), true);
-      break;
+      setActionEnabled(actions.get(Names.SAVE_AS), false);      
     }
   }
 

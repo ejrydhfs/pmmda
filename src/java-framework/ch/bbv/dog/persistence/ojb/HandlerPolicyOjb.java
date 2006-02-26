@@ -225,6 +225,10 @@ class HandlerPolicyOjb {
     } catch (QueryException e) {
       log.error(e);
       tx.abort();
+    } catch (RuntimeException e) {
+      log.error(e);
+      tx.abort();
+      throw e;
     }
     return items;
   }
