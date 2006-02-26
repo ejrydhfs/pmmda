@@ -22,7 +22,11 @@ import $importStatement;
 #end
 
 /* %% USER DEFINED IMPORT START %% */
-/* %% USER DEFINED IMPORT END   %% */
+#set($lines=${blocks.get("imports")})
+#foreach($line in $lines)
+$line
+#end
+/* %% USER DEFINED IMPORT END %% */
 
 #emitClassDescription($class "")
 #set($className=${class.getAttribute("bo-lw-class")})
@@ -35,6 +39,10 @@ import $importStatement;
 ${class.retrieveVisibilityText()} class ${className} ${extends} implements LightweightObject {
 
 /* %% USER DEFINED DECLARATION START %% */
+#set($lines=${blocks.get("declarations")})
+#foreach($line in $lines)
+$line
+#end
 /* %% USER DEFINED DECLARATION END %% */
 
   /**
@@ -100,6 +108,21 @@ ${class.retrieveVisibilityText()} class ${className} ${extends} implements Light
 #end
 #end
   }
+
+/* %% USER DEFINED CONSTRUCTORS START %% */
+#set($lines=${blocks.get("constructors")})
+#foreach($line in $lines)
+$line
+#end
+/* %% USER DEFINED CONSTRUCTORS END %% */
+
+/* %% USER DEFINED CODE START %% */
+#set($lines=${blocks.get("definitions")})
+#foreach($line in $lines)
+$line
+#end
+/* %% USER DEFINED CODE END %% */
+
 #foreach ($property in $properties)
 #if(${property.booleanValueOfTag("bo-lightweight")})
 #if(${property.canBeRead()})

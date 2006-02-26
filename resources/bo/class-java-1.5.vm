@@ -137,7 +137,7 @@ $line
 
   /** 
    * Sets the new value of the simple property ${lName}.
-   * @param ${lName} new value of the property.
+   * @param ${lName} new value of the property
 #if(${vetoable})
    * @throws PropertyVetoException if a listener refuses the published change.
 #end
@@ -230,8 +230,8 @@ $line
   /** 
    * Returns the element with the specified key in the ordered indexed  
    * property ${lName}.
-   * @param key key of element to return. 
-   * @return the element at the specified position in this list.
+   * @param key key of element to return
+   * @return the element at the specified position in this list
 #if(${aggregation.canBeWritten()})
    * @see ${sign}set${usName}(${keyType}, ${itemType})
 #end    
@@ -253,8 +253,8 @@ $line
   /** 
    * Returns the element at the specified position in the indexed property 
    * ${lName}.
-   * @param index index of element to return. 
-   * @return the element at the specified position in this list.
+   * @param index index of element to return
+   * @return the element at the specified position in this list
 #if(${aggregation.canBeWritten()})
    * @see ${sign}${setter}(int, ${itemType})
 #end    
@@ -272,8 +272,8 @@ $line
   /** 
    * Inserts the given child with the given key in the ordered indexed
    * property ${lName}.
-   * @param key key at which the specified element is to be inserted.
-   * @param value value to be inserted.
+   * @param key key at which the specified element is to be inserted
+   * @param value value to be inserted
 #if(${aggregation.canBeRead()})
    * @see ${sign}get${usName}(${keyType})
 #end   
@@ -289,8 +289,8 @@ $line
   
   /** 
    * Removes the element with the specified key.
-   * @param key key whose mappingis to be removed from the map. 
-   * @return true if this list contained the specified element. 
+   * @param key key whose mappingis to be removed from the map
+   * @return true if this list contained the specified element
    * @see java.util.Map${sign}remove(Object)
    */
   ${visibility} ${itemType} remove${usName}(${keyType} key) {
@@ -313,8 +313,8 @@ $line
    * this list, in the order that they are returned by the specified 
    * collection's iterator. The behavior of this operation is unspecified if 
    * the specified collection is modified while the operation is in progress. 
-   * @param c collection whose elements are to be added to this list. 
-   * @return true if this list changed as a result of the call. 
+   * @param c collection whose elements are to be added to this list
+   * @return true if this list changed as a result of the call
    * @see java.util.List${sign}addAll(Collection)
    */
   ${visibility} boolean add${upName}(Collection<$itemType> c) {
@@ -333,8 +333,8 @@ $line
   
   /** 
    * Inserts the given child at the select position in the relation ${lName}.
-   * @param index index at which the specified element is to be inserted.
-   * @param element element to be inserted.
+   * @param index index at which the specified element is to be inserted
+   * @param element element to be inserted
 #if(${aggregation.canBeWritten()})
    * @see ${sign}${getter}(int)
 #end    
@@ -347,8 +347,8 @@ $line
   /** 
    * Appends the specified element to the end of this list in the relation 
    * ${lName}.
-   * @param element to be appended to this list.
-   * @return true (as per the general contract of the Collection.add method).   
+   * @param element to be appended to this list
+   * @return true (as per the general contract of the Collection.add method)
    * @see java.util.List${sign}add(Object)
    * @pre element != null
    */
@@ -361,8 +361,8 @@ $line
    * If this list does not contain the element, it is unchanged. More formally, 
    * removes the element with the lowest index i such that 
    * (o==null ? get(i)==null : o.equals(get(i))) (if such an element exists). 
-   * @param element element to be removed from this list, if present. 
-   * @return true if this list contained the specified element. 
+   * @param element element to be removed from this list, if present
+   * @return true if this list contained the specified element
    * @see java.util.List${sign}remove(Object)
    */
   ${visibility} boolean remove${usName}(${itemType} element) {
@@ -376,7 +376,7 @@ $line
   /**
    * Adds a property change listener to the data object. If not defined for the
    * class an operation not supported exception is thrown.
-   * @param listener listener to add.
+   * @param listener listener to add
    * @see ${sign}removePropertyChangeListener(PropertyChangeListener)
    */
   public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -386,8 +386,8 @@ $line
   /**
    * Adds a property change listener for a property to the data object. If not
    * defined for the class an operation not supported exception is thrown.
-   * @param propertyName name of the property to listen to.
-   * @param listener listener to add.
+   * @param propertyName name of the property to listen to
+   * @param listener listener to add
    * @see ${sign}removePropertyChangeListener(String, PropertyChangeListener)
    */
   public void addPropertyChangeListener(String propertyName, 
@@ -398,7 +398,7 @@ $line
   /**
    * Remove the property change listener from the data object. If not defined
    * for the class an operation not supported exception is thrown.
-   * @param listener listener to remove.
+   * @param listener listener to remove
    * @see ${sign}addPropertyChangeListener(PropertyChangeListener)
    */
   public void removePropertyChangeListener(PropertyChangeListener listener) {
@@ -408,8 +408,8 @@ $line
   /**
    * Remove the property change listener from the data object. If not defined
    * for the class an operation not supported exception is thrown.
-   * @param propertyName name of the property listened to.
-   * @param listener listener to remove.
+   * @param propertyName name of the property listened to
+   * @param listener listener to remove
    * @see ${sign}addPropertyChangeListener(String, PropertyChangeListener)
    */
   public void removePropertyChangeListener(String propertyName, 
@@ -422,7 +422,7 @@ $line
   /**
    * Adds a property vetoable change listener to the data object. If not defined
    * for the class an operation not supported exception is thrown.
-   * @param listener listener to add.
+   * @param listener listener to add
    * @see ${sign}removeVetoableChangeListener(VetoableChangeListener)
    */
   public void addVetoableChangeListener(VetoableChangeListener listener) {
@@ -433,8 +433,8 @@ $line
    * Adds a property vetoable change listener for a property to the data object.
    * If not defined for the class an operation not supported exception is
    * thrown.
-   * @param propertyName name of the property to listen to.
-   * @param listener listener to add.
+   * @param propertyName name of the property to listen to
+   * @param listener listener to add
    * @see ${sign}removeVetoableChangeListener(String, VetoableChangeListener)
    */
   public void addVetoableChangeListener(String propertyName, 
@@ -445,7 +445,7 @@ $line
   /**
    * Remove the property vetoable change listener from the data object. If not
    * defined for the class an operation not supported exception is thrown.
-   * @param listener listener to remove.
+   * @param listener listener to remove
    * @see ${sign}addVetoableChangeListener(VetoableChangeListener)
    */
   public void removeVetoableChangeListener(VetoableChangeListener listener) {
@@ -455,8 +455,8 @@ $line
   /**
    * Remove the property vetoable change listener from the data object. If not
    * defined for the class an operation not supported exception is thrown.
-   * @param propertyName name of the property listened to.
-   * @param listener listener to remove.
+   * @param propertyName name of the property listened to
+   * @param listener listener to remove
    * @see ${sign}addVetoableChangeListener(String, VetoableChangeListener)
    */
   public void removeVetoableChangeListener(String propertyName, 

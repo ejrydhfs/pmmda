@@ -27,6 +27,7 @@ public class LwTransformer {
    * @return the lightweight representation of the data object instance.
    */
   public static ${lwClass} transform(${boClass} item) {
+    assert item != null;
     ${lwClass} lw = new ${lwClass}(item.getId());
     synchronize(item, lw);
     return lw;
@@ -45,6 +46,7 @@ public class LwTransformer {
    * @param lw the lightweight representation to synchronize.
    */
   public static void synchronize(${boClass} item, ${lwClass} lw) {
+    assert (item != null) && (lw != null);
 #set($ancestors=${class.retrieveAncestors()})
 #foreach($ancestor in $ancestors)
 #isLightweightDataObject($ancestor $isAncestorLw)
@@ -57,7 +59,9 @@ public class LwTransformer {
 #if(${property.booleanValueOfTag("bo-lightweight")})
 #isTypeLightweigth($model $property $isTypeLightweigth)
 #if($isTypeLightweigth)
-    lw.set${property.nameFirstUpper()}(transform(item.get${property.nameFirstUpper()}()));
+    if (item.get${property.nameFirstUpper()}() != null) {
+      lw.set${property.nameFirstUpper()}(transform(item.get${property.nameFirstUpper()}()));
+    }
 #else
 #getterName($property $getter)
     lw.set${property.nameFirstUpper()}(item.${getter}());
@@ -73,7 +77,7 @@ public class LwTransformer {
 #isTypeLightweigth($model $aggregation $isTypeLightweigth)
 #if($isTypeLightweigth)
     for (${type.getAttribute("bo-mo-class")} i : item.get${aggregation.nameFirstUpperPlural()}()) {
-      lw.add${aggregation.nameFirstUpperSingular()}(transform(i));
+      lw.add${aggregation.nameFirstUpperSingular()}((i != null) ? transform(i) : null);
     }
 #end
 #end
