@@ -114,10 +114,12 @@
   </configuration>
   <datatypes language="java">
     <datatype name="bool" type="boolean" />
+    <datatype name="boolean" type="boolean" />
     <datatype name="byte" type="byte" />
     <datatype name="char" type="char" />
     <datatype name="short" type="short" />
     <datatype name="int" type="int" />
+    <datatype name="integer" type="int" />
     <datatype name="long" type="long" />
     <datatype name="float" type="float" />
     <datatype name="double" type="double" />
