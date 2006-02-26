@@ -3,7 +3,7 @@
  * you may not use this file except in compliance with the License. 
  * $Id$
  */
-package ch.bbv.documentor.taglets;
+package org.sf.pmmda.development.taglets;
 
 import java.util.Map;
 
