@@ -6,10 +6,36 @@
  */
 package ch.bbv.pim.ui;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ch.bbv.explorer.*;
+import ch.bbv.application.Library;
+import ch.bbv.application.ProjectInfo;
+import ch.bbv.application.VersionId;
+import ch.bbv.dog.DataObjectManager;
+import ch.bbv.explorer.Explorer;
+import ch.bbv.explorer.ExplorerMenuBar;
+import ch.bbv.explorer.ExplorerNode;
+import ch.bbv.explorer.UiNodeTypeFactory;
+import ch.bbv.explorer.ExplorerMenuBar.Names;
+import ch.bbv.explorer.about.Contributor;
+import ch.bbv.explorer.about.Licences;
+import ch.bbv.explorer.actions.ExplorerAboutAction;
+import ch.bbv.explorer.actions.ExplorerExitAction;
+import ch.bbv.pim.AddressBook;
+import ch.bbv.pim.client.TypeFactory;
+import ch.bbv.pim.lw.AddressBookLw;
+import ch.bbv.pim.lw.LwTransformer;
+import ch.bbv.pim.ui.actions.NewAction;
+import ch.bbv.pim.ui.actions.OpenAction;
+import ch.bbv.pim.ui.actions.SaveAction;
+import ch.bbv.pim.ui.actions.SaveAsAction;
 
 /**
  * The PIM explorer provides an explorer user interface to manipulate the
@@ -42,9 +68,14 @@ public class PimExplorer extends Explorer {
   private static UiNodeTypeFactory factory;
 
   /**
+   * Lightweight object handler of the explorer instances.
+   */
+  private static DataObjectManager manager;
+
+  /**
    * The document displayed in the explorer.
    */
-  private ExplorerDocument document;
+  private PimDocument document;
 
   /**
    * Creates a new MDA explorer.
@@ -60,13 +91,23 @@ public class PimExplorer extends Explorer {
   }
 
   /**
+   * Registers all the node types used the explorer with their attributes and
+   * relationships.
+   */
+  public static void registerNodeTypes() {
+    manager = PimApplication.getApplication().getDataObjectManager();
+    factory = new UiNodeTypeFactory();
+    TypeFactory typeFactory = new TypeFactory(factory, manager);
+    typeFactory.registerAllTypes();
+  }
+
+  /**
    * Constructor of the class.
    * @param title title of the explorer frame.
    */
   public PimExplorer(String title) {
-    super(factory, null, null);
+    super(factory, manager, null);
     this.setTitle(title);
-    document = new ExplorerDocumentImpl();
     if (log.isInfoEnabled()) {
       log.info("Start initializing PIM explorer");
     }
@@ -75,17 +116,107 @@ public class PimExplorer extends Explorer {
   /**
    * Returns the document of the explorer.
    * @return the document of the explorer.
+   * @see #setDocument(PimDocument)
    */
-  public ExplorerDocument getDocument() {
+  public PimDocument getDocument() {
     return document;
+  }
+
+  /**
+   * Sets the document displayed in the explorer.
+   * @param document the new document displayed in the explorer.
+   * @see #getDocument()
+   */
+  public void setDocument(PimDocument document) {
+    this.document = document;
+    if (document != null) {
+      AddressBook book = document.getAddressBook();
+      AddressBookLw bookLw = LwTransformer.transform(book);
+      ExplorerNode root = createTree(bookLw);
+      root.setDataObject(book);
+      setRoot(root);
+      getMenuBar().documentChanged(document);
+    }
   }
 
   /**
    * Initializes the explorer. The initial tree of lightweight objects is
    * created.
    */
+  @Override
   protected void initialize() {
     ExplorerMenuBar menuBar = new ExplorerMenuBar(this);
     setMenuBar(menuBar);
+
+    JMenu menu = menuBar.getMenu(ExplorerMenuBar.HELP_MENU);
+    ExplorerAboutAction aboutAction = new ExplorerAboutAction(this);
+    aboutAction.setProjectInfo(getProjectInfo());
+    menu.add(new JMenuItem(aboutAction));
+
+    menu = menuBar.getMenu(ExplorerMenuBar.FILE_MENU);
+    menuBar.addStandardAction(menu, Names.NEW, new NewAction(this));
+    menuBar.addStandardAction(menu, Names.OPEN, new OpenAction(this));
+    menu.addSeparator();
+    menuBar.addStandardAction(menu, Names.SAVE, new SaveAction(this));
+    menuBar.addStandardAction(menu, Names.SAVE_AS, new SaveAsAction(this));
+    menuBar.addStandardAction(menu, Names.EXIT, new ExplorerExitAction(this));
+    getMenuBar().documentChanged(null);
+  }
+
+  /**
+   * Returns the project information displayed in the about box.
+   * @return the project information with contributors and libraries.
+   */
+  private ProjectInfo getProjectInfo() {
+    ProjectInfo info = new ProjectInfo();
+    info.setCopyright("copyright Marcel Baumann (Apache Sofware License 2.0)");
+    info.setInfo("pmmda.sourceforge.net");
+    info.setLicenceName("Apache Software License 2.0");
+    info.setLicenceText(Licences.LICENCE_APACHE_2_0);
+    info.setName("pmMDA - poor man Model Driven Architecture -");
+    info.setVersion(new VersionId(0, 1, 0, "dev"));
+    info.setContributors(getContributors());
+    info.setLibraries(getLibrairies());
+    return info;
+  }
+
+  /**
+   * Returns a list of all contributors to the project.
+   * @return list of all contributors.
+   */
+  private List<Contributor> getContributors() {
+    List<Contributor> contributors = new ArrayList<Contributor>();
+    contributors.add(new Contributor("Marcel Baumann",
+        "marcel.baumann@computer.org", "System Architect"));
+    return contributors;
+  }
+
+  /**
+   * Returns a list of all librairies used in the project.
+   * @return list of used librairies.
+   */
+  private List<Library> getLibrairies() {
+    List<Library> librairies = new ArrayList<Library>();
+    librairies.add(new Library("commons-beanutils", new VersionId(1, 7, 0),
+        "Apache License", "http://jakarta.apache.org/commons"));
+    librairies.add(new Library("commons-collections", new VersionId(3, 1, 0),
+        "Apache License", "http://jakarta.apache.org/commons"));
+    librairies.add(new Library("commons-cli", new VersionId(1, 0, 0),
+        "Apache License", "http://jakarta.apache.org/cli"));
+    librairies.add(new Library("commons-logging", new VersionId(1, 0, 4),
+        "Apache License", "http://jakarta.apache.org/commons"));
+    librairies.add(new Library("commons-logging-api", new VersionId(1, 0, 4),
+        "Apache License", "http://jakarta.apache.org/commons"));
+    librairies.add(new Library("forms", new VersionId(1, 0, 6), "BSD License",
+        "www.jgoodies.com"));
+    librairies.add(new Library("glazedlists", new VersionId(1, 5, 0), "LGPL",
+        "www.publicobject.com/glazedlists"));
+    librairies.add(new Library("jcalendar", new VersionId(1, 2, 1), "LGPL",
+        "www.toedter.com/jcalendar"));
+    librairies.add(new Library("velocity", new VersionId(1, 4, 0),
+        "Apache License", "http://jakarta.apache.org/velocity"));
+    librairies.add(new Library("velocity-dep", new VersionId(1, 4, 0),
+        "Apache License", "http://jakarta.apache.org/velocity"));
+    return librairies;
   }
 }

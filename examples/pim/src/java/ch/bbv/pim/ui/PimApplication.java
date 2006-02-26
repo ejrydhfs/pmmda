@@ -15,6 +15,9 @@ import org.apache.commons.logging.LogFactory;
 import ch.bbv.application.ComponentException;
 import ch.bbv.application.Locator;
 import ch.bbv.cmdlineparser.CmdLineBuilder;
+import ch.bbv.dog.DataObjectManager;
+import ch.bbv.dog.EmptyHandler;
+import ch.bbv.dog.LightweightObjectHandlerImpl;
 import ch.bbv.dog.reference.ReferenceCodeUtilities;
 import ch.bbv.pim.AddressBook;
 import ch.bbv.pim.Country;
@@ -27,11 +30,11 @@ import ch.bbv.pim.formats.*;
  * @author MarcelBaumann
  * @version $Revision$
  */
-public class Pim extends Locator {
+public class PimApplication extends Locator {
   /**
    * Logger instance of the class.
    */
-  private static Log log = LogFactory.getLog(Pim.class);
+  private static Log log = LogFactory.getLog(PimApplication.class);
 
   /**
    * The command line arguments of the application.
@@ -46,7 +49,7 @@ public class Pim extends Locator {
   public static void main(String[] args) {
     try {
       System.out.println("Hello PIM");
-      new Pim(args);
+      new PimApplication(args);
     } catch (ComponentException e) {
       log.fatal(e);
     } catch (IOException e) {
@@ -60,8 +63,8 @@ public class Pim extends Locator {
    * Convenience method returning the locator instace as an application.
    * @return the singleton locator as application instance.
    */
-  public static Pim getApplication() {
-    return (Pim) Locator.getInstance();
+  public static PimApplication getApplication() {
+    return (PimApplication) Locator.getInstance();
   }
 
   /**
@@ -72,9 +75,12 @@ public class Pim extends Locator {
    * @throws IOException if a file operation encounters a problem.
    * @throws Exception if a component creation is unsucessful.
    */
-  public Pim(String[] args) throws ComponentException, IOException, Exception {
+  public PimApplication(String[] args) throws ComponentException, IOException,
+      Exception {
     arguments = args;
     register(this);
+    register(new DataObjectManager(new EmptyHandler(),
+        new LightweightObjectHandlerImpl(), null));
     FormatManager manager = new FormatManager();
     manager.register(new LdifEmitter(), ".ldif");
     manager.register(new VCardEmitter(), ".vcf");
@@ -82,10 +88,16 @@ public class Pim extends Locator {
     manager.register(new VCardParser(), ".vcf");
     manager.register(new TextEmitter(new File("./classes/format-pm.xml")),
         ".pm.txt");
-
     register(manager);
     initialize();
+    startup();
     processCommandLine();
+  }
+
+  @Override
+  public void initialize() throws ComponentException {
+    super.initialize();
+    PimExplorer.registerNodeTypes();
   }
 
   /**
@@ -94,6 +106,17 @@ public class Pim extends Locator {
    */
   public FormatManager getFormatManager() {
     return (FormatManager) getApplication().getComponent(FormatManager.NAME);
+  }
+
+  /**
+   * Returns the data object manager of the application. The manager provides
+   * access the data object handler, lock manager and lightweight object
+   * handler.
+   * @return the data object handler of the application.
+   */
+  public DataObjectManager getDataObjectManager() {
+    Locator locator = Locator.getInstance();
+    return (DataObjectManager) locator.getComponent(DataObjectManager.NAME);
   }
 
   /**

@@ -100,7 +100,7 @@ public class Address implements DataObject {
   
   /** 
    * Sets the identifier of the data object instance.
-   * @param id new identifier of the instance.
+   * @param id new identifier of the instance
    * @see #getId()
    */
   public final void setId(Integer id) {
@@ -118,7 +118,7 @@ public class Address implements DataObject {
   
   /** 
    * Sets the flag indicating if the data object instance was modified.
-   * @param modified new value of the flag.
+   * @param modified new value of the flag
    * @see #isModified
    */
   public final void setModified(boolean modified) {
@@ -145,7 +145,7 @@ public class Address implements DataObject {
   
   /** 
    * Sets the timestamp of the data object instance.
-   * @param timestamp timestamp of the instance.
+   * @param timestamp timestamp of the instance
    * @see #getTimestamp()
    */
    public final void setTimestamp(Timestamp timestamp) {
@@ -163,7 +163,7 @@ public class Address implements DataObject {
 
   /** 
    * Sets the new value of the simple property street.
-   * @param street new value of the property.
+   * @param street new value of the property
    * @see #getStreet()
    */    
   public void setStreet(String street) {
@@ -185,7 +185,7 @@ public class Address implements DataObject {
 
   /** 
    * Sets the new value of the simple property poBox.
-   * @param poBox new value of the property.
+   * @param poBox new value of the property
    * @see #getPoBox()
    */    
   public void setPoBox(String poBox) {
@@ -207,7 +207,7 @@ public class Address implements DataObject {
 
   /** 
    * Sets the new value of the simple property city.
-   * @param city new value of the property.
+   * @param city new value of the property
    * @see #getCity()
    */    
   public void setCity(String city) {
@@ -229,7 +229,7 @@ public class Address implements DataObject {
 
   /** 
    * Sets the new value of the simple property state.
-   * @param state new value of the property.
+   * @param state new value of the property
    * @see #getState()
    */    
   public void setState(String state) {
@@ -251,7 +251,7 @@ public class Address implements DataObject {
 
   /** 
    * Sets the new value of the simple property postalCode.
-   * @param postalCode new value of the property.
+   * @param postalCode new value of the property
    * @see #getPostalCode()
    */    
   public void setPostalCode(String postalCode) {
@@ -273,7 +273,7 @@ public class Address implements DataObject {
 
   /** 
    * Sets the new value of the simple property country.
-   * @param country new value of the property.
+   * @param country new value of the property
    * @see #getCountry()
    */    
   public void setCountry(Country country) {
@@ -288,7 +288,7 @@ public class Address implements DataObject {
    * Implements the visitor pattern in the data object class. The accept
    * method dispatches the visitor to all its relevant children. A relevant
    * child is always another data object.
-   * @param visitor visitor to act on the data object.
+   * @param visitor visitor to act on the data object
    * @pre visitor != null
    */  
   public void accept(Visitor visitor) {
@@ -355,9 +355,9 @@ public class Address implements DataObject {
 
   /**
    * Convenience method to set the value of a foreign key.
-   * @param bean object which property should be set.
-   * @param property property to be set.
-   * @param key key identifier to set.
+   * @param bean object which property should be set
+   * @param property property to be set
+   * @param key key identifier to set
    * @pre (bean != null) && (property != null) && (key != null)
    */
    protected final void setForeignKey(DataObject bean, String property,
@@ -380,7 +380,7 @@ public class Address implements DataObject {
 
   /** 
    * Copies deeply all the attributes of the class and its ancestors.
-   * @param clone the copy which deep copy should be generated.
+   * @param clone the copy which deep copy should be generated
    */
   protected void copy(Address clone) {
   }
@@ -389,7 +389,7 @@ public class Address implements DataObject {
    * Implements the visitor pattern in the data object class. The accept
    * method dispatches the visitor to all relevant children of the ancestors
    * and its children. A relevant child is always another data object.
-   * @param visitor visitor to act on the data object.
+   * @param visitor visitor to act on the data object
    */  
   protected void traverse(Visitor visitor) {
   }  

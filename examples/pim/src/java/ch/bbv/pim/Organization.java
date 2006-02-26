@@ -109,7 +109,7 @@ public class Organization implements DataObject {
   
   /** 
    * Sets the identifier of the data object instance.
-   * @param id new identifier of the instance.
+   * @param id new identifier of the instance
    * @see #getId()
    */
   public final void setId(Integer id) {
@@ -127,7 +127,7 @@ public class Organization implements DataObject {
   
   /** 
    * Sets the flag indicating if the data object instance was modified.
-   * @param modified new value of the flag.
+   * @param modified new value of the flag
    * @see #isModified
    */
   public final void setModified(boolean modified) {
@@ -154,7 +154,7 @@ public class Organization implements DataObject {
   
   /** 
    * Sets the timestamp of the data object instance.
-   * @param timestamp timestamp of the instance.
+   * @param timestamp timestamp of the instance
    * @see #getTimestamp()
    */
    public final void setTimestamp(Timestamp timestamp) {
@@ -172,7 +172,7 @@ public class Organization implements DataObject {
 
   /** 
    * Sets the new value of the simple property name.
-   * @param name new value of the property.
+   * @param name new value of the property
    * @see #getName()
    */    
   public void setName(String name) {
@@ -194,7 +194,7 @@ public class Organization implements DataObject {
 
   /** 
    * Sets the new value of the simple property mainEmail.
-   * @param mainEmail new value of the property.
+   * @param mainEmail new value of the property
    * @see #getMainEmail()
    */    
   public void setMainEmail(String mainEmail) {
@@ -216,7 +216,7 @@ public class Organization implements DataObject {
 
   /** 
    * Sets the new value of the simple property mainUrl.
-   * @param mainUrl new value of the property.
+   * @param mainUrl new value of the property
    * @see #getMainUrl()
    */    
   public void setMainUrl(URL mainUrl) {
@@ -238,7 +238,7 @@ public class Organization implements DataObject {
 
   /** 
    * Sets the new value of the simple property mainNumber.
-   * @param mainNumber new value of the property.
+   * @param mainNumber new value of the property
    * @see #getMainNumber()
    */    
   public void setMainNumber(PhoneNumber mainNumber) {
@@ -260,7 +260,7 @@ public class Organization implements DataObject {
 
   /** 
    * Sets the new value of the simple property mainAddress.
-   * @param mainAddress new value of the property.
+   * @param mainAddress new value of the property
    * @see #getMainAddress()
    */    
   public void setMainAddress(Address mainAddress) {
@@ -282,8 +282,8 @@ public class Organization implements DataObject {
   /** 
    * Returns the element at the specified position in the indexed property 
    * contacts.
-   * @param index index of element to return. 
-   * @return the element at the specified position in this list.
+   * @param index index of element to return
+   * @return the element at the specified position in this list
    * @see #addContact(int, Contact)
    * @see java.util.List#get(int)
    */
@@ -296,8 +296,8 @@ public class Organization implements DataObject {
    * this list, in the order that they are returned by the specified 
    * collection's iterator. The behavior of this operation is unspecified if 
    * the specified collection is modified while the operation is in progress. 
-   * @param c collection whose elements are to be added to this list. 
-   * @return true if this list changed as a result of the call. 
+   * @param c collection whose elements are to be added to this list
+   * @return true if this list changed as a result of the call
    * @see java.util.List#addAll(Collection)
    */
   public boolean addContacts(Collection<Contact> c) {
@@ -310,8 +310,8 @@ public class Organization implements DataObject {
   
   /** 
    * Inserts the given child at the select position in the relation contacts.
-   * @param index index at which the specified element is to be inserted.
-   * @param element element to be inserted.
+   * @param index index at which the specified element is to be inserted
+   * @param element element to be inserted
    * @throws PropertyVetoException if a listener refuses the published change.
    * @see #getContact(int)
    * @see java.util.List#add(int, Object)
@@ -336,9 +336,9 @@ public class Organization implements DataObject {
   /** 
    * Appends the specified element to the end of this list in the relation 
    * contacts.
-   * @param element to be appended to this list.
-   * @return true (as per the general contract of the Collection.add method).   
-   * @throws PropertyVetoException if a listener refuses the published change.
+   * @param element to be appended to this list
+   * @return true (as per the general contract of the Collection.add method)  
+   * @throws PropertyVetoException if a listener refuses the published change
    * @see java.util.List#add(Object)
    * @pre element != null
    */
@@ -367,9 +367,9 @@ public class Organization implements DataObject {
    * the list does not contain the element, it is unchanged. More formally, 
    * removes the element with the lowest index i such that 
    * (o==null ? get(i)==null : o.equals(get(i))) (if such an element exists). 
-   * @param element element to be removed from this list, if present. 
-   * @return true if this list contained the specified element. 
-   * @throws PropertyVetoException if a listener refuses the published change.
+   * @param element element to be removed from this list, if present
+   * @return true if this list contained the specified element
+   * @throws PropertyVetoException if a listener refuses the published change
    * @see java.util.List#remove(Object)
    */
   public boolean removeContact(Contact element) throws PropertyVetoException {
@@ -396,7 +396,7 @@ public class Organization implements DataObject {
    * Implements the visitor pattern in the data object class. The accept
    * method dispatches the visitor to all its relevant children. A relevant
    * child is always another data object.
-   * @param visitor visitor to act on the data object.
+   * @param visitor visitor to act on the data object
    * @pre visitor != null
    */  
   public void accept(Visitor visitor) {
@@ -463,9 +463,9 @@ public class Organization implements DataObject {
 
   /**
    * Convenience method to set the value of a foreign key.
-   * @param bean object which property should be set.
-   * @param property property to be set.
-   * @param key key identifier to set.
+   * @param bean object which property should be set
+   * @param property property to be set
+   * @param key key identifier to set
    * @pre (bean != null) && (property != null) && (key != null)
    */
    protected final void setForeignKey(DataObject bean, String property,
@@ -488,7 +488,7 @@ public class Organization implements DataObject {
 
   /** 
    * Copies deeply all the attributes of the class and its ancestors.
-   * @param clone the copy which deep copy should be generated.
+   * @param clone the copy which deep copy should be generated
    */
   protected void copy(Organization clone) {
     if (mainNumber != null) {
@@ -507,7 +507,7 @@ public class Organization implements DataObject {
    * Implements the visitor pattern in the data object class. The accept
    * method dispatches the visitor to all relevant children of the ancestors
    * and its children. A relevant child is always another data object.
-   * @param visitor visitor to act on the data object.
+   * @param visitor visitor to act on the data object
    */  
   protected void traverse(Visitor visitor) {
     if (mainNumber != null) {

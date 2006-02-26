@@ -9,7 +9,7 @@ import ch.bbv.dog.LightweightObject;
 import java.util.*;
 
 /* %% USER DEFINED IMPORT START %% */
-/* %% USER DEFINED IMPORT END   %% */
+/* %% USER DEFINED IMPORT END %% */
 
 /**
  * An organization is a structure grouping a set of contacts.
@@ -29,6 +29,12 @@ public class OrganizationLw  implements LightweightObject {
    * The name of the organization.
    */
   private String name;
+
+  /**
+   * The main voice phone number of the organization is also called the 
+   * reception number.
+   */
+  private PhoneNumberLw mainNumber;
 
   /**
    * The contacts associated with this organization.
@@ -58,6 +64,13 @@ public class OrganizationLw  implements LightweightObject {
     contacts = new ArrayList<ContactLw>();
   }
 
+/* %% USER DEFINED CONSTRUCTORS START %% */
+/* %% USER DEFINED CONSTRUCTORS END %% */
+
+/* %% USER DEFINED CODE START %% */
+/* %% USER DEFINED CODE END %% */
+
+
   /** 
    * Gets the current value of the attribute Name.
    * @return the value of the attribute Name.
@@ -74,6 +87,24 @@ public class OrganizationLw  implements LightweightObject {
    */    
   public void setName(String name) {
     this.name = name;
+  }
+
+  /** 
+   * Gets the current value of the attribute MainNumber.
+   * @return the value of the attribute MainNumber.
+   * @see #setMainNumber(PhoneNumberLw)
+   */
+  public PhoneNumberLw getMainNumber() {
+    return mainNumber;
+  }
+
+  /** 
+   * Sets the new value of the simple property MainNumber.
+   * @param mainNumber new value of the property.
+   * @see #getMainNumber()
+   */    
+  public void setMainNumber(PhoneNumberLw mainNumber) {
+    this.mainNumber = mainNumber;
   }
 
   /** 
@@ -193,6 +224,9 @@ public class OrganizationLw  implements LightweightObject {
    * @param visitor visitor to act on the data object.
    */  
   protected void traverse(LwVisitor visitor) {
+    if (mainNumber != null) {
+      mainNumber.accept(visitor);
+    }
     for (ContactLw item : getContacts()) {
       item.accept(visitor);
     }

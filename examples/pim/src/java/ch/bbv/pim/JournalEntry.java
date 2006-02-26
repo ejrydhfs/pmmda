@@ -95,7 +95,7 @@ public class JournalEntry implements DataObject {
   
   /** 
    * Sets the identifier of the data object instance.
-   * @param id new identifier of the instance.
+   * @param id new identifier of the instance
    * @see #getId()
    */
   public final void setId(Integer id) {
@@ -113,7 +113,7 @@ public class JournalEntry implements DataObject {
   
   /** 
    * Sets the flag indicating if the data object instance was modified.
-   * @param modified new value of the flag.
+   * @param modified new value of the flag
    * @see #isModified
    */
   public final void setModified(boolean modified) {
@@ -140,7 +140,7 @@ public class JournalEntry implements DataObject {
   
   /** 
    * Sets the timestamp of the data object instance.
-   * @param timestamp timestamp of the instance.
+   * @param timestamp timestamp of the instance
    * @see #getTimestamp()
    */
    public final void setTimestamp(Timestamp timestamp) {
@@ -158,7 +158,7 @@ public class JournalEntry implements DataObject {
 
   /** 
    * Sets the new value of the simple property author.
-   * @param author new value of the property.
+   * @param author new value of the property
    * @see #getAuthor()
    */    
   public void setAuthor(String author) {
@@ -180,7 +180,7 @@ public class JournalEntry implements DataObject {
 
   /** 
    * Sets the new value of the simple property creation.
-   * @param creation new value of the property.
+   * @param creation new value of the property
    * @see #getCreation()
    */    
   public void setCreation(Date creation) {
@@ -202,7 +202,7 @@ public class JournalEntry implements DataObject {
 
   /** 
    * Sets the new value of the simple property text.
-   * @param text new value of the property.
+   * @param text new value of the property
    * @see #getText()
    */    
   public void setText(String text) {
@@ -224,7 +224,7 @@ public class JournalEntry implements DataObject {
 
   /** 
    * Sets the new value of the simple property duration.
-   * @param duration new value of the property.
+   * @param duration new value of the property
    * @see #getDuration()
    */    
   public void setDuration(int duration) {
@@ -245,7 +245,7 @@ public class JournalEntry implements DataObject {
 
   /** 
    * Sets the new value of the simple property type.
-   * @param type new value of the property.
+   * @param type new value of the property
    * @see #getType()
    */    
   public void setType(JournalEntryType type) {
@@ -260,7 +260,7 @@ public class JournalEntry implements DataObject {
    * Implements the visitor pattern in the data object class. The accept
    * method dispatches the visitor to all its relevant children. A relevant
    * child is always another data object.
-   * @param visitor visitor to act on the data object.
+   * @param visitor visitor to act on the data object
    * @pre visitor != null
    */  
   public void accept(Visitor visitor) {
@@ -327,9 +327,9 @@ public class JournalEntry implements DataObject {
 
   /**
    * Convenience method to set the value of a foreign key.
-   * @param bean object which property should be set.
-   * @param property property to be set.
-   * @param key key identifier to set.
+   * @param bean object which property should be set
+   * @param property property to be set
+   * @param key key identifier to set
    * @pre (bean != null) && (property != null) && (key != null)
    */
    protected final void setForeignKey(DataObject bean, String property,
@@ -352,7 +352,7 @@ public class JournalEntry implements DataObject {
 
   /** 
    * Copies deeply all the attributes of the class and its ancestors.
-   * @param clone the copy which deep copy should be generated.
+   * @param clone the copy which deep copy should be generated
    */
   protected void copy(JournalEntry clone) {
   }
@@ -361,7 +361,7 @@ public class JournalEntry implements DataObject {
    * Implements the visitor pattern in the data object class. The accept
    * method dispatches the visitor to all relevant children of the ancestors
    * and its children. A relevant child is always another data object.
-   * @param visitor visitor to act on the data object.
+   * @param visitor visitor to act on the data object
    */  
   protected void traverse(Visitor visitor) {
   }  

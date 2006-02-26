@@ -42,4 +42,14 @@ public interface LwVisitor {
    * @param item item to visit.
    */
   void visit(ContactLw item);
+  /** 
+   * Visits the class PhoneNumberLw as part of the visitor pattern.
+   * @param item item to visit.
+   */
+  void visit(PhoneNumberLw item);
+  /** 
+   * Visits the class AddressBookLw as part of the visitor pattern.
+   * @param item item to visit.
+   */
+  void visit(AddressBookLw item);
 }

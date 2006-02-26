@@ -177,6 +177,21 @@ public class Contact implements DataObject {
     return AddressUtilities.createDistinguishedName(this);
   }
 
+  public String getName() {
+    StringBuilder buffer = new StringBuilder();
+    buffer.append(lastname);
+    if ((firstname != null) || (middlename != null)) {
+      buffer.append(",");
+      if (firstname != null) {
+        buffer.append(" ").append(firstname);
+      }
+      if (middlename != null) {
+        buffer.append(" ").append(middlename);
+      }
+    }
+    return buffer.toString();
+  }
+
   public String getPrefix() {
     return AddressUtilities.createPrefix(this);
   }
@@ -195,7 +210,7 @@ public class Contact implements DataObject {
   
   /** 
    * Sets the identifier of the data object instance.
-   * @param id new identifier of the instance.
+   * @param id new identifier of the instance
    * @see #getId()
    */
   public final void setId(Integer id) {
@@ -213,7 +228,7 @@ public class Contact implements DataObject {
   
   /** 
    * Sets the flag indicating if the data object instance was modified.
-   * @param modified new value of the flag.
+   * @param modified new value of the flag
    * @see #isModified
    */
   public final void setModified(boolean modified) {
@@ -240,7 +255,7 @@ public class Contact implements DataObject {
   
   /** 
    * Sets the timestamp of the data object instance.
-   * @param timestamp timestamp of the instance.
+   * @param timestamp timestamp of the instance
    * @see #getTimestamp()
    */
    public final void setTimestamp(Timestamp timestamp) {
@@ -258,7 +273,7 @@ public class Contact implements DataObject {
 
   /** 
    * Sets the new value of the simple property firstname.
-   * @param firstname new value of the property.
+   * @param firstname new value of the property
    * @see #getFirstname()
    */    
   public void setFirstname(String firstname) {
@@ -280,7 +295,7 @@ public class Contact implements DataObject {
 
   /** 
    * Sets the new value of the simple property lastname.
-   * @param lastname new value of the property.
+   * @param lastname new value of the property
    * @see #getLastname()
    */    
   public void setLastname(String lastname) {
@@ -302,7 +317,7 @@ public class Contact implements DataObject {
 
   /** 
    * Sets the new value of the simple property middlename.
-   * @param middlename new value of the property.
+   * @param middlename new value of the property
    * @see #getMiddlename()
    */    
   public void setMiddlename(String middlename) {
@@ -324,7 +339,7 @@ public class Contact implements DataObject {
 
   /** 
    * Sets the new value of the simple property male.
-   * @param male new value of the property.
+   * @param male new value of the property
    * @see #isMale()
    */    
   public void setMale(boolean male) {
@@ -345,7 +360,7 @@ public class Contact implements DataObject {
 
   /** 
    * Sets the new value of the simple property timezone.
-   * @param timezone new value of the property.
+   * @param timezone new value of the property
    * @see #getTimezone()
    */    
   public void setTimezone(String timezone) {
@@ -367,7 +382,7 @@ public class Contact implements DataObject {
 
   /** 
    * Sets the new value of the simple property title.
-   * @param title new value of the property.
+   * @param title new value of the property
    * @see #getTitle()
    */    
   public void setTitle(String title) {
@@ -389,7 +404,7 @@ public class Contact implements DataObject {
 
   /** 
    * Sets the new value of the simple property workUrl.
-   * @param workUrl new value of the property.
+   * @param workUrl new value of the property
    * @see #getWorkUrl()
    */    
   public void setWorkUrl(URL workUrl) {
@@ -411,7 +426,7 @@ public class Contact implements DataObject {
 
   /** 
    * Sets the new value of the simple property homeURL.
-   * @param homeURL new value of the property.
+   * @param homeURL new value of the property
    * @see #getHomeURL()
    */    
   public void setHomeURL(URL homeURL) {
@@ -433,7 +448,7 @@ public class Contact implements DataObject {
 
   /** 
    * Sets the new value of the simple property workEmail.
-   * @param workEmail new value of the property.
+   * @param workEmail new value of the property
    * @see #getWorkEmail()
    */    
   public void setWorkEmail(String workEmail) {
@@ -455,7 +470,7 @@ public class Contact implements DataObject {
 
   /** 
    * Sets the new value of the simple property homeEmail.
-   * @param homeEmail new value of the property.
+   * @param homeEmail new value of the property
    * @see #getHomeEmail()
    */    
   public void setHomeEmail(String homeEmail) {
@@ -477,7 +492,7 @@ public class Contact implements DataObject {
 
   /** 
    * Sets the new value of the simple property department.
-   * @param department new value of the property.
+   * @param department new value of the property
    * @see #getDepartment()
    */    
   public void setDepartment(String department) {
@@ -499,7 +514,7 @@ public class Contact implements DataObject {
 
   /** 
    * Sets the new value of the simple property birthday.
-   * @param birthday new value of the property.
+   * @param birthday new value of the property
    * @see #getBirthday()
    */    
   public void setBirthday(Date birthday) {
@@ -521,7 +536,7 @@ public class Contact implements DataObject {
 
   /** 
    * Sets the new value of the simple property workAddress.
-   * @param workAddress new value of the property.
+   * @param workAddress new value of the property
    * @see #getWorkAddress()
    */    
   public void setWorkAddress(Address workAddress) {
@@ -543,7 +558,7 @@ public class Contact implements DataObject {
 
   /** 
    * Sets the new value of the simple property homeAddress.
-   * @param homeAddress new value of the property.
+   * @param homeAddress new value of the property
    * @see #getHomeAddress()
    */    
   public void setHomeAddress(Address homeAddress) {
@@ -565,7 +580,7 @@ public class Contact implements DataObject {
 
   /** 
    * Sets the new value of the simple property workNumber.
-   * @param workNumber new value of the property.
+   * @param workNumber new value of the property
    * @see #getWorkNumber()
    */    
   public void setWorkNumber(PhoneNumber workNumber) {
@@ -587,7 +602,7 @@ public class Contact implements DataObject {
 
   /** 
    * Sets the new value of the simple property homeNumber.
-   * @param homeNumber new value of the property.
+   * @param homeNumber new value of the property
    * @see #getHomeNumber()
    */    
   public void setHomeNumber(PhoneNumber homeNumber) {
@@ -609,7 +624,7 @@ public class Contact implements DataObject {
 
   /** 
    * Sets the new value of the simple property workMobileNumber.
-   * @param workMobileNumber new value of the property.
+   * @param workMobileNumber new value of the property
    * @see #getWorkMobileNumber()
    */    
   public void setWorkMobileNumber(PhoneNumber workMobileNumber) {
@@ -631,7 +646,7 @@ public class Contact implements DataObject {
 
   /** 
    * Sets the new value of the simple property workFaxNumber.
-   * @param workFaxNumber new value of the property.
+   * @param workFaxNumber new value of the property
    * @see #getWorkFaxNumber()
    */    
   public void setWorkFaxNumber(PhoneNumber workFaxNumber) {
@@ -653,7 +668,7 @@ public class Contact implements DataObject {
 
   /** 
    * Sets the new value of the simple property organization.
-   * @param organization new value of the property.
+   * @param organization new value of the property
    * @see #getOrganization()
    */    
   public void setOrganization(Organization organization) {
@@ -675,7 +690,7 @@ public class Contact implements DataObject {
 
   /** 
    * Sets the new value of the simple property language.
-   * @param language new value of the property.
+   * @param language new value of the property
    * @see #getLanguage()
    */    
   public void setLanguage(Language language) {
@@ -697,8 +712,8 @@ public class Contact implements DataObject {
   /** 
    * Returns the element at the specified position in the indexed property 
    * entries.
-   * @param index index of element to return. 
-   * @return the element at the specified position in this list.
+   * @param index index of element to return
+   * @return the element at the specified position in this list
    * @see #addEntry(int, JournalEntry)
    * @see java.util.List#get(int)
    */
@@ -711,8 +726,8 @@ public class Contact implements DataObject {
    * this list, in the order that they are returned by the specified 
    * collection's iterator. The behavior of this operation is unspecified if 
    * the specified collection is modified while the operation is in progress. 
-   * @param c collection whose elements are to be added to this list. 
-   * @return true if this list changed as a result of the call. 
+   * @param c collection whose elements are to be added to this list
+   * @return true if this list changed as a result of the call
    * @see java.util.List#addAll(Collection)
    */
   public boolean addEntries(Collection<JournalEntry> c) {
@@ -722,8 +737,8 @@ public class Contact implements DataObject {
   
   /** 
    * Inserts the given child at the select position in the relation entries.
-   * @param index index at which the specified element is to be inserted.
-   * @param element element to be inserted.
+   * @param index index at which the specified element is to be inserted
+   * @param element element to be inserted
    * @see #getEntry(int)
    * @see java.util.List#add(int, Object)
    */
@@ -736,8 +751,8 @@ public class Contact implements DataObject {
   /** 
    * Appends the specified element to the end of this list in the relation 
    * entries.
-   * @param element to be appended to this list.
-   * @return true (as per the general contract of the Collection.add method).   
+   * @param element to be appended to this list
+   * @return true (as per the general contract of the Collection.add method)  
    * @see java.util.List#add(Object)
    * @pre element != null
    */
@@ -755,8 +770,8 @@ public class Contact implements DataObject {
    * the list does not contain the element, it is unchanged. More formally, 
    * removes the element with the lowest index i such that 
    * (o==null ? get(i)==null : o.equals(get(i))) (if such an element exists). 
-   * @param element element to be removed from this list, if present. 
-   * @return true if this list contained the specified element. 
+   * @param element element to be removed from this list, if present
+   * @return true if this list contained the specified element
    * @see java.util.List#remove(Object)
    */
   public boolean removeEntry(JournalEntry element) {
@@ -772,7 +787,7 @@ public class Contact implements DataObject {
    * Implements the visitor pattern in the data object class. The accept
    * method dispatches the visitor to all its relevant children. A relevant
    * child is always another data object.
-   * @param visitor visitor to act on the data object.
+   * @param visitor visitor to act on the data object
    * @pre visitor != null
    */  
   public void accept(Visitor visitor) {
@@ -839,9 +854,9 @@ public class Contact implements DataObject {
 
   /**
    * Convenience method to set the value of a foreign key.
-   * @param bean object which property should be set.
-   * @param property property to be set.
-   * @param key key identifier to set.
+   * @param bean object which property should be set
+   * @param property property to be set
+   * @param key key identifier to set
    * @pre (bean != null) && (property != null) && (key != null)
    */
    protected final void setForeignKey(DataObject bean, String property,
@@ -864,7 +879,7 @@ public class Contact implements DataObject {
 
   /** 
    * Copies deeply all the attributes of the class and its ancestors.
-   * @param clone the copy which deep copy should be generated.
+   * @param clone the copy which deep copy should be generated
    */
   protected void copy(Contact clone) {
     if (workAddress != null) {
@@ -898,7 +913,7 @@ public class Contact implements DataObject {
    * Implements the visitor pattern in the data object class. The accept
    * method dispatches the visitor to all relevant children of the ancestors
    * and its children. A relevant child is always another data object.
-   * @param visitor visitor to act on the data object.
+   * @param visitor visitor to act on the data object
    */  
   protected void traverse(Visitor visitor) {
     if (workAddress != null) {

@@ -39,6 +39,8 @@ public class TypeFactory {
   public void registerAllTypes() {
     createNodeTypeForOrganization();
     createNodeTypeForContact();
+    createNodeTypeForPhoneNumber();
+    createNodeTypeForAddressBook();
   }
   
 
@@ -58,6 +60,26 @@ public class TypeFactory {
   public void createNodeTypeForContact() {
     DataObjectType type = new DataObjectType(ContactLw.class,
       Contact.class, Contact.class, VisitorFunctor.class, 
+      LwVisitorFunctor.class, LwTransformer.class);
+    manager.register(type);
+  }
+
+  /** 
+   * Creates a new data object type for the data object graph framework.
+   */
+  public void createNodeTypeForPhoneNumber() {
+    DataObjectType type = new DataObjectType(PhoneNumberLw.class,
+      PhoneNumber.class, PhoneNumber.class, VisitorFunctor.class, 
+      LwVisitorFunctor.class, LwTransformer.class);
+    manager.register(type);
+  }
+
+  /** 
+   * Creates a new data object type for the data object graph framework.
+   */
+  public void createNodeTypeForAddressBook() {
+    DataObjectType type = new DataObjectType(AddressBookLw.class,
+      AddressBook.class, AddressBook.class, VisitorFunctor.class, 
       LwVisitorFunctor.class, LwTransformer.class);
     manager.register(type);
   }

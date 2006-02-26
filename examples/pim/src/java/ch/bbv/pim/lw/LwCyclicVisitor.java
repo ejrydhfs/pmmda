@@ -58,4 +58,16 @@ public class LwCyclicVisitor implements LwVisitor {
       delegate.visit(item);
     }
   }
+  public void visit(PhoneNumberLw item) {
+    if (!visitedObjects.contains(item)) {
+      visitedObjects.add(item);  
+      delegate.visit(item);
+    }
+  }
+  public void visit(AddressBookLw item) {
+    if (!visitedObjects.contains(item)) {
+      visitedObjects.add(item);  
+      delegate.visit(item);
+    }
+  }
 }

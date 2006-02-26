@@ -179,10 +179,10 @@ public class Country extends ReferenceCodeImpl {
 
   /**
    * Constructor initializes the immutable instance with all property values.
-   * @param code unique identifier for the code of this type.
-   * @param sortOrder sort order of the code instance.
-   * @param shortDescription short description of the code.
-   * @param description description of the code.
+   * @param code unique identifier for the code of this type
+   * @param sortOrder sort order of the code instance
+   * @param shortDescription short description of the code
+   * @param description description of the code
    */
   private Country(int code, int sortOrder, String shortDescription,
       String description) {
@@ -199,8 +199,8 @@ public class Country extends ReferenceCodeImpl {
 
   /**
    * Returns the business code associated with the given code.
-   * @param value value of the requested code.
-   * @return the requested reference code.
+   * @param value value of the requested code
+   * @return the requested reference code
    */
   public static Country getCode(int value) {
     return codes.get(value);

@@ -8,7 +8,7 @@ package ch.bbv.pim.lw;
 import ch.bbv.dog.LightweightObject;
 
 /* %% USER DEFINED IMPORT START %% */
-/* %% USER DEFINED IMPORT END   %% */
+/* %% USER DEFINED IMPORT END %% */
 
 /**
  * A contact identifies an entity with whom we can communicate.
@@ -39,6 +39,16 @@ public class ContactLw  implements LightweightObject {
    */
   private String middlename;
 
+  /**
+   * The work email address to reach the contact.
+   */
+  private String workEmail;
+
+  /**
+   * The work number of the contact.
+   */
+  private PhoneNumberLw workNumber;
+
   /** 
    * Unique identifier of the data object instance distinguishing it from 
    * all other instances of the same data object type.
@@ -60,6 +70,33 @@ public class ContactLw  implements LightweightObject {
   public ContactLw(Integer id) {
     this.id = id;
   }
+
+/* %% USER DEFINED CONSTRUCTORS START %% */
+/* %% USER DEFINED CONSTRUCTORS END %% */
+
+/* %% USER DEFINED CODE START %% */
+  /**
+   * Returns the legible name of a contact. This name is the concatenation
+   * of the lastname, firstname and middle nanme.
+   * @return the full name of the contact 
+   */
+  public String getName() {
+    StringBuilder buffer = new StringBuilder();
+    buffer.append(lastname);
+    if ((firstname != null) || (middlename != null)) {
+      buffer.append(",");
+      if (firstname != null) {
+        buffer.append(" ").append(firstname);
+      }
+      if (middlename != null) {
+        buffer.append(" ").append(middlename);
+      }
+    }
+    return buffer.toString();
+  }
+
+/* %% USER DEFINED CODE END %% */
+
 
   /** 
    * Gets the current value of the attribute Firstname.
@@ -116,6 +153,42 @@ public class ContactLw  implements LightweightObject {
   }
 
   /** 
+   * Gets the current value of the attribute WorkEmail.
+   * @return the value of the attribute WorkEmail.
+   * @see #setWorkEmail(String)
+   */
+  public String getWorkEmail() {
+    return workEmail;
+  }
+
+  /** 
+   * Sets the new value of the simple property WorkEmail.
+   * @param workEmail new value of the property.
+   * @see #getWorkEmail()
+   */    
+  public void setWorkEmail(String workEmail) {
+    this.workEmail = workEmail;
+  }
+
+  /** 
+   * Gets the current value of the attribute WorkNumber.
+   * @return the value of the attribute WorkNumber.
+   * @see #setWorkNumber(PhoneNumberLw)
+   */
+  public PhoneNumberLw getWorkNumber() {
+    return workNumber;
+  }
+
+  /** 
+   * Sets the new value of the simple property WorkNumber.
+   * @param workNumber new value of the property.
+   * @see #getWorkNumber()
+   */    
+  public void setWorkNumber(PhoneNumberLw workNumber) {
+    this.workNumber = workNumber;
+  }
+
+  /** 
    * Returns the unique identifier of the data object instance.
    * @return the identifier of the instance.
    */
@@ -162,5 +235,8 @@ public class ContactLw  implements LightweightObject {
    * @param visitor visitor to act on the data object.
    */  
   protected void traverse(LwVisitor visitor) {
+    if (workNumber != null) {
+      workNumber.accept(visitor);
+    }
   }  
 }
