@@ -10,6 +10,10 @@ Version 0.0.2 (30 January 2006)
 The following new features were added.
 - Support for the new LDIF format of Thunderbird 1.5 is now provided. The old
   format is still supported.
+- Initial support for the user interface based on the explorer framework.
+  Because it is the third application together with the realm and the pmMDA
+  application itself, refactoring of the explorer framework was started to 
+  improve its usability.
 
 The following errors were corrected.
 - Export of notes in VCARD do not contain any new line to respect the VCARD 
