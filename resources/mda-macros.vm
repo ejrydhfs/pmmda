@@ -5,11 +5,9 @@
 
 ## emit file header for a Java source file artifact.
 #macro(emitFileHeader)
-#set($_dollar="$")
 /* This code was generated automatically with the pmMDA generator. Please do 
    NOT add code outside the marked zones. All changes outside the marked areas 
    will be discarded during the next execution of the MDA generator. 
-   ${_dollar}Id${_dollar}
 */
 #end
 
@@ -17,7 +15,6 @@
 ## @param $element element which description should be generated.
 ## @param $spaces leading spaces for the indentation of the comment.
 #macro(emitClassDescription $element $spaces)
-#set($_dollar="$")
 #set($_offset=${spaces.length()} + 3)
 #set($_lines = ${element.docComment(${_offset})})
 #if(${_lines.size()} > 0)
@@ -25,7 +22,6 @@ ${spaces}/**
 #foreach($_line in $_lines)
 ${spaces} * ${_line}
 #end
-${spaces} * @version ${_dollar}Revision${_dollar}
 ${spaces} * @author ${element.valueOfTag("author")}
 ${spaces} */
 #end
@@ -128,7 +124,7 @@ new ${_containerType}<${_type}>()##end
 
 #macro(getterName $property $result)
 #set($_type="")	
-#set($_type = ${property.getClassifier().getAttribute("bo-datatype")})
+#set($_type = ${property.getClassifier().getAttribute("bo-type-java")})
 #if($_type=="boolean")
 #set($result="is${property.nameFirstUpperSingular()}")
 #else

@@ -31,6 +31,9 @@ import ch.bbv.utilities.ReflectUtilities;
  * <dl>
  * <dt>mode (corba direct j2ee)</dt>
  * <dd>defines the mode of the client.</dd>
+ * <dt>O/R synchronization mode</dt>
+ * <dd>The legal values are replace, synchronize, and detach. The default mode
+ * is replace.</dd>
  * <dt>ORBInitialPort</dt>
  * <dd>port of the CORBA broker as defined in the Java CORBA package.</dd>
  * <dt>ORBInitialHost</dt>
@@ -40,7 +43,7 @@ import ch.bbv.utilities.ReflectUtilities;
  * @author MarcelBaumann
  * @version $Revision$
  */
-public class Application extends Locator {
+public class UserApplication extends Locator {
   /**
    * The name of the ORB subsystem as registered.
    */
@@ -67,9 +70,24 @@ public class Application extends Locator {
   public static final String USE_J2EE = "j2ee";
 
   /**
+   * Mode for the configuration of the object-relation mapping subsystem.
+   */
+  public static final String USE_REPLACE = "REPLACE";
+
+  /**
+   * Mode for the configuration of the object-relation mapping subsystem.
+   */
+  public static final String USE_SYNCHRONIZE = "SYNCHRONIZE";
+
+  /**
+   * Mode for the configuration of the object-relation mapping subsystem.
+   */
+  public static final String USE_DETACHED = "DETACHED";
+
+  /**
    * Logger for all instances of the class.
    */
-  private static Log log = LogFactory.getLog(Application.class);
+  private static Log log = LogFactory.getLog(UserApplication.class);
 
   /**
    * Command line arguments of the application.
@@ -81,10 +99,12 @@ public class Application extends Locator {
    * with cache enabled and without copy cache.
    * @param mode mode of the application. The legal values are defined as
    *          constants (USE_DIRECT, USE_CORBA, USE_J2EE).
+   * @param synchronization synchronization mode of the O/R system.
    * @throws ComponentException occured when building the application.
    */
-  public Application(String mode) throws ComponentException {
-    this(mode, false);
+  public UserApplication(String mode, String synchronization)
+      throws ComponentException {
+    this(mode, synchronization, false);
   }
 
   /**
@@ -92,19 +112,21 @@ public class Application extends Locator {
    * with cache enabled and without copy cache.
    * @param mode mode of the application. The legal values are defined as
    *          constants (USE_DIRECT, USE_CORBA, USE_J2EE).
+   * @param synchronization synchronization mode of the O/R system.
    * @param commandLineMode flag indicating if the application is used in
    *          command line mode or in user interface mode.
    * @throws ComponentException occured when building the application.
    */
-  public Application(String mode, boolean commandLineMode)
-      throws ComponentException {
+  public UserApplication(String mode, String synchronization,
+      boolean commandLineMode) throws ComponentException {
     DataObjectManager manager = null;
     register(this);
     if (USE_DIRECT.equalsIgnoreCase(mode)) {
       log.info("Application started in direct mode");
+      PersistenceHandler.Mode sync = PersistenceHandler.Mode
+          .valueOf(synchronization);
       manager = new DataObjectManager(new CacheHandler(new PersistenceHandler(
-          false, PersistenceHandler.Mode.REPLACE), true, true),
-          new LightweightObjectHandlerImpl(), null);
+          false, sync), true, true), new LightweightObjectHandlerImpl(), null);
     } else if (USE_CORBA.equalsIgnoreCase(mode)) {
       log.info("Application started in CORBA mode");
       register(ORB.init(args, null), ORB_NAME);
@@ -130,11 +152,11 @@ public class Application extends Locator {
   }
 
   /**
-   * Convenience method returning the locator instace as an application.
+   * Convenience method returning the locator instance as an application.
    * @return the singleton locator as application instance.
    */
-  public static Application getApplication() {
-    return (Application) Locator.getInstance();
+  public static UserApplication getApplication() {
+    return (UserApplication) Locator.getInstance();
   }
 
   /**
@@ -142,7 +164,7 @@ public class Application extends Locator {
    * @param args command line arguments.
    */
   public static void main(String[] args) {
-    Application.args = args;
+    UserApplication.args = args;
     Options options = new Options();
     OptionGroup group = new OptionGroup();
     options.addOption(CmdLineBuilder.createNoArgOption("h", "help",
@@ -155,6 +177,9 @@ public class Application extends Locator {
     options.addOption(CmdLineBuilder.createArgOption("m", "mode",
         "defines the mode of the application [direct | CORBA | J2EE]", "mode",
         false, String.class));
+    options.addOption(CmdLineBuilder.createArgOption("s", "synch",
+        "defines the O/R synchronization [replace | synchronize | detach]",
+        "synch", false, String.class));
     options.addOption(CmdLineBuilder.createArgOption("ORBInitialPort", null,
         "the ORB TCP/IP port", "port", false, String.class));
     options.addOption(CmdLineBuilder.createArgOption("ORBInitialHost", null,
@@ -177,10 +202,13 @@ public class Application extends Locator {
       String mode = line.getOptionValue("m", USE_DIRECT);
       // Handles the case where mode is not defined at all.
       mode = (mode == null ? USE_DIRECT : mode);
+      String synchronization = line.getOptionValue("s", USE_REPLACE)
+          .toUpperCase();
+      synchronization = (synchronization == null ? USE_REPLACE : synchronization);
       if (log.isInfoEnabled()) {
         log.info(Arrays.asList(args));
       }
-      new Application(mode);
+      new UserApplication(mode, synchronization);
     } catch (ComponentException e) {
       log.fatal(e);
     } catch (ParseException e) {

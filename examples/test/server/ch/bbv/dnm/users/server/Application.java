@@ -52,6 +52,21 @@ public class Application extends Locator {
   public static final String USE_J2EE = "j2ee";
 
   /**
+   * Mode for the configuration of the object-relation mapping subsystem.
+   */
+  public static final String USE_REPLACE = "REPLACE";
+
+  /**
+   * Mode for the configuration of the object-relation mapping subsystem.
+   */
+  public static final String USE_SYNCHRONIZE = "SYNCHRONIZE";
+
+  /**
+   * Mode for the configuration of the object-relation mapping subsystem.
+   */
+  public static final String USE_DETACHED = "DETACHED";
+
+  /**
    * Name of the ORB component in the application.
    */
   public static final String ORB_NAME = "CORBA_ORB";
@@ -82,39 +97,40 @@ public class Application extends Locator {
    * @throws ComponentException occured when creating the client application.
    */
   public Application() throws ComponentException {
-    this(mode);
+    this(mode, "REPLACE");
   }
 
   /**
    * Default constructor of the class.
    * @param mode mode of the client application.
+   * @param synchronization synchronization mode of the O/R system.
    * @throws ComponentException occured when creating the client application.
    */
-  public Application(String mode) throws ComponentException {
+  public Application(String mode, String synchronization)
+      throws ComponentException {
     assert mode != null;
     DataObjectManager manager = null;
     ORB orb = null;
     register(this);
+    PersistenceHandler.Mode sync = PersistenceHandler.Mode
+        .valueOf(synchronization);
     if (mode.equalsIgnoreCase(USE_DIRECT)) {
       log.info("Application started in direct mode");
-      manager = new DataObjectManager(new PersistenceHandler(false,
-          PersistenceHandler.Mode.REPLACE), new LightweightObjectHandlerImpl(),
-          null);
+      manager = new DataObjectManager(new PersistenceHandler(false, sync),
+          new LightweightObjectHandlerImpl(), null);
       register(manager);
     } else if (mode.equalsIgnoreCase(USE_CORBA)) {
       log.info("Application started in CORBA mode");
-      manager = new DataObjectManager(new PersistenceHandler(false,
-          PersistenceHandler.Mode.REPLACE), new LightweightObjectHandlerImpl(),
-          null);
+      manager = new DataObjectManager(new PersistenceHandler(false, sync),
+          new LightweightObjectHandlerImpl(), null);
       register(manager);
       orb = ORB.init(args, null);
       register(orb, ORB_NAME);
       createCorbaServer("ch.bbv.dnm.users.server.UsersServerCorba");
     } else if (mode.equalsIgnoreCase(USE_J2EE)) {
       log.info("Application started in J2EE mode");
-      manager = new DataObjectManager(new PersistenceHandler(true,
-          PersistenceHandler.Mode.REPLACE), new LightweightObjectHandlerImpl(),
-          null);
+      manager = new DataObjectManager(new PersistenceHandler(true, sync),
+          new LightweightObjectHandlerImpl(), null);
       register(manager);
     }
     TypeFactory factory = new TypeFactory(manager);
@@ -156,6 +172,9 @@ public class Application extends Locator {
     options.addOption(CmdLineBuilder.createArgOption("m", "mode",
         "defines the mode of the application [direct | CORBA | J2EE]", "mode",
         false, String.class));
+    options.addOption(CmdLineBuilder.createArgOption("s", "synch",
+        "defines the O/R synchronization [replace | synchronize | detach]",
+        "synch", false, String.class));
     options.addOption(CmdLineBuilder.createArgOption("ORBInitialPort", null,
         "the ORB TCP/IP port", "port", false, String.class));
     options.addOption(CmdLineBuilder.createArgOption("ORBInitialHost", null,
@@ -178,6 +197,10 @@ public class Application extends Locator {
       String mode = line.getOptionValue("m", USE_DIRECT);
       // Handles the case where mode is not defined at all.
       mode = (mode == null ? USE_DIRECT : mode);
+      String synchronization = line.getOptionValue("s", USE_REPLACE)
+          .toUpperCase();
+      synchronization = (synchronization == null ? USE_REPLACE
+          : synchronization);
       if (log.isInfoEnabled()) {
         log.info(Arrays.asList(args));
       }

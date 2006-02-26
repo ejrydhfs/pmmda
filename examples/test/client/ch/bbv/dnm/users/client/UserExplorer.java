@@ -81,7 +81,7 @@ public class UserExplorer extends Explorer {
    * Registers all the node types used the explorer.
    */
   public static void registerNodeTypes() {
-    manager = Application.getApplication().getDataObjectManager();
+    manager = UserApplication.getApplication().getDataObjectManager();
     factory = new UiNodeTypeFactory();
     TypeFactory typeFactory = new TypeFactory(factory, manager);
     typeFactory.registerAllTypes();
@@ -112,7 +112,6 @@ public class UserExplorer extends Explorer {
         .hasNext();) {
       realmLw.addProvider((ProviderLw) i.next());
     }
-
     ExplorerNode root = createTree(realmLw);
     root.setDataObject(realm);
     setRoot(root);

@@ -242,9 +242,9 @@
         <pathelement path="${src.dog.dir}/" />
         <pathelement path="${src.documentor.dir}/" />
       </sourcepath>
-      <taglet name="ch.bbv.documentor.taglets.PreTaglet" path="${build.dir}" />
-      <taglet name="ch.bbv.documentor.taglets.PostTaglet" path="${build.dir}" />
-      <taglet name="ch.bbv.documentor.taglets.InvTaglet" path="${build.dir}" />
+      <taglet name="org.sf.pmmda.development.taglets.PreTaglet" path="${build.dir}" />
+      <taglet name="org.sf.pmmda.development.taglets.PostTaglet" path="${build.dir}" />
+      <taglet name="org.sf.pmmda.development.taglets.InvTaglet" path="${build.dir}" />
     </javadoc>
   </target>
 
