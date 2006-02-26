@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann 
+/* copyright 2000-2006 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$ 
@@ -42,7 +42,7 @@ public class FileOperators {
    */
   public static void copyFile(File source, File target) throws IOException {
     InputStream in = new FileInputStream(source);
-    OutputStream out = new FileOutputStream(target);
+    OutputStream out = new FileOutputStream(target, false);
     byte[] buffer = new byte[2048];
     int length = in.read(buffer);
     while (length > 0) {

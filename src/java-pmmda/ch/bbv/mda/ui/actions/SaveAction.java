@@ -1,5 +1,5 @@
 /* 
- * copyright 2000-2005 Marcel Baumann 
+ * copyright 2000-20056 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence); 
  * you may not use this file except in compliance with the License. 
  * $Id$
@@ -8,8 +8,8 @@ package ch.bbv.mda.ui.actions;
 
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
-import java.io.IOException;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import javax.swing.JOptionPane;
 
@@ -50,7 +50,8 @@ public class SaveAction extends ExplorerSaveAction {
 
   public boolean execute() {
     MdaExplorer explorer = (MdaExplorer) getExplorer();
-    explorer.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+    explorer.getFrame().setCursor(
+        Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
     try {
       MdaDocument document = explorer.getDocument();
       String filename = document.getModel().getFilename();
@@ -67,10 +68,12 @@ public class SaveAction extends ExplorerSaveAction {
       }
     } catch (PersistenceException e) {
       log.error(e);
-      if(e.getCause() instanceof FileNotFoundException) {
-        JOptionPane.showMessageDialog(null, e.getLocalizedMessage(), ResourceUtilities
-            .getString("mda.ui.sorryMsg.SORRY"), JOptionPane.ERROR_MESSAGE);
-        lastResult = false; // This cause indicates that writter attempt to write a locked file.
+      if (e.getCause() instanceof FileNotFoundException) {
+        JOptionPane.showMessageDialog(null, e.getLocalizedMessage(),
+            ResourceUtilities.getString("mda.ui.sorryMsg.SORRY"),
+            JOptionPane.ERROR_MESSAGE);
+        lastResult = false; // This cause indicates that writter attempt to
+                            // write a locked file.
         return lastResult;
       }
       JOptionPane.showMessageDialog(explorer.getFrame(), ResourceUtilities
@@ -92,9 +95,12 @@ public class SaveAction extends ExplorerSaveAction {
       lastResult = false;
       return lastResult;
     } finally {
-      explorer.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+      explorer.getFrame().setCursor(
+          Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     }
-    explorer.getMenuBar().documentChanged(ExplorerDocument.State.CLEAN);
+    ExplorerDocument document = explorer.getDocument();
+    document.setModified(false);
+    explorer.getMenuBar().documentChanged(document);
     lastResult = true;
     return lastResult;
   }

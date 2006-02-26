@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann
+/* copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -13,8 +13,6 @@ import java.util.prefs.Preferences;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 import org.apache.commons.cli.*;
 import org.apache.commons.logging.Log;
@@ -29,7 +27,6 @@ import ch.bbv.application.VersionId;
 import ch.bbv.cmdlineparser.CmdLineBuilder;
 import ch.bbv.dog.DataObjectManager;
 import ch.bbv.explorer.Explorer;
-import ch.bbv.explorer.ExplorerDocument.State;
 import ch.bbv.explorer.ExplorerMenuBar;
 import ch.bbv.explorer.ExplorerUtilities;
 import ch.bbv.explorer.UiNodeTypeFactory;
@@ -145,14 +142,14 @@ public class MdaExplorer extends Explorer {
    * @see #getDocument()
    */
   public void setDocument(MdaDocument document) {
-    assert (document != null);
+    assert document != null;
     this.document = document;
     MetaModel model = document.getModel();
     TreeConstructor constructor = new TreeConstructor(getNodeTypeFactory());
     model.accept(constructor);
     setRoot(constructor.getRoot());
     validationPanel.clear();
-    getMenuBar().documentChanged(document.getState());
+    getMenuBar().documentChanged(document);
   }
 
   /**
@@ -172,16 +169,6 @@ public class MdaExplorer extends Explorer {
     ExplorerMenuBar menuBar = new ExplorerMenuBar(this);
     setMenuBar(menuBar);
 
-    ProjectInfo projectInfo = new ProjectInfo();
-    projectInfo
-        .setCopyright("copyright Marcel Baumann (Apache Sofware License 2.0)");
-    projectInfo.setInfo("pmmda.sourceforge.net");
-    projectInfo.setLicenceName("Apache Software License 2.0");
-    projectInfo.setLicenceText(Licences.LICENCE_APACHE_2_0);
-    projectInfo.setName("pmMDA - poor man Model Driven Architecture -");
-    projectInfo.setVersion(new VersionId(0, 3, 0, "dev"));
-    projectInfo.setContributors(getContributors());
-    projectInfo.setLibraries(getLibrairies());
     validationPanel = new ValidationPanel();
     validationPanel.setName(VALIDATION_PANEL_NAME);
     Dockable dockable = DockingManager.registerDockable(validationPanel,
@@ -191,35 +178,20 @@ public class MdaExplorer extends Explorer {
 
     JMenu menu = menuBar.getMenu(ExplorerMenuBar.HELP_MENU);
     ExplorerAboutAction aboutAction = new ExplorerAboutAction(this);
-    aboutAction.setProjectInfo(projectInfo);
+    aboutAction.setProjectInfo(getProjectInfo());
     menu.add(new JMenuItem(aboutAction));
 
     menu = menuBar.getMenu(ExplorerMenuBar.FILE_MENU);
-    addAction(menuBar, menu, Names.NEW, new NewAction(this));
+    menuBar.addStandardAction(menu, Names.NEW, new NewAction(this));
+    menuBar.addStandardAction(menu, Names.OPEN, new OpenAction(this));
     menu.addSeparator();
-    addAction(menuBar, menu, Names.OPEN, new OpenAction(this));
-    menu.addSeparator();
-    addAction(menuBar, menu, Names.SAVE, new SaveAction(this));
-    addAction(menuBar, menu, Names.SAVE_AS, new SaveAsAction(this));
-    addAction(menuBar, menu, Names.EXIT, new ExplorerExitAction(this));
+    menuBar.addStandardAction(menu, Names.SAVE, new SaveAction(this));
+    menuBar.addStandardAction(menu, Names.SAVE_AS, new SaveAsAction(this));
+    menuBar.addStandardAction(menu, Names.EXIT, new ExplorerExitAction(this));
     generateAllAction = new GenerateAllAction(this);
     createGenerateMenu();
     createToolsMenu();
     processCommandLine();
-    getFrame().addWindowListener(new MyWindowAdapter(this));
-  }
-
-  /**
-   * Adds an action to the given menu.
-   * @param menuBar menu bar owning the menu.
-   * @param menu menu to which the action should be added.
-   * @param name name of the action as defined in the menu bar.
-   * @param action action to add.
-   */
-  protected void addAction(ExplorerMenuBar menuBar, JMenu menu, Names name,
-      ExplorerGlobalAction action) {
-    menu.add(new JMenuItem(action));
-    menuBar.putStandardAction(name, action);
   }
 
   /**
@@ -278,12 +250,10 @@ public class MdaExplorer extends Explorer {
       }
       if (!success) {
         menuBar.getStandardAction(Names.NEW).execute();
-        this.getDocument().setState(State.CLEAN);
       }
     } catch (ParseException e) {
       log.error("parse arguments exception", e);
       menuBar.getStandardAction(Names.NEW).execute();
-      this.getDocument().setState(State.CLEAN);
     }
   }
 
@@ -313,6 +283,23 @@ public class MdaExplorer extends Explorer {
   }
 
   /**
+   * Returns the project information displayed in the about box.
+   * @return the project information with contributors and libraries.
+   */
+  private ProjectInfo getProjectInfo() {
+    ProjectInfo info = new ProjectInfo();
+    info.setCopyright("copyright Marcel Baumann (Apache Sofware License 2.0)");
+    info.setInfo("pmmda.sourceforge.net");
+    info.setLicenceName("Apache Software License 2.0");
+    info.setLicenceText(Licences.LICENCE_APACHE_2_0);
+    info.setName("pmMDA - poor man Model Driven Architecture -");
+    info.setVersion(new VersionId(0, 3, 0, "RC3"));
+    info.setContributors(getContributors());
+    info.setLibraries(getLibrairies());
+    return info;
+  }
+
+  /**
    * Returns a list of all contributors to the project.
    * @return list of all contributors.
    */
@@ -331,17 +318,19 @@ public class MdaExplorer extends Explorer {
    */
   private List<Library> getLibrairies() {
     List<Library> librairies = new ArrayList<Library>();
-    librairies.add(new Library("commons-beanutils", new VersionId(1, 6, 1),
+    librairies.add(new Library("commons-beanutils", new VersionId(1, 7, 0),
         "Apache License", "http://jakarta.apache.org/commons"));
-    librairies.add(new Library("commons-collections", new VersionId(2, 1, 1),
+    librairies.add(new Library("commons-cli", new VersionId(1, 0, 0),
+        "Apache License", "http://jakarta.apache.org/cli"));
+    librairies.add(new Library("commons-collections", new VersionId(3, 1, 0),
         "Apache License", "http://jakarta.apache.org/commons"));
     librairies.add(new Library("commons-logging", new VersionId(1, 0, 4),
         "Apache License", "http://jakarta.apache.org/commons"));
     librairies.add(new Library("commons-logging-api", new VersionId(1, 0, 4),
         "Apache License", "http://jakarta.apache.org/commons"));
-    librairies.add(new Library("forms", new VersionId(1, 0, 5), "Open Source",
+    librairies.add(new Library("forms", new VersionId(1, 0, 6), "OBSD License",
         "www.jgoodies.com"));
-    librairies.add(new Library("glazedlists", new VersionId(0, 9, 7), "LGPL",
+    librairies.add(new Library("glazedlists", new VersionId(1, 5, 0), "LGPL",
         "www.publicobject.com/glazedlists"));
     librairies.add(new Library("jgraph", new VersionId(5, 4, 5), "LGPL/BSD",
         "www.jgraph.com"));
@@ -358,21 +347,5 @@ public class MdaExplorer extends Explorer {
     librairies.add(new Library("xstream", new VersionId(1, 1, 2),
         "BSD License", "http://xtream.codehaus.org"));
     return librairies;
-  }
-  
-  private class MyWindowAdapter extends WindowAdapter {
-    
-    private Explorer explorer = null;
-    
-    public MyWindowAdapter(Explorer explorer) {
-      this.explorer = explorer;
-    }
-    
-    public void windowClosing(WindowEvent e) {
-      super.windowClosing(e);
-      ExplorerGlobalAction action = explorer.getMenuBar().getStandardAction(Names.EXIT);
-      action.execute();
-    }
-    
   }
 }

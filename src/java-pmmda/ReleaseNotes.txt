@@ -21,6 +21,9 @@ The following new features were added.
 - Moved to MySQL 5.0 and OJB 1.0.4.
 - The Velocity templates were reworked to better reflect Sun coding guidelines.
 
+The following errors were corrected.
+- The Java templates better follow the JavaDoc documentation standard of Sun.
+
 Version 0.3.0-RC2 (25 December 2005)
 ------------------------------------
 The following new features were added.

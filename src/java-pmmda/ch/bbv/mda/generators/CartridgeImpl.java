@@ -8,7 +8,10 @@ package ch.bbv.mda.generators;
 import static ch.bbv.mda.cartridges.OrmConstants.COLUMN_NAME;
 
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Properties;
 
 import org.apache.commons.configuration.CompositeConfiguration;
 import org.apache.commons.configuration.ConfigurationConverter;
@@ -341,6 +344,11 @@ public abstract class CartridgeImpl implements Cartridge {
     writer.close();
     File file = FileOperators.createFile(root, packageName, filename);
     if (!FileOperators.equals(tempFile, file)) {
+      file.delete();
+      if (log.isInfoEnabled()) {
+        log.info("writing file with new artifact content "
+            + file.getCanonicalPath());
+      }
       FileOperators.copyFile(tempFile, file);
     }
     tempFile.delete();
@@ -536,10 +544,33 @@ public abstract class CartridgeImpl implements Cartridge {
    *         type.
    * @pre (type != null) && (language != null)
    */
-  protected String translateDatatype(MetaDatatype type, String language, String dialect,
+  protected String translateDatatype(MetaDatatype type, String language,
       boolean concrete) {
+    assert (type != null) && (language != null);
     String typename = type.qualifiedName();
-    return PropertyUtilities.getInfoOfType(configuration, typename, language, dialect, "type", concrete);
+    return PropertyUtilities.getInfoOfType(configuration, typename, language,
+        null, "type", concrete);
+  }
+
+  /**
+   * Returns the mapping for the type to the target language. A mapping exists
+   * only for datatypes.
+   * @param type type to map to a language construct.
+   * @param language language to map to. A cartridge can define multiple
+   *          mappings of datatypes and model types to target programming
+   *          language.
+   * @param dialect of language (e.g. "mssqlserver" for "sql" language).
+   * @param concrete flag indicating if the implementation class should be
+   *          retrieve or not.
+   * @return the requested mapping if found otherwise the qualified name of the
+   *         type.
+   * @pre (type != null) && (language != null)
+   */
+  protected String translateDatatype(MetaDatatype type, String language,
+      String dialect, boolean concrete) {
+    String typename = type.qualifiedName();
+    return PropertyUtilities.getInfoOfType(configuration, typename, language,
+        dialect, "type", concrete);
   }
 
   /**
@@ -623,18 +654,18 @@ public abstract class CartridgeImpl implements Cartridge {
   }
 
   /**
-   * Returns true if the property should be generated, meaning that the persistence tag
-   * is available and true.
+   * Returns true if the property should be generated, meaning that the
+   * persistence tag is available and true.
    * @param metaProperty property which persistency flag should be checked.
    * @return true if the element should be generated otherwise false.
    */
   protected boolean isPersistent(MetaProperty metaProperty) {
     TaggedValue tv = metaProperty.getTaggedValue(UmlConstants.PERSISTENCE_TAG);
-    if(tv != null && tv.getValue().equalsIgnoreCase("true")) {
+    if (tv != null && tv.getValue().equalsIgnoreCase("true")) {
       return true;
     }
     tv = metaProperty.getTaggedValue(COLUMN_NAME);
-    if(tv != null && tv.getValue() != null && !tv.getValue().equals("")) {
+    if (tv != null && tv.getValue() != null && !tv.getValue().equals("")) {
       return true;
     }
     return false;

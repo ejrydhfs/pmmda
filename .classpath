@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry excluding="**/*CVS*.*" kind="src" path="properties"/>
-	<classpathentry excluding="**/*.html" kind="src" path="examples/test/common"/>
-	<classpathentry excluding="**/*.html" kind="src" path="examples/test/unit-tests"/>
-	<classpathentry excluding="**/*.html" kind="src" path="examples/test/client"/>
-	<classpathentry kind="src" path="gendir/orm-server"/>
-	<classpathentry kind="src" path="examples/pim/src/resources"/>
-	<classpathentry excluding="**/*.html" kind="src" path="examples/pim/src/java"/>
+	<classpathentry excluding="**/*.cvsignore|**/*.html" kind="src" path="examples/test/common"/>
+	<classpathentry including="**/*.java|**/*.properties" excluding="**/*.html" kind="src" path="examples/test/unit-tests"/>
+	<classpathentry excluding="**/*.cvsignore|**/*.html" kind="src" path="examples/test/client"/>
+	<classpathentry excluding="**/*.cvsignore" kind="src" path="gendir/orm-server"/>
+	<classpathentry excluding="**/*.cvsignore" kind="src" path="examples/pim/src/resources"/>
+	<classpathentry excluding="**/*.cvsignore|**/*.html" kind="src" path="examples/pim/src/java"/>
 	<classpathentry excluding="**/Entries|**/Repository|**/Root" kind="src" path="src/etc/properties/unmanaged"/>
-	<classpathentry including="**/*.java|**/*.properties" excluding="**/*.html" kind="src" path="gendir/rich-client"/>
+	<classpathentry including="**/*.java|**/*.properties" excluding="**/*.cvsignore|**/*.html" kind="src" path="gendir/rich-client"/>
 	<classpathentry excluding="**/*.html" kind="src" path="src/java-documentor"/>
 	<classpathentry excluding="**/*.html" kind="src" path="src/java-framework"/>
 	<classpathentry excluding="**/*.html" kind="src" path="src/java-pmmda"/>
@@ -34,7 +34,6 @@
 	<classpathentry kind="lib" path="lib/junit-3.8.1.jar"/>
 	<classpathentry kind="lib" path="lib/jakarta-regexp-1.3.jar"/>
 	<classpathentry kind="lib" path="lib/p6spy.jar"/>
-	<classpathentry kind="lib" path="lib/forms-1.0.5.jar"/>
 	<classpathentry kind="lib" path="lib/commons-functor.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/openide-util.jar"/>
@@ -61,5 +60,6 @@
 	<classpathentry sourcepath="C:/bin/db-ojb-1.0.4/src/java" kind="lib" path="lib/db-ojb-1.0.4.jar"/>
 	<classpathentry kind="lib" path="lib/mysql-connector-3.1.12.jar"/>
 	<classpathentry kind="lib" path="lib/glazedlists-1.5.0.jar"/>
+	<classpathentry kind="lib" path="lib/forms-1.0.6.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>

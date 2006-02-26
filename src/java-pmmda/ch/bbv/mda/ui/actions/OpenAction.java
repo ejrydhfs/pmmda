@@ -1,5 +1,5 @@
 /*
- * copyright 2000-2005 Marcel Baumann 
+ * copyright 2000-2006 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence); 
  * you may not use this file except in compliance with the
  * License. $Id$
@@ -57,27 +57,7 @@ public class OpenAction extends ExplorerFileAction {
     try {
       MdaDocument document = new MdaDocument();
       String name = file.getName();
-      if (name != null && (name.lastIndexOf('.') == -1 || name.endsWith("."))) { // in
-                                                                                  // case
-                                                                                  // where
-                                                                                  // user
-                                                                                  // thinks
-                                                                                  // that
-                                                                                  // the
-                                                                                  // extension
-                                                                                  // comes
-                                                                                  // from
-                                                                                  // the
-                                                                                  // file
-                                                                                  // filter
-                                                                                  // we
-                                                                                  // get
-                                                                                  // the
-                                                                                  // first
-                                                                                  // match
-                                                                                  // from
-                                                                                  // the
-                                                                                  // filter.
+      if (name != null && (name.lastIndexOf('.') == -1 || name.endsWith("."))) {
         name = FileTypes.getBestMatchingExtension(getFileChooser()
             .getFileFilter().getDescription());
         if (name != null && !file.getName().endsWith(".")) {

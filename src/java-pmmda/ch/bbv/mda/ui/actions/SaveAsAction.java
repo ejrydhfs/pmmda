@@ -1,5 +1,5 @@
 /*
- * copyright 2000-2005 Marcel Baumann 
+ * copyright 2000-2006 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence); 
  * you may not use this file except in compliance with the
  * License. $Id$
@@ -72,27 +72,7 @@ public class SaveAsAction extends ExplorerFileAction {
     }
     File file = getSelectedFile();
     String name = file.getName();
-    if (name != null && (name.lastIndexOf('.') == -1 || name.endsWith("."))) { // in
-      // case
-      // where
-      // user
-      // thinks
-      // that
-      // the
-      // extension
-      // comes
-      // from
-      // the
-      // file
-      // filter
-      // we
-      // get
-      // the
-      // first
-      // match
-      // from
-      // the
-      // filter.
+    if (name != null && (name.lastIndexOf('.') == -1 || name.endsWith("."))) {
       name = FileTypes.getBestMatchingExtension(getFileChooser()
           .getFileFilter().getDescription());
       if (name != null && !file.getName().endsWith(".")) {
@@ -142,7 +122,9 @@ public class SaveAsAction extends ExplorerFileAction {
       getExplorer().getFrame().setCursor(
           Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     }
-    getExplorer().getMenuBar().documentChanged(ExplorerDocument.State.CLEAN);
+    ExplorerDocument document = getExplorer().getDocument();
+    document.setModified(false);
+    getExplorer().getMenuBar().documentChanged(document);
     lastResult = true;
     return lastResult;
   }

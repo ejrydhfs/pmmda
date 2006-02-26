@@ -99,13 +99,13 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
    * @see OrmConstants
    */
   private String databaseKey = "";
-  
+
   /**
    * Contains database key: brand of orm to generate for
    * @see OrmConstants
    */
   private String ormKey = "";
-  
+
   /**
    * Default constructor of the class.
    */
@@ -133,10 +133,10 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
 
   @Override
   public void preProcessDatatype(MetaDatatype datatype) {
-    datatype.addAttribute(ORM_TYPE_SQL, translateDatatype(datatype, "SQL", databaseKey,
-        false));
-    datatype.addAttribute(ORM_TYPE_JDBC, translateDatatype(datatype, "JDBC", null,
-        false));
+    datatype.addAttribute(ORM_TYPE_SQL, translateDatatype(datatype, "SQL",
+        databaseKey, false));
+    datatype.addAttribute(ORM_TYPE_JDBC, translateDatatype(datatype, "JDBC",
+        null, false));
   }
 
   @Override
@@ -182,11 +182,10 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
         if (isPersistent(property)) {
           buffer.setLength(0);
           String columnName = property.valueOfTag(COLUMN_NAME);
-          if(columnName == null || columnName.equals("")) {
+          if (columnName == null || columnName.equals("")) {
             columnName = property.getName().toUpperCase();
           }
-          buffer.append(columnPrefix).append(columnName)
-              .append(columnPostfix);
+          buffer.append(columnPrefix).append(columnName).append(columnPostfix);
           property.addAttribute(COLUMN_NAME, buffer.toString());
         }
       }
@@ -194,11 +193,10 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
         if (isPersistent(property)) {
           buffer.setLength(0);
           String columnName = property.valueOfTag(COLUMN_NAME);
-          if(columnName == null || columnName.equals("")) {
+          if (columnName == null || columnName.equals("")) {
             columnName = property.getName().toUpperCase();
           }
-          buffer.append(columnPrefix).append(columnName)
-              .append(columnPostfix);
+          buffer.append(columnPrefix).append(columnName).append(columnPostfix);
           property.addAttribute(COLUMN_NAME, buffer.toString());
         }
       }
@@ -228,8 +226,8 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
         ormKey), context));
     ormLwWriter.print(processTemplate(retrieveTemplate("xml-lw-repository",
         ormKey), context));
-    ddlWriter
-        .print(processTemplate(retrieveTemplate("ddl", databaseKey), context));
+    ddlWriter.print(processTemplate(retrieveTemplate("ddl", databaseKey),
+        context));
     ddlIntegrityWriter.print(processTemplate(retrieveTemplate("ddl-integrity",
         databaseKey), context));
   }
@@ -239,10 +237,10 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
     VelocityContext context = new VelocityContext();
     context.put("postfix", Boolean.TRUE);
     String orm = getContext().getProperty(ORM_KEY);
-    ormBoWriter.print(processTemplate(retrieveTemplate("xml-bo-repository",
-        orm), context));
-    ormLwWriter.print(processTemplate(retrieveTemplate("xml-lw-repository",
-        orm), context));
+    ormBoWriter.print(processTemplate(
+        retrieveTemplate("xml-bo-repository", orm), context));
+    ormLwWriter.print(processTemplate(
+        retrieveTemplate("xml-lw-repository", orm), context));
     FileOperators.closePrintWriter(ormBoWriter);
     FileOperators.closePrintWriter(ormLwWriter);
     FileOperators.closePrintWriter(ddlWriter);
@@ -302,21 +300,23 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
   }
 
   /**
-   * Returns the size parameter for the element. In case where no size is set within the model
-   * then the default size of the type is used.
+   * Returns the size parameter for the element. In case where no size is set
+   * within the model then the default size of the type is used.
    * @param element element which size parameter should be returned.
    * @param index the index of the requested parameter.
    * @return the requested size parameter if defined otherwise "0".
    */
   public String getSizeParameter(MetaElement element, int index) {
     String sizes = element.valueOfTag(COLUMN_SIZE);
-    if(sizes == null && element instanceof MetaProperty) {
-      sizes = PropertyUtilities.getInfoOfType(getConfiguration(), ((MetaProperty)element).getTypeName(), "SQL", databaseKey, "default", false);
+    if (sizes == null && element instanceof MetaProperty) {
+      sizes = PropertyUtilities.getInfoOfType(getConfiguration(),
+          ((MetaProperty) element).getTypeName(), "SQL", databaseKey,
+          "default", false);
     }
     String size;
     if (sizes != null) {
       int position = sizes.indexOf(".");
-      if(position > -1) {
+      if (position > -1) {
         switch (index) {
         case 0:
           size = position != -1 ? sizes.substring(0, position) : "0";
@@ -351,7 +351,7 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
           buffer.append(", ");
         }
         String columnName = property.valueOfTag(COLUMN_NAME);
-        if(columnName == null || columnName.equals("")) {
+        if (columnName == null || columnName.equals("")) {
           columnName = property.getName().toUpperCase();
         }
         buffer.append(columnName);

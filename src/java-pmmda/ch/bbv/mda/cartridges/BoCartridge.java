@@ -70,7 +70,8 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
   /**
    * The name of the generated programming language.
    */
-  public static final String LANGUAGE = "java"; 
+  public static final String LANGUAGE = "java";
+
   /**
    * Log instance for all instatnces of the class.
    */
@@ -120,7 +121,8 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
 
   @Override
   public void preProcessDatatype(MetaDatatype datatype) {
-    datatype.addAttribute(BO_TYPE_JAVA, translateDatatype(datatype, LANGUAGE, null, false));
+    datatype.addAttribute(BO_TYPE_JAVA, translateDatatype(datatype, LANGUAGE,
+        false));
   }
 
   /**
@@ -314,8 +316,8 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
   }
 
   /**
-   * Returns the Java type name of the type of the property. The translation
-   * of datatypes is handled.
+   * Returns the Java type name of the type of the property. The translation of
+   * datatypes is handled.
    * @param property property to infer.
    * @return the component name of the property type.
    */
@@ -566,7 +568,7 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
     if (qualifiedName != null) {
       MetaDatatype datatype = packages.getModel().findDatatype(qualifiedName);
       if (datatype != null) {
-        qualifiedName = translateDatatype(datatype, LANGUAGE, null, interfaces);
+        qualifiedName = translateDatatype(datatype, LANGUAGE, interfaces);
       }
     }
     qualifiedName = ModelOperators.getComponentName(qualifiedName);

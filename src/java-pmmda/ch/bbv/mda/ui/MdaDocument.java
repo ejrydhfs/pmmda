@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann 
+/* copyright 2000-2006 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$ 
@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 
 import ch.bbv.explorer.ExplorerDocument;
+import ch.bbv.explorer.ExplorerDocumentImpl;
 import ch.bbv.mda.MetaModel;
 import ch.bbv.mda.generators.TreeChecker;
 import ch.bbv.mda.operators.FileOperators;
@@ -23,16 +24,12 @@ import ch.bbv.mda.pim.CodeTypeMgr;
  * @author MarcelBaumann
  * @version $Revision$
  */
-public class MdaDocument implements ExplorerDocument {
+public class MdaDocument extends ExplorerDocumentImpl implements
+    ExplorerDocument {
   /**
    * The directory name containing all reference code values of the model.
    */
   public static final String CODES_DIRECTORY = "codes";
-
-  /**
-   * State of the document.
-   */
-  private State state;
 
   /**
    * File in which the model is stored.
@@ -48,22 +45,7 @@ public class MdaDocument implements ExplorerDocument {
    * Default constructor of the class.
    */
   public MdaDocument() {
-    state = State.CREATED;
     model = new MetaModel();
-  }
-
-  public State getState() {
-    return state;
-  }
-
-  public void setState(State state) {
-    if ((state != State.MODIFIED) || (this.state != State.CREATED)) {
-      this.state = state;
-    }
-  }
-
-  public File getFile() {
-    return file;
   }
 
   /**
@@ -80,7 +62,7 @@ public class MdaDocument implements ExplorerDocument {
    * @throws PersistenceException if model could not be written.
    */
   public void load(File file) throws PersistenceException {
-    assert (file != null);
+    assert file != null;
     PersistenceHandlerFactory factory = new PersistenceHandlerFactory();
     PersistenceHandler handler = factory.getHandler(file);
     assert (handler != null);
@@ -92,7 +74,8 @@ public class MdaDocument implements ExplorerDocument {
     model.setFilename(file.toString());
     File directory = new File(model.getFilename()).getParentFile();
     model.getCodeTypeMgr().reset(new File(directory, CODES_DIRECTORY));
-    state = State.CLEAN;
+    setNew(false);
+    setModified(false);
     this.file = file;
   }
 
@@ -106,6 +89,8 @@ public class MdaDocument implements ExplorerDocument {
     PersistenceHandler handler = factory.getHandler(file);
     handler.writeModel(model, file);
     model.getCodeTypeMgr().saveAll();
+    setNew(false);
+    setModified(false);
   }
 
   /**
@@ -129,7 +114,8 @@ public class MdaDocument implements ExplorerDocument {
     PersistenceHandler handler = factory.getHandler(file);
     handler.writeModel(model, file);
     model.setFilename(file.getAbsolutePath());
-    state = State.CLEAN;
+    setNew(false);
+    setModified(false);
     this.file = file;
   }
 }
