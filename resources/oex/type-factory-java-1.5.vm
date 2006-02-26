@@ -52,7 +52,6 @@ public class TypeFactory extends AbstractTypeFactory {
 #end
 #end
   }
-
 #foreach($class in $classes)
 #if((${class.getStereotype()} == "dataObject") && (${class.getAttribute("bo-lightweight")} == "true"))
 #set($boClass=${class.getAttribute("bo-mo-class")})
@@ -89,8 +88,8 @@ public class TypeFactory extends AbstractTypeFactory {
 #foreach($field in $fields)
     addField(params, "${field.getName()}", String.class, true);
 #end
-    nodeType.registerView(new UiNodeViewType("default", nodeType, NodeTableView.class,
-        params, true));
+    nodeType.registerView(new UiNodeViewType("default", nodeType, 
+        NodeTableView.class, params, true));
     register(type, nodeType, new PopupSelectorDefault(nodeType), null);
   }
 #end  
