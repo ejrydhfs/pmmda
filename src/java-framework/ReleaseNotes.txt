@@ -2,6 +2,15 @@ TODO
 ----
 - Integrate navigation buttons in properties dialog to traverse all siblings
 
+Version 0.2.2-RC3 (1 March 2006)
+-----------------------------------
+The following errors were corrected.
+- The tree constructor was extended to handle more complex tree topologies
+  defined as homomorphic trees of the data object and lightweight object
+  representations.
+- The explorer and document classes were refactored to be more legible.
+- An initial clean-up of explorer actions was performed.  
+
 Version 0.2.2-RC2 (25 December 2005)
 -----------------------------------
 - Moved the newest JDK 1.5.0-06 to check compatibility.

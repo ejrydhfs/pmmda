@@ -6,7 +6,7 @@
 #macro(getOwner $item $owner)
 #set($owner=false)
 #set($owner=${item.valueOfTag("bo-navigable")})
-#if($owner && ${owner.length()} > 0)
+#if($owner && ${owner.trim().length()} > 0)
 #set($owner=${utilities.identifierFirstUpper(${owner})})
 #else
 #set($owner=false)	
@@ -267,6 +267,7 @@ $line
 ## generates the source code for all simple properties. Two variants are 
 ## defined to guarantee correct indenting of the generated source code.
 #foreach ($property in $properties)
+#set($owner=false)
 #set($uName = ${property.nameFirstUpper()})
 #set($lName=${property.nameFirstLower()})
 #set($datatype=${cartridge.getDatatype(${property})})
@@ -409,6 +410,7 @@ $line
 #end    
 #end
 #foreach ($aggregation in $aggregations) 
+#set($owner=false)
 #set($uName = ${aggregation.nameFirstUpper()})
 #set($lName = ${aggregation.nameFirstLower()})
 #set($usName = ${aggregation.nameFirstUpperSingular()})
@@ -925,7 +927,7 @@ $line
 #end
 #foreach ($property in $properties)
 #isTypeModel($model $property $isTypeModel)
-#if($isTypeModel)
+#if(${isTypeModel} && !${property.booleanValueOfAttribute("bo-used-for-navigation")})
     if (${property.nameFirstLower()} != null) {
       ${property.nameFirstLower()}.accept(visitor);
     }
@@ -933,7 +935,7 @@ $line
 #end
 #foreach ($aggregation in $aggregations) 
 #isTypeModel($model $aggregation $isTypeModel)
-#if($isTypeModel)
+#if(${isTypeModel} && !${aggregation.booleanValueOfAttribute("bo-used-for-navigation")})
 #set($upName = ${aggregation.nameFirstUpperPlural()})
 #getType($model $aggregation $type)
     for (${type.getAttribute("bo-mo-class")} item : get${upName}()) {

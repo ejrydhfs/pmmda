@@ -86,7 +86,7 @@ public class OrganizationLw  implements LightweightObject {
    * @see #getName()
    */    
   public void setName(String name) {
-    this.name = name;
+      this.name = name;
   }
 
   /** 
@@ -104,7 +104,7 @@ public class OrganizationLw  implements LightweightObject {
    * @see #getMainNumber()
    */    
   public void setMainNumber(PhoneNumberLw mainNumber) {
-    this.mainNumber = mainNumber;
+      this.mainNumber = mainNumber;
   }
 
   /** 

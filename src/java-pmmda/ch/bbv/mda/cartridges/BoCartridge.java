@@ -196,10 +196,18 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
     boolean changeable = false;
     boolean vetoable = false;
     for (MetaProperty property : clazz.getProperties()) {
+      MetaProperty link = getNavigationProperty(property);
+      if (link != null) {
+        link.addAttribute(USED_FOR_NAVIGATION, Boolean.toString(true));
+      }
       changeable |= property.retrieveIsChangeable();
       vetoable |= property.retrieveIsVetoable();
     }
     for (MetaIndexedProperty property : clazz.getIndexedProperties()) {
+      MetaProperty link = getNavigationProperty(property);
+      if (link != null) {
+        link.addAttribute(USED_FOR_NAVIGATION, Boolean.toString(true));
+      }
       changeable |= property.retrieveIsChangeable();
       vetoable |= property.retrieveIsVetoable();
       preProcessClassifier(property, INTERFACE_CLASS, true);
@@ -313,6 +321,43 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
         log.error(e);
       }
     }
+  }
+
+  /**
+   * Returns true if the property is navigable in the lightweight
+   * representation. The conditions are that the property is lightweight,
+   * navigable and that the navigation property is also lightweight.
+   * @param property property to infer
+   * @return true if the property is navigable in the lightweight model
+   *         otherwise false
+   * @pre property != null
+   */
+  public boolean isLightweightNavigable(MetaProperty property) {
+    if (property.booleanValueOfTag(BoConstants.BO_LIGHTWEIGHT)) {
+      MetaProperty link = getNavigationProperty(property);
+      return (link != null)
+          && link.booleanValueOfTag(BoConstants.BO_LIGHTWEIGHT);
+    }
+    return false;
+  }
+
+  /**
+   * Returns the property used to implement the back link
+   * @param property property to infer
+   * @return the back link property if defined otherwise null
+   * @pre property != null
+   */
+  public MetaProperty getNavigationProperty(MetaProperty property) {
+    MetaProperty link = null;
+    String navigation = property.valueOfTag(BoConstants.NAVIGABLE_RELATION);
+    if ((navigation != null) && (navigation.trim().length() > 0)) {
+      MetaClassifier classifier = property.getClassifier();
+      if (classifier instanceof MetaClass) {
+        MetaClass clazz = (MetaClass) classifier;
+        link = clazz.findProperty(navigation);
+      }
+    }
+    return link;
   }
 
   /**

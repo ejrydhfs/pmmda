@@ -81,7 +81,7 @@ public class PhoneNumberLw  implements LightweightObject {
    * @see #getNumber()
    */    
   public void setNumber(String number) {
-    this.number = number;
+      this.number = number;
   }
 
   /** 

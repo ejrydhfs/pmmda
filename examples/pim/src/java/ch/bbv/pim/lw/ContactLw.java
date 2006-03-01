@@ -113,7 +113,7 @@ public class ContactLw  implements LightweightObject {
    * @see #getFirstname()
    */    
   public void setFirstname(String firstname) {
-    this.firstname = firstname;
+      this.firstname = firstname;
   }
 
   /** 
@@ -131,7 +131,7 @@ public class ContactLw  implements LightweightObject {
    * @see #getLastname()
    */    
   public void setLastname(String lastname) {
-    this.lastname = lastname;
+      this.lastname = lastname;
   }
 
   /** 
@@ -149,7 +149,7 @@ public class ContactLw  implements LightweightObject {
    * @see #getMiddlename()
    */    
   public void setMiddlename(String middlename) {
-    this.middlename = middlename;
+      this.middlename = middlename;
   }
 
   /** 
@@ -167,7 +167,7 @@ public class ContactLw  implements LightweightObject {
    * @see #getWorkEmail()
    */    
   public void setWorkEmail(String workEmail) {
-    this.workEmail = workEmail;
+      this.workEmail = workEmail;
   }
 
   /** 
@@ -185,7 +185,7 @@ public class ContactLw  implements LightweightObject {
    * @see #getWorkNumber()
    */    
   public void setWorkNumber(PhoneNumberLw workNumber) {
-    this.workNumber = workNumber;
+      this.workNumber = workNumber;
   }
 
   /** 

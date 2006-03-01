@@ -81,7 +81,7 @@ public class AddressBookLw  implements LightweightObject {
    * @see #getName()
    */    
   public void setName(String name) {
-    this.name = name;
+      this.name = name;
   }
 
   /** 

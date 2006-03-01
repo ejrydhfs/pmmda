@@ -23,6 +23,13 @@ The following new features were added.
 
 The following errors were corrected.
 - The Java templates better follow the JavaDoc documentation standard of Sun.
+- The semantic of the BO cartridge was clarified. First the navigable attribute
+  is honored for lightweight properties - the conditions are that the property
+  is navigable, lightweight and that the property used to implement navigable
+  is also lightweight -. Second the navigable back path is no more part of the
+  paths traversed with a data object or a lightweight visitor.
+- The robustness of the business object cartridge was increased when the model
+  contains properties with various setting for lightweight and navigation.
 
 Version 0.3.0-RC2 (25 December 2005)
 ------------------------------------

@@ -934,9 +934,6 @@ public class Contact implements DataObject {
     if (workFaxNumber != null) {
       workFaxNumber.accept(visitor);
     }
-    if (organization != null) {
-      organization.accept(visitor);
-    }
     for (JournalEntry item : getEntries()) {
       item.accept(visitor);
     }

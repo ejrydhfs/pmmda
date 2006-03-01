@@ -341,6 +341,12 @@ public final class BoConstants {
   public static final String BO_LIGHTWEIGHT = "bo-lightweight";
 
   /**
+   * Attribute indicating if the property is used to realize the navigation back
+   * to a navigable property.
+   */
+  public static final String USED_FOR_NAVIGATION = "bo-used-for-navigation";
+  
+  /**
    * Attribute indicating if the class has an interface.
    */
   public static final String BO_HAS_INTERFACE = "bo-has-interface";

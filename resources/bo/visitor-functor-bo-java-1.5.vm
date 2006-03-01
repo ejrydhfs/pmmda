@@ -61,8 +61,7 @@ public class VisitorFunctor implements Visitor, AbstractVisitorFunctor {
   
   public void setFunctor(Object functor) {
     this.functor = (DoFunctor)functor;
-  }
-    
+  }    
 #foreach($class in $classes)
 #isDataObject($class $isDataObject)
 #if($isDataObject)
@@ -71,6 +70,7 @@ public class VisitorFunctor implements Visitor, AbstractVisitorFunctor {
 #else
 #set($name=${class.getAttribute("bo-mo-class")})
 #end
+
   public void visit(${name} item) {
     functor.execute(item);
   }

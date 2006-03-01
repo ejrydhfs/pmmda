@@ -3,6 +3,17 @@
 ## you may not use this file except in compliance with the License.
 ## $Id$ 
 #set($sign="#")
+#macro(getOwner $cartridge $item $owner)
+#set($owner=false)
+#if(${cartridge.isLightweightNavigable(${item})})
+#set($owner=${item.valueOfTag("bo-navigable")})
+#if($owner && ${owner.trim().length()} > 0)
+#set($owner=${utilities.identifierFirstUpper(${owner})})
+#else
+#set($owner=false)	
+#end
+#end
+#end
 #emitFileHeader()
 
 #if (${package})
@@ -124,6 +135,7 @@ $line
 /* %% USER DEFINED CODE END %% */
 
 #foreach ($property in $properties)
+#set($owner=false)
 #if(${property.booleanValueOfTag("bo-lightweight")})
 #if(${property.canBeRead()})
 #set($uName = ${property.nameFirstUpper()})
@@ -153,6 +165,7 @@ $line
 #end
 #end
 #if(${property.canBeWritten()})
+#getOwner($cartridge $property $owner)
 
   /** 
    * Sets the new value of the simple property ${uName}.
@@ -162,7 +175,17 @@ $line
 #end    
    */    
   ${visibility} void ${setter}(${datatype} ${lName}) {
-    this.${lName} = ${lName};
+#if($owner)
+      if (this.${lName} != null) {
+        this.${lName}.set${owner}(null);
+      }
+#end
+      this.${lName} = ${lName};
+#if($owner)
+      if (this.${lName} != null) {
+        this.${lName}.set${owner}(this);
+      }
+#end
   }
 #end
 #end
@@ -179,6 +202,7 @@ $line
 #end
 #foreach ($aggregation in $aggregations) 
 #if(${aggregation.booleanValueOfTag("bo-lightweight")})
+#set($owner=false)
 #set($uName = ${aggregation.nameFirstUpper()})
 #set($lName = ${aggregation.nameFirstLower()})
 #set($usName = ${aggregation.nameFirstUpperSingular()})
@@ -234,6 +258,7 @@ $line
 #end  
 #end
 #if(${aggregation.canBeWritten()})
+#getOwner($cartridge $property $owner)	
 #if(${aggregation.isOrdered()})
 
   /** 
@@ -268,6 +293,11 @@ $line
    * @see java.util.List#addAll(Collection)
    */
   ${visibility} boolean add${upName}(Collection<$itemType> c) {
+#if($owner)
+    for($itemType item : c) {
+      item.set${owner}(this);
+    }
+#end
     return ${lName}.addAll(c);
   }  
   
@@ -279,6 +309,11 @@ $line
    */
   ${visibility} void add${usName}(int index, ${itemType} element) {
     ${lName}.add(index, element);
+#if($owner)
+    if (element != null) {
+      element.set${owner}(this);
+    }
+#end	
   }
 
   /** 
@@ -289,6 +324,11 @@ $line
    * @see java.util.List#add(Object)
    */
   ${visibility} boolean add${usName}(${itemType} element) {
+#if(${owner})
+      if (result) {
+        element.set${owner}(this);
+      }
+#end	
     return ${lName}.add(element);
   }
   
@@ -302,6 +342,15 @@ $line
    * @see java.util.List#remove(Object)
    */
   ${visibility} boolean remove${usName}(${itemType} element) {
+#if($owner)
+    boolean removed = ${lName}.remove(element);
+    if (removed) {
+      if (element != null) {
+        element.set${owner}(null);
+      }
+	}
+	return removed;
+#end
     return ${lName}.remove(element);
   }
 #end
@@ -374,7 +423,7 @@ $line
 #foreach ($property in $properties)
 #if(${property.booleanValueOfTag("bo-lightweight")})
 #isTypeLightweigth($model $property $isTypeLightweigth)
-#if($isTypeLightweigth)
+#if(${isTypeLightweigth} && !${property.booleanValueOfAttribute("bo-used-for-navigation")})
     if (${property.nameFirstLower()} != null) {
       ${property.nameFirstLower()}.accept(visitor);
     }
@@ -384,7 +433,7 @@ $line
 #foreach ($aggregation in $aggregations) 
 #if(${aggregation.booleanValueOfTag("bo-lightweight")})
 #isTypeLightweigth($model $aggregation $isTypeLightweigth)
-#if($isTypeLightweigth)
+#if(${isTypeLightweigth} && !${aggregation.booleanValueOfAttribute("bo-used-for-navigation")})
 #set($upName = ${aggregation.nameFirstUpperPlural()})
 #getType($model $aggregation $type)
     for (${type.getAttribute("bo-lw-class")} item : get${upName}()) {

@@ -14,9 +14,12 @@ import javax.swing.JOptionPane;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import ch.bbv.dog.AbstractVisitorFunctor;
+import ch.bbv.dog.DataObjectType;
+import ch.bbv.dog.functors.ModifiedFlagFunctor;
 import ch.bbv.explorer.Explorer;
 import ch.bbv.explorer.actions.ExplorerFileAction;
-import ch.bbv.pim.ui.actions.FileTypes;
+import ch.bbv.pim.AddressBook;
 import ch.bbv.pim.formats.ContactParser;
 import ch.bbv.pim.ui.PimApplication;
 import ch.bbv.pim.ui.PimDocument;
@@ -66,7 +69,15 @@ public class OpenAction extends ExplorerFileAction {
           .getParser(file.getCanonicalPath());
       if (parser != null) {
         PimDocument document = new PimDocument();
-        parser.synchronize(document.getAddressBook(), file);
+        AddressBook book = document.getAddressBook();
+        parser.synchronize(book, file);
+        // sets the modified flag back to false
+        DataObjectType type = explorer.getManager().getType(book.getClass());
+        ModifiedFlagFunctor functor = new ModifiedFlagFunctor();
+        functor.setModified(false);
+        AbstractVisitorFunctor visitor = type.createVisitorInstance();
+        visitor.setFunctor(functor);
+        DataObjectType.invokeVisitor(book.getClass(), book, visitor);
         document.setFile(file);
         explorer.setDocument(document);
       } else {

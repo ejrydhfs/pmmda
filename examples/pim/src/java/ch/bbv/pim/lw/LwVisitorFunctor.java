@@ -38,17 +38,20 @@ public class LwVisitorFunctor implements LwVisitor, AbstractVisitorFunctor {
   
   public void setFunctor(Object functor) {
     this.functor = (LwFunctor)functor;
-  }
-    
+  }    
+
   public void visit(OrganizationLw item) {
     functor.execute(item);
   }
+
   public void visit(ContactLw item) {
     functor.execute(item);
   }
+
   public void visit(PhoneNumberLw item) {
     functor.execute(item);
   }
+
   public void visit(AddressBookLw item) {
     functor.execute(item);
   }

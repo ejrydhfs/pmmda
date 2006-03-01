@@ -23,10 +23,7 @@ import org.flexdock.docking.DockingManager;
 import org.flexdock.docking.DockingPort;
 import org.flexdock.docking.defaults.DefaultDockingPort;
 
-import ch.bbv.dog.AbstractVisitorFunctor;
-import ch.bbv.dog.DataObjectManager;
-import ch.bbv.dog.DataObjectType;
-import ch.bbv.dog.LightweightObject;
+import ch.bbv.dog.*;
 import ch.bbv.explorer.components.ExplorerWindowAdapter;
 import ch.bbv.utilities.ReflectUtilities;
 
@@ -498,12 +495,28 @@ public abstract class Explorer {
    * @return the root node of the navigator tree.
    */
   protected ExplorerNode createTree(LightweightObject root) {
-    DataObjectType type = manager.getType(root);
+    return createTree(root, null);
+  }
+
+  /**
+   * Creates the navigator tree representing the lightweight data object graph.
+   * The data objects of the corresponding tree are set in the explorer nodes.
+   * @param lwRoot root of the lightweight data object graph.
+   * @param doRoot root of the data object graph.
+   * @return the root node of the navigator tree.
+   */
+  protected ExplorerNode createTree(LightweightObject lwRoot, DataObject doRoot) {
+    DataObjectType type = manager.getType(lwRoot);
     AbstractVisitorFunctor visitor = type.createLwVisitorInstance();
     TreeConstructFunctor functor = new TreeConstructFunctor(factory, visitor);
-    visitor.setFunctor(functor);
-    DataObjectType.invokeVisitor(root.getClass(), root, visitor);
-    return functor.retrieveNode(root);
+    DataObjectType.invokeVisitor(lwRoot.getClass(), lwRoot, visitor);
+    if (doRoot != null) {
+      visitor = type.createVisitorInstance();
+      functor.reset(visitor);
+      DataObjectType.invokeVisitor(doRoot.getClass(), doRoot, visitor);
+    }
+    return functor.retrieveNode(lwRoot);
+
   }
 
   /**

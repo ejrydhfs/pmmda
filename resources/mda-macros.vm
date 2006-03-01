@@ -94,7 +94,7 @@ ${spaces} */
 #macro(isTypeLightweigth $model $element $result)
 #set($_DATA_OBJECT="dataObject")
 #getType($model $element $_type)
-#set($result=$_type && ${_DATA_OBJECT.equalsIgnoreCase(${_type.getStereotype()})} && (${_type.getAttribute("bo-lightweight")}))
+#set($result=$_type && ${_DATA_OBJECT.equalsIgnoreCase(${_type.getStereotype()})} && (${_type.booleanValueOfAttribute("bo-lightweight")}))
 #end
 
 ## Returns true if the type exists and is a persistent data object

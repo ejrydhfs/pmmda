@@ -42,12 +42,12 @@ public class LwVisitorFunctor implements LwVisitor, AbstractVisitorFunctor {
   
   public void setFunctor(Object functor) {
     this.functor = (LwFunctor)functor;
-  }
-    
+  }    
 #foreach($class in $classes)
 #isLightweightDataObject($class $isLightweightDataObject)
 #if($isLightweightDataObject)
 #set($name=${class.getAttribute("bo-lw-class")})
+
   public void visit(${name} item) {
     functor.execute(item);
   }

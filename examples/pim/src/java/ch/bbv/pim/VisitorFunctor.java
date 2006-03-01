@@ -52,23 +52,28 @@ public class VisitorFunctor implements Visitor, AbstractVisitorFunctor {
   
   public void setFunctor(Object functor) {
     this.functor = (DoFunctor)functor;
-  }
-    
+  }    
+
   public void visit(Organization item) {
     functor.execute(item);
   }
+
   public void visit(Contact item) {
     functor.execute(item);
   }
+
   public void visit(Address item) {
     functor.execute(item);
   }
+
   public void visit(JournalEntry item) {
     functor.execute(item);
   }
+
   public void visit(PhoneNumber item) {
     functor.execute(item);
   }
+
   public void visit(AddressBook item) {
     functor.execute(item);
   }

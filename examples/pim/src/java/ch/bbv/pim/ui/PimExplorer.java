@@ -132,8 +132,7 @@ public class PimExplorer extends Explorer {
     if (document != null) {
       AddressBook book = document.getAddressBook();
       AddressBookLw bookLw = LwTransformer.transform(book);
-      ExplorerNode root = createTree(bookLw);
-      root.setDataObject(book);
+      ExplorerNode root = createTree(bookLw, book);
       setRoot(root);
       getMenuBar().documentChanged(document);
     }
