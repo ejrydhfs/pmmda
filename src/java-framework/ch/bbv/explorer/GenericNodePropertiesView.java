@@ -68,7 +68,7 @@ public class GenericNodePropertiesView extends NodePropertiesView {
   /**
    * List of all views for simple data object properties.
    */
-  private List<DataObjectPropertyView> dataPropertyViews;
+  private List<DataObjectPropertyView> simplePropertyViews;
 
   /**
    * List of all views for indexed properties.
@@ -90,7 +90,7 @@ public class GenericNodePropertiesView extends NodePropertiesView {
    */
   public GenericNodePropertiesView() {
     primitivePropertyViews = new ArrayList<PrimitivePropertyView>();
-    dataPropertyViews = new ArrayList<DataObjectPropertyView>();
+    simplePropertyViews = new ArrayList<DataObjectPropertyView>();
     indexedPropertyViews = new ArrayList<IndexedPropertyView>();
     mappedPropertyViews = new ArrayList<MappedPropertyView>();
   }
@@ -109,6 +109,9 @@ public class GenericNodePropertiesView extends NodePropertiesView {
       initialize();
     }
     for (PropertyView view : primitivePropertyViews) {
+      view.setModel(bean);
+    }
+    for (DataObjectPropertyView view : simplePropertyViews) {
       view.setModel(bean);
     }
     for (IndexedPropertyView view : indexedPropertyViews) {
@@ -146,7 +149,7 @@ public class GenericNodePropertiesView extends NodePropertiesView {
     DefaultFormBuilder builder = new DefaultFormBuilder(layout);
     builder.setDefaultDialogBorder();
     generateRows(builder, "Simple Properties", primitivePropertyViews);
-    generateRows(builder, "Data Objects", dataPropertyViews);
+    generateRows(builder, "Data Objects", simplePropertyViews);
     generateRows(builder, "Indexed Properties", indexedPropertyViews);
     generateRows(builder, "Mapped Properties", mappedPropertyViews);
     JPanel panel = builder.getPanel();
@@ -155,9 +158,9 @@ public class GenericNodePropertiesView extends NodePropertiesView {
 
   /**
    * Generates the rows for the form layout of the generic view.
-   * @param builder form builder to use.
-   * @param seperator the human readable seperators for a sub form.
-   * @param properties properties to display in the form.
+   * @param builder form builder to use
+   * @param seperator the human readable seperators for a sub form
+   * @param properties properties to display in the form
    */
   protected void generateRows(DefaultFormBuilder builder, String seperator,
       List< ? extends PropertyView> properties) {
@@ -184,7 +187,7 @@ public class GenericNodePropertiesView extends NodePropertiesView {
    * <li>Simple properties are displayed if they contains at most one item or
    * if their elements are not data objects.</li>
    * </ul>
-   * @param object data object which properties should be infered.
+   * @param object data object which properties should be infered
    */
   protected void retrieveProperties(DataObject object) {
     type = object.getClass();
@@ -224,7 +227,7 @@ public class GenericNodePropertiesView extends NodePropertiesView {
                 DataObjectPropertyView view = new DataObjectPropertyView(
                     descriptor.getName(), clazz, descriptor.getDisplayName(),
                     type);
-                dataPropertyViews.add(view);
+                simplePropertyViews.add(view);
               } else {
                 if (log.isDebugEnabled()) {
                   log.debug("Data object simple property is not available "
@@ -244,9 +247,9 @@ public class GenericNodePropertiesView extends NodePropertiesView {
 
   /**
    * Returns true if the given class is contained in the interface list.
-   * @param interfaces list of interfaces to check.
-   * @param clazz search interface class definition.
-   * @return true if the interface was found otherwise false.
+   * @param interfaces list of interfaces to check
+   * @param clazz search interface class definition
+   * @return true if the interface was found otherwise false
    */
   protected boolean containsInterface(Class[] interfaces, Class clazz) {
     for (int i = 0; i < interfaces.length; i++) {
@@ -288,9 +291,9 @@ public class GenericNodePropertiesView extends NodePropertiesView {
 
     /**
      * Constructor of the property view.
-     * @param property property name to be displayed in the view.
-     * @param type type of the simple property.
-     * @param label label of the simple property.
+     * @param property property name to be displayed in the view
+     * @param type type of the simple property
+     * @param label label of the simple property
      */
     public PropertyView(String property, Class type, String label) {
       this.property = property;
@@ -306,14 +309,14 @@ public class GenericNodePropertiesView extends NodePropertiesView {
 
     /**
      * Sets the visual component to the given editable mode.
-     * @param editable new value of the editable flag.
+     * @param editable new value of the editable flag
      */
     public abstract void setEditable(boolean editable);
 
     /**
      * Sets the model of the view to the new data object. The view is
      * automatically updated.
-     * @param bean bean which property should be displayed.
+     * @param bean bean which property should be displayed
      */
     public void setModel(DataObject bean) {
       this.bean = bean;
@@ -348,7 +351,7 @@ public class GenericNodePropertiesView extends NodePropertiesView {
 
     /**
      * Sets the value of the displayed property.
-     * @param value value of the property.
+     * @param value value of the property
      */
     protected abstract void setValue(Object value);
   }
@@ -479,7 +482,16 @@ public class GenericNodePropertiesView extends NodePropertiesView {
    * @version $Revision$
    */
   class DataObjectPropertyView extends PropertyView {
+    /**
+     * The area containing the visible components of the view.
+     */
     private JComponent propertyArea;
+
+    /**
+     * The text field display the string representation of the data object if
+     * defined otherwise the field is disabled.
+     */
+    private JTextField text;
 
     private DataObjectType type;
 
@@ -498,8 +510,11 @@ public class GenericNodePropertiesView extends NodePropertiesView {
       super(property, clazz, label);
       this.type = type;
       propertyArea = new JPanel();
+      text = new JTextField(TEXT_FIELD_SIZE);
+      text.setEditable(false);
       deleteButton = new JButton("Delete");
       editButton = new JButton("Edit");
+      propertyArea.add(text);
       propertyArea.add(deleteButton);
       propertyArea.add(editButton);
       actions = new ButtonActions();
@@ -528,6 +543,8 @@ public class GenericNodePropertiesView extends NodePropertiesView {
       dataObject = (DataObject) value;
       copy = null;
       deleteButton.setEnabled(dataObject != null);
+      text.setEnabled(dataObject != null);
+      text.setText((dataObject != null) ? dataObject.toString() : null);
     }
 
     /**
