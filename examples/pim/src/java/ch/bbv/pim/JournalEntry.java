@@ -15,10 +15,6 @@ import java.util.Date;
 /* %% USER DEFINED IMPORT START %% */
 /* %% USER DEFINED IMPORT END %% */
 
-/**
- * A entry into the journal of entry associated with an entity.
- * @author Marcel Baumann
- */
 public class JournalEntry implements DataObject {
 
 /* %% USER DEFINED DECLARATION START %% */
@@ -29,29 +25,14 @@ public class JournalEntry implements DataObject {
    */
   private static final long serialVersionUID = 99990101;
 
-  /**
-   * The author of the journal entry.
-   */
   private String author;
 
-  /**
-   * The creation date of the journal entry.
-   */
   private Date creation;
 
-  /**
-   * The text of the journal entry.
-   */
   private String text;
 
-  /**
-   * The duration of the activity documented in the entry in seconds.
-   */
   private int duration;
 
-  /**
-   * The type of the journal entry.
-   */
   private JournalEntryType type;
 
   /** 

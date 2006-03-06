@@ -38,7 +38,7 @@ public class OpenAction extends ExplorerFileAction {
   /**
    * Serial version identifier coded as back compatibility date.
    */
-  private static final long serialVersionUID = 20041201;
+  private static final long serialVersionUID = -1266462566763460770L;
 
   /**
    * Name of the action as displayed in the menu.
@@ -51,8 +51,8 @@ public class OpenAction extends ExplorerFileAction {
   private static Log log = LogFactory.getLog(OpenAction.class);
 
   /**
-   * Default constructor.
-   * @param explorer explorer owning the global action.
+   * Constructor of the class.
+   * @param explorer explorer owning the global action
    */
   public OpenAction(Explorer explorer) {
     super(ACTION, explorer);
@@ -95,6 +95,7 @@ public class OpenAction extends ExplorerFileAction {
     return lastResult;
   }
 
+  @Override
   protected int display() {
     return getFileChooser().showOpenDialog(getExplorer().getFrame());
   }

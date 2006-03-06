@@ -14,10 +14,6 @@ import java.sql.Timestamp;
 /* %% USER DEFINED IMPORT START %% */
 /* %% USER DEFINED IMPORT END %% */
 
-/**
- * The address defines a postal address usable on planet earth.
- * @author Marcel Baumann
- */
 public class Address implements DataObject {
 
 /* %% USER DEFINED DECLARATION START %% */
@@ -28,35 +24,16 @@ public class Address implements DataObject {
    */
   private static final long serialVersionUID = 99990101;
 
-  /**
-   * The street of the address including the name of the street and the number.
-   */
   private String street;
 
-  /**
-   * The postal box of the address if defined.
-   */
   private String poBox;
 
-  /**
-   * The city of the address is written in the city.
-   */
   private String city;
 
-  /**
-   * The state or province where the city is located.
-   */
   private String state;
 
-  /**
-   * The postal code of the city.
-   */
   private String postalCode;
 
-  /**
-   * The country of the address meaning the country in which the city is 
-   * located.
-   */
   private Country country;
 
   /** 

@@ -14,10 +14,6 @@ import java.sql.Timestamp;
 /* %% USER DEFINED IMPORT START %% */
 /* %% USER DEFINED IMPORT END %% */
 
-/**
- * A legal phone number as defined in the associated RFC.
- * @author Marcel Baumann
- */
 public class PhoneNumber implements DataObject {
 
 /* %% USER DEFINED DECLARATION START %% */
@@ -28,9 +24,6 @@ public class PhoneNumber implements DataObject {
    */
   private static final long serialVersionUID = 99990101;
 
-  /**
-   * The full phone number to dial.
-   */
   private String number;
 
   /** 

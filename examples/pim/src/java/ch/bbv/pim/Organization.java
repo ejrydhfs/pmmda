@@ -15,10 +15,6 @@ import java.util.*;
 /* %% USER DEFINED IMPORT START %% */
 /* %% USER DEFINED IMPORT END %% */
 
-/**
- * An organization is a structure grouping a set of contacts.
- * @author Marcel Baumann
- */
 public class Organization implements DataObject {
 
 /* %% USER DEFINED DECLARATION START %% */
@@ -29,36 +25,16 @@ public class Organization implements DataObject {
    */
   private static final long serialVersionUID = 99990101;
 
-  /**
-   * The name of the organization.
-   */
   private String name;
 
-  /**
-   * The main email address used to send messages to the company.
-   */
   private String mainEmail;
 
-  /**
-   * The main URL to the web site of the organization.
-   */
   private URL mainUrl;
 
-  /**
-   * The main voice phone number of the organization is also called the 
-   * reception number.
-   */
   private PhoneNumber mainNumber;
 
-  /**
-   * The main postal address of the organization often used to send official 
-   * correspondance.
-   */
   private Address mainAddress;
 
-  /**
-   * The contacts associated with this organization.
-   */
   private List<Contact> contacts;
 
   /** 

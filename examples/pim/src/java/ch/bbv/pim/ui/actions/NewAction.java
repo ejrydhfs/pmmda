@@ -20,11 +20,11 @@ public class NewAction extends ExplorerNewAction {
   /**
    * Serial version identifier coded as back compatibility date.
    */
-  private static final long serialVersionUID = 20041201;
+  private static final long serialVersionUID = -1996638957784362370L;
 
   /**
-   * Default constructor.
-   * @param explorer explorer owning the global action.
+   * Constructor of the class.
+   * @param explorer explorer owning the global action
    */
   public NewAction(Explorer explorer) {
     super(explorer);

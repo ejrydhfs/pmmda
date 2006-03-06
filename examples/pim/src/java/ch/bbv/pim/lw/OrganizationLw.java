@@ -11,10 +11,6 @@ import java.util.*;
 /* %% USER DEFINED IMPORT START %% */
 /* %% USER DEFINED IMPORT END %% */
 
-/**
- * An organization is a structure grouping a set of contacts.
- * @author Marcel Baumann
- */
 public class OrganizationLw  implements LightweightObject {
 
 /* %% USER DEFINED DECLARATION START %% */
@@ -25,20 +21,10 @@ public class OrganizationLw  implements LightweightObject {
    */
   private static final long serialVersionUID = 99990101;
 
-  /**
-   * The name of the organization.
-   */
   private String name;
 
-  /**
-   * The main voice phone number of the organization is also called the 
-   * reception number.
-   */
   private PhoneNumberLw mainNumber;
 
-  /**
-   * The contacts associated with this organization.
-   */
   private List<ContactLw> contacts;
 
   /** 

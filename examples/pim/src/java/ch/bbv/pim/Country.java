@@ -14,10 +14,6 @@ import java.util.HashMap;
 /* %% USER DEFINED IMPORT START %% */
 /* %% USER DEFINED IMPORT END %% */
 
-/**
- * The legal countries on our planet.
- * @author Marcel Baumann
- */
 public class Country extends ReferenceCodeImpl {
   /**
    * The code value associated with the reference code.

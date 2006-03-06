@@ -14,10 +14,6 @@ import java.util.HashMap;
 /* %% USER DEFINED IMPORT START %% */
 /* %% USER DEFINED IMPORT END %% */
 
-/**
- * The type of the journal entry to distinguish interactions with the contact.
- * @author Marcel Baumann
- */
 public class JournalEntryType extends ReferenceCodeImpl {
   /**
    * The code value associated with the reference code.

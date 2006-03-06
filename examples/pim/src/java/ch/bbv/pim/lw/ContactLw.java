@@ -10,10 +10,6 @@ import ch.bbv.dog.LightweightObject;
 /* %% USER DEFINED IMPORT START %% */
 /* %% USER DEFINED IMPORT END %% */
 
-/**
- * A contact identifies an entity with whom we can communicate.
- * @author Marcel Baumann
- */
 public class ContactLw  implements LightweightObject {
 
 /* %% USER DEFINED DECLARATION START %% */
@@ -24,29 +20,14 @@ public class ContactLw  implements LightweightObject {
    */
   private static final long serialVersionUID = 99990101;
 
-  /**
-   * The vorname of the contact.
-   */
   private String firstname;
 
-  /**
-   * The surname of the contact
-   */
   private String lastname;
 
-  /**
-   * The middlename of the contact.
-   */
   private String middlename;
 
-  /**
-   * The work email address to reach the contact.
-   */
   private String workEmail;
 
-  /**
-   * The work number of the contact.
-   */
   private PhoneNumberLw workNumber;
 
   /** 

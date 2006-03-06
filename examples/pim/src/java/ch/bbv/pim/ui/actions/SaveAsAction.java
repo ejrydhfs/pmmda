@@ -39,7 +39,7 @@ public class SaveAsAction extends ExplorerFileAction {
   /**
    * Serial version identifier coded as back compatibility date.
    */
-  private static final long serialVersionUID = 20041201;
+  private static final long serialVersionUID = 1020674104541804861L;
 
   /**
    * Logger for all instance of the class.
@@ -52,8 +52,8 @@ public class SaveAsAction extends ExplorerFileAction {
   private static final String ACTION = "SaveAs...";
 
   /**
-   * Default constructor.
-   * @param explorer explorer owning the global action.
+   * Constructor of the class.
+   * @param explorer explorer owning the global action
    */
   public SaveAsAction(Explorer explorer) {
     super(ACTION, explorer);

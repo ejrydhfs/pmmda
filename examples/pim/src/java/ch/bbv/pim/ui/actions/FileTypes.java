@@ -38,7 +38,7 @@ public class FileTypes {
 
   /**
    * Adds all file filters defined for the MDA application.
-   * @param chooser file chooser to which the file filters must be added.
+   * @param chooser file chooser to which the file filters must be added
    */
   public static void addFileFilters(JFileChooser chooser) {
     chooser.addChoosableFileFilter(new SimpleFileFilter(LDIF_EXT, LDIF_TEXT));

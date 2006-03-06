@@ -10,10 +10,6 @@ import ch.bbv.dog.LightweightObject;
 /* %% USER DEFINED IMPORT START %% */
 /* %% USER DEFINED IMPORT END %% */
 
-/**
- * A legal phone number as defined in the associated RFC.
- * @author Marcel Baumann
- */
 public class PhoneNumberLw  implements LightweightObject {
 
 /* %% USER DEFINED DECLARATION START %% */
@@ -24,9 +20,6 @@ public class PhoneNumberLw  implements LightweightObject {
    */
   private static final long serialVersionUID = 99990101;
 
-  /**
-   * The full phone number to dial.
-   */
   private String number;
 
   /** 

@@ -31,7 +31,7 @@ public class SaveAction extends ExplorerSaveAction {
   /**
    * Serial version identifier coded as back compatibility date.
    */
-  private static final long serialVersionUID = 20041201;
+  private static final long serialVersionUID = -2766933036402654987L;
 
   /**
    * Logger of the instances of the class.
@@ -39,8 +39,8 @@ public class SaveAction extends ExplorerSaveAction {
   private static Log log = LogFactory.getLog(SaveAction.class);
 
   /**
-   * Default constructor.
-   * @param explorer explorer owning the global action.
+   * Constructor of the class.
+   * @param explorer explorer owning the global action.\
    */
   public SaveAction(Explorer explorer) {
     super(explorer);
@@ -76,6 +76,7 @@ public class SaveAction extends ExplorerSaveAction {
     return lastResult;
   }
 
+  @Override
   public void actionPerformed(ActionEvent action) {
     execute();
   }

@@ -15,10 +15,6 @@ import java.util.*;
 /* %% USER DEFINED IMPORT START %% */
 /* %% USER DEFINED IMPORT END %% */
 
-/**
- * The address book contains a set of related contacts.
- * @author Marcel Baumann
- */
 public class AddressBook implements DataObject {
 
 /* %% USER DEFINED DECLARATION START %% */
@@ -29,15 +25,8 @@ public class AddressBook implements DataObject {
    */
   private static final long serialVersionUID = 99990101;
 
-  /**
-   * The name of the address book.
-   */
   private String name;
 
-  /**
-   * The list of organizations defined in the address book. Organizations 
-   * groups related contacts.
-   */
   private List<Organization> organizations;
 
   /** 
