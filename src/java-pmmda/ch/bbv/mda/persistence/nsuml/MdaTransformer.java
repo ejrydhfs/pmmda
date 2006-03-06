@@ -405,12 +405,22 @@ public class MdaTransformer {
         taggedValue.setValue("");
       }
     }
+    // synchronizes all the source tags with the target ones
     for (TaggedValue tag : source.getTags()) {
       String tagName = tag.getTag();
       String tagValue = tag.getValue();
       MTaggedValue taggedValue = createTag(item, tagName);
       taggedValue.setValue(tagValue != null ? tagValue : "");
     }
+    // removes the tags no more available in the source. These tags are
+    // the ones declared obsolete in the loaded cartridges.
+    for (Iterator i = item.getTaggedValues().iterator(); i.hasNext();) {
+      MTaggedValue tag = (MTaggedValue) i.next();
+      if (source.getTaggedValue(tag.getTag()) == null) {
+        item.removeTaggedValue(tag);
+      }
+    }
+
   }
 
   /**
