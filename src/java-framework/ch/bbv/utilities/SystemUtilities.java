@@ -1,5 +1,5 @@
 /* 
- * copyright 2000-2005 Marcel Baumann
+ * copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -7,12 +7,7 @@
 
 package ch.bbv.utilities;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.channels.FileChannel;
 
 /**
@@ -88,5 +83,59 @@ public class SystemUtilities {
       extension = filename.substring(index + 1);
     }
     return extension;
+  }
+
+  /**
+   * Deletes a directory and its content recursively.
+   * @param directory directory to delete.
+   * @return true if sucessful otherwise false
+   */
+  public static boolean deleteDirectory(File directory) {
+    if (directory.isDirectory()) {
+      for (String child : directory.list()) {
+        boolean success = deleteDirectory(new File(directory, child));
+        if (!success) {
+          return false;
+        }
+      }
+    }
+    return directory.delete();
+  }
+
+  /**
+   * Copies the content of the source directory to the target directory.
+   * @param source source directory to copy.
+   * @param target destination directory.
+   * @throws IOException if the copy operations encountered a IO problem.
+   */
+  public static void copyDirectory(File source, File target) throws IOException {
+    if (source.isDirectory()) {
+      if (!target.exists()) {
+        target.mkdir();
+      }
+      for (String child : source.list()) {
+        copyDirectory(new File(source, child), new File(target, child));
+      }
+      SystemUtilities.copyFile(source, target);
+    }
+  }
+
+  /**
+   * Copies the source file to the target file.
+   * @param source source file to copy.
+   * @param target target file to copy to.
+   * @throws IOException if the copy operations encountered a IO problem.
+   */
+  public static void copyFile(File source, File target) throws IOException {
+    InputStream in = new FileInputStream(source);
+    OutputStream out = new FileOutputStream(target, false);
+    byte[] buffer = new byte[2048];
+    int length = in.read(buffer);
+    while (length > 0) {
+      out.write(buffer, 0, length);
+      length = in.read(buffer);
+    }
+    in.close();
+    out.close();
   }
 }

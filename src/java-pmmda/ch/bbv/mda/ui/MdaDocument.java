@@ -12,11 +12,11 @@ import ch.bbv.explorer.ExplorerDocument;
 import ch.bbv.explorer.ExplorerDocumentImpl;
 import ch.bbv.mda.MetaModel;
 import ch.bbv.mda.generators.TreeChecker;
-import ch.bbv.mda.operators.FileOperators;
 import ch.bbv.mda.persistence.PersistenceException;
 import ch.bbv.mda.persistence.PersistenceHandler;
 import ch.bbv.mda.persistence.PersistenceHandlerFactory;
 import ch.bbv.mda.pim.CodeTypeMgr;
+import ch.bbv.utilities.SystemUtilities;
 
 /**
  * The document represents a document loaded in memory containing a MDA model
@@ -104,10 +104,10 @@ public class MdaDocument extends ExplorerDocumentImpl implements
     CodeTypeMgr codeTypeMgr = model.getCodeTypeMgr();
     File root = codeTypeMgr.getRoot();
     File newRoot = file.getParentFile();
+    File target = new File(newRoot, CODES_DIRECTORY);
+    SystemUtilities.deleteDirectory(target);
     if (root != null) {
-      File source = new File(root, CODES_DIRECTORY);
-      File target = new File(newRoot, CODES_DIRECTORY);
-      FileOperators.copyDirectory(source, target);
+      SystemUtilities.copyDirectory(new File(root, CODES_DIRECTORY), target);
     }
     codeTypeMgr.setRoot(new File(newRoot, CODES_DIRECTORY));
     codeTypeMgr.saveAll();

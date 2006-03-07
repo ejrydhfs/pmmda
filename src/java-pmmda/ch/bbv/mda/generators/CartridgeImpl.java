@@ -33,6 +33,7 @@ import ch.bbv.mda.operators.FileOperators;
 import ch.bbv.mda.operators.ModelOperators;
 import ch.bbv.utilities.PropertyUtilities;
 import ch.bbv.utilities.ReflectUtilities;
+import ch.bbv.utilities.SystemUtilities;
 
 /**
  * The default cartridge implementation provides a set of utility methods to
@@ -336,7 +337,7 @@ public abstract class CartridgeImpl implements Cartridge {
       throws IOException {
     assert (root != null) && (packageName != null) && (filename != null)
         && (template != null) && (context != null);
-    File tempFile = File.createTempFile("pmMDA", null, root);
+    File tempFile = File.createTempFile("pmMDA", null, null);
     tempFile.deleteOnExit();
     PrintWriter writer = new PrintWriter(new BufferedOutputStream(
         new FileOutputStream(tempFile)));
@@ -349,7 +350,7 @@ public abstract class CartridgeImpl implements Cartridge {
         log.info("writing file with new artifact content "
             + file.getCanonicalPath());
       }
-      FileOperators.copyFile(tempFile, file);
+      SystemUtilities.copyFile(tempFile, file);
     }
     tempFile.delete();
   }

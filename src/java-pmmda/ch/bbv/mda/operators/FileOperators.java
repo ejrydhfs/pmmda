@@ -17,43 +17,6 @@ import java.util.List;
  */
 public class FileOperators {
   /**
-   * Copies the content of the source directory to the target directory.
-   * @param source source directory to copy.
-   * @param target destination directory.
-   * @throws IOException if the copy operations encountered a IO problem.
-   */
-  public static void copyDirectory(File source, File target) throws IOException {
-    if (source.isDirectory()) {
-      if (!target.exists()) {
-        target.mkdir();
-      }
-      for (String child : source.list()) {
-        copyDirectory(new File(source, child), new File(target, child));
-      }
-      copyFile(source, target);
-    }
-  }
-
-  /**
-   * Copies the source file to the target file.
-   * @param source source file to copy.
-   * @param target target file to copy to.
-   * @throws IOException if the copy operations encountered a IO problem.
-   */
-  public static void copyFile(File source, File target) throws IOException {
-    InputStream in = new FileInputStream(source);
-    OutputStream out = new FileOutputStream(target, false);
-    byte[] buffer = new byte[2048];
-    int length = in.read(buffer);
-    while (length > 0) {
-      out.write(buffer, 0, length);
-      length = in.read(buffer);
-    }
-    in.close();
-    out.close();
-  }
-
-  /**
    * Checks if the two given text files have the same content or not.
    * @param source source file to compare to.
    * @param target target file to compare to.
