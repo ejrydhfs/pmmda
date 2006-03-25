@@ -81,68 +81,7 @@ public class Application extends Locator {
    */
   private static Log log = LogFactory.getLog(Application.class);
 
-  /**
-   * Mode of the client application. All legal values are defined as constants.
-   */
-  private static String mode;
-
   private static String[] args;
-
-  static {
-    mode = USE_J2EE;
-  }
-
-  /**
-   * Default constructor of the class.
-   * @throws ComponentException occured when creating the client application.
-   */
-  public Application() throws ComponentException {
-    this(mode, "REPLACE");
-  }
-
-  /**
-   * Default constructor of the class.
-   * @param mode mode of the client application.
-   * @param synchronization synchronization mode of the O/R system.
-   * @throws ComponentException occured when creating the client application.
-   */
-  public Application(String mode, String synchronization)
-      throws ComponentException {
-    assert mode != null;
-    DataObjectManager manager = null;
-    ORB orb = null;
-    register(this);
-    PersistenceHandler.Mode sync = PersistenceHandler.Mode
-        .valueOf(synchronization);
-    if (mode.equalsIgnoreCase(USE_DIRECT)) {
-      log.info("Application started in direct mode");
-      manager = new DataObjectManager(new PersistenceHandler(false, sync),
-          new LightweightObjectHandlerImpl(), null);
-      register(manager);
-    } else if (mode.equalsIgnoreCase(USE_CORBA)) {
-      log.info("Application started in CORBA mode");
-      manager = new DataObjectManager(new PersistenceHandler(false, sync),
-          new LightweightObjectHandlerImpl(), null);
-      register(manager);
-      orb = ORB.init(args, null);
-      register(orb, ORB_NAME);
-      createCorbaServer("ch.bbv.dnm.users.server.UsersServerCorba");
-    } else if (mode.equalsIgnoreCase(USE_J2EE)) {
-      log.info("Application started in J2EE mode");
-      manager = new DataObjectManager(new PersistenceHandler(true, sync),
-          new LightweightObjectHandlerImpl(), null);
-      register(manager);
-    }
-    TypeFactory factory = new TypeFactory(manager);
-    factory.registerAllTypes();
-    initialize();
-    startup();
-    manager.getDataObjectHandler().openDatasource(USERS_DATABASE, false);
-    // starts the ORB main loop
-    if (mode.equalsIgnoreCase(USE_CORBA)) {
-      orb.run();
-    }
-  }
 
   /**
    * Returns the client application singleton instance. The application uses the
@@ -154,7 +93,7 @@ public class Application extends Locator {
   }
 
   /**
-   * entry point the client application. The arguments of the application
+   * Entry point the client application. The arguments of the application
    * specify the mode.
    * @param args arguments of the client application.
    */
@@ -205,11 +144,56 @@ public class Application extends Locator {
         log.info(Arrays.asList(args));
       }
       // starts the application in the requested mode
-      new Application(mode);
+      new Application(mode, "REPLACE");
     } catch (ComponentException e) {
       log.fatal(e);
     } catch (ParseException e) {
       log.fatal(e);
+    }
+  }
+  
+  /**
+   * Default constructor of the class.
+   * @param mode mode of the client application.
+   * @param synchronization synchronization mode of the O/R system.
+   * @throws ComponentException occured when creating the client application.
+   * @pre (mode != null) && (synchronization != null)
+   */
+  public Application(String mode, String synchronization)
+      throws ComponentException {
+    assert (mode != null) && (synchronization != null);
+    DataObjectManager manager = null;
+    ORB orb = null;
+    register(this);
+    PersistenceHandler.Mode sync = PersistenceHandler.Mode
+        .valueOf(synchronization);
+    if (mode.equalsIgnoreCase(USE_DIRECT)) {
+      log.info("Application started in direct mode");
+      manager = new DataObjectManager(new PersistenceHandler(false, sync),
+          new LightweightObjectHandlerImpl(), null);
+      register(manager);
+    } else if (mode.equalsIgnoreCase(USE_CORBA)) {
+      log.info("Application started in CORBA mode");
+      manager = new DataObjectManager(new PersistenceHandler(false, sync),
+          new LightweightObjectHandlerImpl(), null);
+      register(manager);
+      orb = ORB.init(args, null);
+      register(orb, ORB_NAME);
+      createCorbaServer("ch.bbv.dnm.users.server.UsersServerCorba");
+    } else if (mode.equalsIgnoreCase(USE_J2EE)) {
+      log.info("Application started in J2EE mode");
+      manager = new DataObjectManager(new PersistenceHandler(true, sync),
+          new LightweightObjectHandlerImpl(), null);
+      register(manager);
+    } 
+    TypeFactory factory = new TypeFactory(manager);
+    factory.registerAllTypes();
+    initialize();
+    startup();
+    manager.getDataObjectHandler().openDatasource(USERS_DATABASE, false);
+    // starts the ORB main loop
+    if (mode.equalsIgnoreCase(USE_CORBA)) {
+      orb.run();
     }
   }
 
