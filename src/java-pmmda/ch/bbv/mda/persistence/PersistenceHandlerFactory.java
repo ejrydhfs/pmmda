@@ -1,5 +1,5 @@
 /* 
- * copyright 2000-2005 Marcel Baumann 
+ * copyright 2000-2006 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$
@@ -40,21 +40,23 @@ public class PersistenceHandlerFactory {
    * @pre file != null
    */
   public PersistenceHandler getHandler(File file) {
-    assert (file != null);
+    assert file != null;
     String filename = file.getName().toLowerCase();
-    PersistenceHandler persistencyHandler = null;
+    PersistenceHandler handler = null;
     if (filename.endsWith(".ser")) {
-      persistencyHandler = getSerializeHandler();
+      handler = getSerializeHandler();
     } else if (filename.endsWith(".xml")) {
-      persistencyHandler = getXmlHandler();
+      handler = getXmlHandler();
     } else if (filename.endsWith(".xmi") || filename.endsWith(".zargo")) {
-      persistencyHandler = getNsUmlHandler();
+      handler = getNsUmlHandler();
+    } else if (filename.endsWith("zargo2")) {
+      handler = getMdrHandler();
     } else if (filename.endsWith(".ecore")) {
-      persistencyHandler = getEcoreHandler();
+      handler = getEcoreHandler();
     } else if (filename.endsWith(".mdl") || filename.endsWith(".cat")) {
-      persistencyHandler = getRoseHandler();
+      handler = getRoseHandler();
     }
-    return persistencyHandler;
+    return handler;
   }
 
   /**

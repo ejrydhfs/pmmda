@@ -48,8 +48,8 @@ public class GenerateCartridgeAction extends ExplorerGlobalActionImpl {
 
   /**
    * Constructor of the class.
-   * @param cartridge cartridge which should be called.
-   * @param explorer explorer owning the global action.
+   * @param cartridge cartridge which should be called
+   * @param explorer explorer owning the global action
    */
   public GenerateCartridgeAction(Cartridge cartridge, Explorer explorer) {
     super(createActionName(cartridge), explorer);
@@ -57,38 +57,41 @@ public class GenerateCartridgeAction extends ExplorerGlobalActionImpl {
   }
 
   public boolean execute() {
-    getExplorer().getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+    getExplorer().getFrame().setCursor(
+        Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
     MetaModel model = (MetaModel) getExplorer().getRoot().getDataObject();
     CartridgeFactory factory = CartridgeFactory.getInstance();
     if (model != null) {
       Validator validator = (Validator) Locator.getInstance().getComponent(
-        Validator.NAME);
+          Validator.NAME);
       ValidationRuleResults results = new ValidationRuleResults();
-      AbstractVisitorFunctor visitor = DataObjectManager.getVisitorFor(model.getClass());
+      AbstractVisitorFunctor visitor = DataObjectManager.getVisitorFor(model
+          .getClass());
       validator.validate(model, visitor, results);
-      ((MdaExplorer)getExplorer()).getValidationPanel().setResults(results);
-      // TODO
-      if(false && results.getCount(ValidationRule.ERROR) > 0) {
-        JOptionPane.showMessageDialog(getExplorer().getFrame(), ResourceUtilities
-            .getString("mda.ui.errorMsg.MODEL_HAS_ERRORS"),
+      ((MdaExplorer) getExplorer()).getValidationPanel().setResults(results);
+      if (false && results.getCount(ValidationRule.ERROR) > 0) {
+        JOptionPane.showMessageDialog(getExplorer().getFrame(),
+            ResourceUtilities.getString("mda.ui.errorMsg.MODEL_HAS_ERRORS"),
             ResourceUtilities.getString("mda.ui.errorMsg.ERROR"),
             JOptionPane.ERROR_MESSAGE);
-        getExplorer().getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        getExplorer().getFrame().setCursor(
+            Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         lastResult = false;
         return lastResult;
       }
 
       factory.execute(cartridge, model);
     }
-    getExplorer().getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+    getExplorer().getFrame().setCursor(
+        Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     lastResult = true;
     return lastResult;
   }
 
   /**
    * Creates the action name for the given cartridge.
-   * @param cartridge cartridge which action name should be created.
-   * @return the name of the generation action.
+   * @param cartridge cartridge which action name should be created
+   * @return the name of the generation action
    */
   private static String createActionName(Cartridge cartridge) {
     StringBuilder buffer = new StringBuilder();

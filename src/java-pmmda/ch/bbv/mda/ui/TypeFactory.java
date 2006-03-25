@@ -12,6 +12,7 @@ import java.util.List;
 import ch.bbv.dog.DataObjectManager;
 import ch.bbv.dog.DataObjectType;
 import ch.bbv.explorer.*;
+import ch.bbv.explorer.views.NodeTableView;
 import ch.bbv.mda.*;
 import ch.bbv.mda.graphs.ClassGraphView;
 

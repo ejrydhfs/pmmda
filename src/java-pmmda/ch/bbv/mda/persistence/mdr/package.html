@@ -7,25 +7,45 @@ a class. The first major difference is that the bean concept is data oriented
 and UML is rather method oriented. Second UML has an artificial distinction
 between attributes and aggregations. Beans handle both as indexed properties.</p>
 
+<h2>Rules</h2>
+<p>Synchronization rules should be defined to align the pmMDA model with the
+underlying XMI model. The following rules are identified.</p>
+<ul>
+  <li>Newly added tag values must be added to the corresponding element of the
+  model. This operation must at lest be performed when saving the model.</li>
+  <li>Removed tag values must be removed from the corresponding element of the
+  model. This operation must at lest be performed when saving the model.</li>
+  <li>Modified tag values must also be changed in the corresponding element of
+  the model. This operation must at lest be performed when saving the model.</li>
+  <li>Added attributes - either simple or indexed property with the flag
+  attribute set - should be added to the corresponding element of the model. The
+  operation is realized through the provided factory.</li>
+  <li>Removed attributes - either simple or indexed property with the flag
+  attribute set - should be removed from the corresponding element of the model.
+  The operation is realized through the provided factory.</li>
+</ul>
+<p>The rules for the mutation of relations, classes and pacakges should be
+defined.</p>
+
 <h2>Mapping Rules</h2>
 <p>Mapping rules are necessary to transform attributes and relationships into
 simple and indexed properties. The transformation process uses the following
 rules.</p>
 <ul>
- <li>An attribute with an undefined multiplicity or a multiplicity with a upper
- bound of one is mapped to a simple property.</li>
- <li>An attribute with a multiplicity with a upper bound greater than one is
- mapped to an indexed property. The type of the property is only specified as
- the qualified name of the class or data type. The class object is retrieved at
- runtime.</li>
- <li>An aggregation with an undefined multiplicity or a multiplicity with a
- upper bound of is mapped to an indexed property. The type of the property items
- is only specified as the qualified name of the class or data type. The class
- object is retrieved at runtime.</li>
- <li>An aggregation with a multiplicity with a upper bound greater than one is
- mapped to an indexed property.</li>
- <li>Undefined relations are not mapped.</li>
- <li>Data types are read-only entities in the MDA model.</li>
+  <li>An attribute with an undefined multiplicity or a multiplicity with a upper
+  bound of one is mapped to a simple property.</li>
+  <li>An attribute with a multiplicity with a upper bound greater than one is
+  mapped to an indexed property. The type of the property is only specified as
+  the qualified name of the class or data type. The class object is retrieved at
+  runtime.</li>
+  <li>An aggregation with an undefined multiplicity or a multiplicity with a
+  upper bound of is mapped to an indexed property. The type of the property
+  items is only specified as the qualified name of the class or data type. The
+  class object is retrieved at runtime.</li>
+  <li>An aggregation with a multiplicity with a upper bound greater than one is
+  mapped to an indexed property.</li>
+  <li>Undefined relations are not mapped.</li>
+  <li>Data types are read-only entities in the MDA model.</li>
 </ul>
 <p>A well-designed UML model, which can be used as the basis for code generation
 should only contain directed composite aggregations.</p>

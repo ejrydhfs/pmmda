@@ -11,7 +11,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import ch.bbv.utilities.SystemUtilities;
+import org.apache.commons.io.IOUtils;
 
 /**
  * The Zip file utilities class provides convenience methods to manipulate a ZIP
@@ -51,9 +51,9 @@ public class ZipFileUtilities {
       while (entry != null) {
         output.putNextEntry(new ZipEntry(entry));
         if (!entry.getName().equals(entryName)) {
-          SystemUtilities.copy(input, output);
+          IOUtils.copy(input, output);
         } else {
-          SystemUtilities.copy(stream, output);
+          IOUtils.copy(stream, output);
         }
         input.closeEntry();
         output.closeEntry();

@@ -45,37 +45,35 @@ public class GenerateAllAction extends ExplorerGlobalActionImpl {
 
   /**
    * Default constructor.
-   * @param explorer explorer owning the global action.
+   * @param explorer explorer owning the global action
    */
   public GenerateAllAction(Explorer explorer) {
     super(ACTION, explorer);
   }
 
-  /**
-   * Executes all cartridges available in a row. Sort order as found.
-   * @see ch.bbv.explorer.actions.ExplorerGlobalAction#execute()
-   */
   public boolean execute() {
-    getExplorer().getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+    getExplorer().getFrame().setCursor(
+        Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
     MetaModel model = (MetaModel) getExplorer().getRoot().getDataObject();
     CartridgeFactory factory = CartridgeFactory.getInstance();
     if (model != null) {
       Validator validator = (Validator) Locator.getInstance().getComponent(
           Validator.NAME);
-        ValidationRuleResults results = new ValidationRuleResults();
-        AbstractVisitorFunctor visitor = DataObjectManager.getVisitorFor(model.getClass());
-        validator.validate(model, visitor, results);
-        ((MdaExplorer)getExplorer()).getValidationPanel().setResults(results);
-        // TODO
-        if(false && results.getCount(ValidationRule.ERROR) > 0) {
-          JOptionPane.showMessageDialog(getExplorer().getFrame(), ResourceUtilities
-              .getString("mda.ui.errorMsg.MODEL_HAS_ERRORS"),
-              ResourceUtilities.getString("mda.ui.errorMsg.ERROR"),
-              JOptionPane.ERROR_MESSAGE);
-          getExplorer().getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-          lastResult = false;
-          return lastResult;
-        }
+      ValidationRuleResults results = new ValidationRuleResults();
+      AbstractVisitorFunctor visitor = DataObjectManager.getVisitorFor(model
+          .getClass());
+      validator.validate(model, visitor, results);
+      ((MdaExplorer) getExplorer()).getValidationPanel().setResults(results);
+      if (false && results.getCount(ValidationRule.ERROR) > 0) {
+        JOptionPane.showMessageDialog(getExplorer().getFrame(),
+            ResourceUtilities.getString("mda.ui.errorMsg.MODEL_HAS_ERRORS"),
+            ResourceUtilities.getString("mda.ui.errorMsg.ERROR"),
+            JOptionPane.ERROR_MESSAGE);
+        getExplorer().getFrame().setCursor(
+            Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        lastResult = false;
+        return lastResult;
+      }
       List<Cartridge> cartridges = new ArrayList<Cartridge>(factory
           .getCartridges());
       StatusBar statusBar = getExplorer().getStatusBar();
@@ -89,7 +87,8 @@ public class GenerateAllAction extends ExplorerGlobalActionImpl {
       statusBar.setInfo("Generate All done");
       statusBar.setProgress(0);
     }
-    getExplorer().getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+    getExplorer().getFrame().setCursor(
+        Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     lastResult = true;
     return lastResult;
   }

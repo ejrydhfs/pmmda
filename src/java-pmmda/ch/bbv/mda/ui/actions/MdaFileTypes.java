@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann
+/* copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -8,16 +8,17 @@ package ch.bbv.mda.ui.actions;
 
 import javax.swing.JFileChooser;
 
+import ch.bbv.explorer.actions.FileTypes;
 import ch.bbv.explorer.actions.SimpleFileFilter;
 import ch.bbv.utilities.ReflectUtilities;
 
 /**
- * The interface defines all the file extensions and descriptive text for the
- * file types supported in the application.
+ * The class defines all the file extensions and descriptive text for the file
+ * types supported in the application.
  * @author MarcelBaumann
  * @version $Revision$
  */
-public class FileTypes {
+public class MdaFileTypes extends FileTypes {
   /**
    * File extensions for models developed with ArgoUML.
    */
@@ -90,43 +91,71 @@ public class FileTypes {
   public static final String XMI_TEXT = "XMI models (*.xmi)";
 
   /**
+   * The singleton instance.
+   */
+  private static MdaFileTypes instance;
+
+  static {
+    instance = new MdaFileTypes();
+  }
+
+  /**
+   * Returns the singleton instance.
+   * @return the singleton instance
+   */
+  public static MdaFileTypes getInstance() {
+    return instance;
+
+  }
+
+  /**
+   * Private constructor for the singleton class.
+   */
+  private MdaFileTypes() {
+    setDefaultExtension(ARGOUML_EXT[0]);
+    add(new SimpleFileFilter(POSEIDON_EXT, POSEIDON_TEXT));
+    add(new SimpleFileFilter(SERIALIZE_EXT, SERIALIZE_TEXT));
+    add(new SimpleFileFilter(XMI_EXT, XMI_TEXT));
+    add(new SimpleFileFilter(XML_EXT, XML_TEXT));
+    add(new SimpleFileFilter(ARGOUML_EXT, ARGOUML_TEXT));
+  }
+
+  /**
    * Adds all file filters defined for the MDA application.
    * @param chooser file chooser to which the file filters must be added.
    */
-  public static void addFileFilters(JFileChooser chooser) {
+  public void addFileFilters(JFileChooser chooser) {
     Class[] types = { JFileChooser.class };
     Object[] params = { chooser };
     if (ReflectUtilities.exists("ch.bbv.mda.ui.eclipse.EclipseUtilities")) {
       ReflectUtilities.execute("ch.bbv.mda.ui.eclipse.EclipseUtilities",
           "addEclipseFileFilters", types, params);
     }
-    chooser.addChoosableFileFilter(new SimpleFileFilter(FileTypes.POSEIDON_EXT,
-        FileTypes.POSEIDON_TEXT));
-    chooser.addChoosableFileFilter(new SimpleFileFilter(
-        FileTypes.SERIALIZE_EXT, FileTypes.SERIALIZE_TEXT));
-    chooser.addChoosableFileFilter(new SimpleFileFilter(FileTypes.XMI_EXT,
-        FileTypes.XMI_TEXT));
-    chooser.addChoosableFileFilter(new SimpleFileFilter(FileTypes.XML_EXT,
-        FileTypes.XML_TEXT));
-    chooser.addChoosableFileFilter(new SimpleFileFilter(FileTypes.ARGOUML_EXT,
-        FileTypes.ARGOUML_TEXT));
-
+    super.addFileFilters(chooser);
   }
-  
-  /** Returns the first extension in the list of a filter description.
-   * 
+
+  /**
+   * Returns the first extension in the list of a filter description.
    * @param filterDescription to search for an extension.
    * @return extension (without '.' at the beginning) or null if none found.
    */
-  public static String getBestMatchingExtension(String filterDescription) {
-    if(filterDescription == null) return null;
-    if(filterDescription.equals(FileTypes.POSEIDON_TEXT)) return FileTypes.POSEIDON_EXT[0];
-    if(filterDescription.equals(FileTypes.SERIALIZE_TEXT)) return FileTypes.SERIALIZE_EXT[0];
-    if(filterDescription.equals(FileTypes.XMI_TEXT)) return FileTypes.XMI_EXT[0];
-    if(filterDescription.equals(FileTypes.XML_TEXT)) return FileTypes.XML_EXT[0];
-    if(filterDescription.equals(FileTypes.ARGOUML_TEXT)) return FileTypes.ARGOUML_EXT[0];
-    if(filterDescription.equals(FileTypes.RATIONAL_ROSE_TEXT)) return FileTypes.RATIONAL_ROSE_EXT[0];
-    if(filterDescription.equals(FileTypes.RATIONAL_ROSE_CAT_TEXT)) return FileTypes.RATIONAL_ROSE_CAT_EXT[0];
+  public String getBestMatchingExtension(String filterDescription) {
+    if (filterDescription == null)
+      return null;
+    if (filterDescription.equals(MdaFileTypes.POSEIDON_TEXT))
+      return MdaFileTypes.POSEIDON_EXT[0];
+    if (filterDescription.equals(MdaFileTypes.SERIALIZE_TEXT))
+      return MdaFileTypes.SERIALIZE_EXT[0];
+    if (filterDescription.equals(MdaFileTypes.XMI_TEXT))
+      return MdaFileTypes.XMI_EXT[0];
+    if (filterDescription.equals(MdaFileTypes.XML_TEXT))
+      return MdaFileTypes.XML_EXT[0];
+    if (filterDescription.equals(MdaFileTypes.ARGOUML_TEXT))
+      return MdaFileTypes.ARGOUML_EXT[0];
+    if (filterDescription.equals(MdaFileTypes.RATIONAL_ROSE_TEXT))
+      return MdaFileTypes.RATIONAL_ROSE_EXT[0];
+    if (filterDescription.equals(MdaFileTypes.RATIONAL_ROSE_CAT_TEXT))
+      return MdaFileTypes.RATIONAL_ROSE_CAT_EXT[0];
     return null;
   }
 }

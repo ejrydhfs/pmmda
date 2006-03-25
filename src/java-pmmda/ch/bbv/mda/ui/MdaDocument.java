@@ -8,6 +8,8 @@ package ch.bbv.mda.ui;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.commons.io.FileUtils;
+
 import ch.bbv.explorer.ExplorerDocument;
 import ch.bbv.explorer.ExplorerDocumentImpl;
 import ch.bbv.mda.MetaModel;
@@ -16,7 +18,6 @@ import ch.bbv.mda.persistence.PersistenceException;
 import ch.bbv.mda.persistence.PersistenceHandler;
 import ch.bbv.mda.persistence.PersistenceHandlerFactory;
 import ch.bbv.mda.pim.CodeTypeMgr;
-import ch.bbv.utilities.SystemUtilities;
 
 /**
  * The document represents a document loaded in memory containing a MDA model
@@ -105,11 +106,11 @@ public class MdaDocument extends ExplorerDocumentImpl implements
     File root = codeTypeMgr.getRoot();
     File newRoot = file.getParentFile();
     File target = new File(newRoot, CODES_DIRECTORY);
-    SystemUtilities.deleteDirectory(target);
+    FileUtils.deleteDirectory(target);
     if (root != null) {
-      SystemUtilities.copyDirectory(new File(root, CODES_DIRECTORY), target);
+      FileUtils.copyDirectory(root, target);
     }
-    codeTypeMgr.setRoot(new File(newRoot, CODES_DIRECTORY));
+    codeTypeMgr.setRoot(target);
     codeTypeMgr.saveAll();
     PersistenceHandler handler = factory.getHandler(file);
     handler.writeModel(model, file);

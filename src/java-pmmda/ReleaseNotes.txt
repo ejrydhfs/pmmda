@@ -37,7 +37,7 @@ The following errors were corrected
   is saved.
 
 The following errors and change requests are closed 
-  Errors: 1387300, 1379486, 1387983
+  Errors: 1387300, 1379486, 1387983, 1379486
 
 Version 0.3.0-RC2 (25 December 2005)
 ------------------------------------

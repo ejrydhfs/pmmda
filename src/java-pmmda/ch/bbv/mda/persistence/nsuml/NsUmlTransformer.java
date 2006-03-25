@@ -261,24 +261,6 @@ public class NsUmlTransformer {
     }
   }
 
-  private void extractDataType(MClassifier mClass, MetaModel metaModel) {
-    assert ((mClass != null) && (metaModel != null));
-
-    String name = mClass.getName();
-    if (name == null) {
-      if (log.isErrorEnabled()) {
-        log.error("Parsed data type without name in model ");
-      }
-      return;
-    }
-    MetaDatatype metaDatatype = metaModel.findDatatype(name);
-    if (metaDatatype == null) {
-      metaDatatype = new MetaDatatype();
-      metaDatatype.setName(name);
-      metaModel.addDatatype(metaDatatype);
-    }
-  }
-
   /**
    * Extracts the property from the attribute and synchronizes the target.
    * @param attribute attribute containing the data.

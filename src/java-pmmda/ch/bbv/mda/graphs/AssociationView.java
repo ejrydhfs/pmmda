@@ -41,44 +41,42 @@ public class AssociationView extends EdgeView {
    * @return the map of graphical attributes discribing the association.
    */
   private AttributeMap createAttributes() {
-    AttributeMap attributes = getAttributes();
+    AttributeMap style = getAttributes();
     AssociationEdge edge = (AssociationEdge) cell;
 
     if (edge.isInheritance()) {
-      GraphConstants.setLineBegin(attributes, GraphConstants.ARROW_NONE);
-      GraphConstants.setLineEnd(attributes, GraphConstants.ARROW_SIMPLE);
-      GraphConstants.setEndSize(attributes, 10);
-      GraphConstants.setDashPattern(attributes, new float[] { 3, 3 });
+      GraphConstants.setLineBegin(style, GraphConstants.ARROW_NONE);
+      GraphConstants.setLineEnd(style, GraphConstants.ARROW_TECHNICAL);
+      GraphConstants.setEndSize(style, 15);
+      GraphConstants.setDashPattern(style, new float[] { 3, 3 });
     } else if (edge.isRealizes()) {
-      GraphConstants.setLineBegin(attributes, GraphConstants.ARROW_NONE);
-      GraphConstants.setLineEnd(attributes, GraphConstants.ARROW_SIMPLE);
-      GraphConstants.setEndSize(attributes, 10);
-      GraphConstants.setDashPattern(attributes, new float[] { 3, 3 });
+      GraphConstants.setLineBegin(style, GraphConstants.ARROW_NONE);
+      GraphConstants.setLineEnd(style, GraphConstants.ARROW_TECHNICAL);
+      GraphConstants.setEndSize(style, 15);
+      GraphConstants.setDashPattern(style, new float[] { 3, 3 });
     } else {
       // aggregation, composition
       if (edge.isStartNavigable() && edge.isEndNavigable()) {
-        GraphConstants.setLineEnd(attributes, GraphConstants.ARROW_NONE);
-        GraphConstants.setLineBegin(attributes, GraphConstants.ARROW_NONE);
+        GraphConstants.setLineEnd(style, GraphConstants.ARROW_NONE);
+        GraphConstants.setLineBegin(style, GraphConstants.ARROW_NONE);
       } else if (edge.isStartNavigable()) {
-        GraphConstants.setLineBegin(attributes, GraphConstants.ARROW_SIMPLE);
-        GraphConstants.setBeginSize(attributes, 10);
+        GraphConstants.setLineBegin(style, GraphConstants.ARROW_SIMPLE);
+        GraphConstants.setBeginSize(style, 10);
       } else {
-        GraphConstants.setLineEnd(attributes, GraphConstants.ARROW_SIMPLE);
-        GraphConstants.setEndSize(attributes, 10);
+        GraphConstants.setLineEnd(style, GraphConstants.ARROW_SIMPLE);
+        GraphConstants.setEndSize(style, 10);
       }
-
       if (edge.isAggregate() || edge.isComposite()) {
-        GraphConstants.setLineEnd(attributes, GraphConstants.ARROW_DIAMOND);
-        GraphConstants.setEndSize(attributes, 16);
-
+        GraphConstants.setLineEnd(style, GraphConstants.ARROW_DIAMOND);
+        GraphConstants.setEndSize(style, 16);
         if (edge.isAggregate()) {
-          GraphConstants.setEndFill(attributes, true);
+          GraphConstants.setEndFill(style, true);
         } else {
-          GraphConstants.setEndFill(attributes, false);
+          GraphConstants.setEndFill(style, false);
         }
       }
     }
-    return attributes;
+    return style;
   }
 
   static class AssociationRenderer extends EdgeRenderer {

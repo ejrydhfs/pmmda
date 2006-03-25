@@ -17,6 +17,7 @@ import org.apache.commons.configuration.CompositeConfiguration;
 import org.apache.commons.configuration.ConfigurationConverter;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.Template;
@@ -33,7 +34,6 @@ import ch.bbv.mda.operators.FileOperators;
 import ch.bbv.mda.operators.ModelOperators;
 import ch.bbv.utilities.PropertyUtilities;
 import ch.bbv.utilities.ReflectUtilities;
-import ch.bbv.utilities.SystemUtilities;
 
 /**
  * The default cartridge implementation provides a set of utility methods to
@@ -350,7 +350,7 @@ public abstract class CartridgeImpl implements Cartridge {
         log.info("writing file with new artifact content "
             + file.getCanonicalPath());
       }
-      SystemUtilities.copyFile(tempFile, file);
+      FileUtils.copyFile(tempFile, file);
     }
     tempFile.delete();
   }
@@ -538,7 +538,6 @@ public abstract class CartridgeImpl implements Cartridge {
    * @param language language to map to. A cartridge can define multiple
    *          mappings of datatypes and model types to target programming
    *          language.
-   * @param dialect of language (e.g. "mssqlserver" for "sql" language).
    * @param concrete flag indicating if the implementation class should be
    *          retrieve or not.
    * @return the requested mapping if found otherwise the qualified name of the

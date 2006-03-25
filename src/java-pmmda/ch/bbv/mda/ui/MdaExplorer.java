@@ -295,7 +295,7 @@ public class MdaExplorer extends Explorer {
     info.setName("pmMDA - poor man Model Driven Architecture -");
     info.setVersion(new VersionId(0, 3, 0, "RC3"));
     info.setContributors(getContributors());
-    info.setLibraries(getLibrairies());
+    info.setLibraries(getLibraries());
     return info;
   }
 
@@ -313,39 +313,41 @@ public class MdaExplorer extends Explorer {
   }
 
   /**
-   * Returns a list of all librairies used in the project.
-   * @return list of used librairies.
+   * Returns a list of all libraries used in the project.
+   * @return list of used libraries.
    */
-  private List<Library> getLibrairies() {
-    List<Library> librairies = new ArrayList<Library>();
-    librairies.add(new Library("commons-beanutils", new VersionId(1, 7, 0),
+  private List<Library> getLibraries() {
+    List<Library> libraries = new ArrayList<Library>();
+    libraries.add(new Library("commons-beanutils", new VersionId(1, 7, 0),
         "Apache License", "http://jakarta.apache.org/commons"));
-    librairies.add(new Library("commons-cli", new VersionId(1, 0, 0),
+    libraries.add(new Library("commons-cli", new VersionId(1, 0, 0),
         "Apache License", "http://jakarta.apache.org/cli"));
-    librairies.add(new Library("commons-collections", new VersionId(3, 1, 0),
+    libraries.add(new Library("commons-collections", new VersionId(3, 1, 0),
         "Apache License", "http://jakarta.apache.org/commons"));
-    librairies.add(new Library("commons-logging", new VersionId(1, 0, 4),
+    libraries.add(new Library("commons-io", new VersionId(1, 2, 0),
         "Apache License", "http://jakarta.apache.org/commons"));
-    librairies.add(new Library("commons-logging-api", new VersionId(1, 0, 4),
+    libraries.add(new Library("commons-logging", new VersionId(1, 0, 4),
         "Apache License", "http://jakarta.apache.org/commons"));
-    librairies.add(new Library("forms", new VersionId(1, 0, 6), "OBSD License",
+    libraries.add(new Library("commons-logging-api", new VersionId(1, 0, 4),
+        "Apache License", "http://jakarta.apache.org/commons"));
+    libraries.add(new Library("forms", new VersionId(1, 0, 6), "OBSD License",
         "www.jgoodies.com"));
-    librairies.add(new Library("glazedlists", new VersionId(1, 5, 0), "LGPL",
+    libraries.add(new Library("glazedlists", new VersionId(1, 5, 0), "LGPL",
         "www.publicobject.com/glazedlists"));
-    librairies.add(new Library("jgraph", new VersionId(5, 4, 5), "LGPL/BSD",
+    libraries.add(new Library("jgraph", new VersionId(5, 4, 5), "LGPL/BSD",
         "www.jgraph.com"));
-    librairies.add(new Library("jgraphaddons", new VersionId(1, 0, 7),
+    libraries.add(new Library("jgraphaddons", new VersionId(1, 0, 7),
         "LGPL/BSD", "www.jgraph.com"));
-    librairies.add(new Library("jcalendar", new VersionId(1, 2, 1), "LGPL",
+    libraries.add(new Library("jcalendar", new VersionId(1, 2, 1), "LGPL",
         "www.toedter.com/jcalendar"));
-    librairies.add(new Library("velocity", new VersionId(1, 4, 0),
+    libraries.add(new Library("velocity", new VersionId(1, 4, 0),
         "Apache License", "http://jakarta.apache.org/velocity"));
-    librairies.add(new Library("velocity-dep", new VersionId(1, 4, 0),
+    libraries.add(new Library("velocity-dep", new VersionId(1, 4, 0),
         "Apache License", "http://jakarta.apache.org/velocity"));
-    librairies.add(new Library("xpp3", new VersionId(1, 1, 3), "BSD License",
+    libraries.add(new Library("xpp3", new VersionId(1, 1, 3), "BSD License",
         "http://www.extreme.indiana.edu"));
-    librairies.add(new Library("xstream", new VersionId(1, 1, 2),
+    libraries.add(new Library("xstream", new VersionId(1, 1, 2),
         "BSD License", "http://xtream.codehaus.org"));
-    return librairies;
+    return libraries;
   }
 }

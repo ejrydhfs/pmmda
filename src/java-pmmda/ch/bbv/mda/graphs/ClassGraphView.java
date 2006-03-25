@@ -10,7 +10,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.swing.JPanel;
@@ -18,7 +17,7 @@ import javax.swing.JScrollPane;
 
 import org.jgraph.JGraph;
 import org.jgraph.graph.*;
-import org.jgraph.layout.AnnealingLayoutAlgorithm;
+import org.jgraph.layout.RadialTreeLayoutAlgorithm;
 import org.jgraph.util.JGraphUtilities;
 
 import ch.bbv.explorer.ExplorerNode;
@@ -53,6 +52,11 @@ public class ClassGraphView extends JPanel implements NodeView {
    * The graph view on the graph model.
    */
   private JGraph graph;
+
+  /**
+   * Layout algorithm for the class diagram.
+   */
+  RadialTreeLayoutAlgorithm layout;
 
   private Map<GraphCell, Map> attributes;
 
@@ -90,6 +94,7 @@ public class ClassGraphView extends JPanel implements NodeView {
     graph = new JGraph(model);
     graph.setEditable(false);
     graph.getGraphLayoutCache().setFactory(new UmlCellViewFactory());
+    layout = new RadialTreeLayoutAlgorithm();
     pane = new JScrollPane(graph);
     add(pane, BorderLayout.CENTER);
   }
@@ -114,7 +119,7 @@ public class ClassGraphView extends JPanel implements NodeView {
     MetaElement element = (MetaElement) node.getDataObject();
     if (element instanceof MetaClass) {
       generateDependencies((MetaClass) element);
-      JGraphUtilities.applyLayout(graph, new AnnealingLayoutAlgorithm());
+      JGraphUtilities.applyLayout(graph, layout);
     }
   }
 
@@ -141,10 +146,8 @@ public class ClassGraphView extends JPanel implements NodeView {
    */
   protected void generateDependencies(MetaClass clazz) {
     MetaModel model = clazz.getModel();
-    List<MetaProperty> properties = clazz.getProperties();
-    List<MetaIndexedProperty> indexedProperties = clazz.getIndexedProperties();
     GraphCell source = createVertex(clazz);
-    for (MetaProperty property : properties) {
+    for (MetaProperty property : clazz.getProperties()) {
       String qualifiedName = property.getTypeName();
       MetaClass type = model.findClass(qualifiedName);
       if ((type != null)
@@ -152,10 +155,11 @@ public class ClassGraphView extends JPanel implements NodeView {
               .getStereotype()) || BoConstants.REFERENCE_CODE_STEREOTYPE
               .equalsIgnoreCase(type.getStereotype()))) {
         GraphCell target = createVertex(type);
-        createEdge(source, target, property, AssociationEdge.Type.aggregation);
+        createEdge(source, target, property.getName(),
+            AssociationEdge.Type.aggregation);
       }
     }
-    for (MetaIndexedProperty property : indexedProperties) {
+    for (MetaIndexedProperty property : clazz.getIndexedProperties()) {
       String qualifiedName = property.getTypeName();
       MetaClass type = model.findClass(qualifiedName);
       if ((type != null)
@@ -163,8 +167,17 @@ public class ClassGraphView extends JPanel implements NodeView {
               .getStereotype()) || BoConstants.REFERENCE_CODE_STEREOTYPE
               .equalsIgnoreCase(type.getStereotype()))) {
         GraphCell target = createVertex(type);
-        createEdge(source, target, property, AssociationEdge.Type.aggregation);
+        createEdge(source, target, property.getName(),
+            AssociationEdge.Type.aggregation);
       }
+    }
+    for (MetaClass ancestor : clazz.retrieveAncestors()) {
+      GraphCell target = createVertex(ancestor);
+      createEdge(source, target, null, AssociationEdge.Type.inheritance);
+    }
+    for (MetaClass interfaces : clazz.retrieveInterfaces()) {
+      GraphCell target = createVertex(interfaces);
+      createEdge(source, target, null, AssociationEdge.Type.inheritance);
     }
   }
 
@@ -184,10 +197,10 @@ public class ClassGraphView extends JPanel implements NodeView {
     return node;
   }
 
-  protected Edge createEdge(GraphCell source, GraphCell target,
-      MetaProperty property, AssociationEdge.Type type) {
+  protected Edge createEdge(GraphCell source, GraphCell target, String name,
+      AssociationEdge.Type type) {
     // AssociatonEdge edge = new AssociationEdge();
-    DefaultEdge edge = new DefaultEdge(property.getName());
+    DefaultEdge edge = new DefaultEdge(name);
     Map edgeAttributes = new HashMap();
     int arrow = GraphConstants.ARROW_CLASSIC;
     Port sourcePort = getDefaultPort(source);

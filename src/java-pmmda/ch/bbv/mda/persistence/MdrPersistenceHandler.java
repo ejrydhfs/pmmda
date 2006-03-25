@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann 
+/* copyright 2000-2006 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$ 
@@ -6,6 +6,10 @@
 package ch.bbv.mda.persistence;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import javax.jmi.reflect.RefPackage;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -39,6 +43,13 @@ public class MdrPersistenceHandler implements PersistenceHandler {
   }
 
   public MetaModel readModel(File file) throws PersistenceException {
+    try {
+      RefPackage packages = mdrTransformer.loadArgoModel(file);
+    } catch (FileNotFoundException e) {
+      log.error(e);
+    } catch (IOException e) {
+      log.error(e);
+    }
     return null;
   }
 

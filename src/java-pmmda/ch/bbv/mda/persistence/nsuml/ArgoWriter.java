@@ -13,8 +13,9 @@ import java.text.MessageFormat;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import org.apache.commons.io.IOUtils;
+
 import ch.bbv.mda.persistence.PersistenceException;
-import ch.bbv.utilities.SystemUtilities;
 
 /**
  * Returns the content of the *.argo file within a *.zargo archive readable to
@@ -69,7 +70,7 @@ public class ArgoWriter {
           file.getName().indexOf(ARGOUML_EXT))
           + XMI_EXT);
       output.putNextEntry(new ZipEntry(entry));
-      SystemUtilities.copy(inputStream, output);
+      IOUtils.copy(inputStream, output);
       output.closeEntry();
       inputStream.close();
       entry = new ZipEntry(file.getName().substring(0,

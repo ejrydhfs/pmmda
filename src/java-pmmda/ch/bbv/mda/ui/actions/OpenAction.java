@@ -6,7 +6,6 @@
  */
 package ch.bbv.mda.ui.actions;
 
-import java.awt.Cursor;
 import java.io.File;
 import java.text.MessageFormat;
 
@@ -46,20 +45,19 @@ public class OpenAction extends ExplorerFileAction {
   public OpenAction(Explorer explorer) {
     super(ACTION, explorer);
     shouldSaveAndProceed = true;
-    FileTypes.addFileFilters(getFileChooser());
+    MdaFileTypes.getInstance().addFileFilters(getFileChooser());
   }
 
   public boolean execute() {
     File file = getSelectedFile();
     MdaExplorer explorer = (MdaExplorer) getExplorer();
-    explorer.getFrame().setCursor(
-        Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+    switchWaitCursor(true);
     try {
       MdaDocument document = new MdaDocument();
       String name = file.getName();
       if (name != null && (name.lastIndexOf('.') == -1 || name.endsWith("."))) {
-        name = FileTypes.getBestMatchingExtension(getFileChooser()
-            .getFileFilter().getDescription());
+        name = MdaFileTypes.getInstance().getBestMatchingExtension(
+            getFileChooser().getFileFilter().getDescription());
         if (name != null && !file.getName().endsWith(".")) {
           name = "." + name;
         }
@@ -95,13 +93,13 @@ public class OpenAction extends ExplorerFileAction {
       lastResult = false;
       return lastResult;
     } finally {
-      explorer.getFrame().setCursor(
-          Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+      switchWaitCursor(false);
     }
     lastResult = true;
     return lastResult;
   }
 
+  @Override
   protected int display() {
     return getFileChooser().showOpenDialog(getExplorer().getFrame());
   }

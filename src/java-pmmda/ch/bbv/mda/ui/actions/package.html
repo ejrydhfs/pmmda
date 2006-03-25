@@ -9,5 +9,22 @@ supported extensions and their displayed names should be the same to provide a
 coherent user interface. These extensions and their names are defined in a
 utility class accessible to all action instances.</p>
 
+<h2>File Extensions</h2>
+<p>File extension support is provided through the classes simple file filter and
+file types. An application can define a set of extensions it supports. The
+following features are provided.</p>
+<ul>
+  <li>Each supported set of extensions is defined in a simple file filter
+  instance. A filter can handle one or more extensions. The open and save as
+  file selection dialog use these filters to select the files of interest</li>
+  <li>Each filter can define a default extension. If the user write a filename
+  without extension this default extension can be appended.</li>
+  <li>A default extension can be defined for the application and is used if the
+  user do not specify a filter.</li>
+  <li>Methods are provided to normalize file names and add the expected
+  extension</li>
+</ul>
+<p>The application is free to either add an default extension if the filename is
+missing an extension or provide an error message.</p>
 @since Java 2 Platform, Standard Edition, version 1.5
 </body>

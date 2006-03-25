@@ -6,7 +6,6 @@
  */
 package ch.bbv.mda.ui.actions;
 
-import java.awt.Cursor;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -14,6 +13,7 @@ import java.util.Arrays;
 
 import javax.swing.JOptionPane;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -24,7 +24,6 @@ import ch.bbv.mda.persistence.PersistenceException;
 import ch.bbv.mda.ui.MdaDocument;
 import ch.bbv.mda.ui.MdaExplorer;
 import ch.bbv.utilities.ResourceUtilities;
-import ch.bbv.utilities.SystemUtilities;
 
 /**
  * The save as action for the user interface of <em>pmMDA</em> application.
@@ -62,7 +61,7 @@ public class SaveAsAction extends ExplorerFileAction {
    */
   public SaveAsAction(Explorer explorer) {
     super(ACTION, explorer);
-    FileTypes.addFileFilters(getFileChooser());
+    MdaFileTypes.getInstance().addFileFilters(getFileChooser());
   }
 
   public boolean execute() {
@@ -71,42 +70,34 @@ public class SaveAsAction extends ExplorerFileAction {
       return lastResult;
     }
     File file = getSelectedFile();
-    String name = file.getName();
-    if (name != null && (name.lastIndexOf('.') == -1 || name.endsWith("."))) {
-      name = FileTypes.getBestMatchingExtension(getFileChooser()
-          .getFileFilter().getDescription());
-      if (name != null && !file.getName().endsWith(".")) {
-        name = "." + name;
-      }
-      if (name != null)
-        file = new File(file.getPath() + name);
-    }
-    String extension = SystemUtilities.getFileExtension(file);
-    if (extension == null) {
-      JOptionPane.showMessageDialog(getExplorer().getFrame(), ResourceUtilities
-          .getString("mda.ui.errorMsg.ILLEGAL_FILE_NAME_OR_TYPE"),
-          ResourceUtilities.getString("mda.ui.errorMsg.ERROR"),
-          JOptionPane.ERROR_MESSAGE);
-      lastResult = false;
-      return lastResult;
-    }
-    extension = extension.toLowerCase();
-    getExplorer().getFrame().setCursor(
-        Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+    switchWaitCursor(true);
     try {
-      if (Arrays.binarySearch(FileTypes.ARGOUML_EXT, extension) >= 0) {
+      String extension = FilenameUtils.getExtension(file.getCanonicalPath());
+      if (extension == null) {
+        file = MdaFileTypes.getInstance().normalizeFile(
+          getFileChooser().getFileFilter(), file);
+      }
+      extension = FilenameUtils.getExtension(file.getCanonicalPath());
+      if (extension == null) {
+        JOptionPane.showMessageDialog(getExplorer().getFrame(),
+            ResourceUtilities
+                .getString("mda.ui.errorMsg.ILLEGAL_FILE_NAME_OR_TYPE"),
+            ResourceUtilities.getString("mda.ui.errorMsg.ERROR"),
+            JOptionPane.ERROR_MESSAGE);
+        lastResult = false;
+        return lastResult;
+      }
+      extension = extension.toLowerCase();
+      if (Arrays.binarySearch(MdaFileTypes.ARGOUML_EXT, extension) >= 0) {
         writeModel(file);
-      } else if (Arrays.binarySearch(FileTypes.POSEIDON_EXT, extension) >= 0) {
+      } else if (Arrays.binarySearch(MdaFileTypes.POSEIDON_EXT, extension) >= 0) {
         JOptionPane.showMessageDialog(null,
             "Poseidon Save Option Not Supported", "Not Yet Implemented",
             JOptionPane.ERROR_MESSAGE);
-      } else if (Arrays.binarySearch(FileTypes.XML_EXT, extension) >= 0) {
-        writeModel(file);
-      } else if (Arrays.binarySearch(FileTypes.SERIALIZE_EXT, extension) >= 0) {
-        writeModel(file);
-      } else if (Arrays.binarySearch(FileTypes.XMI_EXT, extension) >= 0) {
-        writeModel(file);
-      } else if (Arrays.binarySearch(FileTypes.RATIONAL_ROSE_EXT, extension) >= 0) {
+      } else if ((Arrays.binarySearch(MdaFileTypes.XML_EXT, extension) >= 0)
+          || (Arrays.binarySearch(MdaFileTypes.SERIALIZE_EXT, extension) >= 0)
+          || (Arrays.binarySearch(MdaFileTypes.XMI_EXT, extension) >= 0)
+          || (Arrays.binarySearch(MdaFileTypes.RATIONAL_ROSE_EXT, extension) >= 0)) {
         writeModel(file);
       } else {
         JOptionPane.showMessageDialog(getExplorer().getFrame(),
@@ -115,12 +106,11 @@ public class SaveAsAction extends ExplorerFileAction {
             ResourceUtilities.getString("mda.ui.sorryMsg.SORRY"),
             JOptionPane.ERROR_MESSAGE);
       }
-    } catch (PersistenceException e) {
+    } catch (Exception e) {
       lastResult = false;
       return lastResult;
     } finally {
-      getExplorer().getFrame().setCursor(
-          Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+      switchWaitCursor(false);
     }
     ExplorerDocument document = getExplorer().getDocument();
     document.setModified(false);
@@ -168,6 +158,7 @@ public class SaveAsAction extends ExplorerFileAction {
     }
   }
 
+  @Override
   protected int display() {
     return getFileChooser().showSaveDialog(getExplorer().getFrame());
   }
