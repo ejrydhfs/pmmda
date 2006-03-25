@@ -82,7 +82,7 @@
         </tr>
         <tr>
           <td>antlr</td>
-          <td>2.7.3</td>
+          <td>2.7.5</td>
           <td>Open Source</td>
           <td>
             <a href="http://www.antlr.org">ANTLR</a>
@@ -150,6 +150,14 @@
           <td>Apache License</td>
           <td>
             <a href="ext:jakarta/commons-digester">Jakarta Commons Digester</a>
+          </td>
+        </tr>
+        <tr>
+          <td>commons-io</td>
+          <td>1.2</td>
+          <td>Apache License</td>
+          <td>
+            <a href="ext:jakarta/commons-io">Jakarta Commons IO</a>
           </td>
         </tr>
         <tr>

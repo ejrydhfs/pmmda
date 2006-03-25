@@ -100,7 +100,7 @@
       <question>Where do I find the used libraries (jar files)?</question>
       <answer>
         <p>
-          All librairies used in the projects can be donwloaded as a zip file
+          All libraries used in the projects can be donwloaded as a zip file
           from the sourceforge project home page. The project team uses the
           convention that no binary files should be stored in the version
           management system. Therefore the jar files cannot be found in the

@@ -22,13 +22,14 @@ import ch.bbv.explorer.PopupSelectorDefault;
 import java.util.ArrayList;
 import java.util.List;
 import ch.bbv.explorer.*;
+import ch.bbv.explorer.views.*;
 
 
 /* %% USER DEFINED DECLARATIONS START %% */
 /* %% USER DEFINED DECLARATIONS END   %% */
 
 /** 
- * The type factory defines all the rich client types defining the data object
+ * The type factory defines all the rich client types containing the data object
  * class and their lightweight association. The factory is used to initialize 
  * the OEX framework during runtime.
  */
@@ -72,8 +73,13 @@ public class TypeFactory extends AbstractTypeFactory {
       ${boClass}.class, ${ifClass}.class, VisitorFunctor.class, 
       LwVisitorFunctor.class, LwTransformer.class);
     type.setRoot(${class.booleanValueOfTag("bo-is-root")});
+#set($view=false)
+#set($view=${class.valueOfTag("oex-view-class")})
+#if(!$view)
+#set($view="GenericNodePropertiesView")
+#end
     UiNodeTypeImpl nodeType = new UiNodeTypeImpl(type, "name", 
-      GenericNodePropertiesView.class);
+      ${view}.class);
 #set($relations = ${class.getIndexedProperties()})
 #foreach($relation in $relations)
 #set($lName = ${relation.nameFirstLower()})

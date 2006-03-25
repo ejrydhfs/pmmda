@@ -65,6 +65,7 @@
     <copy file="${lib.dir}/${commons-cli.lib}" todir="${pmmda-lib.dir}" />
     <copy file="${lib.dir}/${commons-collections.lib}" todir="${pmmda-lib.dir}" />
     <copy file="${lib.dir}/${commons-configuration.lib}" todir="${pmmda-lib.dir}" />
+    <copy file="${lib.dir}/${commons-io.lib}" todir="${pmmda-lib.dir}" />
     <copy file="${lib.dir}/${commons-lang.lib}" todir="${pmmda-lib.dir}" />
     <copy file="${lib.dir}/${commons-logging.lib}" todir="${pmmda-lib.dir}" />
     <copy file="${lib.dir}/${commons-logging-api.lib}" todir="${pmmda-lib.dir}" />
@@ -112,7 +113,7 @@
     <antcall target="pmmda-examples" />
     <echo message="generate pmMDA distribution as zipped tar file" />
     <tar destfile="${dist.dir}/${pmmda.name}-${pmmda.version}.tar.gz" basedir="${pmmda-dist.dir}" compression="gzip" />
-    <echo message="generate archive files of all librairies" />
+    <echo message="generate archive files of all libraries" />
     <zip destfile="${dist.dir}/${pmmda.name}-dev-libs-${pmmda.version}.zip" basedir="${lib.dir}" update="true" />
     <zip destfile="${dist.dir}/${pmmda.name}-dev-metrics-libs-${pmmda.version}.zip" basedir="${scripts.lib.dir}" update="true" />
   </target>
@@ -124,6 +125,7 @@
     <copy file="${lib.dir}/${antlr.lib}" todir="${dog-lib.dir}" />
     <copy file="${lib.dir}/${commons-beanutils.lib}" todir="${dog-lib.dir}" />
     <copy file="${lib.dir}/${commons-dbcp.lib}" todir="${dog-lib.dir}" />
+    <copy file="${lib.dir}/${commons-io.lib}" todir="${dog-lib.dir}" />
     <copy file="${lib.dir}/${commons-lang.lib}" todir="${dog-lib.dir}" />
     <copy file="${lib.dir}/${commons-logging.lib}" todir="${dog-lib.dir}" />
     <copy file="${lib.dir}/${commons-logging-api.lib}" todir="${dog-lib.dir}" />
@@ -194,19 +196,19 @@
 
     <copy file="${model.dir}/test-model/test-model.zargo" todir="${pmmda-ex-model.dir}" />
     <copy todir="${pmmda-ex-src.dir}/client">
-      <fileset dir="${test.client.dir}">
+      <fileset dir="${example-src.dir}/client">
         <include name="**/*.java" />
         <exclude name="**/*CVS*" />
       </fileset>
     </copy>
     <copy todir="${pmmda-ex-src.dir}/common">
-      <fileset dir="${test.common.dir}">
+      <fileset dir="${example-src.dir}/common">
         <include name="**/*.java" />
         <exclude name="**/*CVS*" />
       </fileset>
     </copy>
     <copy todir="${pmmda-ex-src.dir}/server">
-      <fileset dir="${test.server.dir}">
+      <fileset dir="${example-src.dir}/server">
         <include name="**/*.java" />
         <exclude name="**/*CVS*" />
       </fileset>
@@ -218,6 +220,7 @@
     <copy file="${lib.dir}/${commons-cli.lib}" todir="${pmmda-ex-lib.dir}" />
     <copy file="${lib.dir}/${commons-collections.lib}" todir="${pmmda-ex-lib.dir}" />
     <copy file="${lib.dir}/${commons-dbcp.lib}" todir="${pmmda-ex-lib.dir}" />
+    <copy file="${lib.dir}/${commons-io.lib}" todir="${pmmda-ex-lib.dir}" />
     <copy file="${lib.dir}/${commons-lang.lib}" todir="${pmmda-ex-lib.dir}" />
     <copy file="${lib.dir}/${commons-logging.lib}" todir="${pmmda-ex-lib.dir}" />
     <copy file="${lib.dir}/${commons-logging-api.lib}" todir="${pmmda-ex-lib.dir}" />

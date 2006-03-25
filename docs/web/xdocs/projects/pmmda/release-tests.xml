@@ -46,7 +46,7 @@
         machine.
       </note>
       <note>
-        The EJB ant task is an extension and needs additional librairies. The
+        The EJB ant task is an extension and needs additional libraries. The
         BCEL jar file must be installed. Please consult the Ant manual for
         detailed instructions.
       </note>
@@ -210,7 +210,7 @@
           <tr>
             <td>
               Verify the information in the about dialog. The list of
-              librairies, the license, the contributors and the system
+              libraries, the license, the contributors and the system
               properties should be visible and up to date.
             </td>
           </tr>
