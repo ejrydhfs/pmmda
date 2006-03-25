@@ -5,17 +5,16 @@
  */
 package ch.bbv.pim.ui.actions;
 
-import javax.swing.JFileChooser;
-
+import ch.bbv.explorer.actions.FileTypes;
 import ch.bbv.explorer.actions.SimpleFileFilter;
 
 /**
- * The interface defines all the file extensions and descriptive text for the
- * file types supported in the application.
+ * The class defines all the file extensions and descriptive text for the file
+ * types supported in the application.
  * @author MarcelBaumann
  * @version $Revision$
  */
-public class FileTypes {
+class PimFileTypes extends FileTypes {
   /**
    * File extensions for models developed with ArgoUML.
    */
@@ -37,11 +36,29 @@ public class FileTypes {
   public static final String VCARD_TEXT = "VCARD format (*.vcf)";
 
   /**
-   * Adds all file filters defined for the MDA application.
-   * @param chooser file chooser to which the file filters must be added
+   * The singleton instance.
    */
-  public static void addFileFilters(JFileChooser chooser) {
-    chooser.addChoosableFileFilter(new SimpleFileFilter(LDIF_EXT, LDIF_TEXT));
-    chooser.addChoosableFileFilter(new SimpleFileFilter(VCARD_EXT, VCARD_TEXT));
+  private static PimFileTypes instance;
+
+  static {
+    instance = new PimFileTypes();
+  }
+
+  /**
+   * Returns the singleton instance.
+   * @return the singleton instance
+   */
+  public static PimFileTypes getInstance() {
+    return instance;
+
+  }
+
+  /**
+   * Private constructor for the singleton class.
+   */
+  private PimFileTypes() {
+    setDefaultExtension(VCARD_EXT[0]);
+    add(new SimpleFileFilter(LDIF_EXT, LDIF_TEXT));
+    add(new SimpleFileFilter(VCARD_EXT, VCARD_TEXT));
   }
 }

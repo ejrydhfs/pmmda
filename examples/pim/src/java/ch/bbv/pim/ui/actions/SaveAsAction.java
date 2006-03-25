@@ -57,7 +57,7 @@ public class SaveAsAction extends ExplorerFileAction {
    */
   public SaveAsAction(Explorer explorer) {
     super(ACTION, explorer);
-    FileTypes.addFileFilters(getFileChooser());
+    PimFileTypes.getInstance().addFileFilters(getFileChooser());
   }
 
   public boolean execute() {
@@ -66,23 +66,23 @@ public class SaveAsAction extends ExplorerFileAction {
       return lastResult;
     }
     File file = getSelectedFile();
-    PimExplorer explorer = (PimExplorer) getExplorer();
     switchWaitCursor(true);
+    PimExplorer explorer = (PimExplorer) getExplorer();
+    PimDocument document = explorer.getDocument();
     try {
-      PimDocument document = explorer.getDocument();
-      if (file != null) {
-        ContactEmitter emitter = PimApplication.getApplication()
-            .getFormatManager().getEmitter(file.getCanonicalPath());
-        if (emitter != null) {
-          emitter.emit(document.getAddressBook(), file);
-          document.setFile(file);
-          explorer.setDocument(document);
-        } else {
-          JOptionPane.showMessageDialog(explorer.getFrame(),
-              "File extension not supported in the application",
-              "File extension error", JOptionPane.ERROR_MESSAGE);
+      file = PimFileTypes.getInstance().normalizeFile(
+          getFileChooser().getFileFilter(), file);
+      ContactEmitter emitter = PimApplication.getApplication()
+          .getFormatManager().getEmitter(file.getCanonicalPath());
+      if (emitter != null) {
+        emitter.emit(document.getAddressBook(), file);
+        document.setFile(file);
+        explorer.setDocument(document);
+      } else {
+        JOptionPane.showMessageDialog(explorer.getFrame(),
+            "File extension not supported in the application",
+            "File extension error", JOptionPane.ERROR_MESSAGE);
 
-        }
       }
     } catch (IOException e) {
       log.error(e);
@@ -94,6 +94,7 @@ public class SaveAsAction extends ExplorerFileAction {
     return lastResult;
   }
 
+  @Override
   protected int display() {
     return getFileChooser().showSaveDialog(getExplorer().getFrame());
   }

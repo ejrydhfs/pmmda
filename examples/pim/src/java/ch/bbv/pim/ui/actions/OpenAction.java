@@ -56,15 +56,22 @@ public class OpenAction extends ExplorerFileAction {
    */
   public OpenAction(Explorer explorer) {
     super(ACTION, explorer);
-    FileTypes.addFileFilters(getFileChooser());
+    PimFileTypes.getInstance().addFileFilters(getFileChooser());
     shouldSaveAndProceed = true;
   }
 
   public boolean execute() {
     File file = getSelectedFile();
     PimExplorer explorer = (PimExplorer) getExplorer();
-    switchWaitCursor(true);
     try {
+      if (!file.exists()) {
+        JOptionPane.showMessageDialog(getExplorer().getFrame(),
+            "Selected file does not exists: " + file.getCanonicalPath(),
+            "File name error", JOptionPane.ERROR_MESSAGE);
+        return true;
+
+      }
+      switchWaitCursor(true);
       ContactParser parser = PimApplication.getApplication().getFormatManager()
           .getParser(file.getCanonicalPath());
       if (parser != null) {
