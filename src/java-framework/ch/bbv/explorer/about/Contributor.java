@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann 
+/* copyright 2000-2006 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$
@@ -6,10 +6,8 @@
 package ch.bbv.explorer.about;
 
 /**
- * <p>
  * The contributor class describes a contributor to a software project. The
  * class implements the Java bean convention.
- * </p>
  * @author Marcel Baumann
  * @version $Revision$
  */
@@ -43,7 +41,7 @@ public class Contributor {
 
   /**
    * Returns the contributor's name.
-   * @return the contributor's name.
+   * @return the contributor's name
    */
   public String getName() {
     return name;
@@ -51,7 +49,7 @@ public class Contributor {
 
   /**
    * Returns the contributor's e-mail address.
-   * @return the contributor's e-mail address.
+   * @return the contributor's e-mail address
    */
   public String getEmail() {
     return email;
@@ -59,7 +57,7 @@ public class Contributor {
 
   /**
    * Returns the role of the contributor in the project.
-   * @return role of the contributor.
+   * @return role of the contributor
    */
   public String getRole() {
     return role;

@@ -37,12 +37,14 @@ public class ExplorerNode implements MutableTreeNode {
 
   /**
    * The lightweight data object of this node.
+   * @inv lwObject != null
    */
   private LightweightObject lwObject;
 
   /**
    * The node type describing the user interface aspect of the data object type
    * to which the data and lightweight objects belongs to.
+   * @inv nodeType != null
    */
   private UiNodeType nodeType;
 
@@ -50,13 +52,6 @@ public class ExplorerNode implements MutableTreeNode {
    * The explorer owning the node.
    */
   private Explorer explorer;
-
-  /**
-   * Default constructor of the class.
-   */
-  public ExplorerNode() {
-    children = new ArrayList<ExplorerNode>();
-  }
 
   /**
    * Constructor of the class.
@@ -67,7 +62,8 @@ public class ExplorerNode implements MutableTreeNode {
    */
   public ExplorerNode(UiNodeType nodeType, LightweightObject lwObject,
       DataObject boObject) {
-    this();
+    assert (nodeType != null) && (lwObject != null);
+    children = new ArrayList<ExplorerNode>();
     this.nodeType = nodeType;
     setLightweightObject(lwObject);
     setDataObject(boObject);
@@ -76,7 +72,7 @@ public class ExplorerNode implements MutableTreeNode {
   /**
    * Returns the name of the node. The name is retrieved from the lightweight
    * object.
-   * @return the name of the node.
+   * @return the name of the node as displayed in the explorer
    */
   public String getName() {
     return nodeType.getNameFor(lwObject);
@@ -84,7 +80,7 @@ public class ExplorerNode implements MutableTreeNode {
 
   /**
    * Returns the node type of the explorer node.
-   * @return node type of the explorer node.
+   * @return node type of the explorer node
    */
   public UiNodeType getNodeType() {
     return nodeType;
@@ -92,7 +88,7 @@ public class ExplorerNode implements MutableTreeNode {
 
   /**
    * Returns the data object associated with the explorer node.
-   * @return the data object of the explorer node.
+   * @return the data object of the explorer node
    * @see #setDataObject(DataObject)
    */
   public DataObject getDataObject() {
@@ -101,7 +97,7 @@ public class ExplorerNode implements MutableTreeNode {
 
   /**
    * Sets the data object of the explorer node.
-   * @param boObject data object of the explorer node.
+   * @param boObject data object of the explorer node
    * @see #getDataObject()
    */
   public void setDataObject(DataObject boObject) {
@@ -110,7 +106,7 @@ public class ExplorerNode implements MutableTreeNode {
 
   /**
    * Returns the lightweight object associated with the explorer node.
-   * @return the lightweight object of the explorer node.
+   * @return the lightweight object of the explorer node
    * @see #setLightweightObject(LightweightObject)
    */
   public Object getLightweightObject() {
@@ -119,7 +115,7 @@ public class ExplorerNode implements MutableTreeNode {
 
   /**
    * Sets the lightweight object of the explorer node.
-   * @param lwObject lightweight object of the explorer node.
+   * @param lwObject lightweight object of the explorer node
    * @see #getLightweightObject()
    */
   public void setLightweightObject(LightweightObject lwObject) {
@@ -199,14 +195,23 @@ public class ExplorerNode implements MutableTreeNode {
     }
   }
 
+  /**
+   * @inheritDoc
+   */
   public int getChildCount() {
     return children.size();
   }
 
+  /**
+   * @inheritDoc
+   */
   public boolean getAllowsChildren() {
     return true;
   }
 
+  /**
+   * @inheritDoc
+   */
   public boolean isLeaf() {
     return children.size() == 0;
   }
@@ -221,7 +226,7 @@ public class ExplorerNode implements MutableTreeNode {
 
   /**
    * Returns the list of children of the node as unmodifiable list.
-   * @return the list of children.
+   * @return the list of children
    */
   public List<ExplorerNode> getChildren() {
     return Collections.unmodifiableList(children);
@@ -243,7 +248,7 @@ public class ExplorerNode implements MutableTreeNode {
    * Returns the path from the root, to get to this node. The last element in
    * the path is this node.
    * @return an array of TreeNode objects giving the path, where the first
-   *         element in the path is the root and the last element is this node.
+   *         element in the path is the root and the last element is this node
    */
   public ExplorerNode[] getPath() {
     Stack<ExplorerNode> stack = new Stack<ExplorerNode>();
@@ -261,7 +266,7 @@ public class ExplorerNode implements MutableTreeNode {
 
   /**
    * Returns the root of the tree view to which this node belongs.
-   * @return The root of the tree hierarchy.
+   * @return The root of the tree hierarchy
    */
   public ExplorerNode getRoot() {
     ExplorerNode root = this;
@@ -273,8 +278,8 @@ public class ExplorerNode implements MutableTreeNode {
 
   /**
    * Returns the explorer to whicht the node belongs.
-   * @return the explorer owning the node.
-   * @see #setExplorer
+   * @return the explorer owning the node
+   * @see #setExplorer(Explorer)
    */
   public Explorer getExplorer() {
     return getRoot().explorer;
@@ -282,8 +287,8 @@ public class ExplorerNode implements MutableTreeNode {
 
   /**
    * Sets the explorer to which the node belongs.
-   * @param explorer new explorer owning the node.
-   * @see #getExplorer
+   * @param explorer new explorer owning the node
+   * @see #getExplorer()
    */
   public void setExplorer(Explorer explorer) {
     this.explorer = explorer;
@@ -292,6 +297,7 @@ public class ExplorerNode implements MutableTreeNode {
   /**
    * @inheritDoc
    */
+  @Override
   public String toString() {
     return getName();
   }

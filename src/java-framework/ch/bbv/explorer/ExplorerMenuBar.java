@@ -144,7 +144,7 @@ public class ExplorerMenuBar extends JMenuBar {
   }
 
   /**
-   * Change event about the status of the current displayed document.
+   * Processes change event about the status of the current displayed document.
    * @param document the document which status changed.
    */
   public void documentChanged(ExplorerDocument document) {
@@ -162,10 +162,10 @@ public class ExplorerMenuBar extends JMenuBar {
             explorer.getRoot().getName() + (modified ? " * " : ""));
       }
       setActionEnabled(actions.get(Names.SAVE), !news && modified);
-      setActionEnabled(actions.get(Names.SAVE_AS), news || modified);
+      setActionEnabled(actions.get(Names.SAVE_AS), true);
     } else {
       setActionEnabled(actions.get(Names.SAVE), false);
-      setActionEnabled(actions.get(Names.SAVE_AS), false);      
+      setActionEnabled(actions.get(Names.SAVE_AS), false);
     }
   }
 

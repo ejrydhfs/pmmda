@@ -5,9 +5,14 @@
  */
 package ch.bbv.explorer.about;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.GridLayout;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 import ch.bbv.application.ProjectInfo;
 
@@ -20,47 +25,20 @@ public class AboutPanel extends JPanel {
   /**
    * Serial version identifier coded as back compatibility date.
    */
-  private static final long serialVersionUID = 20041201;
+  private static final long serialVersionUID = -4640733906720449033L;
 
   /**
    * Constructor of the class.
-   * @param projectInfo the project information.
+   * @param projectInfo the project information
    */
   public AboutPanel(ProjectInfo projectInfo) {
     setLayout(new BorderLayout());
-
     JPanel textPanel = new JPanel(new GridLayout(4, 1, 0, 4));
-
-    JPanel appPanel = new JPanel();
-    Font f1 = new Font("Dialog", Font.BOLD, 14);
-    JLabel appLabel = createLabel(projectInfo.getName(), f1, Color.black);
-    appLabel.setHorizontalTextPosition(SwingConstants.CENTER);
-    appPanel.add(appLabel);
-
-    JPanel verPanel = new JPanel();
-    Font f2 = new Font("Dialog", Font.PLAIN, 12);
-    JLabel verLabel = createLabel(projectInfo.getVersion().toString(), f2,
-        Color.black);
-    verLabel.setHorizontalTextPosition(SwingConstants.CENTER);
-    verPanel.add(verLabel);
-
-    JPanel copyrightPanel = new JPanel();
-    JLabel copyrightLabel = createLabel(projectInfo.getCopyright(), f2,
-        Color.black);
-    copyrightLabel.setHorizontalTextPosition(SwingConstants.CENTER);
-    copyrightPanel.add(copyrightLabel);
-
-    JPanel infoPanel = new JPanel();
-    JLabel infoLabel = createLabel(projectInfo.getInfo(), f2, Color.black);
-    infoLabel.setHorizontalTextPosition(SwingConstants.CENTER);
-    infoPanel.add(infoLabel);
-
-    textPanel.add(appPanel);
-    textPanel.add(verPanel);
-    textPanel.add(copyrightPanel);
-    textPanel.add(infoPanel);
+    textPanel.add(create(projectInfo.getName()));
+    textPanel.add(create(projectInfo.getVersion().toString()));
+    textPanel.add(create(projectInfo.getCopyright()));
+    textPanel.add(create(projectInfo.getInfo()));
     add(textPanel);
-
     if (projectInfo.getLogo() != null) {
       JPanel imagePanel = new JPanel(new BorderLayout());
       imagePanel.add(new javax.swing.JLabel(new javax.swing.ImageIcon(
@@ -72,18 +50,18 @@ public class AboutPanel extends JPanel {
       add(imageContainer, BorderLayout.WEST);
     }
   }
-
-  /**
-   * Creates a label of the expected structure.
-   * @param text text of the label.
-   * @param font font of the label.
-   * @param color color of the label.
-   * @return the requested label.
+  
+  /** Creates a new panel with the given name
+   * 
+   * @param name of the panel as displayed in the label
+   * @return the created panel
    */
-  public JLabel createLabel(String text, Font font, Color color) {
-    JLabel result = new JLabel(text);
-    result.setFont(font);
-    result.setForeground(color);
-    return result;
+  private JPanel create(String name) {
+    JPanel panel = new JPanel();
+    JLabel label = new JLabel(name);
+    label.setHorizontalTextPosition(SwingConstants.CENTER);
+    panel.add(label);
+    return panel;
+
   }
 }

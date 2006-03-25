@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann 
+/* copyright 2000-2006 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$
@@ -19,7 +19,8 @@ import ch.bbv.explorer.components.TableCell;
 import ch.bbv.explorer.components.TablePanel;
 
 /**
- * A dialog that displays information about the application.
+ * A dialog that displays information about the application and its
+ * contributors.
  * @author Marcel Baumann
  * @version $Revision$
  */
@@ -27,7 +28,7 @@ public class AboutFrame extends JDialog {
   /**
    * Serial version identifier coded as back compatibility date.
    */
-  private static final long serialVersionUID = 20041201;
+  private static final long serialVersionUID = -4692364482531014831L;
 
   /**
    * The name of the columns of the contributors table list.
@@ -51,18 +52,15 @@ public class AboutFrame extends JDialog {
 
   /**
    * Constructs an about frame.
-   * @param owner the owner of the dialog.
-   * @param title the frame title.
-   * @param projectInfo information about the project.
+   * @param owner the owner of the dialog
+   * @param title the frame title
+   * @param projectInfo information about the project
    */
   public AboutFrame(JFrame owner, String title, ProjectInfo projectInfo) {
     super(owner, title);
-
     this.projectInfo = projectInfo;
-
     JPanel content = new JPanel(new BorderLayout());
     content.setBorder(STANDARD_BORDER);
-
     JTabbedPane tabs = createTabs();
     content.add(tabs);
     setContentPane(content);
@@ -72,7 +70,7 @@ public class AboutFrame extends JDialog {
 
   /**
    * Returns the preferred size for the about frame.
-   * @return the preferred size.
+   * @return the preferred size
    */
   public Dimension getPreferredSize() {
     return PREFERRED_SIZE;
@@ -81,7 +79,7 @@ public class AboutFrame extends JDialog {
   /**
    * Creates a tabbed pane containing an about panel and a system properties
    * panel.
-   * @return a tabbed pane.
+   * @return a tabbed pane
    */
   private JTabbedPane createTabs() {
     JTabbedPane tabs = new JTabbedPane();
@@ -105,7 +103,7 @@ public class AboutFrame extends JDialog {
    * Creates a panel showing information about the application, including the
    * name, version, copyright notice, URL for further information, and a list of
    * contributors.
-   * @return a panel.
+   * @return the about panel
    */
   private JPanel createAboutPanel() {
     JPanel about = new JPanel(new BorderLayout());
@@ -151,7 +149,8 @@ public class AboutFrame extends JDialog {
   }
 
   /*
-   * Creates a panel showing the licence. @return a panel.
+   * Creates a panel showing the licence. @return a panel. @return the license
+   * panel
    */
   private JPanel createLicencePanel() {
     JPanel licence = new JPanel(new BorderLayout());

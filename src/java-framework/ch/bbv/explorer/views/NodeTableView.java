@@ -3,11 +3,12 @@
  * you may not use this file except in compliance with the License.
  * $Id$ 
  */
-package ch.bbv.explorer;
+package ch.bbv.explorer.views;
 
 import java.util.Collections;
 import java.util.List;
 
+import ch.bbv.explorer.*;
 import ch.bbv.explorer.components.TablePanel;
 
 /**

@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann
+/* copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -28,8 +28,8 @@ public class Property {
 
   /**
    * Constructor of the class.
-   * @param name the property name.
-   * @param value the property value.
+   * @param name the property name
+   * @param value the property value
    */
   public Property(String name, String value) {
     this.name = name;
@@ -38,7 +38,7 @@ public class Property {
 
   /**
    * Returns the property name.
-   * @return the property name.
+   * @return the property name
    * @see #setName(String)
    */
   public String getName() {
@@ -47,7 +47,7 @@ public class Property {
 
   /**
    * Sets the name of the property.
-   * @param name new name of the property.
+   * @param name new name of the property
    * @see #getName()
    */
   public void setName(String name) {
@@ -56,7 +56,7 @@ public class Property {
 
   /**
    * Returns the property value.
-   * @return the property value.
+   * @return the property value
    * @see #setValue(String)
    */
   public String getValue() {
@@ -65,7 +65,7 @@ public class Property {
 
   /**
    * Sets the value of the property.
-   * @param value new value of the property.
+   * @param value new value of the property
    * @see #getValue()
    */
   public void setValue(String value) {
@@ -74,7 +74,7 @@ public class Property {
 
   /**
    * Returns the property default value.
-   * @return the property default value.
+   * @return the property default value
    * @see #setDefaultValue(String)
    */
   public String getDefaultValue() {
@@ -83,11 +83,10 @@ public class Property {
 
   /**
    * Sets the value of the property.
-   * @param defaultValue new value of the property.
+   * @param defaultValue new value of the property
    * @see #getDefaultValue()
    */
   public void setDefaultValue(String defaultValue) {
     this.defaultValue = value;
   }
-
 }

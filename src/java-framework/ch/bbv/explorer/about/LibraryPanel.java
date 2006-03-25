@@ -22,7 +22,7 @@ public class LibraryPanel extends TablePanel {
   private static final long serialVersionUID = 20041201;
 
   /**
-   * The name of the columns of the librairies table list.
+   * The name of the columns of the libraries table list.
    */
   public static final String[] COLUMN_NAMES = { "name", "version", "licence",
       "info" };
