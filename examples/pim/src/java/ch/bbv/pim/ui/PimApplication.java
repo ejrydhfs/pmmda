@@ -80,7 +80,7 @@ public class PimApplication extends Locator {
     arguments = args;
     register(this);
     register(new DataObjectManager(new EmptyHandler(),
-        new LightweightObjectHandlerImpl(), null));
+        new LightweightObjectHandlerImpl(), null, null));
     FormatManager manager = new FormatManager();
     manager.register(new LdifEmitter(), ".ldif");
     manager.register(new VCardEmitter(), ".vcf");

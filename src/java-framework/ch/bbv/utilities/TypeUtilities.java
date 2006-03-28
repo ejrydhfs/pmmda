@@ -85,8 +85,8 @@ public class TypeUtilities {
 
   /**
    * Returns true is the class represents a natural number.
-   * @param clazz class to check.
-   * @return true if the class represents natural number.
+   * @param clazz class to check
+   * @return true if the class represents natural number
    */
   public static boolean isNaturalNumber(Class clazz) {
     return primitiveNaturals.contains(clazz) || objectNaturals.contains(clazz);
@@ -94,8 +94,8 @@ public class TypeUtilities {
 
   /**
    * Returns true is the class represents a real number.
-   * @param clazz class to check.
-   * @return true if the class represents real number.
+   * @param clazz class to check
+   * @return true if the class represents real number
    */
   public static boolean isRealNumber(Class clazz) {
     return primitiveReals.contains(clazz) || objectNaturals.contains(clazz);
@@ -103,8 +103,8 @@ public class TypeUtilities {
 
   /**
    * Returns true is the class represents a primitive number.
-   * @param clazz class to check.
-   * @return true if the class represents primitive number.
+   * @param clazz class to check
+   * @return true if the class represents primitive number
    */
   public static boolean isPrimitiveNumber(Class clazz) {
     return primitiveNaturals.contains(clazz) || primitiveReals.contains(clazz);
@@ -112,8 +112,8 @@ public class TypeUtilities {
 
   /**
    * Returns true is the class represents an object number.
-   * @param clazz class to check.
-   * @return true if the class represents object number.
+   * @param clazz class to check
+   * @return true if the class represents object number
    */
   public static boolean isObjectNumber(Class clazz) {
     return objectNaturals.contains(clazz) || objectReals.contains(clazz);
@@ -121,8 +121,8 @@ public class TypeUtilities {
 
   /**
    * Returns the zero value of the primitive number class.
-   * @param clazz class representing primitive number class.
-   * @return the zero value instance of the class.
+   * @param clazz class representing primitive number class
+   * @return the zero value instance of the class
    */
   public static Number getPrimitiveZero(Class clazz) {
     Number zero = null;

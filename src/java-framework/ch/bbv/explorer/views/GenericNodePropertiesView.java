@@ -165,7 +165,7 @@ public class GenericNodePropertiesView extends NodePropertiesView {
       builder.appendSeparator(seperator);
       for (int i = 0; i < size; i++) {
         PropertyView view = properties.get(i);
-        builder.append(view.label, view.getComponent());
+        builder.append(view.getLabel(), view.getComponent());
       }
     }
   }

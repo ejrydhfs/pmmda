@@ -397,7 +397,7 @@ public class CodesView extends JPanel implements NodeView {
    * @return the code type manager of the MDA model.
    */
   private CodeTypeMgr getCodeTypeMgr() {
-    return ((MdaExplorer) node.getExplorer()).getDocument().getModel()
+    return ((MdaExplorer) node.getNodeOwner()).getDocument().getModel()
         .getCodeTypeMgr();
   }
 

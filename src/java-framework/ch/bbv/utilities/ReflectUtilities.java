@@ -6,16 +6,13 @@
 package ch.bbv.utilities;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.PatternSyntaxException;
 
 import org.apache.commons.beanutils.NestedNullException;
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -418,79 +415,6 @@ public final class ReflectUtilities {
       Thread.currentThread().setContextClassLoader(loader);
     }
     return loader;
-  }
-
-  /**
-   * Provides matching of simple wildcards. (i.e. '*.java' etc.)
-   * @param path the path to match against.
-   * @param pattern the pattern to check if the path matches.
-   * @return true if the <code>path</code> matches the given
-   *         <code>pattern</code>, false otherwise.
-   */
-  public static boolean wildcardMatch(String path, String pattern) {
-    path = StringUtils.trimToEmpty(path);
-    boolean matches = false;
-    final String doubleStar = "**/";
-    final String slash = "/";
-    pattern = StringUtils.replace(pattern, ".", "\\.");
-    boolean matchAll = pattern.startsWith(doubleStar);
-    if (matchAll) {
-      String replacement = ".*/";
-      if (path.indexOf(slash) == -1) {
-        replacement = ".*";
-      }
-      pattern = StringUtils.replaceOnce(pattern, doubleStar, replacement);
-    }
-    pattern = StringUtils.replace(pattern, "*", ".*");
-    try {
-      matches = path.matches(pattern);
-    } catch (final PatternSyntaxException exception) {
-      matches = false;
-    }
-    if (!matchAll) {
-      matches = matches
-          && StringUtils.countMatches(pattern, slash) == StringUtils
-              .countMatches(path, slash);
-    }
-    return matches;
-  }
-
-  /**
-   * Returns the type class name for a Java primitive.
-   * @param name a <code>String</code> with the name of the type
-   * @param loader the loader to use.
-   * @return a <code>String</code> with the name of the corresponding
-   *         java.lang wrapper class if <code>name</code> is a Java primitive
-   *         type; <code>false</code> if not
-   */
-  protected static final Class getPrimitiveClass(final String name,
-      final ClassLoader loader) {
-    final String methodName = "ClassUtils.getPrimitiveClass";
-    ExceptionUtils.checkEmpty(methodName, "name", name);
-    ExceptionUtils.checkNull(methodName, "loader", loader);
-
-    Class primitiveClass = null;
-    if (isPrimitiveType(name) && !name.equals("void")) {
-      String className = null;
-      if ("char".equals(name)) {
-        className = "java.lang.Character";
-      }
-      if ("int".equals(name)) {
-        className = "java.lang.Integer";
-      }
-
-      className = "java.lang." + StringUtils.capitalize(name);
-
-      try {
-        if (StringUtils.isNotEmpty(className)) {
-          Field field = loader.loadClass(className).getField("TYPE");
-          primitiveClass = (Class) field.get(null);
-        }
-      } catch (final Exception e) {
-        log.error(e);
-      }
-    }
-    return primitiveClass;
   }
 
   /**

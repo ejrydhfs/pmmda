@@ -8,7 +8,9 @@ package ch.bbv.mda.operators;
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.bbv.mda.*;
+import ch.bbv.mda.MetaClass;
+import ch.bbv.mda.MetaIndexedProperty;
+import ch.bbv.mda.MetaProperty;
 
 /**
  * The utility class provides utility functions for generators activities.

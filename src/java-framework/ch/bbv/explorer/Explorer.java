@@ -8,14 +8,13 @@ package ch.bbv.explorer;
 import java.awt.BorderLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
 
 import org.flexdock.docking.Dockable;
 import org.flexdock.docking.DockingConstants;
@@ -23,6 +22,8 @@ import org.flexdock.docking.DockingManager;
 import org.flexdock.docking.DockingPort;
 import org.flexdock.docking.defaults.DefaultDockingPort;
 
+import ch.bbv.application.Library;
+import ch.bbv.application.VersionId;
 import ch.bbv.dog.*;
 import ch.bbv.explorer.components.ExplorerWindowAdapter;
 import ch.bbv.utilities.ReflectUtilities;
@@ -52,19 +53,7 @@ import ch.bbv.utilities.ReflectUtilities;
  * @author Marcel Baumann
  * @version $Revision$
  */
-public abstract class Explorer {
-  /**
-   * The selected node which popup menu could be display. Because a popup menu
-   * is modal at most one such node exist for one application. The number of
-   * explorer view instances is not relevant.
-   */
-  private static ExplorerNode selectedNodeForPopup;
-
-  /**
-   * Root node of the displayed graph in the left pane.
-   */
-  private ExplorerNode root;
-
+public abstract class Explorer implements ExplorerNodeOwner {
   /**
    * The frame of the explorer view.
    */
@@ -108,19 +97,14 @@ public abstract class Explorer {
   private StatusBar statusBar;
 
   /**
-   * Swing component of the explorer view used to display the tree model.
+   * Explorer node tree view used to display the tree model.
    */
-  private JTree tree;
+  private ExplorerTree tree;
 
   /**
    * Current node
    */
   private NodeView nodeView;
-
-  /**
-   * The tree model displayed in the explorer.
-   */
-  private DefaultTreeModel treeModel;
 
   /**
    * The selection listener for the explorer frame.
@@ -137,11 +121,6 @@ public abstract class Explorer {
    * The handler of the lightweight and data objects.
    */
   private DataObjectManager manager;
-
-  /**
-   * Data source used to retrieve the data objects.
-   */
-  private String datasource;
 
   /**
    * The menu bar of the explorer frame.
@@ -206,35 +185,14 @@ public abstract class Explorer {
   }
 
   /**
-   * Resets the current selected node used to generate the popup menu. To reset
-   * the value, the node parameter can be set to null.
-   * @param node new selected node of the explorer.
-   * @see #getSelectedNodeForPopup()
-   */
-  public static void setSelectedNodeForPopup(ExplorerNode node) {
-    selectedNodeForPopup = node;
-  }
-
-  /**
-   * Returns the current selected node uded to generate the popup menu.
-   * @return selected node if existing otherwise null.
-   * @see #setSelectedNodeForPopup(ExplorerNode)
-   */
-  public static ExplorerNode getSelectedNodeForPopup() {
-    return selectedNodeForPopup;
-  }
-
-  /**
    * Constructor of the class.
    * @param factory node type factory of the explorer.
    * @param manager data object manager of the explorer.
-   * @param datasource name of the datasource used to access persistent data.
    */
-  public Explorer(UiNodeTypeFactory factory, DataObjectManager manager,
-      String datasource) {
+  public Explorer(UiNodeTypeFactory factory, DataObjectManager manager) {
     this.factory = factory;
     this.manager = manager;
-    this.datasource = datasource;
+    tree = new ExplorerTree();
     // create the explorer docking structure
     viewPort = new DefaultDockingPort();
     navigationPort = new DefaultDockingPort();
@@ -247,7 +205,7 @@ public abstract class Explorer {
         viewUtilitiesPane);
     treeViewPane.setDividerSize(5);
     treeViewPane.setResizeWeight(0.3);
-    treePane = new JScrollPane(tree);
+    treePane = new JScrollPane(tree.getTree());
     treePane.setName("Tree");
     Dockable tree = DockingManager.registerDockable(treePane, treePane
         .getName());
@@ -285,21 +243,12 @@ public abstract class Explorer {
   }
 
   /**
-   * Returns the datasource of the tree of data objects displayed in the
-   * explorer.
-   * @return the data source used in the explorer.
-   */
-  public String getDatasource() {
-    return datasource;
-  }
-
-  /**
    * Sets the title of the explorer frame.
    * @param title new title of the explorer.
    * @pre title != null
    */
   public void setTitle(String title) {
-    assert (title != null);
+    assert title != null;
     frame.setTitle(title);
   }
 
@@ -369,7 +318,7 @@ public abstract class Explorer {
    * @return the graphical tree component of the explorer.
    */
   public JTree getTree() {
-    return tree;
+    return tree.getTree();
   }
 
   /**
@@ -378,7 +327,7 @@ public abstract class Explorer {
    * @see #setRoot(ExplorerNode)
    */
   public ExplorerNode getRoot() {
-    return root;
+    return tree.getRoot();
   }
 
   /**
@@ -387,15 +336,11 @@ public abstract class Explorer {
    * @see #getRoot()
    */
   public void setRoot(ExplorerNode root) {
-    ExplorerNode currentRoot = getRoot();
-    if (currentRoot != null) {
-      currentRoot.setExplorer(null);
-      selectedNodeForPopup = null;
-    }
-    this.root = root;
-    root.setExplorer(this);
-    initializeRoot();
-    selectionListener.displayViews(root);
+    tree.setRoot(root, this);
+    JTree view = tree.getTree();
+    view.addTreeSelectionListener(selectionListener);
+    view.addMouseListener(new ExplorerMouseListener());
+    treePane.setViewportView(view);
   }
 
   /**
@@ -408,41 +353,16 @@ public abstract class Explorer {
     frame.setVisible(true);
   }
 
-  /**
-   * Displays the frame and its child.
-   */
-  protected void initializeRoot() {
-    treeModel = new DefaultTreeModel(root);
-    tree = new JTree(treeModel);
-    tree.getSelectionModel().setSelectionMode(
-        TreeSelectionModel.SINGLE_TREE_SELECTION);
-    tree.setCellRenderer(new ExplorerTreeCellRenderer());
-    tree.addTreeSelectionListener(selectionListener);
-    tree.addMouseListener(new ExplorerMouseListener());
-    treePane.setViewportView(tree);
-  }
-
-  /**
-   * Called each type a node is inserted.
-   * @param node inserted child node in this node.
-   * @param index index of the inserted child node.
-   */
   public void nodeInserted(ExplorerNode node, int index) {
     int[] childIndices = new int[1];
     childIndices[0] = index;
-    treeModel.nodesWereInserted(node, childIndices);
+    tree.getTreeModel().nodesWereInserted(node, childIndices);
     if (nodeView != null) {
       nodeView.nodeInserted(node, index);
-      getTree().expandRow(0);
+      tree.getTree().expandRow(0);
     }
   }
 
-  /**
-   * Called each time a node is removed.
-   * @param parent parent node of the removed node.
-   * @param node removed child node in this node.
-   * @param index index of the removed child node.
-   */
   public void nodeRemoved(ExplorerNode parent, ExplorerNode node, int index) {
     ExplorerDocument document = getDocument();
     document.setModified(true);
@@ -451,22 +371,17 @@ public abstract class Explorer {
     Object[] removedChildren = new Object[1];
     childIndices[0] = index;
     removedChildren[0] = node;
-    treeModel.nodesWereRemoved(parent, childIndices, removedChildren);
+    tree.getTreeModel().nodesWereRemoved(parent, childIndices, removedChildren);
     if (nodeView != null) {
       nodeView.nodeRemoved(parent, node, index);
     }
   }
 
-  /**
-   * Called each type this node has changed. The menu bar is updated to handle
-   * the modification of the displayed model.
-   * @param node the modified node.
-   */
   public void nodeChanged(ExplorerNode node) {
     ExplorerDocument document = getDocument();
     document.setModified(true);
     getMenuBar().documentChanged(document);
-    treeModel.nodeChanged(node);
+    tree.getTreeModel().nodeChanged(node);
     if (nodeView != null) {
       nodeView.nodeChanged(node);
     }
@@ -606,11 +521,40 @@ public abstract class Explorer {
           JPopupMenu menu = node.getNodeType().getFactory().getPopupFactory()
               .getMenu(node);
           if (menu != null) {
-            setSelectedNodeForPopup(node);
+            ExplorerTree.setSelectedNodeForPopup(node);
             menu.show(getTree(), event.getX(), event.getY());
           }
         }
       }
     }
+  }
+
+  /**
+   * Returns the libraries used in the explorer framework.
+   * @return the libraries the framework depends on
+   */
+  protected List<Library> getLibraries() {
+    List<Library> libraries = new ArrayList<Library>();
+    libraries.add(new Library("commons-beanutils", new VersionId(1, 7, 0),
+        "Apache License", "http://jakarta.apache.org/commons"));
+    libraries.add(new Library("commons-cli", new VersionId(1, 0, 0),
+        "Apache License", "http://jakarta.apache.org/cli"));
+    libraries.add(new Library("commons-collections", new VersionId(3, 1, 0),
+        "Apache License", "http://jakarta.apache.org/commons"));
+    libraries.add(new Library("commons-io", new VersionId(1, 2, 0),
+        "Apache License", "http://jakarta.apache.org/commons"));
+    libraries.add(new Library("commons-logging", new VersionId(1, 0, 4),
+        "Apache License", "http://jakarta.apache.org/commons"));
+    libraries.add(new Library("commons-logging-api", new VersionId(1, 0, 4),
+        "Apache License", "http://jakarta.apache.org/commons"));
+    libraries.add(new Library("flexdock", new VersionId(0, 4, 0),
+        "MIT License", "flexdock.dev.java"));
+    libraries.add(new Library("forms", new VersionId(1, 0, 6), "OBSD License",
+        "www.jgoodies.com"));
+    libraries.add(new Library("glazedlists", new VersionId(1, 5, 0), "LGPL",
+        "www.publicobject.com/glazedlists"));
+    libraries.add(new Library("jcalendar", new VersionId(1, 2, 1), "LGPL",
+        "www.toedter.com/jcalendar"));
+    return libraries;
   }
 }

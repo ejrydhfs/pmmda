@@ -45,6 +45,8 @@ public class DataObjectManager extends ComponentImpl implements Component {
    * graphs.
    */
   private GraphLockHandler lockHandler;
+  
+  private String datasource;
 
   /**
    * The map for all the data object types and their associated type.
@@ -64,16 +66,19 @@ public class DataObjectManager extends ComponentImpl implements Component {
 
   /**
    * Constructor of the class.
-   * @param dataObjectHandler data object handler.
-   * @param lwHandler lightweight object handler.
-   * @param lockHandler lock handler.
+   * @param dataObjectHandler data object handler
+   * @param lwHandler lightweight object handler
+   * @param lockHandler lock handler
+   * @param datasource database containing the persistent object
    */
   public DataObjectManager(DataObjectHandler dataObjectHandler,
-      LightweightObjectHandler lwHandler, GraphLockHandler lockHandler) {
+      LightweightObjectHandler lwHandler, GraphLockHandler lockHandler,
+      String datasource) {
     super(NAME);
     this.dataObjectHandler = dataObjectHandler;
     this.lwHandler = lwHandler;
     this.lockHandler = lockHandler;
+    this.datasource = datasource;
     types = new HashMap<Class, DataObjectType>();
   }
 
@@ -101,6 +106,14 @@ public class DataObjectManager extends ComponentImpl implements Component {
     return lockHandler;
   }
 
+  /**
+   * Returns the datasource.
+   * @return the datasource of the manager
+   */
+  public String getDatasource() {
+    return datasource;
+  }
+  
   /**
    * Returns the data object type associated with the type of the given data
    * object.

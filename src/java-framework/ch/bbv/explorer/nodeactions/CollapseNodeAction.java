@@ -34,7 +34,7 @@ public class CollapseNodeAction extends AbstractNodeAction {
   }
 
   public void execute(ExplorerNode node) {
-    collapse(node, node.getExplorer().getTree());
+    collapse(node, node.getNodeOwner().getTree());
   }
 
   private void collapse(ExplorerNode node, JTree tree) {

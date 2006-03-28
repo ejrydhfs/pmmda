@@ -59,9 +59,9 @@ public class DerivedAttributeMgr implements PropertyChangeListener {
 
   /**
    * Registers the functor for the property of the given class.
-   * @param clazz class owning the property, which triggers the functor.
-   * @param property property, which change triggers the functor.
-   * @param functor functor to execute upon change.
+   * @param clazz class owning the property, which triggers the functor
+   * @param property property, which change triggers the functor
+   * @param functor functor to execute upon change
    */
   public void register(Class clazz, String property, DoFunctor functor) {
     assert (clazz != null && property != null && functor != null);
@@ -81,9 +81,9 @@ public class DerivedAttributeMgr implements PropertyChangeListener {
 
   /**
    * Unregisters the functor associated to the class and property.
-   * @param clazz class owning the property, which triggers the functor.
-   * @param property property, which change triggers the functor.
-   * @param functor functor to execute upon change.
+   * @param clazz class owning the property, which triggers the functor
+   * @param property property, which change triggers the functor
+   * @param functor functor to execute upon change
    */
   public void unregister(Class clazz, String property, DoFunctor functor) {
     assert (clazz != null && property != null && functor != null);
@@ -106,7 +106,7 @@ public class DerivedAttributeMgr implements PropertyChangeListener {
    * Registers the data object and its owned items to process all derived
    * attributes each time a change happens. All items are traversed with a
    * visitor and the manager register itself as listener.
-   * @param object data object to register.
+   * @param object data object to register
    */
   public void register(DataObject object) {
 
@@ -116,7 +116,7 @@ public class DerivedAttributeMgr implements PropertyChangeListener {
    * Unregisters the data object and its owned items. After this call no derived
    * attributes are computed when a change happens. All items are traversed with
    * a visitor and the manager unregister itself as listener.
-   * @param object data object to unregister.
+   * @param object data object to unregister
    */
   public void unregister(DataObject object) {
 
@@ -125,7 +125,7 @@ public class DerivedAttributeMgr implements PropertyChangeListener {
   /**
    * All functors registered for the property identified in the event are
    * executed.
-   * @param event property change event indentifying the changed property.
+   * @param event property change event indentifying the changed property
    */
   public void propertyChange(PropertyChangeEvent event) {
     List list = getFunctors(event.getSource().getClass(), event

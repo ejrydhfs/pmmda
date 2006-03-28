@@ -20,7 +20,7 @@ public class ReferenceCodeComboBox extends JComboBox {
   /**
    * Serial version identifier coded as back compatibility date.
    */
-  private static final long serialVersionUID = 20041201;
+  private static final long serialVersionUID = -1622750292245093412L;
 
   /**
    * Reference code class displayed in the combobox.

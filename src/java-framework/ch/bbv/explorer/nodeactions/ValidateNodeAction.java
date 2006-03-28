@@ -65,7 +65,7 @@ public class ValidateNodeAction extends AbstractNodeAction {
       List<ValidationRuleResult> results = new ArrayList<ValidationRuleResult>();
       validator.validate(object, visitor, results);
       log.debug("Display validator messages " + results.size());
-      MdaExplorer explorer = (MdaExplorer) node.getExplorer();
+      MdaExplorer explorer = (MdaExplorer) node.getNodeOwner();
       explorer.getStatusBar().setInfo("Validation Completed");
       explorer.getValidationPanel().setResults(results);
     }

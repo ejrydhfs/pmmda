@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann 
+/* copyright 2000-2006 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$ 
@@ -26,9 +26,9 @@ public class Licences {
 "   and distribution as defined by Sections 1 through 9 of this document.\n" +
 "\n" +
 "   \"Licensor\" shall mean the copyright owner or entity authorized by\n" +
-"	  the copyright owner that is granting the License.\n" +
+"   the copyright owner that is granting the License.\n" +
 "\n" +
-"	  \"Legal Entity\" shall mean the union of the acting entity and all\n" +
+"   \"Legal Entity\" shall mean the union of the acting entity and all\n" +
 "	  other entities that control, are controlled by, or are under common\n" +
 "	  control with that entity. For the purposes of this definition,\n" +
 "	  \"control\" means (i) the power, direct or indirect, to cause the\n" +
@@ -188,5 +188,5 @@ public class Licences {
 "	  defend, and hold each Contributor harmless for any liability\n" +
 "	  incurred by, or claims asserted against, such Contributor by reason\n" +
 "	  of your accepting any such warranty or additional liability.\n" +
-"\n\n";
+"\n";
 }

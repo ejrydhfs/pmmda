@@ -19,7 +19,7 @@ import ch.bbv.dog.LightweightObject;
  * @author Marcel Baumann
  * @version $Revision$
  */
-public class ExplorerNode implements MutableTreeNode {
+public class ExplorerNode implements MutableTreeNode, Cloneable {
   /**
    * List of all children of the node.
    */
@@ -49,15 +49,15 @@ public class ExplorerNode implements MutableTreeNode {
   private UiNodeType nodeType;
 
   /**
-   * The explorer owning the node.
+   * The owner of the node.
    */
-  private Explorer explorer;
+  private ExplorerNodeOwner owner;
 
   /**
    * Constructor of the class.
-   * @param nodeType type of the node displayed.
-   * @param lwObject lightweight object to display.
-   * @param boObject data object to display.
+   * @param nodeType type of the node displayed
+   * @param lwObject lightweight object to display
+   * @param boObject data object to display
    * @pre (nodeType != null) && (lwObject != null)
    */
   public ExplorerNode(UiNodeType nodeType, LightweightObject lwObject,
@@ -137,14 +137,14 @@ public class ExplorerNode implements MutableTreeNode {
   /**
    * Adds a child at the end of the list of children of this node.
    * @param child child to add.
+   * @see #getChildren()
    */
   public void addChild(ExplorerNode child) {
     child.setParent(this);
     children.add(child);
-
-    Explorer explorer = getExplorer();
-    if (explorer != null) {
-      explorer.nodeInserted(this, children.size() - 1);
+    ExplorerNodeOwner owner = getNodeOwner();
+    if (owner != null) {
+      owner.nodeInserted(this, children.size() - 1);
     }
   }
 
@@ -152,14 +152,14 @@ public class ExplorerNode implements MutableTreeNode {
    * Inserts the child node at the given index in this node.
    * @param child child node to insert.
    * @param index index at which the child node is inserted.
+   * @see #getChildAt(int)
    */
   public void insert(MutableTreeNode child, int index) {
     child.setParent(this);
     children.add(index, (ExplorerNode) child);
-
-    Explorer explorer = getExplorer();
-    if (explorer != null) {
-      explorer.nodeInserted(this, index);
+    ExplorerNodeOwner owner = getNodeOwner();
+    if (owner != null) {
+      owner.nodeInserted(this, index);
     }
   }
 
@@ -167,26 +167,30 @@ public class ExplorerNode implements MutableTreeNode {
    * Handles the event that the node has changed.
    */
   public void nodeChanged() {
-    Explorer explorer = getExplorer();
-    if (explorer != null) {
-      explorer.nodeChanged(this);
+    ExplorerNodeOwner owner = getNodeOwner();
+    if (owner != null) {
+      owner.nodeChanged(this);
     }
   }
 
   /**
    * Removes the child node at the given index.
-   * @param index index of the child node to remove.
+   * @param index index of the child node to remove
    */
   public void remove(int index) {
     ExplorerNode removedChild = children.get(index);
     children.remove(index);
     removedChild.setParent(null);
-    getExplorer().nodeRemoved(this, removedChild, index);
+    ExplorerNodeOwner owner = getNodeOwner();
+    if (owner != null) {
+      getNodeOwner().nodeRemoved(this, removedChild, index);
+    }
   }
 
   /**
    * Removes the given child node.
-   * @param child child node to remove.
+   * @param child child node to remove
+   * @see #addChild(ExplorerNode)
    */
   public void remove(MutableTreeNode child) {
     int index = children.indexOf(child);
@@ -232,14 +236,23 @@ public class ExplorerNode implements MutableTreeNode {
     return Collections.unmodifiableList(children);
   }
 
+  /**
+   * @inheritDoc
+   */
   public TreeNode getParent() {
     return parent;
   }
 
+  /**
+   * @inheritDoc
+   */
   public TreeNode getChildAt(int index) {
     return children.get(index);
   }
 
+  /**
+   * @inheritDoc
+   */
   public int getIndex(TreeNode node) {
     return children.indexOf(node);
   }
@@ -277,28 +290,48 @@ public class ExplorerNode implements MutableTreeNode {
   }
 
   /**
-   * Returns the explorer to whicht the node belongs.
+   * Returns the owner of the node.
    * @return the explorer owning the node
-   * @see #setExplorer(Explorer)
+   * @see #setNodeOwner(ExplorerNodeOwner)
    */
-  public Explorer getExplorer() {
-    return getRoot().explorer;
+  public ExplorerNodeOwner getNodeOwner() {
+    return getRoot().owner;
   }
 
   /**
    * Sets the explorer to which the node belongs.
-   * @param explorer new explorer owning the node
-   * @see #getExplorer()
+   * @param owner new explorer owning the node
+   * @see #getNodeOwner()
    */
-  public void setExplorer(Explorer explorer) {
-    this.explorer = explorer;
+  public void setNodeOwner(ExplorerNodeOwner owner) {
+    this.owner = owner;
   }
 
   /**
    * @inheritDoc
+   * @see Object#toString()
    */
   @Override
   public String toString() {
     return getName();
+  }
+
+  /**
+   * @inheritDoc
+   * @see Object#clone()
+   */
+  @Override
+  public ExplorerNode clone() {
+    ExplorerNode clone = null;
+    try {
+      clone = (ExplorerNode) super.clone();
+      clone.children.clear();
+      for (ExplorerNode node : children) {
+        clone.addChild(node.clone());
+      }
+    } catch (CloneNotSupportedException e) {
+      // impossible error because the class implements cloneable
+    }
+    return clone;
   }
 }

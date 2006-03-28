@@ -91,7 +91,7 @@ public class MdaApplication extends Locator {
     MdaApplication.args = args;
     register(this);
     register(new DataObjectManager(new EmptyHandler(),
-        new LightweightObjectHandlerImpl(), null));
+        new LightweightObjectHandlerImpl(), null, null));
     register(new Validator(Validator.NAME));
     register(new ResourcesManager(ResourcesManager.NAME));
     register(new CartridgeFactory(CartridgeFactory.NAME, getProperties()));

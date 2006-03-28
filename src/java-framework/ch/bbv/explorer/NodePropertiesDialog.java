@@ -60,7 +60,7 @@ public class NodePropertiesDialog extends SimpleDialog {
   public void setModel(ExplorerNode node, boolean isEditable, boolean isNew,
       String title, ExplorerNodeAction action) {
     assert ((node != null) && (title != null));
-    UiNodeTypeFactory factory = node.getExplorer().getNodeTypeFactory();
+    UiNodeTypeFactory factory = node.getNodeOwner().getNodeTypeFactory();
     setTitle(title);
     view = factory.getViewFor(node.getNodeType());
     view.setEditable(isEditable);
@@ -95,7 +95,7 @@ public class NodePropertiesDialog extends SimpleDialog {
       view.commitChanges();
       view.populateSubViews();
       ExplorerNode node = view.getModel();
-      LightweightObjectHandler handler = node.getExplorer().getManager()
+      LightweightObjectHandler handler = node.getNodeOwner().getManager()
           .getLwHandler();
       handler.synchronize(node.getLightweightObject(), node.getDataObject());
     }

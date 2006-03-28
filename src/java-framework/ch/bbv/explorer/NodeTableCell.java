@@ -116,7 +116,7 @@ public class NodeTableCell extends TableCell {
       return bean;
     }
     ExplorerNode node = (ExplorerNode) bean;
-    node.getExplorer().nodeChanged(node);
+    node.getNodeOwner().nodeChanged(node);
     Object object = node.getDataObject();
     fields.get(column).setProperty(object, value);
     return object;

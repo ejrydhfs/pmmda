@@ -69,6 +69,7 @@ class PrimitivePropertyView extends PropertyView {
 
   protected Object getValue() {
     Object value = null;
+    Class type = getType();
     if (type.equals(String.class)) {
       value = text.getText();
     } else if (Boolean.class.equals(type) || Boolean.TYPE.equals(type)) {
@@ -108,6 +109,7 @@ class PrimitivePropertyView extends PropertyView {
   }
 
   protected void setValue(Object value) {
+    Class type = getType();
     if (type.equals(String.class)) {
       text.setText((String) value);
     } else if (Boolean.class.equals(type) || Boolean.TYPE.equals(type)) {

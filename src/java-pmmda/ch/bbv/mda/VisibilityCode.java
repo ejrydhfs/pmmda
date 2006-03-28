@@ -6,11 +6,12 @@
    
 package ch.bbv.mda;
 
-import ch.bbv.dog.reference.ReferenceCodeImpl;
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import ch.bbv.dog.reference.ReferenceCodeImpl;
 
 /* %% USER DEFINED IMPORT START %% */
 /* %% USER DEFINED IMPORT END %% */

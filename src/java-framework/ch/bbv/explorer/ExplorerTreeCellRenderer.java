@@ -70,7 +70,7 @@ public class ExplorerTreeCellRenderer extends DefaultTreeCellRenderer {
     super.getTreeCellRendererComponent(tree, node, selected, expanded, leaf,
         row, hasFocus);
     ExplorerNode explorerNode = (ExplorerNode) node;
-    IconFactory iconFactory = explorerNode.getExplorer().getNodeTypeFactory()
+    IconFactory iconFactory = explorerNode.getNodeOwner().getNodeTypeFactory()
         .getIconFactory();
     ImageIcon icon = iconFactory.getSmallIconFor(explorerNode, expanded);
     if (icon != null) {

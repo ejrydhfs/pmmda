@@ -10,18 +10,8 @@ package ch.bbv.mda.validation;
 import java.util.ResourceBundle;
 
 import ch.bbv.application.Locator;
-import ch.bbv.dog.validation.FormatRule;
-import ch.bbv.dog.validation.NotNullRule;
-import ch.bbv.dog.validation.StringNotNullOrNotEmptyRule;
-import ch.bbv.dog.validation.UndefinedTypeRule;
-import ch.bbv.dog.validation.UniqueRule;
-import ch.bbv.dog.validation.ValidationRule;
-import ch.bbv.dog.validation.Validator;
-import ch.bbv.mda.MetaClass;
-import ch.bbv.mda.MetaIndexedProperty;
-import ch.bbv.mda.MetaModel;
-import ch.bbv.mda.MetaPackage;
-import ch.bbv.mda.MetaProperty;
+import ch.bbv.dog.validation.*;
+import ch.bbv.mda.*;
 
 /**
  * The rules factory defines the validation rules the application requires on

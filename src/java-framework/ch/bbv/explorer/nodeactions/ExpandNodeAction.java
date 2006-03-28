@@ -35,7 +35,7 @@ public class ExpandNodeAction extends AbstractNodeAction {
   }
 
   public void execute(ExplorerNode node) {
-    expand(node, node.getExplorer().getTree());
+    expand(node, node.getNodeOwner().getTree());
   }
 
   private void expand(ExplorerNode node, JTree tree) {

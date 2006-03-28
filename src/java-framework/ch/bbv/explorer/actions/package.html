@@ -1,36 +1,51 @@
 <body>
-  The package defines a framework to create context sensitive and global
-  actions for the explorer framework.
+The package defines a framework to create context sensitive and global actions
+for the explorer framework.
 <h2>Introduction</h2>
 <p>The package defines a framework to create context sensitive and global
-	actions for the explorer framework. Global actions are often added to the
-	menu bar. Context sensitive actions are items of a popup menu. Each node
-	type of the explorer can have a distinct popup menu.</p>
+actions for the explorer framework. Global actions are often added to the menu
+bar. Context sensitive actions are items of a popup menu. Each node type of the
+explorer can have a distinct popup menu.</p>
 <h2>Model Access Actions</h2>
 <p>Each application needs to open, save and close models. Users expect basic
-  intelligence of these actions. The following rules exist.</p>
+intelligence of these actions. The following rules exist.</p>
 <dl>
-	<dt>New</dt><dd>A new model is created. If a model is already opened and 
-		modified the user is asked if he wants to save the model or not before
-		creating a new one.</dd>
-	<dt>Open</dt><dd>A file selection is started allowing the user to select the 
-		file to open. If a model is already opened and modified the user is asked
-		if he wants to save the model or not before loading a new one.</dd>
-	<dt>Close</dt><dd>The action is only available if a model is opened. If the
-		model was modified the user is asked if he wants to save the model or 
-		not.</dd>
-	<dt>Save</dt><dd>The action is only available if a model is opened and 
-		modified.</dd>
-	<dt>Save As</dt><dd>The action is only available if a model is opened.</dd>
-	<dt>Open Last ...</dt><dd>The action displays a list of last opened models.
-		The size of the list is configurable. The file names are shown only if
-		the files are accessible. If a model is already opened and  modified the
-		user is asked if he wants to save the model or not before loading a new
-		one.</dd>
-  <dt>Exit</dt><dd>If a model is already opened and modified the user is asked
-    if he wants to save the model or not before existing the application.</dd>
+  <dt>New</dt>
+  <dd>A new model is created. If a model is already opened and modified the user
+  is asked if he wants to save the model or not before creating a new one.</dd>
+  <dt>Open</dt>
+  <dd>A file selection is started allowing the user to select the file to open.
+  If a model is already opened and modified the user is asked if he wants to
+  save the model or not before loading a new one.</dd>
+  <dt>Close</dt>
+  <dd>The action is only available if a model is opened. If the model was
+  modified the user is asked if he wants to save the model or not.</dd>
+  <dt>Save</dt>
+  <dd>The action is only available if a model is opened and modified.</dd>
+  <dt>Save As</dt>
+  <dd>The action is only available if a model is opened.</dd>
+  <dt>Open Last ...</dt>
+  <dd>The action displays a list of last opened models. The size of the list is
+  configurable. The file names are shown only if the files are accessible. If a
+  model is already opened and modified the user is asked if he wants to save the
+  model or not before loading a new one.</dd>
+  <dt>Exit</dt>
+  <dd>If a model is already opened and modified the user is asked if he wants to
+  save the model or not before existing the application.</dd>
 </dl>
-<p>The explorer manages correctly the currently model and activates or 
-	deactivates the actions accordingly.</p>
-   @since Java 2 Platform, Standard Edition, version 1.5
+<p>The explorer manages correctly the currently model and activates or
+deactivates the actions accordingly.</p>
+<h2>Cascaded Actions</h2>
+<p>Actions such as new or open should first call the save or save as action if
+the model was modified. This mechanism guarantees that no user changes are lost.
+The sequence diagram is as follow.</p>
+<ul>
+  <li>If document is new and modified ask the user if the current document
+  should be saved. If yes call the save as action if not execute the new or open
+  command. If the action was successful execute the new or open command.</li>
+  <li>If document is not not and modified ask the user if the current document
+  should be saved. If yes call the save action if not execute the new or open
+  command. If the action was successful execute the new or open command.</li>
+</ul>
+@since Java 2 Platform, Standard Edition, version 1.5
 </body>

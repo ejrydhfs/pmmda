@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   Copyright 2000-2005 The Apache Software Foundation
-
+  
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-
-      http://www.apache.org/licenses/LICENSE-2.0
-
+  
+  http://www.apache.org/licenses/LICENSE-2.0
+  
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,10 +23,13 @@
   <body>
     <section>
       <title>Dependencies</title>
-      <p>The project uses external open source projects. The list of required 
-        libraries <em>jar files</em> are documented in a dependencies document 
-        distributed with the source code. Below a overview of the used 
-        components is provided.</p>
+      <p>
+        The project uses external open source projects. The list of required
+        libraries
+        <em>jar files</em>
+        are documented in a dependencies document distributed with the source
+        code. Below a overview of the used components is provided.
+      </p>
       <table>
         <tr>
           <th>Project</th>
@@ -34,30 +37,42 @@
         </tr>
         <tr>
           <td>Jakarta</td>
-          <td><a href="ext:jakarta">Apache Jakarta</a></td>
+          <td>
+            <a href="ext:jakarta">Apache Jakarta</a>
+          </td>
         </tr>
         <tr>
           <td>JUnit</td>
-          <td><a href="http://www.junit.org">JUnit</a></td>
+          <td>
+            <a href="http://www.junit.org">JUnit</a>
+          </td>
         </tr>
         <tr>
           <td>JForms</td>
-          <td><a href="http://www.goodies.com">JGoodies Forms</a></td>
+          <td>
+            <a href="http://www.goodies.com">JGoodies Forms</a>
+          </td>
         </tr>
         <tr>
           <td>OJB Object Java Bridge</td>
-          <td><a href="http://db.apache.org">OJB</a></td>
+          <td>
+            <a href="http://db.apache.org">OJB</a>
+          </td>
         </tr>
         <tr>
           <td>MySQL Database</td>
-          <td><a href="http://www.mysql.com">MySQL</a></td>
+          <td>
+            <a href="http://www.mysql.com">MySQL</a>
+          </td>
         </tr>
       </table>
     </section>
     <section>
       <title>Jars List</title>
-      <p>The table below documents all the jar files and their versions used in 
-        the project.</p>
+      <p>
+        The table below documents all the jar files and their versions used in
+        the project.
+      </p>
       <table>
         <tr>
           <th>Jar File</th>
@@ -69,82 +84,115 @@
           <td>antlr</td>
           <td>2.7.3</td>
           <td>Open Source</td>
-          <td><a href="http://www.antlr.org">ANTLR</a></td>
+          <td>
+            <a href="http://www.antlr.org">ANTLR</a>
+          </td>
         </tr>
         <tr>
           <td>commons-beanutils</td>
           <td>1.6.1</td>
           <td>Apache Licence</td>
-          <td><a href="ext:jakarta/commons-beanutils">Bean Utils</a></td>
+          <td>
+            <a href="ext:jakarta/commons-beanutils">Bean Utils</a>
+          </td>
         </tr>
         <tr>
           <td>commons-cli</td>
           <td>1.0</td>
           <td>Apache Licence</td>
-          <td><a href="ext:jakarta/commons-cli">Jakarta Commons</a></td>
+          <td>
+            <a href="ext:jakarta/commons-cli">Jakarta Commons</a>
+          </td>
         </tr>
         <tr>
           <td>commons-collections</td>
           <td>2.1.1</td>
           <td>Apache Licence</td>
           <td>
-            <a href="ext:jakarta/commons-collections">Jakarta Commons 
-              Collections</a>
+            <a href="ext:jakarta/commons-collections">
+              Jakarta Commons Collections
+            </a>
           </td>
         </tr>
         <tr>
           <td>commons-dbcp</td>
           <td>1.1</td>
           <td>Apache Licence</td>
-          <td><a href="ext:jakarta/commons-dbcp">Jakarta Commons DBCP</a></td>
+          <td>
+            <a href="ext:jakarta/commons-dbcp">Jakarta Commons DBCP</a>
+          </td>
         </tr>
         <tr>
           <td>commons-lang</td>
           <td>2.0</td>
           <td>Apache Licence</td>
-          <td><a href="ext:jakarta/commons-lang">Jakarta Commons Language</a></td>
+          <td>
+            <a href="ext:jakarta/commons-lang">Jakarta Commons Language</a>
+          </td>
         </tr>
         <tr>
           <td>commons-logging</td>
           <td>1.0.4</td>
           <td>Apache Licence</td>
-          <td><a href="ext:jakarta/commons-logging">Jakarta Commons Logging</a></td>
+          <td>
+            <a href="ext:jakarta/commons-logging">Jakarta Commons Logging</a>
+          </td>
         </tr>
         <tr>
           <td>commons-logging-api</td>
           <td>1.0.4</td>
           <td>Apache Licence</td>
-          <td><a href="ext:jakarta/commons-logging">Jakarta Commons Logging</a></td>
+          <td>
+            <a href="ext:jakarta/commons-logging">Jakarta Commons Logging</a>
+          </td>
         </tr>
         <tr>
           <td>commons-pool</td>
           <td>1.1</td>
           <td>Apache Licence</td>
-          <td><a href="ext:jakarta/commons-pool">Jakarta Commons Pool</a></td>
+          <td>
+            <a href="ext:jakarta/commons-pool">Jakarta Commons Pool</a>
+          </td>
         </tr>
         <tr>
           <td>db-ojb</td>
           <td>1.0.1</td>
           <td>Apache Licence</td>
-          <td><a href="http://db.apache.org/ojb">OJB Object Java Broker</a></td>
+          <td>
+            <a href="http://db.apache.org/ojb">OJB Object Java Broker</a>
+          </td>
         </tr>
         <tr>
           <td>forms</td>
           <td>1.0.5</td>
           <td>LGPL</td>
-          <td><a href="http://www.goodies.com">JGoodies Forms</a></td>
+          <td>
+            <a href="http://www.goodies.com">JGoodies Forms</a>
+          </td>
+        </tr>
+        <tr>
+          <td>flexdock</td>
+          <td>0.4.0</td>
+          <td>MIT License</td>
+          <td>
+            <a href="http://flexdock.java.net">Flexdock</a>
+          </td>
         </tr>
         <tr>
           <td>glazedlist</td>
           <td>0.9.6</td>
           <td>LGPL</td>
-          <td><a href="http://www.java.net">Glazed Lists</a></td>
+          <td>
+            <a href="http://www.java.net">Glazed Lists</a>
+          </td>
         </tr>
         <tr>
           <td>jcalendar</td>
           <td>1.2.2</td>
           <td>LGPL</td>
-          <td><a href="http://www.toedter.com">JCalendar</a></td>
+          <td>
+            <a href="http://www.toedter.com">JCalendar</a>
+          </td>
         </tr>
       </table>
     </section>

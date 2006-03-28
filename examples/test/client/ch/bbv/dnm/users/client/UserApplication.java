@@ -126,18 +126,18 @@ public class UserApplication extends Locator {
       PersistenceHandler.Mode sync = PersistenceHandler.Mode
           .valueOf(synchronization);
       manager = new DataObjectManager(new CacheHandler(new PersistenceHandler(
-          false, sync), true, true), new LightweightObjectHandlerImpl(), null);
+          false, sync), true, true), new LightweightObjectHandlerImpl(), null, SCHEMA);
     } else if (USE_CORBA.equalsIgnoreCase(mode)) {
       log.info("Application started in CORBA mode");
       register(ORB.init(args, null), ORB_NAME);
       manager = new DataObjectManager(new CacheHandler(
           createHandler("ch.bbv.dnm.users.client.UsersServerCorbaWrapper"),
-          true, false), new LightweightObjectHandlerImpl(), null);
+          true, false), new LightweightObjectHandlerImpl(), null, SCHEMA);
     } else if (USE_J2EE.equalsIgnoreCase(mode)) {
       log.info("Application started in J2EE mode");
       manager = new DataObjectManager(new CacheHandler(
           createHandler("ch.bbv.dnm.users.client.UsersServerWrapper"), true,
-          false), new LightweightObjectHandlerImpl(), null);
+          false), new LightweightObjectHandlerImpl(), null, SCHEMA);
     }
     // if manager is null the command line parameters were erroneous
     assert manager != null;

@@ -5,11 +5,12 @@
 
 package ch.bbv.pim;
 
-import ch.bbv.dog.DataObject;
 import java.beans.PropertyChangeListener;
 import java.beans.VetoableChangeListener;
 import java.lang.reflect.Field;
 import java.sql.Timestamp;
+
+import ch.bbv.dog.DataObject;
 
 /* %% USER DEFINED IMPORT START %% */
 /* %% USER DEFINED IMPORT END %% */

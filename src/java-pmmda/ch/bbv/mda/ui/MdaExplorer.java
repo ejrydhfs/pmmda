@@ -108,7 +108,7 @@ public class MdaExplorer extends Explorer {
    * @param args arguments of the command line.
    */
   public MdaExplorer(String[] args) {
-    super(factory, manager, null);
+    super(factory, manager);
     arguments = args;
     if (log.isInfoEnabled()) {
       log.info("Start initializing MDA explorer");
@@ -117,19 +117,18 @@ public class MdaExplorer extends Explorer {
   }
 
   /**
-   * register all the node types used the explorer.
+   * Registers all the node types used the explorer.
    */
   public static void registerNodeTypes() {
     manager = MdaApplication.getApplication().getDataObjectManager();
     factory = new UiNodeTypeFactory();
-
     TypeFactory typeFactory = new TypeFactory(factory, manager);
     typeFactory.registerAllTypes();
   }
 
   /**
    * Returns the document displayed in the explorer.
-   * @return the document displayed in the explorer.
+   * @return the document displayed in the explorer
    * @see #setDocument(MdaDocument)
    */
   public MdaDocument getDocument() {
@@ -138,7 +137,7 @@ public class MdaExplorer extends Explorer {
 
   /**
    * Sets the document displayed in the explorer.
-   * @param document the new document displayed in the explorer.
+   * @param document the new document displayed in the explorer
    * @see #getDocument()
    */
   public void setDocument(MdaDocument document) {
@@ -154,7 +153,7 @@ public class MdaExplorer extends Explorer {
 
   /**
    * Returns the validation panel of the explorer.
-   * @return the requested validation panel.
+   * @return the requested validation panel
    */
   public ValidationPanel getValidationPanel() {
     return validationPanel;
@@ -284,7 +283,7 @@ public class MdaExplorer extends Explorer {
 
   /**
    * Returns the project information displayed in the about box.
-   * @return the project information with contributors and libraries.
+   * @return the project information with contributors and libraries
    */
   private ProjectInfo getProjectInfo() {
     ProjectInfo info = new ProjectInfo();
@@ -301,7 +300,7 @@ public class MdaExplorer extends Explorer {
 
   /**
    * Returns a list of all contributors to the project.
-   * @return list of all contributors.
+   * @return list of all contributors
    */
   private List<Contributor> getContributors() {
     List<Contributor> contributors = new ArrayList<Contributor>();
@@ -312,42 +311,23 @@ public class MdaExplorer extends Explorer {
     return contributors;
   }
 
-  /**
-   * Returns a list of all libraries used in the project.
-   * @return list of used libraries.
-   */
-  private List<Library> getLibraries() {
-    List<Library> libraries = new ArrayList<Library>();
-    libraries.add(new Library("commons-beanutils", new VersionId(1, 7, 0),
-        "Apache License", "http://jakarta.apache.org/commons"));
-    libraries.add(new Library("commons-cli", new VersionId(1, 0, 0),
-        "Apache License", "http://jakarta.apache.org/cli"));
-    libraries.add(new Library("commons-collections", new VersionId(3, 1, 0),
-        "Apache License", "http://jakarta.apache.org/commons"));
-    libraries.add(new Library("commons-io", new VersionId(1, 2, 0),
-        "Apache License", "http://jakarta.apache.org/commons"));
-    libraries.add(new Library("commons-logging", new VersionId(1, 0, 4),
-        "Apache License", "http://jakarta.apache.org/commons"));
-    libraries.add(new Library("commons-logging-api", new VersionId(1, 0, 4),
-        "Apache License", "http://jakarta.apache.org/commons"));
-    libraries.add(new Library("forms", new VersionId(1, 0, 6), "OBSD License",
-        "www.jgoodies.com"));
-    libraries.add(new Library("glazedlists", new VersionId(1, 5, 0), "LGPL",
-        "www.publicobject.com/glazedlists"));
+  @Override
+  protected List<Library> getLibraries() {
+    List<Library> libraries = super.getLibraries();
+    libraries.add(new Library("dog-framework", new VersionId(0, 3, 0),
+        "Apache License 2.0", "pmmda.sourceforge.net"));
     libraries.add(new Library("jgraph", new VersionId(5, 4, 5), "LGPL/BSD",
         "www.jgraph.com"));
     libraries.add(new Library("jgraphaddons", new VersionId(1, 0, 7),
         "LGPL/BSD", "www.jgraph.com"));
-    libraries.add(new Library("jcalendar", new VersionId(1, 2, 1), "LGPL",
-        "www.toedter.com/jcalendar"));
     libraries.add(new Library("velocity", new VersionId(1, 4, 0),
         "Apache License", "http://jakarta.apache.org/velocity"));
     libraries.add(new Library("velocity-dep", new VersionId(1, 4, 0),
         "Apache License", "http://jakarta.apache.org/velocity"));
     libraries.add(new Library("xpp3", new VersionId(1, 1, 3), "BSD License",
         "http://www.extreme.indiana.edu"));
-    libraries.add(new Library("xstream", new VersionId(1, 1, 2),
-        "BSD License", "http://xtream.codehaus.org"));
+    libraries.add(new Library("xstream", new VersionId(1, 1, 2), "BSD License",
+        "http://xtream.codehaus.org"));
     return libraries;
   }
 }

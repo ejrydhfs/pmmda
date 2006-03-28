@@ -12,6 +12,7 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.border.Border;
 
+import ch.bbv.application.Library;
 import ch.bbv.application.ProjectInfo;
 import ch.bbv.explorer.ExplorerUtilities;
 import ch.bbv.explorer.components.PropertiesPanel;
@@ -120,21 +121,16 @@ public class AboutFrame extends JDialog {
       tabs.add(contributorsTab, contributorsPane);
       includetabs = true;
     }
-
     if (projectInfo.getLicenceName() != null) {
       JPanel licencePanel = createLicencePanel();
       licencePanel.setBorder(STANDARD_BORDER);
-
-      String licenceTab = "Licence";
-      tabs.add(licenceTab, licencePanel);
+      tabs.add("Licence", licencePanel);
       includetabs = true;
     }
-
-    List libraries = projectInfo.getLibraries();
+    List<Library> libraries = projectInfo.getLibraries();
     if (libraries != null) {
       JPanel librariesPanel = new LibraryPanel(libraries);
       librariesPanel.setBorder(AboutFrame.STANDARD_BORDER);
-
       String librariesTab = "Libraries";
       tabs.add(librariesTab, librariesPanel);
       includetabs = true;

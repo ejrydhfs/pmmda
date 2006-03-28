@@ -9,7 +9,10 @@ package ch.bbv.documentor.doclets;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.sun.javadoc.*;
+import com.sun.javadoc.ClassDoc;
+import com.sun.javadoc.DocErrorReporter;
+import com.sun.javadoc.Doclet;
+import com.sun.javadoc.RootDoc;
 
 /**
  * The MDA doclet synchronizes a Java source tree with a MDA UML model. The

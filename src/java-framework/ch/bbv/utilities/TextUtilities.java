@@ -24,8 +24,8 @@ public final class TextUtilities {
 
   /**
    * Removes all special characters from an identifier.
-   * @param identifier identifier to clean-up.
-   * @return legal identifiers after removal of special characters.
+   * @param identifier identifier to clean-up
+   * @return legal identifiers after removal of special characters
    */
   public static String removeSpecialCharacters(String identifier) {
     String tmp = identifier.toLowerCase();
@@ -40,13 +40,12 @@ public final class TextUtilities {
 
   /**
    * Returns the identifier with its first letter in uppercase.
-   * @param identifier identifier to manipulate.
-   * @return new representation of the identifier.
+   * @param identifier identifier to manipulate
+   * @return new representation of the identifier
    * @pre (identifier != null) && (identifier.length() > 0)
    */
   public static String identifierFirstUpper(String identifier) {
     assert (identifier != null) && (identifier.length() > 0);
-
     StringBuilder buffer = new StringBuilder(identifier);
     buffer.setCharAt(0, Character.toUpperCase(buffer.charAt(0)));
     return buffer.toString();
@@ -54,8 +53,8 @@ public final class TextUtilities {
 
   /**
    * Returns the identifier in the singular form.
-   * @param identifier identifier to manipulate.
-   * @return new representation of the identifier.
+   * @param identifier identifier to manipulate
+   * @return new representation of the identifier
    * @pre identifier != null
    */
   public static String identifierSingular(String identifier) {
@@ -79,8 +78,8 @@ public final class TextUtilities {
 
   /**
    * Returns the identifier in the plural form.
-   * @param identifier identifier to manipulate.
-   * @return new representation of the identifier.
+   * @param identifier identifier to manipulate
+   * @return new representation of the identifier
    */
   public static String identifierPlural(String identifier) {
     assert (identifier != null);
@@ -95,5 +94,4 @@ public final class TextUtilities {
     }
     return name;
   }
-
 }

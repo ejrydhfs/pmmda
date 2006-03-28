@@ -10,7 +10,10 @@ import java.awt.event.*;
 import javax.swing.ComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.UIManager;
-import javax.swing.text.*;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.JTextComponent;
+import javax.swing.text.PlainDocument;
 
 /**
  * The completion adapter provides auto completion features for Swing combo

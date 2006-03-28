@@ -6,20 +6,17 @@
    
 package ch.bbv.mda.pim;
 
-import ch.bbv.mda.MetaClass;
-import java.io.File;
-import java.util.*;
+import java.io.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
-/* %% USER DEFINED IMPORT START %% */
-import java.io.IOException;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
-import com.thoughtworks.xstream.XStream;
 import ch.bbv.dog.functors.IsModifiedFlagFunctor;
 import ch.bbv.dog.functors.ModifiedFlagFunctor;
+import ch.bbv.mda.MetaClass;
 import ch.bbv.mda.operators.FileOperators;
+
+import com.thoughtworks.xstream.XStream;
 /* %% USER DEFINED IMPORT END %% */
 
 /**

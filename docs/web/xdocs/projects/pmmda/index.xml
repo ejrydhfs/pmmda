@@ -71,7 +71,10 @@
       <title>Jars List</title>
       <p>
         The table below documents all the jar files and their versions used in
-        the project.
+        the project. Because the application the explorer framework all the jar
+        files listed under
+        <a href="site:dog/overview">explorer framework</a>
+        are also needed and therefore not listed here.
       </p>
       <table>
         <tr>
@@ -97,46 +100,6 @@
           </td>
         </tr>
         <tr>
-          <td>commons-beanutils</td>
-          <td>1.7.0</td>
-          <td>Apache License</td>
-          <td>
-            <a href="ext:jakarta/commons-beanutils">
-              Jakarta Commons Bean Utils
-            </a>
-          </td>
-        </tr>
-        <tr>
-          <td>commons-cli</td>
-          <td>1.0</td>
-          <td>Apache License</td>
-          <td>
-            <a href="ext:jakarta/commons-cli">
-              Jakarta Commons Command Line Interface
-            </a>
-          </td>
-        </tr>
-        <tr>
-          <td>commons-collections</td>
-          <td>3.1</td>
-          <td>Apache License</td>
-          <td>
-            <a href="ext:jakarta/commons-collections">
-              Jakarta Commons Collections
-            </a>
-          </td>
-        </tr>
-        <tr>
-          <td>commons-configuration</td>
-          <td>1.2</td>
-          <td>Apache License</td>
-          <td>
-            <a href="ext:jakarta/commons-configuration">
-              Jakarta Commons Configuration
-            </a>
-          </td>
-        </tr>
-        <tr>
           <td>commons-dbcp</td>
           <td>1.1</td>
           <td>Apache License</td>
@@ -150,38 +113,6 @@
           <td>Apache License</td>
           <td>
             <a href="ext:jakarta/commons-digester">Jakarta Commons Digester</a>
-          </td>
-        </tr>
-        <tr>
-          <td>commons-io</td>
-          <td>1.2</td>
-          <td>Apache License</td>
-          <td>
-            <a href="ext:jakarta/commons-io">Jakarta Commons IO</a>
-          </td>
-        </tr>
-        <tr>
-          <td>commons-lang</td>
-          <td>2.1</td>
-          <td>Apache License</td>
-          <td>
-            <a href="ext:jakarta/commons-lang">Jakarta Commons Language</a>
-          </td>
-        </tr>
-        <tr>
-          <td>commons-logging</td>
-          <td>1.0.4</td>
-          <td>Apache License</td>
-          <td>
-            <a href="ext:jakarta/commons-logging">Jakarta Commons Logging</a>
-          </td>
-        </tr>
-        <tr>
-          <td>commons-logging-api</td>
-          <td>1.0.4</td>
-          <td>Apache License</td>
-          <td>
-            <a href="ext:jakarta/commons-logging">Jakarta Commons Logging</a>
           </td>
         </tr>
       </table>

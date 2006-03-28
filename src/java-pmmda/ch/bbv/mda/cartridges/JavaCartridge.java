@@ -5,9 +5,9 @@
  */
 package ch.bbv.mda.cartridges;
 
+import static ch.bbv.mda.cartridges.BoConstants.DATA_OBJECT_STEREOTYPE;
 import static ch.bbv.mda.cartridges.BoConstants.KEY_CLASS;
 import static ch.bbv.mda.cartridges.BoConstants.REFERENCE_CODE_STEREOTYPE;
-import static ch.bbv.mda.cartridges.BoConstants.DATA_OBJECT_STEREOTYPE;
 
 import java.util.Arrays;
 

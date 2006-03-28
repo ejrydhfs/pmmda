@@ -66,10 +66,9 @@ public class UserExplorer extends Explorer {
   /**
    * Constructor of the class.
    * @param title title of the explorer frame.
-   * @param schema name of the database schema containing the persistent data.
    */
-  public UserExplorer(String title, String schema) {
-    super(factory, manager, schema);
+  public UserExplorer(String title) {
+    super(factory, manager);
     this.setTitle(title);
     document = new ExplorerDocumentImpl();
     if (log.isInfoEnabled()) {
@@ -108,7 +107,7 @@ public class UserExplorer extends Explorer {
     RealmLw realmLw = new RealmLw(DataObjectId.ILLEGAL_ID);
     realmLw.setName("Realm");
     for (Iterator i = manager.getDataObjectHandler().retrieveLw(
-        getDatasource(), ProviderLw.class, (String) null).iterator(); i
+        getManager().getDatasource(), ProviderLw.class, (String) null).iterator(); i
         .hasNext();) {
       realmLw.addProvider((ProviderLw) i.next());
     }

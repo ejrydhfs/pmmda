@@ -106,7 +106,7 @@ public class PimExplorer extends Explorer {
    * @param title title of the explorer frame.
    */
   public PimExplorer(String title) {
-    super(factory, manager, null);
+    super(factory, manager);
     this.setTitle(title);
     if (log.isInfoEnabled()) {
       log.info("Start initializing PIM explorer");
@@ -190,28 +190,9 @@ public class PimExplorer extends Explorer {
     return contributors;
   }
 
-  /**
-   * Returns a list of all libraries used in the project.
-   * @return list of used libraries.
-   */
-  private List<Library> getLibraries() {
-    List<Library> libraries = new ArrayList<Library>();
-    libraries.add(new Library("commons-beanutils", new VersionId(1, 7, 0),
-        "Apache License", "http://jakarta.apache.org/commons"));
-    libraries.add(new Library("commons-collections", new VersionId(3, 1, 0),
-        "Apache License", "http://jakarta.apache.org/commons"));
-    libraries.add(new Library("commons-cli", new VersionId(1, 0, 0),
-        "Apache License", "http://jakarta.apache.org/cli"));
-    libraries.add(new Library("commons-logging", new VersionId(1, 0, 4),
-        "Apache License", "http://jakarta.apache.org/commons"));
-    libraries.add(new Library("commons-logging-api", new VersionId(1, 0, 4),
-        "Apache License", "http://jakarta.apache.org/commons"));
-    libraries.add(new Library("forms", new VersionId(1, 0, 6), "BSD License",
-        "www.jgoodies.com"));
-    libraries.add(new Library("glazedlists", new VersionId(1, 5, 0), "LGPL",
-        "www.publicobject.com/glazedlists"));
-    libraries.add(new Library("jcalendar", new VersionId(1, 2, 1), "LGPL",
-        "www.toedter.com/jcalendar"));
+  @Override
+  protected List<Library> getLibraries() {
+    List<Library> libraries = super.getLibraries();
     libraries.add(new Library("velocity", new VersionId(1, 4, 0),
         "Apache License", "http://jakarta.apache.org/velocity"));
     libraries.add(new Library("velocity-dep", new VersionId(1, 4, 0),

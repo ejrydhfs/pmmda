@@ -17,7 +17,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jdom.JDOMException;
 
-import ch.bbv.pim.*;
+import ch.bbv.pim.Address;
+import ch.bbv.pim.AddressBook;
+import ch.bbv.pim.Contact;
+import ch.bbv.pim.PhoneNumber;
 import ch.bbv.utilities.ReflectUtilities;
 
 /**

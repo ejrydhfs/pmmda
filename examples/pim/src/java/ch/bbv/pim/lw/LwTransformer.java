@@ -5,7 +5,10 @@
 
 package ch.bbv.pim.lw;
 
-import ch.bbv.pim.*;
+import ch.bbv.pim.AddressBook;
+import ch.bbv.pim.Contact;
+import ch.bbv.pim.Organization;
+import ch.bbv.pim.PhoneNumber;
 
 /** 
  * The transformer is responsible to transform a tree of data objects into its

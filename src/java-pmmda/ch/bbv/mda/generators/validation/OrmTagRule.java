@@ -14,7 +14,10 @@ import java.util.List;
 
 import ch.bbv.dog.validation.ValidationRuleResult;
 import ch.bbv.mda.*;
-import ch.bbv.mda.cartridges.*;
+import ch.bbv.mda.cartridges.BoConstants;
+import ch.bbv.mda.cartridges.JdbcTypeCode;
+import ch.bbv.mda.cartridges.OrmCartridge;
+import ch.bbv.mda.cartridges.OrmConstants;
 
 /**
  * The orm tag rule implements all validation rules for the tag values defined

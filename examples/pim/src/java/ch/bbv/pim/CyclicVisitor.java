@@ -5,8 +5,9 @@
    
 package ch.bbv.pim;
 
-import java.util.Set;
 import java.util.HashSet;
+import java.util.Set;
+
 import ch.bbv.dog.DataObject;
 
 /** 

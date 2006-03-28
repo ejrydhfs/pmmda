@@ -29,8 +29,8 @@ public final class PropertyUtilities {
   /**
    * Converts a properties configuration into a regular Java properties object.
    * All variables are expanded.
-   * @param propertiesConfiguration properties configuration to convert.
-   * @return the converted properties object.
+   * @param propertiesConfiguration properties configuration to convert
+   * @return the converted properties object
    */
   public static Properties convert(
       PropertiesConfiguration propertiesConfiguration) {
@@ -46,13 +46,13 @@ public final class PropertyUtilities {
   /**
    * Returns the value of the attribute in the first element with the given
    * identifier value.
-   * @param configuration configuration containing the attribute to retrieve.
-   * @param path path containing the elements to look for.
-   * @param attributeId attribute identifying the identifier value.
-   * @param id identifier value looked for.
+   * @param configuration configuration containing the attribute to retrieve
+   * @param path path containing the elements to look for
+   * @param attributeId attribute identifying the identifier value
+   * @param id identifier value looked for
    * @param attribute the attribute to retrieve in the element with the given
-   *          identifier value.
-   * @return the requested attribute value if found otherwise null.
+   *          identifier value
+   * @return the requested attribute value if found otherwise null
    * @pre (configuration != null) && (path != null) && (attributeId != null) &&
    *      (id != null) && (attribute != null)
    */
@@ -78,11 +78,11 @@ public final class PropertyUtilities {
 
   /**
    * Returns the requested attribute at the given index.
-   * @param configuration configuration containing the attribue.
-   * @param path path to the list of elements.
-   * @param index index of the elements.
-   * @param attribute attribute to retrieve.
-   * @return the value of the attribute if found otherwise null.
+   * @param configuration configuration containing the attribue
+   * @param path path to the list of elements
+   * @param index index of the elements
+   * @param attribute attribute to retrieve
+   * @return the value of the attribute if found otherwise null
    * @pre (configuration != null) && (path != null) && (index >= 0) &&
    *      (attribute != null)
    */
@@ -100,16 +100,16 @@ public final class PropertyUtilities {
   /**
    * Returns the mapping for the type to the target language. A mapping exists
    * only for datatypes.
-   * @param configuration configuration containing the attribue.
-   * @param typename to map to a language construct (qualified name).
+   * @param configuration configuration containing the attribute
+   * @param typename to map to a language construct (qualified name)
    * @param language language to map to. A cartridge can define multiple
    *          mappings of datatypes and model types to target programming
-   *          language.
-   * @param dialect of language (e.g. "mssqlserver" for "sql" language).
-   * @param info to provide about the type (e.g. "type", "default", "null").
+   *          language
+   * @param dialect of language (e.g. "mssqlserver" for "sql" language)
+   * @param info to provide about the type (e.g. "type", "default", "null")
    * @param concrete flag indicating if the implementation class should be
-   *          retrieve or not.
-   * @return the requested info about the type.
+   *          retrieve or not
+   * @return the requested info about the type
    * @pre (typename != null) && (language != null) && (info != null)
    */
   public static String getInfoOfType(CompositeConfiguration configuration, String typename, String language, 
@@ -164,5 +164,4 @@ public final class PropertyUtilities {
     }
     return result;
   }
-
 }

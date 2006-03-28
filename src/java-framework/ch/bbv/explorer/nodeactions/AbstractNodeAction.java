@@ -28,7 +28,7 @@ public abstract class AbstractNodeAction extends ExplorerNodeActionImpl {
    * Constructor of the class.
    * @param type node type for which the action is defined.
    * @param name name of the action. If the action is an add, the name must be
-   *        the name of the property.
+   *          the name of the property.
    * @param editable flag indicating if the node is editable in this action.
    */
   protected AbstractNodeAction(UiNodeType type, String name, boolean editable) {
@@ -47,8 +47,8 @@ public abstract class AbstractNodeAction extends ExplorerNodeActionImpl {
    *         of the searched data object.
    */
   protected ExplorerNode updateNodeWithBo(ExplorerNode node) {
-    Explorer explorer = node.getExplorer();
-    DataObjectManager manager = explorer.getManager();
+    ExplorerNodeOwner owner = node.getNodeOwner();
+    DataObjectManager manager = owner.getManager();
     ExplorerNode root = node;
     while ((root != null) && !root.getNodeType().getDataObjectType().isRoot()) {
       root = (ExplorerNode) root.getParent();
@@ -57,13 +57,13 @@ public abstract class AbstractNodeAction extends ExplorerNodeActionImpl {
 
     DataObjectType type = root.getNodeType().getDataObjectType();
     DataObject boGraph = manager.getDataObjectHandler().retrieve(
-        explorer.getDatasource(), type.getBoClass(),
+        owner.getManager().getDatasource(), type.getBoClass(),
         ((LightweightObject) root.getLightweightObject()).getId());
     ExplorerNode newNode = node;
     if (boGraph != null) {
       newNode = updateNavigator(root, boGraph, (HasId) newNode
           .getLightweightObject());
-      explorer.getTree().expandPath(new TreePath(newNode.getPath()));
+      owner.getTree().expandPath(new TreePath(newNode.getPath()));
     } else {
       // TODO warn user no graph could be loaded
     }
@@ -83,12 +83,12 @@ public abstract class AbstractNodeAction extends ExplorerNodeActionImpl {
   protected ExplorerNode updateNavigator(ExplorerNode node, DataObject root,
       HasId id) {
     DataObjectType type = node.getNodeType().getDataObjectType();
-    Explorer explorer = node.getExplorer();
-    LightweightObject lwRoot = explorer.getManager().getLwHandler()
-        .createGraph(root);
+    ExplorerNodeOwner owner = node.getNodeOwner();
+    LightweightObject lwRoot = owner.getManager().getLwHandler().createGraph(
+        root);
     AbstractVisitorFunctor lwVisitor = type.createLwVisitorInstance();
     AbstractVisitorFunctor boVisitor = type.createVisitorInstance();
-    TreeConstructFunctor functor = new TreeConstructFunctor(explorer
+    TreeConstructFunctor functor = new TreeConstructFunctor(owner
         .getNodeTypeFactory(), lwVisitor);
     lwVisitor.setFunctor(functor);
     boVisitor.setFunctor(functor);
@@ -119,9 +119,9 @@ public abstract class AbstractNodeAction extends ExplorerNodeActionImpl {
       newNode = updateNodeWithBo(node);
       boObject = newNode.getDataObject();
     }
-    Explorer explorer = newNode.getExplorer();
-    UiNodeTypeFactory factory = explorer.getNodeTypeFactory();
-    NodePropertiesDialog dialog = factory.getPropertiesDialog(explorer);
+    ExplorerNodeOwner owner = newNode.getNodeOwner();
+    UiNodeTypeFactory factory = owner .getNodeTypeFactory();
+    NodePropertiesDialog dialog = factory.getPropertiesDialog((Explorer)owner);
     dialog.setModel(newNode, editable, created, getViewLabel(node), this);
     dialog.setVisible(true);
   }

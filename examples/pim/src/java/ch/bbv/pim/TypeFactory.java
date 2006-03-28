@@ -5,11 +5,12 @@
    
 package ch.bbv.pim;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ch.bbv.dog.DataObjectManager;
 import ch.bbv.dog.DataObjectType;
 import ch.bbv.pim.lw.*;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * The type factory provides meta information about all data objects and

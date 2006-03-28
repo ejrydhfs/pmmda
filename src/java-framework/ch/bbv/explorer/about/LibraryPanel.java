@@ -7,6 +7,7 @@ package ch.bbv.explorer.about;
 
 import java.util.List;
 
+import ch.bbv.application.Library;
 import ch.bbv.explorer.components.TableCell;
 import ch.bbv.explorer.components.TablePanel;
 
@@ -29,9 +30,9 @@ public class LibraryPanel extends TablePanel {
 
   /**
    * Constructs a library panel.
-   * @param libraries a list of libraries (represented by Library objects).
+   * @param libraries a list of libraries
    */
-  public LibraryPanel(List libraries) {
+  public LibraryPanel(List<Library> libraries) {
     super(libraries, new TableCell(COLUMN_NAMES));
   }
 }

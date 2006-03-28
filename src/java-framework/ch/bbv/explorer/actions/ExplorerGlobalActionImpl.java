@@ -101,7 +101,7 @@ public abstract class ExplorerGlobalActionImpl extends AbstractAction implements
 
   /**
    * Asks the user if his changes should be saved. If yes the changes are saved.
-   * The returned value states if the action was sucessful and the action should
+   * The returned value states if the action was successful and the action should
    * proceed with the requested function or if the user aborted the action.
    * @return flag indicating if the selected action should proceed or not.
    */
@@ -116,14 +116,14 @@ public abstract class ExplorerGlobalActionImpl extends AbstractAction implements
       int selection = displayMessage("actions.SAVE_CHANGES");
       switch (selection) {
       case 0:
-        File file = document.getFile();
-        if (file != null) {
-          sucess = menuBar.getStandardAction(Names.SAVE).execute();
-        } else {
+        if (document.isNew()) {
           menuBar.getStandardAction(Names.SAVE_AS).actionPerformed(null);
           sucess = menuBar.getStandardAction(Names.SAVE_AS).getLastResult();
+        } else {
+          sucess = menuBar.getStandardAction(Names.SAVE).execute();
         }
         if (sucess) {
+          document.setNew(false);
           document.setModified(false);
           menuBar.documentChanged(document);
         }

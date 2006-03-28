@@ -12,27 +12,30 @@ import ch.bbv.utilities.ReflectUtilities;
  * @version $Revision$
  */
 abstract class PropertyView {
+  /**
+   * Standard size of the text field.
+   */
   protected static final int TEXT_FIELD_SIZE = 32;
 
   /**
    * The bean which property is displayed.
    */
-  DataObject bean;
+  private DataObject bean;
 
   /**
    * Name of the property displayed in the view.
    */
-  String property;
+  private String property;
 
   /**
    * Label of the property in the view.
    */
-  String label;
+  private String label;
 
   /**
    * Type of the property.
    */
-  Class type;
+  private Class type;
 
   /**
    * Constructor of the property view.
@@ -59,6 +62,22 @@ abstract class PropertyView {
   public abstract void setEditable(boolean editable);
 
   /**
+   * Returns the type of the property.
+   * @return the type of the property
+   */
+  public Class getType() {
+    return type;
+  }
+
+  /**
+   * Returns the label of the property.
+   * @return the label of the property
+   */
+  public String getLabel() {
+    return label;
+  }
+
+  /**
    * Sets the model of the view to the new data object. The view is
    * automatically updated.
    * @param bean bean which property should be displayed
@@ -66,7 +85,7 @@ abstract class PropertyView {
   public void setModel(DataObject bean) {
     this.bean = bean;
     Object value;
-    if (bean != null) {
+    if ((bean != null) && (property != null)) {
       value = ReflectUtilities.getProperty(bean, property);
     } else {
       value = null;

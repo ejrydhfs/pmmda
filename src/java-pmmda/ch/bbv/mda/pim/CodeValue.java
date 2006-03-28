@@ -6,12 +6,13 @@
 
 package ch.bbv.mda.pim;
 
-import ch.bbv.dog.DataObject;
 import java.beans.PropertyChangeListener;
 import java.beans.VetoableChangeListener;
 import java.lang.reflect.Field;
 import java.sql.Timestamp;
 import java.util.Date;
+
+import ch.bbv.dog.DataObject;
 
 /* %% USER DEFINED IMPORT START %% */
 /* %% USER DEFINED IMPORT END %% */

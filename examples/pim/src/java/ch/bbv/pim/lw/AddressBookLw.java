@@ -5,8 +5,11 @@
 
 package ch.bbv.pim.lw;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import ch.bbv.dog.LightweightObject;
-import java.util.*;
 
 /* %% USER DEFINED IMPORT START %% */
 /* %% USER DEFINED IMPORT END %% */

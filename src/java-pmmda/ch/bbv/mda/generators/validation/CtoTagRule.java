@@ -9,7 +9,10 @@ package ch.bbv.mda.generators.validation;
 import java.util.List;
 
 import ch.bbv.dog.validation.ValidationRuleResult;
-import ch.bbv.mda.*;
+import ch.bbv.mda.MetaClass;
+import ch.bbv.mda.MetaIndexedProperty;
+import ch.bbv.mda.MetaPackage;
+import ch.bbv.mda.MetaProperty;
 import ch.bbv.mda.cartridges.OrmCartridge;
 
 /**
