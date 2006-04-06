@@ -32,10 +32,7 @@ import ch.bbv.pim.AddressBook;
 import ch.bbv.pim.client.TypeFactory;
 import ch.bbv.pim.lw.AddressBookLw;
 import ch.bbv.pim.lw.LwTransformer;
-import ch.bbv.pim.ui.actions.NewAction;
-import ch.bbv.pim.ui.actions.OpenAction;
-import ch.bbv.pim.ui.actions.SaveAction;
-import ch.bbv.pim.ui.actions.SaveAsAction;
+import ch.bbv.pim.ui.actions.*;
 
 /**
  * The PIM explorer provides an explorer user interface to manipulate the
@@ -158,9 +155,11 @@ public class PimExplorer extends Explorer {
     menu.addSeparator();
     menuBar.addStandardAction(menu, Names.SAVE, new SaveAction(this));
     menuBar.addStandardAction(menu, Names.SAVE_AS, new SaveAsAction(this));
+    menu.addSeparator();
     menuBar.addStandardAction(menu, Names.EXIT, new ExplorerExitAction(this));
     getMenuBar().documentChanged(null);
-  }
+    createToolsMenu();
+}
 
   /**
    * Returns the project information displayed in the about box.
@@ -199,4 +198,13 @@ public class PimExplorer extends Explorer {
         "Apache License", "http://jakarta.apache.org/velocity"));
     return libraries;
   }
+
+  private void createToolsMenu() {
+    JMenu menu = new JMenu("Tools");
+    menu.setName("Tools");
+    menu.add(new RelocateContactsAction("Relocate", this));
+    ExplorerMenuBar menuBar = getMenuBar();
+    menuBar.add(menu, menuBar.getMenuCount() - 1);
+  }
+
 }

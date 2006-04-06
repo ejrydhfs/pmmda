@@ -34,7 +34,7 @@ public class ExplorerTree {
   private JTree tree;
 
   /**
-   * Root node of the displayed graph in the left pane.
+   * Root node of the displayed graph.
    */
   private ExplorerNode root;
 

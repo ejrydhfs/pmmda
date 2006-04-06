@@ -325,7 +325,7 @@ public class ExplorerNode implements MutableTreeNode, Cloneable {
     ExplorerNode clone = null;
     try {
       clone = (ExplorerNode) super.clone();
-      clone.children.clear();
+      clone.children = new ArrayList<ExplorerNode>(children.size());
       for (ExplorerNode node : children) {
         clone.addChild(node.clone());
       }

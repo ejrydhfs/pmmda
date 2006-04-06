@@ -25,7 +25,9 @@
       <title>Latest News</title>
       <p>
         Latest news of the
-        <em>pmMDA</em>
+        <a href="http://pmmda.sourceforge.net">
+          <em>pmMDA</em>
+        </a>
         for the community.
       </p>
       <ul>

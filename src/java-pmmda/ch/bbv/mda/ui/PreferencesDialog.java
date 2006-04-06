@@ -49,13 +49,4 @@ public class PreferencesDialog extends SimpleDialog {
     content.add(tabbedPane);
     setView(content);
   }
-
-  protected void processCancel() {
-  }
-
-  protected void processOk() {
-  }
-
-  protected void processApply() {
-  }
 }

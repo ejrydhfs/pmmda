@@ -72,6 +72,7 @@ public class NodePropertiesDialog extends SimpleDialog {
     setView(view);
   }
 
+  @Override
   protected void processOk() {
     processApply();
     if (action != null) {
@@ -80,6 +81,7 @@ public class NodePropertiesDialog extends SimpleDialog {
     view.setModel(null);
   }
 
+  @Override
   protected void processCancel() {
     if (view.isEditable()) {
       view.cancelChanges();
@@ -90,6 +92,7 @@ public class NodePropertiesDialog extends SimpleDialog {
     view.setModel(null);
   }
 
+  @Override
   protected void processApply() {
     if (view.isEditable()) {
       view.commitChanges();

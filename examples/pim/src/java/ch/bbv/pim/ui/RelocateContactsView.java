@@ -6,6 +6,12 @@
 package ch.bbv.pim.ui;
 
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.JTree;
+
+import ch.bbv.dog.DataObjectManager;
+import ch.bbv.explorer.*;
 
 /**
  * The view allows the relocation of contact to a selected organization. The
@@ -18,11 +24,86 @@ import javax.swing.JPanel;
  * @author MarcelBaumann
  * @version $Revision$
  */
-public class RelocateContactsView extends JPanel {
+public class RelocateContactsView extends JPanel implements ExplorerNodeOwner {
 
   /**
    * Serial version identifier of the class.
    */
   private static final long serialVersionUID = -8153917542904210072L;
 
+  private ExplorerTree tree;
+
+  /**
+   * Data object manager of this owner.
+   */
+  private DataObjectManager manager;
+
+  /**
+   * User interface node type factory of this owner.
+   */
+  private UiNodeTypeFactory factory;
+
+  /**
+   * Scroll pane containing the complete tree.
+   */
+  private JScrollPane treePane;
+
+  /**
+   * The name of the selected organization.
+   */
+  private JTextField organization;
+
+  /**
+   * Scroll pane containing the list of contacts.
+   */
+  private JScrollPane contactsPane;
+
+  /**
+   * Constructor of the class.
+   * @param explorer explorer in which the view is created
+   */
+  public RelocateContactsView(Explorer explorer) {
+    this(explorer.getRoot().clone(), explorer.getManager(), explorer
+        .getNodeTypeFactory());
+  }
+
+  /**
+   * Constructor of the class.
+   * @param root root of the tree
+   * @param manager data object manager of this owner
+   * @param factory user interface node type factory of this owner
+   */
+  public RelocateContactsView(ExplorerNode root, DataObjectManager manager,
+      UiNodeTypeFactory factory) {
+    assert (root != null) && (manager != null) && (factory != null);
+    this.manager = manager;
+    this.factory = factory;
+    tree = new ExplorerTree();
+    tree.setRoot(root, this);
+    treePane = new JScrollPane(tree.getTree());
+    add(treePane);
+    contactsPane = new JScrollPane();
+    add(contactsPane);
+  }
+
+  public DataObjectManager getManager() {
+    return manager;
+  }
+
+  public UiNodeTypeFactory getNodeTypeFactory() {
+    return factory;
+  }
+
+  public JTree getTree() {
+    return tree.getTree();
+  }
+
+  public void nodeChanged(ExplorerNode node) {
+  }
+
+  public void nodeInserted(ExplorerNode node, int index) {
+  }
+
+  public void nodeRemoved(ExplorerNode parent, ExplorerNode node, int index) {
+  }
 }

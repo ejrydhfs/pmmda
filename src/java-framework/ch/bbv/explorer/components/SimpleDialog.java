@@ -21,7 +21,12 @@ import ch.bbv.explorer.ExplorerUtilities;
  * @author MarcelBaumann
  * @version $Revision$
  */
-public abstract class SimpleDialog extends JDialog implements ActionListener {
+public class SimpleDialog extends JDialog implements ActionListener {
+  /**
+   * Serial version identifier for the class.
+   */
+  private static final long serialVersionUID = 7868386323347272561L;
+
   /**
    * Text for the OK button.
    */
@@ -36,7 +41,7 @@ public abstract class SimpleDialog extends JDialog implements ActionListener {
    * Text for the cancel button.
    */
   static final String APPLY_BUTTON_LABEL = "Apply";
-  
+
   /**
    * Swing component of the property dialog.
    */
@@ -54,9 +59,20 @@ public abstract class SimpleDialog extends JDialog implements ActionListener {
 
   /**
    * Constructor of the class.
-   * @param owner owner of the dialog. 
+   * @param owner owner of the dialog
    */
   public SimpleDialog(JFrame owner) {
+    this(owner, true, true);
+  }
+
+  /**
+   * Constructor of the class.
+   * @param owner owner of the dialog
+   * @param displayCancel flag indicating if the cancel button should be
+   *          displayed
+   * @param displayApply flag indicating if the apply button should be displayed
+   */
+  public SimpleDialog(JFrame owner, boolean displayCancel, boolean displayApply) {
     super(owner);
     addWindowListener(new PropertiesWindowListener());
     okButton = new JButton(OK_BUTTON_LABEL);
@@ -66,21 +82,27 @@ public abstract class SimpleDialog extends JDialog implements ActionListener {
     applyButton = new JButton(APPLY_BUTTON_LABEL);
     applyButton.addActionListener(this);
     JPanel panel = new JPanel(new FlowLayout());
-    panel.add(cancelButton);
-    panel.add(applyButton);
+    if (displayCancel) {
+      panel.add(cancelButton);
+    }
+    if (displayApply) {
+      panel.add(applyButton);
+    }
     panel.add(okButton);
     getContentPane().add(panel, BorderLayout.SOUTH);
     ExplorerUtilities.centerOnParent(this);
     KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-    panel.registerKeyboardAction(new EscListener(), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+    panel.registerKeyboardAction(new EscapeListener(), stroke,
+        JComponent.WHEN_IN_FOCUSED_WINDOW);
     stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-    panel.registerKeyboardAction(new EnterListener(), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+    panel.registerKeyboardAction(new EnterListener(), stroke,
+        JComponent.WHEN_IN_FOCUSED_WINDOW);
   }
 
   /**
    * Called each time one of the buttons of the dialog is activated. The
    * associated abstract processing methods are called.
-   * @param event event detected in Swing.
+   * @param event event detected in Swing
    */
   public void actionPerformed(ActionEvent event) {
     Object source = event.getSource();
@@ -97,7 +119,7 @@ public abstract class SimpleDialog extends JDialog implements ActionListener {
 
   /**
    * Sets the view of the dialog.
-   * @param view the new view of the dialog.
+   * @param view the new view of the dialog
    */
   public void setView(JPanel view) {
     getContentPane().add(view, BorderLayout.CENTER);
@@ -107,7 +129,7 @@ public abstract class SimpleDialog extends JDialog implements ActionListener {
 
   /**
    * Sets the enabled status of the button.
-   * @param enabled new status of the button.
+   * @param enabled new status of the button
    */
   public void setOkButtonEnabled(boolean enabled) {
     okButton.setEnabled(enabled);
@@ -115,7 +137,7 @@ public abstract class SimpleDialog extends JDialog implements ActionListener {
 
   /**
    * Sets the enabled status of the button.
-   * @param enabled new status of the button.
+   * @param enabled new status of the button
    */
   public void setApplyButtonEnabled(boolean enabled) {
     applyButton.setEnabled(enabled);
@@ -123,7 +145,7 @@ public abstract class SimpleDialog extends JDialog implements ActionListener {
 
   /**
    * Sets the enabled status of the button.
-   * @param enabled new status of the button.
+   * @param enabled new status of the button
    */
   public void setCancelButtonEnabled(boolean enabled) {
     cancelButton.setEnabled(enabled);
@@ -131,38 +153,47 @@ public abstract class SimpleDialog extends JDialog implements ActionListener {
 
   /**
    * The process method is called either when the cancel button is pressed or
-   * the window is closed.
+   * the window is closed. If action is requested it should be overwritten in
+   * the subclass.
    */
-  protected abstract void processCancel();
+  protected void processCancel() {
+  }
 
   /**
-   * The process method is called when the ok button is pressed.
+   * The process method is called when the ok button is pressed. If action is
+   * requested it should be overwritten in the subclass.
    */
-  protected abstract void processOk();
+  protected void processOk() {
+  }
 
   /**
-   * The process method is called when the apply button is pressed.
+   * The process method is called when the apply button is pressed. If action is
+   * requested it should be overwritten in the subclass.
    */
-  protected abstract void processApply();
-  
+  protected void processApply() {
+  }
+
   /**
    * Implements the window listener of the property dialog.
    */
   private class PropertiesWindowListener extends WindowAdapter {
     /**
      * Handles the window closing event.
-     * @param event windows event to handle.
+     * @param event windows event to handle
      */
     public void windowClosing(WindowEvent event) {
       processCancel();
       setVisible(false);
     }
   }
-  
+
   /**
-   * Listener for escape keys -> cancel action
+   * The escape key listener associated with the cancel action.
    */
-  private class EscListener implements ActionListener {
+  private class EscapeListener implements ActionListener {
+    /**
+     * @inheritDoc
+     */
     public void actionPerformed(ActionEvent actionEvent) {
       processCancel();
       setVisible(false);
@@ -170,9 +201,12 @@ public abstract class SimpleDialog extends JDialog implements ActionListener {
   }
 
   /**
-   * Listener for enter key -> ok action 
+   * The enter key listener associated with the enter action.
    */
   private class EnterListener implements ActionListener {
+    /**
+     * @inheritDoc
+     */
     public void actionPerformed(ActionEvent actionEvent) {
       processOk();
       setVisible(false);

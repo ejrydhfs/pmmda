@@ -67,8 +67,6 @@ which will be used to configure the chosen Forrest skin.
   <group-description>pmMDA Group Description</group-description>
   <group-url>http://www.sourceforge.net/projects/pmmda</group-url>
   <group-logo>images/group-logo.gif</group-logo>
-  <!-- optional host logo (e.g. sourceforge logo)
-       default skin: renders it at the bottom-left corner -->
   <host-url>www.sourceforge.net</host-url>
   <host-logo></host-logo>
   <!-- relative url of a favicon file, normally favicon.ico -->
@@ -108,8 +106,8 @@ which will be used to configure the chosen Forrest skin.
     feedback link in the footer with the page pathname appended:
     <a href="@href">{@to}</a>
     -->
-  <feedback to="marcelbaumann@users.sourceforge.org" 
-    href="mailto:marcelbaumann@users.sourceforge.org?subject=Feedback&#160;" > 
+  <feedback to="marcelbaumann@users.sourceforge.net" 
+    href="mailto:marcelbaumann@users.sourceforge.net?subject=Feedback-pmMDA " > 
     Send feedback about the website to: </feedback>
   <!--
     extra-css - here you can define custom css-elements that are 

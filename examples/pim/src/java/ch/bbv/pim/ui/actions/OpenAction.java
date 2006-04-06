@@ -36,7 +36,7 @@ import ch.bbv.pim.ui.PimExplorer;
  */
 public class OpenAction extends ExplorerFileAction {
   /**
-   * Serial version identifier coded as back compatibility date.
+   * Serial version identifier.
    */
   private static final long serialVersionUID = -1266462566763460770L;
 

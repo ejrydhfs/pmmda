@@ -140,13 +140,12 @@ public class AboutFrame extends JDialog {
     if (includetabs) {
       about.add(tabs);
     }
-
     return about;
   }
 
-  /*
-   * Creates a panel showing the licence. @return a panel. @return the license
-   * panel
+  /**
+   * Creates a panel showing the licence.
+   * @return the license panel
    */
   private JPanel createLicencePanel() {
     JPanel licence = new JPanel(new BorderLayout());

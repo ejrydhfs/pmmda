@@ -22,13 +22,25 @@
   </header>
   <body>
     <section>
-      <title>Binary Downloads</title>
+      <title>End users Binary Downloads</title>
       <p>
-        Binary downloads of the current released version of the project is
-        available in the download section of the sourceforge project. The
-        <em>pmMDA</em>
-        distribution can be downloaded, unpacked and installed in a directory.
-        No environment variables or system configuration needs to be performed.
+        Binary downloads of the released version of the project is available in
+        the download section of the sourceforge project. The
+        <a href="ext:pmmda">
+          <em>pmMDA</em>
+          distribution
+        </a>
+        can be downloaded, unpacked and installed in a directory. No environment
+        variables or system configuration needs to be performed. If you later
+        want to remove the installation just delete the directory containing the
+        distribution. A detailed description of these steps is provided in the
+        <a href="site:pmmda/tutorial">two minutes tutorial</a>
+        .
+      </p>
+      <p>
+        You can edit UML models with the open source UML tool
+        <a href="ext:argoUML">argoUML</a>
+        . Extensions also support commercial tools such as Rational Rose.
       </p>
       <p>
         Older releases are also available. The oldest ones are removed on a
@@ -40,7 +52,7 @@
       </p>
     </section>
     <section>
-      <title>Source Downloads</title>
+      <title>Developers Source Downloads</title>
       <p>
         Source downloads of the current version of the project is available in
         the download section of the sourceforge project. Please consult the
@@ -56,9 +68,6 @@
       <p>
         <a href="ext:pmmda">source and development downloads</a>
       </p>
-    </section>
-    <section>
-      <title>Developer's Downloads</title>
       <p>
         The source code and all associated artifacts of the project are
         available through the project CVS repository. Therefore any interested

@@ -186,6 +186,7 @@ public class MdaExplorer extends Explorer {
     menu.addSeparator();
     menuBar.addStandardAction(menu, Names.SAVE, new SaveAction(this));
     menuBar.addStandardAction(menu, Names.SAVE_AS, new SaveAsAction(this));
+    menu.addSeparator();
     menuBar.addStandardAction(menu, Names.EXIT, new ExplorerExitAction(this));
     generateAllAction = new GenerateAllAction(this);
     createGenerateMenu();

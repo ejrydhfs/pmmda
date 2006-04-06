@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2000-2005 The Apache Software Foundation
+  Copyright 2000-2006 The Apache Software Foundation
   
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -46,7 +46,11 @@
         This small project shows the power of the
         <em>pmMDA</em>
         pragmatic approach. The provided user interface and the consistent usage
-        of Apache libraries minimizes the amount of hand written code.
+        of Apache libraries minimize the amount of hand written code. The
+        example is a showcase of the capabilities of the explorer framework but
+        avoid the complexities of the
+        <em>pmMDA</em>
+        application.
       </p>
     </section>
     <section>

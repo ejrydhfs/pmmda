@@ -48,8 +48,8 @@ public abstract class ExplorerGlobalActionImpl extends AbstractAction implements
 
   /**
    * Constructor of the class.
-   * @param name name of the action.
-   * @param explorer explorer owning the global action.
+   * @param name name of the action
+   * @param explorer explorer owning the global action
    */
   public ExplorerGlobalActionImpl(String name, Explorer explorer) {
     super(name);
@@ -59,7 +59,7 @@ public abstract class ExplorerGlobalActionImpl extends AbstractAction implements
 
   /**
    * Returns the name of the global action.
-   * @return name of the action.
+   * @return name of the action
    */
   public String getName() {
     return (String) getValue(Action.NAME);
@@ -67,7 +67,7 @@ public abstract class ExplorerGlobalActionImpl extends AbstractAction implements
 
   /**
    * Returns the explorer owning the global action.
-   * @return the owning explorer if the action is registered otherwise null.
+   * @return the owning explorer if the action is registered otherwise null
    * @see #setExplorer(Explorer)
    */
   public Explorer getExplorer() {
@@ -76,7 +76,7 @@ public abstract class ExplorerGlobalActionImpl extends AbstractAction implements
 
   /**
    * Sets the explorer owning the global action.
-   * @param explorer new explorer owning the global action.
+   * @param explorer new explorer owning the global action
    * @see #getExplorer()
    */
   public void setExplorer(Explorer explorer) {
@@ -85,7 +85,7 @@ public abstract class ExplorerGlobalActionImpl extends AbstractAction implements
 
   /**
    * Performs the action associated with the event.
-   * @param event event to process.
+   * @param event event to process
    */
   public void actionPerformed(ActionEvent event) {
     lastResult = execute();
