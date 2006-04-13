@@ -14,7 +14,7 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 
 import ch.bbv.explorer.actions.SimpleFileFilter;
 import ch.bbv.mda.persistence.rose.MdaRoseUtil;
-import ch.bbv.mda.ui.actions.FileTypes;
+import ch.bbv.mda.ui.actions.MdaFileTypes;
 
 public class EclipseUtilities {
   
@@ -40,9 +40,9 @@ public class EclipseUtilities {
     if(ch.bbv.mda.ui.eclipse.EclipseUtilities.isEclipseRunning())
     {
       chooser.addChoosableFileFilter(new SimpleFileFilter(
-          FileTypes.RATIONAL_ROSE_EXT, FileTypes.RATIONAL_ROSE_TEXT));
+          MdaFileTypes.RATIONAL_ROSE_EXT, MdaFileTypes.RATIONAL_ROSE_TEXT));
       chooser.addChoosableFileFilter(new SimpleFileFilter(
-          FileTypes.RATIONAL_ROSE_CAT_EXT, FileTypes.RATIONAL_ROSE_CAT_TEXT));
+          MdaFileTypes.RATIONAL_ROSE_CAT_EXT, MdaFileTypes.RATIONAL_ROSE_CAT_TEXT));
     }
   }
 
