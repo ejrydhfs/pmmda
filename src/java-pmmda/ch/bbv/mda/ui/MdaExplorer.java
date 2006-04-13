@@ -21,11 +21,12 @@ import org.flexdock.docking.Dockable;
 import org.flexdock.docking.DockingConstants;
 import org.flexdock.docking.DockingManager;
 
+import ch.bbv.application.Application;
 import ch.bbv.application.Library;
 import ch.bbv.application.ProjectInfo;
 import ch.bbv.application.VersionId;
 import ch.bbv.cmdlineparser.CmdLineBuilder;
-import ch.bbv.dog.DataObjectManager;
+import ch.bbv.dog.DataObjectMgr;
 import ch.bbv.explorer.Explorer;
 import ch.bbv.explorer.ExplorerMenuBar;
 import ch.bbv.explorer.ExplorerUtilities;
@@ -73,7 +74,7 @@ public class MdaExplorer extends Explorer {
   /**
    * Lightweight object handler of the explorer instances.
    */
-  private static DataObjectManager manager;
+  private static DataObjectMgr manager;
 
   /**
    * The document edited in the explorer component.
@@ -120,7 +121,7 @@ public class MdaExplorer extends Explorer {
    * Registers all the node types used the explorer.
    */
   public static void registerNodeTypes() {
-    manager = MdaApplication.getApplication().getDataObjectManager();
+    manager = Application.getApplication().getDataObjectMgr();
     factory = new UiNodeTypeFactory();
     TypeFactory typeFactory = new TypeFactory(factory, manager);
     typeFactory.registerAllTypes();

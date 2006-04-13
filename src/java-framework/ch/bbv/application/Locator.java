@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann
+/* copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $id$
@@ -105,10 +105,10 @@ public class Locator {
   /**
    * Factory create pattern for the locator class. An instance of the given
    * subclass is created and registered as locator.
-   * @param classname qualified name of the subclass of locator to instantiate.
+   * @param classname qualified name of the subclass of locator to instantiate
    * @param params parameters list of the create method. The type of the
    *          parameters must correspond to the ones of the constructor
-   *          signature.
+   *          signature
    * @pre classname != null
    */
   public static final void create(String classname, Object[] params) {
@@ -154,11 +154,12 @@ public class Locator {
   }
 
   /**
-   * Register the unique instance of the application class. The application
+   * Registers the unique instance of the application class. The application
    * class the singleton pattern.
    * @param locator locator to register. Subclass instances of locator can be
-   *          registered.
+   *          registered
    * @pre (theLocator == null) && (locator != null)
+   * @post getInstance() != null
    */
   public static final void register(Locator locator) {
     assert (theLocator == null) && (locator != null);
@@ -171,7 +172,7 @@ public class Locator {
 
   /**
    * Returns true if the component is stopped.
-   * @return True if stopped otherwise false.
+   * @return true if stopped otherwise false
    */
   public boolean isStopped() {
     return state == States.STOPPED;
@@ -179,7 +180,7 @@ public class Locator {
 
   /**
    * Returns true if the component is initialized.
-   * @return True if initialized otherwise false.
+   * @return true if initialized otherwise false
    */
   public boolean isInitialized() {
     return state == States.INITIALIZED;
@@ -187,7 +188,7 @@ public class Locator {
 
   /**
    * Returns true if the component is running.
-   * @return True if running otherwise false.
+   * @return true if running otherwise false
    */
   public boolean isRunning() {
     return state == States.RUNNING;
@@ -213,7 +214,7 @@ public class Locator {
 
   /**
    * Startups the whole application. All registered components are started.
-   * @throws ComponentException an error occured in one of the components.
+   * @throws ComponentException if an error occured in one of the components
    * @pre isInitialized()
    * @post isRunning()
    */
@@ -231,7 +232,7 @@ public class Locator {
   /**
    * Shutdowns immediately the whole application. All registered components are
    * started. An immediate shutdown is an emergency procedure.
-   * @throws ComponentException an error occured in one of the components.
+   * @throws ComponentException if an error occured in one of the components
    * @pre isRunning()
    * @post isStopped()
    */
@@ -249,7 +250,7 @@ public class Locator {
   /**
    * Shutdowns the whole application. All registered components are started. A
    * normal shutdown is the standard procedure to stop the application.
-   * @throws ComponentException an error occured in one of the components.
+   * @throws ComponentException if an error occured in one of the components
    * @pre isRunning()
    * @post isStopped()
    */
@@ -269,7 +270,7 @@ public class Locator {
    * running, the component is started accordingly. The component is not
    * registered if there is already a component with the same name.
    * @param component component to register
-   * @throws ComponentException an error occured in one of the components.
+   * @throws ComponentException if an error occured in one of the components
    * @pre (component != null) && !isRegistered(component)
    * @post isRegistered(component)
    */
@@ -287,14 +288,13 @@ public class Locator {
       component.startup();
       break;
     }
-
     assert isRegistered(component);
   }
 
   /**
    * Unregisters the component from the application. The component is removed
    * from the application.
-   * @param component component to remove from the application.
+   * @param component component to remove from the application
    * @pre isRegistered(component)
    * @post !isRegistered(component)
    */
@@ -307,7 +307,7 @@ public class Locator {
   /**
    * Registers the subsystem under the given name.
    * @param subsystem subsystem to register.
-   * @param name name of the subsystem.
+   * @param name name of the subsystem
    * @pre subsystem != null && name != null
    */
   public void register(Object subsystem, String name) {
@@ -317,7 +317,7 @@ public class Locator {
 
   /**
    * Unregisters the subsystem.
-   * @param name name of the subsystem to unregister.
+   * @param name name of the subsystem to unregister
    * @pre name != null
    */
   public void unregister(String name) {
@@ -328,7 +328,7 @@ public class Locator {
   /**
    * Returns true if the component is already registered otherwise false.
    * @param component component which registration should be checked.
-   * @return True if registered otherwise false.
+   * @return true if registered otherwise false
    * @pre component != null
    */
   public boolean isRegistered(Component component) {
@@ -361,8 +361,8 @@ public class Locator {
   /**
    * Enables or disables the debug mode for the whole application and all
    * registered components.
-   * @param isDebugOn new debug mode for the application.
-   * @see #getDebugMode
+   * @param isDebugOn new debug mode for the application
+   * @see #getDebugMode()
    * @pre isStopped()
    * @post getDebugMode() == isDebugOn
    */
@@ -374,8 +374,8 @@ public class Locator {
 
   /**
    * Returns the debug mode of the application.
-   * @return The debug mode of the application.
-   * @see #setDebugMode
+   * @return the debug mode of the application
+   * @see #setDebugMode(boolean)
    */
   protected boolean getDebugMode() {
     return debugMode;
@@ -384,8 +384,8 @@ public class Locator {
   /**
    * Enables or disables the simulation mode for the whole application and all
    * registered components.
-   * @param isSimulationOn new simulation mode for the application.
-   * @see #getSimulationMode
+   * @param isSimulationOn new simulation mode for the application
+   * @see #getSimulationMode()
    * @pre isStopped()
    * @post getSimulationMode() == isSimulationOn
    */
@@ -397,8 +397,8 @@ public class Locator {
 
   /**
    * Returns the simulation mode of the application.
-   * @return The simulation mode of the application.
-   * @see #setSimulationMode
+   * @return The simulation mode of the application
+   * @see #setSimulationMode(boolean)
    */
   protected boolean getSimulationMode() {
     return simulationMode;

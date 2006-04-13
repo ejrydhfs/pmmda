@@ -181,7 +181,7 @@ public class PersistenceHandler implements DataObjectHandler {
       DataObject root) {
     Database database = getDatabase(datasource);
     CollectFunctor collect = new CollectFunctor();
-    AbstractVisitorFunctor visitor = DataObjectManager.getVisitorFor(clazz);
+    AbstractVisitorFunctor visitor = DataObjectMgr.getVisitorFor(clazz);
     visitor.setFunctor(collect);
     List<DataObject> originals = Collections.emptyList();
     if (!root.isNew()) {
@@ -224,7 +224,7 @@ public class PersistenceHandler implements DataObjectHandler {
       // stores the new graph in the database. All objects must be new.
       Database database = getDatabase(datasource);
       CollectFunctor collect = new CollectFunctor();
-      AbstractVisitorFunctor visitor = DataObjectManager.getVisitorFor(clazz);
+      AbstractVisitorFunctor visitor = DataObjectMgr.getVisitorFor(clazz);
       visitor.setFunctor(collect);
       DataObjectType.invokeVisitor(clazz, root, visitor);
       List<DataObject> objects = collect.getObjects();
@@ -237,7 +237,7 @@ public class PersistenceHandler implements DataObjectHandler {
     } else {
       // synchronizes the new graph with the original one
       ChangeFunctor changes = new ChangeFunctor();
-      AbstractVisitorFunctor visitor = DataObjectManager.getVisitorFor(clazz);
+      AbstractVisitorFunctor visitor = DataObjectMgr.getVisitorFor(clazz);
       visitor.setFunctor(changes);
       DataObject originalRoot = retrieve(datasource, clazz, root.getId());
       if (originalRoot != null) {
@@ -285,7 +285,7 @@ public class PersistenceHandler implements DataObjectHandler {
     }
     Database database = getDatabase(datasource);
     CollectFunctor collect = new CollectFunctor();
-    AbstractVisitorFunctor visitor = DataObjectManager.getVisitorFor(clazz);
+    AbstractVisitorFunctor visitor = DataObjectMgr.getVisitorFor(clazz);
     visitor.setFunctor(collect);
     DataObjectType.invokeVisitor(clazz, originalRoot, visitor);
     List<DataObject> deleted = new ArrayList<DataObject>(collect.getObjects());

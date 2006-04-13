@@ -15,10 +15,11 @@ import javax.swing.JMenuItem;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import ch.bbv.application.Application;
 import ch.bbv.application.Library;
 import ch.bbv.application.ProjectInfo;
 import ch.bbv.application.VersionId;
-import ch.bbv.dog.DataObjectManager;
+import ch.bbv.dog.DataObjectMgr;
 import ch.bbv.explorer.Explorer;
 import ch.bbv.explorer.ExplorerMenuBar;
 import ch.bbv.explorer.ExplorerNode;
@@ -67,7 +68,7 @@ public class PimExplorer extends Explorer {
   /**
    * Lightweight object handler of the explorer instances.
    */
-  private static DataObjectManager manager;
+  private static DataObjectMgr manager;
 
   /**
    * The document displayed in the explorer.
@@ -92,7 +93,7 @@ public class PimExplorer extends Explorer {
    * relationships.
    */
   public static void registerNodeTypes() {
-    manager = PimApplication.getApplication().getDataObjectManager();
+    manager = Application.getApplication().getDataObjectMgr();
     factory = new UiNodeTypeFactory();
     TypeFactory typeFactory = new TypeFactory(factory, manager);
     typeFactory.registerAllTypes();
@@ -159,7 +160,7 @@ public class PimExplorer extends Explorer {
     menuBar.addStandardAction(menu, Names.EXIT, new ExplorerExitAction(this));
     getMenuBar().documentChanged(null);
     createToolsMenu();
-}
+  }
 
   /**
    * Returns the project information displayed in the about box.

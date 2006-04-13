@@ -11,11 +11,12 @@ import java.util.Iterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import ch.bbv.application.Application;
 import ch.bbv.dnm.users.Realm;
 import ch.bbv.dnm.users.lw.ProviderLw;
 import ch.bbv.dnm.users.lw.RealmLw;
 import ch.bbv.dog.DataObjectId;
-import ch.bbv.dog.DataObjectManager;
+import ch.bbv.dog.DataObjectMgr;
 import ch.bbv.explorer.*;
 
 /**
@@ -42,7 +43,7 @@ public class UserExplorer extends Explorer {
   /**
    * Lightweight object handler of the explorer instances.
    */
-  private static DataObjectManager manager;
+  private static DataObjectMgr manager;
 
   /**
    * The document displayed in the explorer.
@@ -80,7 +81,7 @@ public class UserExplorer extends Explorer {
    * Registers all the node types used the explorer.
    */
   public static void registerNodeTypes() {
-    manager = UserApplication.getApplication().getDataObjectManager();
+    manager = Application.getApplication().getDataObjectMgr();
     factory = new UiNodeTypeFactory();
     TypeFactory typeFactory = new TypeFactory(factory, manager);
     typeFactory.registerAllTypes();
@@ -107,8 +108,8 @@ public class UserExplorer extends Explorer {
     RealmLw realmLw = new RealmLw(DataObjectId.ILLEGAL_ID);
     realmLw.setName("Realm");
     for (Iterator i = manager.getDataObjectHandler().retrieveLw(
-        getManager().getDatasource(), ProviderLw.class, (String) null).iterator(); i
-        .hasNext();) {
+        getManager().getDatasource(), ProviderLw.class, (String) null)
+        .iterator(); i.hasNext();) {
       realmLw.addProvider((ProviderLw) i.next());
     }
     ExplorerNode root = createTree(realmLw);

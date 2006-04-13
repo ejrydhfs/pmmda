@@ -17,11 +17,11 @@ import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ch.bbv.application.Locator;
+import ch.bbv.application.Application;
 import ch.bbv.dnm.users.client.UserApplication;
 import ch.bbv.dog.CacheHandler;
 import ch.bbv.dog.DataObject;
-import ch.bbv.dog.DataObjectManager;
+import ch.bbv.dog.DataObjectMgr;
 
 /**
  * The test class provides test cases to create and manipulate persistent graphs
@@ -53,7 +53,8 @@ public class UsersTest extends TestCase {
 
   public void setUp() throws Exception {
     if (UserApplication.getApplication() == null) {
-      new UserApplication(UserApplication.USE_DIRECT, UserApplication.USE_REPLACE, true);
+      new UserApplication(UserApplication.USE_DIRECT,
+          UserApplication.USE_REPLACE, true);
       log.info("Application singleton created");
     }
   }
@@ -64,7 +65,7 @@ public class UsersTest extends TestCase {
    * stored version.
    */
   public void testCrudProvider() {
-    DataObjectManager manager = getDataObjectManager();
+    DataObjectMgr manager = Application.getApplication().getDataObjectMgr();
     assertNotNull(manager);
     List providers = manager.getDataObjectHandler().retrieve(DATASOURCE,
         Provider.class, (String) null);
@@ -87,9 +88,8 @@ public class UsersTest extends TestCase {
   }
 
   public void testCrudDomain() {
-    DataObjectManager manager = getDataObjectManager();
+    DataObjectMgr manager = Application.getApplication().getDataObjectMgr();
     assertNotNull(manager);
-
     Provider provider = createProviderGraph(2, 0, 0, 0);
     manager.getDataObjectHandler().store(DATASOURCE, Provider.class, provider);
     for (int i = 1; i <= 5; i++) {
@@ -109,7 +109,7 @@ public class UsersTest extends TestCase {
   }
 
   public void testBigCrdProvider() {
-    DataObjectManager manager = getDataObjectManager();
+    DataObjectMgr manager = Application.getApplication().getDataObjectMgr();
     assertNotNull(manager);
 
     Provider provider = createProviderGraph(1, 10, 10, 10);
@@ -128,7 +128,7 @@ public class UsersTest extends TestCase {
 
   public void testStressCrdProvider() {
     List<Provider> providers = new ArrayList<Provider>();
-    DataObjectManager manager = getDataObjectManager();
+    DataObjectMgr manager = Application.getApplication().getDataObjectMgr();
     assertNotNull(manager);
     for (int i = 0; i < 10; i++) {
       Provider provider = createProviderGraph(1, 10, 10, 10);
@@ -156,7 +156,7 @@ public class UsersTest extends TestCase {
    * cache handler.
    */
   public void testCacheHandler() {
-    DataObjectManager manager = getDataObjectManager();
+    DataObjectMgr manager = Application.getApplication().getDataObjectMgr();
     assertNotNull(manager);
     CacheHandler handler = (CacheHandler) manager.getDataObjectHandler();
     assertNotNull(handler);
@@ -304,16 +304,5 @@ public class UsersTest extends TestCase {
 
   private String id2String(long id) {
     return Long.toString(id);
-  }
-
-  /**
-   * Returns the data object manager of the application. The manager provides
-   * access the data object handler, lock manager and lightweight object
-   * handler.
-   * @return the data object handler of the application.
-   */
-  private DataObjectManager getDataObjectManager() {
-    Locator locator = Locator.getInstance();
-    return (DataObjectManager) locator.getComponent(DataObjectManager.NAME);
   }
 }

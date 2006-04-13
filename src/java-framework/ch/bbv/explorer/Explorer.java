@@ -120,7 +120,7 @@ public abstract class Explorer implements ExplorerNodeOwner {
   /**
    * The handler of the lightweight and data objects.
    */
-  private DataObjectManager manager;
+  private DataObjectMgr manager;
 
   /**
    * The menu bar of the explorer frame.
@@ -189,7 +189,7 @@ public abstract class Explorer implements ExplorerNodeOwner {
    * @param factory node type factory of the explorer.
    * @param manager data object manager of the explorer.
    */
-  public Explorer(UiNodeTypeFactory factory, DataObjectManager manager) {
+  public Explorer(UiNodeTypeFactory factory, DataObjectMgr manager) {
     this.factory = factory;
     this.manager = manager;
     tree = new ExplorerTree();
@@ -238,7 +238,7 @@ public abstract class Explorer implements ExplorerNodeOwner {
    * Returns the data object manager used in the explorer.
    * @return the data object manager used in the explorer.
    */
-  public DataObjectManager getManager() {
+  public DataObjectMgr getManager() {
     return manager;
   }
 

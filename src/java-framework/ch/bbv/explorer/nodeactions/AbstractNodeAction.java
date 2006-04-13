@@ -48,7 +48,7 @@ public abstract class AbstractNodeAction extends ExplorerNodeActionImpl {
    */
   protected ExplorerNode updateNodeWithBo(ExplorerNode node) {
     ExplorerNodeOwner owner = node.getNodeOwner();
-    DataObjectManager manager = owner.getManager();
+    DataObjectMgr manager = owner.getManager();
     ExplorerNode root = node;
     while ((root != null) && !root.getNodeType().getDataObjectType().isRoot()) {
       root = (ExplorerNode) root.getParent();

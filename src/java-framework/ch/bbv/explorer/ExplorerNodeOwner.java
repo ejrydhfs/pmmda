@@ -7,7 +7,7 @@ package ch.bbv.explorer;
 
 import javax.swing.JTree;
 
-import ch.bbv.dog.DataObjectManager;
+import ch.bbv.dog.DataObjectMgr;
 
 /**
  * The class defines the interface of the owner of an explorer node tree. All
@@ -51,7 +51,7 @@ public interface ExplorerNodeOwner {
    * mechanisms to retrieve data objects if requested.
    * @return the data object manager used in the owner
    */
-  DataObjectManager getManager();
+  DataObjectMgr getManager();
 
   /**
    * Returns the visual tree of the owner.

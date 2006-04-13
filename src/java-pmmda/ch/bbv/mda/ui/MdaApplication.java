@@ -15,9 +15,10 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import ch.bbv.application.Application;
 import ch.bbv.application.ComponentException;
 import ch.bbv.application.Locator;
-import ch.bbv.dog.DataObjectManager;
+import ch.bbv.dog.DataObjectMgr;
 import ch.bbv.dog.EmptyHandler;
 import ch.bbv.dog.LightweightObjectHandlerImpl;
 import ch.bbv.dog.validation.Validator;
@@ -34,7 +35,7 @@ import ch.bbv.utilities.PropertyUtilities;
  * @author MarcelBaumann
  * @version $Revision$
  */
-public class MdaApplication extends Locator {
+public class MdaApplication extends Application {
   /**
    * Name of the default properties file of the application.
    */
@@ -90,7 +91,7 @@ public class MdaApplication extends Locator {
   public MdaApplication(String[] args) throws ComponentException {
     MdaApplication.args = args;
     register(this);
-    register(new DataObjectManager(new EmptyHandler(),
+    setDataObjectMgr(new DataObjectMgr(new EmptyHandler(),
         new LightweightObjectHandlerImpl(), null, null));
     register(new Validator(Validator.NAME));
     register(new ResourcesManager(ResourcesManager.NAME));
@@ -114,17 +115,6 @@ public class MdaApplication extends Locator {
       resourcesManager.registerResources(cartridge);
     }
     explorer = MdaExplorer.create(args);
-  }
-
-  /**
-   * Returns the data object manager of the application. The manager provides
-   * access the data object handler, lock manager and lightweight object
-   * handler.
-   * @return the data object handler of the application.
-   */
-  public DataObjectManager getDataObjectManager() {
-    Locator locator = Locator.getInstance();
-    return (DataObjectManager) locator.getComponent(DataObjectManager.NAME);
   }
 
   /**

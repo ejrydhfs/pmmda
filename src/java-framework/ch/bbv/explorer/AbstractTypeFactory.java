@@ -7,7 +7,7 @@ package ch.bbv.explorer;
 
 import java.util.List;
 
-import ch.bbv.dog.DataObjectManager;
+import ch.bbv.dog.DataObjectMgr;
 import ch.bbv.dog.DataObjectType;
 
 /**
@@ -25,7 +25,7 @@ public abstract class AbstractTypeFactory {
   /**
    * The data object manager to retrieve data.
    */
-  protected DataObjectManager manager;
+  protected DataObjectMgr manager;
 
   /**
    * Constructor of the class.
@@ -33,7 +33,7 @@ public abstract class AbstractTypeFactory {
    * @param manager the data object manager used to retrieve data.
    */
   protected AbstractTypeFactory(UiNodeTypeFactory factory,
-      DataObjectManager manager) {
+      DataObjectMgr manager) {
     this.factory = factory;
     this.manager = manager;
   }

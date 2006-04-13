@@ -32,13 +32,11 @@
       <path refid="jdkjars.classpath" />
       <fileset dir="${lib.dir}">
         <include name="**/*.jar" />
-        <include name="**/*.zip" />
       </fileset>
     </path>
     <path id="scripts.classpath">
       <fileset dir="${scripts.dir}/lib">
         <include name="**/*.jar" />
-        <include name="**/*.zip" />
       </fileset>
     </path>
   </target>
@@ -47,7 +45,7 @@
     <property name="antlr.lib" value="antlr-2.7.5.jar" />
     <property name="commons-beanutils.lib" value="commons-beanutils-1.7.0.jar" />
     <property name="commons-cli.lib" value="commons-cli-1.0.jar" />
-    <property name="commons-codec.lib" value="commons-code-1.3.jar" />
+    <property name="commons-codec.lib" value="commons-codec-1.3.jar" />
     <property name="commons-collections.lib" value="commons-collections-3.1.jar" />
     <property name="commons-configuration.lib" value="commons-configuration-1.2.jar" />
     <property name="commons-dbcp.lib" value="commons-dbcp-1.1.jar" />
@@ -74,7 +72,7 @@
 
   <target name="dist-init" depends="init, init-libs" description="Initializes the distribution project properties">
     <property name="example-src.dir" value="${basedir}/examples/test" />
-    
+
     <property name="dist.dir" value="${basedir}/dist" />
     <property name="pmmda-dist.dir" value="${dist.dir}/${pmmda.name}" />
     <property name="pmmda-lib.dir" value="${pmmda-dist.dir}/lib" />

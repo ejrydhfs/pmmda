@@ -15,7 +15,7 @@ TODO
   classname, prefix, loaded, active, dependants
 - Have a self contained jar file running with java -jar pmMDA
 
-Version 0.3.0-RC3 (31 March 2006)
+Version 0.3.0-RC3 (15 April 2006)
 ------------------------------------
 The following new features were added.
 - Moved to MySQL 5.0 and OJB 1.0.4.
@@ -38,7 +38,8 @@ The following errors were corrected
 
 The following errors and change requests are closed 
   Errors: 1387300, 1379486, 1387983, 1379486
-
+	Features: 1466354
+	
 Version 0.3.0-RC2 (25 December 2005)
 ------------------------------------
 The following new features were added.

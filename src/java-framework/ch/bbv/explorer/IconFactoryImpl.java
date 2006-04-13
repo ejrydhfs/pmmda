@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann
+/* copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$ 
@@ -12,6 +12,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.ImageIcon;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * The icon factory defines a conceptual framework to service lifecycle icons
@@ -36,6 +39,11 @@ public class IconFactoryImpl implements IconFactory {
    * Extension for GIF image files.
    */
   private static final String GIF_EXTENSION = ".gif";
+
+  /**
+   * Logger for all instances of the class.
+   */
+  private static Log log = LogFactory.getLog(IconFactoryImpl.class);
 
   /**
    * Local cache of all loaded icons.
@@ -77,10 +85,14 @@ public class IconFactoryImpl implements IconFactory {
     if (icon == null) {
       StringBuilder buffer = new StringBuilder();
       buffer.append("/images/").append(identifier).append(GIF_EXTENSION);
-      URL url = getClass().getResource(buffer.toString());
-      Image image = Toolkit.getDefaultToolkit().createImage(url);
-      icon = new ImageIcon(image);
-      icons.put(identifier, icon);
+      try {
+        URL url = getClass().getResource(buffer.toString());
+        Image image = Toolkit.getDefaultToolkit().createImage(url);
+        icon = new ImageIcon(image);
+        icons.put(identifier, icon);
+      } catch (Exception e) {
+        log.error("icon could not be loaded " + buffer, e);
+      }
     }
     return icon;
   }

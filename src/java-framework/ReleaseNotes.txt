@@ -2,7 +2,7 @@ TODO
 ----
 - Integrate navigation buttons in properties dialog to traverse all siblings
 
-Version 0.2.2-RC3 (31 March 2006)
+Version 0.2.2-RC3 (15 April 2006)
 -----------------------------------
 The following errors were corrected.
 - The tree constructor was extended to handle more complex tree topologies
@@ -13,6 +13,7 @@ The following errors were corrected.
 
 The following errors and change requests are closed 
   Errors: 1379486
+  Features: 1455236, 4460061
 
 Version 0.2.2-RC2 (25 December 2005)
 -----------------------------------

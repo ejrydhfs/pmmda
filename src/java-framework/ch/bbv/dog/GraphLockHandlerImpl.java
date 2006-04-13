@@ -26,7 +26,7 @@ public class GraphLockHandlerImpl implements GraphLockHandler {
   /**
    * Data object manager of the objects handled in the lock handler.
    */
-  private DataObjectManager manager;
+  private DataObjectMgr manager;
 
   /**
    * Functor used to collect all root objects of a graph.
@@ -42,7 +42,7 @@ public class GraphLockHandlerImpl implements GraphLockHandler {
    * Constructor of the class.
    * @param manager manager responsible of the data objects to lock.
    */
-  public GraphLockHandlerImpl(DataObjectManager manager) {
+  public GraphLockHandlerImpl(DataObjectMgr manager) {
     this.manager = manager;
     functor = new CollectRootFunctor(manager);
     locks = new HashSet<DataObjectId>();

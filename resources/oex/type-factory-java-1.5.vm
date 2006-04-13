@@ -16,7 +16,7 @@ import ${package.getAttribute("bo-if-package")}.*;
 import ${package.getAttribute("bo-lw-package")}.*;
 #end
 import ${package.getAttribute("bo-mo-package")}.*;
-import ch.bbv.dog.DataObjectManager;
+import ch.bbv.dog.DataObjectMgr;
 import ch.bbv.dog.DataObjectType;
 import ch.bbv.explorer.PopupSelectorDefault;
 import java.util.ArrayList;
@@ -42,7 +42,7 @@ public class TypeFactory extends AbstractTypeFactory {
    * @param factory node type factory in which the nodes should be created.
    * @param manager data object manager where the types should be created.
    */
-  public TypeFactory(UiNodeTypeFactory factory, DataObjectManager manager) {
+  public TypeFactory(UiNodeTypeFactory factory, DataObjectMgr manager) {
     super(factory, manager);
   }
 

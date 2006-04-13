@@ -10,7 +10,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 
-import ch.bbv.dog.DataObjectManager;
+import ch.bbv.dog.DataObjectMgr;
 import ch.bbv.explorer.*;
 
 /**
@@ -36,7 +36,7 @@ public class RelocateContactsView extends JPanel implements ExplorerNodeOwner {
   /**
    * Data object manager of this owner.
    */
-  private DataObjectManager manager;
+  private DataObjectMgr manager;
 
   /**
    * User interface node type factory of this owner.
@@ -73,7 +73,7 @@ public class RelocateContactsView extends JPanel implements ExplorerNodeOwner {
    * @param manager data object manager of this owner
    * @param factory user interface node type factory of this owner
    */
-  public RelocateContactsView(ExplorerNode root, DataObjectManager manager,
+  public RelocateContactsView(ExplorerNode root, DataObjectMgr manager,
       UiNodeTypeFactory factory) {
     assert (root != null) && (manager != null) && (factory != null);
     this.manager = manager;
@@ -86,7 +86,7 @@ public class RelocateContactsView extends JPanel implements ExplorerNodeOwner {
     add(contactsPane);
   }
 
-  public DataObjectManager getManager() {
+  public DataObjectMgr getManager() {
     return manager;
   }
 

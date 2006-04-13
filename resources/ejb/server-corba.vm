@@ -12,8 +12,8 @@ package ${package.getAttribute("ejb-server-package")};
 #set($foo=${imports.addPackageName(${package.getAttribute("cto-bo2dto-package")})})
 #set($foo=${imports.addPackageName(${package.getAttribute("cto-lw2dto-package")})})
 #set($foo=${imports.addPackageName(${package.getAttribute("bo-lw-package")})})
-#set($foo=${imports.addPackageName("ch.bbv.application")})
-#set($foo=${imports.addClassName("ch.bbv.dog.DataObjectManager")})
+#set($foo=${imports.addClassName("ch.bbv.application.Application")})
+#set($foo=${imports.addClassName("ch.bbv.dog.DataObjectMgr")})
 #set($foo=${imports.addClassName("ch.bbv.dog.DataObjectHandler")})
 #set($foo=${imports.addClassName("ch.bbv.dog.DataObject")})
 #set($foo=${imports.addClassName("ch.bbv.dog.DataObjectId")})
@@ -78,8 +78,8 @@ public class $classname extends ${serverName}POA  {
   public static ${classname} create(String name) {
     ${classname} server = null;
     try {
-      Locator locator = Locator.getInstance();
-      org.omg.CORBA.ORB orb = (org.omg.CORBA.ORB) locator.getSubsystem(ORB_NAME);
+      Application application = Application.getApplication();
+      org.omg.CORBA.ORB orb = (org.omg.CORBA.ORB) application.getSubsystem(ORB_NAME);
       server = new ${classname}();
       POA rootpoa = POAHelper.narrow(orb.resolve_initial_references("RootPOA"));
       rootpoa.the_POAManager().activate();
@@ -89,7 +89,7 @@ public class $classname extends ${serverName}POA  {
       NamingContextExt ncRef = NamingContextExtHelper.narrow(objRef);
       NameComponent path[] = ncRef.to_name(name);
       ncRef.rebind(path, href);
-      locator.register(server, name);
+      application.register(server, name);
       log.info("${serverName} named [" + name + "] ready and waiting ...");
     } catch (Exception e) {
       log.fatal(e);
@@ -209,8 +209,8 @@ public class $classname extends ${serverName}POA  {
 #end
   /** 
    * Retrieves the values of the reference codes described in the given list.
-   * @param descriptors list of reference code types to retrieve.
-   * @return list of requested reference code types with their values.
+   * @param descriptors list of reference code types to retrieve
+   * @return list of requested reference code types with their values
    */
   public ReferenceCodeInfoCto[] retrieveCodes(ReferenceCodeInfoCto[] descriptors) {
     return descriptors;
@@ -219,16 +219,16 @@ public class $classname extends ${serverName}POA  {
   /** 
    * Heartbeat tests for the server. Calls an empty method on the server to 
    * test if it is still available.
-   * @throws CtoExceptionCto the server encountered a problem.
+   * @throws CtoExceptionCto if the server encountered a problem
    */
   public void heartbeat() throws CtoExceptionCto {
   }
   
   /**
    * Creates the CTO representation of a Java exception.
-   * @param exception to represent.
-   * @param reason text describing the reason of the exception. The value can be null.
-   * @return the CTO representatio of the exception.
+   * @param exception to represent
+   * @param reason text describing the reason of the exception. The value can be null
+   * @return the CTO representatio of the exception
    */
   private CtoExceptionCto create(Exception exception, String reason) {
     CtoException cto = new CtoException(exception.getMessage(), reason);
@@ -237,11 +237,10 @@ public class $classname extends ${serverName}POA  {
   
   /**
    * Returns the data object handler of the server.
-   * @return the data object handler.
+   * @return the data object handler
    */
   private DataObjectHandler getHandler() {
-    DataObjectManager manager = (DataObjectManager) Locator.getInstance()
-                                    .getComponent(DataObjectManager.NAME);
+    DataObjectMgr manager = Application.getApplication().getDataObjectMgr();
     return manager.getDataObjectHandler();
   }
 }

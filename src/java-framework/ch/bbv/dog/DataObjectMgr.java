@@ -9,9 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ch.bbv.application.Component;
-import ch.bbv.application.ComponentImpl;
-import ch.bbv.application.Locator;
+import ch.bbv.application.Application;
 
 /**
  * The data object manager defines a coherant set of handlers responsible to
@@ -24,12 +22,7 @@ import ch.bbv.application.Locator;
  * @author MarcelBaumann
  * @version $Revision$
  */
-public class DataObjectManager extends ComponentImpl implements Component {
-  /**
-   * Name of the component in the application.
-   */
-  public static final String NAME = "DataObjectManager";
-
+public class DataObjectMgr {
   /**
    * data object handler used to manipulate data objects.
    */
@@ -45,7 +38,7 @@ public class DataObjectManager extends ComponentImpl implements Component {
    * graphs.
    */
   private GraphLockHandler lockHandler;
-  
+
   private String datasource;
 
   /**
@@ -59,8 +52,7 @@ public class DataObjectManager extends ComponentImpl implements Component {
    * @return requested visitor if found otherwise false.
    */
   public static AbstractVisitorFunctor getVisitorFor(Class clazz) {
-    DataObjectManager manager = (DataObjectManager) Locator.getInstance()
-        .getComponent(DataObjectManager.NAME);
+    DataObjectMgr manager = Application.getApplication().getDataObjectMgr();
     return manager.getVisitor(clazz);
   }
 
@@ -71,10 +63,9 @@ public class DataObjectManager extends ComponentImpl implements Component {
    * @param lockHandler lock handler
    * @param datasource database containing the persistent object
    */
-  public DataObjectManager(DataObjectHandler dataObjectHandler,
+  public DataObjectMgr(DataObjectHandler dataObjectHandler,
       LightweightObjectHandler lwHandler, GraphLockHandler lockHandler,
       String datasource) {
-    super(NAME);
     this.dataObjectHandler = dataObjectHandler;
     this.lwHandler = lwHandler;
     this.lockHandler = lockHandler;
@@ -84,7 +75,7 @@ public class DataObjectManager extends ComponentImpl implements Component {
 
   /**
    * Returns the data object handler.
-   * @return the requested handler.
+   * @return the requested handler
    */
   public DataObjectHandler getDataObjectHandler() {
     return dataObjectHandler;
@@ -92,7 +83,7 @@ public class DataObjectManager extends ComponentImpl implements Component {
 
   /**
    * Returns the lightweight data object handler.
-   * @return the requested handler.
+   * @return the requested handler
    */
   public LightweightObjectHandler getLwHandler() {
     return lwHandler;
@@ -100,7 +91,7 @@ public class DataObjectManager extends ComponentImpl implements Component {
 
   /**
    * Returns the data object lock handler.
-   * @return the requested handler.
+   * @return the requested handler
    */
   public GraphLockHandler getLockHandler() {
     return lockHandler;
@@ -113,7 +104,7 @@ public class DataObjectManager extends ComponentImpl implements Component {
   public String getDatasource() {
     return datasource;
   }
-  
+
   /**
    * Returns the data object type associated with the type of the given data
    * object.
@@ -128,8 +119,8 @@ public class DataObjectManager extends ComponentImpl implements Component {
 
   /**
    * Returns the data object type associated with the given class.
-   * @param clazz class which data object type is requested.
-   * @return the requested type if found otherwise null.
+   * @param clazz class which data object type is requested
+   * @return the requested type if found otherwise null
    * @pre clazz != null
    */
   public DataObjectType getType(Class clazz) {
@@ -140,8 +131,8 @@ public class DataObjectManager extends ComponentImpl implements Component {
   /**
    * Returns the data object type describing the type of the given lightweight
    * data object.
-   * @param object lightweight data object which type is requested.
-   * @return the requested data object type.
+   * @param object lightweight data object which type is requested
+   * @return the requested data object type
    * @pre object != null
    */
   public DataObjectType getType(LightweightObject object) {
@@ -151,7 +142,7 @@ public class DataObjectManager extends ComponentImpl implements Component {
 
   /**
    * Registers the data object type defined for the given data object type.
-   * @param type data object type declaration.
+   * @param type data object type declaration
    * @pre type != null
    */
   public void register(DataObjectType type) {
@@ -165,8 +156,8 @@ public class DataObjectManager extends ComponentImpl implements Component {
   /**
    * Returns all root data objects members of the tree. A root is a data object
    * which data object type has the root flag set.
-   * @param root tree of data objects to traverse.
-   * @return list of all root objects in the tree.
+   * @param root tree of data objects to traverse
+   * @return list of all root objects in the tree
    * @pre root != null
    */
   public List< ? extends DataObject> getRoots(DataObject root) {
@@ -180,8 +171,8 @@ public class DataObjectManager extends ComponentImpl implements Component {
 
   /**
    * Returns the visitor of the class.
-   * @param clazz business object class which visitor is requested.
-   * @return requested visitor if found otherwise false.
+   * @param clazz business object class which visitor is requested
+   * @return requested visitor if found otherwise false
    * @pre clazz != null
    */
   public AbstractVisitorFunctor getVisitor(Class clazz) {

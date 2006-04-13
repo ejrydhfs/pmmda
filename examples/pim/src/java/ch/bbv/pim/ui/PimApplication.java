@@ -12,15 +12,20 @@ import org.apache.commons.cli.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import ch.bbv.application.Application;
 import ch.bbv.application.ComponentException;
 import ch.bbv.application.Locator;
 import ch.bbv.cmdlineparser.CmdLineBuilder;
-import ch.bbv.dog.DataObjectManager;
+import ch.bbv.dog.DataObjectMgr;
 import ch.bbv.dog.EmptyHandler;
 import ch.bbv.dog.LightweightObjectHandlerImpl;
+import ch.bbv.dog.reference.BooleanCode;
+import ch.bbv.dog.reference.ReferenceCodeMgr;
+import ch.bbv.dog.reference.ReferenceCodeMgrImpl;
 import ch.bbv.dog.reference.ReferenceCodeUtilities;
 import ch.bbv.pim.AddressBook;
 import ch.bbv.pim.Country;
+import ch.bbv.pim.JournalEntryType;
 import ch.bbv.pim.Language;
 import ch.bbv.pim.formats.*;
 
@@ -30,7 +35,7 @@ import ch.bbv.pim.formats.*;
  * @author MarcelBaumann
  * @version $Revision$
  */
-public class PimApplication extends Locator {
+public class PimApplication extends Application {
   /**
    * Logger instance of the class.
    */
@@ -79,8 +84,9 @@ public class PimApplication extends Locator {
       Exception {
     arguments = args;
     register(this);
-    register(new DataObjectManager(new EmptyHandler(),
+    setDataObjectMgr(new DataObjectMgr(new EmptyHandler(),
         new LightweightObjectHandlerImpl(), null, null));
+    setReferenceCodeMgr(new ReferenceCodeMgrImpl());
     FormatManager manager = new FormatManager();
     manager.register(new LdifEmitter(), ".ldif");
     manager.register(new VCardEmitter(), ".vcf");
@@ -97,6 +103,11 @@ public class PimApplication extends Locator {
   @Override
   public void initialize() throws ComponentException {
     super.initialize();
+    ReferenceCodeMgr manager = getReferenceCodeMgr();
+    manager.registerReferenceCode(BooleanCode.class, BooleanCode.getCodes());
+    manager.registerReferenceCode(Country.class, Country.getCodes());
+    manager.registerReferenceCode(Language.class, Language.getCodes());
+    manager.registerReferenceCode(JournalEntryType.class, JournalEntryType.getCodes());
     PimExplorer.registerNodeTypes();
   }
 
@@ -106,17 +117,6 @@ public class PimApplication extends Locator {
    */
   public FormatManager getFormatManager() {
     return (FormatManager) getApplication().getComponent(FormatManager.NAME);
-  }
-
-  /**
-   * Returns the data object manager of the application. The manager provides
-   * access the data object handler, lock manager and lightweight object
-   * handler.
-   * @return the data object handler of the application.
-   */
-  public DataObjectManager getDataObjectManager() {
-    Locator locator = Locator.getInstance();
-    return (DataObjectManager) locator.getComponent(DataObjectManager.NAME);
   }
 
   /**

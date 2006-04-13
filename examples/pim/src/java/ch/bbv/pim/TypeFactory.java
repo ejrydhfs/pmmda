@@ -8,7 +8,7 @@ package ch.bbv.pim;
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.bbv.dog.DataObjectManager;
+import ch.bbv.dog.DataObjectMgr;
 import ch.bbv.dog.DataObjectType;
 import ch.bbv.pim.lw.*;
 
@@ -24,13 +24,13 @@ public class TypeFactory {
   /** 
    * The data object manager responsible of the types defines in the package.
    */
-  private DataObjectManager manager;
+  private DataObjectMgr manager;
   
   /** 
    * Constructor of the class.
    * @param manager data object manager where the types should be created.
    */
-  public TypeFactory(DataObjectManager manager) {
+  public TypeFactory(DataObjectMgr manager) {
     this.manager = manager;
   }
 

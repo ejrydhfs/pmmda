@@ -13,7 +13,7 @@ package ${package.getAttribute("ejb-server-package")};
 #if(${package.booleanValueOfAttribute("bo-lightweight")})  
 #set($foo=${imports.addPackageName(${package.getAttribute("bo-lw-package")})})
 #end
-#set($foo=${imports.addClassName("ch.bbv.dog.DataObjectManager")})
+#set($foo=${imports.addClassName("ch.bbv.dog.DataObjectMgr")})
 #set($foo=${imports.addClassName("ch.bbv.dog.DataObjectHandler")})
 #set($foo=${imports.addClassName("ch.bbv.dog.DataObject")})
 #set($foo=${imports.addClassName("ch.bbv.dog.DataObjectId")})

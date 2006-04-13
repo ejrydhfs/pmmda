@@ -17,7 +17,7 @@ package ${package.getAttribute("bo-mo-package")};
 #set($foo=${imports.addPackageName(${package.getAttribute("bo-lw-package")})})
 #end
 #set($foo=${imports.addPackageName(${package.getAttribute("bo-mo-package")})})
-#set($foo=${imports.addClassName("ch.bbv.dog.DataObjectManager")})
+#set($foo=${imports.addClassName("ch.bbv.dog.DataObjectMgr")})
 #set($foo=${imports.addClassName("ch.bbv.dog.DataObjectType")})
 #set($foo=${imports.addClassName("java.util.List")})
 #set($foo=${imports.addClassName("java.util.ArrayList")})
@@ -38,13 +38,13 @@ public class TypeFactory {
   /** 
    * The data object manager responsible of the types defines in the package.
    */
-  private DataObjectManager manager;
+  private DataObjectMgr manager;
   
   /** 
    * Constructor of the class.
    * @param manager data object manager where the types should be created.
    */
-  public TypeFactory(DataObjectManager manager) {
+  public TypeFactory(DataObjectMgr manager) {
     this.manager = manager;
   }
 

@@ -69,7 +69,7 @@ public class ChangeFunctor implements DoFunctor {
     updates.clear();
     CollectFunctor collect = new CollectFunctor();
     Class clazz = originalGraph.getClass();
-    AbstractVisitorFunctor visitor = DataObjectManager.getVisitorFor(clazz);
+    AbstractVisitorFunctor visitor = DataObjectMgr.getVisitorFor(clazz);
     visitor.setFunctor(collect);
     DataObjectType.invokeVisitor(clazz, originalGraph, visitor);
     objects = new ArrayList<DataObject>(collect.getObjects());

@@ -16,8 +16,9 @@ package ${package.getAttribute("ejb-server-package")};
 #set($foo=${imports.addClassName("java.util.ConcurrentModificationException")})
 #set($foo=${imports.addClassName("java.rmi.RemoteException")})
 #set($foo=${imports.addClassName("javax.ejb.SessionContext")})
+#set($foo=${imports.addClassName("ch.bbv.application.Application")})
 #set($foo=${imports.addClassName("ch.bbv.application.Locator")})
-#set($foo=${imports.addClassName("ch.bbv.dog.DataObjectManager")})
+#set($foo=${imports.addClassName("ch.bbv.dog.DataObjectMgr")})
 #set($foo=${imports.addClassName("ch.bbv.dog.DataObjectHandler")})
 #set($foo=${imports.addClassName("ch.bbv.dog.DataObject")})
 #set($foo=${imports.addClassName("ch.bbv.dog.DataObjectId")})
@@ -185,8 +186,8 @@ public class ${className} implements javax.ejb.SessionBean {
 
   /**
    * Sets the session context of the session bean.
-   * @param context session context of the session bean.
-   * @see #getSessionContext
+   * @param context session context of the session bean
+   * @see #getSessionContext()
    */
   public void setSessionContext(SessionContext context) {
     this.context = context;
@@ -194,8 +195,8 @@ public class ${className} implements javax.ejb.SessionBean {
   
   /**
    * Returns the session context of the session bean.
-   * @return the session context of the session bean.
-   * @see #setSessionContext
+   * @return the session context of the session bean
+   * @see #setSessionContext(SessionContext)
    */
    SessionContext getSessionContext() {
      return context;
@@ -203,10 +204,10 @@ public class ${className} implements javax.ejb.SessionBean {
    
   /** 
    * Returns the data object handler of the application.
-   * @return the data object handler of the application.
+   * @return the data object handler of the application
    */    
   private DataObjectHandler getHandler() {
-    DataObjectManager manager = (DataObjectManager) Locator.getInstance().getComponent(DataObjectManager.NAME);
+    DataObjectMgr manager = Application.getApplication().getDataObjectMgr();
     return manager.getDataObjectHandler();
   }
 }

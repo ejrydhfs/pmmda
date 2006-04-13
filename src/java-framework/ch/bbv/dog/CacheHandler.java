@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ch.bbv.application.Locator;
+import ch.bbv.application.Application;
 import ch.bbv.dog.functors.UpdateFunctor;
 
 /**
@@ -251,8 +251,7 @@ public class CacheHandler implements DataObjectHandler, CachesHandler {
    * @param cache cache containing the data objects to remove.
    */
   private void addToCache(DataObject root, Map<DataObjectId, DataObject> cache) {
-    DataObjectManager manager = (DataObjectManager) Locator.getInstance()
-        .getComponent(DataObjectManager.NAME);
+    DataObjectMgr manager = Application.getApplication().getDataObjectMgr();
     for (DataObject object : manager.getRoots(root)) {
       cache.put(new DataObjectId(object), object);
     }
@@ -266,8 +265,7 @@ public class CacheHandler implements DataObjectHandler, CachesHandler {
    */
   private void removeFromCache(Class clazz, Integer id,
       Map<DataObjectId, DataObject> cache) {
-    DataObjectManager manager = (DataObjectManager) Locator.getInstance()
-        .getComponent(DataObjectManager.NAME);
+    DataObjectMgr manager = Application.getApplication().getDataObjectMgr();
     DataObject root = cache.get(new DataObjectId(clazz, id));
     if (root != null) {
       for (DataObject object : manager.getRoots(root)) {
@@ -358,8 +356,7 @@ public class CacheHandler implements DataObjectHandler, CachesHandler {
    * @return requested visitor if found otherwise false.
    */
   private AbstractVisitorFunctor getVisitor(Class clazz) {
-    DataObjectManager manager = (DataObjectManager) Locator.getInstance()
-        .getComponent(DataObjectManager.NAME);
+    DataObjectMgr manager = Application.getApplication().getDataObjectMgr();
     DataObjectType type = manager.getType(clazz);
     return type.createVisitorInstance();
   }

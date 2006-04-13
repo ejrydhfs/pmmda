@@ -20,7 +20,7 @@ public class CollectRootFunctor implements DoFunctor {
   /**
    * The data object manager responsible for the data objects.
    */
-  private DataObjectManager manager;
+  private DataObjectMgr manager;
 
   /**
    * List of collected root objects found in the data object graph.
@@ -36,7 +36,7 @@ public class CollectRootFunctor implements DoFunctor {
    * Constructor of the class.
    * @param manager manager of the data objects part of the traversed tree.
    */
-  public CollectRootFunctor(DataObjectManager manager) {
+  public CollectRootFunctor(DataObjectMgr manager) {
     this.manager = manager;
     reset();
   }

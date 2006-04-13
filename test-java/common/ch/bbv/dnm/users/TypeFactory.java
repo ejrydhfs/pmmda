@@ -6,7 +6,7 @@
 package ch.bbv.dnm.users;
 
 import ch.bbv.dnm.users.lw.*;
-import ch.bbv.dog.DataObjectManager;
+import ch.bbv.dog.DataObjectMgr;
 import ch.bbv.dog.DataObjectType;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,13 +23,13 @@ public class TypeFactory {
   /** 
    * The data object manager responsible of the types defines in the package.
    */
-  private DataObjectManager manager;
+  private DataObjectMgr manager;
   
   /** 
    * Constructor of the class.
    * @param manager data object manager where the types should be created.
    */
-  public TypeFactory(DataObjectManager manager) {
+  public TypeFactory(DataObjectMgr manager) {
     this.manager = manager;
   }
 

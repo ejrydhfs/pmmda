@@ -202,6 +202,59 @@
           platform is guaranteed.
         </note>
       </section>
+      <section>
+        <title>Used Ant Plugins</title>
+        <p>
+          The artifacts and distributions are created with
+          <a href="ext:ant">Ant</a>
+          . Additional libraries are used to streamline the build process. The
+          goal of the Ant script is to provide a complete and automatic build,
+          unit test, create distribution and documentation for the project.
+          These scripts are used in the continuous integration process. Below
+          the list of all external libraries and extensions necessary to build
+          the distributions with the provided Ant build scripts.
+        </p>
+        <dl>
+          <dt>javaNCSS</dt>
+          <dd>
+            The java NCSS task is used to generate quality metrics on the
+            project. The download site is
+            <a href="http://www.kclee.de/clemens/java/javancss">JavaNCSS</a>
+            .
+          </dd>
+          <dt>jdepend</dt>
+          <dd>
+            The JDepend task is used to generate quality metrics on the project.
+            The task is part of the standard Ant distribution but request the
+            installation of the JDepend parser. Please consult Ant documentation
+            for details.
+          </dd>
+          <dt>pmd</dt>
+          <dd></dd>
+          <dt>bcel</dt>
+          <dd>
+            The BCEL task is used in the Ant EJB task to verify the completeness
+            of the EJB distribution. The download site is
+            <a href="http://jakarta.apache.org/bcel">BCEL</a>
+            .
+          </dd>
+          <dt>dependencies</dt>
+          <dd>
+            The dependencies task is used to access Maven and local repositories
+            as an alternate way to retrieve all the libraries used in the
+            projects. The download site is
+            <a href="http://www.httpunit.org/doc/dependencies.html">
+              dependencies
+            </a>
+            .
+          </dd>
+          <dt>String Utilities</dt>
+          <dd>
+            The string utilities are used to process library names and update
+            all the script files delivered with the distribution.
+          </dd>
+        </dl>
+      </section>
     </section>
     <section>
       <title>Project Structure</title>
@@ -386,11 +439,7 @@
       </p>
       <ul>
         <li>Work hard, be proud of the results, have fun</li>
-        <li>
-          Be creative, be curious, be extreme (
-          <em>eXtreme Programming</em>
-          )
-        </li>
+        <li>Be creative, be curious, be extreme ( eXtreme Programming )</li>
         <li>Learn new skills, teach your skills to others</li>
         <li>Value the contributions of team members</li>
         <li>Read papers, write papers, give presentations</li>
@@ -401,6 +450,43 @@
         <li>Fix your own bugs, fix other bugs</li>
         <li>Make at least one joke each day</li>
       </ul>
+      <p>
+        More formally the lean thinking principles (adapted to the software
+        context) are
+      </p>
+      <ol>
+        <li>
+          Eliminate Waste - If the customer does not value it or if it slows
+          down rapid delivery to the customer, it is waste. Don't do it
+        </li>
+        <li>
+          Amplify Learning - Development is about discovery and feedback.
+          Deliver in small batches to minimize uncertainty and permit the
+          customer to steer
+        </li>
+        <li>
+          Decide as Late as Possible - Delay commitment. Keep options open as
+          long as possible to base decisions on the best possible information
+        </li>
+        <li>
+          Deliver as Fast as Possible - The best measure of organizational
+          maturity is the speed with which it can repeatedly and consistently
+          deliver value
+        </li>
+        <li>
+          Empower the Team - Teams should design their own processes. Provide
+          the training and leadership they need
+        </li>
+        <li>
+          Build Integrity In - Concurrent development enables rich
+          communication, the essential ingredient for system integrity
+        </li>
+        <li>
+          See the Whole - Decomposition leads to sub-optimization. Focus on
+          overall results
+        </li>
+      </ol>
+
     </section>
   </body>
 </document>

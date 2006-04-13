@@ -12,12 +12,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.omg.CORBA.ORB;
 
+import ch.bbv.application.Application;
 import ch.bbv.application.ComponentException;
 import ch.bbv.application.Locator;
 import ch.bbv.cmdlineparser.CmdLineBuilder;
 import ch.bbv.dog.CacheHandler;
 import ch.bbv.dog.DataObjectHandler;
-import ch.bbv.dog.DataObjectManager;
+import ch.bbv.dog.DataObjectMgr;
 import ch.bbv.dog.LightweightObjectHandlerImpl;
 import ch.bbv.dog.persistence.ojb.PersistenceHandler;
 import ch.bbv.utilities.ReflectUtilities;
@@ -43,7 +44,7 @@ import ch.bbv.utilities.ReflectUtilities;
  * @author MarcelBaumann
  * @version $Revision$
  */
-public class UserApplication extends Locator {
+public class UserApplication extends Application {
   /**
    * The name of the ORB subsystem as registered.
    */
@@ -119,29 +120,30 @@ public class UserApplication extends Locator {
    */
   public UserApplication(String mode, String synchronization,
       boolean commandLineMode) throws ComponentException {
-    DataObjectManager manager = null;
+    DataObjectMgr manager = null;
     register(this);
     if (USE_DIRECT.equalsIgnoreCase(mode)) {
       log.info("Application started in direct mode");
       PersistenceHandler.Mode sync = PersistenceHandler.Mode
           .valueOf(synchronization);
-      manager = new DataObjectManager(new CacheHandler(new PersistenceHandler(
-          false, sync), true, true), new LightweightObjectHandlerImpl(), null, SCHEMA);
+      manager = new DataObjectMgr(new CacheHandler(new PersistenceHandler(
+          false, sync), true, true), new LightweightObjectHandlerImpl(), null,
+          SCHEMA);
     } else if (USE_CORBA.equalsIgnoreCase(mode)) {
       log.info("Application started in CORBA mode");
       register(ORB.init(args, null), ORB_NAME);
-      manager = new DataObjectManager(new CacheHandler(
+      manager = new DataObjectMgr(new CacheHandler(
           createHandler("ch.bbv.dnm.users.client.UsersServerCorbaWrapper"),
           true, false), new LightweightObjectHandlerImpl(), null, SCHEMA);
     } else if (USE_J2EE.equalsIgnoreCase(mode)) {
       log.info("Application started in J2EE mode");
-      manager = new DataObjectManager(new CacheHandler(
+      manager = new DataObjectMgr(new CacheHandler(
           createHandler("ch.bbv.dnm.users.client.UsersServerWrapper"), true,
           false), new LightweightObjectHandlerImpl(), null, SCHEMA);
     }
     // if manager is null the command line parameters were erroneous
     assert manager != null;
-    register(manager);
+    setDataObjectMgr(manager);
     UserExplorer.registerNodeTypes();
     initialize();
     startup();
@@ -204,7 +206,8 @@ public class UserApplication extends Locator {
       mode = (mode == null ? USE_DIRECT : mode);
       String synchronization = line.getOptionValue("s", USE_REPLACE)
           .toUpperCase();
-      synchronization = (synchronization == null ? USE_REPLACE : synchronization);
+      synchronization = (synchronization == null ? USE_REPLACE
+          : synchronization);
       if (log.isInfoEnabled()) {
         log.info(Arrays.asList(args));
       }
@@ -214,17 +217,6 @@ public class UserApplication extends Locator {
     } catch (ParseException e) {
       log.fatal(e);
     }
-  }
-
-  /**
-   * Returns the data object manager of the application. The manager provides
-   * access the data object handler, lock manager and lightweight object
-   * handler.
-   * @return the data object handler of the application.
-   */
-  public DataObjectManager getDataObjectManager() {
-    Locator locator = Locator.getInstance();
-    return (DataObjectManager) locator.getComponent(DataObjectManager.NAME);
   }
 
   /**

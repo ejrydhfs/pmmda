@@ -9,7 +9,7 @@ package ch.bbv.mda.ui;
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.bbv.dog.DataObjectManager;
+import ch.bbv.dog.DataObjectMgr;
 import ch.bbv.dog.DataObjectType;
 import ch.bbv.explorer.*;
 import ch.bbv.explorer.views.NodeTableView;
@@ -28,7 +28,7 @@ public class TypeFactory extends AbstractTypeFactory {
    * @param factory the user interface node type factory to use.
    * @param manager the data object manager to use.
    */
-  public TypeFactory(UiNodeTypeFactory factory, DataObjectManager manager) {
+  public TypeFactory(UiNodeTypeFactory factory, DataObjectMgr manager) {
     super(factory, manager);
   }
 

@@ -5,9 +5,50 @@
   <property name="forrest.plugins-dir" value="${forrest.home}/build/plugins" />
   <import file="${forrest.home}/main/forrest.build.xml" />
 
+  <!--
+  <typedef resource="dependencies.properties" />
+  <dependencies pathId="dog.lib.classpath" filesetId="dog.lib.files">
+    <dependency group="commons-beanutils" version="1.7.0" />
+    <dependency group="commons-cli" version="1.0" />
+    <dependency group="commons-collections" version="3.1" />
+    <dependency group="commons-configuration" version="1.2" />
+    <dependency group="commons-io" version="1.2" />
+    <dependency group="commons-lang" version="2.1" />
+    <dependency group="commons-logging" version="1.0.4" />
+    <dependency group="commons-logging-api" version="1.0.4" />
+    <dependency group="flexdock" version="0.4.0" />
+    <dependency group="forms" version="1.0.6" />
+    <dependency group="glazedlists" version="1.5.0" />
+    <dependency group="jcalendar" version="1.2.2" />
+  </dependencies>
+
+  <dependencies pathId="dog-server.lib.classpath" filesetId="dog-server.lib.files">
+    <dependency group="antlr" version="2.7.5" />
+    <dependency group="commons-dbcp" version="1.1" />
+    <dependency group="commons-pool" version="1.2" />
+    <dependendy group="ojb" version="1.0.4" />
+  </dependencies>
+
+  <dependencies pathId="pmmda.lib.classpath" filesetId="pmmda.lib.files">
+    <dependency group="dog" version="${dog.version}" />
+    <dependency group="jgraph" version="5.7.7.4" />
+    <dependency group="jgraphaddons" version="1.0.8" />
+    <dependency group="nsuml" version="" />
+    <dependency group="mysql-connector" version="3.1.12" />
+    <dependency group="velocity" version="1.4" />
+    <dependency group="velocity-dep" version="1.4" />
+    <dependency group="xpp3" version="1.1.3.4" />
+    <dependency group="xstream" version="1.1.2" />
+  </dependencies>
+  -->
+
   <target name="clean" depends="dist-init" description="Clean the distribution directories">
     <delete dir="${dist.dir}" />
     <mkdir dir="${dist.dir}" />
+    <delete dir="${site.api.dir}" />
+    <mkdir dir="${site.api.dir}" />
+    <delete dir="${site.quality.dir}" />
+    <mkdir dir="${site.quality.dir}" />
   </target>
 
   <target name="compile-dist" depends="dist-init" description="compiles all java files of the projects dog, pmmda, documentor">
@@ -237,6 +278,89 @@
     <copy file="${basedir}/build-examples.xml" todir="${pmmda-ex.dir}" />
   </target>
 
+  <target name="update-scripts" depends="dist-init" description="updates all scripts with the actual libraries versions">
+    <replaceregexp match="antlr-(.*?)\.jar" replace="${antlr.lib}" flags="i">
+      <fileset dir="${scripts.dir}">
+        <include name="**/*.bat" />
+      </fileset>
+    </replaceregexp>
+    <replaceregexp match="commons-beanutils-(.*?)\.jar" replace="${commons-beanutils.lib}" flags="i">
+      <fileset dir="${scripts.dir}">
+        <include name="**/*.bat" />
+      </fileset>
+    </replaceregexp>
+    <replaceregexp match="commons-cli-(.*?)\.jar" replace="${commons-cli.lib}" flags="i">
+      <fileset dir="${scripts.dir}">
+        <include name="**/*.bat" />
+      </fileset>
+    </replaceregexp>
+    <replaceregexp match="commons-collections-(.*?)\.jar" replace="${commons-collections.lib}" flags="i">
+      <fileset dir="${scripts.dir}">
+        <include name="**/*.bat" />
+      </fileset>
+    </replaceregexp>
+    <replaceregexp match="commons-configuration-(.*?)\.jar" replace="${commons-configuration.lib}" flags="i">
+      <fileset dir="${scripts.dir}">
+        <include name="**/*.bat" />
+      </fileset>
+    </replaceregexp>
+    <replaceregexp match="commons-dbcp-(.*?)\.jar" replace="${commons-dbcp.lib}" flags="i">
+      <fileset dir="${scripts.dir}">
+        <include name="**/*.bat" />
+      </fileset>
+    </replaceregexp>
+    <replaceregexp match="commons-lang-(.*?)\.jar" replace="${commons-lang.lib}" flags="i">
+      <fileset dir="${scripts.dir}">
+        <include name="**/*.bat" />
+      </fileset>
+    </replaceregexp>
+    <replaceregexp match="commons-io-(.*?)\.jar" replace="${commons-io.lib}" flags="i">
+      <fileset dir="${scripts.dir}">
+        <include name="**/*.bat" />
+      </fileset>
+    </replaceregexp>
+    <replaceregexp match="commons-logging-(.*?)\.jar" replace="${commons-logging.lib}" flags="i">
+      <fileset dir="${scripts.dir}">
+        <include name="**/*.bat" />
+      </fileset>
+    </replaceregexp>
+    <replaceregexp match="commons-logging-api-(.*?)\.jar" replace="${commons-logging-api.lib}" flags="i">
+      <fileset dir="${scripts.dir}">
+        <include name="**/*.bat" />
+      </fileset>
+    </replaceregexp>
+    <replaceregexp match="commons-pool-(.*?)\.jar" replace="${commons-pool.lib}" flags="i">
+      <fileset dir="${scripts.dir}">
+        <include name="**/*.bat" />
+      </fileset>
+    </replaceregexp>
+    <replaceregexp match="dog-(.*?)\.jar" replace="${dog.lib}" flags="i">
+      <fileset dir="${scripts.dir}">
+        <include name="**/*.bat" />
+      </fileset>
+    </replaceregexp>
+    <replaceregexp match="flexdock-(.*?)\.jar" replace="${flexdock.lib}" flags="i">
+      <fileset dir="${scripts.dir}">
+        <include name="**/*.bat" />
+      </fileset>
+    </replaceregexp>
+    <replaceregexp match="forms-(.*?)\.jar" replace="${forms.lib}" flags="i">
+      <fileset dir="${scripts.dir}">
+        <include name="**/*.bat" />
+      </fileset>
+    </replaceregexp>
+    <replaceregexp match="glazedlists-(.*?)\.jar" replace="${glazedlists.lib}" flags="i">
+      <fileset dir="${scripts.dir}">
+        <include name="**/*.bat" />
+      </fileset>
+    </replaceregexp>
+    <replaceregexp match="mysql-connector-(.*?)\.jar" replace="${mysql-connector.lib}" flags="i">
+      <fileset dir="${scripts.dir}">
+        <include name="**/*.bat" />
+      </fileset>
+    </replaceregexp>
+  </target>
+
   <target name="javadoc" depends="init" description="generates javadoc for the project">
     <mkdir dir="${site.api.dir}" />
     <javadoc destdir="${site.api.dir}" packagenames="ch.bbv.*" classpath="${build.dir}" classpathref="application.classpath" access="private" author="true" version="true" use="true" source="1.5" windowtitle="pmMDA API">
@@ -249,13 +373,6 @@
       <taglet name="org.sf.pmmda.development.taglets.PostTaglet" path="${build.dir}" />
       <taglet name="org.sf.pmmda.development.taglets.InvTaglet" path="${build.dir}" />
     </javadoc>
-  </target>
-
-  <target name="clean-docs" depends="init" description="remove all generated document and metrics artifacts">
-    <delete dir="${site.api.dir}" />
-    <mkdir dir="${site.api.dir}" />
-    <delete dir="${site.quality.dir}" />
-    <mkdir dir="${site.quality.dir}" />
   </target>
 
   <target name="metrics" depends="init" description="generates quality metrics on the project">
@@ -311,12 +428,7 @@
   <target name="sourceforge-without-documentation" depends="dist-init, clean, compile-dist, dog-dist, pmmda-dist, pmmda-examples" description="Generates the pmMDA sourceforge site (without web site)">
   </target>
 
-  <target name="generate-docs" depends="dist-init, clean-docs" description="Generates the site related documents (before running forrest)">
-    <antcall target="javadoc" />
-    <antcall target="metrics" />
-  </target>
-
-  <target name="sourceforge" depends="sourceforge-without-documentation, generate-docs, site" description="Generates the pmMDA sourceforge site including web site">
+  <target name="sourceforge" depends="sourceforge-without-documentation, javadoc, metrics, site" description="Generates the pmMDA sourceforge site including web site">
     <echo message="generate sourceforge web site (forrest is mandatory)" />
   </target>
 </project>

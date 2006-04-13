@@ -20,7 +20,7 @@ package ${package.getAttribute("ejb-client-package")};
 #set($foo=${imports.addClassName("ch.bbv.application.ComponentException")})
 #set($foo=${imports.addClassName("ch.bbv.application.ComponentImpl")})
 #set($foo=${imports.addClassName("ch.bbv.application.Locator")})
-#set($foo=${imports.addClassName("ch.bbv.dog.DataObjectManager")})
+#set($foo=${imports.addClassName("ch.bbv.dog.DataObjectMgr")})
 #set($foo=${imports.addClassName("ch.bbv.dog.DataObjectHandler")})
 #set($foo=${imports.addClassName("ch.bbv.dog.DataObject")})
 #set($foo=${imports.addClassName("ch.bbv.dog.DataObjectId")})

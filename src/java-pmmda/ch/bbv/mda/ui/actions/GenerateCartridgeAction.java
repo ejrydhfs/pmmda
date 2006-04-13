@@ -10,7 +10,7 @@ import javax.swing.JOptionPane;
 
 import ch.bbv.application.Locator;
 import ch.bbv.dog.AbstractVisitorFunctor;
-import ch.bbv.dog.DataObjectManager;
+import ch.bbv.dog.DataObjectMgr;
 import ch.bbv.dog.validation.ValidationRule;
 import ch.bbv.dog.validation.ValidationRuleResults;
 import ch.bbv.dog.validation.Validator;
@@ -65,7 +65,7 @@ public class GenerateCartridgeAction extends ExplorerGlobalActionImpl {
       Validator validator = (Validator) Locator.getInstance().getComponent(
           Validator.NAME);
       ValidationRuleResults results = new ValidationRuleResults();
-      AbstractVisitorFunctor visitor = DataObjectManager.getVisitorFor(model
+      AbstractVisitorFunctor visitor = DataObjectMgr.getVisitorFor(model
           .getClass());
       validator.validate(model, visitor, results);
       ((MdaExplorer) getExplorer()).getValidationPanel().setResults(results);
