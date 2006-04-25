@@ -46,11 +46,13 @@ public class TagDefinition extends AdornmentType implements Serializable {
 
   /**
    * Constructor of the class.
-   * @param tag tag name for the tagged values of this type.
-   * @param defaultValue default value for the tagged values of this type.
-   * @param type type of the values for the tagged values of this type.
+   * @param tag tag name for the tagged values of this type
+   * @param defaultValue default value for the tagged values of this type
+   * @param type type of the values for the tagged values of this type
+   * @pre (tag != null) && (type != null)
    */
   public TagDefinition(String tag, String defaultValue, Class type) {
+    assert (tag != null) && (type != null);
     setName(tag);
     this.defaultValue = defaultValue;
     this.type = type;
@@ -58,8 +60,9 @@ public class TagDefinition extends AdornmentType implements Serializable {
 
   /**
    * Constructor of the class.
-   * @param tag tag name for the tagged values of this type.
-   * @param type type of the values for the tagged values of this type.
+   * @param tag tag name for the tagged values of this type
+   * @param type type of the values for the tagged values of this type
+   * @pre (tag != null) && (type != null)
    */
   public TagDefinition(String tag, Class type) {
     this(tag, null, type);
@@ -67,7 +70,7 @@ public class TagDefinition extends AdornmentType implements Serializable {
   
   /**
    * Returns the tag name of this type.
-   * @return the tag name represented in this type.
+   * @return the tag name represented in this type
    */
   public String getTag() {
     return getName();
@@ -75,7 +78,7 @@ public class TagDefinition extends AdornmentType implements Serializable {
 
   /**
    * Returns the default value of this type.
-   * @return the default value represented in this type.
+   * @return the default value represented in this type
    */
   public String getDefaultValue() {
     return defaultValue;
@@ -83,7 +86,7 @@ public class TagDefinition extends AdornmentType implements Serializable {
 
   /**
    * Returns the value type of this type.
-   * @return the type of values represented in this type.
+   * @return the type of values represented in this type
    */
   public Class getType() {
     return type;
@@ -91,7 +94,7 @@ public class TagDefinition extends AdornmentType implements Serializable {
 
   /**
    * Returns the qualified class name of the type if defined.
-   * @return class name of the type if defined otherwise null.
+   * @return class name of the type if defined otherwise null
    */
   public String getTypename() {
     return (type != null) ? type.getName() : null;

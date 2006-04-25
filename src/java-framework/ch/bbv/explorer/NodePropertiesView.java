@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann
+/* copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -128,14 +128,13 @@ public abstract class NodePropertiesView extends JPanel {
    * Sets the editable flag for the views and all its children. The abstract
    * method <code>setViewEditable</code> is called for the subclass and all
    * registered subviews. The call is performed only if the flag is toggled.
-   * @param editable new value of the flag.
+   * @param editable new value of the flag
    * @post editable = isEditable()
    * @see #isEditable()
    */
   public void setEditable(boolean editable) {
     this.editable = editable;
     setViewEditable(editable);
-
     for (NodePropertiesView view : nodePropertiesSubViews) {
       view.setEditable(editable);
       view.setViewEditable(editable);
@@ -144,7 +143,7 @@ public abstract class NodePropertiesView extends JPanel {
 
   /**
    * Returns the value of the is editable flag.
-   * @return value of the flag.
+   * @return value of the flag
    * @see #setEditable(boolean)
    */
   public boolean isEditable() {
@@ -160,7 +159,7 @@ public abstract class NodePropertiesView extends JPanel {
 
   /**
    * Returns the model which properties are displayed in the view.
-   * @return the node displayed in the view.
+   * @return the node displayed in the view
    * @see #setModel(ExplorerNode)
    */
   protected ExplorerNode getModel() {
@@ -169,7 +168,7 @@ public abstract class NodePropertiesView extends JPanel {
 
   /**
    * Sets the model to the properties view and all registered subviews.
-   * @param node new model explorer node.
+   * @param node new model explorer node
    * @see #getModel()
    */
   protected void setModel(ExplorerNode node) {
@@ -181,7 +180,7 @@ public abstract class NodePropertiesView extends JPanel {
 
   /**
    * Propagates the model to the view and all its subviews.
-   * @param node model propagated to all subviews.
+   * @param node model propagated to all subviews
    */
   protected void propagateModel(ExplorerNode node) {
     this.node = node;
@@ -203,7 +202,7 @@ public abstract class NodePropertiesView extends JPanel {
 
   /**
    * Returns the explorer node displayed in the node properties view.
-   * @return explorer node displayed in the view.
+   * @return explorer node displayed in the view
    */
   protected ExplorerNode getNode() {
     return node;
@@ -213,7 +212,7 @@ public abstract class NodePropertiesView extends JPanel {
    * Returns the data object associated with the model. This function is a
    * convenience method for the subclasses.
    * @return the data object stored in the explorer node if defined otherwise
-   *         null.
+   *         null
    */
   protected DataObject getDataObject() {
     DataObject object = null;

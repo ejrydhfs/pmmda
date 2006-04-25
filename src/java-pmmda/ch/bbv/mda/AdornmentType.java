@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann
+/* copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -12,7 +12,7 @@ package ch.bbv.mda;
  * @author MarcelBaumann
  * @version $Revision$
  */
-public abstract class AdornmentType {
+public abstract class AdornmentType implements Comparable {
   /**
    * Name of the adornment type.
    */
@@ -127,4 +127,12 @@ public abstract class AdornmentType {
   public void setFieldScope(boolean fieldScope) {
     this.fieldScope = fieldScope;
   }
+
+  /**
+   * @inheritDoc
+   */
+  public int compareTo(Object object) {
+    return (((AdornmentType) object).getName().compareTo(getName()));
+  }
+
 }

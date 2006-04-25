@@ -15,8 +15,17 @@ TODO
   classname, prefix, loaded, active, dependants
 - Have a self contained jar file running with java -jar pmMDA
 
+Version 0.3.0-RC4 (30 April 2006)
+---------------------------------
+The following new features were added.
+- Support of multiple stereotypes on meta elements.
+
+The following errors were corrected.
+- Tool tips for tagged values without a loaded cartridge prefix in their name 
+  do not anymore generate an exception in the log.
+
 Version 0.3.0-RC3 (15 April 2006)
-------------------------------------
+---------------------------------
 The following new features were added.
 - Moved to MySQL 5.0 and OJB 1.0.4.
 - The Velocity templates were reworked to better reflect Sun coding guidelines.

@@ -76,17 +76,16 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
   private VisibilityCode visibility;
 
   /**
-   * Stereotype property of the class.
-   * @serial
-   */
-  private String stereotype;
-
-  /**
    * Flag indicating if the package belongs to the standard packages of the
    * environment or not.
    * @serial
    */
   private boolean system;
+
+  /**
+   * The stereotypes of the element.
+   */
+  private List<Stereotype> stereotypes;
 
   /**
    * Tagged values of the element indexed with the tag.
@@ -104,6 +103,7 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
    * Default constructor of the class.
    */
   public MetaElement() {
+    stereotypes = new ArrayList<Stereotype>();
     taggedValues = new HashMap<String, TaggedValue>();
     attributes = new HashMap<String, String>();
     visibility = VisibilityCode.getCode(VisibilityCode.PUBLIC_ID);
@@ -111,7 +111,7 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
 
   /**
    * Returns true if the package belongs to the standards ones otherwise false.
-   * @return the value of the flag.
+   * @return the value of the flag
    * @see #setSystem(boolean)
    */
   public final boolean isSystem() {
@@ -120,7 +120,7 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
 
   /**
    * Sets the new value of the package.
-   * @param system true if the package is a standard one otherwise false.
+   * @param system true if the package is a standard one otherwise false
    * @see #isSystem()
    */
   public final void setSystem(boolean system) {
@@ -129,7 +129,7 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
 
   /**
    * Returns the name of the element.
-   * @return name of the element.
+   * @return name of the element
    * @see #setName(String)
    */
   public String getName() {
@@ -156,7 +156,7 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
 
   /**
    * Sets the description of the element.
-   * @param description new value of the description.
+   * @param description new value of the description
    * @see #getDescription()
    */
   public void setDescription(String description) {
@@ -165,7 +165,7 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
 
   /**
    * Returns the context of the element if defined otherwise null.
-   * @return context of the element.
+   * @return context of the element
    * @see #setContext(MetaElement)
    */
   public MetaElement getContext() {
@@ -179,6 +179,71 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
    */
   public void setContext(MetaElement context) {
     this.context = context;
+  }
+
+  /**
+   * Returns the stereotype with the given index.
+   * @param index index of the requested datatype.
+   * @return the requested stereotype.
+   * @see #addStereotype(int, Stereotype)
+   */
+  public Stereotype getStereotype(int index) {
+    return stereotypes.get(index);
+  }
+
+  /**
+   * Adds the stereotype in the list of datatypes.
+   * @param stereotype stereotype to add.
+   * @pre stereotype != null
+   */
+  public void addStereotype(Stereotype stereotype) {
+    assert stereotype != null;
+    stereotypes.add(stereotype);
+  }
+
+  /**
+   * Adds the stereotype in the list of datatypes.
+   * @param index position where the stereotype should be inserted in the list.
+   * @param stereotype stereotype to add
+   * @pre datatype != null
+   * @see #getStereotype(int)
+   */
+  public void addStereotype(int index, Stereotype stereotype) {
+    stereotypes.add(index, stereotype);
+  }
+
+  /**
+   * Returns a list of all stereotypes defined in the object.
+   * @return list of all stereotypes.
+   * @see #setStereotypes(List)
+   */
+  public List<Stereotype> getStereotypes() {
+    return stereotypes;
+  }
+
+  /**
+   * Sets the list of stereotypes of the model.
+   * @param stereotypes new list of datatypes.
+   * @see #getStereotypes()
+   */
+  public void setStereotypes(List<Stereotype> stereotypes) {
+    removeAllStereotypes();
+    stereotypes.addAll(stereotypes);
+  }
+
+  /**
+   * Removes all stereotypes of the model.
+   */
+  public void removeAllStereotypes() {
+    stereotypes.clear();
+  }
+
+  /**
+   * Removes a stereotype from the model.
+   * @param stereotype stereotype to be removed.
+   */
+  public void removeStereotype(Stereotype stereotype) {
+    stereotypes.remove(stereotype);
   }
 
   /**
@@ -230,7 +295,7 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
 
   /**
    * Sets the visibility of the element.
-   * @param visibility new value of the visibility.
+   * @param visibility new value of the visibility
    * @see #getVisibility
    */
   public void setVisibility(VisibilityCode visibility) {
@@ -241,24 +306,36 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
    * Returns the stereotype of the element.
    * @return stereotype of the element.
    * @see #setStereotype
+   * @deprecated
    */
   public String getStereotype() {
-    return stereotype;
+    if (stereotypes.size() > 0) {
+      return stereotypes.get(0).getName();
+    }
+    return null;
   }
 
   /**
    * Sets the stereotype of the element.
-   * @param stereotype new value of the stereotype.
-   * @see #getStereotype
+   * @param name new value of the stereotype
+   * @see #getStereotype()
+   * @deprecated
    */
-  public void setStereotype(String stereotype) {
-    this.stereotype = stereotype;
+  public void setStereotype(String name) {
+    Stereotype stereotype = findStereotype(name);
+    if (stereotype == null) {
+      stereotype = getModel().findStereotype(name);
+      if (stereotype == null) {
+        stereotype = new Stereotype(name);
+      }
+      addStereotype(stereotype);
+    }
   }
 
   /**
    * Returns the tagged value with the given tag.
-   * @param tag name of the tagged value to retrieve.
-   * @return the requested tagged value if found otherwise null.
+   * @param tag name of the tagged value to retrieve
+   * @return the requested tagged value if found otherwise null
    * @pre tag != null
    * @see #setTaggedValue(String, TaggedValue)
    */
@@ -548,6 +625,24 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
     return ((value != null) && value.equals("true"));
   }
 
+  /**
+   * Finds the stereotype with the given name.
+   * @param name the qualified name of the stereotype to find.
+   * @return the requested stereotype if found otherwise null.
+   */
+  public Stereotype findStereotype(String name) {
+    assert name != null;
+    for (Stereotype stereotype : stereotypes) {
+      if (name.equalsIgnoreCase(stereotype.getName())) {
+        return stereotype;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * @inheritDoc
+   */
   public String toString() {
     return qualifiedName();
   }

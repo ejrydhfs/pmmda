@@ -181,14 +181,14 @@ public class MetaModel extends MetaPackage {
   /**
    * Adds the datatype in the list of datatypes.
    * @param index position where the datatype should be inserted in the list.
-   * @param datatype datatype to add.
+   * @param datatype datatype to add
    * @pre datatype != null
    * @see #getDatatype(int)
    */
   public void addDatatype(int index, MetaDatatype datatype) {
     datatypes.add(index, datatype);
     datatype.setContext(this);
-    Collections.sort(packages, MetaElement.NAME_COMPARATOR);
+    Collections.sort(datatypes, MetaElement.NAME_COMPARATOR);
   }
 
   /**
@@ -259,12 +259,12 @@ public class MetaModel extends MetaPackage {
   }
 
   /**
-   * Finds the datatype with the given qualified name.
-   * @param qualifiedName the qualified name of the datatype to find.
+   * Finds the datatype with the given name.
+   * @param name the qualified name of the datatype to find.
    * @return the requested datatype if found otherwise null.
    */
-  public MetaDatatype findDatatype(String qualifiedName) {
-    return (MetaDatatype) findElement(datatypes, qualifiedName);
+  public MetaDatatype findDatatype(String name) {
+    return (MetaDatatype) findElement(datatypes, name);
   }
 
   /**

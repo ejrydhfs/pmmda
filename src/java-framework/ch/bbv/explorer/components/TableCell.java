@@ -81,10 +81,10 @@ public class TableCell implements TableFormat, WritableTableFormat,
 
     /**
      * Constructor of the class.
-     * @param property name of the property displayed in the column.
-     * @param column name of the column as displayed in the header.
-     * @param type type of the values displayed in the column.
-     * @param editable flag indicating if the values are editable.
+     * @param property name of the property displayed in the column
+     * @param column name of the column as displayed in the header
+     * @param type type of the values displayed in the column
+     * @param editable flag indicating if the values are editable
      */
     public Cell(String property, String column, Class type, boolean editable) {
       this.property = property;
@@ -99,7 +99,7 @@ public class TableCell implements TableFormat, WritableTableFormat,
 
     /**
      * Returns the property name.
-     * @return the name of the property.
+     * @return the name of the property
      */
     public String getProperty() {
       return property;
@@ -107,7 +107,7 @@ public class TableCell implements TableFormat, WritableTableFormat,
 
     /**
      * Returns the column header name.
-     * @return the name of the column header.
+     * @return the name of the column header
      */
     public String getColumn() {
       return column;
@@ -117,7 +117,7 @@ public class TableCell implements TableFormat, WritableTableFormat,
      * Returns the type of the column. The type is the Java class of the items
      * displayed in a column. If the type is primitive one the class of the
      * associated wrapper is returned.
-     * @return the type of the column.
+     * @return the type of the column
      */
     public Class getType() {
       return type;
@@ -125,7 +125,7 @@ public class TableCell implements TableFormat, WritableTableFormat,
 
     /**
      * Returns the flag defining in the column values are editable.
-     * @return the editable flag.
+     * @return the editable flag
      */
     public boolean isEditable() {
       return editable;
@@ -134,11 +134,11 @@ public class TableCell implements TableFormat, WritableTableFormat,
 
   /**
    * Creates a cell array describing a table with the passed parameters.
-   * @param properties list of properties displayed in the table.
-   * @param columns list of column header names in the table.
-   * @param types list of types for each column in the table.
-   * @param editables list of flag indicating if the column is editable.
-   * @return the cell array describing the table to construct.
+   * @param properties list of properties displayed in the table
+   * @param columns list of column header names in the table
+   * @param types list of types for each column in the table
+   * @param editables list of flag indicating if the column is editable
+   * @return the cell array describing the table to construct
    */
   public static Cell[] create(String[] properties, String[] columns,
       Class[] types, boolean[] editables) {
@@ -164,7 +164,7 @@ public class TableCell implements TableFormat, WritableTableFormat,
   /**
    * Constructor of the class. The name of a column is also the name of the
    * property in the Java bean.
-   * @param cells the list of column cells of the tables.
+   * @param cells the list of column cells of the tables.\
    * @pre columnNames != null
    */
   public TableCell(Cell[] cells) {
@@ -174,7 +174,7 @@ public class TableCell implements TableFormat, WritableTableFormat,
   /**
    * Constructor of the class. The name of a column is also the name of the
    * property in the Java bean.
-   * @param propertyNames the list of property names of the table.
+   * @param propertyNames the list of property names of the table
    * @pre propertyNames != null
    */
   public TableCell(String[] propertyNames) {
@@ -184,7 +184,7 @@ public class TableCell implements TableFormat, WritableTableFormat,
 
   /**
    * Sets the editable columns of table panel.
-   * @param editables the list of editable columns of the table.
+   * @param editables the list of editable columns of the table
    * @pre (editables == null) || (editables.length == cells.length)
    */
   public void setEditableColumns(boolean[] editables) {
@@ -196,7 +196,7 @@ public class TableCell implements TableFormat, WritableTableFormat,
 
   /**
    * Returns the number of columns in the table model.
-   * @return the column count of the table.
+   * @return the column count of the table
    */
   public int getColumnCount() {
     return cells.length;
@@ -204,8 +204,8 @@ public class TableCell implements TableFormat, WritableTableFormat,
 
   /**
    * Returns the name of the specified column.
-   * @param column the column index.
-   * @return the column name.
+   * @param column the column index
+   * @return the column name
    * @pre (0 <= column) && (column <= cells.length)
    */
   public String getColumnName(int column) {
@@ -215,9 +215,9 @@ public class TableCell implements TableFormat, WritableTableFormat,
 
   /**
    * Indicates if the object in the column is editable or not.
-   * @param object object to test as editable or not.
-   * @param column column to check.
-   * @return true if the column is editable otherwise false.
+   * @param object object to test as editable or not
+   * @param column column to check
+   * @return true if the column is editable otherwise false
    * @pre (0 <= column) && (column <= cells.length)
    */
   public boolean isEditable(Object object, int column) {
@@ -227,9 +227,9 @@ public class TableCell implements TableFormat, WritableTableFormat,
 
   /**
    * Returns the value at the specified row and column.
-   * @param bean the row index.
-   * @param column the column index.
-   * @return the requested value.
+   * @param bean the row index
+   * @param column the column index
+   * @return the requested value
    * @pre (0 <= column) && (column <= cells.length) && (bean != null)
    * @see #setColumnValue(Object, Object, int)
    */
@@ -251,10 +251,10 @@ public class TableCell implements TableFormat, WritableTableFormat,
   /**
    * Sets the property in the bean associated with the column displayed in the
    * table.
-   * @param bean object to update.
-   * @param value new value of the field displayed at the given column.
-   * @param column column of the field to update.
-   * @return the updated object if sucessful otherwise null.
+   * @param bean object to update
+   * @param value new value of the field displayed at the given column
+   * @param column column of the field to update
+   * @return the updated object if sucessful otherwise null
    * @pre (0 <= column) && (column <= cells.length) && (bean != null)
    * @see #getColumnValue(Object, int)
    */
@@ -275,8 +275,8 @@ public class TableCell implements TableFormat, WritableTableFormat,
 
   /**
    * Returns the class of the requested column.
-   * @param column index of the requested column.
-   * @return the class of the items displayed in the column.
+   * @param column index of the requested column
+   * @return the class of the items displayed in the column
    */
   public Class getColumnClass(int column) {
     return cells[column].type;
@@ -284,16 +284,16 @@ public class TableCell implements TableFormat, WritableTableFormat,
 
   /**
    * Returns the comparator of the requested column.
-   * @param column index of the requested column.
-   * @return the comparator of the items displayed in the column.
+   * @param column index of the requested column
+   * @return the comparator of the items displayed in the column
    */
   public Comparator getColumnComparator(int column) {
     return cells[column].comparator;
   }
 
   /**
-   * Returns the column description of the table.
-   * @return the column descriptions.
+   * Returns the column descriptions of the table.
+   * @return the column descriptions
    */
   public Cell[] getCells() {
     return cells;
