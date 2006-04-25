@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann 
+/* copyright 2000-2006 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$ 
@@ -41,7 +41,7 @@ public class ResourcesManager extends ComponentImpl implements Component {
 
   /**
    * Constructor of the class.
-   * @param name name of the instance as accessible through the locator.
+   * @param name name of the instance as accessible through the locator
    */
   public ResourcesManager(String name) {
     super(name);
@@ -50,7 +50,7 @@ public class ResourcesManager extends ComponentImpl implements Component {
 
   /**
    * Registers the cartridge and its resources in the manager.
-   * @param cartridge cartridge to register.
+   * @param cartridge cartridge to register
    */
   public void registerResources(Cartridge cartridge) {
     StringBuilder buffer = new StringBuilder();
@@ -66,14 +66,19 @@ public class ResourcesManager extends ComponentImpl implements Component {
   /**
    * Returns the resource associated to the provided key.
    * @param key the key of the requested resource. The key prefix must be the
-   *          prefix of the cartridge defining the resource.
-   * @return the requested resource if found otherwise null.
+   *          prefix of the cartridge defining the resource
+   * @return the requested resource if found otherwise null
+   * @pre key != null
    */
   public String getString(String key) {
+    assert key != null;
     String text = null;
-    Cartridge cartridge = getCartridge(getPrefix(key));
-    if (cartridge != null) {
-      text = resources.get(cartridge).getString(key);
+    String prefix = getPrefix(key);
+    if (prefix != null) {
+      Cartridge cartridge = getCartridge(prefix);
+      if (cartridge != null) {
+        text = resources.get(cartridge).getString(key);
+      }
     }
     return text;
   }
@@ -81,8 +86,8 @@ public class ResourcesManager extends ComponentImpl implements Component {
   /**
    * Extracts the cartridge prefix of the key.
    * @param key key which prefix should be extracted. The separator between the
-   *          prefix and the end of the key is the character '-'.
-   * @return the abbreviation if found otherwise null.
+   *          prefix and the end of the key is the character '-'
+   * @return the abbreviation if found otherwise null
    */
   private String getPrefix(String key) {
     int index = key.indexOf('-');
@@ -94,8 +99,8 @@ public class ResourcesManager extends ComponentImpl implements Component {
 
   /**
    * Returns the cartridge with the given prefix.
-   * @param prefix prefix of the cartridge.
-   * @return requested cartridge if found otherwise null.
+   * @param prefix prefix of the cartridge
+   * @return requested cartridge if found otherwise null
    */
   private Cartridge getCartridge(String prefix) {
     return CartridgeFactory.getInstance().getCartridge(prefix);

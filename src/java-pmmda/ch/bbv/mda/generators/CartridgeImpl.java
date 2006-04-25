@@ -181,7 +181,7 @@ public abstract class CartridgeImpl implements Cartridge {
     return Collections.EMPTY_LIST;
   }
 
-  public List<StereotypeType> getAllStereotypes() {
+  public List<Stereotype> getAllStereotypes() {
     return Collections.emptyList();
   }
 

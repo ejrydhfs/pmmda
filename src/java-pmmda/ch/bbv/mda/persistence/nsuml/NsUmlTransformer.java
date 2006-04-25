@@ -125,6 +125,7 @@ public class NsUmlTransformer {
   public void synchronize(MModel source, MetaModel target) {
     target.setName(source.getName());
     extractDataTypes(source, target);
+    extractStereotypes(source, target);
     for (Iterator<MPackage> i = new FilterIterator<MPackage>(source
         .getOwnedElements(), MPackage.class); i.hasNext();) {
       MPackage mSubPackage = i.next();
@@ -308,9 +309,17 @@ public class NsUmlTransformer {
    * @param item meta item to synchronize.
    */
   private void extractStereotypeAndTags(MModelElement source, MetaElement item) {
-    MStereotype stereotype = source.getStereotype();
-    if (stereotype != null) {
-      item.setStereotype(stereotype.getName());
+    MStereotype mStereotype = source.getStereotype();
+    if (mStereotype != null) {
+      String name = mStereotype.getName();
+      if ((name != null) && (name.trim().length() > 0)) {
+        Stereotype stereotype = item.getModel().findStereotype(name);
+        if (stereotype == null) {
+          stereotype = new Stereotype(name);
+          item.getModel().addStereotype(stereotype);
+        }
+        item.addStereotype(stereotype);
+      }
     }
     item.setVisibility(convert(source.getVisibility()));
     for (Iterator i = source.getTaggedValues().iterator(); i.hasNext();) {
@@ -477,6 +486,15 @@ public class NsUmlTransformer {
       datatype.setName(mDataType.getName());
       extractStereotypeAndTags(mDataType, datatype);
       target.addDatatype(datatype);
+    }
+  }
+
+  private void extractStereotypes(MModel source, MetaModel target) {
+    for (Iterator<MStereotype> i = new FilterIterator<MStereotype>(source
+        .getOwnedElements(), MStereotype.class); i.hasNext();) {
+      MStereotype mStereotype = i.next();
+      Stereotype stereotype = new Stereotype(mStereotype.getName());
+      target.addStereotype(stereotype);
     }
   }
 

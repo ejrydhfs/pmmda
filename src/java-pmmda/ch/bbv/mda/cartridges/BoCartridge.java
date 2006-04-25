@@ -80,7 +80,7 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
   /**
    * List of stereotypes managed in the cartride.
    */
-  private static List<StereotypeType> stereotypes;
+  private static List<Stereotype> stereotypes;
 
   /**
    * The actual package being processed in the cartridge.
@@ -108,9 +108,9 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
    */
   public BoCartridge() {
     super("Data Object Graph Cartridge", PREFIX, new VersionId(0, 3, 0));
-    stereotypes = new ArrayList<StereotypeType>();
-    stereotypes.add(new StereotypeType(DATA_OBJECT_STEREOTYPE));
-    stereotypes.add(new StereotypeType(REFERENCE_CODE_STEREOTYPE));
+    stereotypes = new ArrayList<Stereotype>();
+    stereotypes.add(new Stereotype(DATA_OBJECT_STEREOTYPE));
+    stereotypes.add(new Stereotype(REFERENCE_CODE_STEREOTYPE));
   }
 
   @Override

@@ -74,7 +74,7 @@ public interface Cartridge {
    * Returns all the stereotypes used in the cartridge.
    * @return list of all stereotypes.
    */
-  List<StereotypeType> getAllStereotypes();
+  List<Stereotype> getAllStereotypes();
 
   /**
    * Returns the cartridge context of the cartridge.

@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann
+/* copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence);
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -36,7 +36,7 @@ public class PreferencesDialog extends SimpleDialog {
 
   /**
    * Constructor of the class.
-   * @param owner the frame owning the dialog.
+   * @param owner the frame owning the dialog
    */
   public PreferencesDialog(JFrame owner) {
     super(owner);

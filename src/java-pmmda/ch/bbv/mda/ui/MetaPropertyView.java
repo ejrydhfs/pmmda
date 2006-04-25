@@ -11,12 +11,14 @@ import java.awt.event.FocusListener;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.*;
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
-import ch.bbv.dog.ui.ReferenceCodeComboBox;
-import ch.bbv.explorer.NodePropertiesView;
-import ch.bbv.mda.*;
-import ch.bbv.mda.generators.CartridgeFactory;
+import ch.bbv.mda.MetaIndexedProperty;
+import ch.bbv.mda.MetaProperty;
+import ch.bbv.mda.Multiplicity;
+import ch.bbv.mda.VisibilityCode;
 
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
@@ -26,21 +28,11 @@ import com.jgoodies.forms.layout.FormLayout;
  * @author marcelbaumann
  * @version $Revision$
  */
-public class MetaPropertyView extends NodePropertiesView {
+public class MetaPropertyView extends MetaItemView {
   /**
    * Serial version identifier coded as back compatibility date.
    */
   private static final long serialVersionUID = 20041201;
-
-  /**
-   * The size of a text field in the view.
-   */
-  private final static int TEXT_FIELD_SIZE = 20;
-
-  /**
-   * The size of a text area in the view.
-   */
-  private final static int TEXT_AREA_SIZE = 40;
 
   /**
    * Pattern for validating identifiers
@@ -52,23 +44,13 @@ public class MetaPropertyView extends NodePropertiesView {
    */
   static Pattern validType;
 
-  JTextField nameText;
-
   JTextField typeText;
-
-  private JTextField contextText;
-
-  private ReferenceCodeComboBox visibility;
 
   private JTextField multiplicityLowerBoundText;
 
   private JTextField multiplicityUpperBoundText;
 
   private JTextField initialValueText;
-
-  private JTextArea descriptionText;
-
-  private JScrollPane descriptionPane;
 
   private JCheckBox volatiles;
 
@@ -78,50 +60,28 @@ public class MetaPropertyView extends NodePropertiesView {
 
   private JCheckBox statics;
 
-  private TaggedValuesView tagsView;
-
   /**
    * Default constructor of the class.
    */
   public MetaPropertyView() {
-    nameText = new JTextField(TEXT_FIELD_SIZE);
-    nameText.addFocusListener(new VerificationActions());
     typeText = new JTextField(TEXT_FIELD_SIZE);
     typeText.addFocusListener(new VerificationActions());
-    contextText = new JTextField(TEXT_FIELD_SIZE);
-    contextText.setEditable(false);
-    visibility = new ReferenceCodeComboBox(VisibilityCode.class, VisibilityCode
-        .getCodes());
     multiplicityLowerBoundText = new JTextField();
     multiplicityUpperBoundText = new JTextField();
     initialValueText = new JTextField(TEXT_FIELD_SIZE);
-    descriptionText = new JTextArea(3, TEXT_AREA_SIZE);
-    descriptionText.setLineWrap(true);
-    descriptionText.setWrapStyleWord(true);
-    descriptionPane = new JScrollPane(descriptionText,
-        JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-        JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     volatiles = new JCheckBox();
     transients = new JCheckBox();
     finals = new JCheckBox();
     statics = new JCheckBox();
-    tagsView = new TaggedValuesView();
-    addNodePropertiesSubView(tagsView);
     initialize();
   }
 
   @Override
   public void populateView() {
+    super.populateView();
     MetaProperty model = (MetaProperty) getDataObject();
-    if (this.isNewObject()) {
-      CartridgeFactory.getInstance().getItemFactory().initialize(model,
-          model.getClass());
-    }
-    nameText.setText(model.getName());
-    nameText.setBackground(Color.WHITE);
     typeText.setText(model.getTypeName());
     typeText.setBackground(Color.WHITE);
-    visibility.setSelectedCode(model.getVisibility());
     volatiles.setSelected(model.isVolatile());
     transients.setSelected(model.isTransient());
     statics.setSelected(model.isStatic());
@@ -138,30 +98,15 @@ public class MetaPropertyView extends NodePropertiesView {
       multiplicityLowerBoundText.setEditable(false);
       multiplicityUpperBoundText.setEditable(false);
     }
-    MetaElement context = model.getContext();
-    if (context != null) {
-      contextText.setText(context.qualifiedName());
-    } else {
-      contextText.setText(null);
-    }
     initialValueText.setText(model.getInitialValue());
-    descriptionText.setText(model.getDescription());
   }
 
   @Override
   public void commitChanges() {
+    super.commitChanges();
     MetaProperty model = (MetaProperty) getDataObject();
-    String text = nameText.getText();
-    if (text != null) {
-      model.setName(text.trim());
-    }
     model.setInitialValue(initialValueText.getText());
-
-    text = descriptionText.getText();
-    if (text != null) {
-      model.setDescription(text.trim());
-    }
-    text = typeText.getText();
+    String text = typeText.getText();
     if (text != null) {
       model.setTypeName(text.trim());
     }
@@ -170,37 +115,27 @@ public class MetaPropertyView extends NodePropertiesView {
     model.setTransient(transients.isSelected());
     model.setFinal(finals.isSelected());
     model.setStatic(statics.isSelected());
-    tagsView.commitChanges();
     getModel().nodeChanged();
   }
 
   @Override
   public void setViewEditable(boolean editable) {
-    nameText.setEditable(editable);
+    super.setViewEditable(editable);
     typeText.setEditable(editable);
-    visibility.setEnabled(editable);
     multiplicityLowerBoundText.setEditable(editable);
     multiplicityUpperBoundText.setEditable(editable);
     initialValueText.setEditable(editable);
-    descriptionText.setEditable(editable);
     volatiles.setEnabled(editable);
     transients.setEnabled(editable);
     finals.setEnabled(editable);
     statics.setEnabled(editable);
-    tagsView.setEnabled(editable);
-  }
-
-  @Override
-  public void cancelChanges() {
-    tagsView.cancelChanges();
   }
 
   /**
    * Initialize the panel with the user interface elements.
    */
   protected void initialize() {
-    FormLayout layout = new FormLayout(
-        "right:pref, 3dlu, pref, 7dlu, right:pref, 3dlu, pref", "");
+    FormLayout layout = new FormLayout(LAYOUT, "");
     DefaultFormBuilder builder = new DefaultFormBuilder(layout);
     builder.setDefaultDialogBorder();
     builder.appendSeparator("General");
@@ -224,11 +159,11 @@ public class MetaPropertyView extends NodePropertiesView {
     add(panel);
 
     validName = Pattern.compile("^[0-9]" // no number at the beginning of the
-                                          // identifier
+        // identifier
         + "|[^\\w]"); // no special characters
 
     validType = Pattern.compile("^[0-9\\.]" // no number and no dot at the
-                                            // beginning of the identifier
+        // beginning of the identifier
         + "|[^\\w&&[^\\.]]" // no special characters other than dot
         + "|\\.[0-9]"); // no number after a dot
   }
