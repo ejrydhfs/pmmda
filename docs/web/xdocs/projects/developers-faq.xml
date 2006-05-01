@@ -30,8 +30,9 @@
         <ul>
           <li>
             A complete Java development environment - we recommend to install
-            Sun JDK 1.5 -. Compatibility to other Java environments, e.g. IBM
-            Jikes are not tested.
+            Sun JDK 1.5 or 1.6 -. Compatibility to other Java environments, e.g.
+            IBM Jikes are not tested. We recommend that you also install the JDK
+            documentation available as a seperate download.
           </li>
           <li>
             The Eclipse IDE - the actual project files are defined for versions
@@ -49,6 +50,9 @@
             editor for the forrest files and open office for the white papers.
             Open office can be downloaded from
             <code>www.openoffice.org</code>
+            . The Web tools subproject of Eclipse provides all the needed XML
+            edition and validation capabilities needed to modify the Forrest
+            based documentation.
           </li>
         </ul>
       </answer>
@@ -151,20 +155,20 @@
       <answer>
         <p>
           Yes. As discribed in the developer's installation guide you must
-          configure the used JDK and a set of variables. This approach is the recommended
-          way to define portable projects under Eclipse.
+          configure the used JDK and a set of variables. This approach is the
+          recommended way to define portable projects under Eclipse.
         </p>
         <dl>
-          <dt>jdk 1.5/5.0</dt>
+          <dt>Installed JDK</dt>
           <dd>
-            Defines the root directory to your JDK 5.0. Java development or
+            Define the root directory to your preferred JDK Java development or
             runtime kits are defined under
             <em>Windows/Preferences/Java/Installed JRE</em>
-            .
+            . We recommend JDK 1.5 or 1.6.
           </dd>
           <dt>JDK_TOOLS</dt>
           <dd>
-            Defines the tools.jar file in the the JDK 5.0 directory in the lib
+            Defines the tools.jar file in the the JDK directory in the lib
             directory. Variables can be defined in
             <em>Windows/Preferences/Java/Build Path/Classpath Variables</em>
             menu. Consult the JDK documentation for the purpose and content of
@@ -215,10 +219,11 @@
           </dd>
           <dt>Veloeclipse</dt>
           <dd>The velocity plugin is used to edit all Velocity plugin</dd>
-          <dt>XML Buddy</dt>
+          <dt>Web Tools Eclipse project</dt>
           <dd>
-            The velocity plugin is used to edit XML files part of the home page
-            of the project. The home page is generated using forest.
+            The Eclipse Web tools are used to edit and validate the XML files
+            part of the home page of the project. The home page is generated
+            using forrest.
           </dd>
           <dt>PMD</dt>
           <dd>The PMD plugin is used to generate quality code metrics.</dd>
@@ -246,6 +251,24 @@
           <code>JDK_TOOLS</code>
           variable in eclipse environment. See the FAQ entry about variable
           configuration.
+        </p>
+      </answer>
+    </faq>
+    <faq>
+      <question>
+        Why was Ant not found when trying to run the distributed examples?
+      </question>
+      <answer>
+        <p>
+          You must define the system variable
+          <code>ANT_HOME</code>
+          and add the path to the Ant executables to your path. The Ant tool
+          also depends on the correct definition of the system varialbe
+          <code>JAVA_HOME</code>
+          to an installed JDK. It must be a JDK, a JRE is not adequate because
+          it does not provide the
+          <code>tools.jar</code>
+          library. Please consult the documention of the Ant tool.
         </p>
       </answer>
     </faq>

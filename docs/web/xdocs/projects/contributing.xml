@@ -52,15 +52,20 @@
       <p>
         If you are interesting to work on the
         <em>pmMDA</em>
-        project you must download the project and configure Eclipse IDE. Tips
-        are also provided for the Eclipse plugins used in the project.
+        project you must download the project and configure
+        <a href="http://www.eclipse.org">Eclipse IDE</a>
+        . Tips are also provided for the Eclipse plugins used in the project.
+        The build scripts use the
+        <a href="ext:ant">Ant</a>
+        tool from the Apache fondation. You should download it.
       </p>
       <section>
         <title>Configure Project</title>
         <p>
           Developers interested to participate to the project must have an
-          account in Sourceforge and install Eclipse 3.x on their development
-          machine. The next steps install the
+          account in Sourceforge and install Java JDK and Eclipse 3.x on their
+          development machine. We recommend that you also install the
+          documentaion of the Java development kit. The next steps install the
           <em>pmMDA</em>
           project.
         </p>
@@ -289,7 +294,11 @@
         <li>
           The analysis and design are stored under the
           <em>model</em>
-          directory.
+          directory. These files can be edited either with
+          <a href="http://argomul.tigris.org">ArgoUML</a>
+          or with
+          <a href="http://www.gentleware.com">Poseidon</a>
+          UML tools.
         </li>
         <li>
           The compiled classes of the projects are written to

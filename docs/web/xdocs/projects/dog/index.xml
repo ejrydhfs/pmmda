@@ -54,6 +54,12 @@
           </td>
         </tr>
         <tr>
+          <td>Validation Framework</td>
+          <td>
+            <a href="http://www.goodies.com">Validation Framework</a>
+          </td>
+        </tr>
+        <tr>
           <td>OJB Object Java Bridge</td>
           <td>
             <a href="http://db.apache.org">OJB</a>
@@ -165,9 +171,17 @@
         <tr>
           <td>forms</td>
           <td>1.0.5</td>
-          <td>LGPL</td>
+          <td>BSD License</td>
           <td>
             <a href="http://www.goodies.com">JGoodies Forms</a>
+          </td>
+        </tr>
+        <tr>
+          <td>validation</td>
+          <td>1.1</td>
+          <td>BSD License</td>
+          <td>
+            <a href="http://www.goodies.com">Validation</a>
           </td>
         </tr>
         <tr>
