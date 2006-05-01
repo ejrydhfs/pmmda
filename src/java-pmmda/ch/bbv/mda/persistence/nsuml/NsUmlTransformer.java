@@ -30,6 +30,8 @@ import ru.novosoft.uml.model_management.MPackage;
 import ru.novosoft.uml.xmi.IncompleteXMIException;
 import ru.novosoft.uml.xmi.XMIWriter;
 import ch.bbv.mda.*;
+import ch.bbv.mda.persistence.ExternalTransformer;
+import ch.bbv.mda.persistence.FilterIterator;
 
 /**
  * The NSUML transformer defines rules how to transform a NSUML element into the
@@ -39,12 +41,7 @@ import ch.bbv.mda.*;
  * @author Marcel Baumann
  * @version $Revision$
  */
-public class NsUmlTransformer {
-  /**
-   * Encoding rule of the XML file containing the XMI data.
-   */
-  public static final String XML_ENCODING = "UTF-8";
-
+public class NsUmlTransformer extends ExternalTransformer {
   /**
    * Logger of the class.
    */
@@ -181,8 +178,7 @@ public class NsUmlTransformer {
    * @param context MDA context containing the class to synchronize.
    */
   protected void extractClass(MClassifier source, MetaPackage context) {
-    assert ((source != null) && (context != null));
-
+    assert (source != null) && (context != null);
     String name = source.getName();
     if (name == null) {
       if (log.isErrorEnabled()) {
@@ -190,7 +186,6 @@ public class NsUmlTransformer {
       }
       return;
     }
-
     MetaClass metaClass = context.findClass(name);
     if (metaClass == null) {
       metaClass = new MetaClass();
@@ -543,43 +538,5 @@ public class NsUmlTransformer {
       visibility = VisibilityCode.getCode(VisibilityCode.PRIVATE_ID);
     }
     return visibility;
-  }
-
-  /**
-   * Flags all system packages found in the model. A system package name is
-   * identified through a regular expresssion. See the Java package naming
-   * conventions for a detailed discussion.
-   * @param model model to flag.
-   */
-  private void flagSystemPackages(MetaModel model) {
-    for (MetaPackage metaPackage : model.getPackages()) {
-      if (isSystemPackage(metaPackage)) {
-        metaPackage.setSystem(true);
-        for (MetaClass clazz : metaPackage.getClasses()) {
-          clazz.setSystem(true);
-        }
-      }
-    }
-  }
-
-  /**
-   * Returns true if the package is identified as a system package.
-   * @param metaPackage package to check.
-   * @return true if the package belongs to the Java system otherwise false.
-   */
-  private boolean isSystemPackage(MetaPackage metaPackage) {
-    String name = metaPackage.getName();
-    return ((name != null) && (name.startsWith("java.")
-        || name.startsWith("javax.") || name.equals("java") || name
-        .equals("javax")));
-  }
-
-  /**
-   * Return the boolean value of the string as used in NSUML models.
-   * @param value string value to convert.
-   * @return the boolean value of the string representation.
-   */
-  private boolean booleanValue(String value) {
-    return (value != null && value.equalsIgnoreCase("true"));
   }
 }

@@ -12,12 +12,10 @@ package ch.bbv.mda;
  * @version $Revision$
  */
 public abstract class MetaClassifier extends MetaElement {
-  
+  /**
+   * @see MetaElement#qualifiedName()
+   */
   public String getQualifiedName() {
-    MetaElement parent = getContext();
-    if(parent instanceof MetaModel) return getName();
-    if(parent instanceof MetaPackage) return parent.getName()+"."+getName();
-    if(parent instanceof MetaClassifier) return ((MetaClassifier)parent).getQualifiedName()+"."+getName();
-    return "";
+    return qualifiedName();
   }
 }

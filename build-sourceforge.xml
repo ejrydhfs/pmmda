@@ -112,6 +112,7 @@
     <copy file="${lib.dir}/${commons-logging-api.lib}" todir="${pmmda-lib.dir}" />
     <copy file="${lib.dir}/${flexdock.lib}" todir="${pmmda-lib.dir}" />
     <copy file="${lib.dir}/${forms.lib}" todir="${pmmda-lib.dir}" />
+    <copy file="${lib.dir}/${validation.lib}" todir="${pmmda-lib.dir}" />
     <copy file="${lib.dir}/${glazedlists.lib}" todir="${pmmda-lib.dir}" />
     <copy file="${lib.dir}/${jgraph.lib}" todir="${pmmda-lib.dir}" />
     <copy file="${lib.dir}/${jgraphaddons.lib}" todir="${pmmda-lib.dir}" />
@@ -172,6 +173,9 @@
     <copy file="${lib.dir}/${commons-logging-api.lib}" todir="${dog-lib.dir}" />
     <copy file="${lib.dir}/${commons-pool.lib}" todir="${dog-lib.dir}" />
     <copy file="${lib.dir}/${mysql-connector.lib}" todir="${dog-lib.dir}" />
+    <copy file="${lib.dir}/${forms.lib}" todir="${dog-lib.dir}" />
+    <copy file="${lib.dir}/${validation.lib}" todir="${dog-lib.dir}" />
+    <copy file="${lib.dir}/${glazedlists.lib}" todir="${dog-lib.dir}" />
     <copy file="${src.dog.dir}/ReleaseNotes.txt" todir="${dog-dist.dir}" />
     <jar jarfile="${dog-lib.dir}/${dog.name}-${dog.version}.jar" compress="true" index="true">
       <fileset dir="${build.dir}" excludes="ch/bbv/mda/**,ch/bbv/documentor/**,**/*.html,**/*.xml,**/*.sql" />
@@ -267,6 +271,7 @@
     <copy file="${lib.dir}/${commons-logging-api.lib}" todir="${pmmda-ex-lib.dir}" />
     <copy file="${lib.dir}/${commons-pool.lib}" todir="${pmmda-ex-lib.dir}" />
     <copy file="${lib.dir}/${forms.lib}" todir="${pmmda-ex-lib.dir}" />
+    <copy file="${lib.dir}/${validation.lib}" todir="${pmmda-ex-lib.dir}" />
     <copy file="${lib.dir}/${flexdock.lib}" todir="${pmmda-ex-lib.dir}" />
     <copy file="${lib.dir}/${jcalendar.lib}" todir="${pmmda-ex-lib.dir}" />
     <copy file="${lib.dir}/${glazedlists.lib}" todir="${pmmda-ex-lib.dir}" />
@@ -345,6 +350,11 @@
       </fileset>
     </replaceregexp>
     <replaceregexp match="forms-(.*?)\.jar" replace="${forms.lib}" flags="i">
+      <fileset dir="${scripts.dir}">
+        <include name="**/*.bat" />
+      </fileset>
+    </replaceregexp>
+    <replaceregexp match="validation-(.*?)\.jar" replace="${validation.lib}" flags="i">
       <fileset dir="${scripts.dir}">
         <include name="**/*.bat" />
       </fileset>

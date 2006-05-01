@@ -62,5 +62,6 @@
 	<classpathentry kind="lib" path="lib/glazedlists-1.5.0.jar"/>
 	<classpathentry kind="lib" path="lib/forms-1.0.6.jar"/>
 	<classpathentry kind="lib" path="lib/commons-io-1.2.jar"/>
+	<classpathentry kind="lib" path="lib/validation-1.1.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>

@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann 
+/* copyright 2000-2006 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence); 
  * you may not use this file except in compliance with the License. 
  * $Id$
@@ -15,6 +15,7 @@ import ch.bbv.mda.MetaModel;
 
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.validation.view.ValidationComponentUtils;
 
 /**
  * The view has two areas. The first area displays the fields of a meta package.
@@ -24,7 +25,7 @@ import com.jgoodies.forms.layout.FormLayout;
  */
 public class MetaModelView extends NodePropertiesView {
   /**
-   * Serial version identifier coded as back compatibility date.
+   * Serial version identifier for the instances of the class.
    */
   private static final long serialVersionUID = 20041201;
 
@@ -57,7 +58,7 @@ public class MetaModelView extends NodePropertiesView {
     root.setEditable(false);
     filename = new JTextField(TEXT_FIELD_SIZE);
     filename.setEditable(false);
-    initialize();
+    add(buildPanel());
   }
 
   @Override
@@ -70,7 +71,8 @@ public class MetaModelView extends NodePropertiesView {
     String emptyFileName = "....";
     MetaModel model = (MetaModel) getDataObject();
     name.setText(model.getName());
-    if(model.getFilename() == null || model.getFilename().equals("") || model.getFilename().equals(emptyFileName)) {
+    if (model.getFilename() == null || model.getFilename().equals("")
+        || model.getFilename().equals(emptyFileName)) {
       root.setText("\"Unnamed model\"");
       filename.setText(emptyFileName);
     } else {
@@ -93,9 +95,10 @@ public class MetaModelView extends NodePropertiesView {
   }
 
   /**
-   * Initialize the view component with the user interface elements.
+   * Builds the view component with the user interface elements.
+   * @return the panel containing all components
    */
-  protected void initialize() {
+  protected JPanel buildPanel() {
     FormLayout layout = new FormLayout("right:pref, 3dlu, pref:grow", "");
     DefaultFormBuilder builder = new DefaultFormBuilder(layout);
     builder.setDefaultDialogBorder();
@@ -104,6 +107,8 @@ public class MetaModelView extends NodePropertiesView {
     builder.append("&Filename", filename);
     builder.append("&Root Directory", root);
     JPanel panel = builder.getPanel();
-    add(panel);
+    ValidationComponentUtils.setMandatory(name, true);
+    ValidationComponentUtils.updateComponentTreeMandatoryBorder(panel);
+    return panel;
   }
 }

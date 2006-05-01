@@ -25,6 +25,7 @@ public class MetaIndexedProperty extends MetaProperty {
     setMultiplicity(Multiplicity.MULTIPLICITY_0_N);
   }
 
+  @Override
   public void accept(Visitor visitor) {
     visitor.visit(this);
   }
@@ -32,7 +33,7 @@ public class MetaIndexedProperty extends MetaProperty {
   /* %% USER DEFINED CODE START %% */
   /**
    * Returns true if the lower bound if the multiplicity is zero.
-   * @return true if elements are optional otherwise false.
+   * @return true if elements are optional otherwise false
    */
   public boolean canBeNull() {
     return getMultiplicity().getLowerBound() == 0;

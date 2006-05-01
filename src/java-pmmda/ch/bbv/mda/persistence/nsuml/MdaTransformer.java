@@ -20,6 +20,7 @@ import ru.novosoft.uml.model_management.MModel;
 import ru.novosoft.uml.model_management.MPackage;
 import ru.novosoft.uml.model_management.MPackageImpl;
 import ch.bbv.mda.*;
+import ch.bbv.mda.persistence.FilterIterator;
 
 /**
  * The MDA transformer defines rules how to transform a MDA element into the

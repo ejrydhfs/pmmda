@@ -19,10 +19,13 @@ Version 0.3.0-RC4 (30 April 2006)
 ---------------------------------
 The following new features were added.
 - Support of multiple stereotypes on meta elements.
+- Started to add a validation framework based on the JGoodies library in the
+  pmMDA user interface.
 
 The following errors were corrected.
 - Tool tips for tagged values without a loaded cartridge prefix in their name 
   do not anymore generate an exception in the log.
+- Errors in the installation notes and developers' FAQ were corrected.
 
 Version 0.3.0-RC3 (15 April 2006)
 ---------------------------------

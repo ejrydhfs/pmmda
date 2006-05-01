@@ -5,19 +5,18 @@
  */
 package ch.bbv.mda.ui;
 
-import java.awt.Color;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import javax.swing.JCheckBox;
-import javax.swing.JPanel;
+import javax.swing.JComponent;
 
 import ch.bbv.mda.MetaClass;
 import ch.bbv.mda.VisibilityCode;
+import ch.bbv.mda.validation.IdentifierValidator;
 
 import com.jgoodies.forms.builder.DefaultFormBuilder;
+import com.jgoodies.validation.Severity;
+import com.jgoodies.validation.ValidationResult;
+import com.jgoodies.validation.message.SimpleValidationMessage;
+import com.jgoodies.validation.util.ValidationUtils;
 
 /**
  * The meta class view defines the view of a MDA class.
@@ -29,11 +28,6 @@ public class MetaClassView extends MetaItemView {
    * Serial version identifier coded as back compatibility date.
    */
   private static final long serialVersionUID = 20041201;
-
-  /**
-   * Pattern for validating identifiers
-   */
-  static Pattern validName;
 
   /**
    * Swing component to display the associated property.
@@ -59,12 +53,11 @@ public class MetaClassView extends MetaItemView {
    * Default constructor of the class.
    */
   public MetaClassView() {
-    nameText.addFocusListener(new VerificationActions());
     abstracts = new JCheckBox();
     finals = new JCheckBox();
     interfaces = new JCheckBox();
     statics = new JCheckBox();
-    initialize();
+    add(buildPanel());
   }
 
   @Override
@@ -91,6 +84,21 @@ public class MetaClassView extends MetaItemView {
   }
 
   @Override
+  public void validateView(ValidationResult result) {
+    String identifier = name.getText();
+    if (!ValidationUtils.isBlank(identifier)) {
+      if (!IdentifierValidator.checkJavaIdentifier(identifier)) {
+        result.add(new SimpleValidationMessage("name is not a Java identifier",
+            Severity.ERROR, name));
+      } else if (!Character.isUpperCase(identifier.charAt(0))) {
+        result.add(new SimpleValidationMessage(
+            "name does not start with upper case", Severity.WARNING, name));
+      }
+    }
+    super.validateView(result);
+  }
+
+  @Override
   public void setViewEditable(boolean editable) {
     super.setViewEditable(editable);
     abstracts.setEnabled(editable);
@@ -99,45 +107,19 @@ public class MetaClassView extends MetaItemView {
     statics.setEnabled(editable);
   }
 
-  /**
-   * Initialize the view component with the user interface elements.
-   */
-  protected void initialize() {
+  @Override
+  protected JComponent buildGeneral() {
     DefaultFormBuilder builder = initializeGeneral();
-    builder.appendSeparator("Modifiers");
+    return builder.getPanel();
+  }
+
+  @Override
+  protected JComponent buildFlags() {
+    DefaultFormBuilder builder = getBuilder(FLAGS_LAYOUT);
     builder.append("&abstract", abstracts);
     builder.append("&interface", interfaces);
     builder.append("&final", finals);
     builder.append("&static", statics);
-    builder.appendSeparator("Tagged Values");
-    builder.append(tagsView, 7);
-    JPanel panel = builder.getPanel();
-    add(panel);
-
-    validName = Pattern.compile("^[0-9]" // no number at the beginning of the
-        // identifier
-        + "|[^\\w]"); // no special characters
-  }
-
-  /**
-   * Focus listeners for verification of input. It applies input rules.
-   * @author AdrianBachofen
-   * @version $Revision$
-   */
-  private class VerificationActions implements FocusListener {
-    public void focusLost(FocusEvent e) {
-      if (e.getSource() == nameText) {
-        Matcher matcher = validName.matcher(nameText.getText());
-        if (matcher.find()) {
-          nameText.setBackground(ALERT_COLOR);
-        } else {
-          nameText.setBackground(Color.WHITE);
-        }
-      }
-    }
-
-    public void focusGained(FocusEvent e) {
-      // don't do anything
-    }
+    return builder.getPanel();
   }
 }

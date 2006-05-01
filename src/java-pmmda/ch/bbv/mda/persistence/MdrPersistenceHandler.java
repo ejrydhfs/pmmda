@@ -9,10 +9,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import javax.jmi.reflect.RefPackage;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.omg.uml.UmlPackage;
 
 import ch.bbv.mda.MetaModel;
 import ch.bbv.mda.persistence.mdr.MdaTransformer;
@@ -44,7 +43,7 @@ public class MdrPersistenceHandler implements PersistenceHandler {
 
   public MetaModel readModel(File file) throws PersistenceException {
     try {
-      RefPackage packages = mdrTransformer.loadArgoModel(file);
+      UmlPackage uml = mdrTransformer.loadArgoModel(file);
     } catch (FileNotFoundException e) {
       log.error(e);
     } catch (IOException e) {

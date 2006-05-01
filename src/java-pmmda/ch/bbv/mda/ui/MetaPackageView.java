@@ -5,14 +5,8 @@
  */
 package ch.bbv.mda.ui;
 
-import java.awt.Color;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import javax.swing.JCheckBox;
-import javax.swing.JPanel;
+import javax.swing.JComponent;
 
 import ch.bbv.dog.DataObject;
 import ch.bbv.dog.DataObjectType;
@@ -23,6 +17,10 @@ import ch.bbv.mda.*;
 import ch.bbv.mda.generators.CartridgeFactory;
 
 import com.jgoodies.forms.builder.DefaultFormBuilder;
+import com.jgoodies.validation.Severity;
+import com.jgoodies.validation.ValidationResult;
+import com.jgoodies.validation.message.SimpleValidationMessage;
+import com.jgoodies.validation.util.ValidationUtils;
 
 /**
  * The meta package view defines the view of a MDA package.
@@ -33,23 +31,20 @@ public class MetaPackageView extends MetaItemView {
   /**
    * Serial version identifier coded as back compatibility date.
    */
-  private static final long serialVersionUID = 20041201;
+  private static final long serialVersionUID = 2388221329446034721L;
 
   /**
-   * Pattern for validating identifiers
+   * Flag indicating if the package is a system package.
    */
-  static Pattern validName;
-
   private JCheckBox system;
 
   /**
    * Default constructor of the class.
    */
   public MetaPackageView() {
-    nameText.addFocusListener(new VerificationActions());
     system = new JCheckBox();
     system.setEnabled(false);
-    initialize();
+    add(buildPanel());
   }
 
   @Override
@@ -69,7 +64,7 @@ public class MetaPackageView extends MetaItemView {
   public void commitChanges() {
     MetaPackage model = (MetaPackage) getDataObject();
     if (model.getName() != null
-        && !model.getName().equals(nameText.getText().trim())) {
+        && !model.getName().equals(name.getText().trim())) {
       changePackageName(model);
       addParentPackages(model);
     }
@@ -78,16 +73,48 @@ public class MetaPackageView extends MetaItemView {
     getModel().nodeChanged();
   }
 
+  @Override
+  public void validateView(ValidationResult result) {
+    if (ValidationUtils.isBlank(name.getText())) {
+      result.add(new SimpleValidationMessage("name is mandatory",
+          Severity.ERROR, name));
+    }
+    if (ValidationUtils.isBlank(description.getText())) {
+      result.add(new SimpleValidationMessage("description should be provided",
+          Severity.WARNING, description));
+    }
+    super.validateView(result);
+    validationResultModel.setResult(result);
+  }
+
+  @Override
+  public void cancelChanges() {
+    tagsView.cancelChanges();
+  }
+
+  @Override
+  protected JComponent buildGeneral() {
+    DefaultFormBuilder builder = initializeGeneral();
+    return builder.getPanel();
+  }
+
+  @Override
+  protected JComponent buildFlags() {
+    DefaultFormBuilder builder = getBuilder(FLAGS_LAYOUT);
+    builder.append("&Is System", system);
+    return builder.getPanel();
+  }
+
   /**
    * Changes a package name. It also updates references to classes within this
    * package.
-   * @param metaPackage package which name should be changed.
+   * @param packages package which name should be changed.
    */
-  private void changePackageName(MetaPackage metaPackage) {
-    String text = nameText.getText().trim();
-    String oldName = metaPackage.getName();
+  private void changePackageName(MetaPackage packages) {
+    String text = name.getText().trim();
+    String oldName = packages.getName();
     if (text != null) {
-      metaPackage.setName(text);
+      packages.setName(text);
     }
     MetaModel metaModel = ((MetaPackage) getDataObject()).getModel();
     if (!text.equals(oldName)) {
@@ -98,13 +125,13 @@ public class MetaPackageView extends MetaItemView {
   /**
    * If context is not set then this is a new meta package. If name is qualified
    * then verify whether parent packages exist. If not then add them.
-   * @param metaPackage
+   * @param packages package to process
    */
-  private void addParentPackages(MetaPackage metaPackage) {
+  private void addParentPackages(MetaPackage packages) {
     MetaModel metaModel = ((MetaPackage) getDataObject()).getModel();
     if (metaModel == null)
       return;
-    String name = metaPackage.getName();
+    String name = packages.getName();
     int idx = ((ExplorerNode) getNode().getParent()).getIndex(getNode());
     while (name.lastIndexOf(".") > 0) {
       name = name.substring(0, name.lastIndexOf("."));
@@ -118,7 +145,7 @@ public class MetaPackageView extends MetaItemView {
         mPackage.setVisibility((VisibilityCode) visibility.getSelectedCode());
         node.setDataObject(mPackage);
         tagsView.commitChanges();
-        node.setDataObject(metaPackage);
+        node.setDataObject(packages);
         metaModel.addPackage(mPackage);
 
         // add explorer node
@@ -137,56 +164,6 @@ public class MetaPackageView extends MetaItemView {
           ((ExplorerNode) getNode().getParent()).insert(childNode, idx);
         }
       }
-    }
-  }
-
-  protected boolean validateContent() {
-    return false;
-  }
-
-  @Override
-  public void cancelChanges() {
-    tagsView.cancelChanges();
-  }
-
-  /**
-   * Initialize the view component with the user interface elements.
-   */
-  protected void initialize() {
-    DefaultFormBuilder builder = initializeGeneral();
-    builder.appendSeparator("Modifiers");
-    builder.append("&Is System", system);
-    builder.nextLine();
-    builder.appendSeparator("Tagged Values");
-    builder.append(tagsView, 7);
-    JPanel panel = builder.getPanel();
-    add(panel);
-
-    validName = Pattern.compile("^[0-9\\.]" // no number and no dot at the
-        // beginning of the identifier
-        + "|[^\\w&&[^\\.]]" // no special characters other than dot
-        + "|\\.[0-9]"); // no number after a dot
-  }
-
-  /**
-   * Focus listeners for verification of input. It applies input rules.
-   * @author AdrianBachofen
-   * @version $Revision$
-   */
-  private class VerificationActions implements FocusListener {
-    public void focusLost(FocusEvent e) {
-      if (e.getSource() == nameText) {
-        Matcher matcher = validName.matcher(nameText.getText());
-        if (matcher.find()) {
-          nameText.setBackground(ALERT_COLOR);
-        } else {
-          nameText.setBackground(Color.WHITE);
-        }
-      }
-    }
-
-    public void focusGained(FocusEvent e) {
-      // don't do anything
     }
   }
 

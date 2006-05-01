@@ -102,13 +102,14 @@ public class SimpleDialog extends JDialog implements ActionListener {
   /**
    * Called each time one of the buttons of the dialog is activated. The
    * associated abstract processing methods are called.
-   * @param event event detected in Swing
+   * @param event action event detected in Swing
    */
   public void actionPerformed(ActionEvent event) {
     Object source = event.getSource();
     if (source == okButton) {
-      processOk();
-      setVisible(false);
+      if (processOk()) {
+        setVisible(false);
+      }
     } else if (source == cancelButton) {
       processCancel();
       setVisible(false);
@@ -128,49 +129,57 @@ public class SimpleDialog extends JDialog implements ActionListener {
   }
 
   /**
-   * Sets the enabled status of the button.
-   * @param enabled new status of the button
+   * Returns the requested button.
+   * @return the requested button if defined otherwise null
    */
-  public void setOkButtonEnabled(boolean enabled) {
-    okButton.setEnabled(enabled);
+  public JButton getOkButton() {
+    return okButton;
   }
 
   /**
-   * Sets the enabled status of the button.
-   * @param enabled new status of the button
+   * Returns the requested button.
+   * @return the requested button if defined otherwise null
    */
-  public void setApplyButtonEnabled(boolean enabled) {
-    applyButton.setEnabled(enabled);
+  public JButton getCancelButton() {
+    return cancelButton;
   }
 
   /**
-   * Sets the enabled status of the button.
-   * @param enabled new status of the button
+   * Returns the requested button.
+   * @return the requested button if defined otherwise null
    */
-  public void setCancelButtonEnabled(boolean enabled) {
-    cancelButton.setEnabled(enabled);
+  public JButton getApplyButton() {
+    return applyButton;
   }
 
   /**
    * The process method is called either when the cancel button is pressed or
    * the window is closed. If action is requested it should be overwritten in
    * the subclass.
+   * @return true if the processing was successful otherwise false. The dialog
+   *         is only closed if the processing is sucessful
    */
-  protected void processCancel() {
+  protected boolean processCancel() {
+    return true;
   }
 
   /**
    * The process method is called when the ok button is pressed. If action is
    * requested it should be overwritten in the subclass.
+   * @return true if the processing was successful otherwise false. The dialog
+   *         is only closed if the processing is sucessful
    */
-  protected void processOk() {
+  protected boolean processOk() {
+    return true;
   }
 
   /**
    * The process method is called when the apply button is pressed. If action is
    * requested it should be overwritten in the subclass.
+   * @return true if the processing was successful otherwise false
    */
-  protected void processApply() {
+  protected boolean processApply() {
+    return true;
   }
 
   /**

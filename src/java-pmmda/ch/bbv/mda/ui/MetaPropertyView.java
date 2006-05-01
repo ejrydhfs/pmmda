@@ -6,22 +6,24 @@
 package ch.bbv.mda.ui;
 
 import java.awt.Color;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.JCheckBox;
-import javax.swing.JPanel;
+import javax.swing.JComponent;
 import javax.swing.JTextField;
 
 import ch.bbv.mda.MetaIndexedProperty;
 import ch.bbv.mda.MetaProperty;
 import ch.bbv.mda.Multiplicity;
 import ch.bbv.mda.VisibilityCode;
+import ch.bbv.mda.validation.IdentifierValidator;
 
 import com.jgoodies.forms.builder.DefaultFormBuilder;
-import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.validation.Severity;
+import com.jgoodies.validation.ValidationResult;
+import com.jgoodies.validation.message.SimpleValidationMessage;
+import com.jgoodies.validation.util.ValidationUtils;
+import com.jgoodies.validation.view.ValidationComponentUtils;
 
 /**
  * The meta property view defines the view of a MDA simple or indexed property.
@@ -42,15 +44,13 @@ public class MetaPropertyView extends MetaItemView {
   /**
    * Pattern for validating types
    */
-  static Pattern validType;
+  JTextField type;
 
-  JTextField typeText;
+  private JTextField multiplicityLowerBound;
 
-  private JTextField multiplicityLowerBoundText;
+  private JTextField multiplicityUpperBound;
 
-  private JTextField multiplicityUpperBoundText;
-
-  private JTextField initialValueText;
+  private JTextField initialValue;
 
   private JCheckBox volatiles;
 
@@ -64,49 +64,51 @@ public class MetaPropertyView extends MetaItemView {
    * Default constructor of the class.
    */
   public MetaPropertyView() {
-    typeText = new JTextField(TEXT_FIELD_SIZE);
-    typeText.addFocusListener(new VerificationActions());
-    multiplicityLowerBoundText = new JTextField();
-    multiplicityUpperBoundText = new JTextField();
-    initialValueText = new JTextField(TEXT_FIELD_SIZE);
+    type = new JTextField(TEXT_FIELD_SIZE);
+    multiplicityLowerBound = new JTextField();
+    multiplicityUpperBound = new JTextField();
+    initialValue = new JTextField(TEXT_FIELD_SIZE);
     volatiles = new JCheckBox();
     transients = new JCheckBox();
     finals = new JCheckBox();
     statics = new JCheckBox();
-    initialize();
+    ValidationComponentUtils.setMandatory(type, true);
+    ValidationComponentUtils.setMandatory(multiplicityLowerBound, true);
+    ValidationComponentUtils.setMandatory(multiplicityUpperBound, true);
+    add(buildPanel());
   }
 
   @Override
   public void populateView() {
     super.populateView();
     MetaProperty model = (MetaProperty) getDataObject();
-    typeText.setText(model.getTypeName());
-    typeText.setBackground(Color.WHITE);
+    type.setText(model.getTypeName());
+    type.setBackground(Color.WHITE);
     volatiles.setSelected(model.isVolatile());
     transients.setSelected(model.isTransient());
     statics.setSelected(model.isStatic());
     finals.setSelected(model.isFinal());
     Multiplicity multiplicity = model.getMultiplicity();
-    multiplicityLowerBoundText.setText(Multiplicity.stringValue(multiplicity
+    multiplicityLowerBound.setText(Multiplicity.stringValue(multiplicity
         .getLowerBound()));
-    multiplicityUpperBoundText.setText(Multiplicity.stringValue(multiplicity
+    multiplicityUpperBound.setText(Multiplicity.stringValue(multiplicity
         .getUpperBound()));
     if (model instanceof MetaIndexedProperty) {
-      multiplicityLowerBoundText.setEditable(true);
-      multiplicityUpperBoundText.setEditable(true);
+      multiplicityLowerBound.setEditable(true);
+      multiplicityUpperBound.setEditable(true);
     } else {
-      multiplicityLowerBoundText.setEditable(false);
-      multiplicityUpperBoundText.setEditable(false);
+      multiplicityLowerBound.setEditable(false);
+      multiplicityUpperBound.setEditable(false);
     }
-    initialValueText.setText(model.getInitialValue());
+    initialValue.setText(model.getInitialValue());
   }
 
   @Override
   public void commitChanges() {
     super.commitChanges();
     MetaProperty model = (MetaProperty) getDataObject();
-    model.setInitialValue(initialValueText.getText());
-    String text = typeText.getText();
+    model.setInitialValue(initialValue.getText());
+    String text = type.getText();
     if (text != null) {
       model.setTypeName(text.trim());
     }
@@ -119,82 +121,63 @@ public class MetaPropertyView extends MetaItemView {
   }
 
   @Override
+  public void validateView(ValidationResult result) {
+    String identifier = name.getText();
+    if (!ValidationUtils.isBlank(identifier)) {
+      if (!IdentifierValidator.checkIdentifier(identifier)) {
+        result.add(new SimpleValidationMessage(
+            " name is not a legal Java identifier", Severity.ERROR, name));
+      } else if (!Character.isLowerCase(identifier.charAt(0))) {
+        result.add(new SimpleValidationMessage(
+            "name does not start with lower case", Severity.WARNING, name));
+      }
+
+    }
+    if (ValidationUtils.isBlank(type.getText())) {
+      result.add(new SimpleValidationMessage("type is mandatory",
+          Severity.ERROR, type));
+    }
+    if (ValidationUtils.isBlank(multiplicityLowerBound.getText())) {
+      result.add(new SimpleValidationMessage("lower bound must be provided",
+          Severity.ERROR, multiplicityLowerBound));
+    }
+    if (ValidationUtils.isBlank(multiplicityUpperBound.getText())) {
+      result.add(new SimpleValidationMessage("upper bound must be provided",
+          Severity.ERROR, multiplicityUpperBound));
+    }
+    super.validateView(result);
+  }
+
+  @Override
   public void setViewEditable(boolean editable) {
     super.setViewEditable(editable);
-    typeText.setEditable(editable);
-    multiplicityLowerBoundText.setEditable(editable);
-    multiplicityUpperBoundText.setEditable(editable);
-    initialValueText.setEditable(editable);
+    type.setEditable(editable);
+    multiplicityLowerBound.setEditable(editable);
+    multiplicityUpperBound.setEditable(editable);
+    initialValue.setEditable(editable);
     volatiles.setEnabled(editable);
     transients.setEnabled(editable);
     finals.setEnabled(editable);
     statics.setEnabled(editable);
   }
 
-  /**
-   * Initialize the panel with the user interface elements.
-   */
-  protected void initialize() {
-    FormLayout layout = new FormLayout(LAYOUT, "");
-    DefaultFormBuilder builder = new DefaultFormBuilder(layout);
-    builder.setDefaultDialogBorder();
-    builder.appendSeparator("General");
-    builder.append("&Name", nameText);
-    builder.append("&Type", typeText);
-    builder.append("&Context", contextText);
-    builder.append("&Visibility", visibility);
-    builder.append("&Lower Bound", multiplicityLowerBoundText);
-    builder.append("&Upper Bound", multiplicityUpperBoundText);
-    builder.append("&Initial Value", initialValueText);
-    builder.nextLine();
-    builder.append("&Description", descriptionPane, 5);
-    builder.appendSeparator("Modifiers");
+  @Override
+  protected JComponent buildGeneral() {
+    DefaultFormBuilder builder = initializeGeneral();
+    builder.append("&Type", type);
+    builder.append("&Initial Value", initialValue);
+    builder.append("&Lower Bound", multiplicityLowerBound);
+    builder.append("&Upper Bound", multiplicityUpperBound);
+    return builder.getPanel();
+  }
+
+  @Override
+  protected JComponent buildFlags() {
+    DefaultFormBuilder builder = getBuilder(FLAGS_LAYOUT);
     builder.append("&volatile", volatiles);
     builder.append("&transient", transients);
     builder.append("&final", finals);
     builder.append("&static", statics);
-    builder.appendSeparator("Tagged Values");
-    builder.append(tagsView, 7);
-    JPanel panel = builder.getPanel();
-    add(panel);
-
-    validName = Pattern.compile("^[0-9]" // no number at the beginning of the
-        // identifier
-        + "|[^\\w]"); // no special characters
-
-    validType = Pattern.compile("^[0-9\\.]" // no number and no dot at the
-        // beginning of the identifier
-        + "|[^\\w&&[^\\.]]" // no special characters other than dot
-        + "|\\.[0-9]"); // no number after a dot
-  }
-
-  /**
-   * Focus listeners for verification of input. It applies input rules.
-   * @author AdrianBachofen
-   * @version $Revision$
-   */
-  private class VerificationActions implements FocusListener {
-    public void focusLost(FocusEvent e) {
-      if (e.getSource() == nameText) {
-        Matcher matcher = validName.matcher(nameText.getText());
-        if (matcher.find()) {
-          nameText.setBackground(ALERT_COLOR);
-        } else {
-          nameText.setBackground(Color.WHITE);
-        }
-      }
-      if (e.getSource() == typeText) {
-        Matcher matcher = validType.matcher(typeText.getText());
-        if (matcher.find()) {
-          typeText.setBackground(ALERT_COLOR);
-        } else {
-          typeText.setBackground(Color.WHITE);
-        }
-      }
-    }
-
-    public void focusGained(FocusEvent e) {
-      // don't do anything
-    }
+    return builder.getPanel();
   }
 }

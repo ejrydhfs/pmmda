@@ -173,7 +173,7 @@ public class MetaProperty extends MetaMember {
 
   /**
    * Implements the visitor pattern.
-   * @param visitor visitor to process.
+   * @param visitor visitor to process
    * @pre visitor != null
    */
   public void accept(Visitor visitor) {
@@ -183,7 +183,7 @@ public class MetaProperty extends MetaMember {
   /* %% USER DEFINED CODE START %% */
   /**
    * Returns the value of the tagged value.
-   * @return value of the requested tagged value.
+   * @return value of the requested tagged value
    */
   public boolean retrieveIsChangeable() {
     return booleanValueOfTag("bo-change-event");
@@ -191,7 +191,7 @@ public class MetaProperty extends MetaMember {
 
   /**
    * Returns the value of the tagged value.
-   * @return value of the requested tagged value.
+   * @return value of the requested tagged value
    */
   public boolean retrieveIsVetoable() {
     return booleanValueOfTag("bo-veto-event");
@@ -199,7 +199,7 @@ public class MetaProperty extends MetaMember {
 
   /**
    * Returns the value of the tagged value.
-   * @return value of the requested tagged value.
+   * @return value of the requested tagged value
    */
   public boolean canBeRead() {
     String mode = getTaggedValue("bo-mode").getValue();

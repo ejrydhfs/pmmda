@@ -71,7 +71,7 @@ Installation Notes pmMDA
    
    Developers desiring to run pmMDA inside eclipse can define a new target.
    The class containing the main method is
-             ch.bbv.explorer.ExplorerTest
+             ch.bbv.mda.ui.MdaApplication
    
 4. Configure pmMDA
    ---------------

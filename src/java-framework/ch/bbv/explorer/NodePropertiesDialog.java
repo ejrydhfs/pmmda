@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann
+/* copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -10,6 +10,8 @@ import javax.swing.JFrame;
 import ch.bbv.dog.LightweightObjectHandler;
 import ch.bbv.explorer.actions.ExplorerNodeAction;
 import ch.bbv.explorer.components.SimpleDialog;
+
+import com.jgoodies.validation.ValidationResult;
 
 /**
  * The node properties dialog displays the properties view of the selected node.
@@ -50,39 +52,42 @@ public class NodePropertiesDialog extends SimpleDialog {
   /**
    * The data object to display and the view containing its properties are
    * assigned to the dialog.
-   * @param node node containing the data object to display.
-   * @param isEditable flag indicating if the data object is editable.
-   * @param isNew flag indicating if the data object is a new one.
-   * @param title title of the properties dialog.
-   * @param action action to execute upon completion of the dialog.
+   * @param node node containing the data object to display
+   * @param editable flag indicating if the data object is editable
+   * @param news flag indicating if the data object is a new one
+   * @param title title of the properties dialog
+   * @param action action to execute upon completion of the dialog
    * @pre (node != null) && (title != null)
    */
-  public void setModel(ExplorerNode node, boolean isEditable, boolean isNew,
+  public void setModel(ExplorerNode node, boolean editable, boolean news,
       String title, ExplorerNodeAction action) {
-    assert ((node != null) && (title != null));
+    assert (node != null) && (title != null);
     UiNodeTypeFactory factory = node.getNodeOwner().getNodeTypeFactory();
     setTitle(title);
     view = factory.getViewFor(node.getNodeType());
-    view.setEditable(isEditable);
-    setOkButtonEnabled(isEditable);
-    setApplyButtonEnabled(isEditable);
-    view.setNewObject(isNew);
+    view.setEditable(editable);
+    getOkButton().setEnabled(editable);
+    getApplyButton().setEnabled(editable);
+    view.setNewObject(news);
     view.setModel(node);
     this.action = action;
     setView(view);
   }
 
   @Override
-  protected void processOk() {
-    processApply();
-    if (action != null) {
-      action.postExecute(view.getModel(), false);
+  protected boolean processOk() {
+    boolean validated = processApply();
+    if (validated) {
+      if (action != null) {
+        action.postExecute(view.getModel(), false);
+      }
+      view.setModel(null);
     }
-    view.setModel(null);
+    return validated;
   }
 
   @Override
-  protected void processCancel() {
+  protected boolean processCancel() {
     if (view.isEditable()) {
       view.cancelChanges();
     }
@@ -90,17 +95,24 @@ public class NodePropertiesDialog extends SimpleDialog {
       action.postExecute(view.getModel(), true);
     }
     view.setModel(null);
+    return true;
   }
 
   @Override
-  protected void processApply() {
+  protected boolean processApply() {
+    ValidationResult result = new ValidationResult();
+    view.validateView(result);
+    boolean validated = !result.hasErrors();
     if (view.isEditable()) {
-      view.commitChanges();
-      view.populateSubViews();
-      ExplorerNode node = view.getModel();
-      LightweightObjectHandler handler = node.getNodeOwner().getManager()
-          .getLwHandler();
-      handler.synchronize(node.getLightweightObject(), node.getDataObject());
+      if (validated) {
+        view.commitChanges();
+        view.populateSubViews();
+        ExplorerNode node = view.getModel();
+        LightweightObjectHandler handler = node.getNodeOwner().getManager()
+            .getLwHandler();
+        handler.synchronize(node.getLightweightObject(), node.getDataObject());
+      }
     }
+    return validated;
   }
 }

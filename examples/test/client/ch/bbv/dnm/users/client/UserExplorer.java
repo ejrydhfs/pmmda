@@ -53,12 +53,11 @@ public class UserExplorer extends Explorer {
   /**
    * Creates a new MDA explorer.
    * @param title title of the explorer frame.
-   * @param schema name of the database schema containing the persistent data.
    * @return the newly created user explorer.
    */
-  public static UserExplorer create(String title, String schema) {
-    Class[] types = { String.class, String.class };
-    Object[] arguments = { title, schema };
+  public static UserExplorer create(String title) {
+    Class[] types = { String.class };
+    Object[] arguments = { title };
     UserExplorer explorer = (UserExplorer) Explorer.createAndShow(
         UserExplorer.class, types, arguments);
     return explorer;

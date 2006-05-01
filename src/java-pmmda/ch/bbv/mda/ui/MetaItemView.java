@@ -22,9 +22,23 @@ import ch.bbv.mda.VisibilityCode;
 import ch.bbv.mda.generators.CartridgeFactory;
 
 import com.jgoodies.forms.builder.DefaultFormBuilder;
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.validation.Severity;
+import com.jgoodies.validation.ValidationResult;
+import com.jgoodies.validation.message.SimpleValidationMessage;
+import com.jgoodies.validation.util.DefaultValidationResultModel;
+import com.jgoodies.validation.util.ValidationUtils;
+import com.jgoodies.validation.view.ValidationComponentUtils;
+import com.jgoodies.validation.view.ValidationResultViewFactory;
 
 class MetaItemView extends NodePropertiesView implements ActionListener {
+  /**
+   * Serial version identifier for the instances of the class.
+   */
+  private static final long serialVersionUID = -8559504085949561644L;
+
   /**
    * The size of a text field in the view.
    */
@@ -36,19 +50,24 @@ class MetaItemView extends NodePropertiesView implements ActionListener {
   protected final static int TEXT_AREA_SIZE = 40;
 
   /**
-   * Layout for the item dialog forms.
+   * Layout for the general section of the item dialog forms.
    */
-  final static String LAYOUT = "right:pref, 3dlu, pref, 7dlu, right:pref, 3dlu, pref";
+  final static String GENERAL_LAYOUT = "right:pref, 3dlu, pref, 7dlu, right:pref, 3dlu, pref";
+
+  /**
+   * Layout for the general section of the item dialog forms.
+   */
+  final static String FLAGS_LAYOUT = "right:pref, 3dlu, pref, 17dlu, pref, 3dlu, pref, 17dlu, pref, 3dlu, pref, 17dlu, pref, 3dlu, pref";
 
   /**
    * Swing component to display the associated property.
    */
-  JTextField nameText;
+  protected JTextField name;
 
   /**
    * Swing component to display the associated property.
    */
-  protected JTextField stereotypeText;
+  protected JTextField stereotypesText;
 
   /**
    * Read-only swing component to display the associated property.
@@ -63,7 +82,7 @@ class MetaItemView extends NodePropertiesView implements ActionListener {
   /**
    * Swing component to display the associated property.
    */
-  protected JTextArea descriptionText;
+  protected JTextArea description;
 
   /**
    * Swing component to display the associated property.
@@ -89,28 +108,31 @@ class MetaItemView extends NodePropertiesView implements ActionListener {
    * Default constructor of the class.
    */
   MetaItemView() {
-    nameText = new JTextField(TEXT_FIELD_SIZE);
+    name = new JTextField(TEXT_FIELD_SIZE);
     stereotypes = new ArrayList<Stereotype>();
-    stereotypeText = new JTextField(TEXT_FIELD_SIZE);
-    stereotypeText.setEditable(false);
+    stereotypesText = new JTextField(TEXT_FIELD_SIZE);
+    stereotypesText.setEditable(false);
     contextText = new JTextField(TEXT_FIELD_SIZE);
     contextText.setEditable(false);
     visibility = new ReferenceCodeComboBox(VisibilityCode.class, VisibilityCode
         .getCodes());
-    descriptionText = new JTextArea(3, TEXT_AREA_SIZE);
-    descriptionText.setLineWrap(true);
-    descriptionText.setWrapStyleWord(true);
-    descriptionPane = new JScrollPane(descriptionText,
+    description = new JTextArea(4, TEXT_AREA_SIZE);
+    description.setLineWrap(true);
+    description.setWrapStyleWord(true);
+    descriptionPane = new JScrollPane(description,
         JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
         JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     tagsView = new TaggedValuesView();
     addNodePropertiesSubView(tagsView);
+    ValidationComponentUtils.setMandatory(name, true);
+    ValidationComponentUtils.setMandatory(visibility, true);
+    validationResultModel = new DefaultValidationResultModel();
   }
 
   @Override
   public void setViewEditable(boolean editable) {
-    nameText.setEditable(editable);
-    descriptionText.setEditable(editable);
+    name.setEditable(editable);
+    description.setEditable(editable);
     visibility.setEnabled(editable);
     tagsView.setEnabled(editable);
     editStereotypes.setEnabled(editable);
@@ -128,27 +150,42 @@ class MetaItemView extends NodePropertiesView implements ActionListener {
       CartridgeFactory.getInstance().getItemFactory().initialize(model,
           model.getClass());
     }
-    nameText.setText(model.getName());
-    nameText.setBackground(Color.WHITE);
+    name.setText(model.getName());
+    name.setBackground(Color.WHITE);
     MetaElement context = model.getContext();
     contextText.setText(context != null ? context.qualifiedName() : null);
     updateStereotypes(model.getStereotypes());
     visibility.setSelectedCode(model.getVisibility());
-    descriptionText.setText(model.getDescription());
+    description.setText(model.getDescription());
   }
 
   @Override
   public void commitChanges() {
     MetaElement model = (MetaElement) getDataObject();
-    String text = nameText.getText();
+    String text = name.getText();
     if (text != null) {
       model.setName(text.trim());
     }
-    text = descriptionText.getText();
+    text = description.getText();
     model.setDescription(text != null ? text.trim() : null);
     model.setStereotypes(stereotypes);
     model.setVisibility((VisibilityCode) visibility.getSelectedCode());
     tagsView.commitChanges();
+  }
+
+  @Override
+  public void validateView(ValidationResult result) {
+    if (ValidationUtils.isBlank(name.getText())) {
+      result.add(new SimpleValidationMessage("name is mandatory",
+          Severity.ERROR, name));
+    }
+    MetaElement item = (MetaElement) getDataObject();
+    if (!item.isSystem() && ValidationUtils.isBlank(description.getText())) {
+      result.add(new SimpleValidationMessage("description should be provided",
+          Severity.WARNING, description));
+    }
+    super.validateView(result);
+    validationResultModel.setResult(result);
   }
 
   /**
@@ -165,24 +202,68 @@ class MetaItemView extends NodePropertiesView implements ActionListener {
   }
 
   /**
-   * Initialize the panel with the user interface elements.
+   * Builds the view component with the user interface elements.
+   * @return the panel containing all components
+   */
+  protected JPanel buildPanel() {
+    FormLayout layout = new FormLayout("fill:pref:grow",
+        "p, 3dlu, p, 9dlu, p, 3dlu, p, 9dlu, p, 3dlu, p, 12dlu, p, 9dlu");
+    PanelBuilder builder = new PanelBuilder(layout);
+    builder.setDefaultDialogBorder();
+    CellConstraints cc = new CellConstraints();
+    builder.addSeparator("General", cc.xy(1, 1));
+    builder.add(buildGeneral(), cc.xy(1, 3));
+    builder.addSeparator("Modifiers", cc.xy(1, 5));
+    builder.add(buildFlags(), cc.xy(1, 7));
+    builder.addSeparator("Tagged Values", cc.xy(1, 9));
+    builder.add(tagsView, cc.xy(1, 11));
+    builder.add(ValidationResultViewFactory
+        .createReportList(validationResultModel), cc.xy(1, 13));
+    ValidationComponentUtils.updateComponentTreeMandatoryBorder(builder
+        .getPanel());
+    ValidationComponentUtils.updateComponentTreeMandatoryBackground(builder
+        .getPanel());
+    return builder.getPanel();
+  }
+
+  /**
+   * Initializes the panel with the user interface elements.
    * @return form builder to use
    */
   protected DefaultFormBuilder initializeGeneral() {
-    FormLayout layout = new FormLayout(LAYOUT, "");
-    DefaultFormBuilder builder = new DefaultFormBuilder(layout);
-    builder.setDefaultDialogBorder();
-    builder.appendSeparator("General");
-    builder.append("&Name", nameText);
+    DefaultFormBuilder builder = getBuilder(GENERAL_LAYOUT);
+    builder.append("&Name", name);
     builder.append("&Context", contextText);
     builder.append("&Visibility", visibility);
     editStereotypes = new JButton("Stereotypes ...");
     editStereotypes.setHorizontalTextPosition(SwingConstants.RIGHT);
     editStereotypes.addActionListener(this);
-    builder.append(editStereotypes, stereotypeText);
+    builder.append(editStereotypes, stereotypesText);
     builder.nextLine();
     builder.append("&Description", descriptionPane, 5);
     return builder;
+  }
+
+  /**
+   * Returns a default builder with the given horizontal layout.
+   * @param layout layout to use in the builder
+   * @return a new builder instance
+   * @pre layout != null
+   */
+  protected DefaultFormBuilder getBuilder(String layout) {
+    assert layout != null;
+    DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout(layout,
+        ""));
+    builder.setDefaultDialogBorder();
+    return builder;
+  }
+
+  protected JComponent buildGeneral() {
+    return null;
+  }
+
+  protected JComponent buildFlags() {
+    return null;
   }
 
   void updateStereotypes(List<Stereotype> stereotypes) {
@@ -192,7 +273,6 @@ class MetaItemView extends NodePropertiesView implements ActionListener {
     for (Stereotype stereotype : this.stereotypes) {
       buffer.append("<<").append(stereotype.getName()).append(">>").append(" ");
     }
-    stereotypeText.setText(buffer.toString());
-
+    stereotypesText.setText(buffer.toString());
   }
 }

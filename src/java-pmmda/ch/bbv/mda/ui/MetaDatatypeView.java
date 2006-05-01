@@ -5,18 +5,18 @@
  */
 package ch.bbv.mda.ui;
 
-import java.awt.Color;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.swing.JPanel;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 
 import ch.bbv.mda.MetaDatatype;
 import ch.bbv.mda.generators.CartridgeFactory;
+import ch.bbv.mda.validation.IdentifierValidator;
 
 import com.jgoodies.forms.builder.DefaultFormBuilder;
+import com.jgoodies.validation.Severity;
+import com.jgoodies.validation.ValidationResult;
+import com.jgoodies.validation.message.SimpleValidationMessage;
+import com.jgoodies.validation.util.ValidationUtils;
 
 /**
  * The meta class view defines the view of a MDA class.
@@ -30,16 +30,17 @@ public class MetaDatatypeView extends MetaItemView {
   private static final long serialVersionUID = 20060103;
 
   /**
-   * Pattern for validating identifiers
+   * Flag indicating if the package is a system package.
    */
-  static Pattern validName;
+  private JCheckBox system;
 
   /**
    * Default constructor of the class.
    */
   public MetaDatatypeView() {
-    nameText.addFocusListener(new VerificationActions());
-    initialize();
+    system = new JCheckBox();
+    system.setEnabled(false);
+    add(buildPanel());
   }
 
   @Override
@@ -58,40 +59,28 @@ public class MetaDatatypeView extends MetaItemView {
     getModel().nodeChanged();
   }
 
-  /**
-   * Initialize the view component with the user interface elements.
-   */
-  protected void initialize() {
-    DefaultFormBuilder builder = initializeGeneral();
-    builder.appendSeparator("Tagged Values");
-    builder.append(tagsView, 7);
-    JPanel panel = builder.getPanel();
-    add(panel);
-
-    validName = Pattern.compile("^[0-9]" // no number at the beginning of the
-        // identifier
-        + "|[^\\w]"); // no special characters
-  }
-
-  /**
-   * Focus listeners for verification of input. It applies input rules.
-   * @author AdrianBachofen
-   * @version $Revision$
-   */
-  private class VerificationActions implements FocusListener {
-    public void focusLost(FocusEvent e) {
-      if (e.getSource() == nameText) {
-        Matcher matcher = validName.matcher(nameText.getText());
-        if (matcher.find()) {
-          nameText.setBackground(ALERT_COLOR);
-        } else {
-          nameText.setBackground(Color.WHITE);
-        }
+  @Override
+  public void validateView(ValidationResult result) {
+    String identifier = name.getText();
+    if (!ValidationUtils.isBlank(identifier)) {
+      if (!IdentifierValidator.checkJavaIdentifier(identifier)) {
+        result.add(new SimpleValidationMessage("name is not a Java identifier",
+            Severity.ERROR, name));
       }
     }
+    super.validateView(result);
+  }
 
-    public void focusGained(FocusEvent e) {
-      // don't do anything
-    }
+  @Override
+  protected JComponent buildGeneral() {
+    DefaultFormBuilder builder = initializeGeneral();
+    return builder.getPanel();
+  }
+
+  @Override
+  protected JComponent buildFlags() {
+    DefaultFormBuilder builder = getBuilder(FLAGS_LAYOUT);
+    builder.append("&Is System", system);
+    return builder.getPanel();
   }
 }

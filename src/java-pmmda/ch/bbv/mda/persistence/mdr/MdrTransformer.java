@@ -7,20 +7,29 @@
 package ch.bbv.mda.persistence.mdr;
 
 import java.io.*;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.zip.ZipInputStream;
 
 import javax.jmi.model.ModelPackage;
 import javax.jmi.model.MofPackage;
-import javax.jmi.reflect.RefPackage;
 import javax.jmi.xmi.MalformedXMIException;
 import javax.jmi.xmi.XmiReader;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.netbeans.api.mdr.CreationFailedException;
 import org.netbeans.api.mdr.MDRManager;
 import org.netbeans.api.mdr.MDRepository;
+import org.omg.uml.UmlPackage;
+import org.omg.uml.foundation.core.Namespace;
 import org.openide.util.Lookup;
+
+import ch.bbv.mda.MetaElement;
+import ch.bbv.mda.MetaModel;
+import ch.bbv.mda.persistence.ExternalTransformer;
+import ch.bbv.mda.persistence.FilterIterator;
 
 /**
  * The MDR transformer defines rules how to transform a MDR element into the
@@ -30,15 +39,12 @@ import org.openide.util.Lookup;
  * @author MarcelBaumann
  * @version $Revision$
  */
-public class MdrTransformer {
-  /**
-   * Encoding rule of the XML file containing the XMI data.
-   */
-  public static final String XML_ENCODING = "UTF-8";
-
+public class MdrTransformer extends ExternalTransformer {
   private final static String UML_INSTANCE = "UMLInstance";
 
   private final static String UML_MM = "UML";
+
+  private static final String STEREOTYPE_METAMODEL = "metamodel";
 
   /**
    * Logger of the class.
@@ -48,14 +54,28 @@ public class MdrTransformer {
   private MDRepository repository;
 
   /**
+   * Maps between the source objects used as keys and the target objects used as
+   * values. Source objects are NSUML entities, target objects are MDA
+   * instances.
+   */
+  private Map<Object, MetaElement> elements;
+
+  /**
+   * Default constructor of the class.
+   */
+  public MdrTransformer() {
+    elements = new HashMap<Object, MetaElement>();
+  }
+
+  /**
    * Loads the provided file, opens the file containing the XMI model and
-   * creates a NSUML model.
-   * @param file file containing the NSUML model.
-   * @return the NSUML model defined in the file.
+   * creates a MDR model.
+   * @param file file containing the MDR model.
+   * @return the MDR model defined in the file.
    * @throws FileNotFoundException the given file could not be found.
    * @throws IOException an error occured when reading data.
    */
-  public RefPackage loadArgoModel(File file) throws FileNotFoundException,
+  public UmlPackage loadArgoModel(File file) throws FileNotFoundException,
       IOException {
     InputStream source = null;
     ZipInputStream input = null;
@@ -70,22 +90,68 @@ public class MdrTransformer {
     } else {
       source = new BufferedInputStream(new FileInputStream(file));
     }
-    funnyClassLoaders("etc/repository");
     String uri = file.toURI().toString();
     repository = MDRManager.getDefault().getDefaultRepository();
     XmiReader xmiReader = (XmiReader) Lookup.getDefault().lookup(
         XmiReader.class);
-    RefPackage packages = null;
+    UmlPackage uml = null;
     try {
-      xmiReader.read(source, uri, packages);
+      repository.beginTrans(true);
+      uml = (UmlPackage) repository.getExtent("UMLInstance");
+      if (uml == null)
+        uml = (UmlPackage) repository.createExtent("UMLInstance",
+            getUmlPackage(repository));
+      xmiReader.read(source, uri, uml);
+      repository.endTrans(true);
     } catch (FileNotFoundException e) {
       log.error(e);
     } catch (IOException e) {
       log.error(e);
     } catch (MalformedXMIException e) {
       log.error(e);
+    } catch (CreationFailedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (Exception e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
     }
-    return packages;
+    return uml;
+  }
+
+  /**
+   * Synchronize the MDA model with the MDR model.
+   * @param source MDR model used as source of the synchronization
+   * @param target MDA model to synchronize
+   */
+  public void synchronize(UmlPackage source, MetaModel target) {
+    for (Iterator<Namespace> i = new FilterIterator<Namespace>(source.getCore()
+        .getNamespace().refAllOfType(), Namespace.class); i.hasNext();) {
+      Namespace namespace = i.next();
+      if (namespace.getNamespace() == null) {
+        
+      }
+    }
+  }
+
+  private void extractPackage(
+      org.omg.uml.modelmanagement.UmlPackage umlPackage, MetaModel context) {
+
+  }
+
+  private MofPackage getUmlPackage(MDRepository repository) throws Exception {
+    ModelPackage umlMM = (ModelPackage) repository.getExtent("UML");
+    if (umlMM == null)
+      umlMM = (ModelPackage) repository.createExtent("UML");
+    MofPackage result = getUmlPackage(umlMM);
+    if (result == null) {
+      XmiReader reader = (XmiReader) Lookup.getDefault().lookup(
+          javax.jmi.xmi.XmiReader.class);
+      reader.read(getClass().getResource(
+          "/org/omg/uml/resources/01-02-15_Diff.xml").toString(), umlMM);
+      result = getUmlPackage(umlMM);
+    }
+    return result;
   }
 
   /*
@@ -101,7 +167,7 @@ public class MdrTransformer {
     if (result == null) {
       log.debug("Reading resources/01-02-15_Diff.xml");
       // reader.read(UmlPackage.class.getResource("resources/01-02-15_Diff.xml")
-      //    .toString(), umlMM);
+      // .toString(), umlMM);
     }
     result = getUmlPackage(umlMM);
     return result;
@@ -120,21 +186,4 @@ public class MdrTransformer {
     }
     return null;
   }
-
-  private MDRManager funnyClassLoaders(String fileName) {
-    File file = new File(fileName);
-    if (!file.getParentFile().exists()) {
-      file.getParentFile().mkdirs();
-    }
-
-    ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
-    Thread.currentThread().setContextClassLoader(
-        this.getClass().getClassLoader());
-
-    System.getProperties().put("org.netbeans.mdr.persistence.Dir", fileName);
-    MDRManager manager = MDRManager.getDefault();
-    Thread.currentThread().setContextClassLoader(oldLoader);
-    return manager;
-  }
-
 }

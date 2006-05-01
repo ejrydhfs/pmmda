@@ -16,7 +16,7 @@ import ch.bbv.mda.Stereotype;
 
 public class StereotypesDialog extends SimpleDialog {
   MetaItemView view;
-  
+
   private ListsTransferPanel panel;
 
   /**
@@ -28,15 +28,17 @@ public class StereotypesDialog extends SimpleDialog {
     panel = new ListsTransferPanel();
   }
 
-  public void populate(MetaItemView view, List<Stereotype> stereotypes, 
+  public void populate(MetaItemView view, List<Stereotype> stereotypes,
       MetaElement element, boolean allowDuplicates) {
     this.view = view;
-    panel.setLists(element.getModel().getStereotypes(), stereotypes, allowDuplicates);
+    panel.setLists(element.getModel().getStereotypes(), stereotypes,
+        allowDuplicates);
     setView(panel);
   }
 
   @Override
-  protected void processOk() {
-     view.updateStereotypes((List<Stereotype>)panel.getItems());
+  protected boolean processOk() {
+    view.updateStereotypes((List<Stereotype>) panel.getItems());
+    return true;
   }
 }

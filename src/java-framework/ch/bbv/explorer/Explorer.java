@@ -142,9 +142,9 @@ public abstract class Explorer implements ExplorerNodeOwner {
     /**
      * Constructor of the class. The constructor of the class with the given
      * parameters is called.
-     * @param clazz class of the explorer to instantiate.
-     * @param types signature of the constructur to call.
-     * @param parameters parameters of the constructor to call.
+     * @param clazz class of the explorer to instantiate
+     * @param types signature of the constructur to call
+     * @param parameters parameters of the constructor to call
      */
     public GuiTask(Class clazz, Class[] types, Object[] parameters) {
       if (parameters == null) {
@@ -162,7 +162,7 @@ public abstract class Explorer implements ExplorerNodeOwner {
 
     /**
      * Returns the instantiated explorer.
-     * @return the newly created explorer.
+     * @return the newly created explorer
      */
     public Explorer getExplorer() {
       return explorer;
@@ -172,10 +172,10 @@ public abstract class Explorer implements ExplorerNodeOwner {
   /**
    * Instantiates a new explorer and runs it in the context of the AWT event
    * processing thread as requested in Swing best practices.
-   * @param clazz class of the explorer to create.
-   * @param types signature of the constructur to call.
-   * @param parameters parameters of the constructor to call.
-   * @return the newly created explorer.
+   * @param clazz class of the explorer to create
+   * @param types signature of the constructur to call
+   * @param parameters parameters of the constructor to call
+   * @return the newly created explorer
    */
   public static Explorer createAndShow(Class clazz, Class[] types,
       Object[] parameters) {
@@ -186,8 +186,8 @@ public abstract class Explorer implements ExplorerNodeOwner {
 
   /**
    * Constructor of the class.
-   * @param factory node type factory of the explorer.
-   * @param manager data object manager of the explorer.
+   * @param factory node type factory of the explorer
+   * @param manager data object manager of the explorer
    */
   public Explorer(UiNodeTypeFactory factory, DataObjectMgr manager) {
     this.factory = factory;
@@ -222,13 +222,13 @@ public abstract class Explorer implements ExplorerNodeOwner {
 
   /**
    * Returns the document displayed in the explorer.
-   * @return the document displayed in the explorer if defined otherwise null.
+   * @return the document displayed in the explorer if defined otherwise null
    */
   public abstract ExplorerDocument getDocument();
 
   /**
    * Returns the user interface node type factory of the explorer.
-   * @return the factory of the explorer.
+   * @return the factory of the explorer
    */
   public UiNodeTypeFactory getNodeTypeFactory() {
     return factory;
@@ -236,7 +236,7 @@ public abstract class Explorer implements ExplorerNodeOwner {
 
   /**
    * Returns the data object manager used in the explorer.
-   * @return the data object manager used in the explorer.
+   * @return the data object manager used in the explorer
    */
   public DataObjectMgr getManager() {
     return manager;
@@ -244,7 +244,7 @@ public abstract class Explorer implements ExplorerNodeOwner {
 
   /**
    * Sets the title of the explorer frame.
-   * @param title new title of the explorer.
+   * @param title new title of the explorer
    * @pre title != null
    */
   public void setTitle(String title) {
@@ -254,7 +254,7 @@ public abstract class Explorer implements ExplorerNodeOwner {
 
   /**
    * Returns the main port in the docking framework defined for the explorer.
-   * @return the requested docking port.
+   * @return the requested docking port
    */
   public DockingPort getMainPort() {
     return viewPort;
@@ -263,7 +263,7 @@ public abstract class Explorer implements ExplorerNodeOwner {
   /**
    * Returns the navigation port in the docking framework defined for the
    * explorer.
-   * @return the requested docking port.
+   * @return the requested docking port
    */
   public DockingPort getNavigationPort() {
     return navigationPort;
@@ -272,7 +272,7 @@ public abstract class Explorer implements ExplorerNodeOwner {
   /**
    * Returns the utilities port in the docking framework defined for the
    * explorer.
-   * @return the requested docking port.
+   * @return the requested docking port
    */
   public DockingPort getUtilitiesPort() {
     return utilitiesPort;
@@ -280,7 +280,7 @@ public abstract class Explorer implements ExplorerNodeOwner {
 
   /**
    * Returns the menu bar of the explorer.
-   * @return the menu bar of the explorer.
+   * @return the menu bar of the explorer
    * @see #setMenuBar(ExplorerMenuBar)
    */
   public ExplorerMenuBar getMenuBar() {
@@ -289,7 +289,7 @@ public abstract class Explorer implements ExplorerNodeOwner {
 
   /**
    * Returns the status bar of the explorer.
-   * @return the status bar of the explorer.
+   * @return the status bar of the explorer
    */
   public StatusBar getStatusBar() {
     return statusBar;
@@ -297,7 +297,7 @@ public abstract class Explorer implements ExplorerNodeOwner {
 
   /**
    * Sets the menu bar of the explorer.
-   * @param menuBar the new menu bar of the explorer.
+   * @param menuBar the new menu bar of the explorer
    * @see #getMenuBar()
    */
   public void setMenuBar(ExplorerMenuBar menuBar) {
@@ -307,7 +307,7 @@ public abstract class Explorer implements ExplorerNodeOwner {
 
   /**
    * Returns the frame containing the explorer.
-   * @return the frame containing the explorer panel.
+   * @return the frame containing the explorer panel
    */
   public JFrame getFrame() {
     return frame;
@@ -315,7 +315,7 @@ public abstract class Explorer implements ExplorerNodeOwner {
 
   /**
    * Returns the tree of the explorer.
-   * @return the graphical tree component of the explorer.
+   * @return the graphical tree component of the explorer
    */
   public JTree getTree() {
     return tree.getTree();
@@ -323,7 +323,7 @@ public abstract class Explorer implements ExplorerNodeOwner {
 
   /**
    * Returns the root of the explorer tree.
-   * @return root of the explorer if defined otherwise null.
+   * @return root of the explorer if defined otherwise null
    * @see #setRoot(ExplorerNode)
    */
   public ExplorerNode getRoot() {
@@ -332,7 +332,7 @@ public abstract class Explorer implements ExplorerNodeOwner {
 
   /**
    * Sets the root of the explorer tree.
-   * @param root new root of the explorer tree.
+   * @param root new root of the explorer tree
    * @see #getRoot()
    */
   public void setRoot(ExplorerNode root) {
@@ -398,7 +398,7 @@ public abstract class Explorer implements ExplorerNodeOwner {
 
   /**
    * Retursn the user interface node type factory of the explorer.
-   * @return the node type factory.
+   * @return the node type factory
    */
   protected UiNodeTypeFactory getFactory() {
     return factory;
@@ -406,8 +406,8 @@ public abstract class Explorer implements ExplorerNodeOwner {
 
   /**
    * Creates the navigator tree representing the lightweight data object graph.
-   * @param root root of the data object graph.
-   * @return the root node of the navigator tree.
+   * @param root root of the data object graph
+   * @return the root node of the navigator tree
    */
   protected ExplorerNode createTree(LightweightObject root) {
     return createTree(root, null);
@@ -416,9 +416,9 @@ public abstract class Explorer implements ExplorerNodeOwner {
   /**
    * Creates the navigator tree representing the lightweight data object graph.
    * The data objects of the corresponding tree are set in the explorer nodes.
-   * @param lwRoot root of the lightweight data object graph.
-   * @param doRoot root of the data object graph.
-   * @return the root node of the navigator tree.
+   * @param lwRoot root of the lightweight data object graph
+   * @param doRoot root of the data object graph
+   * @return the root node of the navigator tree
    */
   protected ExplorerNode createTree(LightweightObject lwRoot, DataObject doRoot) {
     DataObjectType type = manager.getType(lwRoot);
@@ -459,7 +459,7 @@ public abstract class Explorer implements ExplorerNodeOwner {
      * children are displayed in the table view. Care is taken to save the
      * header visual structure onto the node type and to avoid unnecessary
      * updates.
-     * @param event tree selection event sent by the JTree component.
+     * @param event tree selection event sent by the JTree component
      */
     public void valueChanged(TreeSelectionEvent event) {
       ExplorerNode node = (ExplorerNode) getTree()
@@ -479,7 +479,7 @@ public abstract class Explorer implements ExplorerNodeOwner {
 
     /**
      * Displays the data object members of the node with the provided view type.
-     * @param node node which data object should be displayed.
+     * @param node node which data object should be displayed
      */
     public void displayViews(ExplorerNode node) {
       List<NodeView> newViews = getFactory().getNodeViews(node);
@@ -508,7 +508,7 @@ public abstract class Explorer implements ExplorerNodeOwner {
     /**
      * Checks if the mouse event should activate the display of the popup menu
      * upon a mouse clicked. If yes displays the popup menu.
-     * @param event mouse event to handle.
+     * @param event mouse event to handle
      */
     @Override
     public void mouseReleased(MouseEvent event) {
@@ -549,8 +549,10 @@ public abstract class Explorer implements ExplorerNodeOwner {
         "Apache License", "http://jakarta.apache.org/commons"));
     libraries.add(new Library("flexdock", new VersionId(0, 4, 0),
         "MIT License", "flexdock.dev.java"));
-    libraries.add(new Library("forms", new VersionId(1, 0, 6), "OBSD License",
+    libraries.add(new Library("forms", new VersionId(1, 0, 6), "BSD License",
         "www.jgoodies.com"));
+    libraries.add(new Library("validation", new VersionId(1, 1, 0),
+        "BSD License", "www.jgoodies.com"));
     libraries.add(new Library("glazedlists", new VersionId(1, 5, 0), "LGPL",
         "www.publicobject.com/glazedlists"));
     libraries.add(new Library("jcalendar", new VersionId(1, 2, 1), "LGPL",

@@ -5,13 +5,15 @@
  */
 package ch.bbv.explorer;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JPanel;
 
 import ch.bbv.dog.DataObject;
+
+import com.jgoodies.validation.ValidationResult;
+import com.jgoodies.validation.ValidationResultModel;
 
 /**
  * The node properties view defines the view displaying all properties of a data
@@ -25,12 +27,6 @@ import ch.bbv.dog.DataObject;
  * @version $Revision$
  */
 public abstract class NodePropertiesView extends JPanel {
-  
-  /**
-   * Color to display illegal input into text fields.
-   */
-  public final static Color ALERT_COLOR = new Color(255, 100, 100);
-  
   /**
    * Node being displayed in the property view.
    */
@@ -50,6 +46,11 @@ public abstract class NodePropertiesView extends JPanel {
    * List of subviews defined in the panel.
    */
   private List<NodePropertiesView> nodePropertiesSubViews;
+
+  /**
+   * The validation result model.
+   */
+  protected ValidationResultModel validationResultModel;
 
   /**
    * Default constructor of the class.
@@ -77,15 +78,26 @@ public abstract class NodePropertiesView extends JPanel {
   public abstract void cancelChanges();
 
   /**
+   * Validates the view and its values. If no error was found return true
+   * otherwise false.
+   * @param result validation results
+   */
+  public void validateView(ValidationResult result) {
+    for (NodePropertiesView view : nodePropertiesSubViews) {
+      view.validateView(result);
+    }
+  }
+
+  /**
    * Sets the editable flag for the view. The subclass should toggle the view
    * representation to reflect its new status.
-   * @param editable new value of the flag.
+   * @param editable new value of the flag
    */
   public abstract void setViewEditable(boolean editable);
 
   /**
    * Adds the node properties subview.
-   * @param nodePropertiesView view to add.
+   * @param nodePropertiesView view to add
    */
   public void addNodePropertiesSubView(NodePropertiesView nodePropertiesView) {
     nodePropertiesSubViews.add(nodePropertiesView);
@@ -93,16 +105,16 @@ public abstract class NodePropertiesView extends JPanel {
 
   /**
    * Returns the list of subview.
-   * @return list of subviews.
+   * @return list of subviews
    */
-  public List getNodePropertiesSubViews() {
+  public List<NodePropertiesView> getNodePropertiesSubViews() {
     return nodePropertiesSubViews;
   }
 
   /**
    * Sets the is new flag for the views and all its children. The flag is is set
    * only if the flag is toggled.
-   * @param newObject new value of the flag.
+   * @param newObject new value of the flag
    * @post isNewObject == isNewObject()
    * @see #isNewObject()
    */
@@ -198,6 +210,7 @@ public abstract class NodePropertiesView extends JPanel {
     for (NodePropertiesView view : nodePropertiesSubViews) {
       view.populateView();
     }
+    validateView(new ValidationResult());
   }
 
   /**

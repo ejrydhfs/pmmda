@@ -149,7 +149,7 @@ public class UserApplication extends Application {
     startup();
     manager.getDataObjectHandler().openDatasource(SCHEMA, false);
     if (!commandLineMode) {
-      UserExplorer.create("User Explorer", SCHEMA);
+      UserExplorer.create("User Explorer");
     }
   }
 
