@@ -151,7 +151,7 @@ public class EjbCartridge extends JavaCartridge implements Cartridge {
   }
 
   /**
-   * Returns true if a EJB or CORBA server should be generated for the package.
+   * Returns true if an EJB or CORBA server should be generated for the package.
    * @param packages package to check.
    * @return true if a server should be generated otherwise false.
    */
