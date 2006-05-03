@@ -133,6 +133,11 @@
           . The logging information shows the progress of the artifacts
           generation.
         </p>
+        <p>
+          You must now compile the generated artifacts before being able to run
+          them. The next section shows how to compile the generated source code
+          files.
+        </p>
       </section>
       <section id="compileTests">
         <title>Compile Tests Artifacts</title>
@@ -193,6 +198,31 @@
           you to run the examples in the following modes.
         </p>
         <ul>
+          <li>
+            Configure the database
+            <dl>
+              <dt>Create the database schema</dt>
+              <dd>
+                The data definition files are generated in the directory
+                <em>gendir/orm-server</em>
+                . You should use the DDL file corresponding to the database you
+                are using. The database must have a schema called
+                <em>OJB</em>
+                .
+              </dd>
+              <dt>Set the username and password</dt>
+              <dd>
+                The default username is
+                <em>user</em>
+                and the password is
+                <em>user</em>
+                . These information is configured in the ORM layer. For example
+                when using OJB you can change this configuration in the file
+                <em>repository_database.xml</em>
+                .
+              </dd>
+            </dl>
+          </li>
           <li>
             Rich client scripts to run the 2-tiers application.
             <dl>

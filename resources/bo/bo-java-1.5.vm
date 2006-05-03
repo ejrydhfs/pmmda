@@ -685,6 +685,9 @@ $line
     setModified(true);
     return result;
 #else
+#if(${isPersistentAggregation})
+    setForeignKey(element, "${keyName}", getId());
+#end
     setModified(true);
     return ${lName}.add(element);
 #end

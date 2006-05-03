@@ -53,8 +53,7 @@ public abstract class AbstractNodeAction extends ExplorerNodeActionImpl {
     while ((root != null) && !root.getNodeType().getDataObjectType().isRoot()) {
       root = (ExplorerNode) root.getParent();
     }
-    assert (root.getDataObject() == null);
-
+    assert root.getDataObject() == null;
     DataObjectType type = root.getNodeType().getDataObjectType();
     DataObject boGraph = manager.getDataObjectHandler().retrieve(
         owner.getManager().getDatasource(), type.getBoClass(),

@@ -30,6 +30,10 @@ public class TreeConstructFunctor implements DoFunctor, LwFunctor {
    */
   private Map<DataObjectId, ExplorerNode> nodes;
 
+  /**
+   * Nodes are ordered with their traversal order to suppor the implementation of
+   * homomorphism based algorithms.
+   */
   private Map<Integer, ExplorerNode> orderedNodes;
 
   /**
@@ -248,7 +252,7 @@ public class TreeConstructFunctor implements DoFunctor, LwFunctor {
    */
   private void inferChildren(DataObject object) {
     UiNodeType nodeType = factory.getNodeTypeForBo(object.getClass());
-    if (visitor.getDepth() == 1) {
+    if (visitor.getDepth() == 0) {
       // root object is always displayed
       explorerDoNodes.add(object);
     }

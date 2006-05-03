@@ -43,16 +43,16 @@
 #else
   <field-descriptor name="${property.nameFirstLower()}"
     column="${property.getAttribute("orm-column-name")}"
-#if(${columnType.equalsIgnoreCase("BOOLEAN")})
+#if(${columnType.equalsIgnoreCase("STRING")})
+    jdbc-type="VARCHAR"
+#elseif(${columnType.equalsIgnoreCase("BOOLEAN")})
     jdbc-type="INTEGER"
     conversion="org.apache.ojb.broker.accesslayer.conversions.Boolean2IntFieldConversion"
-#elseif(${columnType.equalsIgnoreCase("STRING")})
-    jdbc-type="VARCHAR"
-#else    
+#elseif(${columnType.equalsIgnoreCase("DATE")})
+    jdbc-type="DATE"
+    conversion="org.apache.ojb.broker.accesslayer.conversions.JavaDate2SqlDateFieldConversion"
+#else
     jdbc-type="${columnType}"
-#if (${columnType.equalsIgnoreCase("BOOLEAN")})
-    conversion="org.apache.ojb.broker.accesslayer.conversions.Boolean2IntFieldConversion"
-#end
 #end
 #if(${property.getTaggedValue("orm-is-primary")} == "true")
     autoincrement="true"

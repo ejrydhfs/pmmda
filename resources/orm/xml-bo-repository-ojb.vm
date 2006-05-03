@@ -47,13 +47,14 @@
     column="${columnName}"
 #if(${columnType.equalsIgnoreCase("STRING")})
     jdbc-type="VARCHAR"
-#else    
-#if (${columnType.equalsIgnoreCase("BOOLEAN")})
+#elseif(${columnType.equalsIgnoreCase("BOOLEAN")})
     jdbc-type="INTEGER"
     conversion="org.apache.ojb.broker.accesslayer.conversions.Boolean2IntFieldConversion"
+#elseif(${columnType.equalsIgnoreCase("DATE")})
+    jdbc-type="DATE"
+    conversion="org.apache.ojb.broker.accesslayer.conversions.JavaDate2SqlDateFieldConversion"
 #else
     jdbc-type="${columnType}"
-#end
 #end
 #if(${property.booleanValueOfTag("orm-is-primary")})
     primarykey="true"

@@ -149,12 +149,12 @@ public class CacheHandler implements DataObjectHandler, CachesHandler {
   }
 
   public void closeDatasource(String datasource) {
-    assert (datasource != null);
+    assert datasource != null;
     handler.closeDatasource(datasource);
   }
 
   public DataObject retrieve(String datasource, Class clazz, Integer id) {
-    assert ((datasource != null) && (clazz != null) && (id != null));
+    assert (datasource != null) && (clazz != null) && (id != null);
     DataObject root = retrieveFromCaches(clazz, id);
     if (root == null) {
       root = handler.retrieve(datasource, clazz, id);
@@ -165,7 +165,7 @@ public class CacheHandler implements DataObjectHandler, CachesHandler {
 
   public List<DataObject> retrieve(String datasource, Class clazz,
       String constraints) {
-    assert ((datasource != null) && (clazz != null) && (constraints != null));
+    assert (datasource != null) && (clazz != null) && (constraints != null);
     List<DataObject> copies = new ArrayList<DataObject>();
     List<DataObject> roots = handler.retrieve(datasource, clazz, constraints);
     for (DataObject root : roots) {
@@ -175,19 +175,19 @@ public class CacheHandler implements DataObjectHandler, CachesHandler {
   }
 
   public LightweightObject retrieveLw(String datasource, Class clazz, Integer id) {
-    assert ((datasource != null) && (clazz != null) && (id != null));
+    assert (datasource != null) && (clazz != null) && (id != null);
     return handler.retrieveLw(datasource, clazz, id);
   }
 
   public List<LightweightObject> retrieveLw(String datasource, Class clazz,
       String constraints) {
-    assert ((datasource != null) && (clazz != null));
+    assert (datasource != null) && (clazz != null);
     return handler.retrieveLw(datasource, clazz, constraints);
   }
 
   public List<DataObjectUpdate> store(String datasource, Class clazz,
       DataObject root) {
-    assert ((datasource != null) && (clazz != null) && (root != null));
+    assert (datasource != null) && (clazz != null) && (root != null);
     List<DataObjectUpdate> infos = handler.store(datasource, clazz, root);
     AbstractVisitorFunctor visitor = getVisitor(clazz);
     UpdateFunctor functor = new UpdateFunctor();
@@ -199,14 +199,14 @@ public class CacheHandler implements DataObjectHandler, CachesHandler {
   }
 
   public void remove(String datasource, Class clazz, DataObject root) {
-    assert ((datasource != null) && (clazz != null) && (root != null));
+    assert (datasource != null) && (clazz != null) && (root != null);
     removeFromCache(root.getClass(), root.getId(), copiesCache);
     removeFromCache(root.getClass(), root.getId(), originalsCache);
     handler.remove(datasource, clazz, root);
   }
 
   public void remove(String datasource, Class clazz, Integer id) {
-    assert ((datasource != null) && (clazz != null) && (id != null));
+    assert (datasource != null) && (clazz != null) && (id != null);
     removeFromCache(clazz, id, copiesCache);
     removeFromCache(clazz, id, originalsCache);
     handler.remove(datasource, clazz, id);

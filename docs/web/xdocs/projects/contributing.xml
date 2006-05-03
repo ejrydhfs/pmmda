@@ -156,10 +156,10 @@
             to the update site via this bookmark and install the Velocity UI
             feature.
           </dd>
-          <dt>Eclipe Web Tools</dt>
+          <dt>Eclipse Web Tools</dt>
           <dd>
             Download the plugin from
-            <a href="http://www.eclipe.org/webtools">Web Tools</a>
+            <a href="http://www.eclipse.org/webtools">Web Tools</a>
             and follow the instruction on the web site. The extensions extends
             Eclipse in the area of web based tools for XML and HTML edition.
           </dd>
