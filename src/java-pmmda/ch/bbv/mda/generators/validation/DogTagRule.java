@@ -77,7 +77,7 @@ public class DogTagRule extends TagRule {
       List<ValidationRuleResult> results) {
     boolean success = true;
     MetaClass clazz = (MetaClass) property.getContext();
-    if (BoConstants.DATA_OBJECT_STEREOTYPE.equals(clazz.getStereotype())) {
+    if (clazz.hasStereotype(BoConstants.DATA_OBJECT_STEREOTYPE)) {
       if (property.booleanValueOfTag(UmlConstants.PERSISTENCE_TAG)
           && property.isTransient()) {
         success = false;

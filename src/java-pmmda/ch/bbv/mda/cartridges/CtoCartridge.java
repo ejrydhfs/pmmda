@@ -167,8 +167,8 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
   @Override
   public void processPackage(MetaPackage packages) {
     assert packages != null;
-    isPackageInterface = BoConstants.INTERFACE_STEREOTYPE
-        .equalsIgnoreCase(packages.getStereotype());
+    isPackageInterface = packages
+        .hasStereotype(BoConstants.INTERFACE_STEREOTYPE);
   }
 
   @Override
@@ -187,7 +187,7 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
       idlRoot.mkdirs();
     }
     try {
-      if (BoConstants.DATA_OBJECT_STEREOTYPE.equals(clazz.getStereotype())) {
+      if (clazz.hasStereotype(BoConstants.DATA_OBJECT_STEREOTYPE)) {
         MetaPackage metaPackage = (MetaPackage) clazz.getContext();
         VelocityContext context = createContext(clazz);
         processTemplate(idlRoot, metaPackage.valueOfTag(CTO_PACKAGE_IDL), clazz

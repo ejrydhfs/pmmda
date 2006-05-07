@@ -1,0 +1,53 @@
+## copyright 2000-2006 Marcel Baumann
+## Licensed under the Apache License, Version 2.0 (the "Licence");
+## you may not use this file except in compliance with the License.
+## $Id$ 
+#if(${prefix})
+<?xml version="1.0" ?>
+<!DOCTYPE database SYSTEM "http://jakarta.apache.org/turbine/dtd/database.dtd">
+
+<database name="default" 
+  defaultIdMethod="none"
+  defaultJavaMethod="object";
+  baseClass="BaseObject"
+  basePeer="BasePeer">
+#elseif(${postfix})
+</database>
+#else
+#set($schema=${package.valueOfTag("orm-schema-name")})
+#if(${schema})#set($schema=${schema.toUpperCase()})#set($schema=${schema} + ".")#else#set($schema="")#end
+#set($table=${class.getAttribute("orm-table-name")})
+  <table name="${table}"
+    javaName="${package.getAttribute("bo-mo-package")}.${class.getAttribute("bo-mo-class")}"
+    idMethod="None">
+#foreach($property in $properties)
+#if(!${property.isTransient()})
+#set($columnType=${cartridge.getDatatype(${property}, "JDBC")})	
+#set($columnName=${property.getAttribute("orm-column-name")})
+    <column name="${columnName}"
+      javaName="${property.getName()}"
+#if(${property.isPrimaryKey()})
+      primaryKey="true"
+#end
+#if(${property.getAttributeValue("canBeNull")} == "false")
+      required="true"
+#else
+      required="false"
+#end
+      type="${columnType}"
+#if(${property.getAttributeValue("metaType")} == "OBJECT")
+      javaType="OBJECT"/>
+#elseif(${property.getAttributeValue("metaType")} == "PRIMITIVE")
+      javaType="PRIMITIVE"/>
+#else 
+    />
+#end
+#end
+#end
+#foreach($property in $keys) 
+  <foreign-key foreignTable="${tablePrefix}LOOKUP${tablePostfix}">
+    <reference local="${property.getAttributeValue("jdbcName")}" foreign="CODE"/>
+  </foreign-key>
+#end
+  </table>
+#end

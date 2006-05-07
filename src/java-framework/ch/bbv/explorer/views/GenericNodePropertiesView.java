@@ -22,6 +22,7 @@ import ch.bbv.dog.DataObject;
 import ch.bbv.dog.DataObjectType;
 import ch.bbv.explorer.NodePropertiesView;
 import ch.bbv.explorer.UiNodeType;
+import ch.bbv.utilities.TextUtilities;
 
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
@@ -195,8 +196,8 @@ public class GenericNodePropertiesView extends NodePropertiesView {
         continue;
       } else if (descriptor instanceof MappedPropertyDescriptor) {
         MappedPropertyView propertyView = new MappedPropertyView(descriptor
-            .getName(), descriptor.getPropertyType(), descriptor
-            .getDisplayName());
+            .getName(), descriptor.getPropertyType(), TextUtilities
+            .fromCamelCase(descriptor.getDisplayName()));
         mappedPropertyViews.add(propertyView);
       } else {
         if (Arrays.binarySearch(DataObject.SYSTEM_SIMPLE_PROPERTIES, descriptor
@@ -209,7 +210,7 @@ public class GenericNodePropertiesView extends NodePropertiesView {
             if (getNode().getNodeType().getRelation(descriptor.getName()) == null) {
               IndexedPropertyView propertyView = new IndexedPropertyView(
                   descriptor.getName(), descriptor.getPropertyType(),
-                  descriptor.getDisplayName());
+                  TextUtilities.fromCamelCase(descriptor.getDisplayName()));
               indexedPropertyViews.add(propertyView);
             }
           } else {
@@ -221,8 +222,8 @@ public class GenericNodePropertiesView extends NodePropertiesView {
                 // only registered data object types are added
                 DataObjectType type = nodeType.getDataObjectType();
                 DataObjectPropertyView view = new DataObjectPropertyView(
-                    descriptor.getName(), clazz, descriptor.getDisplayName(),
-                    type);
+                    descriptor.getName(), clazz, TextUtilities
+                        .fromCamelCase(descriptor.getDisplayName()), type);
                 simplePropertyViews.add(view);
               } else {
                 if (log.isDebugEnabled()) {
@@ -232,7 +233,8 @@ public class GenericNodePropertiesView extends NodePropertiesView {
               }
             } else {
               PrimitivePropertyView view = new PrimitivePropertyView(descriptor
-                  .getName(), clazz, descriptor.getDisplayName());
+                  .getName(), clazz, TextUtilities.fromCamelCase(descriptor
+                  .getDisplayName()));
               primitivePropertyViews.add(view);
             }
           }
@@ -246,8 +248,10 @@ public class GenericNodePropertiesView extends NodePropertiesView {
    * @param interfaces list of interfaces to check
    * @param clazz search interface class definition
    * @return true if the interface was found otherwise false
+   * @pre (interfaces != null) && (clazz != null)
    */
   protected boolean containsInterface(Class[] interfaces, Class clazz) {
+    assert (interfaces != null) && (clazz != null);
     for (int i = 0; i < interfaces.length; i++) {
       if (clazz == interfaces[i]) {
         return true;

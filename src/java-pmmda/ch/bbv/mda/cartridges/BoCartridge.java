@@ -241,16 +241,13 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
       return;
     }
     for (MetaClass clazz : packages.getClasses()) {
-      hasDataObjects |= DATA_OBJECT_STEREOTYPE.equalsIgnoreCase(clazz
-          .getStereotype());
-      hasCodes |= REFERENCE_CODE_STEREOTYPE.equalsIgnoreCase(clazz
-          .getStereotype());
+      hasDataObjects |= clazz.hasStereotype(DATA_OBJECT_STEREOTYPE);
+      hasCodes |= clazz.hasStereotype(REFERENCE_CODE_STEREOTYPE);
     }
   }
 
   @Override
   public void processClass(MetaClass clazz) {
-    String stereotype = clazz.getStereotype();
     // class is only emitted if the class is relevant and the package should be
     // generated
     if (!clazz.retrievePackage().booleanValueOfTag(GENERATE)) {
@@ -261,7 +258,7 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
       Map<String, List<String>> blocks = extractUserCode(packages
           .getAttribute(BO_PACKAGE), clazz.getAttribute(BO_CLASS));
       context.put(CODE_BLOCKS, blocks);
-      if (DATA_OBJECT_STEREOTYPE.equalsIgnoreCase(stereotype)) {
+      if (clazz.hasStereotype(DATA_OBJECT_STEREOTYPE)) {
         processJavaTemplate(root, packages.getAttribute(BO_PACKAGE), clazz
             .getAttribute(BO_CLASS), retrieveTemplate("bo"), context);
         if (hasLightweight(clazz)) {
@@ -271,7 +268,7 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
           processJavaTemplate(root, packages.getAttribute(LW_PACKAGE), clazz
               .getAttribute(LW_CLASS), retrieveTemplate("lw"), context);
         }
-      } else if (REFERENCE_CODE_STEREOTYPE.equalsIgnoreCase(stereotype)) {
+      } else if (clazz.hasStereotype(REFERENCE_CODE_STEREOTYPE)) {
         processJavaTemplate(root, packages.getAttribute(BO_PACKAGE), clazz
             .getAttribute(BO_CLASS), retrieveTemplate("code"), context);
       } else if (clazz.booleanValueOfTag(BO_GENERATE)) {
@@ -637,7 +634,7 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
         || vetoable));
     if (changeable || vetoable) {
       for (MetaClass ancestor : clazz.retrieveAncestors()) {
-        if (DATA_OBJECT_STEREOTYPE.equals(ancestor.getStereotype())) {
+        if (ancestor.hasStereotype(DATA_OBJECT_STEREOTYPE)) {
           preProcessBean(ancestor, changeable, vetoable);
         }
       }

@@ -71,8 +71,7 @@ public class OexCartridge extends JavaCartridge implements Cartridge {
       }
       MetaClass objectClass = clazz.getModel().findClass(className);
       if ((objectClass == null)
-          || !BoConstants.DATA_OBJECT_STEREOTYPE.equals(objectClass
-              .getStereotype())) {
+          || objectClass.hasStereotype(BoConstants.DATA_OBJECT_STEREOTYPE)) {
         continue;
       }
       for (MetaProperty property : objectClass.getProperties()) {
@@ -126,7 +125,7 @@ public class OexCartridge extends JavaCartridge implements Cartridge {
   private boolean hasLightweightClasses(MetaPackage packages) {
     boolean hasLightweightClasses = false;
     for (MetaClass clazz : packages.getClasses()) {
-      if (BoConstants.DATA_OBJECT_STEREOTYPE.equals(clazz.getStereotype())
+      if (clazz.hasStereotype(BoConstants.DATA_OBJECT_STEREOTYPE)
           && clazz.booleanValueOfAttribute(BoConstants.BO_LIGHTWEIGHT)) {
         hasLightweightClasses = true;
         break;

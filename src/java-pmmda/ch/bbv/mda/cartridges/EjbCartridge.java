@@ -69,8 +69,8 @@ public class EjbCartridge extends JavaCartridge implements Cartridge {
   @Override
   public void processPackage(MetaPackage packages) {
     assert packages != null;
-    isPackageInterface = BoConstants.INTERFACE_STEREOTYPE
-        .equalsIgnoreCase(packages.getStereotype());
+    isPackageInterface = packages
+        .hasStereotype(BoConstants.INTERFACE_STEREOTYPE);
     if (!isPackageInterface
         && !packages.booleanValueOfTag(BoConstants.GENERATE)
         && !shouldCreateServer(packages)) {
@@ -127,8 +127,8 @@ public class EjbCartridge extends JavaCartridge implements Cartridge {
             packages.valueOfTag(SERVER_NAME) + "Session", retrieveTemplate(
                 "server-session-if", null), context);
         processJavaTemplate(serverRoot, packages.getAttribute(SERVER_PACKAGE),
-            packages.valueOfTag(SERVER_NAME) + "SessionBean",
-            retrieveTemplate("server-session", null), context);
+            packages.valueOfTag(SERVER_NAME) + "SessionBean", retrieveTemplate(
+                "server-session", null), context);
         processJavaTemplate(commonRoot, packages.getAttribute(SERVER_PACKAGE),
             packages.valueOfTag(SERVER_NAME) + "Home", retrieveTemplate(
                 "server-home", null), context);
@@ -139,8 +139,8 @@ public class EjbCartridge extends JavaCartridge implements Cartridge {
             packages.valueOfTag(SERVER_NAME) + "-ejb-jar.xml",
             retrieveTemplate("server-descriptor", null), context);
         processTemplate(serverRoot, packages.getAttribute(SERVER_PACKAGE),
-            packages.valueOfTag(SERVER_NAME) + "-jboss.xml",
-            retrieveTemplate("server-jboss-descriptor", null), context);
+            packages.valueOfTag(SERVER_NAME) + "-jboss.xml", retrieveTemplate(
+                "server-jboss-descriptor", null), context);
         processTemplate(serverRoot, packages.getAttribute(SERVER_PACKAGE),
             packages.valueOfTag(SERVER_NAME) + "-jbosscmp-jdbc.xml",
             retrieveTemplate("server-jboss-jdbc-descriptor", null), context);
@@ -157,7 +157,7 @@ public class EjbCartridge extends JavaCartridge implements Cartridge {
    */
   private boolean shouldCreateServer(MetaPackage packages) {
     for (MetaClass clazz : packages.getClasses()) {
-      if (BoConstants.DATA_OBJECT_STEREOTYPE.equals(clazz.getStereotype())
+      if ((clazz.hasStereotype(BoConstants.DATA_OBJECT_STEREOTYPE))
           && clazz.booleanValueOfTag(BoConstants.IS_ROOT)) {
         return true;
       }

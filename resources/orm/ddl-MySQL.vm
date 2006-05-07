@@ -3,6 +3,11 @@
 ## you may not use this file except in compliance with the License.
 ## $Id$ 
 ## generate the table declaration
+#if(${prefix})
+## nothind to do	
+#elseif(${postfix})
+## nothind to do	
+#else	
 #set($DATA_OBJECT="dataObject")
 #set($shouldGenerateFkIndex=${configuration.getProperty("orm-cartridge.generate-fk-index").equalsIgnoreCase("true")})
 #set($database=${configuration.getProperty("orm-cartridge.database")})
@@ -134,6 +139,7 @@ CREATE INDEX ${table}_${column}_IDX ON
 CREATE INDEX ${column}_IDX ON 
   ${schema}${table}(${column});
 
+#end
 #end
 #end
 #end

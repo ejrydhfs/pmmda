@@ -151,9 +151,8 @@ public class ClassGraphView extends JPanel implements NodeView {
       String qualifiedName = property.getTypeName();
       MetaClass type = model.findClass(qualifiedName);
       if ((type != null)
-          && (BoConstants.DATA_OBJECT_STEREOTYPE.equalsIgnoreCase(type
-              .getStereotype()) || BoConstants.REFERENCE_CODE_STEREOTYPE
-              .equalsIgnoreCase(type.getStereotype()))) {
+          && (type.hasStereotype(BoConstants.DATA_OBJECT_STEREOTYPE) || type
+              .hasStereotype(BoConstants.REFERENCE_CODE_STEREOTYPE))) {
         GraphCell target = createVertex(type);
         createEdge(source, target, property.getName(),
             AssociationEdge.Type.aggregation);
@@ -163,9 +162,8 @@ public class ClassGraphView extends JPanel implements NodeView {
       String qualifiedName = property.getTypeName();
       MetaClass type = model.findClass(qualifiedName);
       if ((type != null)
-          && (BoConstants.DATA_OBJECT_STEREOTYPE.equalsIgnoreCase(type
-              .getStereotype()) || BoConstants.REFERENCE_CODE_STEREOTYPE
-              .equalsIgnoreCase(type.getStereotype()))) {
+          && (type.hasStereotype(BoConstants.DATA_OBJECT_STEREOTYPE) || type
+              .hasStereotype(BoConstants.REFERENCE_CODE_STEREOTYPE))) {
         GraphCell target = createVertex(type);
         createEdge(source, target, property.getName(),
             AssociationEdge.Type.aggregation);

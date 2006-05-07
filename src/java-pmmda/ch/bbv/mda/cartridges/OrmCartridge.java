@@ -14,6 +14,7 @@ import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 
 import ch.bbv.application.VersionId;
@@ -207,8 +208,7 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
   public void processClass(MetaClass clazz) {
     assert clazz != null;
     if (!clazz.retrievePackage().booleanValueOfTag(BoConstants.GENERATE)
-        || !BoConstants.DATA_OBJECT_STEREOTYPE.equalsIgnoreCase(clazz
-            .getStereotype())
+        || !clazz.hasStereotype(BoConstants.DATA_OBJECT_STEREOTYPE)
         || !clazz.booleanValueOfTag(UmlConstants.PERSISTENCE_TAG)) {
       return;
     }
@@ -219,6 +219,12 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
           ormKey), context));
       ormLwWriter.print(processTemplate(retrieveTemplate("xml-lw-repository",
           ormKey), context));
+      ddlWriter.print(processTemplate(retrieveTemplate("ddl", databaseKey),
+          context));
+      Template template = retrieveTemplate("ddl-integrity", databaseKey);
+      if (template != null) {
+        ddlIntegrityWriter.print(processTemplate(template, context));
+      }
       isFirstClassOfPackage = false;
     }
     VelocityContext context = createPersistencyContext(clazz);
@@ -228,8 +234,10 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
         ormKey), context));
     ddlWriter.print(processTemplate(retrieveTemplate("ddl", databaseKey),
         context));
-    ddlIntegrityWriter.print(processTemplate(retrieveTemplate("ddl-integrity",
-        databaseKey), context));
+    Template template = retrieveTemplate("ddl-integrity", databaseKey);
+    if (template != null) {
+      ddlIntegrityWriter.print(processTemplate(template, context));
+    }
   }
 
   @Override

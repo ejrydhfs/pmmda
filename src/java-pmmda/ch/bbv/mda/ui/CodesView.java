@@ -380,7 +380,7 @@ public class CodesView extends JPanel implements NodeView {
   public void setModel(ExplorerNode node) {
     this.node = node;
     MetaClass clazz = (MetaClass) node.getDataObject();
-    if (BoConstants.REFERENCE_CODE_STEREOTYPE.equals(clazz.getStereotype())) {
+    if (clazz.hasStereotype(BoConstants.REFERENCE_CODE_STEREOTYPE)) {
       load();
       setMenuEnabled(true);
       // TODO synchronize tagged values with code values

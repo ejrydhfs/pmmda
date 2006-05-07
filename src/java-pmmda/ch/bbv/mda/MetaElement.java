@@ -228,14 +228,14 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
    */
   public void setStereotypes(List<Stereotype> stereotypes) {
     removeAllStereotypes();
-    stereotypes.addAll(stereotypes);
+    this.stereotypes.addAll(stereotypes);
   }
 
   /**
    * Removes all stereotypes of the model.
    */
   public void removeAllStereotypes() {
-    stereotypes.clear();
+    this.stereotypes.clear();
   }
 
   /**
@@ -627,8 +627,9 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
 
   /**
    * Finds the stereotype with the given name.
-   * @param name the qualified name of the stereotype to find.
-   * @return the requested stereotype if found otherwise null.
+   * @param name the qualified name of the stereotype to find
+   * @return the requested stereotype if found otherwise null
+   * @pre name != null
    */
   public Stereotype findStereotype(String name) {
     assert name != null;
@@ -641,6 +642,17 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
   }
 
   /**
+   * Indicates if the element contains the stereotype with the given name.
+   * This is a convenience method.
+   * @param name the qualified name of the stereotype to find
+   * @return true if the stereotype exists in the element otherwise false
+   * @pre name != null
+   */
+  public boolean hasStereotype(String name) {
+    return findStereotype(name) != null;
+  }
+  
+  /** 
    * @inheritDoc
    */
   public String toString() {

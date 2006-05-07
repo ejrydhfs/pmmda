@@ -107,8 +107,7 @@ public class OrmTagRule extends TagRule {
         addErrorMessage(results, ERROR_MISSING_COLUMN, COLUMN_NAME, property
             .qualifiedName());
       }
-      if (!BoConstants.DATA_OBJECT_STEREOTYPE.equals(property.getClassifier()
-          .getStereotype())) {
+      if (!property.getClassifier().hasStereotype(BoConstants.DATA_OBJECT_STEREOTYPE)) {
         if (!exists(property, COLUMN_TYPE)) {
           sucess = false;
           addErrorMessage(results, ERROR_MISSING_TYPE, COLUMN_TYPE, property

@@ -335,6 +335,7 @@ public class MetaModel extends MetaPackage {
    * Returns the list of meta classes referencing the given class.
    * @param clazz class which references are looked for.
    * @return the list of classes referencing the given class.
+   * @pre clazz != null
    */
   public Collection getClassReferences(MetaClass clazz) {
     assert clazz != null;
