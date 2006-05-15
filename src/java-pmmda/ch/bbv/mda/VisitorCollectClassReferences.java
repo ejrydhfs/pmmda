@@ -48,7 +48,7 @@ public class VisitorCollectClassReferences implements Visitor {
    */
   public void setReferencedClass(MetaClass clazz) {
     assert (clazz != null);
-    className = clazz.qualifiedName();
+    className = clazz.getQualifiedName();
     classes.clear();
   }
 
