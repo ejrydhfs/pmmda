@@ -74,6 +74,10 @@ public class TreeConstructor implements Visitor {
   public void visit(MetaClass metaClass) {
     constructNode(metaClass);
   }
+  
+  public void visit(MetaView metaView) {
+	    constructNode(metaView);
+	  }
 
   public void visit(MetaProperty metaProperty) {
     constructNode(metaProperty);

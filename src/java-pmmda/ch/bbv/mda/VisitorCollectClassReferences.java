@@ -63,6 +63,10 @@ public class VisitorCollectClassReferences implements Visitor {
   public void visit(MetaClass clazz) {
     assert (clazz != null);
   }
+  
+  public void visit(MetaView clazz) {
+	    assert (clazz != null);
+  }
 
   public void visit(MetaProperty property) {
     assert (property != null);

@@ -61,6 +61,10 @@ public class TreeChecker implements Visitor {
   public void visit(MetaModel metaModel) {
     itemFactory.initialize(metaModel, MetaModel.class);
   }
+  
+  public void visit(MetaView metaView){
+	  itemFactory.initialize(metaView, MetaView.class);
+  }
 
   public void visit(MetaPackage metaPackage) {
     itemFactory.initialize(metaPackage, MetaPackage.class);
