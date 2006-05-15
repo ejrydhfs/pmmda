@@ -54,4 +54,10 @@ public interface Visitor {
    * @param item item to visit.
    */
   void visit(TaggedValue item);
+  
+  /**
+   * Visits class instances of this type as part of the visitor pattern.
+   * @param item item to visit.
+   */
+  void visit(MetaView item);
 }
