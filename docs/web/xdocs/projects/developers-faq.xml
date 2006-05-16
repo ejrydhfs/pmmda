@@ -76,9 +76,11 @@
         </p>
         <dl>
           <dt>Host</dt>
-          <dd>cvs.sourceforge.net</dd>
+          <dd>pmmda.cvs.sourceforge.net</dd>
           <dt>Repository</dt>
           <dd>/cvsroot/pmmda</dd>
+          <dt>port</dt>
+          <dd>2401</dd>
           <dt>User</dt>
           <dd>anonymous</dd>
           <dt>Password</dt>

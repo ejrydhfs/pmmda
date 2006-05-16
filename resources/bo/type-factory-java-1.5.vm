@@ -42,7 +42,7 @@ public class TypeFactory {
   
   /** 
    * Constructor of the class.
-   * @param manager data object manager where the types should be created.
+   * @param manager data object manager where the types should be created
    */
   public TypeFactory(DataObjectMgr manager) {
     this.manager = manager;
@@ -86,13 +86,13 @@ public class TypeFactory {
   /** 
    * Returns the list of the classnames of all reference code types defined in 
    * the package.
-   * @return list of class names of all reference code types in the package.
+   * @return list of class names of all reference code types in the package
    */
   public List<String> getReferenceCodeTypes() {
     List<String> classnames = new ArrayList<String>();
 #foreach($class in $classes)
 #if(${class.getStereotype()} == "referenceCode")
-    classnames.add("${class.qualifiedName()}");
+    classnames.add("${class.getQualifiedName()}");
 #end
 #end
     return classnames;

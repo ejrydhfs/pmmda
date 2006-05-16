@@ -102,14 +102,18 @@
       </fileset>
     </copy>
     <echo message="copy pmMDA needed library files" />
+
     <copy file="${lib.dir}/${commons-beanutils.lib}" todir="${pmmda-lib.dir}" />
+    <copy file="${lib.dir}/${commons-betwixt.lib}" todir="${pmmda-lib.dir}" />
     <copy file="${lib.dir}/${commons-cli.lib}" todir="${pmmda-lib.dir}" />
     <copy file="${lib.dir}/${commons-collections.lib}" todir="${pmmda-lib.dir}" />
     <copy file="${lib.dir}/${commons-configuration.lib}" todir="${pmmda-lib.dir}" />
+    <copy file="${lib.dir}/${commons-digester.lib}" todir="${pmmda-lib.dir}" />
     <copy file="${lib.dir}/${commons-io.lib}" todir="${pmmda-lib.dir}" />
     <copy file="${lib.dir}/${commons-lang.lib}" todir="${pmmda-lib.dir}" />
     <copy file="${lib.dir}/${commons-logging.lib}" todir="${pmmda-lib.dir}" />
     <copy file="${lib.dir}/${commons-logging-api.lib}" todir="${pmmda-lib.dir}" />
+    <copy file="${lib.dir}/${ddl-utils.lib}" todir="${pmmda-lib.dir}" />
     <copy file="${lib.dir}/${flexdock.lib}" todir="${pmmda-lib.dir}" />
     <copy file="${lib.dir}/${forms.lib}" todir="${pmmda-lib.dir}" />
     <copy file="${lib.dir}/${validation.lib}" todir="${pmmda-lib.dir}" />
@@ -235,6 +239,7 @@
     <copy todir="${pmmda-ex.dir}/scripts/tests">
       <fileset dir="${scripts.dir}/tests">
         <include name="**/*.bat" />
+        <include name="**/*.ddl" />
         <exclude name="**/*CVS*" />
       </fileset>
     </copy>
@@ -259,7 +264,6 @@
       </fileset>
     </copy>
 
-    <copy file="${lib.dir}/hsqldb.jar" todir="${pmmda-ex-lib.dir}" />
     <copy file="${lib.dir}/${antlr.lib}" todir="${pmmda-ex-lib.dir}" />
     <copy file="${lib.dir}/${commons-beanutils.lib}" todir="${pmmda-ex-lib.dir}" />
     <copy file="${lib.dir}/${commons-cli.lib}" todir="${pmmda-ex-lib.dir}" />
@@ -271,6 +275,8 @@
     <copy file="${lib.dir}/${commons-logging-api.lib}" todir="${pmmda-ex-lib.dir}" />
     <copy file="${lib.dir}/${commons-pool.lib}" todir="${pmmda-ex-lib.dir}" />
     <copy file="${lib.dir}/${forms.lib}" todir="${pmmda-ex-lib.dir}" />
+    <copy file="${lib.dir}/${derby.lib}" todir="${pmmda-ex-lib.dir}" />
+    <copy file="${lib.dir}/${derby-tools.lib}" todir="${pmmda-ex-lib.dir}" />
     <copy file="${lib.dir}/${validation.lib}" todir="${pmmda-ex-lib.dir}" />
     <copy file="${lib.dir}/${flexdock.lib}" todir="${pmmda-ex-lib.dir}" />
     <copy file="${lib.dir}/${jcalendar.lib}" todir="${pmmda-ex-lib.dir}" />

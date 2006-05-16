@@ -489,28 +489,6 @@ public abstract class CartridgeImpl implements Cartridge {
   }
 
   /**
-   * Returns the root file defined in the property with the given key.
-   * @param key key of the property containing the root directory.
-   * @param defaultKey default key of the property containing the root
-   *          directory.
-   * @return The root file if defined otherwise null.
-   */
-  protected final File getRoot(String key, String defaultKey) {
-    Properties properties = getContext();
-    String value = properties.getProperty(key);
-    File root;
-    if ((value == null) || (value.trim().length() == 0)) {
-      value = properties.getProperty(defaultKey);
-    }
-    if ((value == null) || (value.trim().length() == 0)) {
-      root = null;
-    } else {
-      root = new File(value);
-    }
-    return root;
-  }
-
-  /**
    * Expands an identifier with its prefix and postfix.
    * @param prefixKey key of the prefix defined in the context.
    * @param identifier identifier to expand.
@@ -547,7 +525,7 @@ public abstract class CartridgeImpl implements Cartridge {
   protected String translateDatatype(MetaDatatype type, String language,
       boolean concrete) {
     assert (type != null) && (language != null);
-    String typename = type.qualifiedName();
+    String typename = type.getQualifiedName();
     return PropertyUtilities.getInfoOfType(configuration, typename, language,
         null, "type", concrete);
   }
@@ -568,7 +546,7 @@ public abstract class CartridgeImpl implements Cartridge {
    */
   protected String translateDatatype(MetaDatatype type, String language,
       String dialect, boolean concrete) {
-    String typename = type.qualifiedName();
+    String typename = type.getQualifiedName();
     return PropertyUtilities.getInfoOfType(configuration, typename, language,
         dialect, "type", concrete);
   }
@@ -669,5 +647,45 @@ public abstract class CartridgeImpl implements Cartridge {
       return true;
     }
     return false;
+  }
+
+  /**
+   * Returns the root file defined in the property with the given key.
+   * @param key key of the property containing the root directory.
+   * @param defaultKey default key of the property containing the root
+   *          directory.
+   * @return The root file if defined otherwise null.
+   */
+  protected final File getRoot(String key, String defaultKey) {
+    Properties properties = getContext();
+    String value = properties.getProperty(key);
+    File root;
+    if ((value == null) || (value.trim().length() == 0)) {
+      value = properties.getProperty(defaultKey);
+    }
+    if ((value == null) || (value.trim().length() == 0)) {
+      root = null;
+    } else {
+      root = mkdirs(value);
+    }
+    return root;
+  }
+
+  /**
+   * Opens the directory file with the given name. If necessary creates the
+   * necessary directories if the directory does not exist in the file system
+   * @param directory name of the directory to create
+   * @return the requested directory as file.
+   */
+  protected File mkdirs(String directory) {
+    File dir = new File(directory);
+    if (!dir.exists()) {
+      dir.mkdirs();
+    }
+    return dir;
+  }
+  
+  protected boolean getBooleanProperty(String property) {
+   return "true".equalsIgnoreCase(properties.getProperty(property)); 
   }
 }

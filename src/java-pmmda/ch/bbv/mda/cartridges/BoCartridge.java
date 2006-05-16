@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann
+/* copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -150,7 +150,7 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
   public void preProcessPackage(MetaPackage packages) {
     assert (packages != null);
     this.packages = packages;
-    String name = packages.qualifiedName();
+    String name = packages.getQualifiedName();
     packages.addAttribute(IF_PACKAGE, expandIdentifier(null, name,
         IF_PACKAGE_POSTFIX_KEY));
     packages.addAttribute(BO_PACKAGE, expandIdentifier(null, name,
@@ -231,10 +231,7 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
     if (rootDirectory == null) {
       rootDirectory = getContext().getProperty(ROOT_COMMON_FOLDER_KEY);
     }
-    root = new File(rootDirectory);
-    if (!root.exists()) {
-      root.mkdirs();
-    }
+    root = this.mkdirs(rootDirectory);
     hasDataObjects = false;
     hasCodes = false;
     if (!packages.booleanValueOfTag(GENERATE)) {
@@ -481,7 +478,7 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
       MetaClass type, String attribute) {
     String typeName = type.getAttribute(attribute);
     if (typeName == null) {
-      addImportStatement(statements, clazz, type.qualifiedName());
+      addImportStatement(statements, clazz, type.getQualifiedName());
     } else {
       statements.addClassName(typeName);
     }
@@ -508,7 +505,7 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
           statements.addClass(type);
         } else {
           if (log.isErrorEnabled()) {
-            Object[] parameters = { qualifiedName, clazz.qualifiedName() };
+            Object[] parameters = { qualifiedName, clazz.getQualifiedName() };
             log
                 .error(MessageFormat
                     .format(

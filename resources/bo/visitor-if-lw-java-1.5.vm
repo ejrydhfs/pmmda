@@ -25,14 +25,14 @@ public interface LwVisitor {
   /** 
    * Returns the current depth in the graph when traversing it with the 
    * visitor. The depth is a positive integer with a minimal value of 1.
-   * @return the current depth of the visitor in the graph.
+   * @return the current depth of the visitor in the graph
    */
   int getDepth();
 
   /** 
    * Sets the current depth in the graph when traversing it with the visitor. 
    * The depth is a positive integer with a minimal value of 1.
-   * @param depth current depth of the visitor in the traversed graph.
+   * @param depth current depth of the visitor in the traversed graph
    */
   void setDepth(int depth);
 
@@ -42,7 +42,7 @@ public interface LwVisitor {
 #set($name=${class.getAttribute("bo-lw-class")})
   /** 
    * Visits the class ${name} as part of the visitor pattern.
-   * @param item item to visit.
+   * @param item item to visit
    */
   void visit(${name} item);
 #end

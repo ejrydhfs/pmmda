@@ -36,7 +36,7 @@ public class CyclicVisitor implements Visitor {
   
   /**
    * Constructor of the class, which initializes the functor.
-   * @param delegate delegate visitor to execute in protected mode.
+   * @param delegate delegate visitor to execute in protected mode
    */
   public CyclicVisitor(Visitor delegate) {
     this.delegate = delegate;

@@ -3,6 +3,11 @@
 ## you may not use this file except in compliance with the License.
 ## $Id$ 
 ## generate the index and integrity constraints
+#if(${prefix})
+## nothind to do	
+#elseif(${postfix})
+## nothind to do	
+#else	
 #set($schema=${package.valueOfTag("orm-schema-name")})
 #if(${schema})#set($schema=${schema.toUpperCase()})#set($schema="${schema}.")#else#set($schema="")#end
 #set($table=${class.getAttribute("orm-table-name")})
@@ -60,6 +65,7 @@ ALTER TABLE ${schema}${table} ADD CONSTRAINT ${foreignTableName}_${columnName}_I
   FOREIGN KEY (${column})
   REFERENCES ${schema}${foreignTableName}(ID)${constraints}
 
+#end
 #end
 #end
 #end

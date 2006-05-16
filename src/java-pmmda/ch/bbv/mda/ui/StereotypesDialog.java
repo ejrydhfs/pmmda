@@ -38,7 +38,7 @@ public class StereotypesDialog extends SimpleDialog {
 
   @Override
   protected boolean processOk() {
-    view.updateStereotypes((List<Stereotype>) panel.getItems());
+    view.updateStereotypes(panel.getItems());
     return true;
   }
 }

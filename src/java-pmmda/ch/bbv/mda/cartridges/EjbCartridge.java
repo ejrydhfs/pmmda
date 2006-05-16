@@ -56,7 +56,7 @@ public class EjbCartridge extends JavaCartridge implements Cartridge {
     assert packages != null;
     Properties context = getContext();
     StringBuilder buffer = new StringBuilder();
-    String qualifiedName = packages.qualifiedName();
+    String qualifiedName = packages.getQualifiedName();
     buffer.append(qualifiedName).append(
         context.getProperty(SERVER_PACKAGE_EXTENSION_KEY));
     packages.addAttribute(SERVER_PACKAGE, buffer.toString());
@@ -76,25 +76,15 @@ public class EjbCartridge extends JavaCartridge implements Cartridge {
         && !shouldCreateServer(packages)) {
       return;
     }
-
     VelocityContext context = createContext(packages);
     try {
-      if (getContext().getProperty(GENERATE_CORBA_KEY).equals("true")) {
+      if (getBooleanProperty(GENERATE_CORBA_KEY)) {
         File serverRoot = getRoot(ROOT_SERVER_CORBA_KEY,
             BoConstants.ROOT_SERVER_FOLDER_KEY);
-        if (!serverRoot.exists()) {
-          serverRoot.mkdirs();
-        }
         File clientRoot = getRoot(ROOT_CLIENT_CORBA_KEY,
             BoConstants.ROOT_CLIENT_FOLDER_KEY);
-        if (!clientRoot.exists()) {
-          clientRoot.mkdirs();
-        }
-        File IdlRoot = new File(getContext().getProperty(
+        File IdlRoot = mkdirs(getContext().getProperty(
             CtoConstants.ROOT_IDL_KEY));
-        if (!IdlRoot.exists()) {
-          IdlRoot.mkdirs();
-        }
         processTemplate(IdlRoot, packages
             .valueOfTag(CtoConstants.CTO_PACKAGE_IDL), packages
             .valueOfTag(SERVER_NAME)
@@ -107,22 +97,14 @@ public class EjbCartridge extends JavaCartridge implements Cartridge {
             packages.valueOfTag(SERVER_NAME) + "CorbaWrapper",
             retrieveTemplate("server-corba-wrapper", null), context);
       }
-      if (getContext().getProperty(GENERATE_BEAN_KEY).equals("true")) {
+      if (getBooleanProperty(GENERATE_BEAN_KEY)) {
+        String j2eeServer = getContext().getProperty(J2EE_SERVER_KEY);
         File serverRoot = getRoot(ROOT_SERVER_J2EE_KEY,
             BoConstants.ROOT_SERVER_FOLDER_KEY);
-        if (!serverRoot.exists()) {
-          serverRoot.mkdirs();
-        }
         File clientRoot = getRoot(ROOT_CLIENT_J2EE_KEY,
             BoConstants.ROOT_CLIENT_FOLDER_KEY);
-        if (!clientRoot.exists()) {
-          clientRoot.mkdirs();
-        }
         File commonRoot = getRoot(ROOT_COMMON_J2EE_KEY,
             BoConstants.ROOT_COMMON_FOLDER_KEY);
-        if (!commonRoot.exists()) {
-          commonRoot.mkdirs();
-        }
         processJavaTemplate(commonRoot, packages.getAttribute(SERVER_PACKAGE),
             packages.valueOfTag(SERVER_NAME) + "Session", retrieveTemplate(
                 "server-session-if", null), context);
@@ -139,8 +121,9 @@ public class EjbCartridge extends JavaCartridge implements Cartridge {
             packages.valueOfTag(SERVER_NAME) + "-ejb-jar.xml",
             retrieveTemplate("server-descriptor", null), context);
         processTemplate(serverRoot, packages.getAttribute(SERVER_PACKAGE),
-            packages.valueOfTag(SERVER_NAME) + "-jboss.xml", retrieveTemplate(
-                "server-jboss-descriptor", null), context);
+            packages.valueOfTag(SERVER_NAME) + getExtension(j2eeServer),
+            retrieveTemplate("server-" + j2eeServer + "-descriptor", null),
+            context);
         processTemplate(serverRoot, packages.getAttribute(SERVER_PACKAGE),
             packages.valueOfTag(SERVER_NAME) + "-jbosscmp-jdbc.xml",
             retrieveTemplate("server-jboss-jdbc-descriptor", null), context);
@@ -163,5 +146,15 @@ public class EjbCartridge extends JavaCartridge implements Cartridge {
       }
     }
     return false;
+  }
+
+  private String getExtension(String server) {
+    String extension = null;
+    if ("geronimo".equalsIgnoreCase(server)) {
+      extension = EXTENSION_GERONIMO;
+    } else if ("jboss".equalsIgnoreCase(server)) {
+      extension = EXTENSION_JBOSS;
+    }
+    return extension;
   }
 }

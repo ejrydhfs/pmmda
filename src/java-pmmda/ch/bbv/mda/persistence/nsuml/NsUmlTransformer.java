@@ -129,7 +129,7 @@ public class NsUmlTransformer extends ExternalTransformer {
       extractPackage(mSubPackage, target);
     }
     extractRelations(source, target);
-    flagSystemPackages(target);
+    postProcessModel(target);
     for (Iterator<MClass> i = new FilterIterator<MClass>(source
         .getOwnedElements(), MClass.class); i.hasNext();) {
       MClassifier mClass = i.next();
@@ -444,7 +444,7 @@ public class NsUmlTransformer extends ExternalTransformer {
       }
       property.setName(name);
       if (owned != null) {
-        property.setTypeName(owned.qualifiedName());
+        property.setTypeName(owned.getQualifiedName());
       }
       if (e1.getAggregation() == MAggregationKind.AGGREGATE) {
         property.setAggregation(true);

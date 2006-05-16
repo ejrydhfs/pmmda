@@ -5,49 +5,224 @@
 #if(${prefix})
 <?xml version="1.0" ?>
 <!DOCTYPE database SYSTEM "http://jakarta.apache.org/turbine/dtd/database.dtd">
-
 <database name="default" 
-  defaultIdMethod="none"
-  defaultJavaMethod="object";
-  baseClass="BaseObject"
-  basePeer="BasePeer">
+	defaultIdMethod="none"
+	defaultJavaType="object"
+	baseClass="BaseObject"
+	basePeer="BasePeer">
 #elseif(${postfix})
 </database>
 #else
+#set($DATA_OBJECT="dataObject")
 #set($schema=${package.valueOfTag("orm-schema-name")})
 #if(${schema})#set($schema=${schema.toUpperCase()})#set($schema=${schema} + ".")#else#set($schema="")#end
 #set($table=${class.getAttribute("orm-table-name")})
-  <table name="${table}"
-    javaName="${package.getAttribute("bo-mo-package")}.${class.getAttribute("bo-mo-class")}"
-    idMethod="None">
+<table name="${table}"
+	   javaName="${package.getAttribute("bo-mo-package")}.${class.getAttribute("bo-mo-class")}"
+	   idMethod="none">
+## ==============================================================
+##  Add common fields (ID, TS)
+## ==============================================================
+#if(${DATA_OBJECT.equalsIgnoreCase(${class.getStereotype()})})
+<column name="ID"
+        primaryKey="true"
+        required="true"
+        type="INTEGER"/>
+<column name="TS"
+        primaryKey="false"
+        required="true"
+        type="TIMESTAMP" />
+#end
 #foreach($property in $properties)
 #if(!${property.isTransient()})
-#set($columnType=${cartridge.getDatatype(${property}, "JDBC")})	
-#set($columnName=${property.getAttribute("orm-column-name")})
-    <column name="${columnName}"
-      javaName="${property.getName()}"
+  #set($columnType=${cartridge.getDatatype(${property}, "JDBC")})	
+  #set($columnName=${property.getAttribute("orm-column-name")})
+  #getType($model $property $type)
+  #isPersistentDataObject($type $isPersistentDataObject)
+  #if($isPersistentDataObject)
+    #getForwardFk($property $columnName)
+	#set($columnType = "INTEGER")
+#end
+<column name="${columnName}"
+	javaName="${property.getName()}"
 #if(${property.isPrimaryKey()})
-      primaryKey="true"
+	primaryKey="true"
 #end
 #if(${property.getAttributeValue("canBeNull")} == "false")
-      required="true"
+	required="true"
 #else
-      required="false"
+	required="false"
 #end
-      type="${columnType}"
+#if(${columnType} == "BOOLEAN")
+	type="BOOLEANINT"
+#else
+	type="${columnType}"
+#end
 #if(${property.getAttributeValue("metaType")} == "OBJECT")
-      javaType="OBJECT"/>
+	javaType="OBJECT"/>
 #elseif(${property.getAttributeValue("metaType")} == "PRIMITIVE")
-      javaType="PRIMITIVE"/>
+	javaType="PRIMITIVE"/>
 #else 
-    />
+/>
 #end
 #end
 #end
-#foreach($property in $keys) 
-  <foreign-key foreignTable="${tablePrefix}LOOKUP${tablePostfix}">
-    <reference local="${property.getAttributeValue("jdbcName")}" foreign="CODE"/>
-  </foreign-key>
+## ==============================================================
+##   add foreign keys
+## ==============================================================
+## aggregations with cardinality 1-1 and 1-0..1 are generated as foreign keys.
+## This situation should never arise because this is a simple property.
+#foreach($aggregation in $aggregations)
+#if(${aggregation.getMultiplicity().getUpperBound()} == 1)
+#set($typeName=${aggregation.getTypeName()})
+#set($type=false)
+#set($type=${model.findClass(${typeName})})
+#if(!${aggregation.canBeNull()})
+#set($nullInfo="true")
+#else
+#set($nullInfo="false")
 #end
-  </table>
+#isPersistentDataObject($type $isPersistentDataObject)
+#if($isPersistentDataObject)
+#getForwardFk($aggregation $column)
+<column name="${column}"
+        primaryKey="false" 
+        required="${nullInfo}" 
+        type="INTEGER" />
+
+#end
+#end
+#end
+#### references to the class having indexed properties with cardinality 1-N
+#foreach($reference in $references)
+#isPersistentDataObject($reference $isPersistentDataObject)
+#if($isPersistentDataObject)
+#set($relations=${reference.getIndexedProperties()})
+#foreach($relation in $relations)
+#getType($model $relation $type)
+#if(${type} == ${class})
+#if(!${relation.canBeNull()})
+#set($nullInfo="true")
+#else
+#set($nullInfo="false")
+#end
+#getReverseFk($reference $relation $column)
+<column name="${column}"
+        primaryKey="false" 
+        required="${nullInfo}" 
+        type="INTEGER" /> 
+#end
+#end
+#end
+#end
+## ==============================================================
+##   Index
+## ==============================================================
+## create indices for properties
+#foreach($property in $properties)
+#if(!${property.isTransient()})
+#getType($model $property $type)
+#isPersistentDataObject($type $isPersistentDataObject)
+#if($isPersistentDataObject)
+#getForwardFk($property $column)
+
+<index name="${table}_${column}_IDX">
+  <index-column name="${column}" /> 
+</index>
+
+#end
+#end
+#end
+## create indices for aggreations
+#foreach($aggregation in $aggregations)
+#if(!${aggregation.isTransient()} && (${aggregation.getMultiplicity().getUpperBound()} == 1))
+#set($typeName=${aggregation.getTypeName()})
+#set($type=false)
+#set($type=${model.findClass(${typeName})})
+#isPersistentDataObject($type $isPersistentDataObject)
+#if($isPersistentDataObject)
+#getForwardFk($aggregation $column)
+
+<index name="${table}_${column}_IDX">
+  <index-column name="${column}" /> 
+</index>
+#end
+#end
+#end
+## create indices for references
+#set($references=$model.getClassReferences($class))
+#foreach($reference in $references)
+#isPersistentDataObject($reference $isPersistentDataObject)
+#if($isPersistentDataObject)
+#set($relations=${reference.getIndexedProperties()})
+#foreach($relation in $relations)
+#getType($model $relation $type)
+#if(${type} == ${class})
+#getReverseFk($reference $relation $column)
+
+<index name="${table}_${column}_IDX">
+  <index-column name="${column}" /> 
+</index>
+
+#end
+#end
+#end
+#end
+## ==============================================================
+##   Constraints
+## ==============================================================
+#foreach($property in $properties)
+#if(!${property.isTransient()})
+#set($columnType=${property.valueOfTag("orm-column-type")})
+#getType($model $property $type)
+#isPersistentDataObject($type $isPersistentDataObject)
+#if($isPersistentDataObject)
+#set($columnName=${property.valueOfTag("orm-column-name")})
+#set($foreignTableName=${type.getAttribute("orm-table-name")})
+#getForwardFk($property $column)
+
+<foreign-key foreignTable="${foreignTableName}" name="${table}_${foreignTableName}_${column}_IR1">
+	<reference local="${column}" foreign="ID"/>
+</foreign-key>
+#end
+#end
+#end
+## aggregations with cardinality 1-1 and 1-0..1 are generated as foreign keys.
+## This situation should never arise because this is a simple property.
+#foreach($aggregation in $aggregations)
+#if(${aggregation.getMultiplicity().getUpperBound()} == 1)
+#getType($model $aggregation $type)
+#isPersistentDataObject($type $isPersistentDataObject)
+#if($isPersistentDataObject)
+#set($columnName=${aggregation.valueOfTag("orm-column-name")})
+#set($foreignTableName=${type.getAttribute("orm-table-name")})
+#getForwardFk($property $column)
+
+<foreign-key foreignTable="${foreignTableName}" name="${table}_${foreignTableName}_${column}_IR2">
+	<reference local="${column}" foreign="ID"/>
+</foreign-key>
+#end
+#end
+#end
+## references to the class having indexed properties with cardinality 1-N to the
+## class are generated as reverse foreign keys in the class.
+#set($references=$model.getClassReferences($class))
+#foreach($reference in $references)
+#if((${reference.getStereotype()} == "dataObject") && ${reference.booleanValueOfTag("persistence")})
+#set($relations=${reference.getIndexedProperties()})
+#foreach($relation in $relations)
+#getType($model $relation $type)
+#if((${type} == ${class}) && ${type.booleanValueOfTag("persistence")})
+#set($columnName=${relation.valueOfTag("orm-column-name")})
+#set($foreignTableName=${reference.getAttribute("orm-table-name")})
+#getReverseFk($reference $relation $column)
+
+<foreign-key foreignTable="${foreignTableName}" name="${table}_${foreignTableName}_${column}_IR3">
+	<reference local="${column}" foreign="ID"/>
+</foreign-key>
+#end
+#end
+#end
+#end
+</table>
 #end

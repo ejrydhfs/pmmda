@@ -171,9 +171,9 @@ public abstract class ContactParser {
 
   /**
    * Sets the string property with the new value. Empty strings default to null
-   * @param object object which property should be set.
-   * @param property property to set.
-   * @param value new value of the property.
+   * @param object object which property should be set
+   * @param property property to set
+   * @param value new value of the property
    */
   protected void setProperty(Object object, String property, String value) {
     if (value != null) {
@@ -189,8 +189,8 @@ public abstract class ContactParser {
   /**
    * Adds the contact to the organization with the given name if no organization
    * is specified. If necessary the organization is created.
-   * @param contact contact to add.
-   * @param name name of the organization associated with the contact.
+   * @param contact contact to add
+   * @param name name of the organization associated with the contact
    * @pre (contact != null) && (name != null)
    */
   protected void addToOrganization(Contact contact, String name) {
@@ -259,11 +259,11 @@ public abstract class ContactParser {
    * <dd>enumeration of note types: email, phone, meeting, mailing, , letter,
    * exhibition</dd>
    * </dl>
-   * @param contact contact to which the journal entries should be added.
-   * @param line line containing the description.
-   * @throws IOException if an IO problem occurs.
-   * @throws JDOMException if a XML parsing error occurs.
-   * @throws ParseException if a date format is erroneous.
+   * @param contact contact to which the journal entries should be added
+   * @param line line containing the description
+   * @throws IOException if an IO problem occurs
+   * @throws JDOMException if a XML parsing error occurs
+   * @throws ParseException if a date format is erroneous
    * @pre contact != null
    */
   protected void parseDescription(Contact contact, String line)
@@ -273,7 +273,7 @@ public abstract class ContactParser {
     }
     SAXBuilder builder = new SAXBuilder();
     Document document = builder.build(new StringReader(line));
-    List<Element> notes = document.getRootElement().getChildren("note");
+    List<Element> notes = (List<Element>)document.getRootElement().getChildren("note");
     for (Element element : notes) {
       JournalEntry entry = new JournalEntry();
       entry.setType(JournalEntryType.NOTE);

@@ -111,7 +111,7 @@
 #set($columnName=${aggregation.getAttribute("orm-column-name")})
   <reference-descriptor
     name="${property.getName()}"
-    class-ref="${type.qualifiedName()}"
+    class-ref="${type.getQualifiedName()}"
     auto-retrieve="true"
     auto-update="none"
     auto-delete="none">
@@ -200,7 +200,7 @@
 #set($subClasses=${model.findSubClasses($class)})
 #foreach($subClass in $subClasses)
 #if(${subClass.getStereotype().equalsIgnoreCase("dataObject")})
-  <extent-class class-ref="${subClass.qualifiedName()}"/>
+  <extent-class class-ref="${subClass.getQualifiedName()}"/>
 #end
 #end
 </class-descriptor>

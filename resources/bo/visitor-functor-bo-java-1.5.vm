@@ -28,6 +28,11 @@ public class VisitorFunctor implements Visitor, AbstractVisitorFunctor {
    */
   private DoFunctor functor; 
 
+  /** 
+   * The current depth of the visitor when traversing a graph.
+   */
+  private int depth;
+  
   /**
    * Default constructor of the class.
    */
@@ -36,16 +41,11 @@ public class VisitorFunctor implements Visitor, AbstractVisitorFunctor {
   
   /**
    * Constructor of the class, which initializes the functor.
-   * @param functor functor of the visitor.
+   * @param functor functor of the visitor
    */
   public VisitorFunctor(DoFunctor functor) {
     this.functor = functor;
   }
-
-  /** 
-   * The current depth of the visitor when traversing a graph.
-   */
-  private int depth;
 
   public int getDepth() {
     return depth;

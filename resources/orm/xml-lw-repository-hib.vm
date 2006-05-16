@@ -43,7 +43,7 @@
 #getForwardFk($property $column)
     <many-to-one name="${property.nameFirstLower()}"
 	  column="${column}"
-	  class="${type.qualifiedName()}"
+	  class="${type.getQualifiedName()}"
       not-null="${notNull}"
 #if($shouldGenerateFkIndex)
 	  index="${table}_${columnName}_IDX"
@@ -103,7 +103,7 @@
 #getForwardFk($aggregation $column)
     <many-to-one name="${aggregation.nameFirstLower()}"
       column="${column}"
-      class="${type.qualifiedName()}"
+      class="${type.getQualifiedName()}"
       not-null="${notNull}"
 #if($shouldGenerateFkIndex)
       index="${table}_${columnName}_IDX"

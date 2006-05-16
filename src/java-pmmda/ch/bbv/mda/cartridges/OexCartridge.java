@@ -93,7 +93,7 @@ public class OexCartridge extends JavaCartridge implements Cartridge {
     assert packages != null;
     Properties context = getContext();
     StringBuilder buffer = new StringBuilder();
-    String qualifiedName = packages.qualifiedName();
+    String qualifiedName = packages.getQualifiedName();
     buffer.append(qualifiedName).append(
         context.getProperty(RICH_CLIENT_PACKAGE_POSTFIX_KEY));
     packages.addAttribute(OEX_RICH_CLIENT_PACKAGE, buffer.toString());
@@ -105,13 +105,10 @@ public class OexCartridge extends JavaCartridge implements Cartridge {
     assert packages != null;
     File sourceRoot = getRoot(ROOT_RICH_CLIENT_KEY,
         BoConstants.ROOT_CLIENT_FOLDER_KEY);
-    if (!sourceRoot.exists()) {
-      sourceRoot.mkdirs();
-    }
     if (packages.booleanValueOfTag(BoConstants.GENERATE)
         && hasLightweightClasses(packages)) {
       VelocityContext context = createContext(packages);
-      log.info("OEX Catridge processing package " + packages.qualifiedName());
+      log.info("OEX Catridge processing package " + packages.getQualifiedName());
       try {
         processJavaTemplate(sourceRoot, packages
             .getAttribute(OEX_RICH_CLIENT_PACKAGE), "TypeFactory",

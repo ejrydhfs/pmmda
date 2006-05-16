@@ -14,7 +14,11 @@ import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.velocity.Template;
+import org.apache.ddlutils.Platform;
+import org.apache.ddlutils.PlatformFactory;
+import org.apache.ddlutils.io.DatabaseIO;
+import org.apache.ddlutils.model.Database;
+import org.apache.ddlutils.platform.SqlBuilder;
 import org.apache.velocity.VelocityContext;
 
 import ch.bbv.application.VersionId;
@@ -75,6 +79,11 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
   private PrintWriter ddlIntegrityWriter;
 
   /**
+   * Writer used to generate the DDL utils XML artifacts.
+   */
+  private PrintWriter ddlXmlWriter;
+
+  /**
    * Writer used to generate the associated artifact.
    */
   private PrintWriter ormBoWriter;
@@ -94,6 +103,17 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
    * not.
    */
   private boolean isFirstClassOfPackage;
+
+  /**
+   * Flag indicating if the DDL generation is done with Apache database DdlUtils
+   * project.
+   */
+  private boolean useGeneratorDdlUtils;
+
+  /**
+   * File containing the DDL XML description for DDL utils transformation.
+   */
+  private File ddlXmlFile;
 
   /**
    * Contains database key: brand of database to gernerate for
@@ -124,6 +144,8 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
         new OrmTagListener(this));
     databaseKey = getContext().getProperty(DATABASE_KEY);
     ormKey = getContext().getProperty(ORM_KEY);
+    useGeneratorDdlUtils = "ddlUtils".equalsIgnoreCase(getContext()
+        .getProperty(GENERATOR_KEY));
   }
 
   @Override
@@ -143,15 +165,14 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
   @Override
   public void processModel(MetaModel model) {
     assert model != null;
-    root = new File(getContext().getProperty(SOURCE_ROOT_FOLDER_KEY));
-    if (!root.exists()) {
-      root.mkdirs();
-    }
+    root = mkdirs(getContext().getProperty(SOURCE_ROOT_FOLDER_KEY));
     try {
       ormBoWriter = FileOperators.createPrintWriter(new File(root, ormKey
           + "_bo_user.xml"));
       ormLwWriter = FileOperators.createPrintWriter(new File(root, ormKey
           + "_lw_user.xml"));
+      ddlXmlFile = new File(root, model.getName() + "-DdlUtils.xml");
+      ddlXmlWriter = FileOperators.createPrintWriter(ddlXmlFile);
       ddlWriter = FileOperators.createPrintWriter(new File(root, "createTables"
           + databaseKey + ".sql"));
       ddlIntegrityWriter = FileOperators.createPrintWriter(new File(root,
@@ -219,11 +240,13 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
           ormKey), context));
       ormLwWriter.print(processTemplate(retrieveTemplate("xml-lw-repository",
           ormKey), context));
-      ddlWriter.print(processTemplate(retrieveTemplate("ddl", databaseKey),
+      ddlXmlWriter.print(processTemplate(retrieveTemplate("ddl", "Torque"),
           context));
-      Template template = retrieveTemplate("ddl-integrity", databaseKey);
-      if (template != null) {
-        ddlIntegrityWriter.print(processTemplate(template, context));
+      if (!useGeneratorDdlUtils) {
+        ddlWriter.print(processTemplate(retrieveTemplate("ddl", databaseKey),
+            context));
+        ddlIntegrityWriter.print(processTemplate(retrieveTemplate(
+            "ddl-integrity", databaseKey), context));
       }
       isFirstClassOfPackage = false;
     }
@@ -232,11 +255,13 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
         ormKey), context));
     ormLwWriter.print(processTemplate(retrieveTemplate("xml-lw-repository",
         ormKey), context));
-    ddlWriter.print(processTemplate(retrieveTemplate("ddl", databaseKey),
+    ddlXmlWriter.print(processTemplate(retrieveTemplate("ddl", "Torque"),
         context));
-    Template template = retrieveTemplate("ddl-integrity", databaseKey);
-    if (template != null) {
-      ddlIntegrityWriter.print(processTemplate(template, context));
+    if (!useGeneratorDdlUtils) {
+      ddlWriter.print(processTemplate(retrieveTemplate("ddl", databaseKey),
+          context));
+      ddlIntegrityWriter.print(processTemplate(retrieveTemplate(
+          "ddl-integrity", databaseKey), context));
     }
   }
 
@@ -249,8 +274,30 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
         retrieveTemplate("xml-bo-repository", orm), context));
     ormLwWriter.print(processTemplate(
         retrieveTemplate("xml-lw-repository", orm), context));
+    if (!useGeneratorDdlUtils) {
+      ddlWriter.print(processTemplate(retrieveTemplate("ddl", databaseKey),
+          context));
+      ddlIntegrityWriter.print(processTemplate(retrieveTemplate(
+          "ddl-integrity", databaseKey), context));
+    } else {
+      ddlXmlWriter.print(processTemplate(retrieveTemplate("ddl", "Torque"),
+          context));      
+    }
     FileOperators.closePrintWriter(ormBoWriter);
     FileOperators.closePrintWriter(ormLwWriter);
+    FileOperators.closePrintWriter(ddlXmlWriter);
+    if (useGeneratorDdlUtils) {
+      Database db = new DatabaseIO().read(ddlXmlFile);
+      Platform platform = PlatformFactory
+          .createNewPlatformInstance(databaseKey);
+      SqlBuilder builder = platform.getSqlBuilder();
+      builder.setWriter(ddlWriter);
+      try {
+        builder.createTables(db);
+      } catch (IOException e) {
+        log.error("Could not write the DDL description file with ddl Utils", e);
+      }
+    }
     FileOperators.closePrintWriter(ddlWriter);
     FileOperators.closePrintWriter(ddlIntegrityWriter);
   }
@@ -346,8 +393,8 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
 
   /**
    * Creates the context for a persistent class.
-   * @param clazz clazz which persistent context should be generated.
-   * @return the computed context.
+   * @param clazz clazz which persistent context should be generated
+   * @return the computed context
    */
   protected VelocityContext createPersistencyContext(MetaClass clazz) {
     VelocityContext context = createContext(clazz);

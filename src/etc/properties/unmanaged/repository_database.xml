@@ -1,8 +1,19 @@
+<!--  configuration to run MySQL on the local machine using schema OJB 
 <jdbc-connection-descriptor jcd-alias="orm-dnm" default-connection="true"
   platform="MySQL" jdbc-level="3.0" eager-release="false" batch-mode="false"
   useAutoCommit="1" ignoreAutoCommitExceptions="false"
   driver="com.mysql.jdbc.Driver" protocol="jdbc" subprotocol="mysql"
   dbalias="//localhost/ojb" username="user" password="user">
+-->
+
+<!--  configuration to run Derby as embedded database using schema OJB -->
+
+<jdbc-connection-descriptor jcd-alias="orm-dnm" default-connection="true"
+  platform="Derby" jdbc-level="3.0" eager-release="false" batch-mode="false"
+  useAutoCommit="1" ignoreAutoCommitExceptions="false"
+  driver="org.apache.derby.jdbc.EmbeddedDriver" protocol="jdbc" subprotocol="derby"
+  dbalias="../../db/testdb" username="user" password="user">
+
   <attribute attribute-name="initializationCheck" attribute-value="false" />
   <object-cache class="org.apache.ojb.broker.cache.ObjectCacheTwoLevelImpl">
     <attribute attribute-name="cacheExcludes" attribute-value="" />
@@ -33,4 +44,3 @@
     <attribute attribute-name="autoNaming" attribute-value="true" />
   </sequence-manager>
 </jdbc-connection-descriptor>
-

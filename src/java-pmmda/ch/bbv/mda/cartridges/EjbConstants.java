@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann 
+/* copyright 2000-2006 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$ 
@@ -45,6 +45,10 @@ public final class EjbConstants {
   public static final String ROOT_CLIENT_CORBA_KEY = "ejb-cartridge.client-corba-root-folder";
 
   /**
+   * Key for a property identifying the target J2EE server.
+   */
+  public static final String J2EE_SERVER_KEY = "ejb-cartridge.j2ee-server";
+  /**
    * Key for a property of the cartridge used to retrieve user values.
    */
   public static final String ROOT_SERVER_J2EE_KEY = "ejb-cartridge.server-j2ee-root-folder";
@@ -78,4 +82,7 @@ public final class EjbConstants {
    * Tag name for the client package name.
    */
   public static final String CLIENT_PACKAGE = "ejb-client-package";
+  
+  static final String EXTENSION_JBOSS = "-jboss.xml";
+  static final String EXTENSION_GERONIMO = "-openejb-jar.xml";
 }

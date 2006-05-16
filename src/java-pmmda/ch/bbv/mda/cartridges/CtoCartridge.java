@@ -129,7 +129,7 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
   @Override
   public void preProcessPackage(MetaPackage packages) {
     assert packages != null;
-    String attribute = expandIdentifier(null, packages.qualifiedName(),
+    String attribute = expandIdentifier(null, packages.getQualifiedName(),
         TRANSFORM_PACKAGE_POSTFIX);
     packages.addAttribute(CTO_BO2DTO_PACKAGE, attribute);
     packages.addAttribute(CTO_LW2DTO_PACKAGE, attribute);
@@ -158,7 +158,7 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
     buffer.append(clazz.getAttribute(BoConstants.LW_CLASS)).append(
         "Transformer");
     clazz.addAttribute(CTO_LW2DTO_CLASS, buffer.toString());
-    String idlType = java2idl.get(clazz.qualifiedName());
+    String idlType = java2idl.get(clazz.getQualifiedName());
     if (idlType != null) {
       clazz.addAttribute(CTO_IDL_TYPE, idlType);
     }
@@ -179,13 +179,7 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
       return;
     }
     File javaRoot = getRoot(ROOT_JAVA_KEY, BoConstants.ROOT_COMMON_FOLDER_KEY);
-    if (!javaRoot.exists()) {
-      javaRoot.mkdirs();
-    }
-    File idlRoot = new File(getContext().getProperty(ROOT_IDL_KEY));
-    if (!idlRoot.exists()) {
-      idlRoot.mkdirs();
-    }
+    File idlRoot = mkdirs(getContext().getProperty(ROOT_IDL_KEY));
     try {
       if (clazz.hasStereotype(BoConstants.DATA_OBJECT_STEREOTYPE)) {
         MetaPackage metaPackage = (MetaPackage) clazz.getContext();
@@ -221,7 +215,7 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
     MetaClassifier classifier = property.getClassifier();
     String idlType = classifier.getAttribute(CTO_IDL_TYPE);
     if (idlType == null) {
-      idlType = java2idl.get(classifier.qualifiedName());
+      idlType = java2idl.get(classifier.getQualifiedName());
     }
     return idlType;
   }
@@ -354,7 +348,7 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
     MetaClassifier classifier = property.getClassifier();
     String typename = classifier.getAttribute(BoConstants.BO_TYPE_JAVA);
     if (typename == null) {
-      typename = classifier.qualifiedName();
+      typename = classifier.getQualifiedName();
     }
     return typename;
   }

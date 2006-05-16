@@ -464,7 +464,7 @@ public class CartridgeFactory extends ComponentImpl implements Component {
   private void logProgressInfo(Cartridge cartridge, MetaElement element,
       String message) {
     if (log.isInfoEnabled()) {
-      Object[] arguments = { cartridge.getPrefix(), element.qualifiedName() };
+      Object[] arguments = { cartridge.getPrefix(), element.getQualifiedName() };
       log.info(MessageFormat.format(message, arguments));
     }
   }

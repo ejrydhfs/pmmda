@@ -106,7 +106,7 @@ public class CodeTypeMgr {
     functor.setModified(false);
     type.accept(visitor);
     File file = FileOperators.createFile(root, clazz.getContext()
-        .qualifiedName(), clazz.getName() + ".xml");
+        .getQualifiedName(), clazz.getName() + ".xml");
     BufferedWriter writer = new BufferedWriter(new FileWriter(file));
     xstream.toXML(type, writer);
     writer.close();
@@ -212,7 +212,7 @@ public class CodeTypeMgr {
   private CodeType load(MetaClass clazz) throws IOException {
     CodeType type = null;
     File file = FileOperators.createFile(root, clazz.getContext()
-        .qualifiedName(), clazz.getName() + ".xml");
+        .getQualifiedName(), clazz.getName() + ".xml");
     if (file.canRead()) {
       BufferedReader reader = new BufferedReader(new FileReader(file));
       type = (CodeType) xstream.fromXML(reader);
@@ -221,7 +221,7 @@ public class CodeTypeMgr {
   }
 
   private void synchronize(MetaClass clazz, CodeType type) {
-    type.setQualifiedName(clazz.qualifiedName());
+    type.setQualifiedName(clazz.getQualifiedName());
     // TODO set hierarchical or not
   }
 /* %% USER DEFINED PROTECTED/PRIVATE CODE END %% */

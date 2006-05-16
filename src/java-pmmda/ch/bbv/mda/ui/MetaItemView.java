@@ -153,7 +153,7 @@ class MetaItemView extends NodePropertiesView implements ActionListener {
     name.setText(model.getName());
     name.setBackground(Color.WHITE);
     MetaElement context = model.getContext();
-    contextText.setText(context != null ? context.qualifiedName() : null);
+    contextText.setText(context != null ? context.getQualifiedName() : null);
     updateStereotypes(model.getStereotypes());
     visibility.setSelectedCode(model.getVisibility());
     description.setText(model.getDescription());

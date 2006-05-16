@@ -82,14 +82,14 @@ public class DogTagRule extends TagRule {
           && property.isTransient()) {
         success = false;
         addErrorMessage(results, ERROR_INCONSISTENT_TAG,
-            UmlConstants.PERSISTENCE_TAG, property.qualifiedName());
+            UmlConstants.PERSISTENCE_TAG, property.getQualifiedName());
       }
       String name = property.getName();
       if (name.equalsIgnoreCase(IDENTIFIER) || name.equalsIgnoreCase(TIMESTAMP)
           || name.equalsIgnoreCase(MODIFIED)) {
         success = false;
         addErrorMessage(results, ERROR_RESERVED_IDENTIFIER, BoCartridge.PREFIX,
-            property.qualifiedName());
+            property.getQualifiedName());
       }
     }
     return success;

@@ -2,7 +2,6 @@
 ## Licensed under the Apache License, Version 2.0 (the "Licence");
 ## you may not use this file except in compliance with the License.
 ## $Id$ 
-#set($sign="#")
 #emitFileHeader()
 
 package ${package.getAttribute("ejb-server-package")};
@@ -15,8 +14,12 @@ import javax.ejb.CreateException;
 /** 
  * The class implements the home interface of the ${serverName} session bean
  * as defined in the EJB standard.
- * ${dollar}Revision${dollar}
  */
 public interface ${className} extends javax.ejb.EJBHome {
+  /**
+   * Creates the remote session for the ${serverName}.
+   * @throws RemoteException if a communication error occured
+   * @throws CreateException if the remote session could not be created
+   */
   ${serverName}Session create() throws RemoteException, CreateException;
 }

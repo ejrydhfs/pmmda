@@ -63,7 +63,7 @@ public final class MdaUtilities {
     assert (elements != null) && (qualifiedName != null);
     boolean containsElementNamed = false;
     for (MetaElement element : elements) {
-      containsElementNamed = qualifiedName.equals(element.qualifiedName());
+      containsElementNamed = qualifiedName.equals(element.getQualifiedName());
       if (containsElementNamed) {
         break;
       }

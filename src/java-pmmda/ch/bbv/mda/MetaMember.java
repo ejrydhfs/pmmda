@@ -23,7 +23,7 @@ public abstract class MetaMember extends MetaElement {
   private String typeName;
 
   /**
-   * classifier of the member corresponding to the typename. The field is lazy
+   * Classifier of the member corresponding to the typename. The field is lazy
    * initialized.
    */
   private MetaClassifier classifier;
@@ -41,22 +41,23 @@ public abstract class MetaMember extends MetaElement {
   private boolean finals;
 
   /**
-   * Returns the type name of the element.
+   * Returns the type name of the element. If a classifier is defined the name
+   * of the classifier is returned otherwise the stored type name.
    * @return qualified type name of the element.
    * @see #setTypeName(String)
    */
   public String getTypeName() {
-    return (classifier == null ? typeName : classifier.qualifiedName());
+    return (classifier == null ? typeName : classifier.getQualifiedName());
   }
 
   /**
-   * Sets the type name of the element.
+   * Sets the type name of the element. The classifier is updated.
    * @param typeName new qualified type name of the element.
    * @see #getTypeName()
    */
   public void setTypeName(String typeName) {
     this.typeName = typeName;
-    classifier = null;
+    classifier = retrieveClassifier();
   }
 
   /**
@@ -75,7 +76,7 @@ public abstract class MetaMember extends MetaElement {
    */
   public void setClassifier(MetaClassifier classifier) {
     this.classifier = classifier;
-    typeName = null;
+    typeName = classifier.getQualifiedName();
   }
 
   /**

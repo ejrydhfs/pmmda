@@ -32,7 +32,7 @@ public class LwCyclicVisitor implements LwVisitor {
   
   /**
    * Constructor of the class, which initializes the functor.
-   * @param delegate delegate visitor to execute in protected mode.
+   * @param delegate delegate visitor to execute in protected mode
    */
   public LwCyclicVisitor(LwVisitor delegate) {
     this.delegate = delegate;

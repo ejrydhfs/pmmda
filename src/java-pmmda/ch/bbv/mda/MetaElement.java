@@ -484,9 +484,9 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
    * Returns the qualified name of the component by walking through the context
    * hierarchy. The context of the model is ignored because no relevant for the
    * qualified name.
-   * @return the qualified name of the meta element.
+   * @return the qualified name of the meta element
    */
-  public String qualifiedName() {
+  public String getQualifiedName() {
     StringBuilder qualifiedName = new StringBuilder();
     qualifiedName.append(getName());
     MetaElement context = getContext();
@@ -502,7 +502,7 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
    * Returns the class with the qualified name. If the class has no package name
    * it is assumed the class is in the same package as the instance.
    * @param qualifiedName qualified name of the class to find.
-   * @return the requested meta class if found otherwise null.
+   * @return the requested meta class if found otherwise null
    */
   public MetaClass findClass(String qualifiedName) {
     MetaClass clazz = null;
@@ -517,8 +517,8 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
    * length of the line is computed and the text formated. New lines are
    * inserted where needed; no existing new lines are removed.
    * @param offset the offset in source code at the beginning of each line. It
-   *          is used to compute the effective maximum line length.
-   * @return the comment of the element formatted as requested.
+   *          is used to compute the effective maximum line length
+   * @return the comment of the element formatted as requested
    */
   public List docComment(int offset) {
     List<String> lines = new ArrayList<String>();
@@ -563,7 +563,7 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
   /**
    * Returns the visibility text of the visibility code as defined in languages
    * such as Java or C++.
-   * @return the visibility code of the element.
+   * @return the visibility code of the element
    */
   public String retrieveVisibilityText() {
     return MdaUtilities.visibilityToString(getVisibility().getCode());
@@ -573,8 +573,8 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
    * Returns the string value of the tagged value with the given tag. This
    * convenience method is provided to simplify the writing of code generator
    * templates.
-   * @param tag tag name which value should be returned.
-   * @return the value of the tagged value if found otherwise null.
+   * @param tag tag name which value should be returned
+   * @return the value of the tagged value if found otherwise null
    * @pre tag != null
    */
   public String valueOfTag(String tag) {
@@ -656,7 +656,7 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
    * @inheritDoc
    */
   public String toString() {
-    return qualifiedName();
+    return getQualifiedName();
   }
 
   /**

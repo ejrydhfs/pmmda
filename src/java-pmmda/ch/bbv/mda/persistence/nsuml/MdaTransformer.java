@@ -5,10 +5,7 @@
  */
 package ch.bbv.mda.persistence.nsuml;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.StringTokenizer;
+import java.util.*;
 
 import ru.novosoft.uml.MFactory;
 import ru.novosoft.uml.foundation.core.*;
@@ -1062,11 +1059,16 @@ public class MdaTransformer {
    * @param source MDA element used as source of the synchronization.
    * @param context NSUML context containing the class to synchronize.
    */
+  /**
+   * @param source
+   * @param context
+   */
   private void extractStereotypeAndVisibility(MetaElement source,
       MModelElement context) {
-    String stereotype = source.getStereotype();
+    List<Stereotype> stereotypes = source.getStereotypes();
     MStereotype mStereotype = context.getStereotype();
-    if (stereotype != null && !stereotype.equals("")) {
+    if ((stereotypes.size()) > 0 && (stereotypes.get(0).getName().length() > 0)) {
+      String stereotype = stereotypes.get(0).getName();
       mStereotype = findStereotype(stereotype);
       if (mStereotype == null) {
         mStereotype = MFactory.getDefaultFactory().createStereotype();

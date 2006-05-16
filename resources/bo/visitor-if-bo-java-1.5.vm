@@ -30,7 +30,7 @@ public interface Visitor {
   /** 
    * Returns the current depth in the graph when traversing it with the 
    * visitor. The depth is a positive integer with a minimal value of 1.
-   * @return the current depth of the visitor in the graph.
+   * @return the current depth of the visitor in the graph
    * @see ${sign}setDepth(int)
    */
   int getDepth();
@@ -38,7 +38,7 @@ public interface Visitor {
   /** 
    * Sets the current depth in the graph when traversing it with the visitor. 
    * The depth is a positive integer with a minimal value of 1.
-   * @param depth current depth of the visitor in the traversed graph.
+   * @param depth current depth of the visitor in the traversed graph
    * @see ${sign}getDepth()
    */
   void setDepth(int depth);
@@ -54,7 +54,7 @@ public interface Visitor {
 #end
   /** 
    * Visits the class ${name} as part of the visitor pattern.
-   * @param item item to visit.
+   * @param item item to visit
    */
   void visit(${name} item);
 #end

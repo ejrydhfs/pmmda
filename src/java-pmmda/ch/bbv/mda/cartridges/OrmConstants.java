@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann 
+/* copyright 2000-2006 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$ 
@@ -44,6 +44,11 @@ public final class OrmConstants {
    */
   public static final String INHERITANCE_KEY = "orm-cartridge.inheritance";
 
+  /**
+   * Key for a property of the cartridge defining the DDL generator.
+   */
+  public static final String GENERATOR_KEY = "orm-cartridge.database-DDL-generator";
+  
   /**
    * Key for a property of the cartridge used to retrieve user values.
    */

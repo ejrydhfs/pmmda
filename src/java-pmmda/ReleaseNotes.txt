@@ -15,12 +15,14 @@ TODO
   classname, prefix, loaded, active, dependants
 - Have a self contained jar file running with java -jar pmMDA
 
-Version 0.3.0-RC4 (30 April 2006)
+Version 0.3.0-RC4 (15 May 2006)
 ---------------------------------
 The following new features were added.
 - Support of multiple stereotypes on meta elements.
 - Started to add a validation framework based on the JGoodies library in the
   pmMDA user interface.
+- The ORM cartridge can now use the apache database ddlUtils project to 
+  generate DDL for a large set of database.
 
 The following errors were corrected.
 - Tool tips for tagged values without a loaded cartridge prefix in their name 

@@ -128,7 +128,7 @@ public class ImportStatements {
    */
   public void addClass(MetaClass clazz) {
     assert clazz != null;
-    addClassName(clazz.qualifiedName());
+    addClassName(clazz.getQualifiedName());
   }
 
   /**

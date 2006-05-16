@@ -24,7 +24,7 @@ public class LwTransformer {
   /** 
    * Transforms a data object specific class into its lightweight representation.
    * @param item data object instance to synchronize.
-   * @return the lightweight representation of the data object instance.
+   * @return the lightweight representation of the data object instance
    */
   public static ${lwClass} transform(${boClass} item) {
     assert item != null;

@@ -78,7 +78,7 @@ public class OrmTagRule extends TagRule {
       if (!exists(clazz, OrmConstants.TABLE_NAME)) {
         sucess = false;
         addErrorMessage(results, ERROR_MISSING_TABLE,
-            UmlConstants.PERSISTENCE_TAG, clazz.qualifiedName());
+            UmlConstants.PERSISTENCE_TAG, clazz.getQualifiedName());
       }
     }
     return sucess;
@@ -105,13 +105,13 @@ public class OrmTagRule extends TagRule {
       if (!exists(property, COLUMN_NAME)) {
         sucess = false;
         addErrorMessage(results, ERROR_MISSING_COLUMN, COLUMN_NAME, property
-            .qualifiedName());
+            .getQualifiedName());
       }
       if (!property.getClassifier().hasStereotype(BoConstants.DATA_OBJECT_STEREOTYPE)) {
         if (!exists(property, COLUMN_TYPE)) {
           sucess = false;
           addErrorMessage(results, ERROR_MISSING_TYPE, COLUMN_TYPE, property
-              .qualifiedName());
+              .getQualifiedName());
         }
         String value = property.valueOfTag(COLUMN_TYPE);
         if (value != null && (value.equalsIgnoreCase(JdbcTypeCode.VARCHAR.getShortDescription())
@@ -119,13 +119,13 @@ public class OrmTagRule extends TagRule {
           if (!exists(property, COLUMN_SIZE)) {
             sucess = false;
             addErrorMessage(results, ERROR_MISSING_LENGTH, COLUMN_SIZE,
-                property.qualifiedName());
+                property.getQualifiedName());
           }
         } else {
           if (intValue(property, COLUMN_SIZE) != 0) {
             sucess = false;
             addErrorMessage(results, WARNING_SUPERFLUOUS_LENGTH, COLUMN_SIZE,
-                property.qualifiedName());
+                property.getQualifiedName());
           }
         }
       }

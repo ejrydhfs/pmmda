@@ -347,7 +347,7 @@ public class CodesView extends JPanel implements NodeView {
     CodeTypeMgr mgr = getCodeTypeMgr();
     try {
       type = mgr.retrieve(clazz);
-      type.setQualifiedName(clazz.qualifiedName());
+      type.setQualifiedName(clazz.getQualifiedName());
       nameText.setText(type.getQualifiedName());
       hierarchical.setSelected(type.isHierarchical());
       storageKind.setSelectedCode(type.getStorageKind());

@@ -1,0 +1,72 @@
+## copyright 2000-2006 Marcel Baumann
+## Licensed under the Apache License, Version 2.0 (the "Licence");
+## you may not use this file except in compliance with the License.
+## $Id$ 
+## generate the index and integrity constraints
+#if(${prefix})
+## nothind to do	
+#elseif(${postfix})
+## nothind to do	
+#else	
+#set($schema=${package.valueOfTag("orm-schema-name")})
+#if(${schema})#set($schema=${schema.toUpperCase()})#set($schema="${schema}")#else#set($schema="")#end
+#set($table=${class.getAttribute("orm-table-name")})
+#if(${context.get("configuration").get("orm-cartridge.generate-constraints")})
+#set($constraints=" ON DELETE RESTRICT;")
+#else
+#set($constraints=";")
+#end
+#foreach($property in $properties)
+#if(!${property.isTransient()})
+#set($columnType=${property.valueOfTag("orm-column-type")})
+#getType($model $property $type)
+#isPersistentDataObject($type $isPersistentDataObject)
+#if($isPersistentDataObject)
+#set($columnName=${property.valueOfTag("orm-column-name")})
+#set($foreignTableName=${type.getAttribute("orm-table-name")})
+#getForwardFk($property $column)
+ALTER TABLE ${schema}${table} ADD CONSTRAINT ${foreignTableName}_${columnName}_IR 
+  FOREIGN KEY (${column})
+  REFERENCES ${schema}${foreignTableName}(ID)${constraints}
+  
+#end
+#end
+#end
+## aggregations with cardinality 1-1 and 1-0..1 are generated as foreign keys.
+## This situation should never arise because this is a simple property.
+#foreach($aggregation in $aggregations)
+#if(${aggregation.getMultiplicity().getUpperBound()} == 1)
+#getType($model $aggregation $type)
+#isPersistentDataObject($type $isPersistentDataObject)
+#if($isPersistentDataObject)
+#set($columnName=${aggregation.valueOfTag("orm-column-name")})
+#set($foreignTableName=${type.getAttribute("orm-table-name")})
+#getForwardFk($property $column)
+ALTER TABLE ${schema}${table} ADD CONSTRAINT ${foreignTableName}_${columnName}_IR 
+  FOREIGN KEY (${column})
+  REFERENCES ${schema}${foreignTableName}(ID)${constraints}
+
+#end
+#end
+#end
+## references to the class having indexed properties with cardinality 1-N to the
+## class are generated as reverse foreign keys in the class.
+#set($references=$model.getClassReferences($class))
+#foreach($reference in $references)
+#if((${reference.getStereotype()} == "dataObject") && ${reference.booleanValueOfTag("persistence")})
+#set($relations=${reference.getIndexedProperties()})
+#foreach($relation in $relations)
+#getType($model $relation $type)
+#if((${type} == ${class}) && ${type.booleanValueOfTag("persistence")})
+#set($columnName=${relation.valueOfTag("orm-column-name")})
+#set($foreignTableName=${reference.getAttribute("orm-table-name")})
+#getReverseFk($reference $relation $column)
+ALTER TABLE ${schema}${table} ADD CONSTRAINT ${foreignTableName}_${columnName}_IR 
+  FOREIGN KEY (${column})
+  REFERENCES ${schema}${foreignTableName}(ID)${constraints}
+
+#end
+#end
+#end
+#end
+#end

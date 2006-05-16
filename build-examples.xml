@@ -129,9 +129,9 @@
     </copy>
   </target>
 
-  <target name="build-jboss-tests"
+  <target name="build-j2ee-tests"
           depends="init-tests"
-          description="generate the J2EE JBoss variant of the tests">
+          description="generate the J2EE variant of the tests">
     <delete dir="${test.build.j2ee-server.dir}" />
     <mkdir dir="${test.build.j2ee-server.dir}" />
     <javac destdir="${test.build.j2ee-server.dir}"
@@ -183,7 +183,7 @@
         <pathelement path="${test.build.j2ee-server.dir}" />
       </classpath>
       <support dir="${test.build.j2ee-server.dir}">
-        <include name="**/*.*" />
+        <include name="**/*.xml" />
       </support>
       <include name="**/*-ejb-jar.xml" />
       <dtd publicId="-//Sun Microsystems, Inc.//DTD Enterprise JavaBeans 2.0//EN"
