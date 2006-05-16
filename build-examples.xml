@@ -129,7 +129,7 @@
     </copy>
   </target>
 
-  <target name="build-j2ee-tests"
+  <target name="build-jboss-tests"
           depends="init-tests"
           description="generate the J2EE variant of the tests">
     <delete dir="${test.build.j2ee-server.dir}" />
