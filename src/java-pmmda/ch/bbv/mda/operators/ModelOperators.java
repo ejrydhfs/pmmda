@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann 
+/* copyright 2000-2006 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$ 
@@ -20,13 +20,12 @@ import ch.bbv.mda.MetaProperty;
 public class ModelOperators {
   /**
    * Returns the identifier with its first letter in lowercase.
-   * @param identifier identifier to manipulate.
-   * @return new representation of the identifier.
+   * @param identifier identifier to manipulate
+   * @return new representation of the identifier
    * @pre (identifier != null) && (identifier.length() > 0)
    */
   public static String identifierFirstLower(String identifier) {
     assert (identifier != null) && (identifier.length() > 0);
-
     StringBuilder buffer = new StringBuilder(identifier);
     buffer.setCharAt(0, Character.toLowerCase(buffer.charAt(0)));
     return buffer.toString();
@@ -34,14 +33,14 @@ public class ModelOperators {
 
   /**
    * Returns the identifier with its first letter in uppercase.
-   * @param identifier identifier to manipulate.
-   * @return new representation of the identifier.
+   * @param identifier identifier to manipulate
+   * @return new representation of the identifier
    * @pre (identifier != null) && (identifier.length() > 0)
    */
   public static String identifierFirstUpper(String identifier) {
     assert (identifier != null) && (identifier.length() > 0);
-
-    if(identifier.length() == 0) return identifier;
+    if (identifier.length() == 0)
+      return identifier;
     StringBuilder buffer = new StringBuilder(identifier);
     buffer.setCharAt(0, Character.toUpperCase(buffer.charAt(0)));
     return buffer.toString();
@@ -51,13 +50,12 @@ public class ModelOperators {
    * Returns the identifier with written uppercase and the seperation of words
    * identified with a uppercase for the first letter is transformed to a
    * underline.
-   * @param identifier identifier to manipulate.
-   * @return new representation of the identifier.
+   * @param identifier identifier to manipulate
+   * @return new representation of the identifier
    * @pre (identifier != null) && (identifier.length() > 0)
    */
   public static String identifierUpper(String identifier) {
     assert (identifier != null) && (identifier.length() > 0);
-
     StringBuilder buffer = new StringBuilder();
     buffer.append(Character.toUpperCase(identifier.charAt(0)));
     for (int i = 1; i < identifier.length(); i++) {
@@ -72,12 +70,11 @@ public class ModelOperators {
 
   /**
    * Returns the identifier in the singular form.
-   * @param identifier identifier to manipulate.
-   * @return new representation of the identifier.
+   * @param identifier identifier to manipulate
+   * @return new representation of the identifier
    */
   public static String identifierSingular(String identifier) {
     assert (identifier != null);
-
     String name;
     if (identifier.endsWith("ies")) {
       name = identifier.substring(0, identifier.length() - 3) + "y";
@@ -97,8 +94,8 @@ public class ModelOperators {
 
   /**
    * Returns the identifier in the plural form.
-   * @param identifier identifier to manipulate.
-   * @return new representation of the identifier.
+   * @param identifier identifier to manipulate
+   * @return new representation of the identifier
    * @pre identifier != null
    */
   public static String identifierPlural(String identifier) {
@@ -116,9 +113,8 @@ public class ModelOperators {
 
   /**
    * Returns the context part of a qualified class name.
-   * !!!! For a nested class the context is its parent class
-   * @param qualifiedName qualified name to process.
-   * @return the context name or null if qualified name is null.
+   * @param qualifiedName qualified name to process
+   * @return the context name or null if qualified name is null
    */
   public static String getContextName(String qualifiedName) {
     if (qualifiedName == null) {
@@ -136,9 +132,8 @@ public class ModelOperators {
 
   /**
    * Returns the component name of a qualified name.
-   * !!!! For a nested class the component name is without parent classes
-   * @param qualifiedName qualified name to process.
-   * @return the component name or null if qualified name is null.
+   * @param qualifiedName qualified name to process
+   * @return the component name or null if qualified name is null
    */
   public static String getComponentName(String qualifiedName) {
     if (qualifiedName == null) {
@@ -154,8 +149,8 @@ public class ModelOperators {
 
   /**
    * Returns an identifier representation of the qualified name.
-   * @param qualifiedName qualified name to transform.
-   * @return the transformed qualified name.
+   * @param qualifiedName qualified name to transform
+   * @return the transformed qualified name
    * @pre qualifiedName != null
    */
   public static String qualifiedNameToIdentifier(String qualifiedName) {
@@ -166,8 +161,8 @@ public class ModelOperators {
   /**
    * Returns all fields of the given class and of all its ancestors in the given
    * lists based on their type.
-   * @param clazz class which fields should be generated.
-   * @return properties of the class and its direct and indirect ancestors.
+   * @param clazz class which fields should be generated
+   * @return properties of the class and its direct and indirect ancestors
    */
   public List<MetaProperty> getTransitiveFieldsFor(MetaClass clazz) {
     List<MetaProperty> properties = new ArrayList<MetaProperty>();
@@ -181,12 +176,11 @@ public class ModelOperators {
   /**
    * Returns all fields of the given class and of all its ancestors in the given
    * lists based on their type.
-   * @param clazz class which fields should be generated.
-   * @return properties of the class and its direct and indirect ancestors.
+   * @param clazz class which fields should be generated
+   * @return properties of the class and its direct and indirect ancestors
    */
   public List<MetaIndexedProperty> getTransitiveIndexedFieldsFor(MetaClass clazz) {
     List<MetaIndexedProperty> properties = new ArrayList<MetaIndexedProperty>();
-    properties.addAll(clazz.getIndexedProperties());
     properties.addAll(clazz.getIndexedProperties());
     for (MetaClass ancestor : clazz.retrieveAncestors()) {
       properties.addAll(getTransitiveIndexedFieldsFor(ancestor));
