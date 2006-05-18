@@ -433,7 +433,7 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
       if ((key == null)
           || (property.booleanValueOfAttribute(key) || property
               .booleanValueOfTag(key))) {
-        MetaClass type = clazz.findClass(property.getTypeName());
+        MetaClass type = clazz.getModel().findClass(property.getTypeName());
         if (type != null) {
           addImportStatement(imports, clazz, type, kind);
         } else {
@@ -445,7 +445,7 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
       if ((key == null)
           || (property.booleanValueOfAttribute(key) || property
               .booleanValueOfTag(key))) {
-        MetaClass type = clazz.findClass(property.getTypeName());
+        MetaClass type = clazz.getModel().findClass(property.getTypeName());
         if (type != null) {
           addImportStatement(imports, clazz, type, kind);
         } else {
@@ -456,7 +456,7 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
         addImportStatement(imports, clazz, property.valueOfTag(INTERFACE_CLASS));
         addImportStatement(imports, clazz, property.valueOfTag(CONTAINER_CLASS));
         if (isOrdered(property)) {
-          type = clazz.findClass(property.valueOfTag(KEY_CLASS));
+          type = clazz.getModel().findClass(property.valueOfTag(KEY_CLASS));
           if (type != null) {
             imports.addClass(type);
           }

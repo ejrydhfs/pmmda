@@ -210,8 +210,10 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
    * Returns the IDL type of the type of the property.
    * @param property property wich IDL representation is requested.
    * @return the IDL type of the property.
+   * @pre property != null
    */
   public String getIdlType(MetaProperty property) {
+    assert property != null;
     MetaClassifier classifier = property.getClassifier();
     String idlType = classifier.getAttribute(CTO_IDL_TYPE);
     if (idlType == null) {
@@ -223,9 +225,9 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
   /**
    * Creates the transform statement from a business object to a data transfer
    * object. The case of datatype is also handled.
-   * @param property property to transform.
-   * @param param name of the object from which the value is retrieved.
-   * @return Java statement performing the transformation.
+   * @param property property to transform
+   * @param param name of the object from which the value is retrieved
+   * @return Java statement performing the transformation
    */
   public String getBo2DtoConversion(MetaProperty property, String param) {
     StringBuilder buffer = new StringBuilder();
@@ -264,9 +266,9 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
   /**
    * Creates the transform statement from a data transfer object to a business
    * object.
-   * @param property property to transform.
-   * @param param name of the object from which the value is retrieved.
-   * @return Java statement performing the transformation.
+   * @param property property to transform
+   * @param param name of the object from which the value is retrieved
+   * @return Java statement performing the transformation
    */
   public String getDto2BoConversion(MetaProperty property, String param) {
     StringBuilder buffer = new StringBuilder();
