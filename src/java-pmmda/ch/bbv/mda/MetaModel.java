@@ -251,8 +251,8 @@ public class MetaModel extends MetaPackage {
 
   /**
    * Finds the package with the given qualified name.
-   * @param qualifiedName the qualified name of the package to find.
-   * @return the requested package if found otherwise null.
+   * @param qualifiedName the qualified name of the package to find
+   * @return the requested package if found otherwise null
    */
   public MetaPackage findPackage(String qualifiedName) {
     return (MetaPackage) findElement(packages, qualifiedName);
@@ -260,64 +260,88 @@ public class MetaModel extends MetaPackage {
 
   /**
    * Finds the datatype with the given name.
-   * @param name the qualified name of the datatype to find.
-   * @return the requested datatype if found otherwise null.
+   * @param name the qualified name of the datatype to find
+   * @return the requested datatype if found otherwise null
    */
   public MetaDatatype findDatatype(String name) {
     return (MetaDatatype) findElement(datatypes, name);
   }
 
   /**
-   * Finds the class with the given qualified name. If no package is specified
-   * then directly in the model is searched. Nested classes are also found. The
-   * qualified name is e.g. package1.package2.class.nestedClass1
-   * @param qualifiedName qualified name of the class to find.
-   * @return the requested class if found otherwise null.
+   * Finds the element with the qualified name. The search order is datatypes,
+   * packages, classes, nested classed, attributes, relations, methods.
+   * @param qualifiedName the qualified name of the element to find
+   * @return the rquested element if found otherwise null
+   * @pre (qualifiedName != null) && (!qualifiedName.equals("")) &&
+   *      (!qualifiedName.endsWith("."))
    */
-  public MetaClass findClass(String qualifiedName) {
+  public MetaElement findElement(String qualifiedName) {
     assert (qualifiedName != null) && (!qualifiedName.equals(""))
         && (!qualifiedName.endsWith("."));
-    // if there is no package specified look within the classes of the meta
-    // model
-    if (qualifiedName.indexOf(".") == -1)
-      return super.findClass(qualifiedName);
-    // find best matching package
-    MetaPackage currentPackage = null;
-    String lastIdentifierMatched = "";
-    for (MetaPackage metaPackage : packages) {
-      if (qualifiedName.startsWith(metaPackage.getName())) {
-        if (metaPackage.getName().length() > lastIdentifierMatched.length()) {
-          currentPackage = metaPackage;
-          lastIdentifierMatched = metaPackage.getName();
+    MetaElement element = null;
+    // find datatype
+    element = findDatatype(qualifiedName);
+    if (element != null) {
+      return element;
+    }
+    // find package or decide no package context exists
+    MetaPackage context = this;
+    int lastMatchedLgth = 0;
+    for (MetaPackage item : packages) {
+      String packageName = item.getName();
+      if (qualifiedName.startsWith(packageName)) {
+        if (packageName.length() > lastMatchedLgth) {
+          context = item;
+          lastMatchedLgth = packageName.length();
         }
       }
     }
-    if ((currentPackage == null)
-        || (currentPackage.getName().equals(qualifiedName))) {
-      return null;
-    }
-    // find class or nested class
-    qualifiedName = qualifiedName.substring(lastIdentifierMatched.length() + 1);
+    // find class
+    qualifiedName = qualifiedName.substring(lastMatchedLgth + 1);
     StringTokenizer tokenizer = new StringTokenizer(qualifiedName, ".");
-    MetaClass metaClass = currentPackage.findClass(tokenizer.nextToken());
-    if (metaClass == null) {
-      return null;
-    }
-    while (tokenizer.hasMoreTokens()) {
-      String name = tokenizer.nextToken();
-      metaClass = (MetaClass) metaClass.findElement(metaClass
-          .getNestedClasses(), name);
-      if (metaClass == null) {
-        return null;
+    MetaClass clazz = context.findClass(tokenizer.nextToken());
+    if (clazz != null) {
+      element = clazz;
+      // find subclass, attribute, relation, or method
+      while (tokenizer.hasMoreTokens()) {
+        String name = tokenizer.nextToken();
+        MetaClass nestedClass = (MetaClass) clazz.findElement(clazz
+            .getNestedClasses(), name);
+        if (nestedClass != null) {
+          clazz = nestedClass;
+          element = clazz;
+        } else {
+          element = clazz.findElement(clazz.getProperties(), name);
+          if (element == null) {
+            element = clazz.findElement(clazz.getIndexedProperties(), name);
+          }
+        }
       }
     }
-    return metaClass;
+    return element;
+  }
+
+  /**
+   * Finds the class with the given qualified name. If no package is specified
+   * then directly in the model is searched. Nested classes are also found. The
+   * qualified name is e.g. package1.package2.class.nestedClass1
+   * @param qualifiedName qualified name of the class to find
+   * @return the requested class if found otherwise null
+   * @pre (qualifiedName != null) && (!qualifiedName.equals("")) &&
+   *      (!qualifiedName.endsWith("."))
+   */
+  public MetaClass findClass(String qualifiedName) {
+    MetaElement element = findElement(qualifiedName);
+    if ((element != null) && (element instanceof MetaClass)) {
+      return (MetaClass) element;
+    }
+    return null;
   }
 
   /**
    * finds the classifier with the given qualified name.
-   * @param model model containing the requested classifier.
-   * @param qualifiedName the qualified name of the requested classifier.
+   * @param model model containing the requested classifier
+   * @param qualifiedName the qualified name of the requested classifier
    * @return the requested classifier if found otherwise null
    * @pre (model != null) && (qualifiedName != null)
    */
@@ -333,8 +357,8 @@ public class MetaModel extends MetaPackage {
 
   /**
    * Returns the list of meta classes referencing the given class.
-   * @param clazz class which references are looked for.
-   * @return the list of classes referencing the given class.
+   * @param clazz class which references are looked for
+   * @return the list of classes referencing the given class
    * @pre clazz != null
    */
   public Collection getClassReferences(MetaClass clazz) {
@@ -346,9 +370,10 @@ public class MetaModel extends MetaPackage {
   }
 
   /**
-   * Returns all classes being a subclass of the given class.
-   * @param clazz the class which subclasses are looked for.
-   * @return the list of classes derived from the given one.
+   * Returns all classes being a subclass of the given class defined in the
+   * model.
+   * @param clazz the class which subclasses are looked for
+   * @return the list of classes derived from the given one
    * @pre clazz != null
    */
   public Set<MetaClass> findSubClasses(MetaClass clazz) {
