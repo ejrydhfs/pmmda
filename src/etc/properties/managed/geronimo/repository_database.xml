@@ -1,0 +1,35 @@
+<jdbc-connection-descriptor jcd-alias="orm-dnm" default-connection="true"
+  platform="MySQL" jdbc-level="3.0" eager-release="false"
+  driver="com.mysql.jdbc.Driver" protocol="jdbc" subprotocol="mysql"
+  jndi-datasource-name="java:MySqlDS" username="user" password="user"
+  batch-mode="true" useAutoCommit="0" ignoreAutoCommitExceptions="false">
+  <attribute attribute-name="initializationCheck" attribute-value="false" />
+  <object-cache class="org.apache.ojb.broker.cache.ObjectCacheTwoLevelImpl">
+    <attribute attribute-name="cacheExcludes" attribute-value="" />
+    <attribute attribute-name="applicationCache"
+      attribute-value="org.apache.ojb.broker.cache.ObjectCacheDefaultImpl" />
+    <attribute attribute-name="copyStrategy"
+      attribute-value="org.apache.ojb.broker.cache.ObjectCacheTwoLevelImpl$CopyStrategyImpl" />
+    <attribute attribute-name="forceProxies" attribute-value="false" />
+    <attribute attribute-name="timeout" attribute-value="900" />
+    <attribute attribute-name="autoSync" attribute-value="true" />
+    <attribute attribute-name="cachingKeyType" attribute-value="0" />
+    <attribute attribute-name="useSoftReferences" attribute-value="true" />
+  </object-cache>
+  <connection-pool maxActive="20" validationQuery="" testOnBorrow=""
+    testOnReturn="" whenExhaustedAction="0" maxWait="10000">
+    <attribute attribute-name="fetchSize" attribute-value="0" />
+    <attribute attribute-name="jdbc.defaultBatchValue" attribute-value="5" />
+    <attribute attribute-name="dbcp.poolPreparedStatements"
+      attribute-value="false" />
+    <attribute attribute-name="dbcp.maxOpenPreparedStatements"
+      attribute-value="10" />
+    <attribute attribute-name="dbcp.accessToUnderlyingConnectionAllowed"
+      attribute-value="false" />
+  </connection-pool>
+  <sequence-manager
+    className="org.apache.ojb.broker.util.sequence.SequenceManagerInMemoryImpl">
+    <attribute attribute-name="sequenceStart" attribute-value="1" />
+    <attribute attribute-name="autoNaming" attribute-value="true" />
+  </sequence-manager>
+</jdbc-connection-descriptor>
