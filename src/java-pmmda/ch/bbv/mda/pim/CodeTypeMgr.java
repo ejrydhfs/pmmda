@@ -79,8 +79,10 @@ public class CodeTypeMgr {
    * @return the requested code type if found otherwise an empty code type is
    *         returned.
    * @throws IOException if the file could not be written.
+   * @pre clazz != null
    */
   public CodeType retrieve(MetaClass clazz) throws IOException {
+    assert clazz != null;
     if (!types.containsKey(clazz)) {
       CodeType type = null;
       type = load(clazz);
@@ -97,8 +99,10 @@ public class CodeTypeMgr {
    * Saves the reference code values associated with the class.
    * @param clazz class which reference codes should be saved.
    * @throws IOException if the file could not be written.
+   * @pre clazz != null
    */
   public void save(MetaClass clazz) throws IOException {
+    assert clazz != null;
     CodeType type = types.get(clazz);
     synchronize(clazz, type);
     ModifiedFlagFunctor functor = new ModifiedFlagFunctor();

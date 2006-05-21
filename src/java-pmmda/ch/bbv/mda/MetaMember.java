@@ -134,7 +134,7 @@ public abstract class MetaMember extends MetaElement {
       MetaModel model = getModel();
       classifier = model.findDatatype(typeName);
       if (classifier == null) {
-        classifier = model.findClass(typeName);
+        classifier = model.getClass(typeName);
       }
     }
     return classifier;

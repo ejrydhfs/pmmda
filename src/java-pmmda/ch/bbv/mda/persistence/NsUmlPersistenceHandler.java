@@ -104,7 +104,7 @@ public class NsUmlPersistenceHandler implements PersistenceHandler {
     try {
       MModel mModel = nsUmlTransformer.loadArgoModel(file);
       mdaTransformer.synchronize(model, mModel);
-      File temporaryFile = File.createTempFile("pmMDA", "xmi");
+      File temporaryFile = File.createTempFile("pmMDA", ".xmi");
       nsUmlTransformer.writeArgoModel(mModel, temporaryFile);
       if (file.getName().endsWith(".xmi")) {
         file.delete();

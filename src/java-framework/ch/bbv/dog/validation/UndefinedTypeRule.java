@@ -48,7 +48,7 @@ public class UndefinedTypeRule extends ValidationRuleImpl implements
     String value = (String) ReflectUtilities.getProperty(bean, property);
     if (value != null && !value.equals("")) {
       MetaModel metaModel = ((MetaElement)bean).getModel();
-      if(metaModel.findClass(value) == null && metaModel.findDatatype(value) == null) {
+      if(metaModel.getClass(value) == null && metaModel.findDatatype(value) == null) {
         addMessage(results, resources, UNDEFINED_TYPE, getSeverity(),
             bean, property, null, null);
         return false;
@@ -64,7 +64,7 @@ public class UndefinedTypeRule extends ValidationRuleImpl implements
       String value = (String)newValue;
       if (value != null && !value.equals("")) {
         MetaModel metaModel = ((MetaElement)bean).getModel();
-        if(metaModel.findClass(value) == null && metaModel.findDatatype(value) == null) {
+        if(metaModel.getClass(value) == null && metaModel.findDatatype(value) == null) {
           addMessage(results, resources, UNDEFINED_TYPE, getSeverity(),
               bean, property, null, null);
           return false;

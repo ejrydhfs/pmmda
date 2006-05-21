@@ -272,11 +272,11 @@ public class MetaModel extends MetaPackage {
    * packages, classes, nested classed, attributes, relations, methods.
    * @param qualifiedName the qualified name of the element to find
    * @return the rquested element if found otherwise null
-   * @pre (qualifiedName != null) && (!qualifiedName.equals("")) &&
+   * @pre (qualifiedName != null) && (qualifiedName.trim().length() > 0) &&
    *      (!qualifiedName.endsWith("."))
    */
   public MetaElement findElement(String qualifiedName) {
-    assert (qualifiedName != null) && (!qualifiedName.equals(""))
+    assert (qualifiedName != null) && (qualifiedName.trim().length() > 0)
         && (!qualifiedName.endsWith("."));
     MetaElement element = null;
     // find datatype
@@ -297,9 +297,11 @@ public class MetaModel extends MetaPackage {
       }
     }
     // find class
-    qualifiedName = qualifiedName.substring(lastMatchedLgth + 1);
+    if (lastMatchedLgth > 0) {
+      qualifiedName = qualifiedName.substring(lastMatchedLgth + 1);
+    }
     StringTokenizer tokenizer = new StringTokenizer(qualifiedName, ".");
-    MetaClass clazz = context.findClass(tokenizer.nextToken());
+    MetaClass clazz = context.getClass(tokenizer.nextToken());
     if (clazz != null) {
       element = clazz;
       // find subclass, attribute, relation, or method
@@ -350,7 +352,7 @@ public class MetaModel extends MetaPackage {
     assert (model != null) && (qualifiedName != null);
     MetaClassifier classifier = model.findDatatype(qualifiedName);
     if (classifier == null) {
-      classifier = model.findClass(qualifiedName);
+      classifier = model.getClass(qualifiedName);
     }
     return classifier;
   }

@@ -503,7 +503,7 @@ public class MetaClass extends MetaClassifier {
    */
   public boolean hasAncestor(String qualifiedName) {
     assert qualifiedName != null;
-    MetaClass ancestor = getModel().findClass(qualifiedName);
+    MetaClass ancestor = getModel().getClass(qualifiedName);
     boolean hasAncestor = false;
     if (ancestor != null) {
       hasAncestor = hasAncestor(ancestor);
@@ -541,7 +541,7 @@ public class MetaClass extends MetaClassifier {
   public boolean hasInterface(String qualifiedName) {
     assert qualifiedName != null;
     MetaModel model = (MetaModel) getRoot();
-    MetaClass ancestor = model.findClass(qualifiedName);
+    MetaClass ancestor = model.getClass(qualifiedName);
     boolean hasInterface = false;
     if (ancestor != null) {
       hasInterface = hasInterface(ancestor);

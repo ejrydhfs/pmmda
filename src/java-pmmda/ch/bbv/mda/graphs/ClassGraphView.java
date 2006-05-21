@@ -149,7 +149,7 @@ public class ClassGraphView extends JPanel implements NodeView {
     GraphCell source = createVertex(clazz);
     for (MetaProperty property : clazz.getProperties()) {
       String qualifiedName = property.getTypeName();
-      MetaClass type = model.findClass(qualifiedName);
+      MetaClass type = model.getClass(qualifiedName);
       if ((type != null)
           && (type.hasStereotype(BoConstants.DATA_OBJECT_STEREOTYPE) || type
               .hasStereotype(BoConstants.REFERENCE_CODE_STEREOTYPE))) {
@@ -160,7 +160,7 @@ public class ClassGraphView extends JPanel implements NodeView {
     }
     for (MetaIndexedProperty property : clazz.getIndexedProperties()) {
       String qualifiedName = property.getTypeName();
-      MetaClass type = model.findClass(qualifiedName);
+      MetaClass type = model.getClass(qualifiedName);
       if ((type != null)
           && (type.hasStereotype(BoConstants.DATA_OBJECT_STEREOTYPE) || type
               .hasStereotype(BoConstants.REFERENCE_CODE_STEREOTYPE))) {

@@ -70,8 +70,8 @@ public class ZipFileUtilities {
       if (!isSuccess) {
         throw new PersistenceException();
       }
-    } catch (IOException ioe) {
-      throw new PersistenceException(ioe);
+    } catch (IOException e) {
+      throw new PersistenceException(e);
     }
   }
 }

@@ -298,10 +298,20 @@ public class CodesView extends JPanel implements NodeView {
         codesListener);
   }
 
+  /**
+   * Returns the name of the view.
+   * @return the name of the view
+   * @see #setName(String)
+   */
   public String getName() {
     return name;
   }
 
+  /**
+   * Sets the name of the view.
+   * @param name name of the view
+   * @pre #getName()
+   */
   public void setName(String name) {
     this.name = name;
   }

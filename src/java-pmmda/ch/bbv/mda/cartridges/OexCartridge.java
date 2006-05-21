@@ -69,7 +69,7 @@ public class OexCartridge extends JavaCartridge implements Cartridge {
       if (className == null) {
         continue;
       }
-      MetaClass objectClass = clazz.getModel().findClass(className);
+      MetaClass objectClass = clazz.getModel().getClass(className);
       if ((objectClass == null)
           || objectClass.hasStereotype(BoConstants.DATA_OBJECT_STEREOTYPE)) {
         continue;

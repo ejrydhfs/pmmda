@@ -410,15 +410,17 @@ public class MdaTransformer {
       MTaggedValue taggedValue = createTag(item, tagName);
       taggedValue.setValue(tagValue != null ? tagValue : "");
     }
-    // removes the tags no more available in the source. These tags are
-    // the ones declared obsolete in the loaded cartridges.
+    // removes the tags no more available in the source. These tags are the 
+    // ones declared obsolete in the loaded cartridges - take care of 
+    // documentation tag
     for (Iterator i = item.getTaggedValues().iterator(); i.hasNext();) {
       MTaggedValue tag = (MTaggedValue) i.next();
-      if (source.getTaggedValue(tag.getTag()) == null) {
+      String tagName = tag.getTag();
+      if (!UmlConstants.DOCUMENTATION_TAG.equalsIgnoreCase(tagName)
+          && (source.getTaggedValue(tag.getTag()) == null)) {
         item.removeTaggedValue(tag);
       }
     }
-
   }
 
   /**
@@ -808,7 +810,7 @@ public class MdaTransformer {
 
     MClassifier item = null;
 
-    MetaClass mc = metaModel.findClass(name);
+    MetaClass mc = metaModel.getClass(name);
     if (mc != null) {
       item = (MClassifier) elements.get(mc);
       if (item == null) {
@@ -893,7 +895,7 @@ public class MdaTransformer {
     myClass.setMultiplicity(MMultiplicity.M1_1);
 
     myClass.setType((MClassifier) elements.get(source.getContext()));
-    Object o = elements.get(source.getModel().findClass(source.getTypeName()));
+    Object o = elements.get(source.getModel().getClass(source.getTypeName()));
     if (o == null) {
       o = findDataType(source.getTypeName());
     }

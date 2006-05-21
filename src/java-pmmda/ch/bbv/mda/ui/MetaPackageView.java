@@ -79,10 +79,6 @@ public class MetaPackageView extends MetaItemView {
       result.add(new SimpleValidationMessage("name is mandatory",
           Severity.ERROR, name));
     }
-    if (ValidationUtils.isBlank(description.getText())) {
-      result.add(new SimpleValidationMessage("description should be provided",
-          Severity.WARNING, description));
-    }
     super.validateView(result);
     validationResultModel.setResult(result);
   }

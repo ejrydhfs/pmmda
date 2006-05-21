@@ -308,9 +308,11 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
    * @param packageName name of the package containing the artifact associated
    *          with the class.
    * @return list of all import statements for the class.
+   * @pre (clazz != null) && (packageName != null)
    */
   public ImportStatements retrieveImportStatementsForBo(MetaClass clazz,
       String packageName) {
+    assert (clazz != null) && (packageName != null);
     BoCartridge cartridge = (BoCartridge) CartridgeFactory.getInstance()
         .getCartridge(BoCartridge.PREFIX);
     return cartridge.retrieveImportStatementsForBo(clazz, packageName);

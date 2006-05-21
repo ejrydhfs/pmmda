@@ -45,7 +45,7 @@ public class InterfaceHandler {
    */
   public void synchronize(ClassDoc interfaces) {
     assert (interfaces != null && interfaces.isInterface());
-    MetaClass clazz = model.findClass(interfaces.qualifiedTypeName());
+    MetaClass clazz = model.getClass(interfaces.qualifiedTypeName());
     if (clazz == null) {
       if (log.isWarnEnabled()) {
         log.warn("interface not defined in model "
