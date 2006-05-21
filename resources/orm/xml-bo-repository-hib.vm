@@ -4,6 +4,9 @@
 ## $Id$ 
 #set($schema=${package.valueOfTag("orm-schema")})
 #if(${schema})#set($schema=${schema.toUpperCase()})#set($schema=${schema} + ".")#else#set($schema="")#end
+## ----------------------------------------------------------------------------------
+##  Print header
+## ----------------------------------------------------------------------------------
 #if(${prefix})
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
@@ -12,19 +15,27 @@
 <hibernate-mapping 
 	auto-import="false"
 	schema="${schema}"
-	default-access="field">	
+	default-access="field">
+## ----------------------------------------------------------------------------------
+##  Print footer
+## ----------------------------------------------------------------------------------
 #elseif(${postfix})
 </hibernate-mapping>
 
+## ----------------------------------------------------------------------------------
+##  Print class tags
+## ----------------------------------------------------------------------------------
 #else	
+	
 #if(${class.getStereotype().equalsIgnoreCase("dataObject")})
 #set($shouldGenerateFkIndex=${configuration.getProperty("orm-cartridge.generate-fk-index").equalsIgnoreCase("true")})
 #set($inheritanceMode=${configuration.getProperty("orm-cartridge.inheritance")})
 #set($table=${class.getAttribute("orm-table-name")})
   <class name="${package.getAttribute("bo-mo-package")}.${class.getAttribute("bo-mo-class")}"
     table="${table}"
+	lazy="false" 
     mutable="true">
-    <id name="id" column="ID" type="integer" unsaved-value="null" index="${table}_IDX">
+    <id name="id" column="ID" type="integer">
       <generator class="increment"/>
     </id>
     <timestamp name="timestamp" column="TS"/>
@@ -34,15 +45,17 @@
 #foreach($property in $properties)
 #if(!${property.isTransient()})
 #set($notNull=!${property.booleanValueOfTag("orm-can-be-null")})	
-#set($columnType=${property.valueOfTag("orm-column-type").toUpperCase()})
+##set($columnType=${property.getAttribute("orm-column-type").toUpperCase()})
+#set($columnType=${cartridge.getDatatype(${property}, "JAVA")})	
 #set($columnName=${property.getAttribute("orm-column-name").toUpperCase()})
 #getType($model $property $type)
+
 #isPersistentDataObject($type $isPersistentDataObject)
 #if($isPersistentDataObject)
 #getForwardFk($property $column)
     <many-to-one name="${property.nameFirstLower()}"
       column="${column}"
-      class="${type.getQualifiedName()}"
+      class="${type.qualifiedName()}"
       not-null="${notNull}"
 #if($shouldGenerateFkIndex)
       index="${table}_${columnName}_IDX"
@@ -66,26 +79,45 @@
 #getForwardFk($aggregation $column)
     <many-to-one name="${aggregation.nameFirstLower()}"
       column="${column}"
-      class="${type.getQualifiedName()}"
+      class="${type.qualifiedName()}"
       not-null="${notNull}"
 #if($shouldGenerateFkIndex)
       index="${table}_${columnName}_IDX"
 #end
     />	
 #end
-#end
-#end
-#foreach($aggregation in $aggregations)
-#if(${aggregation.getMultiplicity().getUpperBound()} == -1)
+#elseif(${aggregation.getMultiplicity().getUpperBound()} == -1)
 #getType($model $aggregation $type)
 #isPersistentDataObject($type $isPersistentDataObject)
 #if($isPersistentDataObject)
 #set($typePackage=${type.getContext()})
-    <list name="${aggregation.getName()}">
-      <key column="${class.nameFirstLower()}${aggregation.nameFirstUpper()}Handle"/>
-      <index column="id"/>
+#getForwardFk($aggregation $columnFK)
+
+#set($interface=$aggregation.getAttribute("bo-interface-class"))
+#if($interface == "List")
+	<list name="${aggregation.getName()}" lazy="false">
+      <key column="${table}_${columnFK}"/>
+      <index column="ordering_${table}_${columnFK}"/>
       <one-to-many class="${typePackage.getAttribute("bo-mo-package")}.${type.getAttribute("bo-mo-class")}"/>
     </list>
+#elseif($interface == "Set")
+	<set name="${aggregation.getName()}" lazy="false">
+      <key column="${table}_${columnFK}"/>
+      <one-to-many class="${typePackage.getAttribute("bo-mo-package")}.${type.getAttribute("bo-mo-class")}"/>
+    </set>
+#elseif($interface == "Bag")
+	<bag name="${aggregation.getName()}" lazy="false">
+      <key column="${table}_${columnFK}"/>
+      <one-to-many class="${typePackage.getAttribute("bo-mo-package")}.${type.getAttribute("bo-mo-class")}"/>
+    </bag>
+#elseif($interface == "Map")
+	<map name="${aggregation.getName()}" lazy="false">
+      <key column="${table}_${columnFK}"/>
+      <index column="ordering_${table}_${columnFK}"/>
+      <one-to-many class="${typePackage.getAttribute("bo-mo-package")}.${type.getAttribute("bo-mo-class")}"/>
+    </map>
+#end
+
 #end
 #end
 #end

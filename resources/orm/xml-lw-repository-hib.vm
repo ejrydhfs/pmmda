@@ -24,26 +24,32 @@
 #set($table=${class.getAttribute("orm-table-name")})
   <class name="${package.getAttribute("bo-lw-package")}.${class.getAttribute("bo-lw-class")}"
     table="${table}"
+	lazy="false"
     mutable="true">
-    <id name="id" column="ID" type="integer" unsaved-value="null" index="${table}_IDX">
+	##index="${table}_IDX"
+    <id name="id" column="ID" type="integer">
       <generator class="increment"/>
     </id>
-    <timestamp name="timestamp" column="TS"/>
+   ## <timestamp name="timestamp" column="TS"/>
 ## generates all primitive properties as a column. A primitive property is 
 ## either a simple property or an indexed property with a cardinality of 1
 ## having as type a class not being a data object.
 #foreach($property in $properties)
 #if(!${property.isTransient()} && $property.booleanValueOfTag("bo-lightweight"))
 #set($columnType=${property.valueOfTag("orm-column-type").toUpperCase()})
-#set($notNull=!${property.booleanValueOfTag("orm-can-be-null")})	
+#set($notNull=!${property.booleanValueOfTag("orm-can-be-null")})
+#set($columnType=${cartridge.getDatatype(${property}, "JAVA")})	
+#set($columnName=${property.getAttribute("orm-column-name").toUpperCase()})
 #getType($model $property $type)
 #isDataObject($type $isDataObject)
 ## identifies a forward reference 1-0..1 or 1-1
+
+
 #if($isDataObject && ${type.booleanValueOfTag("persistence")})
 #getForwardFk($property $column)
     <many-to-one name="${property.nameFirstLower()}"
 	  column="${column}"
-	  class="${type.getQualifiedName()}"
+	  class="${type.qualifiedName()}"
       not-null="${notNull}"
 #if($shouldGenerateFkIndex)
 	  index="${table}_${columnName}_IDX"
@@ -83,18 +89,23 @@
 #getType($model $relation $type)
 #if(${type} == ${class})
 #getReverseFk($reference $relation $column)
-  <field-descriptor 
-    name="${reference.nameFirstLower()}${relation.nameFirstUpper()}Handle" 
-    column="${column}"
-    jdbc-type="INTEGER"
-    nullable="${relation.canBeNull()}"
-    access="anonymous"/>
+##  <field-descriptor 
+##    name="${reference.nameFirstLower()}${relation.nameFirstUpper()}Handle" 
+##    column="${column}"
+##    jdbc-type="INTEGER"
+##    nullable="${relation.canBeNull()}"
+##    access="anonymous"/>
+
+##<many-to-one name="${reference.nameFirstLower()}" column="${column}" not-null="true"/>
+
 #end
 #end
 #end
 #end
+
 #foreach($aggregation in $aggregations)
-#if(${aggregation.getMultiplicity().getUpperBound()} == 1)
+
+#if($aggregation.booleanValueOfTag("bo-lightweight") && ${aggregation.getMultiplicity().getUpperBound()} == 1 )
 #set($notNull=!${property.booleanValueOfTag("orm-can-be-null")})	
 #set($columnName=${aggregation.getAttribute("orm-column-name")})
 #getType($model $aggregation $type)
@@ -103,27 +114,49 @@
 #getForwardFk($aggregation $column)
     <many-to-one name="${aggregation.nameFirstLower()}"
       column="${column}"
-      class="${type.getQualifiedName()}"
+      class="${type.qualifiedName()}"
       not-null="${notNull}"
 #if($shouldGenerateFkIndex)
       index="${table}_${columnName}_IDX"
 #end
     />	
 #end
-#end
-#end
-#foreach($aggregation in $aggregations)
-#if(${aggregation.getMultiplicity().getUpperBound()} == -1)
+#elseif($aggregation.booleanValueOfTag("bo-lightweight") && ${aggregation.getMultiplicity().getUpperBound()} == -1)
 #getType($model $aggregation $type)
 #isPersistentDataObject($type $isPersistentDataObject)
 #if($isPersistentDataObject)
 #set($typePackage=${type.getContext()})
-    <list name="${aggregation.getName()}">
-      <key column="${class.nameFirstLower()}${aggregation.nameFirstUpper()}Handle"/>
-      <index column="id"/>
+#getForwardFk($aggregation $columnFK)
+
+#set($interface=$aggregation.getAttribute("bo-interface-class"))
+
+#if($interface == "List")
+	<list name="${aggregation.getName()}" lazy="false">
+      <key column="${table}_${columnFK}"/>
+	  <index column="ordering_${table}_${columnFK}"/>
       <one-to-many class="${typePackage.getAttribute("bo-lw-package")}.${type.getAttribute("bo-lw-class")}"/>
     </list>
+#elseif($interface == "Set")
+	<set name="${aggregation.getName()}" lazy="false">
+      <key column="${table}_${columnFK}"/>
+      <one-to-many class="${typePackage.getAttribute("bo-lw-package")}.${type.getAttribute("bo-lw-class")}"/>
+    </set>
+#elseif($interface == "Bag")
+	<bag name="${aggregation.getName()}" lazy="false">
+      <key column="${table}_${columnFK}"/>
+      <one-to-many class="${typePackage.getAttribute("bo-lw-package")}.${type.getAttribute("bo-lw-class")}"/>
+    </bag>
+#elseif($interface == "Map")
+	<bag name="${aggregation.getName()}" lazy="false">
+      <key column="${table}_${columnFK}"/>
+	  <index column="ordering_${table}_${columnFK}"/>
+	  <one-to-many class="${typePackage.getAttribute("bo-lw-package")}.${type.getAttribute("bo-lw-class")}"/>
+    </bag>
 #end
+
+	
+#end
+
 #end
 #end
   </class>
