@@ -14,7 +14,6 @@ import org.apache.commons.logging.LogFactory;
 
 import bsh.EvalError;
 import bsh.Interpreter;
-import ch.bbv.dog.persistence.ojb.PersistenceHandler;
 
 /**
  * The beanshell validation rule implements validation rules which logic is
@@ -27,7 +26,7 @@ public class BshRule extends ValidationRuleImpl implements ValidationRule {
   /**
    * Logger of the instances of the class.
    */
-  private static Log log = LogFactory.getLog(PersistenceHandler.class);
+  private static Log log = LogFactory.getLog(BshRule.class);
 
   private Interpreter interpreter;
 
