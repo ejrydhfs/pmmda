@@ -20,7 +20,7 @@ import ch.bbv.dog.CacheHandler;
 import ch.bbv.dog.DataObjectHandler;
 import ch.bbv.dog.DataObjectMgr;
 import ch.bbv.dog.LightweightObjectHandlerImpl;
-import ch.bbv.dog.persistence.ojb.PersistenceHandler;
+import ch.bbv.dog.persistence.ojb.PersistenceHandlerOjb;
 import ch.bbv.utilities.ReflectUtilities;
 
 /**
@@ -124,9 +124,9 @@ public class UserApplication extends Application {
     register(this);
     if (USE_DIRECT.equalsIgnoreCase(mode)) {
       log.info("Application started in direct mode");
-      PersistenceHandler.Mode sync = PersistenceHandler.Mode
+      PersistenceHandlerOjb.Mode sync = PersistenceHandlerOjb.Mode
           .valueOf(synchronization);
-      manager = new DataObjectMgr(new CacheHandler(new PersistenceHandler(
+      manager = new DataObjectMgr(new CacheHandler(new PersistenceHandlerOjb(
           false, sync), true, true), new LightweightObjectHandlerImpl(), null,
           SCHEMA);
     } else if (USE_CORBA.equalsIgnoreCase(mode)) {

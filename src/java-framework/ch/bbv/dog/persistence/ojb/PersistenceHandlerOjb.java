@@ -15,6 +15,7 @@ import org.apache.commons.logging.LogFactory;
 import org.odmg.Database;
 
 import ch.bbv.dog.*;
+import ch.bbv.dog.persistence.CollectFunctor;
 
 /**
  * The data object persistence handler retrieves and stores data object graphs
@@ -34,7 +35,7 @@ import ch.bbv.dog.*;
  * @version $Revision$
  */
 
-public class PersistenceHandler implements DataObjectHandler {
+public class PersistenceHandlerOjb implements DataObjectHandler {
   /**
    * The modes of the persistence handler.
    */
@@ -45,7 +46,7 @@ public class PersistenceHandler implements DataObjectHandler {
   /**
    * Logger for all instances of the class.
    */
-  private static Log log = LogFactory.getLog(PersistenceHandler.class);
+  private static Log log = LogFactory.getLog(PersistenceHandlerOjb.class);
 
   /**
    * Hack due to compiler differences between JDK 1.5 and eclipse. This constant
@@ -56,7 +57,7 @@ public class PersistenceHandler implements DataObjectHandler {
   /**
    * The database manager used in the handler to access the databases.
    */
-  private DatabaseMgr databaseMgr;
+  private DatabaseMgrOjb databaseMgr;
 
   /**
    * The handler responsible for the OJB specific policy.
@@ -75,8 +76,8 @@ public class PersistenceHandler implements DataObjectHandler {
    * @param mode mode used to synchronize the modified objects with the ones in
    *          the cache or the persistent store.
    */
-  public PersistenceHandler(boolean managed, Mode mode) {
-    databaseMgr = new DatabaseMgr();
+  public PersistenceHandlerOjb(boolean managed, Mode mode) {
+    databaseMgr = new DatabaseMgrOjb();
     if (managed) {
       policy = new HandlerPolicyManagedOjb(databaseMgr);
     } else {
@@ -262,7 +263,7 @@ public class PersistenceHandler implements DataObjectHandler {
     Database database = databaseMgr.getDatabase(datasource);
     if (database == null) {
       throw new MissingResourceException("datasource not found",
-          PersistenceHandler.class.getName(), datasource);
+          PersistenceHandlerOjb.class.getName(), datasource);
     }
     return database;
   }

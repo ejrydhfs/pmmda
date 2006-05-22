@@ -14,12 +14,12 @@ import org.hibernate.SessionFactory;
 
 import ch.bbv.dog.DataObject;
 
-public class HibHandlerPolicy {
+public class HandlerPolicyHib {
 
   /**
    * Logger of the instances of the class.
    */
-  protected static Log log = LogFactory.getLog(HibHandlerPolicy.class);
+  protected static Log log = LogFactory.getLog(HandlerPolicyHib.class);
 
   void update(SessionFactory sessionFactory, List<DataObject> originals,
       List<DataObject> copies, List deletedObjects,

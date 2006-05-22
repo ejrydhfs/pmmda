@@ -33,13 +33,13 @@ class HandlerPolicyOjb {
   /**
    * The database manager on which the policy is applied.
    */
-  private DatabaseMgr databaseMgr;
+  private DatabaseMgrOjb databaseMgr;
 
   /**
    * Constructor of the class.
    * @param databaseMgr the database manager on which the policy is applied.
    */
-  public HandlerPolicyOjb(DatabaseMgr databaseMgr) {
+  public HandlerPolicyOjb(DatabaseMgrOjb databaseMgr) {
     this.databaseMgr = databaseMgr;
   }
 
@@ -248,7 +248,7 @@ class HandlerPolicyOjb {
    * Returns the database manager associated with the handler policy object.
    * @return the database manager of the handler policy.
    */
-  protected final DatabaseMgr getDatabaseMgr() {
+  protected final DatabaseMgrOjb getDatabaseMgr() {
     return databaseMgr;
   }
 }

@@ -37,11 +37,11 @@ import org.odmg.Transaction;
  * @author MarcelBaumann
  * @version $Revision$
  */
-class DatabaseMgr {
+class DatabaseMgrOjb {
   /**
    * Logger of the database manager class.
    */
-  private static Log log = LogFactory.getLog(DatabaseMgr.class);
+  private static Log log = LogFactory.getLog(DatabaseMgrOjb.class);
 
   /**
    * List of all opened databases.
@@ -51,7 +51,7 @@ class DatabaseMgr {
   /**
    * Default constructor of the class.
    */
-  public DatabaseMgr() {
+  public DatabaseMgrOjb() {
     databases = new HashMap<String, LogicalDatabase>();
   }
 

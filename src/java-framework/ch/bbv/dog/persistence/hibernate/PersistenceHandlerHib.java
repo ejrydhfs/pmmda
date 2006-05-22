@@ -1,8 +1,3 @@
-/* copyright 2000-2006 Marcel Baumann 
- * Licensed under the Apache License, Version 2.0 (the "Licence"); 
- * you may not use this file except in compliance with the License. 
- * $Id$
- */
 package ch.bbv.dog.persistence.hibernate;
 
 import java.util.ArrayList;
@@ -16,16 +11,38 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
 import ch.bbv.dog.*;
-import ch.bbv.dog.persistence.ojb.CollectFunctor;
+import ch.bbv.dog.persistence.CollectFunctor;
 
-public class HibPersistenceHandler implements DataObjectHandler {
+/**
+ * The data object persistence handler retrieves and stores data object graphs
+ * in the database. The handler uses the services defined in the package and
+ * provided in Hibernate layer to communicate with the underlying database. The
+ * handler always returns a copy of the graph to be able later to infer which
+ * objects were removed.
+ * <ul>
+ * <li>The retrieval of a graph of data objects is the creation of the correct
+ * OQL statement and its execution.</li>
+ * <li>The update of a graph of data objects is to organize the objects into
+ * one set of objects to delete, to insert and to update and to perform these
+ * operations. Upon completion the update information should be sent back to the
+ * client.</li>
+ * </ul>
+ * @author MarcelBaumann
+ * @author UeliKurmann
+ * @version $Revision$
+ */
 
-  HibDatabaseMgr databaseMgr;
+public class PersistenceHandlerHib implements DataObjectHandler {
+
+  /**
+   * The Hibernate Database Manager
+   */
+  DatabaseMgrHib databaseMgr;
 
   /**
    * Logger of the instances of the class.
    */
-  protected static Log log = LogFactory.getLog(HibPersistenceHandler.class);
+  protected static Log log = LogFactory.getLog(PersistenceHandlerHib.class);
 
   /**
    * Hack due to compiler differences between JDK 1.5 and eclipse. This constant
@@ -33,13 +50,16 @@ public class HibPersistenceHandler implements DataObjectHandler {
    */
   private static final List<DataObject> EMPTY_LIST = new ArrayList<DataObject>();
 
-  public HibPersistenceHandler() {
-    databaseMgr = new HibDatabaseMgr();
+  /**
+   * Default constructor of the class instantiates the Hibernate Database
+   * Manager
+   */
+  public PersistenceHandlerHib() {
+    databaseMgr = new DatabaseMgrHib();
   }
 
   public void openDatasource(String source, boolean readonly) {
-    // TODO: access mode
-    databaseMgr.openDatabase(source, 0);
+    databaseMgr.openDatabase(source);
   }
 
   public void closeDatasource(String datasource) {
@@ -47,6 +67,7 @@ public class HibPersistenceHandler implements DataObjectHandler {
   }
 
   public DataObject retrieve(String datasource, Class clazz, Integer id) {
+    assert (datasource != null) && (clazz != null) && (id != null);
     Session session = databaseMgr.getDatabase(datasource).getCurrentSession();
     session.beginTransaction();
     DataObject dataObject = (DataObject) session.load(clazz, id);
@@ -57,17 +78,15 @@ public class HibPersistenceHandler implements DataObjectHandler {
 
   public List<DataObject> retrieve(String datasource, Class clazz,
       String constraints) {
-
+    assert (datasource != null) && (clazz != null);
     if (constraints != null) {
       throw new RuntimeException("retrieve: constraints not implemented yet!");
     }
-
     Session session = databaseMgr.getDatabase(datasource).getCurrentSession();
     session.beginTransaction();
     Criteria criteria = session.createCriteria(clazz);
     List<DataObject> result = (List<DataObject>) (criteria.list());
     session.getTransaction().commit();
-
     return result;
   }
 
@@ -83,23 +102,20 @@ public class HibPersistenceHandler implements DataObjectHandler {
 
   public List<LightweightObject> retrieveLw(String datasource, Class clazz,
       String constraints) {
-
+    assert (datasource != null) && (clazz != null);
     if (constraints != null) {
       throw new RuntimeException("retrieveLW: constraints not implemented yet!");
     }
-
     Session session = databaseMgr.getDatabase(datasource).getCurrentSession();
     session.beginTransaction();
     Criteria criteria = session.createCriteria(clazz);
     List<LightweightObject> result = (List<LightweightObject>) (criteria.list());
     session.getTransaction().commit();
-
     return result;
   }
 
   public List<DataObjectUpdate> store(String datasource, Class clazz,
       DataObject root) {
-
     CollectFunctor collect = new CollectFunctor();
     AbstractVisitorFunctor visitor = DataObjectMgr.getVisitorFor(clazz);
     visitor.setFunctor(collect);
@@ -117,9 +133,9 @@ public class HibPersistenceHandler implements DataObjectHandler {
     List deleted = collect.getMissingObjectsFrom(originals);
     List<DataObject> inserted = collect.getNewObjects();
     List<DataObject> updated = collect.getUdpatedObjects();
-    HibHandlerPolicy hibPolicy = new HibHandlerPolicy();
-    hibPolicy.update(databaseMgr.getDatabase(datasource), originals, objects,
-        deleted, inserted, updated);
+
+    update(databaseMgr.getDatabase(datasource), originals, objects, deleted,
+        inserted, updated);
     if (log.isTraceEnabled()) {
       StringBuilder text = new StringBuilder();
       text.append("end store operation ").append(objects.size()).append(
@@ -143,6 +159,13 @@ public class HibPersistenceHandler implements DataObjectHandler {
     }
   }
 
+  /**
+   * Remvoes the data object graph.
+   * @param datasource datasouce containing the data objects to remove.
+   * @param clazz class of the root object.
+   * @param root root of the data object graph to remove.
+   * @param originalRoot root of the orginal data object graph to remove.
+   */
   private void remove(String datasource, Class clazz, DataObject root,
       DataObject originalRoot) {
     if (log.isTraceEnabled()) {
@@ -159,13 +182,62 @@ public class HibPersistenceHandler implements DataObjectHandler {
     visitor.setFunctor(collect);
     DataObjectType.invokeVisitor(clazz, originalRoot, visitor);
     List<DataObject> deleted = new ArrayList<DataObject>(collect.getObjects());
-    HibHandlerPolicy hibPolicy = new HibHandlerPolicy();
-    hibPolicy.update(sessionFactory, deleted, deleted, deleted, EMPTY_LIST,
-        EMPTY_LIST);
+    update(sessionFactory, deleted, deleted, deleted, EMPTY_LIST, EMPTY_LIST);
     if (log.isTraceEnabled()) {
       StringBuilder text = new StringBuilder();
       text.append("end remove operation ").append(deleted.size());
       log.trace(text.toString());
+    }
+  }
+
+  /**
+   * Performs the set of updates to synchronize a data object graph with its
+   * persistent representation. The following steps are performed.
+   * <ul>
+   * <li>Remove all original objects from the hibernate cache.</li>
+   * <li>Remove all objects identified as deleted in the database.</li>
+   * <li>Insert all new objects in the database.</li>
+   * <li>Update all modified objects in the database.</li>
+   * </ul>
+   * @param originals the objects of the original graph available locally.
+   * @param copies the objects of the copied graph received from the client.
+   * @param sessionFactory database containing the requested objects.
+   * @param deletedObjects objects to delete in the database.
+   * @param insertedObjects objects to insert in the database.
+   * @param updatedObjects objects to update in the database.
+   * @pre (originals != null) && (copies != null) && (deletedObjects != null) &&
+   *      (insertedObjects != null) && (updatedObjects != null)
+   */
+  void update(SessionFactory sessionFactory, List<DataObject> originals,
+      List<DataObject> copies, List deletedObjects,
+      List<DataObject> insertedObjects, List<DataObject> updatedObjects) {
+    assert (originals != null) && (copies != null) && (deletedObjects != null)
+        && (insertedObjects != null) && (updatedObjects != null);
+
+    Session session = sessionFactory.getCurrentSession();
+
+    try {
+      session.beginTransaction();
+
+      for (Object item : deletedObjects) {
+        session.delete(item);
+      }
+
+      for (DataObject item : insertedObjects) {
+        item.setModified(false);
+        session.save(item);
+      }
+
+      for (DataObject item : updatedObjects) {
+        item.setModified(false);
+        session.saveOrUpdate(item);
+      }
+
+      session.getTransaction().commit();
+    } catch (RuntimeException e) {
+      log.error(e);
+      session.getTransaction().rollback();
+      throw e;
     }
   }
 }

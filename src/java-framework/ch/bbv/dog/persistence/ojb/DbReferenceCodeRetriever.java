@@ -30,7 +30,7 @@ public class DbReferenceCodeRetriever implements ReferenceCodeRetriever {
    * The persistence handler used to access the repository containing the
    * reference code.
    */
-  private PersistenceHandler handler;
+  private PersistenceHandlerOjb handler;
 
   /**
    * Name of the datasource containing the reference code.
@@ -42,7 +42,7 @@ public class DbReferenceCodeRetriever implements ReferenceCodeRetriever {
    * @param handler the persistence handler used to access the database.
    * @param datasource the name of the datasource containing the codes.
    */
-  public DbReferenceCodeRetriever(PersistenceHandler handler, String datasource) {
+  public DbReferenceCodeRetriever(PersistenceHandlerOjb handler, String datasource) {
     this.handler = handler;
     this.datasource = datasource;
   }

@@ -28,7 +28,7 @@ class HandlerPolicyManagedOjb extends HandlerPolicyOjb {
    * Constructor of the class.
    * @param databaseMgr the database manager on which the policy is applied.
    */
-  public HandlerPolicyManagedOjb(DatabaseMgr databaseMgr) {
+  public HandlerPolicyManagedOjb(DatabaseMgrOjb databaseMgr) {
     super(databaseMgr);
   }
 
