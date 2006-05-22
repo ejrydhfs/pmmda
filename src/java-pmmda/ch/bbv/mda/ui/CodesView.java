@@ -40,8 +40,9 @@ import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * The reference code values view displays all code values of a reference code
- * type. The code values are displayed as a list of values. The view supports a
- * popup menu with the following actions.
+ * type. The code values are displayed as a list of values. If the class is not
+ * a reference code the fields of the view are cleared and the popup menu is
+ * disabled. The view supports a popup menu with the following actions.
  * <dl>
  * <dt>Insert Row</dt>
  * <dd>Inserts a new row at the end of the table. The items can be sorted using
@@ -393,8 +394,11 @@ public class CodesView extends JPanel implements NodeView {
     if (clazz.hasStereotype(BoConstants.REFERENCE_CODE_STEREOTYPE)) {
       load();
       setMenuEnabled(true);
-      // TODO synchronize tagged values with code values
     } else {
+      nameText.setText(null);
+      hierarchical.setSelected(false);
+      storageKind.setSelectedCode(null);
+      tablePanel.setModel(Collections.emptyList());
       setMenuEnabled(false);
     }
   }
