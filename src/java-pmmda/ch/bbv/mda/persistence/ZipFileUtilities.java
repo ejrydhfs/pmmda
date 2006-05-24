@@ -49,7 +49,9 @@ public class ZipFileUtilities {
           temporaryFile));
       ZipEntry entry = input.getNextEntry();
       while (entry != null) {
-        output.putNextEntry(new ZipEntry(entry));
+      	ZipEntry zipEntry = new ZipEntry(entry);
+      	zipEntry.setCompressedSize(-1); // in case of different capability of the zip algorithm the output compressed size is different than the input compressed size. Thereof I set it here to undefined.
+        output.putNextEntry(zipEntry);
         if (!entry.getName().equals(entryName)) {
           IOUtils.copy(input, output);
         } else {
