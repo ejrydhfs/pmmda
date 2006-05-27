@@ -352,7 +352,7 @@ public class MetaModel extends MetaPackage {
     assert (model != null) && (qualifiedName != null);
     MetaClassifier classifier = model.findDatatype(qualifiedName);
     if (classifier == null) {
-      classifier = model.getClass(qualifiedName);
+      classifier = model.findClass(qualifiedName);
     }
     return classifier;
   }

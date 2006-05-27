@@ -16,6 +16,7 @@ import org.odmg.Database;
 
 import ch.bbv.dog.*;
 import ch.bbv.dog.persistence.CollectFunctor;
+import ch.bbv.dog.persistence.PersistenceHandler;
 
 /**
  * The data object persistence handler retrieves and stores data object graphs
@@ -35,14 +36,7 @@ import ch.bbv.dog.persistence.CollectFunctor;
  * @version $Revision$
  */
 
-public class PersistenceHandlerOjb implements DataObjectHandler {
-  /**
-   * The modes of the persistence handler.
-   */
-  public enum Mode {
-    REPLACE, SYNCHRONIZE, DETACH
-  }
-
+public class PersistenceHandlerOjb implements PersistenceHandler {
   /**
    * Logger for all instances of the class.
    */
@@ -171,12 +165,12 @@ public class PersistenceHandlerOjb implements DataObjectHandler {
   /**
    * Stores the data object root with replace mode. Modified objects will
    * replace the original ones.
-   * @param datasource name of the datasource containing the instances.
+   * @param datasource name of the datasource containing the instances
    * @param clazz class of the object to store. Used to store subclasses as
-   *          instances of a super class.
-   * @param root root object of the graph to store.
+   *          instances of a super class
+   * @param root root object of the graph to store
    * @return list of update information of the involved object which can be
-   *         propagated to the upper layer.
+   *         propagated to the upper layer
    */
   private List<DataObjectUpdate> storeReplace(String datasource, Class clazz,
       DataObject root) {
@@ -212,12 +206,12 @@ public class PersistenceHandlerOjb implements DataObjectHandler {
   /**
    * Stores the data object root with replace mode. Modified objects will
    * replace the original ones.
-   * @param datasource name of the datasource containing the instances.
+   * @param datasource name of the datasource containing the instances
    * @param clazz class of the object to store. Used to store subclasses as
-   *          instances of a super class.
-   * @param root root object of the graph to store.
+   *          instances of a super class
+   * @param root root object of the graph to store
    * @return list of update information of the involved object which can be
-   *         propagated to the upper layer.
+   *         propagated to the upper layer
    */
   private List<DataObjectUpdate> storeUpdate(String datasource, Class clazz,
       DataObject root) {
@@ -254,9 +248,9 @@ public class PersistenceHandlerOjb implements DataObjectHandler {
 
   /**
    * Returns the database with the given datasource name.
-   * @param datasource name of the datasource to be found.
-   * @return the database associated with the datasource.
-   * @throws MissingResourceException the requested database is unknown.
+   * @param datasource name of the datasource to be found
+   * @return the database associated with the datasource
+   * @throws MissingResourceException if the requested database is unknown
    */
   private Database getDatabase(String datasource)
       throws MissingResourceException {
@@ -269,11 +263,11 @@ public class PersistenceHandlerOjb implements DataObjectHandler {
   }
 
   /**
-   * Remvoes the data object graph.
-   * @param datasource datasouce containing the data objects to remove.
-   * @param clazz class of the root object.
-   * @param root root of the data object graph to remove.
-   * @param originalRoot root of the orginal data object graph to remove.
+   * Removes the data object graph.
+   * @param datasource datasouce containing the data objects to remove
+   * @param clazz class of the root object
+   * @param root root of the data object graph to remove
+   * @param originalRoot root of the orginal data object graph to remove
    */
   private void remove(String datasource, Class clazz, DataObject root,
       DataObject originalRoot) {
@@ -297,5 +291,4 @@ public class PersistenceHandlerOjb implements DataObjectHandler {
       log.trace(text.toString());
     }
   }
-
 }

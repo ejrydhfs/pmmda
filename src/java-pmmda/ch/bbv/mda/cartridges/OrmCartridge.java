@@ -305,9 +305,9 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
   /**
    * Returns the translated type name of the type of the property. The
    * translation of datatypes is handled.
-   * @param property property to infer.
-   * @param language language of the requested mapping.
-   * @return the component name of the property type.
+   * @param property property to infer
+   * @param language language of the requested mapping
+   * @return the component name of the property type
    * @pre (property != null) && (language != null)
    */
   public String getDatatype(MetaProperty property, String language) {

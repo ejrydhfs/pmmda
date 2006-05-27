@@ -17,7 +17,15 @@
 - Run each test application with the provided shell scripts.
 - Execute the sanity test cases - 2-tiers, CORBA, and J2EE -.
 
-1.1 Update web site
+1.1 Sanity Tests
+    ------------
+- Run pmMDA with example test and MySQL, JBoss, no DDL Utils
+- Run pmMDA with example test and Derby, JBoss, no DDL Utils
+- Run pmMDA with example test and MySQL, JBoss, DDL Utils
+- Run pmMDA with example test and Derby, JBoss, DDL Utils
+
+
+1.2 Update web site
     ---------------
 The list of external libraries used in the project must be updated in the site.
 Do not forget to update the version of the libraries.

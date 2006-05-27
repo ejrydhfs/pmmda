@@ -810,7 +810,7 @@ public class MdaTransformer {
 
     MClassifier item = null;
 
-    MetaClass mc = metaModel.getClass(name);
+    MetaClass mc = metaModel.findClass(name);
     if (mc != null) {
       item = (MClassifier) elements.get(mc);
       if (item == null) {
@@ -895,7 +895,7 @@ public class MdaTransformer {
     myClass.setMultiplicity(MMultiplicity.M1_1);
 
     myClass.setType((MClassifier) elements.get(source.getContext()));
-    Object o = elements.get(source.getModel().getClass(source.getTypeName()));
+    Object o = elements.get(source.getModel().findClass(source.getTypeName()));
     if (o == null) {
       o = findDataType(source.getTypeName());
     }

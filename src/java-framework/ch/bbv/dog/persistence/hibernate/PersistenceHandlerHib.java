@@ -12,6 +12,7 @@ import org.hibernate.SessionFactory;
 
 import ch.bbv.dog.*;
 import ch.bbv.dog.persistence.CollectFunctor;
+import ch.bbv.dog.persistence.PersistenceHandler;
 
 /**
  * The data object persistence handler retrieves and stores data object graphs
@@ -32,7 +33,7 @@ import ch.bbv.dog.persistence.CollectFunctor;
  * @version $Revision$
  */
 
-public class PersistenceHandlerHib implements DataObjectHandler {
+public class PersistenceHandlerHib implements PersistenceHandler {
 
   /**
    * The Hibernate Database Manager

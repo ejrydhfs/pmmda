@@ -61,7 +61,7 @@ public class JavaCartridge extends CartridgeImpl implements Cartridge {
    * @return true if the property type is a data object otherwise false.
    */
   public boolean isDataobject(MetaProperty property) {
-    MetaClass clazz = property.getModel().getClass(property.getTypeName());
+    MetaClass clazz = property.getModel().findClass(property.getTypeName());
     return (clazz != null) && clazz.hasStereotype(DATA_OBJECT_STEREOTYPE);
   }
 
@@ -71,7 +71,7 @@ public class JavaCartridge extends CartridgeImpl implements Cartridge {
    * @return true if the property type is a reference code otherwise false.
    */
   public boolean isReferenceCode(MetaProperty property) {
-    MetaClass clazz = property.getModel().getClass(property.getTypeName());
+    MetaClass clazz = property.getModel().findClass(property.getTypeName());
     return (clazz != null) && clazz.hasStereotype(REFERENCE_CODE_STEREOTYPE);
   }
 

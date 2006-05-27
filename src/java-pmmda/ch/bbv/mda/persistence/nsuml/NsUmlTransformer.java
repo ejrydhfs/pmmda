@@ -234,7 +234,7 @@ public class NsUmlTransformer extends ExternalTransformer {
       return;
     }
 
-    MetaClass metaNestedClass = context.getModel().getClass(name);
+    MetaClass metaNestedClass = context.getModel().findClass(name);
     if (metaNestedClass == null) {
       metaNestedClass = new MetaClass();
       metaNestedClass.setName(name);

@@ -22,7 +22,8 @@ import ch.bbv.cmdlineparser.CmdLineBuilder;
 import ch.bbv.dnm.users.TypeFactory;
 import ch.bbv.dog.DataObjectMgr;
 import ch.bbv.dog.LightweightObjectHandlerImpl;
-import ch.bbv.dog.persistence.ojb.PersistenceHandler;
+import ch.bbv.dog.persistence.PersistenceHandler;
+import ch.bbv.dog.persistence.ojb.PersistenceHandlerOjb;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -183,12 +184,12 @@ public class UserApplication extends Application {
         .valueOf(synchronization);
     if (mode.equalsIgnoreCase(USE_DIRECT)) {
       log.info("Application started in direct mode");
-      manager = new DataObjectMgr(new PersistenceHandler(false, sync),
+      manager = new DataObjectMgr(new PersistenceHandlerOjb(false, sync),
           new LightweightObjectHandlerImpl(), null, USERS_DATABASE);
       setDataObjectMgr(manager);
     } else if (mode.equalsIgnoreCase(USE_CORBA)) {
       log.info("Application started in CORBA mode");
-      manager = new DataObjectMgr(new PersistenceHandler(false, sync),
+      manager = new DataObjectMgr(new PersistenceHandlerOjb(false, sync),
           new LightweightObjectHandlerImpl(), null, USERS_DATABASE);
       setDataObjectMgr(manager);
       orb = ORB.init(args, null);
@@ -196,7 +197,7 @@ public class UserApplication extends Application {
       createCorbaServer("ch.bbv.dnm.users.server.UsersServerCorba");
     } else if (mode.equalsIgnoreCase(USE_J2EE)) {
       log.info("Application started in J2EE mode");
-      manager = new DataObjectMgr(new PersistenceHandler(true, sync),
+      manager = new DataObjectMgr(new PersistenceHandlerOjb(true, sync),
           new LightweightObjectHandlerImpl(), null, USERS_DATABASE);
       setDataObjectMgr(manager);
     }
