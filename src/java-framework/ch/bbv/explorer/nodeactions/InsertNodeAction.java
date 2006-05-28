@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann
+/* copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -17,24 +17,26 @@ import ch.bbv.explorer.UiRelation;
  */
 public class InsertNodeAction extends AbstractNodeAction {
   /**
-   * Serial version identifier coded as back compatibility date.
+   * Unique serial version identifier for the instances of the class.
    */
-  private static final long serialVersionUID = 20041201;
+  private static final long serialVersionUID = 3170799718449101001L;
 
   /**
    * Constructor of the class.
-   * @param type node type for which the action is defined.
+   * @param type node type for which the action is defined
    * @param name name of the action. If the action is an add, the name must be
-   *        the name of the property.
+   *          the name of the property
    */
   public InsertNodeAction(UiNodeType type, String name) {
     super(type, name, true);
   }
 
+  @Override
   public void execute(ExplorerNode node) {
     createNode((ExplorerNode) node.getParent(), node.getNodeType());
   }
 
+  @Override
   public void postExecute(ExplorerNode node, boolean shouldUndo) {
     if (shouldUndo) {
       ((ExplorerNode) node.getParent()).remove(node);

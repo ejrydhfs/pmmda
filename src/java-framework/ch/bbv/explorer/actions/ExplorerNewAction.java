@@ -16,11 +16,6 @@ import ch.bbv.explorer.Explorer;
  */
 public abstract class ExplorerNewAction extends ExplorerGlobalActionImpl {
   /**
-   * Serial version identifier coded as back compatibility date.
-   */
-  private static final long serialVersionUID = 20041201;
-
-  /**
    * Name of the action as displayed in the menu.
    */
   private static final String ACTION = "New";

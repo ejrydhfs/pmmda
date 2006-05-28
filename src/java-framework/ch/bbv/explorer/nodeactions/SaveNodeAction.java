@@ -1,5 +1,5 @@
 /* 
- * copyright 2000-2005 Marcel Baumann
+ * copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -24,20 +24,21 @@ import ch.bbv.explorer.actions.ExplorerNodeActionImpl;
  */
 public class SaveNodeAction extends ExplorerNodeActionImpl {
   /**
-   * Serial version identifier coded as back compatibility date.
+   * Unique serial version identifier for the instances of the class.
    */
-  private static final long serialVersionUID = 20041201;
+  private static final long serialVersionUID = -6678344505297219608L;
 
   /**
    * Constructor of the class.
-   * @param type node type for which the action is defined.
+   * @param type node type for which the action is defined
    * @param name name of the action. If the action is an add, the name must be
-   *          the name of the property.
+   *          the name of the property
    */
   public SaveNodeAction(UiNodeType type, String name) {
     super(name, type);
   }
 
+  @Override
   public void execute(ExplorerNode node) {
     DataObject object = node.getDataObject();
     ExplorerNodeOwner owner = node.getNodeOwner();
@@ -51,14 +52,15 @@ public class SaveNodeAction extends ExplorerNodeActionImpl {
     } else {
       DataObjectType type = node.getNodeType().getDataObjectType();
       DataObjectHandler handler = owner.getManager().getDataObjectHandler();
-      handler.store(owner.getManager().getDatasource(), type.getBoClass(), object);
+      handler.store(owner.getManager().getDatasource(), type.getBoClass(),
+          object);
     }
   }
 
   /**
    * Returns true if the node has an owning root which is not not new.
-   * @param node node to infer.
-   * @return true if a root node was found otherwise false.
+   * @param node node to infer
+   * @return true if a root node was found otherwise false
    */
   private boolean hasRootOwner(ExplorerNode node) {
     ExplorerNode root = node;

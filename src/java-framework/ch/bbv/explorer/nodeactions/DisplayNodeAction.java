@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann
+/* copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -17,19 +17,20 @@ import ch.bbv.explorer.UiNodeType;
  */
 public class DisplayNodeAction extends AbstractNodeAction {
   /**
-   * Serial version identifier coded as back compatibility date.
+   * Unique serial version identifier for the instances of the class.
    */
-  private static final long serialVersionUID = 20041201;
-  
+  private static final long serialVersionUID = -4702552733845432697L;
+
   /**
    * Constructor of the class.
-   * @param type node type for which the action is defined.
-   * @param name name of the view to display. 
+   * @param type node type for which the action is defined
+   * @param name name of the view to display
    */
   public DisplayNodeAction(UiNodeType type, String name) {
     super(type, name, false);
   }
 
+  @Override
   public void execute(ExplorerNode node) {
     displayView(node, false, false);
   }

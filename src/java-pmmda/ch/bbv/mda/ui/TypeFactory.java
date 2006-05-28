@@ -1,5 +1,5 @@
 /* 
- * copyright 2000-2005 Marcel Baumann
+ * copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -51,7 +51,7 @@ public class TypeFactory extends AbstractTypeFactory {
     DataObjectType type = new DataObjectType(MetaModel.class, MetaModel.class,
         MetaModel.class, VisitorFunctor.class, VisitorFunctor.class, null);
     type.setRoot(true);
-
+    
     UiNodeTypeImpl nodeType = new UiNodeTypeImpl(type, "name",
         MetaModelView.class);
     addRelation(nodeType, "packages", MetaPackage.class, true, true);
@@ -76,6 +76,7 @@ public class TypeFactory extends AbstractTypeFactory {
         MetaPackage.class, MetaPackage.class, VisitorFunctor.class,
         VisitorFunctor.class, null);
     type.setRoot(true);
+    
     UiNodeTypeImpl nodeType = new UiNodeTypeImpl(type, "name",
         MetaPackageView.class);
     addRelation(nodeType, "classes", MetaClass.class, true, true);
@@ -98,6 +99,7 @@ public class TypeFactory extends AbstractTypeFactory {
     DataObjectType type = new DataObjectType(MetaClass.class, MetaClass.class,
         MetaClass.class, VisitorFunctor.class, VisitorFunctor.class, null);
     type.setRoot(true);
+    
     UiNodeTypeImpl nodeType = new UiNodeTypeImpl(type, "name",
         MetaClassView.class);
     addRelation(nodeType, "properties", MetaProperty.class, true, true);
@@ -125,6 +127,7 @@ public class TypeFactory extends AbstractTypeFactory {
     DataObjectType type = new DataObjectType(MetaProperty.class,
         MetaProperty.class, MetaProperty.class, VisitorFunctor.class,
         VisitorFunctor.class, null);
+    
     UiNodeTypeImpl nodeType = new UiNodeTypeImpl(type, "name",
         MetaPropertyView.class);
     nodeType.registerView(new UiNodeViewType("default", nodeType,
@@ -140,6 +143,7 @@ public class TypeFactory extends AbstractTypeFactory {
     DataObjectType type = new DataObjectType(MetaIndexedProperty.class,
         MetaIndexedProperty.class, MetaIndexedProperty.class,
         VisitorFunctor.class, VisitorFunctor.class, null);
+    
     UiNodeTypeImpl nodeType = new UiNodeTypeImpl(type, "name",
         MetaPropertyView.class);
     nodeType.registerView(new UiNodeViewType("default", nodeType,
@@ -153,14 +157,14 @@ public class TypeFactory extends AbstractTypeFactory {
    */
   public void createNodeTypeForMetaDataType() {
     DataObjectType type = new DataObjectType(MetaDatatype.class,
-        MetaDatatype.class, MetaDatatype.class,
-        VisitorFunctor.class, VisitorFunctor.class, null);
+        MetaDatatype.class, MetaDatatype.class, VisitorFunctor.class,
+        VisitorFunctor.class, null);
+    
     UiNodeTypeImpl nodeType = new UiNodeTypeImpl(type, "name",
-        MetaDatatypeView.class); // Adrian
+        MetaDatatypeView.class);
     nodeType.registerView(new UiNodeViewType("default", nodeType,
         NodeTableView.class, null, true));
     register(type, nodeType, new PopupSelectorDefault(nodeType),
         new SimpleIconSelector("datatype"));
   }
-
 }

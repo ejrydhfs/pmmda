@@ -1,5 +1,5 @@
 /* 
- * copyright 2000-2005 Marcel Baumann
+ * copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -31,9 +31,9 @@ import ch.bbv.mda.ui.MdaExplorer;
  */
 public class ValidateNodeAction extends AbstractNodeAction {
   /**
-   * Serial version identifier coded as back compatibility date.
+   * Unique serial version identifier for the instances of the class.
    */
-  private static final long serialVersionUID = 20041201;
+  private static final long serialVersionUID = 8665244713385388052L;
 
   /**
    * Logger of the instances of the class.
@@ -47,16 +47,17 @@ public class ValidateNodeAction extends AbstractNodeAction {
 
   /**
    * Constructor of the class.
-   * @param type node type for which the action is defined.
+   * @param type node type for which the action is defined
    * @param name name of the action. If the action is an add, the name must be
-   *          the name of the property.
-   * @param validator validator used to validate the data object graph.
+   *          the name of the property
+   * @param validator validator used to validate the data object graph
    */
   public ValidateNodeAction(UiNodeType type, String name, Validator validator) {
     super(type, name, false);
     this.validator = validator;
   }
 
+  @Override
   public void execute(ExplorerNode node) {
     DataObject object = node.getDataObject();
     if (object != null) {

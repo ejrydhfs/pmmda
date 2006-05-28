@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann
+/* copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -63,7 +63,7 @@ public class MdaApplication extends Application {
 
   /**
    * Entry point of the application.
-   * @param args command line arguments.
+   * @param args command line arguments
    */
   public static void main(String[] args) {
     try {
@@ -76,7 +76,7 @@ public class MdaApplication extends Application {
 
   /**
    * Convenience method returning the locator instace as an application.
-   * @return the singleton locator as application instance.
+   * @return the singleton locator as application instance
    */
   public static MdaApplication getApplication() {
     return (MdaApplication) Locator.getInstance();
@@ -84,9 +84,9 @@ public class MdaApplication extends Application {
 
   /**
    * Constructor of the class.
-   * @param args command line arguments.
+   * @param args command line arguments
    * @throws ComponentException occured when creating and starting the
-   *           application.
+   *           application
    */
   public MdaApplication(String[] args) throws ComponentException {
     MdaApplication.args = args;
@@ -119,7 +119,7 @@ public class MdaApplication extends Application {
 
   /**
    * Returns the resources manager of the application.
-   * @return the resources manager of the application.
+   * @return the resources manager of the application
    */
   public ResourcesManager getResourcesManager() {
     Locator locator = Locator.getInstance();
@@ -128,7 +128,7 @@ public class MdaApplication extends Application {
 
   /**
    * Returns the validator of the application.
-   * @return the validator of the application.
+   * @return the validator of the application
    */
   public Validator getValidator() {
     Locator locator = Locator.getInstance();
@@ -137,7 +137,7 @@ public class MdaApplication extends Application {
 
   /**
    * Returns the cartridge factory of the application.
-   * @return the cartridge factory of the application.
+   * @return the cartridge factory of the application
    */
   public CartridgeFactory getCartridgeFactory() {
     Locator locator = Locator.getInstance();
@@ -146,7 +146,7 @@ public class MdaApplication extends Application {
 
   /**
    * Returns the properties of the application.
-   * @return properties of the application.
+   * @return properties of the application
    */
   public Properties getProperties() {
     return properties;
@@ -154,7 +154,7 @@ public class MdaApplication extends Application {
 
   /**
    * Returns the explorer associated with pmMDA.
-   * @return the explorer of the application.
+   * @return the explorer of the application
    */
   public Explorer getExplorer() {
     return explorer;
@@ -162,8 +162,8 @@ public class MdaApplication extends Application {
 
   /**
    * Reads the properties of the application.
-   * @param resource name of the resource containing the properties.
-   * @return the read properties if sucessful otherwise null.
+   * @param resource name of the resource containing the properties
+   * @return the read properties if sucessful otherwise null
    */
   public static Properties readProperties(String resource) {
     PropertiesConfiguration properties = null;

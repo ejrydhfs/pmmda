@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann
+/* copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -24,20 +24,21 @@ import ch.bbv.explorer.UiNodeType;
  */
 public class ReloadNodeAction extends AbstractNodeAction {
   /**
-   * Serial version identifier coded as back compatibility date.
+   * Unique serial version identifier for the instances of the class.
    */
-  private static final long serialVersionUID = 20041201;
+  private static final long serialVersionUID = 7020308297035887768L;
 
   /**
    * Constructor of the class.
-   * @param type node type for which the action is defined.
+   * @param type node type for which the action is defined
    * @param name name of the action. If the action is an add, the name must be
-   *          the name of the property.
+   *          the name of the property
    */
   public ReloadNodeAction(UiNodeType type, String name) {
     super(type, name, false);
   }
 
+  @Override
   public void execute(ExplorerNode node) {
     DataObject object = node.getDataObject();
     ExplorerNodeOwner owner = node.getNodeOwner();
@@ -49,7 +50,8 @@ public class ReloadNodeAction extends AbstractNodeAction {
       } else {
         CachesHandler handler = (CachesHandler) owner.getManager()
             .getDataObjectHandler();
-        DataObject root = handler.reload(owner.getManager().getDatasource(), object);
+        DataObject root = handler.reload(owner.getManager().getDatasource(),
+            object);
         updateNavigator(node, root, root);
       }
     }

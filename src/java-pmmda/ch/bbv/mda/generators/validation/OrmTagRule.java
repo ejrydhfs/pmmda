@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann
+/* copyright 2000-2006s Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -88,7 +88,9 @@ public class OrmTagRule extends TagRule {
    * The following rules are defined for the element.
    * <ul>
    * <li>If the property is persistent, it must have a column name.</li>
-   * <li>If the property is persistent, it must have a JDBC type.</li>
+   * <li>If the property is persistent, it must have a JDBC type or its
+   * classifier must define the necessary attribute ORM_TYPE_SQL and
+   * ORM_TYPE_JDBC.</li>
    * <li>If the JDBC type is string, it must have a size.</li>
    * <li>If the JDBC type is not string, it should not have a size.</li>
    * <li>If the property is locking, its JDBC type must be either integer or
@@ -107,15 +109,21 @@ public class OrmTagRule extends TagRule {
         addErrorMessage(results, ERROR_MISSING_COLUMN, COLUMN_NAME, property
             .getQualifiedName());
       }
-      if (!property.getClassifier().hasStereotype(BoConstants.DATA_OBJECT_STEREOTYPE)) {
+      MetaClassifier classifier = property.getClassifier();
+      if (!classifier.hasStereotype(BoConstants.DATA_OBJECT_STEREOTYPE)) {
         if (!exists(property, COLUMN_TYPE)) {
-          sucess = false;
-          addErrorMessage(results, ERROR_MISSING_TYPE, COLUMN_TYPE, property
-              .getQualifiedName());
+          if ((classifier.getAttribute(OrmConstants.ORM_TYPE_SQL) == null)
+              || (classifier.getAttribute(OrmConstants.ORM_TYPE_JDBC) == null)) {
+            sucess = false;
+            addErrorMessage(results, ERROR_MISSING_TYPE, COLUMN_TYPE, property
+                .getQualifiedName());
+          }
         }
         String value = property.valueOfTag(COLUMN_TYPE);
-        if (value != null && (value.equalsIgnoreCase(JdbcTypeCode.VARCHAR.getShortDescription())
-            || value.equalsIgnoreCase(JdbcTypeCode.CHAR.getShortDescription()))) {
+        if (value != null
+            && (value.equalsIgnoreCase(JdbcTypeCode.VARCHAR
+                .getShortDescription()) || value
+                .equalsIgnoreCase(JdbcTypeCode.CHAR.getShortDescription()))) {
           if (!exists(property, COLUMN_SIZE)) {
             sucess = false;
             addErrorMessage(results, ERROR_MISSING_LENGTH, COLUMN_SIZE,

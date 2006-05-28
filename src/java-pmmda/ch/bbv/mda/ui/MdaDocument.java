@@ -51,7 +51,7 @@ public class MdaDocument extends ExplorerDocumentImpl implements
 
   /**
    * Returns the MDA model of the document.
-   * @return the MDA model property.
+   * @return the MDA model property
    */
   public MetaModel getModel() {
     return model;
@@ -59,8 +59,8 @@ public class MdaDocument extends ExplorerDocumentImpl implements
 
   /**
    * Loads the MDA model and initializes the associated resources.
-   * @param file file containing the MDA model.
-   * @throws PersistenceException if model could not be written.
+   * @param file file containing the MDA model
+   * @throws PersistenceException if model could not be written
    */
   public void load(File file) throws PersistenceException {
     assert file != null;
@@ -82,8 +82,8 @@ public class MdaDocument extends ExplorerDocumentImpl implements
 
   /**
    * Saves the MDA model and the associated resources.
-   * @throws PersistenceException if model could not be written.
-   * @throws IOException if code values could not be written.
+   * @throws PersistenceException if model could not be written
+   * @throws IOException if code values could not be written
    */
   public void save() throws PersistenceException, IOException {
     PersistenceHandlerFactory factory = new PersistenceHandlerFactory();
@@ -96,9 +96,9 @@ public class MdaDocument extends ExplorerDocumentImpl implements
 
   /**
    * Saves the MDA model and the associated resources in the new file.
-   * @param file file in which the model should be saved.
-   * @throws PersistenceException if model could not be written.
-   * @throws IOException if code values could not be written.
+   * @param file file in which the model should be saved
+   * @throws PersistenceException if model could not be written
+   * @throws IOException if code values could not be written
    */
   public void saveAs(File file) throws PersistenceException, IOException {
     PersistenceHandlerFactory factory = new PersistenceHandlerFactory();
