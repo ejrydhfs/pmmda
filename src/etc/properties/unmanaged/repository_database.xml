@@ -1,4 +1,5 @@
-<!--  configuration to run MySQL on the local machine using schema OJB 
+<!--  configuration to run MySQL on the local machine using schema OJB -->
+<!-- 
 <jdbc-connection-descriptor jcd-alias="orm-dnm" default-connection="true"
   platform="MySQL" jdbc-level="3.0" eager-release="false" batch-mode="false"
   useAutoCommit="1" ignoreAutoCommitExceptions="false"

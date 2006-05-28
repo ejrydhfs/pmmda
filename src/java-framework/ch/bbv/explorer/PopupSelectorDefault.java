@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann
+/* copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -7,6 +7,7 @@
 package ch.bbv.explorer;
 
 import java.util.Collection;
+import java.util.List;
 
 import javax.swing.JMenu;
 import javax.swing.JPopupMenu;
@@ -33,16 +34,52 @@ public class PopupSelectorDefault implements PopupSelector {
   private UiNodeType type;
 
   /**
-   * Constructor of the class.
-   * @param type user interface node type to which the selector is associated
-   *          to.
+   * Validation action for the node type.
+   */
+  private AbstractNodeAction validate;
+
+  /**
+   * Specific actions for the node type.
+   */
+  private List<AbstractNodeAction> actions;
+
+  /**
+   * Constructor of the class. A default validation action and no node specific
+   * actions are created.
+   * @param type user interface node type the selector is associated to
+   * @pre type != null
    */
   public PopupSelectorDefault(UiNodeType type) {
+    this(type, null, null);
+  }
+
+  /**
+   * Constructor of the class.
+   * @param type user interface node type the selector is associated to
+   * @param validate the validate action to use. If null the default validate
+   *          action is created under the condition that a validator component
+   *          is defined in the application
+   * @param actions specific actions to the user interface node type
+   * @pre type != null
+   */
+  public PopupSelectorDefault(UiNodeType type, AbstractNodeAction validate,
+      List<AbstractNodeAction> actions) {
+    assert type != null;
     this.type = type;
+    if (validate == null) {
+      Validator validator = (Validator) Locator.getInstance().getComponent(
+          Validator.NAME);
+      if (validator != null) {
+        this.validate = new ValidateNodeAction(type, "Validate", validator);
+      }
+    } else {
+      this.validate = validate;
+    }
+    this.actions = actions;
   }
 
   public JPopupMenu select(ExplorerNode node) {
-    assert (node.getNodeType() == type);
+    assert node.getNodeType() == type;
     if (menu == null) {
       UiNodeType type = node.getNodeType();
       menu = new JPopupMenu();
@@ -53,7 +90,6 @@ public class PopupSelectorDefault implements PopupSelector {
       Collection<UiRelation> relations = type.getRelations();
       if (relations.size() > 0) {
         menu.addSeparator();
-
         UiNodeTypeFactory factory = type.getFactory();
         JMenu createMenu = new JMenu("Add...");
         for (UiRelation relation : relations) {
@@ -77,24 +113,27 @@ public class PopupSelectorDefault implements PopupSelector {
   }
 
   /**
-   * Creates the menu of actions for a root node. The validator is only added if
-   * a validator component is available.
-   * @param type node tzpe for which the root node actions shold be created.
-   * @return the menu of actions available to a root node.
+   * Creates the menu of actions for a root node.
+   * @param type node tzpe for which the root node actions shold be created
+   * @return the menu of actions available to a root node
    */
   private JMenu createRootNodeActions(UiNodeType type) {
-    JMenu actions = new JMenu("Actions...");
-    actions.add(new ExpandNodeAction(type, "Expand All"));
-    actions.add(new CollapseNodeAction(type, "Collapse All"));
-    Validator validator = (Validator) Locator.getInstance().getComponent(
-        Validator.NAME);
-    if (validator != null) {
-      actions.add(new ValidateNodeAction(type, "Validate", validator));
+    JMenu actionsMenu = new JMenu("Actions...");
+    actionsMenu.add(new ExpandNodeAction(type, "Expand All"));
+    actionsMenu.add(new CollapseNodeAction(type, "Collapse All"));
+    if (validate != null) {
+      actionsMenu.add(validate);
+    }
+    if ((actions != null) && (actions.size() > 0)) {
+      menu.addSeparator();
+      for (AbstractNodeAction action : actions) {
+        actionsMenu.add(action);
+      }
     }
     menu.addSeparator();
-    actions.add(new SaveNodeAction(type, "Save"));
-    actions.add(new RevertNodeAction(type, "Revert"));
-    actions.add(new ReloadNodeAction(type, "Reload"));
-    return actions;
+    actionsMenu.add(new SaveNodeAction(type, "Save"));
+    actionsMenu.add(new RevertNodeAction(type, "Revert"));
+    actionsMenu.add(new ReloadNodeAction(type, "Reload"));
+    return actionsMenu;
   }
 }

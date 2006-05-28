@@ -5,7 +5,7 @@ set LIB=../../test-lib/
 set CP=%LIB%derby-10.1.2.1.jar;%LIB%derbytools-10.1.2.1.jar;.
 set JDBC_DRIVER=-Djdbc.drivers=org.apache.derby.jdbc.EmbeddedDriver
 set JDBC_URL=-Dij.connection.myConn=jdbc:derby:%DATABASE_PATH%%DATABASE_NAME%;
-set OUTPUTFILE=-Dij.outfile=out.txt
+set OUTPUTFILE=-Dij.outfile=createDerbyDB.txt
 set SQL_PATH=../../gendir/orm-server/
 
 REM create the database, the schema, the tables, and the integrity rules
