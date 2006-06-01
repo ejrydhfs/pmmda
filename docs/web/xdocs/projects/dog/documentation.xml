@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   Copyright 2000-2005 The Apache Software Foundation
-
+  
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-
-      http://www.apache.org/licenses/LICENSE-2.0
-
+  
+  http://www.apache.org/licenses/LICENSE-2.0
+  
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,20 +23,72 @@
   <body>
     <section>
       <title>Whitepapers and Articles</title>
-      <p>White papers and in depth articles describing architectural decisions 
-        and implementation details are available.</p>
+      <p>
+        White papers and in depth articles describing architectural decisions
+        and implementation details are available.
+      </p>
       <p>Please consult the articles section of this site.</p>
     </section>
     <section>
       <title>Links</title>
-      <p>The data object graph framework and the associated explorer 
-        visualization framework are influenced by the works of talented 
-        persons.</p>
+      <p>
+        The data object graph framework and the associated explorer
+        visualization framework are influenced by the works of talented persons.
+      </p>
       <ul>
-        <li>The agile approach of <em>Scott Myers</em> reflect the approach the 
-          development group has. Valuable information can be found under 
-          <em>http://www.agiledata.org</em></li>
+        <li>
+          The agile approach of
+          <em>Scott Myers</em>
+          reflect the approach the development group has. Valuable information
+          can be found under
+          <em>http://www.agiledata.org</em>
+        </li>
       </ul>
+    </section>
+    <section>
+      <title>Design Considerations</title>
+      <p>
+        All messages and user interface texts must be defined in resource
+        bundles. The usual mechanisms can be used to load the desired
+        localization. But we do not want to use strings references in the source
+        code and so we should aim for applications with "no string references
+        attached.". This approach allows refactoring with conventional tools and
+        is brittle. All texts are defined through properties classes and
+        instance variables. The variables are strings or arrays of strings. This
+        approach was documented on the
+        <a href="http://java.net">Java Net</a>
+        by Evan Summer. Utilities are provided to generate resource bundles,
+        properties files and to verify that a translation provides all the
+        definitions.
+      </p>
+      <p>
+        We introduce a phased approach for translating an application. First, we
+        move strings into a message class. This is achieved by cutting and
+        pasting strings out of application classes into the message class.
+        Additionally, an existing resource bundle, as produced by IDE might be
+        merged into the messages class, with the assistance of some trivial code
+        generation. We recommend one class per major package to have clear
+        grouping, scalable applications, and no class inflation.
+      </p>
+      <p>
+        This first phase enables us to ensure neat and consistent naming of the
+        keys we use to reference messages. For example, we can readily rename
+        the message keys using IDE refactorings, to correct spelling mistakes
+        and inconsistent naming conventions.
+      </p>
+      <p>
+        The next phase is to generate the master resource bundle from the
+        message class. We use reflection on the message class to generate the
+        key/value pairs, which we cut and paste into the master resource bundle
+        file. After this stage, the resource bundle can be translated into
+        multiple languages.
+      </p>
+      <p>
+        At startup, the application loads the resource bundle for the current
+        locale, and uses reflection to configure the message class from the
+        resource bundle. This offers a mechanism to ensure that the resource
+        bundle is consistent, ie. there are no strings that remain untranslated.
+      </p>
     </section>
   </body>
 </document>

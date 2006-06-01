@@ -29,6 +29,7 @@ import ch.bbv.explorer.about.Contributor;
 import ch.bbv.explorer.about.Licences;
 import ch.bbv.explorer.actions.ExplorerAboutAction;
 import ch.bbv.explorer.actions.ExplorerExitAction;
+import ch.bbv.explorer.properties.Messages;
 import ch.bbv.pim.AddressBook;
 import ch.bbv.pim.client.TypeFactory;
 import ch.bbv.pim.lw.AddressBookLw;
@@ -145,12 +146,12 @@ public class PimExplorer extends Explorer {
     ExplorerMenuBar menuBar = new ExplorerMenuBar(this);
     setMenuBar(menuBar);
 
-    JMenu menu = menuBar.getMenu(ExplorerMenuBar.HELP_MENU);
+    JMenu menu = menuBar.getMenu(Messages.menuHelp);
     ExplorerAboutAction aboutAction = new ExplorerAboutAction(this);
     aboutAction.setProjectInfo(getProjectInfo());
     menu.add(new JMenuItem(aboutAction));
 
-    menu = menuBar.getMenu(ExplorerMenuBar.FILE_MENU);
+    menu = menuBar.getMenu(Messages.menuFile);
     menuBar.addStandardAction(menu, Names.NEW, new NewAction(this));
     menuBar.addStandardAction(menu, Names.OPEN, new OpenAction(this));
     menu.addSeparator();
