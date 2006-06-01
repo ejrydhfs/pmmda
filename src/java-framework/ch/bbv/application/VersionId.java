@@ -1,5 +1,5 @@
 /* 
- * copyright 2000-2005 Marcel Baumann
+ * copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -8,7 +8,7 @@ package ch.bbv.application;
 
 /**
  * The version identifier class defines the concept of versions for various
- * items. A version has three fields.
+ * items. A version has four fields.
  * <dl>
  * <dt>Major version identifier</dt>
  * <dd>identifies the main version of the item</dd>
@@ -16,6 +16,8 @@ package ch.bbv.application;
  * <dd>identifies the minor version of the item within a major version.</dd>
  * <dt>Patch version identifier</dt>
  * <dd>identifies the patch level of the item within a minor version.</dd>
+ * <dt>Postfix</dt>
+ * <dd>A optional text defining additional information</dd>
  * </dl>
  * Two versions of an item are fully compatible if their major and minor
  * versions are the same. These two items are at least partially compatible if
@@ -65,11 +67,11 @@ public class VersionId implements Comparable {
 
   /**
    * Constructor of the class. All variables are initialized.
-   * @param majorVersionId major version identifier.
-   * @param minorVersionId minor version identifier.
-   * @param patchVersionId patch version identifier.
+   * @param majorVersionId major version identifier
+   * @param minorVersionId minor version identifier
+   * @param patchVersionId patch version identifier
    * @param postfix postfix information of the version, for example release
-   *          candidate information.
+   *          candidate information
    */
   public VersionId(int majorVersionId, int minorVersionId, int patchVersionId,
       String postfix) {
@@ -81,9 +83,9 @@ public class VersionId implements Comparable {
 
   /**
    * Constructor of the class. All variables are initialized.
-   * @param majorVersionId major version identifier.
-   * @param minorVersionId minor version identifier.
-   * @param patchVersionId patch version identifier.
+   * @param majorVersionId major version identifier
+   * @param minorVersionId minor version identifier
+   * @param patchVersionId patch version identifier
    */
   public VersionId(int majorVersionId, int minorVersionId, int patchVersionId) {
     this(majorVersionId, minorVersionId, patchVersionId, null);
@@ -91,7 +93,7 @@ public class VersionId implements Comparable {
 
   /**
    * Sets the new value of the requested field.
-   * @param majorVersionId new value of the major version identifier.
+   * @param majorVersionId new value of the major version identifier
    * @see #getMajorVersionId()
    */
   public void setMajorVersionId(int majorVersionId) {
@@ -100,7 +102,7 @@ public class VersionId implements Comparable {
 
   /**
    * Sets the new value of the requested field.
-   * @param minorVersionId new value of the minor version identifier.
+   * @param minorVersionId new value of the minor version identifier
    * @see #getMinorVersionId()
    */
   public void setMinorVersionId(int minorVersionId) {
@@ -109,7 +111,7 @@ public class VersionId implements Comparable {
 
   /**
    * Sets the new value of the requested field.
-   * @param patchVersionId new value of the patch version identifier.
+   * @param patchVersionId new value of the patch version identifier
    * @see #getPatchVersionId()
    */
   public void setPatchVersionId(int patchVersionId) {
@@ -118,7 +120,7 @@ public class VersionId implements Comparable {
 
   /**
    * Sets the new value of the requested field.
-   * @param postfix new value of the postfix.
+   * @param postfix new value of the postfix
    * @see #getPostfix()
    */
   public void setPostfix(String postfix) {
@@ -127,7 +129,7 @@ public class VersionId implements Comparable {
 
   /**
    * Returns the value of the requested field.
-   * @return requested field identifier value.
+   * @return requested field identifier value
    * @see #setMajorVersionId(int)
    */
   public int getMajorVersionId() {
@@ -136,7 +138,7 @@ public class VersionId implements Comparable {
 
   /**
    * Returns the value of the requested field.
-   * @return requested field identifier value.
+   * @return requested field identifier value
    * @see #setMinorVersionId(int)
    */
   public int getMinorVersionId() {
@@ -145,7 +147,7 @@ public class VersionId implements Comparable {
 
   /**
    * Returns the value of the requested field.
-   * @return requested field identifier value.
+   * @return requested field identifier value
    * @see #setPatchVersionId(int)
    */
   public int getPatchVersionId() {
@@ -154,7 +156,7 @@ public class VersionId implements Comparable {
 
   /**
    * Returns the value of the requested field.
-   * @return requested field identifier value.
+   * @return requested field identifier value
    * @see #setPostfix(String)
    */
   public String getPostfix() {
@@ -163,7 +165,7 @@ public class VersionId implements Comparable {
 
   /**
    * Returns true if the version identifier is illegal otherwise false.
-   * @return result of the inquiry.
+   * @return result of the inquiry
    */
   public boolean isIllegal() {
     return (majorVersionId == ILLEGALVERSIONID)
@@ -173,8 +175,8 @@ public class VersionId implements Comparable {
 
   /**
    * Returns true if both version identifiers are compatible otherwise false.
-   * @param id version identifier to check.
-   * @return result of the inquiry.
+   * @param id version identifier to check
+   * @return result of the inquiry
    */
   public boolean isCompatible(VersionId id) {
     return (majorVersionId == id.getMajorVersionId())
@@ -184,9 +186,10 @@ public class VersionId implements Comparable {
   /**
    * Returns true if both version identifiers are equals otherwise false. If the
    * object is not a version identifier returns false.
-   * @param object object to check.
-   * @return result of the inquiry.
+   * @param object object to check
+   * @return result of the inquiry
    */
+  @Override
   public boolean equals(Object object) {
     boolean isEquals = false;
     if (object instanceof VersionId) {
@@ -198,15 +201,20 @@ public class VersionId implements Comparable {
     return isEquals;
   }
 
+  @Override
   public int hashCode() {
-    return majorVersionId ^ minorVersionId ^ patchVersionId;
+    int hashCode = majorVersionId ^ minorVersionId ^ patchVersionId;
+    if (postfix != null) {
+      hashCode ^= postfix.hashCode();
+    }
+    return hashCode;
   }
 
   /**
    * Compare two version identifiers.
-   * @param right version identifier to compare with.
-   * @return <0 if smaller, 0 if equal, > 0 if higher.
-   * @pre right != null && right.instanceof(VersionId)
+   * @param right version identifier to compare with
+   * @return <0 if smaller, 0 if equal, > 0 if higher
+   * @pre (right != null) && (right.instanceof VersionId)
    * @see Comparable
    */
   public int compareTo(Object right) {
@@ -224,8 +232,9 @@ public class VersionId implements Comparable {
 
   /**
    * Returns the version identifier as string.
-   * @return The version identifier as major.minor.patch[-postfix] value.
+   * @return The version identifier as major.minor.patch[-postfix] value
    */
+  @Override
   public String toString() {
     StringBuilder buffer = new StringBuilder();
     buffer.append(majorVersionId).append(".").append(minorVersionId)

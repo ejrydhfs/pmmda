@@ -25,6 +25,16 @@ public class ExplorerDocumentImpl implements ExplorerDocument {
   private boolean news;
 
   /**
+   * Name of the document as displayed on the user interface.
+   */
+  private String name;
+
+  /**
+   * File or directory in which the document is stored.
+   */
+  private File file;
+
+  /**
    * Default constructor of the class.
    */
   public ExplorerDocumentImpl() {
@@ -48,7 +58,28 @@ public class ExplorerDocumentImpl implements ExplorerDocument {
     this.news = news;
   }
 
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  /**
+   * @inheritDoc
+   * @see #setFile(File)
+   */
   public File getFile() {
-    return null;
+    return file;
+  }
+
+  /**
+   * Set the file in which the document is stored.
+   * @param file file containing the document
+   * @see #getFile()
+   */
+  public void setFile(File file) {
+    this.file = file;
   }
 }

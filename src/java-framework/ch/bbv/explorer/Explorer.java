@@ -26,6 +26,7 @@ import ch.bbv.application.Library;
 import ch.bbv.application.VersionId;
 import ch.bbv.dog.*;
 import ch.bbv.explorer.components.ExplorerWindowAdapter;
+import ch.bbv.explorer.properties.Messages;
 import ch.bbv.utilities.ReflectUtilities;
 
 /**
@@ -212,7 +213,7 @@ public abstract class Explorer implements ExplorerNodeOwner {
     navigationPort.dock(tree, DockingConstants.CENTER_REGION);
 
     // create the status bar and construct the frame
-    frame = new JFrame("Explorer");
+    frame = new JFrame(Messages.explorerFrameName);
     frame.add(treeViewPane, BorderLayout.CENTER);
     statusBar = new StatusBar();
     frame.add(statusBar, BorderLayout.SOUTH);

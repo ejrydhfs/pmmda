@@ -16,6 +16,7 @@ import org.apache.commons.logging.LogFactory;
 
 import ch.bbv.explorer.Explorer;
 import ch.bbv.explorer.ExplorerDocument;
+import ch.bbv.explorer.properties.Messages;
 
 /**
  * The save as action starts the file selection dialog. Upon sucessful selection
@@ -43,7 +44,7 @@ public abstract class ExplorerFileAction extends ExplorerGlobalActionImpl {
    * FIXME: hack until design not corrected.
    */
   protected boolean shouldSaveAndProceed = false;
-  
+
   /**
    * Constructor of the instances of the class.
    * @param name name of the action node.
@@ -65,15 +66,16 @@ public abstract class ExplorerFileAction extends ExplorerGlobalActionImpl {
 
   /**
    * Sets the selected file.
-   * @param selectedFile new selected file to set.
+   * @param selectedFile new selected file to set
    * @see #getSelectedFile()
    */
   public void setSelectedFile(File selectedFile) {
     this.selectedFile = selectedFile;
   }
+
   /**
    * Returns the file chooser associated with this action.
-   * @return the Swing file chooser.
+   * @return the Swing file chooser
    */
   public JFileChooser getFileChooser() {
     return fileChooser;
@@ -92,7 +94,7 @@ public abstract class ExplorerFileAction extends ExplorerGlobalActionImpl {
       selectedFile = fileChooser.getSelectedFile();
       if (selectedFile != null) {
         log.trace("File Selected " + selectedFile);
-        if(execute()) {
+        if (execute()) {
           try {
             StringBuilder buffer = new StringBuilder();
             buffer.append(getName()).append(" ").append(
@@ -110,11 +112,13 @@ public abstract class ExplorerFileAction extends ExplorerGlobalActionImpl {
   /**
    * Checks if the file to overwrite exists and if yes ask the user if he wants
    * to overwrite the file.
-   * @return true if the file should be overwriten otherwise false.
+   * @return true if the file should be overwriten otherwise false
    */
   protected boolean shouldOverwriteFile() {
-    if (getSelectedFile() != null && getSelectedFile().exists()) {
-      int selection = displayMessage("actions.FILE_OVERWRITE", getSelectedFile());
+    File file = getSelectedFile();
+    if ((file != null) && file.exists()) {
+      int selection = displayMessage(Messages.actionFileOverwrite,
+          getSelectedFile().getName());
       return (selection != 1) || (selection != 2);
     }
     return true;
@@ -125,7 +129,7 @@ public abstract class ExplorerFileAction extends ExplorerGlobalActionImpl {
    * file was previously selected use the directory containing it. If not and
    * the current document has a persistent representation, use the directory
    * containing it. Otherwise use the home directory of the user.
-   * @return the requested directory.
+   * @return the requested directory
    */
   protected File getDirectory() {
     File directory = null;
@@ -142,10 +146,10 @@ public abstract class ExplorerFileAction extends ExplorerGlobalActionImpl {
     }
     return directory;
   }
-  
+
   /**
    * Displays the file selection dialog with the needed options.
-   * @return result of the file selection activity.
+   * @return result of the file selection activity
    */
   protected abstract int display();
 }

@@ -41,6 +41,7 @@ class PrimitivePropertyView extends PropertyView {
     }
   }
 
+  @Override
   public JComponent getComponent() {
     JComponent component = null;
     if (text != null) {
@@ -55,6 +56,7 @@ class PrimitivePropertyView extends PropertyView {
     return component;
   }
 
+  @Override
   public void setEditable(boolean editable) {
     if (text != null) {
       text.setEditable(editable);
@@ -67,6 +69,7 @@ class PrimitivePropertyView extends PropertyView {
     }
   }
 
+  @Override
   protected Object getValue() {
     Object value = null;
     Class type = getType();
@@ -108,6 +111,7 @@ class PrimitivePropertyView extends PropertyView {
     return value;
   }
 
+  @Override
   protected void setValue(Object value) {
     Class type = getType();
     if (type.equals(String.class)) {

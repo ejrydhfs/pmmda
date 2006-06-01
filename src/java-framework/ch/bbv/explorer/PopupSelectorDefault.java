@@ -14,8 +14,8 @@ import javax.swing.JPopupMenu;
 
 import ch.bbv.application.Locator;
 import ch.bbv.dog.validation.Validator;
-import ch.bbv.explorer.actions.RemoveNodeAction;
 import ch.bbv.explorer.nodeactions.*;
+import ch.bbv.explorer.properties.Messages;
 
 /**
  * The default popup selector provides standard popup menus for node types.
@@ -118,9 +118,9 @@ public class PopupSelectorDefault implements PopupSelector {
    * @return the menu of actions available to a root node
    */
   private JMenu createRootNodeActions(UiNodeType type) {
-    JMenu actionsMenu = new JMenu("Actions...");
-    actionsMenu.add(new ExpandNodeAction(type, "Expand All"));
-    actionsMenu.add(new CollapseNodeAction(type, "Collapse All"));
+    JMenu actionsMenu = new JMenu(Messages.actionsPoupupSubmenu);
+    actionsMenu.add(new ExpandNodeAction(type, Messages.actionExpandAll));
+    actionsMenu.add(new CollapseNodeAction(type, Messages.actionCollapseAll));
     if (validate != null) {
       actionsMenu.add(validate);
     }
@@ -131,9 +131,9 @@ public class PopupSelectorDefault implements PopupSelector {
       }
     }
     menu.addSeparator();
-    actionsMenu.add(new SaveNodeAction(type, "Save"));
-    actionsMenu.add(new RevertNodeAction(type, "Revert"));
-    actionsMenu.add(new ReloadNodeAction(type, "Reload"));
+    actionsMenu.add(new SaveNodeAction(type, Messages.actionSave));
+    actionsMenu.add(new RevertNodeAction(type, Messages.actionRevert));
+    actionsMenu.add(new ReloadNodeAction(type, Messages.actionReload));
     return actionsMenu;
   }
 }

@@ -177,12 +177,12 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
    * implementation. The name is the IF_CLASS and the data object lightweight
    * class postfix.</dd>
    * </ul>
-   * @param clazz the class, which attributes should be computed.
+   * @param clazz the class, which attributes should be computed
    * @pre clazz != null
    */
   @Override
   public void preProcessClass(MetaClass clazz) {
-    assert (clazz != null);
+    assert clazz != null;
     String name = clazz.getName();
     clazz.addAttribute(IF_CLASS, expandIdentifier(IF_CLASS_PREFIX_KEY, name,
         IF_CLASS_POSTFIX_KEY));
@@ -219,6 +219,7 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
 
   @Override
   public void processPackage(MetaPackage packages) {
+    assert packages != null;
     this.packages = packages;
     String rootDirectory = packages.valueOfTag(ROOT);
     if (rootDirectory != null) {
@@ -245,6 +246,7 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
 
   @Override
   public void processClass(MetaClass clazz) {
+    assert clazz != null;
     // class is only emitted if the class is relevant and the package should be
     // generated
     if (!clazz.retrievePackage().booleanValueOfTag(GENERATE)) {

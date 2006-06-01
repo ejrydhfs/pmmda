@@ -15,6 +15,7 @@ import javax.swing.JTextField;
 
 import ch.bbv.dog.DataObject;
 import ch.bbv.dog.DataObjectType;
+import ch.bbv.explorer.properties.Messages;
 
 /**
  * The data object property view displays a data object property . The object is
@@ -54,8 +55,8 @@ class DataObjectPropertyView extends PropertyView {
     propertyArea = new JPanel();
     text = new JTextField(TEXT_FIELD_SIZE);
     text.setEditable(false);
-    deleteButton = new JButton("Delete");
-    editButton = new JButton("Edit");
+    deleteButton = new JButton(Messages.actionDelete);
+    editButton = new JButton(Messages.actionEdit);
     propertyArea.add(text);
     propertyArea.add(deleteButton);
     propertyArea.add(editButton);
@@ -70,11 +71,7 @@ class DataObjectPropertyView extends PropertyView {
 
   public void setEditable(boolean editable) {
     deleteButton.setEnabled(editable);
-    if (editable) {
-      editButton.setText("Edit");
-    } else {
-      editButton.setText("View");
-    }
+    editButton.setText(editable ? Messages.actionEdit : Messages.actionView);
   }
 
   protected Object getValue() {

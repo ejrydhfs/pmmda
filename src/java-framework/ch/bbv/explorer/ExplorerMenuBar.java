@@ -13,6 +13,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
 import ch.bbv.explorer.actions.ExplorerGlobalAction;
+import ch.bbv.explorer.properties.Messages;
 
 /**
  * The explorer menu defines a standard menu bar and menu items for an
@@ -37,21 +38,6 @@ public class ExplorerMenuBar extends JMenuBar {
    * Serial version identifier coded as back compatibility date.
    */
   private static final long serialVersionUID = 20041201;
-
-  /**
-   * Name of the pull down-menu containing file related actions.
-   */
-  public static final String FILE_MENU = "File";
-
-  /**
-   * Name of the pull down-menu containing help related actions.
-   */
-  public static final String HELP_MENU = "Help";
-
-  /**
-   * Name of the pull down-menu containing edition related actions.
-   */
-  public static final String EDIT_MENU = "Edit";
 
   public static enum Names {
     NEW, OPEN, OPEN_LAST, SAVE, SAVE_AS, CLOSE, EXIT
@@ -78,12 +64,12 @@ public class ExplorerMenuBar extends JMenuBar {
     this.explorer = explorer;
     menus = new HashMap<String, JMenu>();
     actions = new HashMap<Names, ExplorerGlobalAction>();
-    JMenu menu = new JMenu(FILE_MENU);
+    JMenu menu = new JMenu(Messages.menuFile);
     add(menu);
-    menus.put(FILE_MENU, menu);
-    menu = new JMenu(HELP_MENU);
+    menus.put(Messages.menuFile, menu);
+    menu = new JMenu(Messages.menuHelp);
     add(menu);
-    menus.put(HELP_MENU, menu);
+    menus.put(Messages.menuHelp, menu);
   }
 
   /**
@@ -155,12 +141,8 @@ public class ExplorerMenuBar extends JMenuBar {
     if (document != null) {
       boolean modified = document.isModified();
       boolean news = document.isNew();
-      if (news) {
-        explorer.getFrame().setTitle("");
-      } else {
-        explorer.getFrame().setTitle(
-            explorer.getRoot().getName() + (modified ? " * " : ""));
-      }
+      explorer.getFrame()
+          .setTitle(document.getName() + (modified ? " * " : ""));
       setActionEnabled(actions.get(Names.SAVE), !news && modified);
       setActionEnabled(actions.get(Names.SAVE_AS), true);
     } else {

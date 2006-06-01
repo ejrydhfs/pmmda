@@ -10,6 +10,7 @@ import javax.swing.JOptionPane;
 import ch.bbv.explorer.Explorer;
 import ch.bbv.explorer.ExplorerDocument;
 import ch.bbv.explorer.ExplorerMenuBar;
+import ch.bbv.explorer.properties.Messages;
 
 /**
  * The save action for the user interface of <strong>pmMDA </strong>
@@ -24,16 +25,11 @@ public class ExplorerExitAction extends ExplorerGlobalActionImpl {
   private static final long serialVersionUID = 20041201;
 
   /**
-   * Name of the action as displayed in the menu.
-   */
-  private static final String ACTION = "Exit";
-
-  /**
    * Constructor of the instances of the class.
    * @param explorer explorer owning the global action.
    */
   public ExplorerExitAction(Explorer explorer) {
-    super(ACTION, explorer);
+    super(Messages.actionExit, explorer);
   }
 
   public boolean execute() {

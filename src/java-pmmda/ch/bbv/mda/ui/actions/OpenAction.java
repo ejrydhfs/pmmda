@@ -13,6 +13,7 @@ import javax.swing.JOptionPane;
 
 import ch.bbv.explorer.Explorer;
 import ch.bbv.explorer.actions.ExplorerFileAction;
+import ch.bbv.explorer.properties.Messages;
 import ch.bbv.mda.persistence.PersistenceException;
 import ch.bbv.mda.ui.MdaDocument;
 import ch.bbv.mda.ui.MdaExplorer;
@@ -34,16 +35,11 @@ public class OpenAction extends ExplorerFileAction {
   private static final long serialVersionUID = 20041201;
 
   /**
-   * Name of the action as displayed in the menu.
-   */
-  private static final String ACTION = "Open...";
-
-  /**
    * Default constructor.
-   * @param explorer explorer owning the global action.
+   * @param explorer explorer owning the global action
    */
   public OpenAction(Explorer explorer) {
-    super(ACTION, explorer);
+    super(Messages.actionOpen, explorer);
     shouldSaveAndProceed = true;
     MdaFileTypes.getInstance().addFileFilters(getFileChooser());
   }

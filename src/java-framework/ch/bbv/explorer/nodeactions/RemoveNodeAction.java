@@ -1,14 +1,15 @@
-/* copyright 2000-2005 Marcel Baumann 
+/* copyright 2000-2006 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id: RemoveNodeAction.java,v 1.1 2004/08/10 17:36:18 marcelbaumann
  * Exp $
  */
-package ch.bbv.explorer.actions;
+package ch.bbv.explorer.nodeactions;
 
 import ch.bbv.explorer.ExplorerNode;
 import ch.bbv.explorer.UiNodeType;
 import ch.bbv.explorer.UiRelation;
+import ch.bbv.explorer.actions.ExplorerNodeActionImpl;
 
 /**
  * The action implements how an explorer node is removed from the navigator and

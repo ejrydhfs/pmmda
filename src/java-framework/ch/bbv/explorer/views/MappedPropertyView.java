@@ -8,27 +8,33 @@ package ch.bbv.explorer.views;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 
+import ch.bbv.explorer.properties.Messages;
+
 class MappedPropertyView extends PropertyView {
   JButton button;
 
   public MappedPropertyView(String property, Class type, String label) {
     super(property, type, label);
-    this.button = new JButton("Edit");
+    this.button = new JButton(Messages.actionEdit);
   }
 
-  public JComponent getComponent() {
+  @Override
+ public JComponent getComponent() {
     return null;
   }
 
+  @Override
   public void setEditable(boolean editable) {
 
   }
 
-  protected Object getValue() {
+  @Override
+ protected Object getValue() {
     return null;
   }
 
-  protected void setValue(Object value) {
+  @Override
+ protected void setValue(Object value) {
 
   }
 }

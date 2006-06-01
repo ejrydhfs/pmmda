@@ -22,7 +22,7 @@ public interface ExplorerDocument {
 
   /**
    * Returns the modified flag of the document.
-   * @return state of the document.
+   * @return true if the document was modified otherwise false
    * @see #setModified(boolean)
    */
   boolean isModified();
@@ -30,28 +30,43 @@ public interface ExplorerDocument {
   /**
    * Sets the state of the document.
    * @param modified flag indicating if the document was modified since it was
-   *          loaded.
+   *          loaded
    * @see #isModified()
    */
   void setModified(boolean modified);
 
   /**
    * Returns the new flag of the document.
-   * @return state of the document.
+   * @return true if the document is new othewise false
    * @see #setNew(boolean)
    */
   boolean isNew();
 
   /**
    * Sets the state of the document.
-   * @param news flag indicating if the document is a new one.
+   * @param news flag indicating if the document is a new one
    * @see #isNew()
    */
   void setNew(boolean news);
-  
+
   /**
-   * Returns the file containing the persistent representation of the file.
-   * @return the file of the document if defined otherwise null.
+   * Returns the name of the document.
+   * @return the name of the document
+   * @see #setName(String)
+   */
+  String getName();
+
+  /**
+   * Sets the name of the document.
+   * @param name name of the document
+   * @see #getName()
+   */
+  void setName(String name);
+
+  /**
+   * Returns the file or directory where the persistent representation of the
+   * document is located.
+   * @return the file or directory containing the persistent representation
    */
   File getFile();
 }

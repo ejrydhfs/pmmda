@@ -8,27 +8,31 @@ package ch.bbv.explorer.views;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 
+import ch.bbv.explorer.properties.Messages;
+
 class IndexedPropertyView extends PropertyView {
   JButton button;
 
   public IndexedPropertyView(String property, Class type, String label) {
     super(property, type, label);
-    this.button = new JButton("Edit");
+    this.button = new JButton(Messages.actionEdit);
   }
 
+  @Override
   public JComponent getComponent() {
     return button;
   }
 
+  @Override
   public void setEditable(boolean editable) {
-
   }
 
+  @Override
   protected Object getValue() {
     return null;
   }
 
+  @Override
   protected void setValue(Object value) {
-
   }
 }

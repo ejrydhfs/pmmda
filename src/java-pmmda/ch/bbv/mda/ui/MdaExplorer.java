@@ -36,6 +36,7 @@ import ch.bbv.explorer.about.Contributor;
 import ch.bbv.explorer.about.Licences;
 import ch.bbv.explorer.actions.*;
 import ch.bbv.explorer.components.ValidationPanel;
+import ch.bbv.explorer.properties.Messages;
 import ch.bbv.mda.MetaModel;
 import ch.bbv.mda.generators.Cartridge;
 import ch.bbv.mda.generators.CartridgeFactory;
@@ -92,8 +93,8 @@ public class MdaExplorer extends Explorer {
 
   /**
    * Creates a new MDA explorer.
-   * @param args command line arguments.
-   * @return the newly created MDA explorer.
+   * @param args command line arguments
+   * @return the newly created MDA explorer
    */
   public static MdaExplorer create(String[] args) {
     Class[] types = { String[].class };
@@ -106,7 +107,7 @@ public class MdaExplorer extends Explorer {
 
   /**
    * Constructor of the class.
-   * @param args arguments of the command line.
+   * @param args arguments of the command line
    */
   public MdaExplorer(String[] args) {
     super(factory, manager);
@@ -176,12 +177,12 @@ public class MdaExplorer extends Explorer {
     DockingManager.dock(dockable, getUtilitiesPort(),
         DockingConstants.CENTER_REGION);
 
-    JMenu menu = menuBar.getMenu(ExplorerMenuBar.HELP_MENU);
+    JMenu menu = menuBar.getMenu(Messages.menuHelp);
     ExplorerAboutAction aboutAction = new ExplorerAboutAction(this);
     aboutAction.setProjectInfo(getProjectInfo());
     menu.add(new JMenuItem(aboutAction));
 
-    menu = menuBar.getMenu(ExplorerMenuBar.FILE_MENU);
+    menu = menuBar.getMenu(Messages.menuFile);
     menuBar.addStandardAction(menu, Names.NEW, new NewAction(this));
     menuBar.addStandardAction(menu, Names.OPEN, new OpenAction(this));
     menu.addSeparator();
@@ -274,6 +275,9 @@ public class MdaExplorer extends Explorer {
     menuBar.add(menu, menuBar.getMenuCount() - 1);
   }
 
+  /**
+   * Creates the dynamic menu containing all tools.
+   */
   private void createToolsMenu() {
     JMenu menu = new JMenu("Tools");
     menu.setName("Tools");

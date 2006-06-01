@@ -10,6 +10,7 @@ import java.util.List;
 import ch.bbv.application.Library;
 import ch.bbv.explorer.components.TableCell;
 import ch.bbv.explorer.components.TablePanel;
+import ch.bbv.explorer.properties.Messages;
 
 /**
  * A panel containing a table that lists the libraries used in a project.
@@ -22,17 +23,12 @@ public class LibraryPanel extends TablePanel {
    */
   private static final long serialVersionUID = 20041201;
 
-  /**
-   * The name of the columns of the libraries table list.
-   */
-  public static final String[] COLUMN_NAMES = { "name", "version", "licence",
-      "info" };
-
+ 
   /**
    * Constructs a library panel.
    * @param libraries a list of libraries
    */
   public LibraryPanel(List<Library> libraries) {
-    super(libraries, new TableCell(COLUMN_NAMES));
+    super(libraries, new TableCell(Messages.librariesColumnNames));
   }
 }

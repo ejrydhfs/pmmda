@@ -33,11 +33,6 @@ public class MdaDocument extends ExplorerDocumentImpl implements
   public static final String CODES_DIRECTORY = "codes";
 
   /**
-   * File in which the model is stored.
-   */
-  private File file;
-
-  /**
    * The MDA model of an application.
    */
   private MetaModel model;
@@ -77,7 +72,8 @@ public class MdaDocument extends ExplorerDocumentImpl implements
     model.getCodeTypeMgr().reset(new File(directory, CODES_DIRECTORY));
     setNew(false);
     setModified(false);
-    this.file = file;
+    setName(model.getName());
+    setFile(file);
   }
 
   /**
@@ -87,11 +83,13 @@ public class MdaDocument extends ExplorerDocumentImpl implements
    */
   public void save() throws PersistenceException, IOException {
     PersistenceHandlerFactory factory = new PersistenceHandlerFactory();
+    File file = getFile();
     PersistenceHandler handler = factory.getHandler(file);
     handler.writeModel(model, file);
     model.getCodeTypeMgr().saveAll();
     setNew(false);
     setModified(false);
+    setName(model.getName());
   }
 
   /**
@@ -117,6 +115,7 @@ public class MdaDocument extends ExplorerDocumentImpl implements
     model.setFilename(file.getAbsolutePath());
     setNew(false);
     setModified(false);
-    this.file = file;
+    setName(model.getName());
+    setFile(file);
   }
 }

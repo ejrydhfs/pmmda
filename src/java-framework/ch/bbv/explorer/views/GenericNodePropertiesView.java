@@ -22,6 +22,7 @@ import ch.bbv.dog.DataObject;
 import ch.bbv.dog.DataObjectType;
 import ch.bbv.explorer.NodePropertiesView;
 import ch.bbv.explorer.UiNodeType;
+import ch.bbv.explorer.properties.Messages;
 import ch.bbv.utilities.TextUtilities;
 
 import com.jgoodies.forms.builder.DefaultFormBuilder;
@@ -145,10 +146,13 @@ public class GenericNodePropertiesView extends NodePropertiesView {
     FormLayout layout = new FormLayout("right:pref, 3dlu, pref", "");
     DefaultFormBuilder builder = new DefaultFormBuilder(layout);
     builder.setDefaultDialogBorder();
-    generateRows(builder, "Simple Properties", primitivePropertyViews);
-    generateRows(builder, "Data Objects", simplePropertyViews);
-    generateRows(builder, "Indexed Properties", indexedPropertyViews);
-    generateRows(builder, "Mapped Properties", mappedPropertyViews);
+    generateRows(builder, Messages.nodeViewSimplePropertiesName,
+        primitivePropertyViews);
+    generateRows(builder, Messages.nodeViewDataObjectsName, simplePropertyViews);
+    generateRows(builder, Messages.nodeViewIndexedPropertiesName,
+        indexedPropertyViews);
+    generateRows(builder, Messages.nodeViewMappedPropertiesName,
+        mappedPropertyViews);
     JPanel panel = builder.getPanel();
     add(panel);
   }

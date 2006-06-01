@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann
+/* copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$ 
@@ -19,34 +19,34 @@ import ch.bbv.explorer.Explorer;
 public interface ExplorerGlobalAction extends Action {
   /**
    * Returns the name of the action as displayed on the user interface.
-   * @return name of the action.
+   * @return name of the action
    */
   String getName();
 
   /**
    * Returns the explorer owning the global action.
-   * @return the owning explorer.
+   * @return the owning explorer
    * @see #setExplorer(Explorer)
    */
   Explorer getExplorer();
 
   /**
    * Sets the explorer owning the global action.
-   * @param explorer the owning explorer.
+   * @param explorer the owning explorer
    * @see #getExplorer()
    */
   void setExplorer(Explorer explorer);
 
   /**
    * Executes the action.
-   * @return true if sucessful otherwise false.
+   * @return true if sucessful otherwise false
    */
   boolean execute();
-  
+
   /**
-   * Returns the result of the last action executed.
-   * The result before the first action executed will be false.
-   * @return result of last action executed.
+   * Returns the result of the last action executed. The result before the first
+   * action executed will be false.
+   * @return result of last action executed
    */
   boolean getLastResult();
 }

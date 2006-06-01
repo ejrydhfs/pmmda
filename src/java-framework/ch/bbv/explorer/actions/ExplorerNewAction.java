@@ -8,6 +8,7 @@ package ch.bbv.explorer.actions;
 import java.awt.event.ActionEvent;
 
 import ch.bbv.explorer.Explorer;
+import ch.bbv.explorer.properties.Messages;
 
 /**
  * The save action for the user interface of the application.
@@ -16,16 +17,11 @@ import ch.bbv.explorer.Explorer;
  */
 public abstract class ExplorerNewAction extends ExplorerGlobalActionImpl {
   /**
-   * Name of the action as displayed in the menu.
-   */
-  private static final String ACTION = "New";
-
-  /**
    * Constructor of the instances of the class.
    * @param explorer explorer owning the global action.
    */
   public ExplorerNewAction(Explorer explorer) {
-    super(ACTION, explorer);
+    super(Messages.actionNew, explorer);
   }
 
   public void actionPerformed(ActionEvent action) {

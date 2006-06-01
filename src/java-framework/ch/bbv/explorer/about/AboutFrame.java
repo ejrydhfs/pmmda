@@ -18,6 +18,7 @@ import ch.bbv.explorer.ExplorerUtilities;
 import ch.bbv.explorer.components.PropertiesPanel;
 import ch.bbv.explorer.components.TableCell;
 import ch.bbv.explorer.components.TablePanel;
+import ch.bbv.explorer.properties.Messages;
 
 /**
  * A dialog that displays information about the application and its
@@ -30,12 +31,6 @@ public class AboutFrame extends JDialog {
    * Serial version identifier coded as back compatibility date.
    */
   private static final long serialVersionUID = -4692364482531014831L;
-
-  /**
-   * The name of the columns of the contributors table list.
-   */
-  private static final String[] CONTRIBUTORS_COLUMN_NAMES = { "name", "email",
-      "role" };
 
   /** The preferred size for the frame. */
   private static final Dimension PREFERRED_SIZE = new Dimension(600, 400);
@@ -114,7 +109,7 @@ public class AboutFrame extends JDialog {
     List<Contributor> contributors = projectInfo.getContributors();
     if (contributors != null) {
       JPanel contributorsPane = new TablePanel(contributors, new TableCell(
-          CONTRIBUTORS_COLUMN_NAMES));
+          Messages.contributorsColumnNames));
       contributorsPane.setBorder(AboutFrame.STANDARD_BORDER);
 
       String contributorsTab = "Contributors";

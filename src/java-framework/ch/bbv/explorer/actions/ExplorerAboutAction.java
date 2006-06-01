@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann
+/* copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$ 
@@ -8,6 +8,7 @@ package ch.bbv.explorer.actions;
 import ch.bbv.application.ProjectInfo;
 import ch.bbv.explorer.Explorer;
 import ch.bbv.explorer.about.AboutFrame;
+import ch.bbv.explorer.properties.Messages;
 
 /**
  * The explorer about action displays the about dialog box when requesting. The
@@ -22,11 +23,6 @@ public class ExplorerAboutAction extends ExplorerGlobalActionImpl {
   private static final long serialVersionUID = 20041201;
 
   /**
-   * Name of the action as displayed in the menu.
-   */
-  private static final String ACTION = "About";
-
-  /**
    * The project description displayed in the about frame.
    */
   private transient ProjectInfo projectInfo;
@@ -38,15 +34,15 @@ public class ExplorerAboutAction extends ExplorerGlobalActionImpl {
 
   /**
    * Constructor of the instances of the class.
-   * @param explorer explorer owning the global action.
+   * @param explorer explorer owning the global action
    */
   public ExplorerAboutAction(Explorer explorer) {
-    super(ACTION, explorer);
+    super(Messages.actionAbout, explorer);
   }
 
   /**
    * Returns the project information of the application.
-   * @return the project information of the application.
+   * @return the project information of the application
    * @see #setProjectInfo(ProjectInfo)
    */
   public ProjectInfo getProjectInfo() {
@@ -55,7 +51,7 @@ public class ExplorerAboutAction extends ExplorerGlobalActionImpl {
 
   /**
    * Sets the project information of the application.
-   * @param projectInfo new project information of the application.
+   * @param projectInfo new project information of the application
    * @see #getProjectInfo()
    */
   public void setProjectInfo(ProjectInfo projectInfo) {
@@ -64,7 +60,7 @@ public class ExplorerAboutAction extends ExplorerGlobalActionImpl {
 
   public boolean execute() {
     if (aboutFrame == null) {
-      aboutFrame = new AboutFrame(getExplorer().getFrame(), "About",
+      aboutFrame = new AboutFrame(getExplorer().getFrame(), Messages.actionAbout,
           projectInfo);
     }
     aboutFrame.setVisible(true);

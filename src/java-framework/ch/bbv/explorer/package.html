@@ -1,166 +1,166 @@
 <body>
 The explorer provides a tree list user interface tailored to the BOG framework.
 <h2>Overview</h2>
-<p>The explorer package provides all mechanisms to map hierarchical data structures 
-	to various graphical representations. Hierarchical data structures are any
-	directed graph structures. The main goal is that no modification to the 
-	underlying model classes are necessary. So a clean interface between the 
-	business model and the visualization model is realized. Additionally legacy 
-	systems can be integrated without expensive modification activities. Another 
-	goal is that the package can be used to create remote user interfaces using 
-	the same remote model stored on a server application. The communication 
-	mechanisms between the framework and the graphical clients are local method 
-	invocation, CORBA or RMI.</p>
-<p>The explorer package provides wrapper classes for the nodes of the hierarchical 
-	structure. The following help classes are provided.</p>
+<p>The explorer package provides all mechanisms to map hierarchical data
+structures to various graphical representations. Hierarchical data structures
+are any directed graph structures. The main goal is that no modification to the
+underlying model classes are necessary. So a clean interface between the
+business model and the visualization model is realized. Additionally legacy
+systems can be integrated without expensive modification activities. Another
+goal is that the package can be used to create remote user interfaces using the
+same remote model stored on a server application. The communication mechanisms
+between the framework and the graphical clients are local method invocation,
+CORBA or RMI.</p>
+<p>The explorer package provides wrapper classes for the nodes of the
+hierarchical structure. The following help classes are provided.</p>
 <ul>
-  <li>The node class is wrapper class, which models the concept of a node in a 
-    hierarchical structure. The corresponding object of the underlying model is 
-    referenced in the node. The node contains the name and the current icon. It 
-    implements lazy evaluation for its children. The children nodes are only 
-    instantiated as needed. This mechanism supports tree of thousands of nodes as 
-    long as one node as no more than thousand children. </li>
-  <li>The node type defines which attributes of a given underlying node class 
-    are visible in the graphical representation. The visibility and editability of 
-    the attributes are also described. The node type also provides the method 
-    used to retrieve the children of the underlying class and the method to inquiry 
-    the name displayed in the tree. The reflection package is used to provide the 
-    meta information. </li>
-  <li>Care was taken to allow sophisticated pictural representations. The node 
-    type class stores all icons associated with its nodes. This mechanism allows a 
-    uniform display of node type. </li>
+  <li>The node class is wrapper class, which models the concept of a node in a
+  hierarchical structure. The corresponding object of the underlying model is
+  referenced in the node. The node contains the name and the current icon. It
+  implements lazy evaluation for its children. The children nodes are only
+  instantiated as needed. This mechanism supports tree of thousands of nodes as
+  long as one node as no more than thousand children.</li>
+  <li>The node type defines which attributes of a given underlying node class
+  are visible in the graphical representation. The visibility and editability of
+  the attributes are also described. The node type also provides the method used
+  to retrieve the children of the underlying class and the method to inquiry the
+  name displayed in the tree. The reflection package is used to provide the meta
+  information.</li>
+  <li>Care was taken to allow sophisticated pictural representations. The node
+  type class stores all icons associated with its nodes. This mechanism allows a
+  uniform display of node type.</li>
   <li>Each node type object can define a context menu for nodes of its type. The
-    context menu is acessed through the usual mechanism of the platform on which 
-    the application is executed. </li>
-  <li>The node type factory provides a factory pattern to create new nodes and 
-    their associated node type for all underlying nodes part of the model. The 
-    factory creates a new node for a given underlying object and creates objects for 
-    all its children. </li>
-  <li>The only assumption made on the objects being visualized is that they provide 
-    a method returning all their children as an enumeration or a list. The method 
-    has no parameters and is public.</li>
+  context menu is acessed through the usual mechanism of the platform on which
+  the application is executed.</li>
+  <li>The node type factory provides a factory pattern to create new nodes and
+  their associated node type for all underlying nodes part of the model. The
+  factory creates a new node for a given underlying object and creates objects
+  for all its children.</li>
+  <li>The only assumption made on the objects being visualized is that they
+  provide a method returning all their children as an enumeration or a list. The
+  method has no parameters and is public.</li>
 </ul>
-<p> To use this package the user must only perform the following task.</p>
+<p>To use this package the user must only perform the following task.</p>
 <ol>
-  <li> A node type object must be created for each model class, which should be 
-    represented. </li>
-  <li> Each such node type must be registered into the node type factory. </li>
-  <li> Request the node type to create a new view given the root of a 
-    hierarchical representation. </li>
-  <li> Embedd the graphical component into the graphical user interface.</li>
+  <li>A node type object must be created for each model class, which should be
+  represented.</li>
+  <li>Each such node type must be registered into the node type factory.</li>
+  <li>Request the node type to create a new view given the root of a
+  hierarchical representation.</li>
+  <li>Embedd the graphical component into the graphical user interface.</li>
 </ol>
 
-<p> The following graphical component are supported.</p>
+<p>The following graphical component are supported.</p>
 <ul>
-	<li>Tree view</li>
-	<li>Table view</li>
-	<li>Explorer view combining a tree and a table view</li>
-	<li>Node type popup menu and associated action</li>
+  <li>Tree view</li>
+  <li>Table view</li>
+  <li>Explorer view combining a tree and a table view</li>
+  <li>Node type popup menu and associated action</li>
 </ul>
 
 <h2>Code Generation</h2>
 <p>The MDA framework generates code compatible to the explorer framework. The
-	generated code defines the whole user interface structure of the business
-	objects. The user interface definition is performed as follow.</p>
-	<ul>
-		<li>The node type definition for all the business objects and their 
-			lightweight representation are generated in a factory class. All the
-			business objects of a package are handled in this factory.</li>
-		<li>Each type of views has its own factory to generate the description
-			for the supported business objects. Views display only business objects
-			and not lightweight objects.</li>
-		<li>The instantiation of the node type factory and the explorer is done
-			programmatically to provide full control to the developers.</li>
-	</ul>
+generated code defines the whole user interface structure of the business
+objects. The user interface definition is performed as follow.</p>
+<ul>
+  <li>The node type definition for all the business objects and their
+  lightweight representation are generated in a factory class. All the business
+  objects of a package are handled in this factory.</li>
+  <li>Each type of views has its own factory to generate the description for the
+  supported business objects. Views display only business objects and not
+  lightweight objects.</li>
+  <li>The instantiation of the node type factory and the explorer is done
+  programmatically to provide full control to the developers.</li>
+</ul>
 
-<h2> Requirements </h2>
-<h3> Remote Explorer Interfaces </h3>
-<p> The explorer framework should support multiple remote interfaces. The 
-communication between the user interface tier and the server tier should use
-RMI or CORBA technology. An possible solution is to use RMI other IIOP enabling
-us to support simultaneously RMI and CORBA. Propriatary technologies like COM 
-do not need to be supported. The object contained in a node is remote and must
+<h2>Requirements</h2>
+<h3>Remote Explorer Interfaces</h3>
+<p>The explorer framework should support multiple remote interfaces. The
+communication between the user interface tier and the server tier should use RMI
+or CORBA technology. An possible solution is to use RMI other IIOP enabling us
+to support simultaneously RMI and CORBA. Propriatary technologies like COM do
+not need to be supported. The object contained in a node is remote and must
 implements the remote interface. For efficiency reasons the node type and the
-node type factory are local objects. </p>
+node type factory are local objects.</p>
 <p>A mechanism must provide a way to update the views if a object is modified.
 The event propagation mechanism should be simple and not impede the performance
-of monolithic applications. </p>
- 
-<h3> Right Views </h3>
+of monolithic applications.</p>
+
+<h3>Right Views</h3>
 <p>The standard right view is a table view displaying the children of the
 selected node in the tree list. This mode models the behavior of standard
-explorer frameworks. More complex user interfaces needs additional views.
-First multiple kinds of table views should be supported. Applications often
-want to support a novice and an advanced user mode. Second some node types
-need to display over kinds of views. For example a CAD node must show a
-diagram.</p>
+explorer frameworks. More complex user interfaces needs additional views. First
+multiple kinds of table views should be supported. Applications often want to
+support a novice and an advanced user mode. Second some node types need to
+display over kinds of views. For example a CAD node must show a diagram.</p>
 
-<p>Our framework has implicit support for the standard explorer mode. Each
-node can add additional views if needed. Finally it is possible to disable
-the standard table view for selected nodes.</p>
+<p>Our framework has implicit support for the standard explorer mode. Each node
+can add additional views if needed. Finally it is possible to disable the
+standard table view for selected nodes.</p>
 
 <h3>Actions and Popup Menu</h3>
 <p>Actions performed on nodes belong to two categories. The standard actions
 have special support from the framework. Client specific actions are supported
 through a plugin mechanism. The following standard actions are supported.</p>
 <dl>
-  <dt>add</dt><dd> Adds a new child to the currently selected node.</dd>
-  <dt>get properties</dt><dd> Displays the property of the selected node in a
-    dialog. The values can be edited if the node is editable.</dd>
-  <dt>delete</dt><dd> Deletes the seclected node if it is removable.</dd>
+  <dt>add</dt>
+  <dd>Adds a new child to the currently selected node.</dd>
+  <dt>get properties</dt>
+  <dd>Displays the property of the selected node in a dialog. The values can be
+  edited if the node is editable.</dd>
+  <dt>delete</dt>
+  <dd>Deletes the seclected node if it is removable.</dd>
 </dl>
 
 <h2>Cook Book</h2>
 <h3>Define a new Explorer View</h3>
-<p> You define a new explorer view by creating a subclass of explorer view. 
-This class contains a node type factory. This factory has the list of all node
-types display in this new explorer view. For each node type an optional property
-view and optinal right views can be defined. The next chapters shows how to define
-these constructs. </p>
-<p> Once define the new class must simply define the root node of the tree view.
-All the handling of the pop-up menus and associated actions and the various 
-displayed are handled in the framework. </p>
+<p>You define a new explorer view by creating a subclass of explorer view. This
+class contains a node type factory. This factory has the list of all node types
+display in this new explorer view. For each node type an optional property view
+and optinal right views can be defined. The next chapters shows how to define
+these constructs.</p>
+<p>Once define the new class must simply define the root node of the tree view.
+All the handling of the pop-up menus and associated actions and the various
+displayed are handled in the framework.</p>
 
-<h3> Register a Node Type</h3>
+<h3>Register a Node Type</h3>
 <p>A new node type defines the capabilities of a set of nodes in the explorer
-view and provides hooks to retrieve data from the underlying model. Each node 
+view and provides hooks to retrieve data from the underlying model. Each node
 type defines the following aspects.</p>
 <ul>
-  <li>The name of the java class defining the class of the objects contained
-    in the nodes of this type. The class must provide a default constructor if 
-    the node is editable. This constructor is called when a new node should be
-    added through the user interface.</li>
+  <li>The name of the java class defining the class of the objects contained in
+  the nodes of this type. The class must provide a default constructor if the
+  node is editable. This constructor is called when a new node should be added
+  through the user interface.</li>
   <li>The method used to retrieve the name of the node. This name is displayed
-    in the tree view.</li>
+  in the tree view.</li>
   <li>Either the name of the method to retrieve all children or the name of the
-    method to retrieve the unique child. The methods must return respectively
-    an iteration or an object.</li>
+  method to retrieve the unique child. The methods must return respectively an
+  iteration or an object.</li>
   <li>The attributes of the node describe which attributes nodes of this type
-    can display. The attributes are optional.</li>
-  <li>The list of possible node types of its children. This information is
-    used to generate the add part of the standard popup menu. This menu is
-    naturally only displayed in the node is editable. This list is 
-    optional.</li>
-  <li>The display attributes of the node describe which attributes of its 
-    children should be displayed in the right view. Each display attribute must
-    have a corresponding attribute in all possible node types of its children. 
-    The attributes are inferred through their name. These attributes are 
-    optional.</li>
-  <li>Various flag indicates if the node allows children, is editable, and is 
-    removable. If the node is removable the standard popup menu contains a
-    delete item.</li>
+  can display. The attributes are optional.</li>
+  <li>The list of possible node types of its children. This information is used
+  to generate the add part of the standard popup menu. This menu is naturally
+  only displayed in the node is editable. This list is optional.</li>
+  <li>The display attributes of the node describe which attributes of its
+  children should be displayed in the right view. Each display attribute must
+  have a corresponding attribute in all possible node types of its children. The
+  attributes are inferred through their name. These attributes are optional.</li>
+  <li>Various flag indicates if the node allows children, is editable, and is
+  removable. If the node is removable the standard popup menu contains a delete
+  item.</li>
   <li>A view can be specified to show details about the object contains in the
-    node. If nodes can be added the same view is used to input the values of
-    the attributes of the object contains in the node. The view is 
-    optional.</li>
-  <li>Finally it is possible to register hooks for finer control of the
-    display of the nodes of this type. All these hooks are optional.
-    <ul>
-      <li> An icon can be registered for display in the tree.</li>
-      <li> If the displayed icon depends upon values of the object displayed
-      in the node, a static method can be registered to compute which icon
-      should be displayed.</li>
-    </ul></li>
+  node. If nodes can be added the same view is used to input the values of the
+  attributes of the object contains in the node. The view is optional.</li>
+  <li>Finally it is possible to register hooks for finer control of the display
+  of the nodes of this type. All these hooks are optional.
+  <ul>
+    <li>An icon can be registered for display in the tree.</li>
+    <li>If the displayed icon depends upon values of the object displayed in the
+    node, a static method can be registered to compute which icon should be
+    displayed.</li>
+  </ul>
+  </li>
 </ul>
 
 <h3>Define a Property View</h3>
@@ -169,100 +169,98 @@ type defines the following aspects.</p>
 <h3>Define a View Right View</h3>
 <p>To be written</p>
 
-<h2> Architecture</h2>
-<h3> Multiple views</h3>
-<p>The explorer framework implicitely support the standard explorer mode.
- Each node type defines which attributes can be used in the table and how
- the values can be accessed.</p>
+<h2>Architecture</h2>
+<h3>Multiple views</h3>
+<p>The explorer framework implicitely support the standard explorer mode. Each
+node type defines which attributes can be used in the table and how the values
+can be accessed.</p>
 
-<p>Each table view defines the attributes effectively shown in the table. It 
-is the responsability of the programmer to insure that all children of a node 
-type support all the attributes displayed in the table view. This list of 
-attributes can be stored as a resource bundle in the node type. This design 
-decision simplifies declarative programming and allow the definition of 
-multiple table views without need to create a new class for type of view.</p>
+<p>Each table view defines the attributes effectively shown in the table. It is
+the responsability of the programmer to insure that all children of a node type
+support all the attributes displayed in the table view. This list of attributes
+can be stored as a resource bundle in the node type. This design decision
+simplifies declarative programming and allow the definition of multiple table
+views without need to create a new class for type of view.</p>
 
-<p>Additional view type can be defined and registered onto the node type.
-Each view can define a resource bundle in the node type. It is the 
-responsibility of the programmer to insure that the key for resource bundle is
-unique.</p>
+<p>Additional view type can be defined and registered onto the node type. Each
+view can define a resource bundle in the node type. It is the responsibility of
+the programmer to insure that the key for resource bundle is unique.</p>
 
-<h3> Reflection Mechanisms </h3>
-<h4> Context Actions </h4>
-<p> Each node type can have an optional context menu with the associated 
-actions. An action is either performed on a node or on the object associated 
-with the node. An action contains the method which should be called upon
-activation. The action on a node contains as a parameter the name of the 
-action without results. The action on an object is a method without parameters
-and results. The user is free to define the actions he wants to associate
-with a node type. Each action is an instance of the explorer action class. 
-All called methods are defined through the reflection mechanism of Java. </p>
+<h3>Reflection Mechanisms</h3>
+<h4>Context Actions</h4>
+<p>Each node type can have an optional context menu with the associated actions.
+An action is either performed on a node or on the object associated with the
+node. An action contains the method which should be called upon activation. The
+action on a node contains as a parameter the name of the action without results.
+The action on an object is a method without parameters and results. The user is
+free to define the actions he wants to associate with a node type. Each action
+is an instance of the explorer action class. All called methods are defined
+through the reflection mechanism of Java.</p>
 
-<p> The framework provides additional support for standard actions. Currently
-the following canonical actions are defined.</p>
+<p>The framework provides additional support for standard actions. Currently the
+following canonical actions are defined.</p>
 <ul>
-	<li> The properties action is responsible to display all visible attributes
-	of an object. The user must register a view derived from the properties view
-	class of the framework. The framewok automatically defines the needed context
-	menu items and calls the associated machinery to display the values. </li>
-	<li> The add action is responsible to create a new node and to add it in the
-	hierarchical structure. The user must register all possible node types of the
-	children of a node type instances. The framework assumes that all instances of
-	a node type can have the same type of children. The framework automatically 
-	defines the needed context menu items based on the name of the registered node 
-	types and calls the associated machinery to display the values. It assumes
-	that the associated object class provides a default constructor. This 
-	asssumption is usual in explorer based user interface. If such a constructor
-	does not exists mechanims are provided to enable the user to define a subclass
-	of node type to correctly instantiate a new object. </li>
-	<li> The delete action is responsible for the deletion of a node in the 
-	hierarchy.</li>
+  <li>The properties action is responsible to display all visible attributes of
+  an object. The user must register a view derived from the properties view
+  class of the framework. The framewok automatically defines the needed context
+  menu items and calls the associated machinery to display the values.</li>
+  <li>The add action is responsible to create a new node and to add it in the
+  hierarchical structure. The user must register all possible node types of the
+  children of a node type instances. The framework assumes that all instances of
+  a node type can have the same type of children. The framework automatically
+  defines the needed context menu items based on the name of the registered node
+  types and calls the associated machinery to display the values. It assumes
+  that the associated object class provides a default constructor. This
+  asssumption is usual in explorer based user interface. If such a constructor
+  does not exists mechanims are provided to enable the user to define a subclass
+  of node type to correctly instantiate a new object.</li>
+  <li>The delete action is responsible for the deletion of a node in the
+  hierarchy.</li>
 </ul>
 <h3>Factory</h3>
 <p>The factory construct a node object for a java object. The associated node
 type contains all the visualization information necessary to display the object
-in an explorer view. The node type also handles the creation of children. Therefore
-a Java class can have at most one node type registered onto a factory. This 
-restriction is necessary to determine which node should be associated with an
-instance of the application model.</p>
+in an explorer view. The node type also handles the creation of children.
+Therefore a Java class can have at most one node type registered onto a factory.
+This restriction is necessary to determine which node should be associated with
+an instance of the application model.</p>
 
 <h3>Efficiency Considerations</h3>
 <p>To be written</p>
 
 <h2>History</h2>
 <ul>
-	<li>The children of a node are now sorted by default. This behavior mimics the
-		one generally found in an explorer view. The sort functionality can be enabled
-		or disabled for all nodes of a given type.</li>
-	<li>A new class node action was introduced to abstract the concept of call on
-		a node but with removing the dependencies to the action class. This 
-		dependency was first a problem with the handling of the delete operation of
-		a node in all its modes.</li>
-	<li>The explorer action class was extended to support static methods. 
-		Experience has shown users do not want to write a new presentation layer 
-		when integrating existing models. The extension allows to store the
-		manipulation code in static methods directly located in the user interface
-		layer. This decision is congruant with modern 3 tiers architecture design 
-		rules.</li>
-	<li>The property dialog and property view classes were simplified. The new
-		version eases the implementation of custom property dialogs. The whole
-		API documentation of the package was checked with the Doclint doclet and
-		accordingly updated. </li>
-	<li>The first change request was introduced to support the special situation
-		where an object has at most one child. The node class provides to wrap the
-		child get method into a method returning a list. This mode supports the 
-		trivial case where a node has just one child.</li>
-	<li>Care was taken so that this framework is compatible with the persistency
-		framework SOODBM. Both framework are orthogonal and have no side effects on
-		each other.</li>
-	<li> A new mechanism allows to specify the different name for the column of 
-		an attribute. The modification was minimal.</li>
-	<li> A new mechanism allows to decide if the children of a given node should
-		be displayed or not in the tree side. The flag is set on the node type and
-		is valid for all instances of the node type.</li> 
-	<li> The property mechanism was extended to inform the client implementation
-		about the node containing the object if defined and if the object is under
-		creation or modification.</li>
+  <li>The children of a node are now sorted by default. This behavior mimics the
+  one generally found in an explorer view. The sort functionality can be enabled
+  or disabled for all nodes of a given type.</li>
+  <li>A new class node action was introduced to abstract the concept of call on
+  a node but with removing the dependencies to the action class. This dependency
+  was first a problem with the handling of the delete operation of a node in all
+  its modes.</li>
+  <li>The explorer action class was extended to support static methods.
+  Experience has shown users do not want to write a new presentation layer when
+  integrating existing models. The extension allows to store the manipulation
+  code in static methods directly located in the user interface layer. This
+  decision is congruant with modern 3 tiers architecture design rules.</li>
+  <li>The property dialog and property view classes were simplified. The new
+  version eases the implementation of custom property dialogs. The whole API
+  documentation of the package was checked with the Doclint doclet and
+  accordingly updated.</li>
+  <li>The first change request was introduced to support the special situation
+  where an object has at most one child. The node class provides to wrap the
+  child get method into a method returning a list. This mode supports the
+  trivial case where a node has just one child.</li>
+  <li>Care was taken so that this framework is compatible with the persistency
+  framework SOODBM. Both framework are orthogonal and have no side effects on
+  each other.</li>
+  <li>A new mechanism allows to specify the different name for the column of an
+  attribute. The modification was minimal.</li>
+  <li>A new mechanism allows to decide if the children of a given node should be
+  displayed or not in the tree side. The flag is set on the node type and is
+  valid for all instances of the node type.</li>
+  <li>The property mechanism was extended to inform the client implementation
+  about the node containing the object if defined and if the object is under
+  creation or modification.</li>
 </ul>
-   @since Java 2 Platform, Standard Edition, version 1.5
+@since Java 2 Platform, Standard Edition, version 1.5
 </body>
