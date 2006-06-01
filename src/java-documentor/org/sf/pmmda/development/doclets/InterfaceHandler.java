@@ -1,10 +1,10 @@
-/* copyright 2000-2005 Marcel Baumann
+/* copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
  */
 
-package ch.bbv.documentor.doclets;
+package org.sf.pmmda.development.doclets;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,18 +33,21 @@ public class InterfaceHandler {
 
   /**
    * Constructor of the class.
-   * @param model model to synchronize with.
+   * @param model model to synchronize with
+   * @pre model != null
    */
   public InterfaceHandler(MetaModel model) {
+    assert model != null;
     this.model = model;
   }
 
   /**
    * Synchronize the interface with its model representation.
-   * @param interfaces interface to synchronize.
+   * @param interfaces interface to synchronize
+   * @pre (interfaces != null) && interfaces.isInterface()
    */
   public void synchronize(ClassDoc interfaces) {
-    assert (interfaces != null && interfaces.isInterface());
+    assert (interfaces != null) && interfaces.isInterface();
     MetaClass clazz = model.findClass(interfaces.qualifiedTypeName());
     if (clazz == null) {
       if (log.isWarnEnabled()) {
@@ -71,20 +74,20 @@ public class InterfaceHandler {
   /**
    * Synchronizes the model with the JavaDoc data The field name, description,
    * and type are synchronized. The field can only be a constant.
-   * @param field field to synchronize.
+   * @param field field to synchronize
    * @param clazz clazz to synchronize
    * @pre (field != null) && (clazz != null)
    */
   private void synchronizeConstant(FieldDoc field, MetaClass clazz) {
-    assert ((field != null) && (clazz != null));
+    assert (field != null) && (clazz != null);
     MetaProperty property = clazz.findProperty(field.name());
   }
 
   /**
    * Removes the constants defined in the model which are no more part of the
    * source code.
-   * @param fields list of fields define in the source code.
-   * @param clazz class to clean.
+   * @param fields list of fields define in the source code
+   * @param clazz class to clean
    */
   private void removeUndefinedConstants(FieldDoc[] fields, MetaClass clazz) {
   }
