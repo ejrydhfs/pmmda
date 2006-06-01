@@ -16,7 +16,7 @@ public class Messages {
 
   public static String actionSave = "Save";
 
-  public static String actionSaveAs = "SaveAs...";
+  public static String actionSaveAs = "Save As...";
 
   public static String actionOpen = "Open...";
 
