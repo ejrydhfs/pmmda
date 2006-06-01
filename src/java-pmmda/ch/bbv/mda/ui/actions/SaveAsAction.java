@@ -20,6 +20,7 @@ import org.apache.commons.logging.LogFactory;
 import ch.bbv.explorer.Explorer;
 import ch.bbv.explorer.ExplorerDocument;
 import ch.bbv.explorer.actions.ExplorerFileAction;
+import ch.bbv.explorer.properties.Messages;
 import ch.bbv.mda.persistence.PersistenceException;
 import ch.bbv.mda.ui.MdaDocument;
 import ch.bbv.mda.ui.MdaExplorer;
@@ -51,16 +52,11 @@ public class SaveAsAction extends ExplorerFileAction {
   private static Log log = LogFactory.getLog(SaveAsAction.class);
 
   /**
-   * Name of the action as displayed in the menu.
-   */
-  private static final String ACTION = "SaveAs...";
-
-  /**
    * Default constructor.
    * @param explorer explorer owning the global action.
    */
   public SaveAsAction(Explorer explorer) {
-    super(ACTION, explorer);
+    super(Messages.actionSaveAs, explorer);
     MdaFileTypes.getInstance().addFileFilters(getFileChooser());
   }
 
@@ -75,7 +71,7 @@ public class SaveAsAction extends ExplorerFileAction {
       String extension = FilenameUtils.getExtension(file.getCanonicalPath());
       if (extension == null) {
         file = MdaFileTypes.getInstance().normalizeFile(
-          getFileChooser().getFileFilter(), file);
+            getFileChooser().getFileFilter(), file);
       }
       extension = FilenameUtils.getExtension(file.getCanonicalPath());
       if (extension == null) {

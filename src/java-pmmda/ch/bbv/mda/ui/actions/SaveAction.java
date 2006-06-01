@@ -42,7 +42,7 @@ public class SaveAction extends ExplorerSaveAction {
 
   /**
    * Default constructor.
-   * @param explorer explorer owning the global action.
+   * @param explorer explorer owning the global action
    */
   public SaveAction(Explorer explorer) {
     super(explorer);
@@ -105,6 +105,7 @@ public class SaveAction extends ExplorerSaveAction {
     return lastResult;
   }
 
+  @Override
   public void actionPerformed(ActionEvent action) {
     execute();
   }
