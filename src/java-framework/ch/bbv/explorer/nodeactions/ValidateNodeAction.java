@@ -7,20 +7,19 @@
 
 package ch.bbv.explorer.nodeactions;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ch.bbv.dog.AbstractVisitorFunctor;
 import ch.bbv.dog.DataObject;
 import ch.bbv.dog.DataObjectType;
-import ch.bbv.dog.validation.ValidationRuleResult;
 import ch.bbv.dog.validation.Validator;
+import ch.bbv.explorer.Explorer;
 import ch.bbv.explorer.ExplorerNode;
 import ch.bbv.explorer.UiNodeType;
 import ch.bbv.mda.ui.MdaExplorer;
+
+import com.jgoodies.validation.ValidationResult;
 
 /**
  * The validate action traverses the data object graph which root is in the
@@ -61,14 +60,20 @@ public class ValidateNodeAction extends AbstractNodeAction {
   public void execute(ExplorerNode node) {
     DataObject object = node.getDataObject();
     if (object != null) {
-      DataObjectType type = node.getNodeType().getDataObjectType();
-      AbstractVisitorFunctor visitor = type.createVisitorInstance();
-      List<ValidationRuleResult> results = new ArrayList<ValidationRuleResult>();
-      validator.validate(object, visitor, results);
-      log.debug("Display validator messages " + results.size());
       MdaExplorer explorer = (MdaExplorer) node.getNodeOwner();
-      explorer.getStatusBar().setInfo("Validation Completed");
-      explorer.getValidationPanel().setResults(results);
+      validateTree(object, validator, explorer);
     }
+  }
+
+  public static void validateTree(DataObject object, Validator validator,
+      Explorer explorer) {
+    DataObjectType type = explorer.getManager().getType(object);
+    AbstractVisitorFunctor visitor = type.createVisitorInstance();
+    ValidationResult results = new ValidationResult();
+    validator.validate(object, visitor, results);
+    log.debug("Display validator messages " + results.size());
+    explorer.getStatusBar().setInfo("Validation Completed");
+    explorer.getDocument().setValidated(true);
+    explorer.getValidationPanel().setResults(results);
   }
 }

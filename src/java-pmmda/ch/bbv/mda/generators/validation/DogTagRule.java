@@ -8,10 +8,11 @@ package ch.bbv.mda.generators.validation;
 
 import java.util.List;
 
-import ch.bbv.dog.validation.ValidationRuleResult;
 import ch.bbv.mda.*;
 import ch.bbv.mda.cartridges.BoCartridge;
 import ch.bbv.mda.cartridges.BoConstants;
+
+import com.jgoodies.validation.ValidationResult;
 
 /**
  * The DOG tag rule implements all validation rules for the tag values defined
@@ -52,11 +53,11 @@ public class DogTagRule extends TagRule {
     super(BoCartridge.PREFIX);
   }
 
-  protected boolean validate(MetaPackage packages, List results) {
+  protected boolean validate(MetaPackage packages, ValidationResult results) {
     return true;
   }
 
-  protected boolean validate(MetaClass clazz, List results) {
+  protected boolean validate(MetaClass clazz, ValidationResult results) {
     return true;
   }
 
@@ -69,12 +70,11 @@ public class DogTagRule extends TagRule {
    * <li>If the property is persistent, it cannot be transient. If it is
    * transient, it cannot be persistent.</li>
    * </ul>
-   * @param property element to validate.
-   * @param results the validation results.
-   * @return true if no error were found otherwise false.
+   * @param property element to validate
+   * @param results the validation results
+   * @return true if no error were found otherwise false
    */
-  protected boolean validate(MetaProperty property,
-      List<ValidationRuleResult> results) {
+  protected boolean validate(MetaProperty property, ValidationResult results) {
     boolean success = true;
     MetaClass clazz = (MetaClass) property.getContext();
     if (clazz.hasStereotype(BoConstants.DATA_OBJECT_STEREOTYPE)) {
@@ -96,7 +96,7 @@ public class DogTagRule extends TagRule {
   }
 
   protected boolean validate(MetaIndexedProperty property,
-      List<ValidationRuleResult> results) {
+      ValidationResult results) {
     return true;
   }
 }

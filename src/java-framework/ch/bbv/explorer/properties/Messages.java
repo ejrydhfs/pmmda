@@ -42,25 +42,27 @@ public class Messages {
 
   public static String menuHelp = "Help";
 
+  public static String menuActionsPopup = "Actions";
+
+  public static String msgValidation = "Validation Completed";
+
+  public static String msgSaveChanges = "Do you want to save the changes to \"{0}?\"";
+
+  public static String msgFileOverwrite = "Do you want to overwrite the file \"{0}?\"";
+
+  public static String titleExplorerFrame = "Explorer";
+
   public static String titleActionConfirmation = "Confirm Action";
 
-  public static String actionsPoupupSubmenu = "Actions";
+  public static String titleNodeViewSimpleProperties = "Simple Properties";
+
+  public static String titleNodeViewDataObjects = "Data Objects";
+
+  public static String titleNodeViewIndexedProperties = "Indexed Properties";
+
+  public static String titleNodeViewMappedProperties = "Mapped Properties";
 
   public static String undefinedFilename = "<unknown>";
-
-  public static String actionSaveChanges = "Do you want to save the changes to \"{0}?\"";
-
-  public static String actionFileOverwrite = "Do you want to overwrite the file \"{0}?\"";
-
-  public static String explorerFrameName = "Explorer";
-
-  public static String nodeViewSimplePropertiesName = "Simple Properties";
-
-  public static String nodeViewDataObjectsName = "Data Objects";
-
-  public static String nodeViewIndexedPropertiesName = "Indexed Properties";
-
-  public static String nodeViewMappedPropertiesName = "Mapped Properties";
 
   public static String[] contributorsColumnNames = { "name", "email", "role" };
 

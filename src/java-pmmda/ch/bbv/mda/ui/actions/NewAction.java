@@ -9,6 +9,7 @@ import ch.bbv.explorer.Explorer;
 import ch.bbv.explorer.actions.ExplorerNewAction;
 import ch.bbv.mda.MetaModel;
 import ch.bbv.mda.generators.TreeChecker;
+import ch.bbv.mda.properties.MessagesMda;
 import ch.bbv.mda.ui.MdaDocument;
 import ch.bbv.mda.ui.MdaExplorer;
 
@@ -26,7 +27,7 @@ public class NewAction extends ExplorerNewAction {
 
   /**
    * Default constructor.
-   * @param explorer explorer owning the global action.
+   * @param explorer explorer owning the global action
    */
   public NewAction(Explorer explorer) {
     super(explorer);
@@ -36,7 +37,7 @@ public class NewAction extends ExplorerNewAction {
     MdaExplorer explorer = (MdaExplorer) getExplorer();
     MdaDocument document = new MdaDocument();
     MetaModel model = document.getModel();
-    model.setName("default");
+    model.setName(MessagesMda.titleDefaultModel);
     model.setFilename("");
     model.accept(new TreeChecker());
     explorer.setDocument(document);

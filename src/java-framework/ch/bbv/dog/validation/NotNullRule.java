@@ -6,10 +6,12 @@
 
 package ch.bbv.dog.validation;
 
-import java.util.List;
 import java.util.ResourceBundle;
 
 import ch.bbv.utilities.ReflectUtilities;
+
+import com.jgoodies.validation.Severity;
+import com.jgoodies.validation.ValidationResult;
 
 /**
  * The rule verifies that the property is not null.
@@ -34,16 +36,15 @@ public class NotNullRule extends ValidationRuleImpl implements ValidationRule {
 
   /**
    * Constructor of the class.
-   * @param immediate true if the rule is immediate otherwise false.
-   * @param severity the severity level of the rule.
+   * @param immediate true if the rule is immediate otherwise false
+   * @param severity the severity level of the rule
    */
-  public NotNullRule(boolean immediate, int severity) {
+  public NotNullRule(boolean immediate, Severity severity) {
     super(immediate, severity);
   }
 
   @Override
-  public boolean execute(Object bean, String property,
-      List<ValidationRuleResult> results) {
+  public boolean execute(Object bean, String property, ValidationResult results) {
     Object value = ReflectUtilities.getProperty(bean, property);
     if (value == null) {
       addMessage(results, resources, IS_NULL, getSeverity(), bean, property,
@@ -55,7 +56,7 @@ public class NotNullRule extends ValidationRuleImpl implements ValidationRule {
 
   @Override
   public boolean execute(Object bean, String property, Object oldValue,
-      Object newValue, List<ValidationRuleResult> results) {
+      Object newValue, ValidationResult results) {
     Object value = ReflectUtilities.getProperty(bean, property);
     if (value == null) {
       addMessage(results, resources, IS_NULL, getSeverity(), bean, property,

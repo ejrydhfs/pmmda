@@ -114,7 +114,7 @@ public abstract class ExplorerGlobalActionImpl extends AbstractAction implements
       if (name == null) {
         name = Messages.undefinedFilename;
       }
-      int selection = displayMessage(Messages.actionSaveChanges, name);
+      int selection = displayMessage(Messages.msgSaveChanges, name);
       switch (selection) {
       case 0:
         if (document.isNew()) {

@@ -25,6 +25,11 @@ public class ExplorerDocumentImpl implements ExplorerDocument {
   private boolean news;
 
   /**
+   * Flag indicating if the document is validated.
+   */
+  private boolean validated;
+
+  /**
    * Name of the document as displayed on the user interface.
    */
   private String name;
@@ -56,6 +61,14 @@ public class ExplorerDocumentImpl implements ExplorerDocument {
 
   public void setNew(boolean news) {
     this.news = news;
+  }
+
+  public boolean isValidated() {
+    return validated;
+  }
+
+  public void setValidated(boolean validated) {
+    this.validated = validated;
   }
 
   public String getName() {

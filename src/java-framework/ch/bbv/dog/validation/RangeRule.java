@@ -8,9 +8,11 @@ package ch.bbv.dog.validation;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
-import java.util.List;
 
 import ch.bbv.utilities.ReflectUtilities;
+
+import com.jgoodies.validation.Severity;
+import com.jgoodies.validation.ValidationResult;
 
 /**
  * The range rule insures a property value is inside a defined minimum and
@@ -28,12 +30,13 @@ public class RangeRule extends ValidationRuleImpl implements ValidationRule {
 
   /**
    * Constructor for a new range rule.
-   * @param immediate flag indicating if the rule is immediate or not.
-   * @param severity the severity level of the rule.
-   * @param min lower bound of the interval. The value is part of the interval.
-   * @param max high bound of the interval. The value is part or the interval.
+   * @param immediate flag indicating if the rule is immediate or not
+   * @param severity the severity level of the rule
+   * @param min lower bound of the interval. The value is part of the interval
+   * @param max high bound of the interval. The value is part or the
+   *          intervalSeverity
    */
-  public RangeRule(boolean immediate, int severity, long min, long max) {
+  public RangeRule(boolean immediate, Severity severity, long min, long max) {
     super(immediate, severity);
     range = new NaturalRange(min, max);
   }
@@ -45,7 +48,7 @@ public class RangeRule extends ValidationRuleImpl implements ValidationRule {
    * @param min lower bound of the interval. The value is part of the interval.
    * @param max high bound of the interval. The value is part or the interval.
    */
-  public RangeRule(boolean immediate, int severity, double min, double max) {
+  public RangeRule(boolean immediate, Severity severity, double min, double max) {
     super(immediate, severity);
     range = new FractionalRange(min, max);
   }
@@ -53,11 +56,11 @@ public class RangeRule extends ValidationRuleImpl implements ValidationRule {
   /**
    * Constructor for a new range rule.
    * @param immediate indicates if the rule should be checked immediately
-   * @param severity the severity level of the rule.
-   * @param min lower bound of the interval. The value is part of the interval.
-   * @param max high bound of the interval. The value is part or the interval.
+   * @param severity the severity level of the rule
+   * @param min lower bound of the interval. The value is part of the interval
+   * @param max high bound of the interval. The value is part or the interval
    */
-  public RangeRule(boolean immediate, int severity, Date min, Date max) {
+  public RangeRule(boolean immediate, Severity severity, Date min, Date max) {
     super(immediate, severity);
     range = new DateRange(min, max);
   }
@@ -65,11 +68,11 @@ public class RangeRule extends ValidationRuleImpl implements ValidationRule {
   /**
    * Constructor for a new range rule.
    * @param immediate indicates if the rule should be checked immediately
-   * @param severity the severity level of the rule.
-   * @param min lower bound of the interval. The value is part of the interval.
-   * @param max high bound of the interval. The value is part or the interval.
+   * @param severity the severity level of the rule
+   * @param min lower bound of the interval. The value is part of the interval
+   * @param max high bound of the interval. The value is part or the interval
    */
-  public RangeRule(boolean immediate, int severity, BigInteger min,
+  public RangeRule(boolean immediate, Severity severity, BigInteger min,
       BigInteger max) {
     super(immediate, severity);
     range = new BigNaturalRange(min, max);
@@ -78,26 +81,25 @@ public class RangeRule extends ValidationRuleImpl implements ValidationRule {
   /**
    * Constructor for a new range rule.
    * @param immediate indicates if the rule should be checked immediately
-   * @param severity the severity level of the rule.
-   * @param min lower bound of the interval. The value is part of the interval.
-   * @param max high bound of the interval. The value is part or the interval.
+   * @param severity the severity level of the rule
+   * @param min lower bound of the interval. The value is part of the interval
+   * @param max high bound of the interval. The value is part or the interval
    */
-  public RangeRule(boolean immediate, int severity, BigDecimal min,
+  public RangeRule(boolean immediate, Severity severity, BigDecimal min,
       BigDecimal max) {
     super(immediate, severity);
     range = new BigFractionalRange(min, max);
   }
 
   @Override
-  public boolean execute(Object bean, String property,
-      List<ValidationRuleResult> results) {
+  public boolean execute(Object bean, String property, ValidationResult results) {
     Object value = ReflectUtilities.getProperty(bean, property);
     return (value != null) && range.isInRange(value);
   }
 
   @Override
   public boolean execute(Object bean, String property, Object oldValue,
-      Object newValue, List<ValidationRuleResult> results) {
+      Object newValue, ValidationResult results) {
     return (newValue != null) && range.isInRange(newValue);
   }
 

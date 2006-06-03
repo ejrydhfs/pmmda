@@ -26,6 +26,7 @@ import ch.bbv.application.Library;
 import ch.bbv.application.VersionId;
 import ch.bbv.dog.*;
 import ch.bbv.explorer.components.ExplorerWindowAdapter;
+import ch.bbv.explorer.components.ValidationPanel;
 import ch.bbv.explorer.properties.Messages;
 import ch.bbv.utilities.ReflectUtilities;
 
@@ -129,6 +130,11 @@ public abstract class Explorer implements ExplorerNodeOwner {
   private ExplorerMenuBar menuBar;
 
   /**
+   * Validation panel of the explorer;
+   */
+  private ValidationPanel validationPanel;
+
+  /**
    * The task class implements the Swing pattern where graphical user interface
    * should be executed in the AWT event processing thread.
    * @author MarcelBaumann
@@ -213,7 +219,7 @@ public abstract class Explorer implements ExplorerNodeOwner {
     navigationPort.dock(tree, DockingConstants.CENTER_REGION);
 
     // create the status bar and construct the frame
-    frame = new JFrame(Messages.explorerFrameName);
+    frame = new JFrame(Messages.titleExplorerFrame);
     frame.add(treeViewPane, BorderLayout.CENTER);
     statusBar = new StatusBar();
     frame.add(statusBar, BorderLayout.SOUTH);
@@ -241,6 +247,19 @@ public abstract class Explorer implements ExplorerNodeOwner {
    */
   public DataObjectMgr getManager() {
     return manager;
+  }
+
+  /**
+   * Returns the validation panel of the explorer.
+   * @return the requested validation panel
+   */
+  public ValidationPanel getValidationPanel() {
+    return validationPanel;
+  }
+
+  protected void setValidationPanel(ValidationPanel validationPanel) {
+    this.validationPanel = validationPanel;
+
   }
 
   /**

@@ -6,14 +6,14 @@
 
 package ch.bbv.mda.validation;
 
-import java.util.List;
-
 import ch.bbv.dog.validation.ValidationRule;
 import ch.bbv.dog.validation.ValidationRuleImpl;
-import ch.bbv.dog.validation.ValidationRuleResult;
 import ch.bbv.mda.MetaClass;
 import ch.bbv.mda.MetaPackage;
 import ch.bbv.mda.MetaProperty;
+
+import com.jgoodies.validation.Severity;
+import com.jgoodies.validation.ValidationResult;
 
 /**
  * The description rule verifies that packages and classes have a description.
@@ -32,14 +32,13 @@ public class DescriptionRule extends ValidationRuleImpl implements
   /**
    * Constructor of the class.
    * @param immediate true if the rule is immediate otherwise false.
-   * @param severity the severity level of the rule.
+   * @param severity the severity level of the rule
    */
-  public DescriptionRule(boolean immediate, int severity) {
+  public DescriptionRule(boolean immediate, Severity severity) {
     super(immediate, severity);
   }
 
-  public boolean execute(Object bean, String property,
-      List<ValidationRuleResult> results) {
+  public boolean execute(Object bean, String property, ValidationResult results) {
     boolean success = true;
     if (bean instanceof MetaPackage) {
       MetaPackage element = (MetaPackage) bean;

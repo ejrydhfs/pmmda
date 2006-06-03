@@ -13,6 +13,8 @@ import ch.bbv.application.Locator;
 import ch.bbv.dog.validation.*;
 import ch.bbv.mda.*;
 
+import com.jgoodies.validation.Severity;
+
 /**
  * The rules factory defines the validation rules the application requires on
  * behalf of the MDA model. The rules are registered on the default validator of
@@ -82,13 +84,13 @@ public class RulesFactory {
    * Registers all rules constraining the MDA model.
    */
   public void registerAllRules() {
-    identifierRule = new FormatRule(false, ValidationRule.ERROR,
+    identifierRule = new FormatRule(false, Severity.ERROR,
         JAVA_IDENTIFIER_PATTERN);
-    packageIdentifierRule = new FormatRule(false, ValidationRule.ERROR,
+    packageIdentifierRule = new FormatRule(false, Severity.ERROR,
         PACKAGE_IDENTIFIER_PATTERN, resources, WRONG_PACKAGE_IDENTIFIER);
     nameTypeNotNullOrNotEmptyRule = new StringNotNullOrNotEmptyRule(true,
-        ValidationRule.ERROR);
-    descriptionNotNullRule = new DescriptionRule(false, ValidationRule.WARNING);
+        Severity.ERROR);
+    descriptionNotNullRule = new DescriptionRule(false, Severity.WARNING);
     createRulesForMetaModel();
     createRulesForMetaPackage();
     createRulesForMetaClass();
@@ -136,13 +138,13 @@ public class RulesFactory {
     Validator validator = getValidator();
     validator.registerRule(descriptionNotNullRule, MetaProperty.class,
         DESCRIPTION);
-    validator.registerRule(new NotNullRule(true, ValidationRule.ERROR),
+    validator.registerRule(new NotNullRule(true, Severity.ERROR),
         MetaProperty.class, "typeName");
     validator.registerRule(identifierRule, MetaProperty.class, NAME);
     validator.registerRule(nameTypeNotNullOrNotEmptyRule, MetaProperty.class,
         "typeName");
-    validator.registerRule(new UndefinedTypeRule(true, ValidationRule.ERROR), MetaProperty.class,
-        "typeName");
+    validator.registerRule(new UndefinedTypeRule(true, Severity.ERROR),
+        MetaProperty.class, "typeName");
   }
 
   /**
@@ -152,13 +154,13 @@ public class RulesFactory {
     Validator validator = getValidator();
     validator.registerRule(descriptionNotNullRule, MetaIndexedProperty.class,
         DESCRIPTION);
-    validator.registerRule(new NotNullRule(true, ValidationRule.ERROR),
+    validator.registerRule(new NotNullRule(true, Severity.ERROR),
         MetaIndexedProperty.class, "typeName");
     validator.registerRule(identifierRule, MetaIndexedProperty.class, NAME);
     validator.registerRule(nameTypeNotNullOrNotEmptyRule,
         MetaIndexedProperty.class, "typeName");
-    validator.registerRule(new UndefinedTypeRule(true, ValidationRule.ERROR), MetaIndexedProperty.class,
-    "typeName");
+    validator.registerRule(new UndefinedTypeRule(true, Severity.ERROR),
+        MetaIndexedProperty.class, "typeName");
   }
 
   /**

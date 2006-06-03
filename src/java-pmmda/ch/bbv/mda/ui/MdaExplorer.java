@@ -40,6 +40,7 @@ import ch.bbv.explorer.properties.Messages;
 import ch.bbv.mda.MetaModel;
 import ch.bbv.mda.generators.Cartridge;
 import ch.bbv.mda.generators.CartridgeFactory;
+import ch.bbv.mda.properties.MessagesMda;
 import ch.bbv.mda.ui.actions.*;
 import ch.bbv.utilities.ResourceUtilities;
 
@@ -56,11 +57,6 @@ public class MdaExplorer extends Explorer {
    * key to infer the set of project lately opened.
    */
   public static final String PREFERENCES_OPENED_PROJECT = "mda.opened-project";
-
-  /**
-   * The name of the validation panel.
-   */
-  public static final String VALIDATION_PANEL_NAME = "Validator";
 
   /**
    * Logger instance of the class.
@@ -88,8 +84,6 @@ public class MdaExplorer extends Explorer {
   private String[] arguments;
 
   private ExplorerGlobalAction generateAllAction;
-
-  private ValidationPanel validationPanel;
 
   /**
    * Creates a new MDA explorer.
@@ -149,16 +143,8 @@ public class MdaExplorer extends Explorer {
     TreeConstructor constructor = new TreeConstructor(getNodeTypeFactory());
     model.accept(constructor);
     setRoot(constructor.getRoot());
-    validationPanel.clear();
+    getValidationPanel().clear();
     getMenuBar().documentChanged(document);
-  }
-
-  /**
-   * Returns the validation panel of the explorer.
-   * @return the requested validation panel
-   */
-  public ValidationPanel getValidationPanel() {
-    return validationPanel;
   }
 
   /**
@@ -166,12 +152,13 @@ public class MdaExplorer extends Explorer {
    */
   @Override
   protected void initialize() {
-    new ResourceUtilities("ch.bbv.mda.ui.Messages", Locale.US);
+    new ResourceUtilities("ch.bbv.mda.ui.OldMessages", Locale.US);
     ExplorerMenuBar menuBar = new ExplorerMenuBar(this);
     setMenuBar(menuBar);
 
-    validationPanel = new ValidationPanel();
-    validationPanel.setName(VALIDATION_PANEL_NAME);
+    ValidationPanel validationPanel = new ValidationPanel();
+    setValidationPanel(validationPanel);
+    validationPanel.setName(MessagesMda.titleValidator);
     Dockable dockable = DockingManager.registerDockable(validationPanel,
         validationPanel.getName());
     DockingManager.dock(dockable, getUtilitiesPort(),
@@ -263,8 +250,8 @@ public class MdaExplorer extends Explorer {
    * Creates the dynamic menu containing all configured cartridges.
    */
   private void createGenerateMenu() {
-    JMenu menu = new JMenu("Generate");
-    menu.setName("Generate");
+    JMenu menu = new JMenu(MessagesMda.menuGenerate);
+    menu.setName(MessagesMda.menuGenerate);
     menu.add(new JMenuItem(generateAllAction));
     menu.addSeparator();
 

@@ -7,9 +7,15 @@
 
 package ch.bbv.dog.validation;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.ResourceBundle;
+import java.util.Set;
 
 import ch.bbv.utilities.ReflectUtilities;
+
+import com.jgoodies.validation.Severity;
+import com.jgoodies.validation.ValidationResult;
 
 /**
  * The rule insures that a property value of a set of objects is unique.
@@ -46,31 +52,30 @@ public class UniqueRule extends ValidationRuleImpl implements ValidationRule {
   /**
    * Constructor of the class where null values are considered.
    * @param indexedProperty property which should be unique for all items in the
-   *          indexed property to evaluate.
+   *          indexed property to evaluate
    */
   public UniqueRule(String indexedProperty) {
-    this(indexedProperty, false, ERROR, false);
+    this(indexedProperty, false, Severity.ERROR, false);
   }
 
   /**
    * Constructor of the class.
-   * @param immediate flag indicating if the rule is immediate or not.
-   * @param severity the severity level of the rule.
+   * @param immediate flag indicating if the rule is immediate or not
+   * @param severity the severity level of the rule
    * @param indexedProperty property which should be unique for all items in the
-   *          indexed property to evaluate.
+   *          indexed property to evaluate
    * @param considerNull flag indicating if null values are relevant for the
-   *          uniqueness test.
+   *          uniqueness test
    */
-  public UniqueRule(String indexedProperty, boolean immediate, int severity,
-      boolean considerNull) {
+  public UniqueRule(String indexedProperty, boolean immediate,
+      Severity severity, boolean considerNull) {
     super(immediate, severity);
     this.indexedProperty = indexedProperty;
     this.considerNull = considerNull;
   }
 
   @Override
-  public boolean execute(Object bean, String property,
-      List<ValidationRuleResult> results) {
+  public boolean execute(Object bean, String property, ValidationResult results) {
     Collection objects = (Collection) ReflectUtilities.getProperty(bean,
         property);
     return validate(objects, results, bean);
@@ -78,12 +83,12 @@ public class UniqueRule extends ValidationRuleImpl implements ValidationRule {
 
   @Override
   public boolean execute(Object bean, String property, Object oldValue,
-      Object newValue, List<ValidationRuleResult> results) {
+      Object newValue, ValidationResult results) {
     return validate((Collection) newValue, results, bean);
   }
 
-  private boolean validate(Collection objects,
-      List<ValidationRuleResult> results, Object bean) {
+  private boolean validate(Collection objects, ValidationResult results,
+      Object bean) {
     Set<Object> values = new HashSet<Object>();
     for (Object object : objects) {
       Object value = ReflectUtilities.getProperty(object, indexedProperty);

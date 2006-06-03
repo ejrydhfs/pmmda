@@ -6,10 +6,12 @@
 
 package ch.bbv.dog.validation;
 
-import java.util.List;
 import java.util.ResourceBundle;
 
 import ch.bbv.utilities.ReflectUtilities;
+
+import com.jgoodies.validation.Severity;
+import com.jgoodies.validation.ValidationResult;
 
 /**
  * The rule verifies that the property is a String type and not empty.
@@ -35,16 +37,15 @@ public class StringNotNullOrNotEmptyRule extends ValidationRuleImpl implements
 
   /**
    * Constructor of the class.
-   * @param immediate true if the rule is immediate otherwise false.
-   * @param severity the severity level of the rule.
+   * @param immediate true if the rule is immediate otherwise false
+   * @param severity the severity level of the rule
    */
-  public StringNotNullOrNotEmptyRule(boolean immediate, int severity) {
+  public StringNotNullOrNotEmptyRule(boolean immediate, Severity severity) {
     super(immediate, severity);
   }
 
   @Override
-  public boolean execute(Object bean, String property,
-      List<ValidationRuleResult> results) {
+  public boolean execute(Object bean, String property, ValidationResult results) {
     String value = (String) ReflectUtilities.getProperty(bean, property);
     if (value == null || value.equals("")) {
       addMessage(results, resources, IS_STRING_NULL_OR_EMPTY, getSeverity(),
@@ -56,7 +57,7 @@ public class StringNotNullOrNotEmptyRule extends ValidationRuleImpl implements
 
   @Override
   public boolean execute(Object bean, String property, Object oldValue,
-      Object newValue, List<ValidationRuleResult> results) {
+      Object newValue, ValidationResult results) {
     Object value = ReflectUtilities.getProperty(bean, property);
     if (value == null || value.equals("")) {
       addMessage(results, resources, IS_STRING_NULL_OR_EMPTY, getSeverity(),

@@ -6,14 +6,13 @@
 
 package ch.bbv.mda.generators.validation;
 
-import java.util.List;
-
-import ch.bbv.dog.validation.ValidationRuleResult;
 import ch.bbv.mda.MetaClass;
 import ch.bbv.mda.MetaIndexedProperty;
 import ch.bbv.mda.MetaPackage;
 import ch.bbv.mda.MetaProperty;
 import ch.bbv.mda.cartridges.OrmCartridge;
+
+import com.jgoodies.validation.ValidationResult;
 
 /**
  * The CTO tag rule implements all validation rules for the tag values defined
@@ -29,22 +28,20 @@ public class CtoTagRule extends TagRule {
     super(OrmCartridge.PREFIX);
   }
 
-  protected boolean validate(MetaPackage packages,
-      List<ValidationRuleResult> results) {
+  protected boolean validate(MetaPackage packages, ValidationResult results) {
     return true;
   }
 
-  protected boolean validate(MetaClass clazz, List<ValidationRuleResult> results) {
+  protected boolean validate(MetaClass clazz, ValidationResult results) {
     return true;
   }
 
-  protected boolean validate(MetaProperty property,
-      List<ValidationRuleResult> results) {
+  protected boolean validate(MetaProperty property, ValidationResult results) {
     return true;
   }
 
   protected boolean validate(MetaIndexedProperty property,
-      List<ValidationRuleResult> results) {
+      ValidationResult results) {
     return true;
   }
 }

@@ -146,12 +146,12 @@ public class GenericNodePropertiesView extends NodePropertiesView {
     FormLayout layout = new FormLayout("right:pref, 3dlu, pref", "");
     DefaultFormBuilder builder = new DefaultFormBuilder(layout);
     builder.setDefaultDialogBorder();
-    generateRows(builder, Messages.nodeViewSimplePropertiesName,
+    generateRows(builder, Messages.titleNodeViewSimpleProperties,
         primitivePropertyViews);
-    generateRows(builder, Messages.nodeViewDataObjectsName, simplePropertyViews);
-    generateRows(builder, Messages.nodeViewIndexedPropertiesName,
+    generateRows(builder, Messages.titleNodeViewDataObjects, simplePropertyViews);
+    generateRows(builder, Messages.titleNodeViewIndexedProperties,
         indexedPropertyViews);
-    generateRows(builder, Messages.nodeViewMappedPropertiesName,
+    generateRows(builder, Messages.titleNodeViewMappedProperties,
         mappedPropertyViews);
     JPanel panel = builder.getPanel();
     add(panel);

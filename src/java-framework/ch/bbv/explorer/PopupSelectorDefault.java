@@ -118,7 +118,7 @@ public class PopupSelectorDefault implements PopupSelector {
    * @return the menu of actions available to a root node
    */
   private JMenu createRootNodeActions(UiNodeType type) {
-    JMenu actionsMenu = new JMenu(Messages.actionsPoupupSubmenu);
+    JMenu actionsMenu = new JMenu(Messages.menuActionsPopup);
     actionsMenu.add(new ExpandNodeAction(type, Messages.actionExpandAll));
     actionsMenu.add(new CollapseNodeAction(type, Messages.actionCollapseAll));
     if (validate != null) {

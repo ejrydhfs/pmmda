@@ -7,13 +7,15 @@
 package ch.bbv.dog.validation;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import bsh.EvalError;
 import bsh.Interpreter;
+
+import com.jgoodies.validation.Severity;
+import com.jgoodies.validation.ValidationResult;
 
 /**
  * The beanshell validation rule implements validation rules which logic is
@@ -38,24 +40,24 @@ public class BshRule extends ValidationRuleImpl implements ValidationRule {
    * @param severity the severity level of the rule.
    * @param filename name of the file containing the beanshell script.
    */
-  public BshRule(boolean immediate, int severity, String filename) {
+  public BshRule(boolean immediate, Severity severity, String filename) {
     super(immediate, severity);
     interpreter = new Interpreter();
   }
 
   @Override
-  public boolean execute(Object bean, String property, List results) {
+  public boolean execute(Object bean, String property, ValidationResult results) {
     return process(bean, property, null, null, results);
   }
 
   @Override
   public boolean execute(Object bean, String property, Object oldValue,
-      Object newValue, List results) {
+      Object newValue, ValidationResult results) {
     return process(bean, property, oldValue, newValue, results);
   }
 
   private boolean process(Object bean, String property, Object oldValue,
-      Object newValue, List results) {
+      Object newValue, ValidationResult results) {
     try {
       interpreter.set("bean", bean);
       interpreter.set("property", property);

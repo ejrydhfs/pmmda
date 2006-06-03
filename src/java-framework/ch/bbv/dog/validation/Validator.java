@@ -17,6 +17,8 @@ import ch.bbv.dog.AbstractVisitorFunctor;
 import ch.bbv.dog.DataObject;
 import ch.bbv.dog.DataObjectType;
 
+import com.jgoodies.validation.ValidationResult;
+
 /**
  * The validator component is responsible to apply validation rules on business
  * object graphs. The name of the validator identifies the component in the
@@ -131,7 +133,7 @@ public class Validator extends ComponentImpl {
    * @param results list to which validation rule results are added.
    * @pre (object != null) && (results != null)
    */
-  public void validate(DataObject object, List<ValidationRuleResult> results) {
+  public void validate(DataObject object, ValidationResult results) {
     assert (object != null) && (results != null);
     ValidationInfo info = infos.get(object.getClass());
     if (info != null) {
@@ -150,13 +152,13 @@ public class Validator extends ComponentImpl {
   /**
    * Validates the data object graph with all its nodes and their simple and
    * indexed properties. The graph is traversed using the visitor pattern.
-   * @param root root data object of the graph to visit.
-   * @param visitor visitor used to traverse the graph.
-   * @param results list to which validation rule results are added.
+   * @param root root data object of the graph to visit
+   * @param visitor visitor used to traverse the graph
+   * @param results list to which validation rule results are added
    * @pre (root != null) && (visitor != null) && (results != null)
    */
   public void validate(DataObject root, AbstractVisitorFunctor visitor,
-      List<ValidationRuleResult> results) {
+      ValidationResult results) {
     assert (root != null) && (visitor != null) && (results != null);
     if (log.isTraceEnabled()) {
       StringBuilder buffer = new StringBuilder();
@@ -169,7 +171,7 @@ public class Validator extends ComponentImpl {
     validationStart(results);
     DataObjectType.invokeVisitor(root, visitor);
     validationEnd(results);
-    results.addAll(functor.getResults());
+    results.addAllFrom(functor.getResults());
     if (log.isTraceEnabled()) {
       StringBuilder buffer = new StringBuilder();
       buffer.append("End validation for ").append(root.getClass()).append(" ")
@@ -180,8 +182,8 @@ public class Validator extends ComponentImpl {
 
   /**
    * Registers a validation rule defined for a class.
-   * @param rule rule to register.
-   * @param clazz class on which instances the rule will be applied.
+   * @param rule rule to register
+   * @param clazz class on which instances the rule will be applied
    * @pre (rule != null) && (clazz != null)
    */
   public void registerRule(ValidationRule rule, Class clazz) {
@@ -196,9 +198,9 @@ public class Validator extends ComponentImpl {
 
   /**
    * Registers a validation rule.
-   * @param rule rule to register.
-   * @param clazz class on which instances the rule will be applied.
-   * @param property property on which the rule will be applied.
+   * @param rule rule to register
+   * @param clazz class on which instances the rule will be applied
+   * @param property property on which the rule will be applied
    * @pre (rule != null) && (clazz != null) && (property != null)
    */
   public void registerRule(ValidationRule rule, Class clazz, String property) {
@@ -214,9 +216,9 @@ public class Validator extends ComponentImpl {
   /**
    * Indicates that validation starts now. This can be used by rules to perform
    * preprocessing.
-   * @param results list to which validation rule results are added.
+   * @param results list to which validation rule results are added
    */
-  private void validationStart(List<ValidationRuleResult> results) {
+  private void validationStart(ValidationResult results) {
     for (ValidationInfo info : infos.values()) {
       for (ValidationRule rule : info.getRules()) {
         rule.validationStart(results);
@@ -233,9 +235,9 @@ public class Validator extends ComponentImpl {
   /**
    * Indicates that validation is complete now. This can be used by rules to
    * perform postprocessing.
-   * @param results list to which validation rule results are added.
+   * @param results list to which validation rule results are added
    */
-  private void validationEnd(List<ValidationRuleResult> results) {
+  private void validationEnd(ValidationResult results) {
     for (ValidationInfo info : infos.values()) {
       for (ValidationRule rule : info.getRules()) {
         rule.validationEnd(results);

@@ -49,6 +49,20 @@ public interface ExplorerDocument {
    */
   void setNew(boolean news);
 
+  /** 
+   * Returns the flag indicating if the document is validated.
+   * @return true if the document is validated otherwise false
+   * @see #setValidated(boolean)
+   */
+  boolean isValidated();
+  
+  /**
+   * Sets the validated flag.
+   * @param validated new value of the flag
+   * @see #isValidated()
+   */
+  void setValidated(boolean validated);
+  
   /**
    * Returns the name of the document.
    * @return the name of the document

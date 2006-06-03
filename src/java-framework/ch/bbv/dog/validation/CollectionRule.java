@@ -7,9 +7,11 @@
 package ch.bbv.dog.validation;
 
 import java.util.Collection;
-import java.util.List;
 
 import ch.bbv.utilities.ReflectUtilities;
+
+import com.jgoodies.validation.Severity;
+import com.jgoodies.validation.ValidationResult;
 
 /**
  * The collection rule applies the given rules to a property of all objects part
@@ -38,7 +40,7 @@ public class CollectionRule extends ValidationRuleImpl implements
    *          indexed property to evaluate.
    * @param rule rule to apply.
    */
-  public CollectionRule(boolean immediate, int severity,
+  public CollectionRule(boolean immediate, Severity severity,
       String indexedProperty, ValidationRule rule) {
     super(immediate, severity);
     this.indexedProperty = indexedProperty;
@@ -46,8 +48,7 @@ public class CollectionRule extends ValidationRuleImpl implements
   }
 
   @Override
-  public boolean execute(Object bean, String property,
-      List<ValidationRuleResult> results) {
+  public boolean execute(Object bean, String property, ValidationResult results) {
     boolean sucess = true;
     Collection objects = (Collection) ReflectUtilities.getProperty(bean,
         property);
@@ -59,7 +60,7 @@ public class CollectionRule extends ValidationRuleImpl implements
 
   @Override
   public boolean execute(Object bean, String property, Object oldValue,
-      Object newValue, List<ValidationRuleResult> results) {
+      Object newValue, ValidationResult results) {
     return execute(bean, property, results);
   }
 }

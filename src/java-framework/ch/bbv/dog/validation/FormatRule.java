@@ -6,12 +6,14 @@
 
 package ch.bbv.dog.validation;
 
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import ch.bbv.utilities.ReflectUtilities;
+
+import com.jgoodies.validation.Severity;
+import com.jgoodies.validation.ValidationResult;
 
 /**
  * The format rule defines the input format of allowed inputs. The format is
@@ -48,15 +50,15 @@ public class FormatRule extends ValidationRuleImpl implements ValidationRule {
   /**
    * Constructor of the class.
    * @param immediate indicates if the rule should be checked immediately
-   * @param severity the severity level of the rule.
-   * @param format format to validate.
+   * @param severity the severity level of the rule
+   * @param format format to validate
    */
-  public FormatRule(boolean immediate, int severity, String format) {
+  public FormatRule(boolean immediate, Severity severity, String format) {
     this(immediate, severity, format, ResourceBundle
         .getBundle("ch.bbv.dog.validation.RulesMessages"), NO_FORMAT_COMPLIANCE);
   }
 
-  public FormatRule(boolean immediate, int severity, String format,
+  public FormatRule(boolean immediate, Severity severity, String format,
       ResourceBundle resourceBundle, String resourceKey) {
     super(immediate, severity);
     pattern = Pattern.compile(format);
@@ -66,8 +68,7 @@ public class FormatRule extends ValidationRuleImpl implements ValidationRule {
   }
 
   @Override
-  public boolean execute(Object bean, String property,
-      List<ValidationRuleResult> results) {
+  public boolean execute(Object bean, String property, ValidationResult results) {
     Object value = ReflectUtilities.getProperty(bean, property);
     if (!validate(value, results)) {
       addMessage(results, resources, resourceKey, getSeverity(), bean,
@@ -79,7 +80,7 @@ public class FormatRule extends ValidationRuleImpl implements ValidationRule {
 
   @Override
   public boolean execute(Object bean, String property, Object oldValue,
-      Object newValue, List<ValidationRuleResult> results) {
+      Object newValue, ValidationResult results) {
     if (!validate(newValue, results)) {
       addMessage(results, resources, resourceKey, getSeverity(), bean,
           property, oldValue, newValue);
@@ -90,11 +91,11 @@ public class FormatRule extends ValidationRuleImpl implements ValidationRule {
 
   /**
    * Validates the rule agains the data.
-   * @param value data to validate.
-   * @param results list of validation rule results.
-   * @return true if sucessful otherwise false.
+   * @param value data to validate
+   * @param results list of validation rule results
+   * @return true if sucessful otherwise false
    */
-  private boolean validate(Object value, List results) {
+  private boolean validate(Object value, ValidationResult results) {
     if (value != null) {
       matcher.reset((String) value);
       if (!matcher.matches()) {

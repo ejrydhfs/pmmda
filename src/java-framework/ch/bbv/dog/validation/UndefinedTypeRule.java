@@ -5,15 +5,18 @@
  */
 package ch.bbv.dog.validation;
 
-import java.util.List;
 import java.util.ResourceBundle;
 
 import ch.bbv.mda.MetaElement;
 import ch.bbv.mda.MetaModel;
 import ch.bbv.utilities.ReflectUtilities;
 
+import com.jgoodies.validation.Severity;
+import com.jgoodies.validation.ValidationResult;
+
 /**
- * The rule verifies that a property or an indexed property have a defined type (type within model)
+ * The rule verifies that a property or an indexed property have a defined type
+ * (type within model)
  * @author Adrian Bachofen
  * @version $Revision$
  */
@@ -35,22 +38,21 @@ public class UndefinedTypeRule extends ValidationRuleImpl implements
 
   /**
    * Constructor of the class.
-   * @param immediate true if the rule is immediate otherwise false.
-   * @param severity the severity level of the rule.
+   * @param immediate true if the rule is immediate otherwise false
+   * @param severity the severity level of the rule
    */
-  public UndefinedTypeRule(boolean immediate, int severity) {
+  public UndefinedTypeRule(boolean immediate, Severity severity) {
     super(immediate, severity);
   }
 
   @Override
-  public boolean execute(Object bean, String property,
-      List<ValidationRuleResult> results) {
+  public boolean execute(Object bean, String property, ValidationResult results) {
     String value = (String) ReflectUtilities.getProperty(bean, property);
     if (value != null && !value.equals("")) {
-      MetaModel model = ((MetaElement)bean).getModel();
-      if(model.findClass(value) == null && model.findDatatype(value) == null) {
-        addMessage(results, resources, UNDEFINED_TYPE, getSeverity(),
-            bean, property, null, null);
+      MetaModel model = ((MetaElement) bean).getModel();
+      if (model.findClass(value) == null && model.findDatatype(value) == null) {
+        addMessage(results, resources, UNDEFINED_TYPE, getSeverity(), bean,
+            property, null, null);
         return false;
       }
     }
@@ -59,14 +61,14 @@ public class UndefinedTypeRule extends ValidationRuleImpl implements
 
   @Override
   public boolean execute(Object bean, String property, Object oldValue,
-      Object newValue, List<ValidationRuleResult> results) {
-    if(newValue != null && newValue instanceof String) {
-      String value = (String)newValue;
+      Object newValue, ValidationResult results) {
+    if (newValue != null && newValue instanceof String) {
+      String value = (String) newValue;
       if (value != null && !value.equals("")) {
-        MetaModel model = ((MetaElement)bean).getModel();
-        if(model.findClass(value) == null && model.findDatatype(value) == null) {
-          addMessage(results, resources, UNDEFINED_TYPE, getSeverity(),
-              bean, property, null, null);
+        MetaModel model = ((MetaElement) bean).getModel();
+        if (model.findClass(value) == null && model.findDatatype(value) == null) {
+          addMessage(results, resources, UNDEFINED_TYPE, getSeverity(), bean,
+              property, null, null);
           return false;
         }
       }

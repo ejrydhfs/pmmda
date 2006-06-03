@@ -9,15 +9,13 @@ package ch.bbv.mda.generators.validation;
 import static ch.bbv.mda.cartridges.OrmConstants.COLUMN_NAME;
 import static ch.bbv.mda.cartridges.OrmConstants.COLUMN_SIZE;
 import static ch.bbv.mda.cartridges.OrmConstants.COLUMN_TYPE;
-
-import java.util.List;
-
-import ch.bbv.dog.validation.ValidationRuleResult;
 import ch.bbv.mda.*;
 import ch.bbv.mda.cartridges.BoConstants;
 import ch.bbv.mda.cartridges.JdbcTypeCode;
 import ch.bbv.mda.cartridges.OrmCartridge;
 import ch.bbv.mda.cartridges.OrmConstants;
+
+import com.jgoodies.validation.ValidationResult;
 
 /**
  * The orm tag rule implements all validation rules for the tag values defined
@@ -58,8 +56,7 @@ public class OrmTagRule extends TagRule {
     super(OrmCartridge.PREFIX);
   }
 
-  protected boolean validate(MetaPackage packages,
-      List<ValidationRuleResult> results) {
+  protected boolean validate(MetaPackage packages, ValidationResult results) {
     return true;
   }
 
@@ -68,11 +65,11 @@ public class OrmTagRule extends TagRule {
    * <ul>
    * <li>If the class is persistent, it must have a table name.</li>
    * </ul>
-   * @param clazz element to validate.
-   * @param results the validation results.
-   * @return true if no error were found otherwise false.
+   * @param clazz element to validate
+   * @param results the validation results
+   * @return true if no error were found otherwise false
    */
-  protected boolean validate(MetaClass clazz, List<ValidationRuleResult> results) {
+  protected boolean validate(MetaClass clazz, ValidationResult results) {
     boolean sucess = true;
     if (clazz.booleanValueOfTag(UmlConstants.PERSISTENCE_TAG)) {
       if (!exists(clazz, OrmConstants.TABLE_NAME)) {
@@ -96,12 +93,11 @@ public class OrmTagRule extends TagRule {
    * <li>If the property is locking, its JDBC type must be either integer or
    * timestamp.</li>
    * </ul>
-   * @param property element to validate.
-   * @param results the validation results.
-   * @return true if no error were found otherwise false.
+   * @param property element to validate
+   * @param results the validation results
+   * @return true if no error were found otherwise false
    */
-  protected boolean validate(MetaProperty property,
-      List<ValidationRuleResult> results) {
+  protected boolean validate(MetaProperty property, ValidationResult results) {
     boolean sucess = true;
     if (property.booleanValueOfTag(UmlConstants.PERSISTENCE_TAG)) {
       if (!exists(property, COLUMN_NAME)) {
@@ -146,20 +142,20 @@ public class OrmTagRule extends TagRule {
    * <ul>
    * <li>none</li>
    * </ul>
-   * @param property element to validate.
-   * @param results the validation results.
-   * @return true if no error were found otherwise false.
+   * @param property element to validate
+   * @param results the validation results
+   * @return true if no error were found otherwise false
    */
   protected boolean validate(MetaIndexedProperty property,
-      List<ValidationRuleResult> results) {
+      ValidationResult results) {
     return true;
   }
 
   /**
    * Checks if the tag is defined and its length is greater than zero.
-   * @param element element containing the tag to check.
-   * @param tag name of the tag to check.
-   * @return true if the tag contains a value otherwise false.
+   * @param element element containing the tag to check
+   * @param tag name of the tag to check
+   * @return true if the tag contains a value otherwise false
    */
   private boolean exists(MetaElement element, String tag) {
     String value = element.valueOfTag(tag);
@@ -169,9 +165,9 @@ public class OrmTagRule extends TagRule {
   /**
    * Returns the value of a numerical tag value. The default value follows the
    * convention of major programming languages.
-   * @param element element containing the tag to check.
-   * @param tag name of the tag to check.
-   * @return the numerical value of the tag if defined otherwise 0.
+   * @param element element containing the tag to check
+   * @param tag name of the tag to check
+   * @return the numerical value of the tag if defined otherwise 0
    */
   private int intValue(MetaElement element, String tag) {
     int value = 0;

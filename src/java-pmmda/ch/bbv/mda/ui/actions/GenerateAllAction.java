@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann 
+/* copyright 2000-2006 Marcel Baumann 
  * Licensed under the Apache License, Version 2.0 (the "Licence"); 
  * you may not use this file except in compliance with the License. 
  * $Id$ 
@@ -12,18 +12,15 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import ch.bbv.application.Locator;
-import ch.bbv.dog.AbstractVisitorFunctor;
-import ch.bbv.dog.DataObjectMgr;
-import ch.bbv.dog.validation.ValidationRule;
-import ch.bbv.dog.validation.ValidationRuleResults;
 import ch.bbv.dog.validation.Validator;
 import ch.bbv.explorer.Explorer;
 import ch.bbv.explorer.StatusBar;
 import ch.bbv.explorer.actions.ExplorerGlobalActionImpl;
+import ch.bbv.explorer.nodeactions.ValidateNodeAction;
 import ch.bbv.mda.MetaModel;
 import ch.bbv.mda.generators.Cartridge;
 import ch.bbv.mda.generators.CartridgeFactory;
-import ch.bbv.mda.ui.MdaExplorer;
+import ch.bbv.mda.properties.MessagesMda;
 import ch.bbv.utilities.ResourceUtilities;
 
 /**
@@ -39,16 +36,11 @@ public class GenerateAllAction extends ExplorerGlobalActionImpl {
   private static final long serialVersionUID = 20041201;
 
   /**
-   * Name of the action as displayed in the menu.
-   */
-  private static final String ACTION = "Generate All";
-
-  /**
    * Default constructor.
    * @param explorer explorer owning the global action
    */
   public GenerateAllAction(Explorer explorer) {
-    super(ACTION, explorer);
+    super(MessagesMda.actionGenerateAll, explorer);
   }
 
   public boolean execute() {
@@ -59,12 +51,8 @@ public class GenerateAllAction extends ExplorerGlobalActionImpl {
     if (model != null) {
       Validator validator = (Validator) Locator.getInstance().getComponent(
           Validator.NAME);
-      ValidationRuleResults results = new ValidationRuleResults();
-      AbstractVisitorFunctor visitor = DataObjectMgr.getVisitorFor(model
-          .getClass());
-      validator.validate(model, visitor, results);
-      ((MdaExplorer) getExplorer()).getValidationPanel().setResults(results);
-      if (false && results.getCount(ValidationRule.ERROR) > 0) {
+      ValidateNodeAction.validateTree(model, validator, getExplorer());
+      if (getExplorer().getValidationPanel().getResults().hasErrors()) {
         JOptionPane.showMessageDialog(getExplorer().getFrame(),
             ResourceUtilities.getString("mda.ui.errorMsg.MODEL_HAS_ERRORS"),
             ResourceUtilities.getString("mda.ui.errorMsg.ERROR"),
