@@ -15,7 +15,7 @@ import javax.swing.JTextField;
 
 import ch.bbv.dog.DataObject;
 import ch.bbv.dog.DataObjectType;
-import ch.bbv.explorer.properties.Messages;
+import ch.bbv.explorer.resources.Messages;
 
 /**
  * The data object property view displays a data object property . The object is

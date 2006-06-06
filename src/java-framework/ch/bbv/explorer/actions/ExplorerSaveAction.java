@@ -9,7 +9,7 @@ import java.awt.event.ActionEvent;
 
 import ch.bbv.explorer.Explorer;
 import ch.bbv.explorer.ExplorerDocument;
-import ch.bbv.explorer.properties.Messages;
+import ch.bbv.explorer.resources.Messages;
 
 /**
  * The save action for the user interface of application.

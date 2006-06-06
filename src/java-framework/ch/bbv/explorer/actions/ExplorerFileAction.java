@@ -16,7 +16,7 @@ import org.apache.commons.logging.LogFactory;
 
 import ch.bbv.explorer.Explorer;
 import ch.bbv.explorer.ExplorerDocument;
-import ch.bbv.explorer.properties.Messages;
+import ch.bbv.explorer.resources.Messages;
 
 /**
  * The save as action starts the file selection dialog. Upon sucessful selection

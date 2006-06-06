@@ -3,7 +3,7 @@
  * you may not use this file except in compliance with the License. 
  * $Id$ 
  */
-package ch.bbv.explorer.properties;
+package ch.bbv.explorer.resources;
 
 public class Messages {
   public static String actionAbout = "About";
@@ -46,11 +46,17 @@ public class Messages {
 
   public static String msgValidation = "Validation Completed";
 
-  public static String msgSaveChanges = "Do you want to save the changes to \"{0}?\"";
+  public static String msgSaveChanges = "Do you want to save the changes to \"{0}\" ?";
 
-  public static String msgFileOverwrite = "Do you want to overwrite the file \"{0}?\"";
-
+  public static String msgFileOverwrite = "Do you want to overwrite the file \"{0}\" ?";
+  
   public static String titleExplorerFrame = "Explorer";
+  
+  public static String titleContributorsTab = "Contributors";
+  
+  public static String titleLicenseTab = "License";
+  
+  public static String titleLibrairiesTab = "Librairies";
 
   public static String titleActionConfirmation = "Confirm Action";
 
@@ -62,10 +68,16 @@ public class Messages {
 
   public static String titleNodeViewMappedProperties = "Mapped Properties";
 
+  public static String titleAboutTab = "About";
+
+  public static String titlesystemTab = "System";
+
   public static String undefinedFilename = "<unknown>";
 
   public static String[] contributorsColumnNames = { "name", "email", "role" };
 
   public static String[] librariesColumnNames = { "name", "version", "licence",
       "info" };
+  
+  public static String[] propertiesColumnNames = { "name", "value" };
 }

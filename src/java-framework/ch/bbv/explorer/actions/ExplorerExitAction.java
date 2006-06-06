@@ -10,7 +10,7 @@ import javax.swing.JOptionPane;
 import ch.bbv.explorer.Explorer;
 import ch.bbv.explorer.ExplorerDocument;
 import ch.bbv.explorer.ExplorerMenuBar;
-import ch.bbv.explorer.properties.Messages;
+import ch.bbv.explorer.resources.Messages;
 
 /**
  * The save action for the user interface of <strong>pmMDA </strong>
@@ -26,36 +26,33 @@ public class ExplorerExitAction extends ExplorerGlobalActionImpl {
 
   /**
    * Constructor of the instances of the class.
-   * @param explorer explorer owning the global action.
+   * @param explorer explorer owning the global action
    */
   public ExplorerExitAction(Explorer explorer) {
     super(Messages.actionExit, explorer);
   }
 
   public boolean execute() {
+    lastResult = true;
     Explorer explorer = getExplorer();
     ExplorerDocument document = explorer.getDocument();
+    int choice = JOptionPane.YES_OPTION;
     if ((document != null) && document.isModified()) {
-      if (document.isNew()) {
-        int choice = JOptionPane.showConfirmDialog(null, "Save As Changes",
-            "Save As Changes", JOptionPane.YES_NO_OPTION);
-        if (choice == JOptionPane.YES_OPTION) {
-          if (!explorer.getMenuBar().getStandardAction(
-              ExplorerMenuBar.Names.SAVE).execute()) {
-          }
-        }
-      } else {
-        int choice = JOptionPane.showConfirmDialog(null, "Save Changes",
-            "Save Changes", JOptionPane.YES_NO_OPTION);
-        if (choice == JOptionPane.YES_OPTION) {
+      choice = displayMessage(Messages.msgSaveChanges, document.getName());
+      if (choice == JOptionPane.YES_OPTION) {
+        if (document.isNew()) {
           explorer.getMenuBar()
               .getStandardAction(ExplorerMenuBar.Names.SAVE_AS)
               .actionPerformed(null);
+        } else {
+          lastResult = explorer.getMenuBar().getStandardAction(
+              ExplorerMenuBar.Names.SAVE).execute();
         }
       }
     }
-    explorer.close();
-    lastResult = true;
+    if (choice != JOptionPane.CANCEL_OPTION) {
+      explorer.close();
+    }
     return lastResult;
   }
 }

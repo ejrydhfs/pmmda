@@ -1,5 +1,5 @@
 /* 
- * copyright 2000-2005 Marcel Baumann
+ * copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -178,7 +178,18 @@ public class TableCell implements TableFormat, WritableTableFormat,
    * @pre propertyNames != null
    */
   public TableCell(String[] propertyNames) {
-    this(create(propertyNames, propertyNames, new Class[propertyNames.length],
+    this(propertyNames, propertyNames);
+  }
+
+  /**
+   * Constructor of the class. The name of a column is also the name of the
+   * property in the Java bean.
+   * @param propertyNames the list of property names of the table
+   * @param columnNames the list of property names of the table
+   * @pre propertyNames != null
+   */
+  public TableCell(String[] propertyNames, String[] columnNames) {
+    this(create(propertyNames, columnNames, new Class[propertyNames.length],
         new boolean[propertyNames.length]));
   }
 

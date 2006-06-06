@@ -22,7 +22,7 @@ import ch.bbv.dog.DataObject;
 import ch.bbv.dog.DataObjectType;
 import ch.bbv.explorer.NodePropertiesView;
 import ch.bbv.explorer.UiNodeType;
-import ch.bbv.explorer.properties.Messages;
+import ch.bbv.explorer.resources.Messages;
 import ch.bbv.utilities.TextUtilities;
 
 import com.jgoodies.forms.builder.DefaultFormBuilder;

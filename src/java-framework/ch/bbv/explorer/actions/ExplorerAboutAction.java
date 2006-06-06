@@ -8,7 +8,7 @@ package ch.bbv.explorer.actions;
 import ch.bbv.application.ProjectInfo;
 import ch.bbv.explorer.Explorer;
 import ch.bbv.explorer.about.AboutFrame;
-import ch.bbv.explorer.properties.Messages;
+import ch.bbv.explorer.resources.Messages;
 
 /**
  * The explorer about action displays the about dialog box when requesting. The

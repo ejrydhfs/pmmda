@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann
+/* copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import ch.bbv.explorer.components.TableCell.Cell;
+import ch.bbv.explorer.resources.Messages;
 
 /**
  * A panel containing a table of system or application properties. Convenience
@@ -25,27 +25,22 @@ public class PropertiesPanel extends TablePanel {
   private static final long serialVersionUID = 20041201;
 
   /**
-   * Name of the columns of the properties panel.
+   * Name of the properties for fields of the table.
    */
-  public static final Cell[] CELLS;
-
-  static {
-    CELLS = new TableCell.Cell[2];
-    CELLS[0] = new Cell("name", "name", String.class, false);
-    CELLS[1] = new Cell("value", "value", String.class, false);
-  }
+  public static String[] propertiesPropertyNames = { "name", "value" };
 
   /**
    * Default constructor of the class.
-   * @param properties property list to display.
+   * @param properties property list to display
    */
   public PropertiesPanel(List<Property> properties) {
-    super(properties, new TableCell(CELLS));
+    super(properties, new TableCell(propertiesPropertyNames,
+        Messages.propertiesColumnNames));
   }
 
   /**
    * Creates a properties panel containing all system properties.
-   * @return the system properties panel.
+   * @return the system properties panel
    */
   public static PropertiesPanel createSystemPropertiesPanel() {
     return new PropertiesPanel(getSystemPropertyList());
@@ -53,7 +48,7 @@ public class PropertiesPanel extends TablePanel {
 
   /**
    * Returns a list of all system properties defined in the virtual machine.
-   * @return the list of system properties.
+   * @return the list of system properties
    */
   public static List<Property> getSystemPropertyList() {
     List<Property> properties = new ArrayList<Property>();

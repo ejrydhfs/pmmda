@@ -15,7 +15,7 @@ import javax.swing.JPopupMenu;
 import ch.bbv.application.Locator;
 import ch.bbv.dog.validation.Validator;
 import ch.bbv.explorer.nodeactions.*;
-import ch.bbv.explorer.properties.Messages;
+import ch.bbv.explorer.resources.Messages;
 
 /**
  * The default popup selector provides standard popup menus for node types.

@@ -8,7 +8,7 @@ package ch.bbv.explorer.views;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 
-import ch.bbv.explorer.properties.Messages;
+import ch.bbv.explorer.resources.Messages;
 
 class IndexedPropertyView extends PropertyView {
   JButton button;

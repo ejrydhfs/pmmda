@@ -6,7 +6,7 @@
 package ch.bbv.explorer.actions;
 
 import ch.bbv.explorer.Explorer;
-import ch.bbv.explorer.properties.Messages;
+import ch.bbv.explorer.resources.Messages;
 
 /**
  * The save action for the user interface of application.

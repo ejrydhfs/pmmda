@@ -27,8 +27,9 @@ import ch.bbv.application.VersionId;
 import ch.bbv.dog.*;
 import ch.bbv.explorer.components.ExplorerWindowAdapter;
 import ch.bbv.explorer.components.ValidationPanel;
-import ch.bbv.explorer.properties.Messages;
+import ch.bbv.explorer.resources.Messages;
 import ch.bbv.utilities.ReflectUtilities;
+import ch.bbv.utilities.ResourceUtilities;
 
 /**
  * The explorer view is responsible to visualize hierarchical data in an
@@ -42,10 +43,10 @@ import ch.bbv.utilities.ReflectUtilities;
  * phases.
  * <ol>
  * <li>The constructor creates an instance of the class. The constructors of
- * the ancestors are called.</li>
+ * the ancestors are called</li>
  * <li>The initialize method is called starting from the leaf descendent. Each
  * subclass, which overwrites the method must call the parent method.</li>
- * <li>The display method shows the explorer on the screen.</li>
+ * <li>The display method shows the explorer on the screen</li>
  * </ol>
  * <p>
  * The right pane provide two panels. The top panel provides detailed views of
@@ -62,14 +63,14 @@ public abstract class Explorer implements ExplorerNodeOwner {
   private JFrame frame;
 
   /**
-   * Docking port for the explorer.
+   * Docking port for the explorer views.
    */
-  private DefaultDockingPort viewPort;
+  private DefaultDockingPort viewsPort;
 
   /**
-   * Docking port for the explorer.
+   * Docking port for the explorer trees.
    */
-  private DefaultDockingPort navigationPort;
+  private DefaultDockingPort treesPort;
 
   /**
    * Docking port for the explorer.
@@ -130,7 +131,7 @@ public abstract class Explorer implements ExplorerNodeOwner {
   private ExplorerMenuBar menuBar;
 
   /**
-   * Validation panel of the explorer;
+   * Validation panel of the explorer.
    */
   private ValidationPanel validationPanel;
 
@@ -197,18 +198,21 @@ public abstract class Explorer implements ExplorerNodeOwner {
    * @param manager data object manager of the explorer
    */
   public Explorer(UiNodeTypeFactory factory, DataObjectMgr manager) {
+    // loads the resource bundle for the locale
+    ResourceUtilities.loadMessages("ch.bbv.explorer.resources.Explorer",
+        Messages.class);
     this.factory = factory;
     this.manager = manager;
     tree = new ExplorerTree();
     // create the explorer docking structure
-    viewPort = new DefaultDockingPort();
-    navigationPort = new DefaultDockingPort();
+    viewsPort = new DefaultDockingPort();
+    treesPort = new DefaultDockingPort();
     utilitiesPort = new DefaultDockingPort();
-    viewUtilitiesPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, viewPort,
+    viewUtilitiesPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, viewsPort,
         utilitiesPort);
     viewUtilitiesPane.setDividerSize(5);
     viewUtilitiesPane.setResizeWeight(0.8);
-    treeViewPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, navigationPort,
+    treeViewPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, treesPort,
         viewUtilitiesPane);
     treeViewPane.setDividerSize(5);
     treeViewPane.setResizeWeight(0.3);
@@ -216,8 +220,7 @@ public abstract class Explorer implements ExplorerNodeOwner {
     treePane.setName("Tree");
     Dockable tree = DockingManager.registerDockable(treePane, treePane
         .getName());
-    navigationPort.dock(tree, DockingConstants.CENTER_REGION);
-
+    treesPort.dock(tree, DockingConstants.CENTER_REGION);
     // create the status bar and construct the frame
     frame = new JFrame(Messages.titleExplorerFrame);
     frame.add(treeViewPane, BorderLayout.CENTER);
@@ -277,7 +280,7 @@ public abstract class Explorer implements ExplorerNodeOwner {
    * @return the requested docking port
    */
   public DockingPort getMainPort() {
-    return viewPort;
+    return viewsPort;
   }
 
   /**
@@ -286,7 +289,7 @@ public abstract class Explorer implements ExplorerNodeOwner {
    * @return the requested docking port
    */
   public DockingPort getNavigationPort() {
-    return navigationPort;
+    return treesPort;
   }
 
   /**
@@ -417,7 +420,7 @@ public abstract class Explorer implements ExplorerNodeOwner {
   }
 
   /**
-   * Retursn the user interface node type factory of the explorer.
+   * Returns the user interface node type factory of the explorer.
    * @return the node type factory
    */
   protected UiNodeTypeFactory getFactory() {

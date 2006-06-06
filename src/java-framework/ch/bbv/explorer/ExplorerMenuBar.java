@@ -13,7 +13,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
 import ch.bbv.explorer.actions.ExplorerGlobalAction;
-import ch.bbv.explorer.properties.Messages;
+import ch.bbv.explorer.resources.Messages;
 
 /**
  * The explorer menu defines a standard menu bar and menu items for an

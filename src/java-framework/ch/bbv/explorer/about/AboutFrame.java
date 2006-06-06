@@ -18,7 +18,7 @@ import ch.bbv.explorer.ExplorerUtilities;
 import ch.bbv.explorer.components.PropertiesPanel;
 import ch.bbv.explorer.components.TableCell;
 import ch.bbv.explorer.components.TablePanel;
-import ch.bbv.explorer.properties.Messages;
+import ch.bbv.explorer.resources.Messages;
 
 /**
  * A dialog that displays information about the application and its
@@ -34,6 +34,11 @@ public class AboutFrame extends JDialog {
 
   /** The preferred size for the frame. */
   private static final Dimension PREFERRED_SIZE = new Dimension(600, 400);
+
+  /**
+   * Name of the properties for fields of the table.
+   */
+  public static String[] contributorsPropertyNames = { "name", "email", "role" };
 
   /**
    * The default border for the panels in the tabbed pane.
@@ -79,19 +84,12 @@ public class AboutFrame extends JDialog {
    */
   private JTabbedPane createTabs() {
     JTabbedPane tabs = new JTabbedPane();
-
     JPanel aboutPanel = createAboutPanel();
     aboutPanel.setBorder(AboutFrame.STANDARD_BORDER);
-
-    String aboutTab = "About";
-    tabs.add(aboutTab, aboutPanel);
-
+    tabs.add(Messages.titleAboutTab, aboutPanel);
     JPanel systemPanel = PropertiesPanel.createSystemPropertiesPanel();
     systemPanel.setBorder(AboutFrame.STANDARD_BORDER);
-
-    String systemTab = "System";
-    tabs.add(systemTab, systemPanel);
-
+    tabs.add(Messages.titlesystemTab, systemPanel);
     return tabs;
   }
 
@@ -109,28 +107,24 @@ public class AboutFrame extends JDialog {
     List<Contributor> contributors = projectInfo.getContributors();
     if (contributors != null) {
       JPanel contributorsPane = new TablePanel(contributors, new TableCell(
-          Messages.contributorsColumnNames));
+          contributorsPropertyNames, Messages.contributorsColumnNames));
       contributorsPane.setBorder(AboutFrame.STANDARD_BORDER);
-
-      String contributorsTab = "Contributors";
-      tabs.add(contributorsTab, contributorsPane);
+      tabs.add(Messages.titleContributorsTab, contributorsPane);
       includetabs = true;
     }
     if (projectInfo.getLicenceName() != null) {
       JPanel licencePanel = createLicencePanel();
       licencePanel.setBorder(STANDARD_BORDER);
-      tabs.add("Licence", licencePanel);
+      tabs.add(Messages.titleLicenseTab, licencePanel);
       includetabs = true;
     }
     List<Library> libraries = projectInfo.getLibraries();
     if (libraries != null) {
       JPanel librariesPanel = new LibraryPanel(libraries);
       librariesPanel.setBorder(AboutFrame.STANDARD_BORDER);
-      String librariesTab = "Libraries";
-      tabs.add(librariesTab, librariesPanel);
+      tabs.add(Messages.titleLibrairiesTab, librariesPanel);
       includetabs = true;
     }
-
     about.add(details, BorderLayout.NORTH);
     if (includetabs) {
       about.add(tabs);

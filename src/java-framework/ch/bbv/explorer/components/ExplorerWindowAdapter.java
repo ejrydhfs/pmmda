@@ -28,10 +28,11 @@ public class ExplorerWindowAdapter extends WindowAdapter {
 
   /**
    * Constructor of the class.
-   * @param explorer explorer on which the adapter is applied.
+   * @param explorer explorer on which the adapter is applied
    * @pre explorer != null
    */
   public ExplorerWindowAdapter(Explorer explorer) {
+    assert explorer != null;
     this.explorer = explorer;
   }
 

@@ -86,11 +86,15 @@ node type factory are local objects.</p>
 The event propagation mechanism should be simple and not impede the performance
 of monolithic applications.</p>
 
+<h3>Left Views</h3>
+<p>The right views provide a tree of nodes to display. Each node has at least
+one right view to show related properties. Each right view displays exactly one
+tree.</p>
 <h3>Right Views</h3>
 <p>The standard right view is a table view displaying the children of the
 selected node in the tree list. This mode models the behavior of standard
 explorer frameworks. More complex user interfaces needs additional views. First
-multiple kinds of table views should be supported. Applications often want to
+Omultiple kinds of table views should be supported. Applications often want to
 support a novice and an advanced user mode. Second some node types need to
 display over kinds of views. For example a CAD node must show a diagram.</p>
 

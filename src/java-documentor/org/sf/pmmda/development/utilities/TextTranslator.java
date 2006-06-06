@@ -11,11 +11,42 @@ import java.lang.reflect.Field;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+/**
+ * The text translator provides functions to generate resource bundles based on
+ * an existing java resource class.
+ * @author MarcelBaumann
+ * @version $Revision$
+ */
 public class TextTranslator {
   /**
    * Logger for all instances of the class.
    */
   private static Log log = LogFactory.getLog(TextTranslator.class);
+
+  public static void main(String[] args) {
+    if (args.length != 2) {
+      System.out.println("Usage: program qualified-class-name filename");
+    } else {
+      TextTranslator.generateResourceBundle(args[0], args[1]);
+    }
+  }
+  
+  /**
+   * Extracts all properties defined in the class with the qualified name and
+   * generates the associated bundle file with the given filename.
+   * @param qualifiedName class name containing all the messages to extract
+   * @param filename name of the file of the property bundle to generate
+   */
+  public static void generateResourceBundle(String qualifiedName,
+      String filename) {
+    File file = new File(filename);
+    try {
+      Class clazz = Class.forName(qualifiedName);
+      generateResourceBundle(clazz, file);
+    } catch (ClassNotFoundException e) {
+      log.fatal(e);
+    }
+  }
 
   /**
    * Extracts all properties defined in the properties class and generates the
@@ -25,33 +56,31 @@ public class TextTranslator {
    */
   public static void generateResourceBundle(Class propertiesClass, File file) {
     try {
+      log.info("Writing properties file " + file.getAbsolutePath());
       PrintWriter writer = new PrintWriter(new BufferedOutputStream(
           new FileOutputStream(file)));
       Object properties = propertiesClass.newInstance();
       StringBuilder buffer = new StringBuilder();
       for (Field field : propertiesClass.getFields()) {
-        buffer.setLength(0);
         String key = field.getName();
         Object value = field.get(properties);
         if (field.getType() == String.class) {
+          buffer.setLength(0);
           buffer.append(key).append("=").append(value);
           writer.println(buffer.toString());
-          writer.println();
-          log.info(buffer.toString());
         } else if (field.getType() == String[].class) {
           String[] array = (String[]) value;
           int index = 0;
           for (String text : array) {
+            buffer.setLength(0);
             buffer.append(key).append("_").append(index).append("=").append(
                 text);
             writer.println(buffer.toString());
-            writer.println();
-            log.info(buffer.toString());
             index++;
           }
         }
-        writer.close();
       }
+      writer.close();
     } catch (InstantiationException e) {
       log.fatal(e);
       e.printStackTrace();
@@ -60,18 +89,6 @@ public class TextTranslator {
     } catch (FileNotFoundException e) {
       log.fatal(e);
     }
-  }
-
-  /**
-   * Extracts all the properties form the property bundle and generates the
-   * associated
-   * @param filename file name fo the property bundle to parse
-   * @param packageName name of the package containing the properties class
-   * @param className name of the properties class
-   */
-  public static void generateClass(String filename, String packageName,
-      String className) {
-
   }
 
   /**
