@@ -14,7 +14,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ch.bbv.mda.MetaModel;
-import ch.bbv.utilities.ResourceUtilities;
+import ch.bbv.mda.resources.MessagesMda;
 
 /**
  * The serialize persistency handler uses the serialize mechanism of the Java
@@ -41,26 +41,27 @@ public class SerializePersistenceHandler implements PersistenceHandler {
       in.close();
     } catch (InvalidClassException ice) {
       log.error(ice);
-      JOptionPane.showMessageDialog(null, ResourceUtilities
-          .getString("mda.ui.sorryMsg.OLD_FORMAT"), ResourceUtilities
-          .getString("mda.ui.sorryMsg.SORRY"), JOptionPane.ERROR_MESSAGE);
-    } catch(Exception e){
+      JOptionPane.showMessageDialog(null, MessagesMda.msgOldFormat,
+          MessagesMda.titleSorry, JOptionPane.ERROR_MESSAGE);
+    } catch (Exception e) {
       throw new PersistenceException(e);
     }
     return project;
   }
 
-  public void writeModel(MetaModel project, File file) throws PersistenceException {
+  public void writeModel(MetaModel project, File file)
+      throws PersistenceException {
     try {
       ObjectOutput out = new ObjectOutputStream(new FileOutputStream(file));
       out.writeObject(project);
       out.close();
-    } catch(Exception e){
+    } catch (Exception e) {
       throw new PersistenceException(e);
     }
   }
 
-  public void updateModel(MetaModel project, File file) throws PersistenceException {
+  public void updateModel(MetaModel project, File file)
+      throws PersistenceException {
     throw new PersistenceException();
   }
 }

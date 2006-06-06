@@ -22,7 +22,7 @@ import ch.bbv.mda.MetaModel;
 import ch.bbv.mda.persistence.nsuml.ArgoWriter;
 import ch.bbv.mda.persistence.nsuml.MdaTransformer;
 import ch.bbv.mda.persistence.nsuml.NsUmlTransformer;
-import ch.bbv.utilities.ResourceUtilities;
+import ch.bbv.mda.resources.MessagesMda;
 
 /**
  * The NSUML handler manipulates XMI 1.0 / UML 1.3 based models. These models
@@ -61,13 +61,12 @@ public class NsUmlPersistenceHandler implements PersistenceHandler {
       MModel mModel = nsUmlTransformer.loadArgoModel(file);
       if (mModel == null) {
         log.error("NsUmlPersistenceHandler#readModel: illegal file - " + file);
-        JOptionPane.showMessageDialog(null, ResourceUtilities
-            .getString("mda.ui.sorryMsg.INVALID_FORMAT"), ResourceUtilities
-            .getString("mda.ui.sorryMsg.SORRY"), JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(null, MessagesMda.msgInvalidFormat,
+            MessagesMda.titleSorry, JOptionPane.ERROR_MESSAGE);
         return null;
       }
       nsUmlTransformer.synchronize(mModel, metaModel);
-    } catch(Exception e){
+    } catch (Exception e) {
       throw new PersistenceException(e);
     }
     return metaModel;
@@ -93,7 +92,7 @@ public class NsUmlPersistenceHandler implements PersistenceHandler {
           ArgoWriter.writeEntry(file, temporaryFile);
           temporaryFile.delete();
         }
-      } catch(Exception e) {
+      } catch (Exception e) {
         throw new PersistenceException(e);
       }
     }
@@ -115,7 +114,7 @@ public class NsUmlPersistenceHandler implements PersistenceHandler {
         ZipFileUtilities.replaceEntry(file, getArgoModelFileName(file), input);
         temporaryFile.delete();
       }
-    } catch(Exception e) {
+    } catch (Exception e) {
       throw new PersistenceException(e);
     }
   }

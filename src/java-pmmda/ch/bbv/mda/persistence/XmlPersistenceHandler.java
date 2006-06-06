@@ -14,7 +14,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ch.bbv.mda.MetaModel;
-import ch.bbv.utilities.ResourceUtilities;
+import ch.bbv.mda.resources.MessagesMda;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.ConversionException;
@@ -44,9 +44,8 @@ public class XmlPersistenceHandler implements PersistenceHandler {
       log.error(e);
     } catch (ConversionException e) {
       log.error(e);
-      JOptionPane.showMessageDialog(null, ResourceUtilities
-          .getString("mda.ui.sorryMsg.OLD_FORMAT"), ResourceUtilities
-          .getString("mda.ui.sorryMsg.SORRY"), JOptionPane.ERROR_MESSAGE);
+      JOptionPane.showMessageDialog(null, MessagesMda.msgOldFormat,
+          MessagesMda.titleSorry, JOptionPane.ERROR_MESSAGE);
     }
     return model;
   }
