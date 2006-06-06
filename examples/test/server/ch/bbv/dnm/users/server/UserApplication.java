@@ -5,6 +5,8 @@
  */
 package ch.bbv.dnm.users.server;
 
+import static ch.bbv.dnm.users.common.ApplicationConstants.*;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.OptionGroup;
@@ -29,6 +31,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
+import static ch.bbv.dnm.users.common.ApplicationConstants.*;
+
 /**
  * The class defines the server application connecting to the database and to
  * the servers. The application is configured to support 2 tiers, CORBA client
@@ -37,46 +41,6 @@ import java.util.Arrays;
  * @version $Revision$
  */
 public class UserApplication extends Application {
-  /**
-   * Mode when the client directly connects to the database.
-   */
-  public static final String USE_DIRECT = "direct";
-
-  /**
-   * Mode when the client connects to the servers using CORBA middleware.
-   */
-  public static final String USE_CORBA = "corba";
-
-  /**
-   * Mode when the client connects to the servers using J2EE middleware.
-   */
-  public static final String USE_J2EE = "j2ee";
-
-  /**
-   * Mode for the configuration of the object-relation mapping subsystem.
-   */
-  public static final String USE_REPLACE = "REPLACE";
-
-  /**
-   * Mode for the configuration of the object-relation mapping subsystem.
-   */
-  public static final String USE_SYNCHRONIZE = "SYNCHRONIZE";
-
-  /**
-   * Mode for the configuration of the object-relation mapping subsystem.
-   */
-  public static final String USE_DETACHED = "DETACHED";
-
-  /**
-   * Name of the ORB component in the application.
-   */
-  public static final String ORB_NAME = "CORBA_ORB";
-
-  /**
-   * Database alias to connect to the O/R mapping layer tool.
-   */
-  public static final String USERS_DATABASE = "orm-dnm";
-
   /**
    * Logger of the application class.
    */
@@ -103,26 +67,7 @@ public class UserApplication extends Application {
    */
   public static void main(String[] args) {
     UserApplication.args = args;
-    Options options = new Options();
-    OptionGroup group = new OptionGroup();
-    options.addOption(CmdLineBuilder.createNoArgOption("h", "help",
-        "display the list of available commands", false));
-    group.addOption(CmdLineBuilder.createNoArgOption("v", "verbose",
-        "set the logging level to verbose", false));
-    group.addOption(CmdLineBuilder.createNoArgOption("q", "quiet",
-        "set the logging level to quiet", false));
-    options.addOptionGroup(group);
-    options.addOption(CmdLineBuilder.createArgOption("m", "mode",
-        "defines the mode of the application [direct | CORBA | J2EE]", "mode",
-        false, String.class));
-    options.addOption(CmdLineBuilder.createArgOption("s", "synch",
-        "defines the O/R synchronization [replace | synchronize | detach]",
-        "synch", false, String.class));
-    options.addOption(CmdLineBuilder.createArgOption("ORBInitialPort", null,
-        "the ORB TCP/IP port", "port", false, String.class));
-    options.addOption(CmdLineBuilder.createArgOption("ORBInitialHost", null,
-        "the host where the ORB is running", "host", false, String.class));
-    options.addOption(CmdLineBuilder.createJavaProperty());
+    Options options = createCommandLine();
     Parser parser = new PosixParser();
     try {
       CommandLine line = parser.parse(options, args, true);

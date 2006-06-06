@@ -5,6 +5,8 @@
  */
 package ch.bbv.dnm.users.client;
 
+import static ch.bbv.dnm.users.common.ApplicationConstants.*;
+
 import java.util.Arrays;
 
 import org.apache.commons.cli.*;
@@ -15,7 +17,6 @@ import org.omg.CORBA.ORB;
 import ch.bbv.application.Application;
 import ch.bbv.application.ComponentException;
 import ch.bbv.application.Locator;
-import ch.bbv.cmdlineparser.CmdLineBuilder;
 import ch.bbv.dog.CacheHandler;
 import ch.bbv.dog.DataObjectHandler;
 import ch.bbv.dog.DataObjectMgr;
@@ -36,6 +37,8 @@ import ch.bbv.utilities.ReflectUtilities;
  * <dt>O/R synchronization mode</dt>
  * <dd>The legal values are replace, synchronize, and detach. The default mode
  * is replace.</dd>
+ * <dt>ORM framework</dt>
+ * <dd>Legal values are OJB, Hibernate.</dd>
  * <dt>ORBInitialPort</dt>
  * <dd>port of the CORBA broker as defined in the Java CORBA package.</dd>
  * <dt>ORBInitialHost</dt>
@@ -46,45 +49,6 @@ import ch.bbv.utilities.ReflectUtilities;
  * @version $Revision$
  */
 public class UserApplication extends Application {
-  /**
-   * The name of the ORB subsystem as registered.
-   */
-  public static final String ORB_NAME = "CORBA_ORB";
-
-  /**
-   * The schema name of the database containing the persistent data.
-   */
-  public static final String SCHEMA = "orm-dnm";
-
-  /**
-   * The mode for the 2-tier mode of the application.
-   */
-  public static final String USE_DIRECT = "direct";
-
-  /**
-   * The mode for the CORBA mode of the application.
-   */
-  public static final String USE_CORBA = "corba";
-
-  /**
-   * The mode for the J2EE mode of the application.
-   */
-  public static final String USE_J2EE = "j2ee";
-
-  /**
-   * Mode for the configuration of the object-relation mapping subsystem.
-   */
-  public static final String USE_REPLACE = "REPLACE";
-
-  /**
-   * Mode for the configuration of the object-relation mapping subsystem.
-   */
-  public static final String USE_SYNCHRONIZE = "SYNCHRONIZE";
-
-  /**
-   * Mode for the configuration of the object-relation mapping subsystem.
-   */
-  public static final String USE_DETACHED = "DETACHED";
 
   /**
    * Logger for all instances of the class.
@@ -168,28 +132,9 @@ public class UserApplication extends Application {
    */
   public static void main(String[] args) {
     UserApplication.args = args;
-    Options options = new Options();
-    OptionGroup group = new OptionGroup();
-    options.addOption(CmdLineBuilder.createNoArgOption("h", "help",
-        "display the list of available commands", false));
-    group.addOption(CmdLineBuilder.createNoArgOption("v", "verbose",
-        "set the logging level to verbose", false));
-    group.addOption(CmdLineBuilder.createNoArgOption("q", "quiet",
-        "set the logging level to quiet", false));
-    options.addOptionGroup(group);
-    options.addOption(CmdLineBuilder.createArgOption("m", "mode",
-        "defines the mode of the application [direct | CORBA | J2EE]", "mode",
-        false, String.class));
-    options.addOption(CmdLineBuilder.createArgOption("s", "synch",
-        "defines the O/R synchronization [replace | synchronize | detach]",
-        "synch", false, String.class));
-    options.addOption(CmdLineBuilder.createArgOption("ORBInitialPort", null,
-        "the ORB TCP/IP port", "port", false, String.class));
-    options.addOption(CmdLineBuilder.createArgOption("ORBInitialHost", null,
-        "the host where the ORB is running", "host", false, String.class));
-    options.addOption(CmdLineBuilder.createJavaProperty());
     Parser parser = new PosixParser();
     try {
+      Options options = createCommandLine();
       CommandLine line = parser.parse(options, args, true);
       if (line.hasOption("h")) {
         HelpFormatter formatter = new HelpFormatter();

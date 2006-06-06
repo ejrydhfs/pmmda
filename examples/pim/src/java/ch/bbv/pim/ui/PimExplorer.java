@@ -29,7 +29,7 @@ import ch.bbv.explorer.about.Contributor;
 import ch.bbv.explorer.about.Licences;
 import ch.bbv.explorer.actions.ExplorerAboutAction;
 import ch.bbv.explorer.actions.ExplorerExitAction;
-import ch.bbv.explorer.properties.Messages;
+import ch.bbv.explorer.resources.Messages;
 import ch.bbv.pim.AddressBook;
 import ch.bbv.pim.client.TypeFactory;
 import ch.bbv.pim.lw.AddressBookLw;
