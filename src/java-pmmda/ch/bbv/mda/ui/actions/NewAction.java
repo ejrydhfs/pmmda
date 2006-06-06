@@ -9,7 +9,7 @@ import ch.bbv.explorer.Explorer;
 import ch.bbv.explorer.actions.ExplorerNewAction;
 import ch.bbv.mda.MetaModel;
 import ch.bbv.mda.generators.TreeChecker;
-import ch.bbv.mda.properties.MessagesMda;
+import ch.bbv.mda.resources.MessagesMda;
 import ch.bbv.mda.ui.MdaDocument;
 import ch.bbv.mda.ui.MdaExplorer;
 

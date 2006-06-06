@@ -20,9 +20,9 @@ import ch.bbv.explorer.Explorer;
 import ch.bbv.explorer.ExplorerDocument;
 import ch.bbv.explorer.actions.ExplorerSaveAction;
 import ch.bbv.mda.persistence.PersistenceException;
+import ch.bbv.mda.resources.MessagesMda;
 import ch.bbv.mda.ui.MdaDocument;
 import ch.bbv.mda.ui.MdaExplorer;
-import ch.bbv.utilities.ResourceUtilities;
 
 /**
  * The save action for the user interface of <em>pmMDA</em> application.
@@ -60,9 +60,8 @@ public class SaveAction extends ExplorerSaveAction {
         if (filename.length() > 0) {
           explorer.getDocument().save();
         } else {
-          JOptionPane.showMessageDialog(explorer.getFrame(), ResourceUtilities
-              .getString("mda.ui.sorryMsg.ILLEGAL_FILE_NAME_OR_TYPE"),
-              ResourceUtilities.getString("mda.ui.errorMsg.ERROR"),
+          JOptionPane.showMessageDialog(explorer.getFrame(),
+              MessagesMda.msgIllegalFileNameOrType, MessagesMda.titleError,
               JOptionPane.ERROR_MESSAGE);
         }
       }
@@ -70,23 +69,20 @@ public class SaveAction extends ExplorerSaveAction {
       log.error(e);
       if (e.getCause() instanceof FileNotFoundException) {
         JOptionPane.showMessageDialog(null, e.getLocalizedMessage(),
-            ResourceUtilities.getString("mda.ui.sorryMsg.SORRY"),
-            JOptionPane.ERROR_MESSAGE);
+            MessagesMda.titleSorry, JOptionPane.ERROR_MESSAGE);
         lastResult = false; // This cause indicates that writter attempt to
-                            // write a locked file.
+        // write a locked file.
         return lastResult;
       }
-      JOptionPane.showMessageDialog(explorer.getFrame(), ResourceUtilities
-          .getString("mda.ui.sorryMsg.UNSUPPORTED_FILE_TYPE_FOR_SAVE"),
-          ResourceUtilities.getString("mda.ui.sorryMsg.SORRY"),
+      JOptionPane.showMessageDialog(explorer.getFrame(),
+          MessagesMda.msgUnsupportedFileType, MessagesMda.titleSorry,
           JOptionPane.ERROR_MESSAGE);
       lastResult = false;
       return lastResult;
     } catch (NullPointerException e) {
       log.error(e);
-      JOptionPane.showMessageDialog(explorer.getFrame(), ResourceUtilities
-          .getString("mda.ui.sorryMsg.UNSUPPORTED_FILE_TYPE_FOR_SAVE"),
-          ResourceUtilities.getString("mda.ui.sorryMsg.SORRY"),
+      JOptionPane.showMessageDialog(explorer.getFrame(),
+          MessagesMda.msgUnsupportedFileType, MessagesMda.titleSorry,
           JOptionPane.ERROR_MESSAGE);
       lastResult = false;
       return lastResult;

@@ -13,11 +13,11 @@ import javax.swing.JOptionPane;
 
 import ch.bbv.explorer.Explorer;
 import ch.bbv.explorer.actions.ExplorerFileAction;
-import ch.bbv.explorer.properties.Messages;
+import ch.bbv.explorer.resources.Messages;
 import ch.bbv.mda.persistence.PersistenceException;
+import ch.bbv.mda.resources.MessagesMda;
 import ch.bbv.mda.ui.MdaDocument;
 import ch.bbv.mda.ui.MdaExplorer;
-import ch.bbv.utilities.ResourceUtilities;
 
 /**
  * The open action implements the loading of a complete meta model. The model is
@@ -61,9 +61,8 @@ public class OpenAction extends ExplorerFileAction {
           file = new File(file.getPath() + name);
       }
       if (name == null) {
-        JOptionPane.showMessageDialog(explorer.getFrame(), ResourceUtilities
-            .getString("mda.ui.sorryMsg.ILLEGAL_FILE_NAME_OR_TYPE"),
-            ResourceUtilities.getString("mda.ui.errorMsg.ERROR"),
+        JOptionPane.showMessageDialog(explorer.getFrame(),
+            MessagesMda.msgIllegalFileNameOrType, MessagesMda.titleError,
             JOptionPane.ERROR_MESSAGE);
         lastResult = false;
         return lastResult;
@@ -72,20 +71,14 @@ public class OpenAction extends ExplorerFileAction {
       explorer.setDocument(document);
     } catch (PersistenceException e) {
       JOptionPane.showMessageDialog(getExplorer().getFrame(), MessageFormat
-          .format(ResourceUtilities
-              .getString("mda.ui.errorMsg.ILLEGAL_FILENAME_ERROR"), file
-              .getName()),
-          ResourceUtilities.getString("mda.ui.errorMsg.ERROR"),
-          JOptionPane.ERROR_MESSAGE);
+          .format(MessagesMda.msgIllegalFilename, file.getName()),
+          MessagesMda.titleError, JOptionPane.ERROR_MESSAGE);
       lastResult = false;
       return lastResult;
     } catch (NullPointerException e) {
       JOptionPane.showMessageDialog(getExplorer().getFrame(), MessageFormat
-          .format(ResourceUtilities
-              .getString("mda.ui.errorMsg.ILLEGAL_FILENAME_ERROR"), file
-              .getName()),
-          ResourceUtilities.getString("mda.ui.errorMsg.ERROR"),
-          JOptionPane.ERROR_MESSAGE);
+          .format(MessagesMda.msgIllegalFilename, file.getName()),
+          MessagesMda.titleError, JOptionPane.ERROR_MESSAGE);
       lastResult = false;
       return lastResult;
     } finally {

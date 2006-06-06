@@ -20,11 +20,11 @@ import org.apache.commons.logging.LogFactory;
 import ch.bbv.explorer.Explorer;
 import ch.bbv.explorer.ExplorerDocument;
 import ch.bbv.explorer.actions.ExplorerFileAction;
-import ch.bbv.explorer.properties.Messages;
+import ch.bbv.explorer.resources.Messages;
 import ch.bbv.mda.persistence.PersistenceException;
+import ch.bbv.mda.resources.MessagesMda;
 import ch.bbv.mda.ui.MdaDocument;
 import ch.bbv.mda.ui.MdaExplorer;
-import ch.bbv.utilities.ResourceUtilities;
 
 /**
  * The save as action for the user interface of <em>pmMDA</em> application.
@@ -76,9 +76,7 @@ public class SaveAsAction extends ExplorerFileAction {
       extension = FilenameUtils.getExtension(file.getCanonicalPath());
       if (extension == null) {
         JOptionPane.showMessageDialog(getExplorer().getFrame(),
-            ResourceUtilities
-                .getString("mda.ui.errorMsg.ILLEGAL_FILE_NAME_OR_TYPE"),
-            ResourceUtilities.getString("mda.ui.errorMsg.ERROR"),
+            MessagesMda.msgIllegalFileNameOrType, MessagesMda.titleError,
             JOptionPane.ERROR_MESSAGE);
         lastResult = false;
         return lastResult;
@@ -97,9 +95,7 @@ public class SaveAsAction extends ExplorerFileAction {
         writeModel(file);
       } else {
         JOptionPane.showMessageDialog(getExplorer().getFrame(),
-            ResourceUtilities
-                .getString("mda.ui.sorryMsg.ILLEGAL_FILE_NAME_OR_TYPE"),
-            ResourceUtilities.getString("mda.ui.sorryMsg.SORRY"),
+            MessagesMda.msgIllegalFileNameOrType, MessagesMda.titleSorry,
             JOptionPane.ERROR_MESSAGE);
       }
     } catch (Exception e) {
@@ -131,21 +127,17 @@ public class SaveAsAction extends ExplorerFileAction {
       if (e.getCause() instanceof FileNotFoundException) {
         // This cause indicates that writter attempt to write a locked file.
         JOptionPane.showMessageDialog(null, e.getLocalizedMessage(),
-            ResourceUtilities.getString("mda.ui.sorryMsg.SORRY"),
-            JOptionPane.ERROR_MESSAGE);
+            MessagesMda.titleSorry, JOptionPane.ERROR_MESSAGE);
       } else {
         JOptionPane.showMessageDialog(getExplorer().getFrame(),
-            ResourceUtilities
-                .getString("mda.ui.sorryMsg.UNSUPPORTED_FILE_TYPE_FOR_SAVE"),
-            ResourceUtilities.getString("mda.ui.sorryMsg.SORRY"),
+            MessagesMda.msgUnsupportedFileType, MessagesMda.titleSorry,
             JOptionPane.ERROR_MESSAGE);
       }
       throw e;
     } catch (NullPointerException e) {
       log.error(e);
-      JOptionPane.showMessageDialog(getExplorer().getFrame(), ResourceUtilities
-          .getString("mda.ui.sorryMsg.UNSUPPORTED_FILE_TYPE_FOR_SAVE"),
-          ResourceUtilities.getString("mda.ui.sorryMsg.SORRY"),
+      JOptionPane.showMessageDialog(getExplorer().getFrame(),
+          MessagesMda.msgUnsupportedFileType, MessagesMda.titleSorry,
           JOptionPane.ERROR_MESSAGE);
       throw new PersistenceException(e);
     } catch (IOException e) {

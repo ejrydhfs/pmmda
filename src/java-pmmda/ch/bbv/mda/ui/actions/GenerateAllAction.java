@@ -20,8 +20,7 @@ import ch.bbv.explorer.nodeactions.ValidateNodeAction;
 import ch.bbv.mda.MetaModel;
 import ch.bbv.mda.generators.Cartridge;
 import ch.bbv.mda.generators.CartridgeFactory;
-import ch.bbv.mda.properties.MessagesMda;
-import ch.bbv.utilities.ResourceUtilities;
+import ch.bbv.mda.resources.MessagesMda;
 
 /**
  * Generate the artifacts for all registered and active catridges. If the
@@ -54,8 +53,7 @@ public class GenerateAllAction extends ExplorerGlobalActionImpl {
       ValidateNodeAction.validateTree(model, validator, getExplorer());
       if (getExplorer().getValidationPanel().getResults().hasErrors()) {
         JOptionPane.showMessageDialog(getExplorer().getFrame(),
-            ResourceUtilities.getString("mda.ui.errorMsg.MODEL_HAS_ERRORS"),
-            ResourceUtilities.getString("mda.ui.errorMsg.ERROR"),
+            MessagesMda.msgModelhasErrors, MessagesMda.titleError,
             JOptionPane.ERROR_MESSAGE);
         getExplorer().getFrame().setCursor(
             Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));

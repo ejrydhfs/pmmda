@@ -86,7 +86,11 @@ The following steps are necessary to create and upload the site.
    and sourceforge request SSH2 accesses therefore the upload time using 
    an ADSL link is still about thirty minutes.
  
-4. Mailing list management
+4. Special Tasks
+   -------------
+- Generation of Messages files
+	TextTranslator ch.bbv.explorer.properties.Messages ./src/ch/bbv/explorer/properties/Explorer_fr.properties    
+5. Mailing list management
    -----------------------
    
 You can configure your mailing list at the following web page:

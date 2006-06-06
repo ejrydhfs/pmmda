@@ -5,7 +5,6 @@
  */
 package ch.bbv.utilities;
 
-import java.io.File;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.*;
@@ -15,16 +14,16 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * @author AdrianBachofen Implements a simple handler for dealing with resources
- *         and localization
+ * The class provides helper method to implement the resource management pattern
+ * used in the application.
+ * @author marceBaumann
+ * @version $Revision$
  */
 public class ResourceUtilities {
   /**
    * Logger of the application class.
    */
   private static Log log = LogFactory.getLog(ResourceUtilities.class);
-
-  public static ResourceBundle resourceBundle;
 
   /**
    * loads all resources from the resource bundle for the default locale into
@@ -34,8 +33,12 @@ public class ResourceUtilities {
    * @param propertiesClass the class which static field should be updated
    */
   public static void loadMessages(String qualifiedName, Class propertiesClass) {
-    ResourceBundle bundle = ResourceBundle.getBundle(qualifiedName, Locale
-        .getDefault());
+    ResourceBundle bundle = null;
+    try {
+      bundle = ResourceBundle.getBundle(qualifiedName, Locale.getDefault());
+    } catch (MissingResourceException e) {
+      // do nothing if the resource is missing, the default values will be used
+    }
     if (bundle != null) {
       loadMessages(bundle, propertiesClass);
     }
@@ -87,18 +90,6 @@ public class ResourceUtilities {
     }
   }
 
-  public ResourceUtilities(String qualifiedName, Locale locale) {
-    resourceBundle = ResourceBundle.getBundle(qualifiedName, locale);
-  }
-
-  public static ResourceBundle getResourceBundle() {
-    return resourceBundle;
-  }
-
-  public static String getString(String resource) {
-    return resourceBundle.getString(resource);
-  }
-
   /**
    * Retrieves a resource from the current classpath.
    * @param resourceName the name of the resource
@@ -109,15 +100,6 @@ public class ResourceUtilities {
     checkEmpty(methodName, "resourceName", resourceName);
     final ClassLoader loader = ReflectUtilities.getClassLoader();
     return loader != null ? loader.getResource(resourceName) : null;
-  }
-
-  /**
-   * Indicates whether or not the given <code>url</code> is a file.
-   * @param url the URL to check
-   * @return true/false
-   */
-  public static boolean isFile(final URL url) {
-    return url != null ? new File(url.getFile()).isFile() : false;
   }
 
   /**

@@ -36,11 +36,11 @@ import ch.bbv.explorer.about.Contributor;
 import ch.bbv.explorer.about.Licences;
 import ch.bbv.explorer.actions.*;
 import ch.bbv.explorer.components.ValidationPanel;
-import ch.bbv.explorer.properties.Messages;
+import ch.bbv.explorer.resources.Messages;
 import ch.bbv.mda.MetaModel;
 import ch.bbv.mda.generators.Cartridge;
 import ch.bbv.mda.generators.CartridgeFactory;
-import ch.bbv.mda.properties.MessagesMda;
+import ch.bbv.mda.resources.MessagesMda;
 import ch.bbv.mda.ui.actions.*;
 import ch.bbv.utilities.ResourceUtilities;
 
@@ -152,7 +152,6 @@ public class MdaExplorer extends Explorer {
    */
   @Override
   protected void initialize() {
-    new ResourceUtilities("ch.bbv.mda.ui.OldMessages", Locale.US);
     ExplorerMenuBar menuBar = new ExplorerMenuBar(this);
     setMenuBar(menuBar);
 
