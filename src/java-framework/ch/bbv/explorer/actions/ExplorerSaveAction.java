@@ -25,6 +25,7 @@ public abstract class ExplorerSaveAction extends ExplorerGlobalActionImpl {
     super(Messages.actionSave, explorer);
   }
 
+  @Override
   public void actionPerformed(ActionEvent action) {
     execute();
     ExplorerDocument document = getExplorer().getDocument();

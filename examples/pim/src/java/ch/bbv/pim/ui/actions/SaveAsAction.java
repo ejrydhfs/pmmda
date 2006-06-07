@@ -16,6 +16,7 @@ import org.apache.commons.logging.LogFactory;
 
 import ch.bbv.explorer.Explorer;
 import ch.bbv.explorer.actions.ExplorerFileAction;
+import ch.bbv.explorer.resources.Messages;
 import ch.bbv.pim.formats.ContactEmitter;
 import ch.bbv.pim.ui.PimApplication;
 import ch.bbv.pim.ui.PimDocument;
@@ -47,16 +48,11 @@ public class SaveAsAction extends ExplorerFileAction {
   private static Log log = LogFactory.getLog(SaveAsAction.class);
 
   /**
-   * Name of the action as displayed in the menu.
-   */
-  private static final String ACTION = "SaveAs...";
-
-  /**
    * Constructor of the class.
    * @param explorer explorer owning the global action
    */
   public SaveAsAction(Explorer explorer) {
-    super(ACTION, explorer);
+    super(Messages.actionSave, explorer);
     PimFileTypes.getInstance().addFileFilters(getFileChooser());
   }
 

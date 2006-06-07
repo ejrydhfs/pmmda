@@ -5,7 +5,7 @@
  */
 package ch.bbv.dnm.users.client;
 
-import static ch.bbv.dnm.users.common.ApplicationConstants.*;
+import static ch.bbv.dnm.users.common.UserApplicationConstants.*;
 
 import java.util.Arrays;
 

@@ -49,13 +49,17 @@ public class Messages {
   public static String msgSaveChanges = "Do you want to save the changes to \"{0}\" ?";
 
   public static String msgFileOverwrite = "Do you want to overwrite the file \"{0}\" ?";
-  
+
+  public static String titleError = "Error";
+
+  public static String titleWarning = "Warning";
+
   public static String titleExplorerFrame = "Explorer";
-  
+
   public static String titleContributorsTab = "Contributors";
-  
+
   public static String titleLicenseTab = "License";
-  
+
   public static String titleLibrairiesTab = "Librairies";
 
   public static String titleActionConfirmation = "Confirm Action";
@@ -78,6 +82,6 @@ public class Messages {
 
   public static String[] librariesColumnNames = { "name", "version", "licence",
       "info" };
-  
+
   public static String[] propertiesColumnNames = { "name", "value" };
 }

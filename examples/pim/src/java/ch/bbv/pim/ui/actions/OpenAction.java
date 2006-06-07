@@ -19,6 +19,7 @@ import ch.bbv.dog.DataObjectType;
 import ch.bbv.dog.functors.ModifiedFlagFunctor;
 import ch.bbv.explorer.Explorer;
 import ch.bbv.explorer.actions.ExplorerFileAction;
+import ch.bbv.explorer.resources.Messages;
 import ch.bbv.pim.AddressBook;
 import ch.bbv.pim.formats.ContactParser;
 import ch.bbv.pim.ui.PimApplication;
@@ -41,11 +42,6 @@ public class OpenAction extends ExplorerFileAction {
   private static final long serialVersionUID = -1266462566763460770L;
 
   /**
-   * Name of the action as displayed in the menu.
-   */
-  private static final String ACTION = "Open...";
-
-  /**
    * Logger instance of the class.
    */
   private static Log log = LogFactory.getLog(OpenAction.class);
@@ -55,7 +51,7 @@ public class OpenAction extends ExplorerFileAction {
    * @param explorer explorer owning the global action
    */
   public OpenAction(Explorer explorer) {
-    super(ACTION, explorer);
+    super(Messages.actionOpen, explorer);
     PimFileTypes.getInstance().addFileFilters(getFileChooser());
     shouldSaveAndProceed = true;
   }

@@ -62,7 +62,7 @@ public class OpenAction extends ExplorerFileAction {
       }
       if (name == null) {
         JOptionPane.showMessageDialog(explorer.getFrame(),
-            MessagesMda.msgIllegalFileNameOrType, MessagesMda.titleError,
+            MessagesMda.msgIllegalFileNameOrType, Messages.titleError,
             JOptionPane.ERROR_MESSAGE);
         lastResult = false;
         return lastResult;
@@ -72,13 +72,13 @@ public class OpenAction extends ExplorerFileAction {
     } catch (PersistenceException e) {
       JOptionPane.showMessageDialog(getExplorer().getFrame(), MessageFormat
           .format(MessagesMda.msgIllegalFilename, file.getName()),
-          MessagesMda.titleError, JOptionPane.ERROR_MESSAGE);
+          Messages.titleError, JOptionPane.ERROR_MESSAGE);
       lastResult = false;
       return lastResult;
     } catch (NullPointerException e) {
       JOptionPane.showMessageDialog(getExplorer().getFrame(), MessageFormat
           .format(MessagesMda.msgIllegalFilename, file.getName()),
-          MessagesMda.titleError, JOptionPane.ERROR_MESSAGE);
+          Messages.titleError, JOptionPane.ERROR_MESSAGE);
       lastResult = false;
       return lastResult;
     } finally {

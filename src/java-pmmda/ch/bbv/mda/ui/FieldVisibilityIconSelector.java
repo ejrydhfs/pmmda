@@ -10,8 +10,8 @@ import javax.swing.ImageIcon;
 import ch.bbv.explorer.ExplorerNode;
 import ch.bbv.explorer.IconFactory;
 import ch.bbv.explorer.IconSelector;
-import ch.bbv.mda.MdaUtilities;
 import ch.bbv.mda.MetaProperty;
+import ch.bbv.mda.operators.MdaUtilities;
 
 /**
  * The field visibility icon selector implements an icon selector to define the

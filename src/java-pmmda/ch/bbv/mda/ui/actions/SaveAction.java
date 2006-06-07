@@ -19,6 +19,7 @@ import org.apache.commons.logging.LogFactory;
 import ch.bbv.explorer.Explorer;
 import ch.bbv.explorer.ExplorerDocument;
 import ch.bbv.explorer.actions.ExplorerSaveAction;
+import ch.bbv.explorer.resources.Messages;
 import ch.bbv.mda.persistence.PersistenceException;
 import ch.bbv.mda.resources.MessagesMda;
 import ch.bbv.mda.ui.MdaDocument;
@@ -61,7 +62,7 @@ public class SaveAction extends ExplorerSaveAction {
           explorer.getDocument().save();
         } else {
           JOptionPane.showMessageDialog(explorer.getFrame(),
-              MessagesMda.msgIllegalFileNameOrType, MessagesMda.titleError,
+              MessagesMda.msgIllegalFileNameOrType, Messages.titleError,
               JOptionPane.ERROR_MESSAGE);
         }
       }
@@ -69,20 +70,20 @@ public class SaveAction extends ExplorerSaveAction {
       log.error(e);
       if (e.getCause() instanceof FileNotFoundException) {
         JOptionPane.showMessageDialog(null, e.getLocalizedMessage(),
-            MessagesMda.titleSorry, JOptionPane.ERROR_MESSAGE);
+            Messages.titleWarning, JOptionPane.ERROR_MESSAGE);
         lastResult = false; // This cause indicates that writter attempt to
         // write a locked file.
         return lastResult;
       }
       JOptionPane.showMessageDialog(explorer.getFrame(),
-          MessagesMda.msgUnsupportedFileType, MessagesMda.titleSorry,
+          MessagesMda.msgUnsupportedFileType, Messages.titleWarning,
           JOptionPane.ERROR_MESSAGE);
       lastResult = false;
       return lastResult;
     } catch (NullPointerException e) {
       log.error(e);
       JOptionPane.showMessageDialog(explorer.getFrame(),
-          MessagesMda.msgUnsupportedFileType, MessagesMda.titleSorry,
+          MessagesMda.msgUnsupportedFileType, Messages.titleWarning,
           JOptionPane.ERROR_MESSAGE);
       lastResult = false;
       return lastResult;

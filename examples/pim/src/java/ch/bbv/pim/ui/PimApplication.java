@@ -53,7 +53,7 @@ public class PimApplication extends Application {
    */
   public static void main(String[] args) {
     try {
-      System.out.println("Hello PIM");
+      log.info("Applictgion PIM starting");
       new PimApplication(args);
     } catch (ComponentException e) {
       log.fatal(e);
@@ -66,7 +66,7 @@ public class PimApplication extends Application {
 
   /**
    * Convenience method returning the locator instace as an application.
-   * @return the singleton locator as application instance.
+   * @return the singleton locator as application instance
    */
   public static PimApplication getApplication() {
     return (PimApplication) Locator.getInstance();
@@ -74,11 +74,11 @@ public class PimApplication extends Application {
 
   /**
    * Constructor of the class.
-   * @param args command line arguments.
+   * @param args command line arguments
    * @throws ComponentException occured when creating and starting the
-   *           application.
-   * @throws IOException if a file operation encounters a problem.
-   * @throws Exception if a component creation is unsucessful.
+   *           application
+   * @throws IOException if a file operation encounters a problem
+   * @throws Exception if a component creation is unsucessful
    */
   public PimApplication(String[] args) throws ComponentException, IOException,
       Exception {
@@ -113,7 +113,7 @@ public class PimApplication extends Application {
 
   /**
    * Returns the format manager of the PIM application.
-   * @return the format manager of the application.
+   * @return the format manager of the application
    */
   public FormatManager getFormatManager() {
     return (FormatManager) getApplication().getComponent(FormatManager.NAME);
@@ -121,7 +121,7 @@ public class PimApplication extends Application {
 
   /**
    * Processes the command line and executes the defined actions.
-   * @throws IOException if a file operation encounters a problem.
+   * @throws IOException if a file operation encounters a problem
    */
   private void processCommandLine() throws IOException {
     Options options = new Options();

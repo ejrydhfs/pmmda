@@ -13,6 +13,7 @@ import javax.swing.JOptionPane;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import ch.bbv.explorer.resources.Messages;
 import ch.bbv.mda.MetaModel;
 import ch.bbv.mda.resources.MessagesMda;
 
@@ -45,7 +46,7 @@ public class XmlPersistenceHandler implements PersistenceHandler {
     } catch (ConversionException e) {
       log.error(e);
       JOptionPane.showMessageDialog(null, MessagesMda.msgOldFormat,
-          MessagesMda.titleSorry, JOptionPane.ERROR_MESSAGE);
+          Messages.titleWarning, JOptionPane.ERROR_MESSAGE);
     }
     return model;
   }

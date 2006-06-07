@@ -5,7 +5,7 @@
  */
 package ch.bbv.dnm.users.server;
 
-import static ch.bbv.dnm.users.common.ApplicationConstants.*;
+import static ch.bbv.dnm.users.common.UserApplicationConstants.*;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;

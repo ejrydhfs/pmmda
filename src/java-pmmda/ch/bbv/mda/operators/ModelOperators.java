@@ -163,8 +163,10 @@ public class ModelOperators {
    * lists based on their type.
    * @param clazz class which fields should be generated
    * @return properties of the class and its direct and indirect ancestors
+   * @pre clazz != null
    */
-  public List<MetaProperty> getTransitiveFieldsFor(MetaClass clazz) {
+  public static List<MetaProperty> getTransitiveFieldsFor(MetaClass clazz) {
+    assert clazz != null;
     List<MetaProperty> properties = new ArrayList<MetaProperty>();
     properties.addAll(clazz.getProperties());
     for (MetaClass ancestor : clazz.retrieveAncestors()) {
@@ -178,8 +180,11 @@ public class ModelOperators {
    * lists based on their type.
    * @param clazz class which fields should be generated
    * @return properties of the class and its direct and indirect ancestors
+   * @pre clazz != null
    */
-  public List<MetaIndexedProperty> getTransitiveIndexedFieldsFor(MetaClass clazz) {
+  public static List<MetaIndexedProperty> getTransitiveIndexedFieldsFor(
+      MetaClass clazz) {
+    assert clazz != null;
     List<MetaIndexedProperty> properties = new ArrayList<MetaIndexedProperty>();
     properties.addAll(clazz.getIndexedProperties());
     for (MetaClass ancestor : clazz.retrieveAncestors()) {

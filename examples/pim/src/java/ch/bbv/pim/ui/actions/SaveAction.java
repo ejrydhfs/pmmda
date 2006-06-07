@@ -6,7 +6,6 @@
  */
 package ch.bbv.pim.ui.actions;
 
-import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 
@@ -40,7 +39,7 @@ public class SaveAction extends ExplorerSaveAction {
 
   /**
    * Constructor of the class.
-   * @param explorer explorer owning the global action.\
+   * @param explorer explorer owning the global action
    */
   public SaveAction(Explorer explorer) {
     super(explorer);
@@ -74,10 +73,5 @@ public class SaveAction extends ExplorerSaveAction {
       switchWaitCursor(false);
     }
     return lastResult;
-  }
-
-  @Override
-  public void actionPerformed(ActionEvent action) {
-    execute();
   }
 }

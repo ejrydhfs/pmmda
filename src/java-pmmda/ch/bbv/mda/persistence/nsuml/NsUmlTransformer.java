@@ -30,6 +30,7 @@ import ru.novosoft.uml.model_management.MPackage;
 import ru.novosoft.uml.xmi.IncompleteXMIException;
 import ru.novosoft.uml.xmi.XMIWriter;
 import ch.bbv.mda.*;
+import ch.bbv.mda.operators.MdaUtilities;
 import ch.bbv.mda.persistence.ExternalTransformer;
 import ch.bbv.mda.persistence.FilterIterator;
 
@@ -300,21 +301,14 @@ public class NsUmlTransformer extends ExternalTransformer {
   /**
    * Extracts tags and stereotypes from the NSUML element and add them the meta
    * element. The visibility of the item is also set.
-   * @param source NSUML element to parse.
-   * @param item meta item to synchronize.
+   * @param source NSUML element to parse
+   * @param item meta item to synchronize
    */
   private void extractStereotypeAndTags(MModelElement source, MetaElement item) {
     MStereotype mStereotype = source.getStereotype();
     if (mStereotype != null) {
       String name = mStereotype.getName();
-      if ((name != null) && (name.trim().length() > 0)) {
-        Stereotype stereotype = item.getModel().findStereotype(name);
-        if (stereotype == null) {
-          stereotype = new Stereotype(name);
-          item.getModel().addStereotype(stereotype);
-        }
-        item.addStereotype(stereotype);
-      }
+      MdaUtilities.addStereotype(item, name);
     }
     item.setVisibility(convert(source.getVisibility()));
     for (Iterator i = source.getTaggedValues().iterator(); i.hasNext();) {

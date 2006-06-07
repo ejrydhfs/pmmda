@@ -39,8 +39,8 @@ public class TypeFactory extends AbstractTypeFactory {
 
   /** 
    * Constructor of the class.
-   * @param factory node type factory in which the nodes should be created.
-   * @param manager data object manager where the types should be created.
+   * @param factory node type factory in which the nodes should be created
+   * @param manager data object manager where the types should be created
    */
   public TypeFactory(UiNodeTypeFactory factory, DataObjectMgr manager) {
     super(factory, manager);

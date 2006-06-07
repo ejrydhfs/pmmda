@@ -106,6 +106,9 @@ public class MdaDocument extends ExplorerDocumentImpl implements
     File target = new File(newRoot, CODES_DIRECTORY);
     FileUtils.deleteDirectory(target);
     if (root != null) {
+      if (!target.exists()) {
+        target.mkdir();
+      }
       FileUtils.copyDirectory(root, target);
     }
     codeTypeMgr.setRoot(target);

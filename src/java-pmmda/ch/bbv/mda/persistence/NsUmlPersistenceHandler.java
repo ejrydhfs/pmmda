@@ -18,6 +18,7 @@ import org.apache.commons.logging.LogFactory;
 
 import ru.novosoft.uml.MFactory;
 import ru.novosoft.uml.model_management.MModel;
+import ch.bbv.explorer.resources.Messages;
 import ch.bbv.mda.MetaModel;
 import ch.bbv.mda.persistence.nsuml.ArgoWriter;
 import ch.bbv.mda.persistence.nsuml.MdaTransformer;
@@ -62,7 +63,7 @@ public class NsUmlPersistenceHandler implements PersistenceHandler {
       if (mModel == null) {
         log.error("NsUmlPersistenceHandler#readModel: illegal file - " + file);
         JOptionPane.showMessageDialog(null, MessagesMda.msgInvalidFormat,
-            MessagesMda.titleSorry, JOptionPane.ERROR_MESSAGE);
+            Messages.titleWarning, JOptionPane.ERROR_MESSAGE);
         return null;
       }
       nsUmlTransformer.synchronize(mModel, metaModel);

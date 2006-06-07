@@ -6,8 +6,7 @@
  */
 package ch.bbv.dnm.users;
 
-import static ch.bbv.dnm.users.common.ApplicationConstants.USE_DIRECT;
-import static ch.bbv.dnm.users.common.ApplicationConstants.USE_REPLACE;
+import static ch.bbv.dnm.users.common.UserApplicationConstants.*;
 
 import java.util.ArrayList;
 import java.util.Date;

@@ -76,7 +76,7 @@ public class SaveAsAction extends ExplorerFileAction {
       extension = FilenameUtils.getExtension(file.getCanonicalPath());
       if (extension == null) {
         JOptionPane.showMessageDialog(getExplorer().getFrame(),
-            MessagesMda.msgIllegalFileNameOrType, MessagesMda.titleError,
+            MessagesMda.msgIllegalFileNameOrType, Messages.titleError,
             JOptionPane.ERROR_MESSAGE);
         lastResult = false;
         return lastResult;
@@ -95,7 +95,7 @@ public class SaveAsAction extends ExplorerFileAction {
         writeModel(file);
       } else {
         JOptionPane.showMessageDialog(getExplorer().getFrame(),
-            MessagesMda.msgIllegalFileNameOrType, MessagesMda.titleSorry,
+            MessagesMda.msgIllegalFileNameOrType, Messages.titleWarning,
             JOptionPane.ERROR_MESSAGE);
       }
     } catch (Exception e) {
@@ -127,17 +127,17 @@ public class SaveAsAction extends ExplorerFileAction {
       if (e.getCause() instanceof FileNotFoundException) {
         // This cause indicates that writter attempt to write a locked file.
         JOptionPane.showMessageDialog(null, e.getLocalizedMessage(),
-            MessagesMda.titleSorry, JOptionPane.ERROR_MESSAGE);
+            Messages.titleWarning, JOptionPane.ERROR_MESSAGE);
       } else {
         JOptionPane.showMessageDialog(getExplorer().getFrame(),
-            MessagesMda.msgUnsupportedFileType, MessagesMda.titleSorry,
+            MessagesMda.msgUnsupportedFileType, Messages.titleWarning,
             JOptionPane.ERROR_MESSAGE);
       }
       throw e;
     } catch (NullPointerException e) {
       log.error(e);
       JOptionPane.showMessageDialog(getExplorer().getFrame(),
-          MessagesMda.msgUnsupportedFileType, MessagesMda.titleSorry,
+          MessagesMda.msgUnsupportedFileType, Messages.titleWarning,
           JOptionPane.ERROR_MESSAGE);
       throw new PersistenceException(e);
     } catch (IOException e) {

@@ -13,6 +13,7 @@ import javax.swing.JPanel;
 import ch.bbv.explorer.components.TableCell;
 import ch.bbv.explorer.components.TablePanel;
 import ch.bbv.mda.generators.Cartridge;
+import ch.bbv.mda.resources.MessagesMda;
 
 /**
  * The cartridge panel displays configuration information for a specific
@@ -41,25 +42,25 @@ public class CartridgePanel extends JPanel {
   /**
    * Column names for the sterotypes of the cartridge.
    */
-  public static final String[] STEREOTYPE_COLUMN_NAMES = { "name" };
+  public static final String[] STEREOTYPE_PROPERTY_NAMES = { "name" };
 
   /**
    * Column names for the tagged value types of the cartridge.
    */
-  public static final String[] TAGGED_VALUE_TYPE_COLUMN_NAMES = { "name",
-      "default", "typename" };
+  public static final String[] TAG_TYPE_PROPERTY_NAMES = { "name", "default",
+      "typename" };
 
   /**
    * Column names of the properties with their default and actual values defined
    * in the cartridge.
    */
-  public static final String[] PROPERTY_COLUMN_NAMES = { "name", "default",
+  public static final String[] PROPERTY_PROPERTY_NAMES = { "name", "default",
       "value" };
 
   /**
    * Column names of the dependent cartridges.
    */
-  public static final String[] CARTRIDGE_COLUMN_NAMES = { "name", "prefix" };
+  public static final String[] CARTRIDGE_PROPERTY_NAMES = { "name", "prefix" };
 
   /**
    * The cartridge being displayed.
@@ -91,19 +92,18 @@ public class CartridgePanel extends JPanel {
    */
   public CartridgePanel() {
     stereotypes = new TablePanel(Collections.EMPTY_LIST, new TableCell(
-        STEREOTYPE_COLUMN_NAMES));
+        MessagesMda.stereotypeColumNames, STEREOTYPE_PROPERTY_NAMES));
     tagDefinitions = new TablePanel(Collections.EMPTY_LIST, new TableCell(
-        TAGGED_VALUE_TYPE_COLUMN_NAMES));
+        MessagesMda.tagTypeColumnNames, TAG_TYPE_PROPERTY_NAMES));
     properties = new TablePanel(Collections.EMPTY_LIST, new TableCell(
-        PROPERTY_COLUMN_NAMES));
+        MessagesMda.propertyColumnNames, PROPERTY_PROPERTY_NAMES));
     cartridges = new TablePanel(Collections.EMPTY_LIST, new TableCell(
-        CARTRIDGE_COLUMN_NAMES));
-
+        MessagesMda.cartridgeColumnNames, CARTRIDGE_PROPERTY_NAMES));
   }
 
   /**
    * Sets the new cartridge of the panel.
-   * @param cartridge new cartridge of the panel.
+   * @param cartridge new cartridge of the panel
    */
   public void setCatridge(Cartridge cartridge) {
     this.cartridge = cartridge;

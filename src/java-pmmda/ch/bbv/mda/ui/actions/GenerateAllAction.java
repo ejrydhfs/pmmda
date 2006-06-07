@@ -17,6 +17,7 @@ import ch.bbv.explorer.Explorer;
 import ch.bbv.explorer.StatusBar;
 import ch.bbv.explorer.actions.ExplorerGlobalActionImpl;
 import ch.bbv.explorer.nodeactions.ValidateNodeAction;
+import ch.bbv.explorer.resources.Messages;
 import ch.bbv.mda.MetaModel;
 import ch.bbv.mda.generators.Cartridge;
 import ch.bbv.mda.generators.CartridgeFactory;
@@ -53,7 +54,7 @@ public class GenerateAllAction extends ExplorerGlobalActionImpl {
       ValidateNodeAction.validateTree(model, validator, getExplorer());
       if (getExplorer().getValidationPanel().getResults().hasErrors()) {
         JOptionPane.showMessageDialog(getExplorer().getFrame(),
-            MessagesMda.msgModelhasErrors, MessagesMda.titleError,
+            MessagesMda.msgModelhasErrors, Messages.titleError,
             JOptionPane.ERROR_MESSAGE);
         getExplorer().getFrame().setCursor(
             Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
