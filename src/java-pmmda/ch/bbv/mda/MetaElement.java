@@ -15,6 +15,7 @@ import java.util.Map;
 import ch.bbv.dog.DataObject;
 import ch.bbv.dog.DataObjectImpl;
 import ch.bbv.dog.LightweightObject;
+import ch.bbv.mda.operators.MdaUtilities;
 import ch.bbv.mda.operators.ModelOperators;
 
 /**
