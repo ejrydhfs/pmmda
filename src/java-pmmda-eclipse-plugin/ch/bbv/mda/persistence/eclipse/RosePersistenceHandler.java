@@ -6,21 +6,21 @@
 package ch.bbv.mda.persistence.eclipse;
 
 
-import java.io.*;
+import java.io.File;
 
 import javax.swing.JOptionPane;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.emf.importer.rose.builder.UnitTreeNode;
-import org.eclipse.emf.importer.rose.parser.RoseWriter;
 import org.eclipse.emf.importer.rose.parser.RoseNode;
+import org.eclipse.emf.importer.rose.parser.RoseWriter;
 
 import ch.bbv.mda.MetaModel;
 import ch.bbv.mda.persistence.PersistenceException;
 import ch.bbv.mda.persistence.PersistenceHandler;
-import ch.bbv.mda.persistence.rose.RoseTransformer;
 import ch.bbv.mda.persistence.rose.MdaTransformer;
+import ch.bbv.mda.persistence.rose.RoseTransformer;
 import ch.bbv.utilities.ResourceUtilities;
 
 

@@ -163,7 +163,7 @@ public class RoseMdaVisitor implements RoseVisitor {
       RoseNode value = defaultCategory.findNodeWithKey(RoseStrings.VALUE); 
       // now add the tagged values
       for(TaggedValue tag : metaElement.getTags()) {
-        if(!(tag.getTag().equals(UmlConstants.PERSISTENCE_TAG) && defaultType.equals(RoseStrings.CLASS))) {
+        if(!(tag.getTag().equals(UmlConstants.PERSISTENCE_TAG) && defaultType.equals(RoseStrings.DEFAULT_CLASS))) {
           value.addNode(createTaggedValue(tag));
         }
       }
@@ -172,13 +172,12 @@ public class RoseMdaVisitor implements RoseVisitor {
       for(TaggedValue tag : metaElement.getTags()) {
         RoseNode tv = findTaggedValue(defaultCategory, RoseStrings.VALUE, tag.getTag());
         if(tv == null) {
-          if(!(tag.getTag().equals(UmlConstants.PERSISTENCE_TAG) && defaultType.equals(RoseStrings.CLASS))) {
+          if(!(tag.getTag().equals(UmlConstants.PERSISTENCE_TAG) && defaultType.equals(RoseStrings.DEFAULT_CLASS))) {
             value.addNode(createTaggedValue(tag));
           }
         } else {
           RoseNode v = tv.findNodeWithKey(RoseStrings.VALUE);
-          if(tv.getNodes() != null && tv.getNodes().size() > 0) v = (RoseNode)tv.getNodes().get(0);
-          v.setValue(formatAttributeValue(tag.getValue()));
+          setValueOfTaggedValue(v, tag.getValue());
         }
       }
 
@@ -189,7 +188,7 @@ public class RoseMdaVisitor implements RoseVisitor {
         RoseNode tv = (RoseNode)tags.get(i);
         RoseNode name = tv.findNodeWithKey(RoseStrings.NAME); // there is no need to check for correct tool, because all tagged values in here belong to pmMDA.
         TaggedValue tag = metaElement.getTaggedValue(Util.getName(name.getValue()));
-        if(tag == null || (tag.getTag().equals(UmlConstants.PERSISTENCE_TAG) && defaultType.equals(RoseStrings.CLASS))) {
+        if(tag == null || (tag.getTag().equals(UmlConstants.PERSISTENCE_TAG) && defaultType.equals(RoseStrings.DEFAULT_CLASS))) {
           itemsToDelete.add(new ItemToDelete(tv, value));
         }
       }
@@ -913,7 +912,7 @@ public class RoseMdaVisitor implements RoseVisitor {
         RoseNode name = tv.findNodeWithKey(RoseStrings.NAME);
         if(Util.getName(tool.getValue()).equals(RosePersistenceHandler.TaggedValueToolIdentifier)) {
           TaggedValue tag = defaultMetaElement.getTaggedValue(Util.getName(name.getValue()));
-          if(tag == null || tag.getTag().equals(UmlConstants.PERSISTENCE_TAG)) {
+          if(tag == null || (tag.getTag().equals(UmlConstants.PERSISTENCE_TAG) && defaultMetaElement.equals(RoseStrings.CLASS))) {
             itemsToDelete.add(new ItemToDelete(tv, attributes));
           }
         }
@@ -1260,6 +1259,14 @@ public class RoseMdaVisitor implements RoseVisitor {
   public String formatAttributeValue(String value) {
     if(value == null) return "\"\"";
     return "\""+value+"\"";
+  }
+  
+  public void setValueOfTaggedValue(RoseNode v, String value) {
+  	if(v.getNodes() != null && v.getNodes().size() > 0) {
+    	v.setValue(RoseStrings.TEXT);
+    	v = (RoseNode)v.getNodes().get(0);
+    }
+    v.setValue(formatAttributeValue(value));
   }
   
   /**
