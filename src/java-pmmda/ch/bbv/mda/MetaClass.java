@@ -336,6 +336,17 @@ public class MetaClass extends MetaClassifier {
   }
 
   /**
+   * Returns the class with the given name.
+   * @param name simple name of the class to find
+   * @return the requested class if found otherwise null
+   * @pre name != null
+   */
+  public MetaClass getNestedClass(String name) {
+    assert name != null;
+    return (MetaClass) findElement(nestedClasses, name);
+  }
+
+  /**
    * Adds the nested class.
    * @param clazz nested class to add.
    */

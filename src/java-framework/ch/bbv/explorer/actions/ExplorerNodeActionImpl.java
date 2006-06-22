@@ -10,7 +10,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 
 import ch.bbv.explorer.ExplorerNode;
-import ch.bbv.explorer.ExplorerTree;
+import ch.bbv.explorer.ExplorerTreeView;
 import ch.bbv.explorer.UiNodeType;
 
 /**
@@ -78,10 +78,10 @@ public class ExplorerNodeActionImpl extends AbstractAction implements
   }
 
   public void actionPerformed(ActionEvent actionEvent) {
-    ExplorerNode node = ExplorerTree.getSelectedNodeForPopup();
+    ExplorerNode node = ExplorerTreeView.getSelectedNodeForPopup();
     assert (node != null);
     preExecute(node);
     execute(node);
-    ExplorerTree.setSelectedNodeForPopup(null);
+    ExplorerTreeView.setSelectedNodeForPopup(null);
   }
 }

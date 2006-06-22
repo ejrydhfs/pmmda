@@ -5,8 +5,15 @@
  */
 package ch.bbv.explorer;
 
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
+import javax.swing.JComponent;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 /**
@@ -15,7 +22,7 @@ import javax.swing.tree.TreeSelectionModel;
  * @author MarcelBaumann
  * @version $Revision$
  */
-public class ExplorerTree {
+public class ExplorerTreeView {
   /**
    * The selected node which popup menu could be display. Because a popup menu
    * is modal at most one such node exist for one application. The number of
@@ -34,9 +41,19 @@ public class ExplorerTree {
   private JTree tree;
 
   /**
+   * Scroll pane containing the tree view.
+   */
+  private JScrollPane pane;
+
+  /**
    * Root node of the displayed graph.
    */
   private ExplorerNode root;
+
+  /**
+   * The name of the explorer tree.
+   */
+  private String name;
 
   /**
    * Resets the current selected node used to generate the popup menu. To reset
@@ -55,6 +72,16 @@ public class ExplorerTree {
    */
   public static ExplorerNode getSelectedNodeForPopup() {
     return selectedNodeForPopup;
+  }
+
+  public ExplorerTreeView(String name) {
+    this.name = name;
+    pane = new JScrollPane(tree);
+    pane.setName(name);
+  }
+
+  public String getName() {
+    return name;
   }
 
   /**
@@ -78,6 +105,10 @@ public class ExplorerTree {
     return root;
   }
 
+  public JComponent getPane() {
+    return pane;
+  }
+
   /**
    * Sets the root of the explorer tree.
    * @param root new root of the explorer tree
@@ -97,5 +128,39 @@ public class ExplorerTree {
     tree.getSelectionModel().setSelectionMode(
         TreeSelectionModel.SINGLE_TREE_SELECTION);
     tree.setCellRenderer(new ExplorerTreeCellRenderer());
+    tree.addMouseListener(new ExplorerMouseListener());
+    pane.setViewportView(tree);
   }
+
+  /**
+   * Implements the mouse listener for the explorer view.
+   * @author Marcel Baumann
+   * @version $Revision$
+   */
+  private final class ExplorerMouseListener extends MouseAdapter {
+
+    /**
+     * Checks if the mouse event should activate the display of the popup menu
+     * upon a mouse clicked. If yes displays the popup menu.
+     * @param event mouse event to handle
+     */
+    @Override
+    public void mouseReleased(MouseEvent event) {
+      if (event.isPopupTrigger()) {
+        TreePath path = getTree()
+            .getPathForLocation(event.getX(), event.getY());
+        if (path != null) {
+          getTree().setSelectionPath(path);
+          ExplorerNode node = (ExplorerNode) path.getLastPathComponent();
+          JPopupMenu menu = node.getNodeType().getFactory().getPopupFactory()
+              .getMenu(node);
+          if (menu != null) {
+            ExplorerTreeView.setSelectedNodeForPopup(node);
+            menu.show(getTree(), event.getX(), event.getY());
+          }
+        }
+      }
+    }
+  }
+
 }

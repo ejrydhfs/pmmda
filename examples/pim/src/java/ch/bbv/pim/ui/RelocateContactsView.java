@@ -31,7 +31,7 @@ public class RelocateContactsView extends JPanel implements ExplorerNodeOwner {
    */
   private static final long serialVersionUID = -8153917542904210072L;
 
-  private ExplorerTree tree;
+  private ExplorerTreeView tree;
 
   /**
    * Data object manager of this owner.
@@ -78,7 +78,7 @@ public class RelocateContactsView extends JPanel implements ExplorerNodeOwner {
     assert (root != null) && (manager != null) && (factory != null);
     this.manager = manager;
     this.factory = factory;
-    tree = new ExplorerTree();
+    tree = new ExplorerTreeView("contacts");
     tree.setRoot(root, this);
     treePane = new JScrollPane(tree.getTree());
     add(treePane);

@@ -57,48 +57,7 @@ public class PersistenceHandlerFactory {
         } else if (filename.endsWith(".xml")) {
             handler = getXmlHandler();
         } else if (filename.endsWith(".zargo")) {
-            try {
-                InputStream source = null;
-                ZipInputStream input = null;
-                FileInputStream inputStream = new FileInputStream(file);
-
-                input = new ZipInputStream(inputStream);
-                String name = input.getNextEntry().getName();
-                while (!name.endsWith(".xmi")) {
-                    name = input.getNextEntry().getName();
-                }
-
-                source = new BufferedInputStream(input);
-
-                StringBuffer sb = new StringBuffer();
-                // read the file 
-                int c;
-                while ((c = source.read()) != -1) {
-                    sb.append((char) c);
-                }
-                
-                // pattern: xmi.version = "nummer"
-                Pattern pattern = Pattern
-                        .compile("xmi.version(\\s)*=(\\s)*['|\"]([0-9]+\\.[0-9]+)['|\"]");
- 
-                Matcher matcher = pattern.matcher(sb);
-                // find matching
-                if (matcher.find()) {
-                    if (matcher.group(3).equals("1.0")) {
-                        handler = getNsUmlHandler();
-                    } else if (matcher.group(3).equals("1.2")) {
-                        handler = getMdrHandler();
-                    } else {
-                        throw new RuntimeException("XMI Version "
-                                + matcher.group(3)
-                                + " is not supported.");
-                    }
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
+            handler = getZargoHandler(file);
         } else if (filename.endsWith(".xmi")) {
             handler = getMdrHandler();
         } else if (filename.endsWith("zargo2")) {
@@ -177,5 +136,62 @@ public class PersistenceHandlerFactory {
     public PersistenceHandler getRoseHandler() {
         return (PersistenceHandler) ReflectUtilities
                 .newInstance("ch.bbv.mda.persistence.eclipse.RosePersistenceHandler");
+    }
+    
+    /**
+     * Decides whether the nsUml or the mdr handler should be returned. 
+     * for xmi 1.0 the nsUml handler is used
+     * for xmi 1.2 the mdr handler is used
+     * @param file  the zargo file
+     * @return the zargo handler
+     */
+    private PersistenceHandler getZargoHandler(File file){
+        PersistenceHandler handler = null;
+        try {
+            InputStream source = null;
+            ZipInputStream input = null;
+            FileInputStream inputStream = new FileInputStream(file);
+
+            input = new ZipInputStream(inputStream);
+            String name = input.getNextEntry().getName();
+            while (!name.endsWith(".xmi")) {
+                name = input.getNextEntry().getName();
+            }
+
+            source = new BufferedInputStream(input);
+
+            StringBuffer sb = new StringBuffer();
+            // read the first 500 characters of the file
+            // the part we are looking for should be within the first 120 characters
+            int character;
+            int counter = 0;
+            while (counter < 500 && (character = source.read()) != -1) {
+                sb.append((char) character);
+                counter++;
+            }
+            
+            // pattern: xmi.version = "nummer"
+            Pattern pattern = Pattern
+                    .compile("xmi.version(\\s)*=(\\s)*['|\"]([0-9]+\\.[0-9]+)['|\"]");
+
+            Matcher matcher = pattern.matcher(sb);
+            // find matching
+            if (matcher.find()) {
+                if (matcher.group(3).equals("1.0")) {
+                    handler = getNsUmlHandler();
+                } else if (matcher.group(3).equals("1.2")) {
+                    handler = getMdrHandler();
+                } else {
+                    throw new RuntimeException("XMI Version "
+                            + matcher.group(3)
+                            + " is not supported.");
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return handler;
+
     }
 }

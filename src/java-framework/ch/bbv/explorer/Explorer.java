@@ -90,11 +90,6 @@ public abstract class Explorer implements ExplorerNodeOwner {
   private JSplitPane viewUtilitiesPane;
 
   /**
-   * Swing component of the explorer view.
-   */
-  private JScrollPane treePane;
-
-  /**
    * Status bar of the explorer view.
    */
   private StatusBar statusBar;
@@ -102,7 +97,7 @@ public abstract class Explorer implements ExplorerNodeOwner {
   /**
    * Explorer node tree view used to display the tree model.
    */
-  private ExplorerTree tree;
+  private ExplorerTreeView tree;
 
   /**
    * Current node
@@ -203,7 +198,7 @@ public abstract class Explorer implements ExplorerNodeOwner {
         Messages.class);
     this.factory = factory;
     this.manager = manager;
-    tree = new ExplorerTree();
+    tree = new ExplorerTreeView("Tree");
     // create the explorer docking structure
     viewsPort = new DefaultDockingPort();
     treesPort = new DefaultDockingPort();
@@ -216,11 +211,8 @@ public abstract class Explorer implements ExplorerNodeOwner {
         viewUtilitiesPane);
     treeViewPane.setDividerSize(5);
     treeViewPane.setResizeWeight(0.3);
-    treePane = new JScrollPane(tree.getTree());
-    treePane.setName("Tree");
-    Dockable tree = DockingManager.registerDockable(treePane, treePane
-        .getName());
-    treesPort.dock(tree, DockingConstants.CENTER_REGION);
+    Dockable treeDock = DockingManager.registerDockable(tree.getPane(), tree.getName());
+    treesPort.dock(treeDock, DockingConstants.CENTER_REGION);
     // create the status bar and construct the frame
     frame = new JFrame(Messages.titleExplorerFrame);
     frame.add(treeViewPane, BorderLayout.CENTER);
@@ -362,8 +354,6 @@ public abstract class Explorer implements ExplorerNodeOwner {
     tree.setRoot(root, this);
     JTree view = tree.getTree();
     view.addTreeSelectionListener(selectionListener);
-    view.addMouseListener(new ExplorerMouseListener());
-    treePane.setViewportView(view);
   }
 
   /**
@@ -517,37 +507,6 @@ public abstract class Explorer implements ExplorerNodeOwner {
             view.getName());
         DockingManager.dock(dockable, getMainPort(),
             DockingConstants.CENTER_REGION);
-      }
-    }
-  }
-
-  /**
-   * Implements the mouse listener for the explorer view.
-   * @author Marcel Baumann
-   * @version $Revision$
-   */
-  private final class ExplorerMouseListener extends MouseAdapter {
-
-    /**
-     * Checks if the mouse event should activate the display of the popup menu
-     * upon a mouse clicked. If yes displays the popup menu.
-     * @param event mouse event to handle
-     */
-    @Override
-    public void mouseReleased(MouseEvent event) {
-      if (event.isPopupTrigger()) {
-        TreePath path = getTree()
-            .getPathForLocation(event.getX(), event.getY());
-        if (path != null) {
-          getTree().setSelectionPath(path);
-          ExplorerNode node = (ExplorerNode) path.getLastPathComponent();
-          JPopupMenu menu = node.getNodeType().getFactory().getPopupFactory()
-              .getMenu(node);
-          if (menu != null) {
-            ExplorerTree.setSelectedNodeForPopup(node);
-            menu.show(getTree(), event.getX(), event.getY());
-          }
-        }
       }
     }
   }
