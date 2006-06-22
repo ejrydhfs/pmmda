@@ -25,8 +25,8 @@ import ch.bbv.mda.graphs.ClassGraphView;
 public class TypeFactory extends AbstractTypeFactory {
   /**
    * Constructor of the class.
-   * @param factory the user interface node type factory to use.
-   * @param manager the data object manager to use.
+   * @param factory the user interface node type factory to use
+   * @param manager the data object manager to use
    */
   public TypeFactory(UiNodeTypeFactory factory, DataObjectMgr manager) {
     super(factory, manager);
@@ -36,18 +36,19 @@ public class TypeFactory extends AbstractTypeFactory {
    * Registers all data object types defined in the package.
    */
   public void registerAllTypes() {
-    createNodeTypeForMetaProject();
+    createNodeTypeForMetaModel();
     createNodeTypeForMetaPackage();
     createNodeTypeForMetaClass();
     createNodeTypeForMetaProperty();
     createNodeTypeForMetaIndexedProperty();
     createNodeTypeForMetaDataType();
+    createNodeTypeForStereotype();
   }
 
   /**
    * Creates the node type for a bean type with fields and relations.
    */
-  public void createNodeTypeForMetaProject() {
+  public void createNodeTypeForMetaModel() {
     DataObjectType type = new DataObjectType(MetaModel.class, MetaModel.class,
         MetaModel.class, VisitorFunctor.class, VisitorFunctor.class, null);
     type.setRoot(true);
@@ -57,6 +58,7 @@ public class TypeFactory extends AbstractTypeFactory {
     addRelation(nodeType, "packages", MetaPackage.class, true, true);
     addRelation(nodeType, "classes", MetaClass.class, true, true);
     addRelation(nodeType, "datatypes", MetaDatatype.class, true, true);
+    addRelation(nodeType, "stereotypes", Stereotype.class, true, true);
 
     List<UiField> params = new ArrayList<UiField>();
     addField(params, "name", String.class, true);
@@ -166,5 +168,21 @@ public class TypeFactory extends AbstractTypeFactory {
         NodeTableView.class, null, true));
     register(type, nodeType, new PopupSelectorDefault(nodeType),
         new SimpleIconSelector("datatype"));
+  }
+
+  /**
+   * Creates the node type for a bean type with fields and relations.
+   */
+  public void createNodeTypeForStereotype() {
+    DataObjectType type = new DataObjectType(Stereotype.class,
+        Stereotype.class, Stereotype.class, VisitorFunctor.class,
+        VisitorFunctor.class, null);
+    
+    UiNodeTypeImpl nodeType = new UiNodeTypeImpl(type, "name",
+        StereotypeView.class);
+    nodeType.registerView(new UiNodeViewType("default", nodeType,
+        NodeTableView.class, null, true));
+    register(type, nodeType, new PopupSelectorDefault(nodeType),
+        new SimpleIconSelector("stereotype"));
   }
 }

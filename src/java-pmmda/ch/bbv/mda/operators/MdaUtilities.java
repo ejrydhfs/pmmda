@@ -109,7 +109,8 @@ public final class MdaUtilities {
     if ((name != null) && (name.trim().length() > 0)) {
       Stereotype stereotype = item.getModel().findStereotype(name);
       if (stereotype == null) {
-        stereotype = new Stereotype(name);
+        stereotype = new Stereotype();
+        stereotype.setName(name);
         item.getModel().addStereotype(stereotype);
       }
       item.addStereotype(stereotype);

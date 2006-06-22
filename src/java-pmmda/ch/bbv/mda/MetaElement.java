@@ -28,7 +28,7 @@ import ch.bbv.mda.operators.ModelOperators;
  * @version $Revision$
  */
 public abstract class MetaElement extends DataObjectImpl implements DataObject,
-    LightweightObject {
+    LightweightObject, Comparable {
 
   /* %% USER DEFINED DECLARATION START %% */
 
@@ -327,7 +327,8 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
     if (stereotype == null) {
       stereotype = getModel().findStereotype(name);
       if (stereotype == null) {
-        stereotype = new Stereotype(name);
+        stereotype = new Stereotype();
+        stereotype.setName(name);
       }
       addStereotype(stereotype);
     }
@@ -645,6 +646,13 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
    */
   public String toString() {
     return getQualifiedName();
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public int compareTo(Object object) {
+    return (((MetaElement) object).getName().compareTo(getName()));
   }
 
   /**

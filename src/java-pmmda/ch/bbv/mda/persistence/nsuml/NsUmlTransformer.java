@@ -482,15 +482,20 @@ public class NsUmlTransformer extends ExternalTransformer {
     for (Iterator<MStereotype> i = new FilterIterator<MStereotype>(source
         .getOwnedElements(), MStereotype.class); i.hasNext();) {
       MStereotype mStereotype = i.next();
-      Stereotype stereotype = new Stereotype(mStereotype.getName());
-      target.addStereotype(stereotype);
+      String name = mStereotype.getName();
+      Stereotype stereotype = target.findStereotype(name);
+      if (stereotype == null) {
+        stereotype = new Stereotype(name);
+        target.addStereotype(stereotype);
+      }
+      extractStereotypeAndTags(mStereotype, stereotype);
     }
   }
 
   /**
    * Converts a NSUML multiplicity into a MDA multiplicity.
-   * @param multiplicity NSUML multiplicity.
-   * @return the equivalent MDA multiplicity of NSUML object.
+   * @param multiplicity NSUML multiplicity
+   * @return the equivalent MDA multiplicity of NSUML object
    * @pre multiplicity != null
    */
   private Multiplicity convert(MMultiplicity multiplicity) {

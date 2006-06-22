@@ -22,6 +22,7 @@ import ch.bbv.dog.DataObjectHandler;
 import ch.bbv.dog.DataObjectMgr;
 import ch.bbv.dog.LightweightObjectHandlerImpl;
 import ch.bbv.dog.persistence.PersistenceHandler;
+import ch.bbv.dog.persistence.hibernate.PersistenceHandlerHib;
 import ch.bbv.dog.persistence.ojb.PersistenceHandlerOjb;
 import ch.bbv.utilities.ReflectUtilities;
 
@@ -64,26 +65,31 @@ public class UserApplication extends Application {
    * Constructor of the class. The data object handler instiates a cache handler
    * with cache enabled and without copy cache.
    * @param mode mode of the application. The legal values are defined as
-   *          constants (USE_DIRECT, USE_CORBA, USE_J2EE).
-   * @param synchronization synchronization mode of the O/R system.
-   * @throws ComponentException occured when building the application.
+   *          constants (USE_DIRECT, USE_CORBA, USE_J2EE)
+   * @param orm object relation mapping library to use. The legal values are
+   *          defined as constants (HIBERNATE, OJB)
+   * @param synchronization synchronization mode of the O/R system
+   * @throws ComponentException if an error occured when building the
+   *           application
    */
-  public UserApplication(String mode, String synchronization)
+  public UserApplication(String mode, String orm, String synchronization)
       throws ComponentException {
-    this(mode, synchronization, false);
+    this(mode, synchronization, orm, false);
   }
 
   /**
    * Constructor of the class. The data object handler instiates a cache handler
    * with cache enabled and without copy cache.
    * @param mode mode of the application. The legal values are defined as
-   *          constants (USE_DIRECT, USE_CORBA, USE_J2EE).
-   * @param synchronization synchronization mode of the O/R system.
+   *          constants (USE_DIRECT, USE_CORBA, USE_J2EE)
+   * @param orm object relation mapping library to use. The legal values are
+   *          defined as constants (HIBERNATE, OJB)
+   * @param synchronization synchronization mode of the O/R system
    * @param commandLineMode flag indicating if the application is used in
-   *          command line mode or in user interface mode.
-   * @throws ComponentException occured when building the application.
+   *          command line mode or in user interface mode
+   * @throws ComponentException occured when building the application
    */
-  public UserApplication(String mode, String synchronization,
+  public UserApplication(String mode, String orm, String synchronization,
       boolean commandLineMode) throws ComponentException {
     DataObjectMgr manager = null;
     register(this);
@@ -91,9 +97,15 @@ public class UserApplication extends Application {
       log.info("Application started in direct mode");
       PersistenceHandler.Mode sync = PersistenceHandler.Mode
           .valueOf(synchronization);
-      manager = new DataObjectMgr(new CacheHandler(new PersistenceHandlerOjb(
-          false, sync), true, true), new LightweightObjectHandlerImpl(), null,
-          SCHEMA);
+      if (USE_OJB.equalsIgnoreCase(orm)) {
+        manager = new DataObjectMgr(new CacheHandler(new PersistenceHandlerOjb(
+            false, sync), true, true), new LightweightObjectHandlerImpl(),
+            null, SCHEMA);
+      } else if (USE_HIBERNATE.equalsIgnoreCase(orm)) {
+        manager = new DataObjectMgr(new CacheHandler(
+            new PersistenceHandlerHib(), true, true),
+            new LightweightObjectHandlerImpl(), null, SCHEMA);
+      }
     } else if (USE_CORBA.equalsIgnoreCase(mode)) {
       log.info("Application started in CORBA mode");
       register(ORB.init(args, null), ORB_NAME);
@@ -114,7 +126,10 @@ public class UserApplication extends Application {
     startup();
     manager.getDataObjectHandler().openDatasource(SCHEMA, false);
     if (!commandLineMode) {
-      UserExplorer.create("User Explorer");
+      StringBuilder buffer = new StringBuilder();
+      buffer.append("User Explorer (mode=").append(mode).append(", orm=")
+          .append(orm).append(", sync=").append(synchronization).append(")");
+      UserExplorer.create(buffer.toString());
     }
   }
 
@@ -148,8 +163,9 @@ public class UserApplication extends Application {
         log.info("logging level set to quiet");
       }
       String mode = line.getOptionValue("m", USE_DIRECT);
-      // Handles the case where mode is not defined at all.
       mode = (mode == null ? USE_DIRECT : mode);
+      String orm = line.getOptionValue("o", USE_OJB);
+      orm = (orm == null ? USE_OJB : orm);
       String synchronization = line.getOptionValue("s", USE_REPLACE)
           .toUpperCase();
       synchronization = (synchronization == null ? USE_REPLACE
@@ -157,7 +173,7 @@ public class UserApplication extends Application {
       if (log.isInfoEnabled()) {
         log.info(Arrays.asList(args));
       }
-      new UserApplication(mode, synchronization);
+      new UserApplication(mode, orm, synchronization);
     } catch (ComponentException e) {
       log.fatal(e);
     } catch (ParseException e) {

@@ -14,15 +14,29 @@ package ch.bbv.mda;
  */
 public class Stereotype extends AdornmentType {
   /**
+   * Default constructor of the class.
+   */
+  public Stereotype() {
+  }
+
+  /**
    * Constructor of the class.
    * @param name name of the stereotype type
    */
   public Stereotype(String name) {
     setName(name);
   }
-  
+
   @Override
   public String toString() {
     return getName();
+  }
+
+  /**
+   * Implements the visitor pattern.
+   * @param visitor visitor to process.
+   */
+  public void accept(Visitor visitor) {
+    visitor.visit(this);
   }
 }

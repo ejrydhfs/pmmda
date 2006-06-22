@@ -44,16 +44,10 @@ public class MetaPackage extends MetaElement {
   private List<MetaClass> classes;
 
   /**
-   * List of all views defined in the package.
-   */
-  private List<MetaView> views;
-
-  /**
    * Default constructor of the class.
    */
   public MetaPackage() {
     classes = new ArrayList<MetaClass>();
-    views = new ArrayList<MetaView>();
   }
 
   /**
@@ -134,81 +128,6 @@ public class MetaPackage extends MetaElement {
   }
 
   /**
-   * Returns the view with the given index.
-   * @param index index of the requested view.
-   * @return the requested view.
-   */
-  public MetaView getView(int index) {
-    return views.get(index);
-  }
-
-  /**
-   * Adds the view in the list of views of the package.
-   * @param view view to add.
-   * @pre view != null
-   */
-  public void addView(MetaView view) {
-    assert view != null;
-    views.add(view);
-    view.setContext(this);
-  }
-
-  /**
-   * Adds the view in the list of views of the package.
-   * @param index position where the view should be inserted in the list.
-   * @param view to be added.
-   * @pre view != null
-   */
-  public void addView(int index, MetaView view) {
-    assert view != null;
-    views.add(index, view);
-    view.setContext(this);
-  }
-
-  /**
-   * Returns a list of all views of the package.
-   * @return list of all views.
-   * @see #setViews(List)
-   */
-  public List<MetaView> getViews() {
-    return views;
-  }
-
-  /**
-   * Set the list of views of the package.
-   * @param views new list of classes.
-   * @see #getViews()
-   */
-  public void setViews(List<MetaView> views) {
-    removeAllViews();
-    views.addAll(views);
-    for (MetaView view : views) {
-      view.setContext(this);
-    }
-  }
-
-  /**
-   * Remove all views of the package.
-   */
-  public void removeAllViews() {
-    for (MetaView view : views) {
-      view.setContext(null);
-    }
-    views.clear();
-  }
-
-  /**
-   * Removes a view from the package.
-   * @param view to be removed.
-   */
-  public void removeView(MetaView view) {
-    if (views.contains(view)) {
-      views.remove(view);
-      view.setContext(null);
-    }
-  }
-
-  /**
    * Implements the visitor pattern.
    * @param visitor visitor to process.
    */
@@ -218,18 +137,15 @@ public class MetaPackage extends MetaElement {
     for (MetaClass clazz : classes) {
       clazz.accept(visitor);
     }
-    for (MetaView view : views) {
-      view.accept(visitor);
-    }
   }
 
   /**
    * Returns the class with the given name.
-   * @param name simple name of the class to find.
-   * @return the requested class if found otherwise null.
+   * @param name simple name of the class to find
+   * @return the requested class if found otherwise null
    * @pre name != null
    */
-  public MetaClass findClass(String name) {
+  public MetaClass getClass(String name) {
     assert name != null;
     return (MetaClass) findElement(classes, name);
   }

@@ -148,7 +148,7 @@ public class MetaModel extends MetaPackage {
 
   /**
    * Removes a package from the model.
-   * @param packages to be removed.
+   * @param packages to be removed
    */
   public void removePackage(MetaPackage packages) {
     if (this.packages.contains(packages)) {
@@ -158,9 +158,32 @@ public class MetaModel extends MetaPackage {
   }
 
   /**
+   * Adds the stereotype in the list of datatypes.
+   * @param stereotype stereotype to add
+   * @pre stereotype != null
+   */
+  public void addStereotype(Stereotype stereotype) {
+    assert stereotype != null;
+    stereotype.setContext(this);
+    super.addStereotype(stereotype);
+  }
+
+  /**
+   * Adds the stereotype in the list of datatypes.
+   * @param index position where the stereotype should be inserted in the list
+   * @param stereotype stereotype to add
+   * @pre datatype != null
+   * @see #getStereotype(int)
+   */
+  public void addStereotype(int index, Stereotype stereotype) {
+    stereotype.setContext(this);
+    super.addStereotype(index, stereotype);
+  }
+
+  /**
    * Returns the datatype with the given index.
-   * @param index index of the requested datatype.
-   * @return the requested datatype.
+   * @param index index of the requested datatype
+   * @return the requested datatype
    * @see #addDatatype(int, MetaDatatype)
    */
   public MetaDatatype getDatatype(int index) {
@@ -169,7 +192,7 @@ public class MetaModel extends MetaPackage {
 
   /**
    * Adds the datatype in the list of datatypes.
-   * @param datatype datatype to add.
+   * @param datatype datatype to add
    * @pre datatype != null
    */
   public void addDatatype(MetaDatatype datatype) {
@@ -180,7 +203,7 @@ public class MetaModel extends MetaPackage {
 
   /**
    * Adds the datatype in the list of datatypes.
-   * @param index position where the datatype should be inserted in the list.
+   * @param index position where the datatype should be inserted in the list
    * @param datatype datatype to add
    * @pre datatype != null
    * @see #getDatatype(int)
@@ -193,7 +216,7 @@ public class MetaModel extends MetaPackage {
 
   /**
    * Returns a list of all datatypes defined in the object.
-   * @return list of all datatypes.
+   * @return list of all datatypes
    * @see #setDatatypes(List)
    */
   public List<MetaDatatype> getDatatypes() {
@@ -202,7 +225,7 @@ public class MetaModel extends MetaPackage {
 
   /**
    * Sets the list of dataytpes of the model.
-   * @param datatypes new list of datatypes.
+   * @param datatypes new list of datatypes
    * @see #getDatatypes()
    */
   public void setDatatypes(List<MetaDatatype> datatypes) {
@@ -234,6 +257,7 @@ public class MetaModel extends MetaPackage {
     }
   }
 
+  @Override
   public void accept(Visitor visitor) {
     visitor.visit(this);
     for (MetaPackage metaPackage : packages) {
@@ -244,6 +268,9 @@ public class MetaModel extends MetaPackage {
     }
     for (MetaDatatype datatype : getDatatypes()) {
       datatype.accept(visitor);
+    }
+    for (Stereotype stereotype : getStereotypes()) {
+      stereotype.accept(visitor);
     }
   }
 

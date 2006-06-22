@@ -151,7 +151,6 @@ public abstract class AbstractNodeAction extends ExplorerNodeActionImpl {
       newNode = updateNodeWithBo(node);
       boObject = newNode.getDataObject();
     }
-
     DataObjectType type = nodeType.getDataObjectType();
     Class boClass = type.getBoClass();
     Class lwClass = type.getLwClass();

@@ -63,10 +63,6 @@ public class VisitorCollectClassReferences implements Visitor {
   public void visit(MetaClass clazz) {
     assert (clazz != null);
   }
-  
-  public void visit(MetaView clazz) {
-	    assert (clazz != null);
-  }
 
   public void visit(MetaProperty property) {
     assert (property != null);
@@ -88,6 +84,10 @@ public class VisitorCollectClassReferences implements Visitor {
 
   public void visit(MetaDatatype datatype) {
     assert (datatype != null);
+  }
+
+  public void visit(Stereotype stereotype) {
+    assert (stereotype != null);
   }
 
   public void visit(TaggedValue taggedValue) {

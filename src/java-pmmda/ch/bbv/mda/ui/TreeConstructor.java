@@ -1,5 +1,5 @@
 /* 
- * copyright 2000-2005 Marcel Baumann
+ * copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence);
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -74,10 +74,6 @@ public class TreeConstructor implements Visitor {
   public void visit(MetaClass metaClass) {
     constructNode(metaClass);
   }
-  
-  public void visit(MetaView metaView) {
-	    constructNode(metaView);
-	  }
 
   public void visit(MetaProperty metaProperty) {
     constructNode(metaProperty);
@@ -88,23 +84,27 @@ public class TreeConstructor implements Visitor {
   }
 
   public void visit(MetaDatatype datatype) {
-    assert (datatype != null);
+    assert datatype != null;
     constructNode(datatype);
   }
 
+  public void visit(Stereotype stereotype) {
+    assert stereotype != null;
+    constructNode(stereotype);
+  }
+
   public void visit(TaggedValue taggedValue) {
-    assert (taggedValue != null);
+    assert taggedValue != null;
   }
 
   /**
    * Constructs an explorer node.
-   * @param item item which explorer node should be constructed.
+   * @param item item which explorer node should be constructed
    */
   private void constructNode(MetaElement item) {
     UiNodeType nodeType = factory.getNodeTypeForBo(item.getClass());
     ExplorerNode node = new ExplorerNode(nodeType, item, item);
     nodes.put(item, node);
-
     ExplorerNode context = nodes.get(item.getContext());
     if ((context == null) && log.isDebugEnabled()) {
       log.debug("Not context found for " + item + " context "

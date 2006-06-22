@@ -12,12 +12,7 @@ package ch.bbv.mda;
  * @author MarcelBaumann
  * @version $Revision$
  */
-public abstract class AdornmentType implements Comparable {
-  /**
-   * Name of the adornment type.
-   */
-  private String name;
-
+public abstract class AdornmentType extends MetaElement {
   /**
    * Flag indicating if the adornment can be used in a package context.
    */
@@ -37,24 +32,6 @@ public abstract class AdornmentType implements Comparable {
    * Flag indicating if the adornment can be used in a field context.
    */
   private boolean fieldScope;
-
-  /**
-   * Returns the name of the adornment.
-   * @return Returns the name.
-   * @see #setName(String)
-   */
-  public String getName() {
-    return name;
-  }
-
-  /**
-   * Sets the name of the adornment.
-   * @param name new name of the adornment.
-   * @see #getName()
-   */
-  public void setName(String name) {
-    this.name = name;
-  }
 
   /**
    * Returns the flag indicating if the adornment can be used in this scope.
@@ -127,12 +104,4 @@ public abstract class AdornmentType implements Comparable {
   public void setFieldScope(boolean fieldScope) {
     this.fieldScope = fieldScope;
   }
-
-  /**
-   * @inheritDoc
-   */
-  public int compareTo(Object object) {
-    return (((AdornmentType) object).getName().compareTo(getName()));
-  }
-
 }

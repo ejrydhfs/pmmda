@@ -61,10 +61,6 @@ public class TreeChecker implements Visitor {
   public void visit(MetaModel metaModel) {
     itemFactory.initialize(metaModel, MetaModel.class);
   }
-  
-  public void visit(MetaView metaView){
-	  itemFactory.initialize(metaView, MetaView.class);
-  }
 
   public void visit(MetaPackage metaPackage) {
     itemFactory.initialize(metaPackage, MetaPackage.class);
@@ -87,6 +83,10 @@ public class TreeChecker implements Visitor {
     // no MDA initialization for such items
   }
 
+  public void visit(Stereotype stereotype) {
+    // no MDA initialization for such items
+  }
+
   public void visit(TaggedValue taggedValue) {
     // no MDA initialization for such items
   }
@@ -94,7 +94,7 @@ public class TreeChecker implements Visitor {
   /**
    * Registers all standard defined UML tags in the model. The persistence flag,
    * the volatile flag and the transient flag are handled.
-   * @param clazz clazz which tags should be completed.
+   * @param clazz clazz which tags should be completed
    */
   private void complete(MetaClass clazz) {
     getOrAddTag(clazz, persistence);
@@ -113,8 +113,8 @@ public class TreeChecker implements Visitor {
   /**
    * Registers all standard defined UML tags in the model. The persistence flag,
    * the volatile flag and the transient flag are handled.
-   * @param property property which tags should be completed.
-   * @return flag indication if the property is persistent.
+   * @param property property which tags should be completed
+   * @return flag indication if the property is persistent
    * @pre property != null
    */
   private boolean complete(MetaProperty property) {
@@ -135,8 +135,8 @@ public class TreeChecker implements Visitor {
   /**
    * Returns the required tag. If not defined the tag is first added.
    * @param element element from which the tag should be retrieved.
-   * @param definition tag defintion of the requested tag.
-   * @return the requested tag.
+   * @param definition tag defintion of the requested tag
+   * @return the requested tag
    * @pre (element != null) || (definition != null)
    */
   private TaggedValue getOrAddTag(MetaElement element, TagDefinition definition) {

@@ -63,10 +63,6 @@ public class VisitorFunctor implements AbstractVisitorFunctor, Visitor {
   public void visit(MetaClass item) {
     functor.execute(item);
   }
-  
-  public void visit(MetaView item) {
-	functor.execute(item);
-  }
 
   public void visit(MetaProperty item) {
     functor.execute(item);
@@ -79,7 +75,11 @@ public class VisitorFunctor implements AbstractVisitorFunctor, Visitor {
   public void visit(MetaDatatype item) {
     functor.execute(item);
   }
-  
+
+  public void visit(Stereotype item) {
+    functor.execute(item);
+  }
+
   public void visit(TaggedValue item) {
     functor.execute(item);
   }

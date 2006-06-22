@@ -6,7 +6,9 @@
  */
 package ch.bbv.dnm.users;
 
-import static ch.bbv.dnm.users.common.UserApplicationConstants.*;
+import static ch.bbv.dnm.users.common.UserApplicationConstants.USE_DIRECT;
+import static ch.bbv.dnm.users.common.UserApplicationConstants.USE_HIBERNATE;
+import static ch.bbv.dnm.users.common.UserApplicationConstants.USE_REPLACE;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -56,7 +58,7 @@ public class UsersTest extends TestCase {
   @Override
   public void setUp() throws Exception {
     if (UserApplication.getApplication() == null) {
-      new UserApplication(USE_DIRECT, USE_REPLACE, true);
+      new UserApplication(USE_DIRECT, USE_HIBERNATE, USE_REPLACE, true);
       log.info("Application singleton created");
     }
   }

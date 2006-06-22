@@ -114,8 +114,8 @@ public class SaveAsAction extends ExplorerFileAction {
   /**
    * Writes the model to a new ArgoUML file. The file is copied from a template
    * before writing the model into it.
-   * @param file new file for the model.
-   * @throws PersistenceException if the model could not be saved.
+   * @param file new file for the model
+   * @throws PersistenceException if the model could not be saved
    */
   private void writeModel(File file) throws PersistenceException {
     try {
