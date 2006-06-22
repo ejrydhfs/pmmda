@@ -30,7 +30,7 @@ import ch.bbv.mda.persistence.FilterIterator;
  * @author Marcel Baumann
  * @version $Revision$
  */
-public class MdaTransformer {
+public class Mda2NsUmlTransformer {
   /**
    * Boolean true value as stored in a NSUML XMI file.
    */
@@ -67,7 +67,7 @@ public class MdaTransformer {
   /**
    * Default constructor of the class.
    */
-  public MdaTransformer() {
+  public Mda2NsUmlTransformer() {
     elements = new HashMap<Object, Object>();
     missingAttributeTypes = new HashMap<MAttribute, MetaClass>();
   }

@@ -42,11 +42,11 @@ import ch.bbv.mda.persistence.FilterIterator;
  * @author Marcel Baumann
  * @version $Revision$
  */
-public class NsUmlTransformer extends ExternalTransformer {
+public class NsUml2MdaTransformer extends ExternalTransformer {
   /**
    * Logger of the class.
    */
-  private static Log log = LogFactory.getLog(NsUmlTransformer.class);
+  private static Log log = LogFactory.getLog(NsUml2MdaTransformer.class);
 
   /**
    * Maps between the source objects used as keys and the target objects used as
@@ -58,7 +58,7 @@ public class NsUmlTransformer extends ExternalTransformer {
   /**
    * Default constructor of the class.
    */
-  public NsUmlTransformer() {
+  public NsUml2MdaTransformer() {
     elements = new HashMap<Object, MetaElement>();
   }
 

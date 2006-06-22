@@ -21,8 +21,8 @@ import ru.novosoft.uml.model_management.MModel;
 import ch.bbv.explorer.resources.Messages;
 import ch.bbv.mda.MetaModel;
 import ch.bbv.mda.persistence.nsuml.ArgoWriter;
-import ch.bbv.mda.persistence.nsuml.MdaTransformer;
-import ch.bbv.mda.persistence.nsuml.NsUmlTransformer;
+import ch.bbv.mda.persistence.nsuml.Mda2NsUmlTransformer;
+import ch.bbv.mda.persistence.nsuml.NsUml2MdaTransformer;
 import ch.bbv.mda.resources.MessagesMda;
 
 /**
@@ -41,19 +41,19 @@ public class NsUmlPersistenceHandler implements PersistenceHandler {
   /**
    * Transformer from NSUML to MDA.
    */
-  private NsUmlTransformer nsUmlTransformer;
+  private NsUml2MdaTransformer nsUmlTransformer;
 
   /**
    * Transformer from MDA to NSUML.
    */
-  private MdaTransformer mdaTransformer;
+  private Mda2NsUmlTransformer mdaTransformer;
 
   /**
    * Default constructor of the class.
    */
   public NsUmlPersistenceHandler() {
-    nsUmlTransformer = new NsUmlTransformer();
-    mdaTransformer = new MdaTransformer();
+    nsUmlTransformer = new NsUml2MdaTransformer();
+    mdaTransformer = new Mda2NsUmlTransformer();
   }
 
   public MetaModel readModel(File file) throws PersistenceException {
