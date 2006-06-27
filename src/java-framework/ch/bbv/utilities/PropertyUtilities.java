@@ -141,7 +141,7 @@ public final class PropertyUtilities {
       String attribute = (String) configuration
           .getProperty("datatypes[@language]");
       if (language.equalsIgnoreCase(attribute)) {
-        buffer.append("datatypes.datatype");
+        buffer.append("datatypes");
       }
     }
     String result = null;
