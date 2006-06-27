@@ -50,7 +50,7 @@ ${spaces} */
 #set($result=${_DATA_OBJECT.equalsIgnoreCase(${element.getStereotype()})})
 #end
 
-## Returns true if the element is a data object.
+## Returns true if the element is a reference code.
 ## @param $element element to check if it has the "reference code" stereotype.
 ## @return true if the steretotype is defined otherwise false.
 #macro(isReferenceCode $element $result)
