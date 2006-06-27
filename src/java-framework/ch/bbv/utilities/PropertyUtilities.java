@@ -127,7 +127,7 @@ public final class PropertyUtilities {
         if (language.equalsIgnoreCase(attribute)) {
           String dialectAttribute = getAttributeAt(configuration, path, i, "dialect");
           if((dialect == null && dialectAttribute == null) ||
-              (dialect != null && dialectAttribute != null && dialect.equals(dialectAttribute))) {
+              (dialect != null && dialectAttribute != null && dialect.equalsIgnoreCase(dialectAttribute))) {
             buffer.append("datatypes(").append(i).append(").datatype");
             bestMatchingTypeMappings = -1;
             break;
