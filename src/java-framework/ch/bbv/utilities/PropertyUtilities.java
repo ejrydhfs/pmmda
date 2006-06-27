@@ -98,8 +98,7 @@ public final class PropertyUtilities {
   }
 
   /**
-   * Returns the mapping for the type to the target language. A mapping exists
-   * only for datatypes.
+   * Returns the mapping for the type to the target language.
    * @param configuration configuration containing the attribute
    * @param typename to map to a language construct (qualified name)
    * @param language language to map to. A cartridge can define multiple
@@ -112,33 +111,31 @@ public final class PropertyUtilities {
    * @return the requested info about the type
    * @pre (typename != null) && (language != null) && (info != null)
    */
-  public static String getInfoOfType(CompositeConfiguration configuration, String typename, String language, 
-      String dialect, String info, boolean concrete) {
+  public static String getInfoOfType(CompositeConfiguration configuration,
+      String typename, String language, String dialect, String info,
+      boolean concrete) {
     StringBuilder buffer = new StringBuilder();
     Object collection = configuration.getProperty("datatypes[@language]");
     if (collection instanceof Collection) {
-      int size = ((Collection)collection).size();
+      int size = ((Collection) collection).size();
       StringBuilder path = new StringBuilder();
       path.append("datatypes");
-      int bestMatchingTypeMappings = -1;
-      for (int i = 0; i<size; i++) {
-        String attribute = getAttributeAt(configuration,
-            path, i, "language");
+      int matchingDatatypesIndex = -1;
+      for (int i = 0; i < size; i++) {
+        String attribute = getAttributeAt(configuration, path, i, "language");
         if (language.equalsIgnoreCase(attribute)) {
-          String dialectAttribute = getAttributeAt(configuration, path, i, "dialect");
-          if((dialect == null && dialectAttribute == null) ||
-              (dialect != null && dialectAttribute != null && dialect.equalsIgnoreCase(dialectAttribute))) {
-            buffer.append("datatypes(").append(i).append(").datatype");
-            bestMatchingTypeMappings = -1;
+          String dialectAttribute = getAttributeAt(configuration, path, i,
+              "dialect");
+          if (dialectAttribute == null) {
+            matchingDatatypesIndex = i;
+          } else if (dialect.equalsIgnoreCase(dialectAttribute)) {
+            matchingDatatypesIndex = -1;
             break;
-          }
-          if(dialectAttribute == null) {
-            bestMatchingTypeMappings = i;
           }
         }
       }
-      if(bestMatchingTypeMappings > -1) {
-        buffer.append("datatypes(").append(bestMatchingTypeMappings).append(").datatype");
+      if (matchingDatatypesIndex > -1) {
+        buffer.append("datatypes(").append(matchingDatatypesIndex).append(")");
       }
     } else {
       String attribute = (String) configuration
@@ -149,17 +146,32 @@ public final class PropertyUtilities {
     }
     String result = null;
     if (buffer.length() > 0) {
+      int length = buffer.length();
+      buffer.append(".datatype");
       for (int i = 0;; i++) {
-        String name = getAttributeAt(configuration, buffer,
-            i, "name");
+        String name = getAttributeAt(configuration, buffer, i, "name");
         if (name == null) {
           break;
         }
         if (typename.equals(name)) {
-          result = getAttributeAt(configuration, buffer, i,
-              info);
+          result = getAttributeAt(configuration, buffer, i, info);
           break;
         }
+      }
+      if (result == null) {
+        buffer.setLength(length);
+        buffer.append(".class");
+        for (int i = 0;; i++) {
+          String name = getAttributeAt(configuration, buffer, i, "name");
+          if (name == null) {
+            break;
+          }
+          if (typename.equals(name)) {
+            result = getAttributeAt(configuration, buffer, i, info);
+            break;
+          }
+        }
+
       }
     }
     return result;
