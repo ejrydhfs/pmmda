@@ -264,7 +264,7 @@ public class CacheHandler implements DataObjectHandler, CachesHandler {
    * @param cache cache containing the data objects to remove.
    */
   private void removeFromCache(Class clazz, Integer id,
-    Map<DataObjectId, DataObject> cache) {
+      Map<DataObjectId, DataObject> cache) {
     DataObjectMgr manager = Application.getApplication().getDataObjectMgr();
     DataObject root = cache.get(new DataObjectId(clazz, id));
     if (root != null) {
