@@ -32,7 +32,7 @@ public class MessagesMda {
 
   public static String msgOldFormat = "This file has been saved with a previous version of pmMDA.\n Open this file with the previous version and save it as *.xml or *.xmi";
 
-  public static String msgInvalidFormat = "This file does not contain a valid xmi format. Please check extension or content of file";
+  public static String msgInvalidFormat = "This file does not contain a valid format. Please check extension or content of file";
 
   public static String[] stereotypeColumNames = { "name" };
 
