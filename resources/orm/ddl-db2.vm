@@ -25,6 +25,9 @@ CREATE TABLESPACE S${spaceName} IN DIUF
 
 CREATE TABLE ${tableName} (
 #foreach($property in $properties)
+#if(!${property.isTransient()} && ${property.booleanValueOfTag("persistence")})
+#set($columnName="")
+#set($columnType="")	
 #set($columnName=${property.getAttribute("orm-column-name")})
 #set($columnType=${property.valueOfTag("orm-column-type")})
 #if(!${property.canBeNull()})#set($nullInfo=" NOT NULL")#else#set($nullInfo="")#end
@@ -35,6 +38,7 @@ CREATE TABLE ${tableName} (
   ${columnName} SHORT${nullInfo},
 #else
   ${columnName} ${columnType}${nullInfo},
+#end
 #end
 #end
 #if(${primaryKeys})

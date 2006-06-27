@@ -17,7 +17,7 @@
 #set($constraints=";")
 #end
 #foreach($property in $properties)
-#if(!${property.isTransient()})
+#if(!${property.isTransient()} && ${property.booleanValueOfTag("persistence")})
 #set($columnType=${property.valueOfTag("orm-column-type")})
 #getType($model $property $type)
 #isPersistentDataObject($type $isPersistentDataObject)

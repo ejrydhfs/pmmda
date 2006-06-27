@@ -31,7 +31,7 @@
 ## either a simple property or an indexed property with a cardinality of 1
 ## having as type a class not being a data object.
 #foreach($property in $properties)
-#if(!${property.isTransient()})
+#if(!${property.isTransient()} && ${property.booleanValueOfTag("persistence")})
 #set($columnType=${cartridge.getDatatype(${property}, "JDBC")})	
 #set($columnName=${property.getAttribute("orm-column-name").toUpperCase()})
 #getType($model $property $type)

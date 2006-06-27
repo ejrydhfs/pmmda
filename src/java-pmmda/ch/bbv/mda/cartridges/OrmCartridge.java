@@ -173,10 +173,12 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
           + "_lw_user.xml"));
       ddlXmlFile = new File(root, model.getName() + "-DdlUtils.xml");
       ddlXmlWriter = FileOperators.createPrintWriter(ddlXmlFile);
-      ddlWriter = FileOperators.createPrintWriter(new File(root, "createTables"
-          + databaseKey + ".sql"));
-      ddlIntegrityWriter = FileOperators.createPrintWriter(new File(root,
-          "createIntegrity" + databaseKey + ".sql"));
+      ddlWriter = FileOperators.createPrintWriter(new File(root, model
+          .getName()
+          + "-createTables" + databaseKey + ".sql"));
+      ddlIntegrityWriter = FileOperators.createPrintWriter(new File(root, model
+          .getName()
+          + "-createIntegrity" + databaseKey + ".sql"));
     } catch (IOException e) {
       log.error(e);
     }
@@ -281,7 +283,7 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
           "ddl-integrity", databaseKey), context));
     } else {
       ddlXmlWriter.print(processTemplate(retrieveTemplate("ddl", "Torque"),
-          context));      
+          context));
     }
     FileOperators.closePrintWriter(ormBoWriter);
     FileOperators.closePrintWriter(ormLwWriter);

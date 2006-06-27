@@ -24,9 +24,11 @@ CREATE TABLE ${schema}${table} (
   TS TIMESTAMP NOT NULL,
 #end
 #foreach($property in $properties)
-#if(!${property.isTransient()})
-#set($columnType=${cartridge.getSqlType(${property})})
+#if(!${property.isTransient()} && ${property.booleanValueOfTag("persistence")})
+#set($columnName="")
+#set($columnType="")
 #set($columnName=${property.getAttribute("orm-column-name")})
+#set($columnType=${cartridge.getSqlType(${property})})
 #getType($model $property $type)
 #if(!${property.booleanValueOfTag("orm-can-be-null")} || ${property.isPrimaryKey()})#set($nullInfo=" NOT NULL")#else#set($nullInfo="")#end
 #isPersistentDataObject($type $isPersistentDataObject)

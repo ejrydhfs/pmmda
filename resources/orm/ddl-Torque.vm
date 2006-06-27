@@ -34,14 +34,16 @@
         type="TIMESTAMP" />
 #end
 #foreach($property in $properties)
-#if(!${property.isTransient()})
-  #set($columnType=${cartridge.getDatatype(${property}, "JDBC")})	
-  #set($columnName=${property.getAttribute("orm-column-name")})
-  #getType($model $property $type)
-  #isPersistentDataObject($type $isPersistentDataObject)
-  #if($isPersistentDataObject)
-    #getForwardFk($property $columnName)
-	#set($columnType = "INTEGER")
+#if(!${property.isTransient()} && ${property.booleanValueOfTag("persistence")})
+#set($columnName="")
+#set($columnType="")
+#set($columnType=${cartridge.getDatatype(${property}, "JDBC")})	
+#set($columnName=${property.getAttribute("orm-column-name")})
+#getType($model $property $type)
+#isPersistentDataObject($type $isPersistentDataObject)
+#if($isPersistentDataObject)
+#getForwardFk($property $columnName)
+#set($columnType = "INTEGER")
 #end
 <column name="${columnName}"
 	javaName="${property.getName()}"
