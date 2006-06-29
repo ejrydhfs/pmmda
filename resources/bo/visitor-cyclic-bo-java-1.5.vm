@@ -15,6 +15,7 @@ package ${packageName};
 
 #set($visited=${cartridge.computeTransitiveClosure(${package})})
 #set($imports=${cartridge.createImports(${packageName})})
+#set($foo=${imports.addClasses(${visited})})
 #set($foo=${imports.addClassName("java.util.Set")})
 #set($foo=${imports.addClassName("java.util.HashSet")})
 #set($foo=${imports.addClassName("ch.bbv.dog.DataObject")})
