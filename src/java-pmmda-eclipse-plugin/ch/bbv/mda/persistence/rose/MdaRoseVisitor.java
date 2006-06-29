@@ -2359,7 +2359,7 @@ public class MdaRoseVisitor implements RoseVisitor
   }
   
   private MetaClass createMetaClass(RoseNode roseNode, EModelElement eElement, String objectName, Object parent, String stereoTypeValue){
-    MetaClass metaClass = metaPackage.findClass(objectName);
+    MetaClass metaClass = metaPackage.getClass(objectName);
     if (metaClass == null) {
       metaClass = new MetaClass();
       if(!(parent instanceof EClass)){
