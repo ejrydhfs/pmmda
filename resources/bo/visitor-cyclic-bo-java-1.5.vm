@@ -64,7 +64,7 @@ public class CyclicVisitor implements Visitor {
 	visitedObjects.clear();
   }
       
-#foreach($class in $classes)
+#foreach($class in $visited)
 #isDataObject($class $isDataObject)
 #if($isDataObject)
 #if($hasInterface)

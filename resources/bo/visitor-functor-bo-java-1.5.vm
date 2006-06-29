@@ -68,7 +68,7 @@ public class VisitorFunctor implements Visitor, AbstractVisitorFunctor {
   public void setFunctor(Object functor) {
     this.functor = (DoFunctor)functor;
   }    
-#foreach($class in $classes)
+#foreach($class in $visited)
 #isDataObject($class $isDataObject)
 #if($isDataObject)
 #if($hasInterface)

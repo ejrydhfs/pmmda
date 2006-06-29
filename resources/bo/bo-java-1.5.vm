@@ -33,15 +33,21 @@ package ${package.getAttribute("bo-mo-package")};
 #set($foo=${imports.addClassName("java.beans.VetoableChangeListener")})
 #set($foo=${imports.addClassName("java.lang.reflect.Field")})
 #set($foo=${imports.addClassName("java.sql.Timestamp")})
-#if (${class.getAttribute("bo-changeable")} == "true")
+#if (${class.class.booleanValueOfAttribute("bo-changeable")})
 #set($foo=${imports.addClassName("java.beans.PropertyChangeSupport")})
 #end
-#if (${class.getAttribute("bo-vetoable")} == "true")
+#if (${class.booleanValueOfAttribute("bo-vetoable")})
 #set($foo=${imports.addClassName("java.beans.VetoableChangeSupport")})
 #end
 #end
-#if (${class.getAttribute("bo-vetoable")} == "true")
+#if (${class.booleanValueOfAttribute("bo-vetoable")})
 #set($foo=${imports.addClassName("java.beans.PropertyVetoException")})
+#end
+#set($hasRoots=${cartridge.hasRootBusinessObjects(${package})})
+#if(!${hasRoots})
+#set($visitorPackageName=${utilities.getContextName(${package.getName()})})
+#set($visitorPackageName="${visitorPackageName}.Visitor")
+#set($foo=${imports.addClassName(${visitorPackageName})})
 #end
 #set($importStatements=${imports.getImportStatements(4)})
 #foreach($importStatement in $importStatements) 
@@ -126,7 +132,7 @@ $line
 #if(${type} == ${class})
 #getReverseHdl($reference $relation $handle)
   /**
-   * Mapping for 1: N relationship ${relation.getName()} as reverse foreign key.
+   * Mapping for 1: N relationship ${reference.getName()} as reverse foreign key.
    */
   private Integer ${handle};
 #end

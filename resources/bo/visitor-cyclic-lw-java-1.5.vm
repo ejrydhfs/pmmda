@@ -57,7 +57,7 @@ public class LwCyclicVisitor implements LwVisitor {
 	visitedObjects.clear();
   }
       
-#foreach($class in $classes)
+#foreach($class in $visited)
 #isLightweightDataObject($class $isLightweightDataObject)
 #if($isLightweightDataObject)
 #set($name=${class.getAttribute("bo-lw-class")})

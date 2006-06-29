@@ -16,9 +16,7 @@
 #end
 #emitFileHeader()
 
-#if (${package})
 package ${package.getAttribute("bo-lw-package")};
-#end
 
 #set($properties=${class.getProperties()})
 #set($aggregations=${class.getIndexedProperties()})
@@ -27,6 +25,12 @@ package ${package.getAttribute("bo-lw-package")};
 #set($interfaces=${class.retrieveInterfaces()})
 #set($imports=${cartridge.retrieveImportStatementsForLw(${class}, ${package.getAttribute("bo-lw-package")})})
 #set($foo=${imports.addClassName("ch.bbv.dog.LightweightObject")})
+#set($hasRoots=${cartridge.hasRootBusinessObjects(${package})})
+#if(!${hasRoots})
+#set($visitorPackageName=${utilities.getContextName(${package.getName()})})
+#set($visitorPackageName="${visitorPackageName}.LwVisitor")
+#set($foo=${imports.addClassName(${visitorPackageName})})
+#end
 #set($importStatements=${imports.getImportStatements(4)})
 #foreach($importStatement in $importStatements) 
 import $importStatement;

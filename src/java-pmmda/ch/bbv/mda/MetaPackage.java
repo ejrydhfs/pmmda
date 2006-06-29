@@ -52,8 +52,8 @@ public class MetaPackage extends MetaElement {
 
   /**
    * Returns the class with the given index.
-   * @param index index of the requested class.
-   * @return the requested class.
+   * @param index index of the requested class
+   * @return the requested class
    * @see #addClass(int, MetaClass)
    */
   public MetaClass getClass(int index) {
@@ -62,7 +62,7 @@ public class MetaPackage extends MetaElement {
 
   /**
    * Adds the class in the list of classes.
-   * @param clazz class to add.
+   * @param clazz class to add
    * @pre clazz != null
    */
   public void addClass(MetaClass clazz) {
@@ -73,8 +73,8 @@ public class MetaPackage extends MetaElement {
 
   /**
    * Adds the class in the list of classes.
-   * @param index position where the class should be inserted in the list.
-   * @param clazz class to add.
+   * @param index position where the class should be inserted in the list
+   * @param clazz class to add
    * @pre clazz != null
    * @see #getClass(int)
    */
@@ -86,7 +86,7 @@ public class MetaPackage extends MetaElement {
 
   /**
    * Returns a list of all classes defined in the object.
-   * @return list of all classes.
+   * @return list of all classes
    * @see #setClasses(List)
    */
   public List<MetaClass> getClasses() {
@@ -95,7 +95,7 @@ public class MetaPackage extends MetaElement {
 
   /**
    * Sets the list of classes of the package.
-   * @param classes new list of classes.
+   * @param classes new list of classes
    * @see #getClasses()
    */
   public void setClasses(List<MetaClass> classes) {
@@ -118,7 +118,7 @@ public class MetaPackage extends MetaElement {
 
   /**
    * Removes a class from the package.
-   * @param clazz to be removed.
+   * @param clazz to be removed
    */
   public void removeClass(MetaClass clazz) {
     if (classes.contains(clazz)) {
@@ -129,7 +129,7 @@ public class MetaPackage extends MetaElement {
 
   /**
    * Implements the visitor pattern.
-   * @param visitor visitor to process.
+   * @param visitor visitor to process
    */
   public void accept(Visitor visitor) {
     assert visitor != null;

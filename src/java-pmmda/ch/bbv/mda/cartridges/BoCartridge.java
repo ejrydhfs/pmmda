@@ -284,31 +284,35 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
       boolean cyclicVisitor = Boolean.parseBoolean(getContext().getProperty(
           CYCLIC_WRAPPER_KEY));
       try {
+        boolean hasRootBusinessObjects = hasRootBusinessObjects(metaPackage);
         if (hasDataObjects) {
           String packages = metaPackage.getAttribute(IF_PACKAGE);
-          processJavaTemplate(root, packages, "Visitor",
-              retrieveTemplate("visitor-if-bo"), context);
-          processJavaTemplate(root, packages, "VisitorFunctor",
-              retrieveTemplate("visitor-functor-bo"), context);
-          if (cyclicVisitor) {
-            processJavaTemplate(root, packages, "CyclicVisitor",
-                retrieveTemplate("visitor-cyclic-bo"), context);
+          if (hasRootBusinessObjects) {
+            processJavaTemplate(root, packages, "Visitor",
+                retrieveTemplate("visitor-if-bo"), context);
+            processJavaTemplate(root, packages, "VisitorFunctor",
+                retrieveTemplate("visitor-functor-bo"), context);
+            if (cyclicVisitor) {
+              processJavaTemplate(root, packages, "CyclicVisitor",
+                  retrieveTemplate("visitor-cyclic-bo"), context);
+            }
           }
           processJavaTemplate(root, metaPackage.getAttribute(BO_PACKAGE),
               "TypeFactory", retrieveTemplate("type-factory"), context);
         }
         if (metaPackage.booleanValueOfAttribute(BO_LIGHTWEIGHT)) {
-          String packages = metaPackage.getAttribute(LW_PACKAGE);
-          processJavaTemplate(root, packages, "LwVisitor",
-              retrieveTemplate("visitor-if-lw"), context);
-          processJavaTemplate(root, packages, "LwVisitorFunctor",
-              retrieveTemplate("visitor-functor-lw"), context);
-          processJavaTemplate(root, packages, "LwTransformer",
-              retrieveTemplate("transformer-lw"), context);
-          if (cyclicVisitor) {
-            processJavaTemplate(root, packages, "LwCyclicVisitor",
-                retrieveTemplate("visitor-cyclic-lw"), context);
-
+          if (hasRootBusinessObjects) {
+            String packages = metaPackage.getAttribute(LW_PACKAGE);
+            processJavaTemplate(root, packages, "LwVisitor",
+                retrieveTemplate("visitor-if-lw"), context);
+            processJavaTemplate(root, packages, "LwVisitorFunctor",
+                retrieveTemplate("visitor-functor-lw"), context);
+            processJavaTemplate(root, packages, "LwTransformer",
+                retrieveTemplate("transformer-lw"), context);
+            if (cyclicVisitor) {
+              processJavaTemplate(root, packages, "LwCyclicVisitor",
+                  retrieveTemplate("visitor-cyclic-lw"), context);
+            }
           }
         }
       } catch (IOException e) {
@@ -397,8 +401,7 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
         MetaClassifier classifier = property.getClassifier();
         if ((classifier != null) && (classifier instanceof MetaClass)) {
           MetaClass type = (MetaClass) classifier;
-          if ((classifier.findStereotype(DATA_OBJECT_STEREOTYPE) != null) &&
-              !classifier.booleanValueOfAttribute(IS_ROOT)){
+          if (classifier.findStereotype(DATA_OBJECT_STEREOTYPE) != null) {
             classes.add(type);
             computeTransitiveClosure(type, classes);
           }
@@ -408,8 +411,7 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
         MetaClassifier classifier = property.getClassifier();
         if ((classifier != null) && (classifier instanceof MetaClass)) {
           MetaClass type = (MetaClass) classifier;
-          if ((classifier.findStereotype(DATA_OBJECT_STEREOTYPE) != null) &&
-              !classifier.booleanValueOfAttribute(IS_ROOT)){
+          if (classifier.findStereotype(DATA_OBJECT_STEREOTYPE) != null) {
             classes.add(type);
             computeTransitiveClosure(type, classes);
           }
@@ -430,7 +432,8 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
   public ImportStatements retrieveImportStatementsForBo(MetaClass clazz,
       String packageName) {
     assert (clazz != null) && (packageName != null);
-    return retrieveImportStatements(packageName, clazz, null, BO_CLASS);
+    return retrieveImportStatements(packageName, clazz, null, BO_PACKAGE,
+        BO_CLASS);
   }
 
   /**
@@ -445,7 +448,8 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
   public ImportStatements retrieveImportStatementsForIf(MetaClass clazz,
       String packageName) {
     assert (clazz != null) && (packageName != null);
-    return retrieveImportStatements(packageName, clazz, null, IF_CLASS);
+    return retrieveImportStatements(packageName, clazz, null, IF_PACKAGE,
+        IF_CLASS);
   }
 
   /**
@@ -461,7 +465,24 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
       String packageName) {
     assert (clazz != null) && (packageName != null);
     return retrieveImportStatements(packageName, clazz, BO_LIGHTWEIGHT,
-        LW_CLASS);
+        LW_PACKAGE, LW_CLASS);
+  }
+
+  /**
+   * Returns true if the package contqains at least one business object being a
+   * root.
+   * @param packages packages to check
+   * @return true if at least one class was found otherwise false.
+   */
+  public boolean hasRootBusinessObjects(MetaPackage packages) {
+    boolean hasRootBusinessObjects = false;
+    for (MetaClass clazz : packages.getClasses()) {
+      hasRootBusinessObjects = clazz.booleanValueOfTag(IS_ROOT);
+      if (hasRootBusinessObjects) {
+        break;
+      }
+    }
+    return hasRootBusinessObjects;
   }
 
   /**
@@ -472,18 +493,21 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
    * @param clazz class for which the import statements should be retrieved.
    * @param key key of the tag or attribute constraining the properties, which
    *          dependencies should be imported.
-   * @param kind kind of type to be retrieved from the data object type of the
-   *          property.
+   * @param packageAttribute attribute defining the name of the package of the
+   *          type of the property
+   * @param classAttribute attribute defining the name of the class of the type
+   *          of the property
    * @return list of all import statements for the class.
    */
   private ImportStatements retrieveImportStatements(String packageName,
-      MetaClass clazz, String key, String kind) {
+      MetaClass clazz, String key, String packageAttribute,
+      String classAttribute) {
     ImportStatements imports = new ImportStatements(packageName);
     for (MetaClass item : clazz.retrieveAncestors()) {
-      addImportStatement(imports, clazz, item, kind);
+      addImportStatement(imports, clazz, item, packageAttribute, classAttribute);
     }
     for (MetaClass item : clazz.retrieveInterfaces()) {
-      addImportStatement(imports, clazz, item, kind);
+      addImportStatement(imports, clazz, item, packageAttribute, classAttribute);
     }
     for (MetaProperty property : clazz.getProperties()) {
       if ((key == null)
@@ -491,7 +515,8 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
               .booleanValueOfTag(key))) {
         MetaClass type = clazz.getModel().findClass(property.getTypeName());
         if (type != null) {
-          addImportStatement(imports, clazz, type, kind);
+          addImportStatement(imports, clazz, type, packageAttribute,
+              classAttribute);
         } else {
           addImportStatement(imports, clazz, property.getTypeName());
         }
@@ -503,7 +528,8 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
               .booleanValueOfTag(key))) {
         MetaClass type = clazz.getModel().findClass(property.getTypeName());
         if (type != null) {
-          addImportStatement(imports, clazz, type, kind);
+          addImportStatement(imports, clazz, type, packageAttribute,
+              classAttribute);
         } else {
           addImportStatement(imports, clazz, property.getTypeName());
         }
@@ -528,15 +554,17 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
    * @param statements statements to add to.
    * @param clazz
    * @param type
-   * @param attribute
+   * @param packageAttribute
+   * @param classAttribute
    */
   private void addImportStatement(ImportStatements statements, MetaClass clazz,
-      MetaClass type, String attribute) {
-    String typeName = type.getAttribute(attribute);
+      MetaClass type, String packageAttribute, String classAttribute) {
+    String typeName = type.getAttribute(classAttribute);
     if (typeName == null) {
       addImportStatement(statements, clazz, type.getQualifiedName());
     } else {
-      statements.addClassName(typeName);
+      String packageName = type.getContext().getAttribute(packageAttribute);
+      statements.addClassName(packageName + "." + typeName);
     }
   }
 
@@ -573,9 +601,16 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
     }
   }
 
-  private boolean hasLightweight(MetaPackage metaPackage) {
+  /**
+   * Returns true if the meta package contains lightweight classes.
+   * @param packages package to check if it contains lightweight classes
+   * @return true if the class has lightweights items otherwise false
+   * @pre packages != null
+   */
+  private boolean hasLightweight(MetaPackage packages) {
+    assert packages != null;
     boolean hasLightweight = false;
-    for (MetaClass clazz : metaPackage.getClasses()) {
+    for (MetaClass clazz : packages.getClasses()) {
       hasLightweight = hasLightweight(clazz);
       if (hasLightweight) {
         break;
@@ -586,8 +621,8 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
 
   /**
    * Returns true if the meta class has lightweight properties.
-   * @param clazz class to check if it has lightweight properties.
-   * @return true if the class has lightweights items otherwise false.
+   * @param clazz class to check if it has lightweight properties
+   * @return true if the class has lightweights items otherwise false
    * @pre clazz != null
    */
   private boolean hasLightweight(MetaClass clazz) {
