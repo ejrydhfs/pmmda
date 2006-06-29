@@ -4,13 +4,18 @@
 ## $Id$ 
 #set($sign="#")
 #emitFileHeader()
+#set($packageName=${package.getAttribute("bo-lw-package")})
 
-#if (${package})
-package ${package.getAttribute("bo-lw-package")};
+package ${packageName};
+
+#set($visited=${cartridge.computeTransitiveClosure(${package})})
+#set($imports=${cartridge.createImports(${packageName})})
+#set($foo=${imports.addClassName("ch.bbv.dog.AbstractVisitorFunctor")})
+#set($foo=${imports.addClassName("ch.bbv.dog.LwFunctor")})
+#set($importStatements=${imports.getImportStatements(4)})
+#foreach($importStatement in $importStatements) 
+import $importStatement;
 #end
-
-import ch.bbv.dog.AbstractVisitorFunctor;
-import ch.bbv.dog.LwFunctor;
 
 /** 
  * The visitor with functor class implements the visitor pattern for the graph 
@@ -43,7 +48,7 @@ public class LwVisitorFunctor implements LwVisitor, AbstractVisitorFunctor {
   public void setFunctor(Object functor) {
     this.functor = (LwFunctor)functor;
   }    
-#foreach($class in $classes)
+#foreach($class in $visited)
 #isLightweightDataObject($class $isLightweightDataObject)
 #if($isLightweightDataObject)
 #set($name=${class.getAttribute("bo-lw-class")})

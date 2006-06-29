@@ -4,23 +4,29 @@
 ## $Id$ 
 #set($sign="#")
 #emitFileHeader()
-
-#set($hasInterface=(${class.getAttribute("bo-has-interface")} == "true"))   
-#if (${package})
+#set($hasInterface=${class.booleanValueOfAttribute("bo-has-interface")})   
 #if ($hasInterface)
-package ${package.getAttribute("bo-if-package")};
+#set($packageName=${package.getAttribute("bo-if-package")})
 #else
-package ${package.getAttribute("bo-mo-package")};
+#set($packageName=${package.getAttribute("bo-mo-package")})
 #end
+
+package ${packageName};
+
+#set($visited=${cartridge.computeTransitiveClosure(${package})})
+#set($imports=${cartridge.createImports(${packageName})})
+#set($importStatements=${imports.getImportStatements(4)})
+#foreach($importStatement in $importStatements) 
+import $importStatement;
 #end
 
 /* %% USER DEFINED DECLARATIONS START %% */
 /* %% USER DEFINED DECLARATIONS END   %% */
 
 /** 
- * The visitor class implements the visitor pattern for the graph of all 
- * data object classes defined in the package. The list of all relevant
- * classes is generated from the MDA model.
+ * The visitor class implements the visitor pattern for the graph of all data
+ * object classes for all root classes defined in the package. The list of all 
+ * relevant classes is generated from the MDA model.
  */
 public interface Visitor {
 
@@ -43,20 +49,17 @@ public interface Visitor {
    */
   void setDepth(int depth);
   
-#foreach($class in $classes)
-#isDataObject($class $isDataObject)
-#if($isDataObject)
-
+#foreach($class in $visited)
 #if($hasInterface)
 #set($name=${class.getAttribute("bo-if-class")})
 #else
 #set($name=${class.getAttribute("bo-mo-class")})
 #end
+
   /** 
    * Visits the class ${name} as part of the visitor pattern.
    * @param item item to visit
    */
   void visit(${name} item);
-#end
 #end
 }

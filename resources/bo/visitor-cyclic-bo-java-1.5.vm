@@ -4,19 +4,24 @@
 ## $Id$ 
 #set($sign="#")
 #emitFileHeader()
-   
-#set($hasInterface=(${class.getAttribute("bo-has-interface")} == "true"))   
-#if (${package})
+#set($hasInterface=${class.booleanValueOfAttribute("bo-has-interface")})   
 #if ($hasInterface)
-package ${package.getAttribute("bo-if-package")};
+#set($packageName=${package.getAttribute("bo-if-package")})
 #else
-package ${package.getAttribute("bo-mo-package")};
-#end
+#set($packageName=${package.getAttribute("bo-mo-package")})
 #end
 
-import java.util.Set;
-import java.util.HashSet;
-import ch.bbv.dog.DataObject;
+package ${packageName};
+
+#set($visited=${cartridge.computeTransitiveClosure(${package})})
+#set($imports=${cartridge.createImports(${packageName})})
+#set($foo=${imports.addClassName("java.util.Set")})
+#set($foo=${imports.addClassName("java.util.HashSet")})
+#set($foo=${imports.addClassName("ch.bbv.dog.DataObject")})
+#set($importStatements=${imports.getImportStatements(4)})
+#foreach($importStatement in $importStatements) 
+import $importStatement;
+#end
 
 /** 
  * The cyclic visitor is a wrapper class allowing to use visitors with graph

@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann
+/* copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -54,7 +54,7 @@ public class ImportStatements {
   /**
    * Constructor of the class.
    * @param context name of the package containing the class which import
-   *          statements are computed.
+   *          statements are computed
    * @pre context != null
    */
   public ImportStatements(String context) {
@@ -64,9 +64,9 @@ public class ImportStatements {
   }
 
   /**
-   * Set the package context of the item defining the import statements.
+   * Sets the package context of the item defining the import statements.
    * @param context name of the package containing the class which import
-   *          statements are computed.
+   *          statements are computed
    * @pre context != null
    */
   public void setPackageContext(String context) {
@@ -76,7 +76,7 @@ public class ImportStatements {
 
   /**
    * Returns the names of all imported packages.
-   * @return list of imported packages.
+   * @return list of imported packages
    */
   public Collection<String> getPackageNames() {
     return new ArrayList<String>(packages.keySet());
@@ -84,8 +84,8 @@ public class ImportStatements {
 
   /**
    * Returns the list of all imported classes of the named package.
-   * @param packageName name of the package which classes are inquired.
-   * @return list of all imported classes.
+   * @param packageName name of the package which classes are inquired
+   * @return list of all imported classes
    * @pre packageName != null
    */
   public Collection<String> getClassNames(String packageName) {
@@ -102,8 +102,8 @@ public class ImportStatements {
 
   /**
    * Returns the number of imported classes of this package.
-   * @return number of imported classes.
-   * @param packageName name of the package which classes are inquired.
+   * @return number of imported classes
+   * @param packageName name of the package which classes are inquired
    * @pre packageName != null
    * @post $return >= 0
    */
@@ -122,8 +122,8 @@ public class ImportStatements {
   }
 
   /**
-   * Adds an imported class to the list of classes.
-   * @param clazz class to add.
+   * Adds an imported class to the list of imported classes.
+   * @param clazz class to add
    * @pre clazz != null
    */
   public void addClass(MetaClass clazz) {
@@ -132,9 +132,21 @@ public class ImportStatements {
   }
 
   /**
+   * Adds the collection of class to the list of imported classes.
+   * @param classes classes to add
+   * @pre classes != null
+   */
+  public void addClasses(Collection<MetaClass> classes) {
+    assert classes != null;
+    for (MetaClass clazz : classes) {
+      addClass(clazz);
+    }
+  }
+  
+  /**
    * Adds a class to the list of imported classes. The package of the class is
    * added if not already defined.
-   * @param qualifiedName not qualified name of the classs.
+   * @param qualifiedName not qualified name of the classs
    * @pre (qualifiedName != null) && (qualifiedName.length() > 0)
    */
   public void addClassName(String qualifiedName) {
@@ -169,7 +181,7 @@ public class ImportStatements {
    * Returns the list of import statements lexicographically sorted.
    * @param limit the limit value specifies the threshold when wildcard should
    *          be used. If the value is -1 no check is performed
-   * @return the list of import statements.
+   * @return the list of import statements
    * @pre (limit > 0) || (limit == -1)
    */
   public List<String> getImportStatements(int limit) {
@@ -201,8 +213,8 @@ public class ImportStatements {
    * Returns true if the package name is relevant for the import statements. To
    * be relevant the package must neither be the default package or the package
    * of the class which import statements should be infered.
-   * @param packageName name of the package to check.
-   * @return true if the package is relevant otherwise false.
+   * @param packageName name of the package to check
+   * @return true if the package is relevant otherwise false
    */
   private boolean isRelevant(String packageName) {
     return (packageName != null)

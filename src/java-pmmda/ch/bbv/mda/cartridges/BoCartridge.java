@@ -10,10 +10,7 @@ import static ch.bbv.mda.cartridges.BoConstants.*;
 import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -339,12 +336,13 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
   }
 
   /**
-   * Returns the property used to implement the back link
+   * Returns the property used to implement the back link.
    * @param property property to infer
    * @return the back link property if defined otherwise null
    * @pre property != null
    */
   public MetaProperty getNavigationProperty(MetaProperty property) {
+    assert property != null;
     MetaProperty link = null;
     String navigation = property.valueOfTag(BoConstants.NAVIGABLE_RELATION);
     if ((navigation != null) && (navigation.trim().length() > 0)) {
@@ -369,6 +367,53 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
       qualifiedName = property.getTypeName();
     }
     return ModelOperators.getComponentName(qualifiedName);
+  }
+
+  /**
+   * Computes the transitive closure of all data objects referenced from all
+   * data objects defined in the package.
+   * @param packages packages which transitive closure should be computed
+   * @return the list of data objects accesible from the root data objects
+   */
+  public Set<MetaClass> computeTransitiveClosure(MetaPackage packages) {
+    Set<MetaClass> classes = new HashSet<MetaClass>();
+    for (MetaClass clazz : packages.getClasses()) {
+      computeTransitiveClosure(clazz, classes);
+    }
+    return classes;
+  }
+
+  /**
+   * Computes the transitive closure of all data objects referenced from the
+   * given data object.
+   * @param clazz which transitive closure should be computed
+   * @param classes set in which the transitive closure of classes is added
+   */
+  public void computeTransitiveClosure(MetaClass clazz, Set<MetaClass> classes) {
+    if ((clazz.findStereotype(DATA_OBJECT_STEREOTYPE) != null)
+        && !classes.contains(clazz)) {
+      classes.add(clazz);
+      for (MetaProperty property : clazz.getProperties()) {
+        MetaClassifier classifier = property.getClassifier();
+        if ((classifier != null) && (classifier instanceof MetaClass)) {
+          MetaClass type = (MetaClass) classifier;
+          if (classifier.findStereotype(DATA_OBJECT_STEREOTYPE) != null) {
+            classes.add(type);
+            computeTransitiveClosure(type, classes);
+          }
+        }
+      }
+      for (MetaIndexedProperty property : clazz.getIndexedProperties()) {
+        MetaClassifier classifier = property.getClassifier();
+        if ((classifier != null) && (classifier instanceof MetaClass)) {
+          MetaClass type = (MetaClass) classifier;
+          if (classifier.findStereotype(DATA_OBJECT_STEREOTYPE) != null) {
+            classes.add(type);
+            computeTransitiveClosure(type, classes);
+          }
+        }
+      }
+    }
   }
 
   /**

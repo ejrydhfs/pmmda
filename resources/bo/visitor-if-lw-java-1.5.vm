@@ -4,9 +4,15 @@
 ## $Id$ 
 #set($sign="#")
 #emitFileHeader()
+#set($packageName=${package.getAttribute("bo-lw-package")})
 
-#if (${package})
-package ${package.getAttribute("bo-lw-package")};
+package ${packageName};
+
+#set($visited=${cartridge.computeTransitiveClosure(${package})})
+#set($imports=${cartridge.createImports(${packageName})})
+#set($importStatements=${imports.getImportStatements(4)})
+#foreach($importStatement in $importStatements) 
+import $importStatement;
 #end
 
 /* %% USER DEFINED DECLARATIONS START %% */
@@ -36,7 +42,7 @@ public interface LwVisitor {
    */
   void setDepth(int depth);
 
-#foreach($class in $classes)
+#foreach($class in $visited)
 #isLightweightDataObject($class $isLightweightDataObject)
 #if($isLightweightDataObject)
 #set($name=${class.getAttribute("bo-lw-class")})

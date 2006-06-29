@@ -102,7 +102,7 @@ CREATE UNIQUE INDEX ${table}_IDX ON
 #end
 #if($shouldGenerateFkIndex)
 #foreach($property in $properties)
-#if(!${property.isTransient()})
+#if(!${property.isTransient()} && ${property.booleanValueOfTag("persistence")})  
 #getType($model $property $type)
 #isPersistentDataObject($type $isPersistentDataObject)
 #if($isPersistentDataObject)
@@ -114,7 +114,7 @@ CREATE INDEX ${table}_${column}_IDX ON
 #end
 #end
 #foreach($aggregation in $aggregations)
-#if(!${aggregation.isTransient()} && (${aggregation.getMultiplicity().getUpperBound()} == 1))
+#if(!${aggregation.isTransient()} && ${aggregation.booleanValueOfTag("persistence")} && (${aggregation.getMultiplicity().getUpperBound()} == 1))
 #set($typeName=${aggregation.getTypeName()})
 #set($type=false)
 #set($type=${model.findClass(${typeName})})
@@ -132,7 +132,7 @@ CREATE INDEX ${table}_${column}_IDX ON
 #set($references=$model.getClassReferences($class))
 #foreach($reference in $references)
 #isPersistentDataObject($reference $isPersistentDataObject)
-#if($isPersistentDataObject)
+#if($isPersistentDataObject && ${reference.booleanValueOfTag("persistence")})
 #set($relations=${reference.getIndexedProperties()})
 #foreach($relation in $relations)
 #getType($model $relation $type)
