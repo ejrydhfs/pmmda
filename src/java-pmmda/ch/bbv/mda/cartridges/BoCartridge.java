@@ -606,7 +606,12 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
       }
     }
     if (!hasLightweight) {
-      // TODO ancestor lightweight
+      for (MetaClass ancestor : clazz.retrieveAncestors()) {
+        hasLightweight = hasLightweight(ancestor);
+        if (hasLightweight) {
+          break;
+        }
+      }
     }
     return hasLightweight;
   }
