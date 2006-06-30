@@ -402,7 +402,6 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
         if ((classifier != null) && (classifier instanceof MetaClass)) {
           MetaClass type = (MetaClass) classifier;
           if (classifier.findStereotype(DATA_OBJECT_STEREOTYPE) != null) {
-            classes.add(type);
             computeTransitiveClosure(type, classes);
           }
         }
@@ -412,7 +411,6 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
         if ((classifier != null) && (classifier instanceof MetaClass)) {
           MetaClass type = (MetaClass) classifier;
           if (classifier.findStereotype(DATA_OBJECT_STEREOTYPE) != null) {
-            classes.add(type);
             computeTransitiveClosure(type, classes);
           }
         }
