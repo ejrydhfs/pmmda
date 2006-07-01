@@ -6,15 +6,13 @@
 package ch.bbv.explorer;
 
 import java.awt.BorderLayout;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.*;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.TreePath;
+import javax.swing.JFrame;
+import javax.swing.JSplitPane;
+import javax.swing.JTree;
+import javax.swing.SwingUtilities;
 
 import org.flexdock.docking.Dockable;
 import org.flexdock.docking.DockingConstants;
@@ -100,14 +98,14 @@ public abstract class Explorer implements ExplorerNodeOwner {
   private ExplorerTreeView tree;
 
   /**
-   * Current node
+   * List of all tree views defined in the explorer.
    */
-  private NodeView nodeView;
+  private List<ExplorerTreeView> treeViews;
 
   /**
-   * The selection listener for the explorer frame.
+   * All the views of the current node.
    */
-  private ExplorerViewTreeSelectionListener selectionListener;
+  private List<NodeView> nodeViews;
 
   /**
    * The factory of user interface type used to create all nodes in this
@@ -198,6 +196,8 @@ public abstract class Explorer implements ExplorerNodeOwner {
         Messages.class);
     this.factory = factory;
     this.manager = manager;
+    treeViews = new ArrayList<ExplorerTreeView>();
+    nodeViews = new ArrayList<NodeView>();
     tree = new ExplorerTreeView("Tree");
     // create the explorer docking structure
     viewsPort = new DefaultDockingPort();
@@ -211,15 +211,13 @@ public abstract class Explorer implements ExplorerNodeOwner {
         viewUtilitiesPane);
     treeViewPane.setDividerSize(5);
     treeViewPane.setResizeWeight(0.3);
-    Dockable treeDock = DockingManager.registerDockable(tree.getPane(), tree.getName());
-    treesPort.dock(treeDock, DockingConstants.CENTER_REGION);
+    addExplorerTree(tree);
     // create the status bar and construct the frame
     frame = new JFrame(Messages.titleExplorerFrame);
     frame.add(treeViewPane, BorderLayout.CENTER);
     statusBar = new StatusBar();
     frame.add(statusBar, BorderLayout.SOUTH);
     frame.addWindowListener(new ExplorerWindowAdapter(this));
-    selectionListener = new ExplorerViewTreeSelectionListener();
   }
 
   /**
@@ -328,6 +326,16 @@ public abstract class Explorer implements ExplorerNodeOwner {
     return frame;
   }
 
+  public void addExplorerTree(ExplorerTreeView tree) {
+    Dockable treeDock = DockingManager.registerDockable(tree.getPane(), tree
+        .getName());
+    treesPort.dock(treeDock, DockingConstants.CENTER_REGION);
+  }
+
+  public void removeExplorerTree(ExplorerTreeView tree) {
+    DockingManager.undock(tree.getPane());
+  }
+
   /**
    * Returns the tree of the explorer.
    * @return the graphical tree component of the explorer
@@ -352,8 +360,6 @@ public abstract class Explorer implements ExplorerNodeOwner {
    */
   public void setRoot(ExplorerNode root) {
     tree.setRoot(root, this);
-    JTree view = tree.getTree();
-    view.addTreeSelectionListener(selectionListener);
   }
 
   /**
@@ -370,7 +376,7 @@ public abstract class Explorer implements ExplorerNodeOwner {
     int[] childIndices = new int[1];
     childIndices[0] = index;
     tree.getTreeModel().nodesWereInserted(node, childIndices);
-    if (nodeView != null) {
+    for (NodeView nodeView : nodeViews) {
       nodeView.nodeInserted(node, index);
       tree.getTree().expandRow(0);
     }
@@ -385,7 +391,7 @@ public abstract class Explorer implements ExplorerNodeOwner {
     childIndices[0] = index;
     removedChildren[0] = node;
     tree.getTreeModel().nodesWereRemoved(parent, childIndices, removedChildren);
-    if (nodeView != null) {
+    for (NodeView nodeView : nodeViews) {
       nodeView.nodeRemoved(parent, node, index);
     }
   }
@@ -395,14 +401,14 @@ public abstract class Explorer implements ExplorerNodeOwner {
     document.setModified(true);
     getMenuBar().documentChanged(document);
     tree.getTreeModel().nodeChanged(node);
-    if (nodeView != null) {
+    for (NodeView nodeView : nodeViews) {
       nodeView.nodeChanged(node);
     }
   }
 
   /**
    * The method is called when the user tries to close the window. The subclass
-   * can redefine the method to perform house keeping activities or veto the
+   * can redefine the method to perform house keeping activities or veto it.
    */
   public void close() {
     frame.setVisible(false);
@@ -452,64 +458,6 @@ public abstract class Explorer implements ExplorerNodeOwner {
    * explorer is displayed on the screen.
    */
   protected abstract void initialize();
-
-  /**
-   * Implements the tree selection listener for the explorer view.
-   * @author Marcel Baumann
-   * @version $Revision$
-   */
-  private final class ExplorerViewTreeSelectionListener implements
-      TreeSelectionListener {
-    private ExplorerNode currentNode;
-
-    /**
-     * The views currently displayed for the selected node.
-     */
-    private List<NodeView> views;
-
-    /**
-     * Reacts on a tree selection event. Each time a node is selected its
-     * children are displayed in the table view. Care is taken to save the
-     * header visual structure onto the node type and to avoid unnecessary
-     * updates.
-     * @param event tree selection event sent by the JTree component
-     */
-    public void valueChanged(TreeSelectionEvent event) {
-      ExplorerNode node = (ExplorerNode) getTree()
-          .getLastSelectedPathComponent();
-      if (node != null) {
-        if ((currentNode == null)
-            || (node.getNodeType() != currentNode.getNodeType())) {
-          displayViews(node);
-          currentNode = node;
-        } else {
-          for (NodeView view : views) {
-            view.setModel(node);
-          }
-        }
-      }
-    }
-
-    /**
-     * Displays the data object members of the node with the provided view type.
-     * @param node node which data object should be displayed
-     */
-    public void displayViews(ExplorerNode node) {
-      List<NodeView> newViews = getFactory().getNodeViews(node);
-      if ((views != null) && !views.containsAll(newViews)) {
-        for (NodeView view : views) {
-          DockingManager.undock((JComponent) view);
-        }
-      }
-      views = newViews;
-      for (NodeView view : newViews) {
-        Dockable dockable = DockingManager.registerDockable((JComponent) view,
-            view.getName());
-        DockingManager.dock(dockable, getMainPort(),
-            DockingConstants.CENTER_REGION);
-      }
-    }
-  }
 
   /**
    * Returns the libraries used in the explorer framework.

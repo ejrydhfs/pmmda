@@ -7,18 +7,25 @@ package ch.bbv.explorer;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.List;
 
 import javax.swing.JComponent;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import org.flexdock.docking.Dockable;
+import org.flexdock.docking.DockingConstants;
+import org.flexdock.docking.DockingManager;
+
 /**
- * The explorer tree defines a tree of explorer nodes. The node type factory is
- * used to select the icons and to retrieve the name of the nodes.
+ * The explorer tree defines a tree of explorer nodes and the view to display
+ * it.
  * @author MarcelBaumann
  * @version $Revision$
  */
@@ -56,6 +63,11 @@ public class ExplorerTreeView {
   private String name;
 
   /**
+   * The selection listener for the explorer frame.
+   */
+  private ExplorerViewTreeSelectionListener selectionListener;
+
+  /**
    * Resets the current selected node used to generate the popup menu. To reset
    * the value, the node parameter can be set to null.
    * @param node new selected node of the explorer
@@ -76,6 +88,7 @@ public class ExplorerTreeView {
 
   public ExplorerTreeView(String name) {
     this.name = name;
+    selectionListener = new ExplorerViewTreeSelectionListener();
     pane = new JScrollPane(tree);
     pane.setName(name);
   }
@@ -129,6 +142,7 @@ public class ExplorerTreeView {
         TreeSelectionModel.SINGLE_TREE_SELECTION);
     tree.setCellRenderer(new ExplorerTreeCellRenderer());
     tree.addMouseListener(new ExplorerMouseListener());
+    tree.addTreeSelectionListener(selectionListener);
     pane.setViewportView(tree);
   }
 
@@ -163,4 +177,62 @@ public class ExplorerTreeView {
     }
   }
 
+  /**
+   * Implements the tree selection listener for the explorer view.
+   * @author Marcel Baumann
+   * @version $Revision$
+   */
+  private final class ExplorerViewTreeSelectionListener implements
+      TreeSelectionListener {
+    private ExplorerNode currentNode;
+
+    /**
+     * The views currently displayed for the selected node.
+     */
+    private List<NodeView> views;
+
+    /**
+     * Reacts on a tree selection event. Each time a node is selected its
+     * children are displayed in the table view. Care is taken to save the
+     * header visual structure onto the node type and to avoid unnecessary
+     * updates.
+     * @param event tree selection event sent by the JTree component
+     */
+    public void valueChanged(TreeSelectionEvent event) {
+      ExplorerNode node = (ExplorerNode) getTree()
+          .getLastSelectedPathComponent();
+      if (node != null) {
+        if ((currentNode == null)
+            || (node.getNodeType() != currentNode.getNodeType())) {
+          displayViews(node);
+          currentNode = node;
+        } else {
+          for (NodeView view : views) {
+            view.setModel(node);
+          }
+        }
+      }
+    }
+
+    /**
+     * Displays the data object members of the node with the provided view type.
+     * @param node node which data object should be displayed
+     */
+    public void displayViews(ExplorerNode node) {
+      Explorer explorer = (Explorer) node.getNodeOwner();
+      List<NodeView> newViews = explorer.getFactory().getNodeViews(node);
+      if ((views != null) && !views.containsAll(newViews)) {
+        for (NodeView view : views) {
+          DockingManager.undock((JComponent) view);
+        }
+      }
+      views = newViews;
+      for (NodeView view : newViews) {
+        Dockable dockable = DockingManager.registerDockable((JComponent) view,
+            view.getName());
+        DockingManager.dock(dockable, explorer.getMainPort(),
+            DockingConstants.CENTER_REGION);
+      }
+    }
+  }
 }
