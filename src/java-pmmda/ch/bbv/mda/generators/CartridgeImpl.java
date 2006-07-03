@@ -522,7 +522,7 @@ public abstract class CartridgeImpl implements Cartridge {
    *         type.
    * @pre (type != null) && (language != null)
    */
-  protected String translateDatatype(MetaDatatype type, String language,
+  public String translateDatatype(MetaDatatype type, String language,
       boolean concrete) {
     assert (type != null) && (language != null);
     String typename = type.getQualifiedName();
@@ -544,7 +544,7 @@ public abstract class CartridgeImpl implements Cartridge {
    *         type.
    * @pre (type != null) && (language != null)
    */
-  protected String translateDatatype(MetaDatatype type, String language,
+  public String translateDatatype(MetaDatatype type, String language,
       String dialect, boolean concrete) {
     String typename = type.getQualifiedName();
     return PropertyUtilities.getInfoOfType(configuration, typename, language,
