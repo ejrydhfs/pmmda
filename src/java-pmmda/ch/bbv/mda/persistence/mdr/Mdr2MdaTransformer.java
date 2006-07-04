@@ -124,6 +124,7 @@ public class Mdr2MdaTransformer extends ExternalTransformer {
             }
         }
         extractRelations(target, source);
+        postProcessModel(target);
     }
 
     /**
@@ -358,6 +359,10 @@ public class Mdr2MdaTransformer extends ExternalTransformer {
             if (UmlConstants.DOCUMENTATION_TAG.equals(tagName)) {
                 item.setDescription(tag.getValue());
             } else {
+                if(tagName == null){
+                    log.warn("Tagged Value has no name.");
+                    continue;
+                }
                 TaggedValue taggedValue = item.getTaggedValue(tagName);
                 if (taggedValue == null) {
                     taggedValue = new TaggedValue(tag.getName(), tag.getValue());

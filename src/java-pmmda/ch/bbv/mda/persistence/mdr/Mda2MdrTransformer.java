@@ -25,8 +25,8 @@ import ch.bbv.mda.persistence.PersistenceException;
 
 /**
  * The MDA transformer defines rules how to transform a MDA element into the
- * corresponding MDR representation. The MDR representation is XMI 1.2 /
- * UML 1.4 compatible. 
+ * corresponding MDR representation. The MDR representation is XMI 1.2 / UML 1.4
+ * compatible.
  * 
  * @author Marcel Baumann
  * @version $Revision$
@@ -44,8 +44,8 @@ public class Mda2MdrTransformer {
 
     /**
      * Maps between the source objects used as keys and the target objects used
-     * as values. Source objects are MDA entities, target objects are wrapped MDR
-     * instances.
+     * as values. Source objects are MDA entities, target objects are wrapped
+     * MDR instances.
      */
     private Map<Object, Object> elements;
 
@@ -98,7 +98,7 @@ public class Mda2MdrTransformer {
                 .createModel();
 
         mdrModel.setName(source.getName());
-        
+
         target.setName(source.getName());
         this.metaModel = source;
         extractDataTypes(source, target);
@@ -215,7 +215,7 @@ public class Mda2MdrTransformer {
         mClass.setAbstract(source.isAbstract());
         mClass.setFinal(source.isFinal());
         mClass.setStatic(source.isStatic());
-       
+
         extractTags(source, mClass);
         extractStereotypeAndVisibility(source, mClass);
         for (MetaClass item : source.getNestedClasses()) {
@@ -237,7 +237,7 @@ public class Mda2MdrTransformer {
         assert (source != null) && (context != null);
         // find class the relations relate to
         MdrUmlClass mClass = mModel.getClass(source.getQualifiedName());
-        
+
         for (MetaProperty item : source.getProperties()) {
             extractProperty(item, mClass);
         }
@@ -256,9 +256,9 @@ public class Mda2MdrTransformer {
     }
 
     /**
-     * Creates a generalization relation within the MDR model. If ancestor
-     * class is already defined then it will be found. If not it will be
-     * created. Detailed information of the ancestor class will be added during
+     * Creates a generalization relation within the MDR model. If ancestor class
+     * is already defined then it will be found. If not it will be created.
+     * Detailed information of the ancestor class will be added during
      * processing the corresponding extractClass method
      * 
      * @param ancestor
@@ -267,8 +267,7 @@ public class Mda2MdrTransformer {
      *            of the generalization relation
      */
     protected void extractAncestor(MetaClass ancestor, MdrUmlClass child) {
-        MdrUmlClass mAncestor = mModel.getClass(ancestor
-                .getQualifiedName());
+        MdrUmlClass mAncestor = mModel.getClass(ancestor.getQualifiedName());
         MdrUmlPackage ancestorContext = mModel.getPackage(ancestor
                 .retrievePackage().getName());
         if (mAncestor == null) {
@@ -301,8 +300,7 @@ public class Mda2MdrTransformer {
      */
 
     protected void extractInterface(MetaClass ancestorIf, MdrUmlClass child) {
-        MdrUmlClass parent = mModel.getClass(ancestorIf
-                .getQualifiedName());
+        MdrUmlClass parent = mModel.getClass(ancestorIf.getQualifiedName());
         MdrUmlPackage ancestorContext = mModel.getPackage(ancestorIf
                 .retrievePackage().getName());
 
@@ -319,19 +317,17 @@ public class Mda2MdrTransformer {
             umlAbstraction.setNamespace(ancestorContext.getNamespace());
 
             abstraction = new MdrUmlAbstraction(umlAbstraction);
-            
+
             abstraction.getClients().add(child.getModelElement());
             abstraction.getSuppliers().add(parent.getModelElement());
 
             abstraction = new MdrUmlAbstraction(umlAbstraction);
 
-           
             MdrUmlStereotype mStereotype = findStereotype("realize");
             if (mStereotype == null) {
                 mStereotype = new MdrUmlStereotype(mdrLoader
                         .createStereotype("realize"));
 
-                
             }
             abstraction.addStereotype(mStereotype);
         }
@@ -355,7 +351,7 @@ public class Mda2MdrTransformer {
             mClass = createClass(context, source.getName());
         }
         mClass.getModelElement().setNamespace(
-                (Namespace)context.getModelElement());
+                (Namespace) context.getModelElement());
         elements.put(source, mClass);
         mClass.setAbstract(source.isAbstract());
         extractTags(source, mClass);
@@ -410,11 +406,13 @@ public class Mda2MdrTransformer {
             MdrUmlAttribute mAttribute = createAttribute(context, source);
 
             MdrUmlClass mClassifier = mAttribute.getType();
-             
-            if (mClassifier == null || mClassifier.getQualifiedName().equals(source.getTypeName())) {
+
+            if (mClassifier == null
+                    || mClassifier.getQualifiedName().equals(
+                            source.getTypeName())) {
                 // TODO: problem, if no attribute type is set
-                if(source.getTypeName() == null){
-                    source.setTypeName("void"); 
+                if (source.getTypeName() == null) {
+                    source.setTypeName("void");
                 }
                 mClassifier = createClassifier(source.getTypeName(), mAttribute);
                 mAttribute.setType(mClassifier);
@@ -427,8 +425,8 @@ public class Mda2MdrTransformer {
                     mdrMultiplicity = mModel.getUmlPackage().getDataTypes()
                             .getMultiplicity().createMultiplicity();
                     MultiplicityRange mdrMultiplicityrange = mModel
-                            .getUmlPackage().getDataTypes().getMultiplicityRange()
-                            .createMultiplicityRange();
+                            .getUmlPackage().getDataTypes()
+                            .getMultiplicityRange().createMultiplicityRange();
                     mdrMultiplicityrange.setLower(newMultiplicity
                             .getLowerBound());
                     mdrMultiplicityrange.setUpper(newMultiplicity
@@ -482,7 +480,9 @@ public class Mda2MdrTransformer {
 
             MdrUmlClass mClassifier = mAttribute.getType();
 
-            if (mClassifier == null || !mClassifier.getQualifiedName().equals(source.getTypeName())) {
+            if (mClassifier == null
+                    || !mClassifier.getQualifiedName().equals(
+                            source.getTypeName())) {
                 mClassifier = createClassifier(source.getTypeName(), mAttribute);
                 mAttribute.setType(mClassifier);
             }
@@ -496,8 +496,8 @@ public class Mda2MdrTransformer {
                     mdrMultiplicity = mModel.getUmlPackage().getDataTypes()
                             .getMultiplicity().createMultiplicity();
                     MultiplicityRange mdrMultiplicityrange = mModel
-                            .getUmlPackage().getDataTypes().getMultiplicityRange()
-                            .createMultiplicityRange();
+                            .getUmlPackage().getDataTypes()
+                            .getMultiplicityRange().createMultiplicityRange();
                     mdrMultiplicityrange.setLower(newMultiplicity
                             .getLowerBound());
                     mdrMultiplicityrange.setUpper(newMultiplicity
@@ -547,11 +547,11 @@ public class Mda2MdrTransformer {
         }
         // removes the tags no more available in the source. These tags are
         // the ones declared obsolete in the loaded cartridges.
-         for (MdrTaggedValue taggedValue:item.getTaggedValues()) {
-             if (source.getTaggedValue(taggedValue.getName()) == null) {
-                 taggedValue.getTaggedValue().refDelete();
-             }
-         }
+        for (MdrTaggedValue taggedValue : item.getTaggedValues()) {
+            if (source.getTaggedValue(taggedValue.getName()) == null) {
+                taggedValue.getTaggedValue().refDelete();
+            }
+        }
 
     }
 
@@ -646,8 +646,11 @@ public class Mda2MdrTransformer {
 
     /**
      * Creates a new mdr classifier instance
-     * @param context the context of the class
-     * @param name the name of the class
+     * 
+     * @param context
+     *            the context of the class
+     * @param name
+     *            the name of the class
      * @return a wrapped mdr classifier
      */
     private MdrUmlClass createClass(MdrUmlPackage context, String name) {
@@ -655,7 +658,7 @@ public class Mda2MdrTransformer {
         MdrUmlClass item = findClass(context, name);
         if (item == null) {
             UmlClass umlClass = mdrLoader.createUmlClass(name, 0);
-            umlClass.setNamespace((Namespace)context.getModelElement());
+            umlClass.setNamespace((Namespace) context.getModelElement());
             item = new MdrUmlClass(umlClass);
             context.addClass(item);
             mModel.addClass(item);
@@ -665,8 +668,11 @@ public class Mda2MdrTransformer {
 
     /**
      * Creates a new mdr classifier instance
-     * @param context the context of the class
-     * @param name the name of the classifier
+     * 
+     * @param context
+     *            the context of the class
+     * @param name
+     *            the name of the classifier
      * @return a wrapped mdr classifier
      */
     private MdrUmlClass createClass(MdrUmlClass context, String name) {
@@ -683,8 +689,11 @@ public class Mda2MdrTransformer {
 
     /**
      * Creates a new mdr interface instance
-     * @param context the context of the instance
-     * @param name the name of the interface
+     * 
+     * @param context
+     *            the context of the instance
+     * @param name
+     *            the name of the interface
      * @return a wrapped mdr interface
      */
     private MdrUmlClass createInterface(MdrUmlPackage context, String name) {
@@ -701,16 +710,19 @@ public class Mda2MdrTransformer {
 
     /**
      * Creates a new mdr interface instance
-     * @param context the context of the instance
-     * @param name the name of the interface
+     * 
+     * @param context
+     *            the context of the instance
+     * @param name
+     *            the name of the interface
      * @return a wrapped mdr interface
      */
     private MdrUmlClass createInterface(MdrUmlClass context, String name) {
         assert (context != null) && (name != null);
         MdrUmlClass item = mModel.getClass(name);
         if (item == null) {
-          Interface umlInterface = mdrLoader.createUmlInterface(name, 0);
-          item = new MdrUmlClass(umlInterface);  
+            Interface umlInterface = mdrLoader.createUmlInterface(name, 0);
+            item = new MdrUmlClass(umlInterface);
         }
         return item;
     }
@@ -735,15 +747,18 @@ public class Mda2MdrTransformer {
         if (item == null) {
             String typeName = source.getTypeName();
             Classifier attributeType = null;
-            
-            try{
-                attributeType = (Classifier)mModel.getClass(typeName).getModelElement();
-            }catch(NullPointerException e){
-                
+
+            try {
+                attributeType = (Classifier) mModel.getClass(typeName)
+                        .getModelElement();
+            } catch (NullPointerException e) {
+
             }
-            
-            if ((attributeType == null) && (typeName != null) && (mModel.getDataType(typeName) != null)) {
-                attributeType = (Classifier) mModel.getDataType(typeName).getModelElement();
+
+            if ((attributeType == null) && (typeName != null)
+                    && (mModel.getDataType(typeName) != null)) {
+                attributeType = (Classifier) mModel.getDataType(typeName)
+                        .getModelElement();
             }
 
             Attribute tmpAttribute = mdrLoader.createUmlAttribute(name,
@@ -775,7 +790,6 @@ public class Mda2MdrTransformer {
         return context.getPackage(qualifiedName);
     }
 
-    
     /**
      * Finds the tag with the given name.
      * 
@@ -845,8 +859,11 @@ public class Mda2MdrTransformer {
 
     /**
      * Finds a class in the given context
-     * @param context the context the class is located
-     * @param unqualifiedName the name of the class
+     * 
+     * @param context
+     *            the context the class is located
+     * @param unqualifiedName
+     *            the name of the class
      * @return a wrapped mdr class
      */
     private MdrUmlClass findClass(MdrUmlClass context, String unqualifiedName) {
@@ -861,8 +878,6 @@ public class Mda2MdrTransformer {
         }
         return mClass;
     }
-
- 
 
     /**
      * Searches an interface directly contained within the passed context
@@ -890,8 +905,11 @@ public class Mda2MdrTransformer {
 
     /**
      * Finds an attribute by name
-     * @param context the context of the attribute
-     * @param name the name of the a ttribute
+     * 
+     * @param context
+     *            the context of the attribute
+     * @param name
+     *            the name of the a ttribute
      * @return a wrapped mdr attribute
      */
     private MdrUmlAttribute findAttribute(MdrUmlClass context, String name) {
@@ -909,7 +927,9 @@ public class Mda2MdrTransformer {
 
     /**
      * Finds a data type
-     * @param name of the data type
+     * 
+     * @param name
+     *            of the data type
      * @return a wrapped mdr datatype
      */
     private MdrUmlClass findDataType(String name) {
@@ -923,18 +943,21 @@ public class Mda2MdrTransformer {
 
     /**
      * Creates a new classifier instance
-     * @param name the name of the classifier
-     * @param mAttribute  a wrapped mdr attribute
+     * 
+     * @param name
+     *            the name of the classifier
+     * @param mAttribute
+     *            a wrapped mdr attribute
      * @return a wrapped mdr classifier
      */
     private MdrUmlClass createClassifier(String name, MdrUmlAttribute mAttribute) {
         assert (name != null);
 
         // work a round to handle error afflicted models
-        if(name == null){
+        if (name == null) {
             name = "void";
         }
-        
+
         MdrUmlClass item = null;
 
         MetaClass mc = metaModel.findClass(name);
@@ -946,8 +969,8 @@ public class Mda2MdrTransformer {
         } else {
             item = findDataType(name);
             if (item == null) {
-                DataType dataType = mModel.getUmlPackage().getCore().getDataType()
-                        .createDataType();
+                DataType dataType = mModel.getUmlPackage().getCore()
+                        .getDataType().createDataType();
                 item = new MdrUmlClass(dataType);
                 item.setName(name);
                 mModel.getDataTypes().add(new MdrUmlDataType(dataType));
@@ -1007,8 +1030,11 @@ public class Mda2MdrTransformer {
 
     /**
      * Creates a mdr association
-     * @param source the mda source
-     * @param context the context of the association
+     * 
+     * @param source
+     *            the mda source
+     * @param context
+     *            the context of the association
      * @return a wrapped mdr association
      */
     private MdrUmlAssociation createAssociation(MetaProperty source,
@@ -1189,8 +1215,11 @@ public class Mda2MdrTransformer {
 
     /**
      * Updates the initial value of a property
-     * @param property the mda property
-     * @param attribute the mdr attribute
+     * 
+     * @param property
+     *            the mda property
+     * @param attribute
+     *            the mdr attribute
      */
     private void updateInitialValue(MetaProperty property,
             MdrUmlAttribute attribute) {
@@ -1223,14 +1252,13 @@ public class Mda2MdrTransformer {
             String stereotypeName = stereotype.getName();
             boolean found = false;
             MdrUmlStereotype mStereotype = null;
-            for (MdrUmlStereotype mdrUmlStereotype : context.getStereotypes()) {
+            // check if stereotype exists in the model
+            for (MdrUmlStereotype mdrUmlStereotype : mModel.getStereotypes()) {
                 if (mdrUmlStereotype != null
-                        && !mdrUmlStereotype.getName().equals("")) {
-                    mStereotype = findStereotype(mdrUmlStereotype.getName());
-                    if (mStereotype != null) {
-                        found = true;
-                        break;
-                    }
+                        && mdrUmlStereotype.getName().equals(stereotypeName)) {
+                    mStereotype = mdrUmlStereotype;
+                    found = true;
+                    break;
                 }
             }
             if (!found) {
