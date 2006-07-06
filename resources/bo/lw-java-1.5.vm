@@ -27,7 +27,7 @@ package ${package.getAttribute("bo-lw-package")};
 #set($foo=${imports.addClassName("ch.bbv.dog.LightweightObject")})
 #set($hasRoots=${cartridge.hasRootBusinessObjects(${package})})
 #if(!${hasRoots})
-#set($visitorPackageName=${utilities.getContextName(${package.getName()})})
+#set($visitorPackageName=${package.getContext().getAttribute("bo-lw-package")})
 #set($visitorPackageName="${visitorPackageName}.LwVisitor")
 #set($foo=${imports.addClassName(${visitorPackageName})})
 #end

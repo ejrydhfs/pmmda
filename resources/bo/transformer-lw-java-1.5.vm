@@ -31,7 +31,7 @@ import $importStatement;
  * lighthweight tree representation.
  */
 public class LwTransformer {
-#foreach($class in $classes)
+#foreach($class in $visited)
 #isLightweightDataObject($class $isLightweightDataObject)
 #if($isLightweightDataObject)
 #set($boClass=${class.getAttribute("bo-mo-class")})
@@ -50,7 +50,7 @@ public class LwTransformer {
   
 #end
 #end
-#foreach($class in $classes)
+#foreach($class in $visited)
 #isLightweightDataObject($class $isLightweightDataObject)
 #if($isLightweightDataObject)
 #set($boClass=${class.getAttribute("bo-mo-class")})
