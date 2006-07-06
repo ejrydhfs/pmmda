@@ -9,12 +9,24 @@
 package ${package.getAttribute("bo-mo-package")};
 #end
 
+#set($visited=${cartridge.computeTransitiveClosure(${package})})
+#set($imports=${cartridge.createImports(${packageName})})
 #set($imports=${cartridge.createImports(${package.getAttribute("bo-mo-package")})})
 #if(${package.getAttribute("bo-has-interface")} == "true")
 #set($foo=${imports.addPackageName(${package.getAttribute("bo-if-package")})})
 #end
 #if(${package.getAttribute("bo-lightweight")} == "true")
 #set($foo=${imports.addPackageName(${package.getAttribute("bo-lw-package")})})
+#end
+#set($foo=${imports.addClasses(${visited})})
+#foreach($class in $visited)
+#isLightweightDataObject($class $isLightweightDataObject)
+#if($isLightweightDataObject)
+#set($lwName=${class.getAttribute("bo-lw-class")})
+#set($lwPackage=${class.getContext().getAttribute("bo-lw-package")})
+#set($lwQualifiedName="${lwPackage}.${lwName}")
+#set($foo=${imports.addClassName(${lwQualifiedName})})
+#end
 #end
 #set($foo=${imports.addPackageName(${package.getAttribute("bo-mo-package")})})
 #set($foo=${imports.addClassName("ch.bbv.dog.DataObjectMgr")})
@@ -25,6 +37,7 @@ package ${package.getAttribute("bo-mo-package")};
 #foreach($importStatement in $importStatements) 
 import $importStatement;
 #end
+
 
 /**
  * The type factory provides meta information about all data objects and
@@ -52,7 +65,7 @@ public class TypeFactory {
    * Registers all data object types defined in the package.
    */
   public void registerAllTypes() {
-#foreach($class in $classes)
+#foreach($class in $visited)
 #isLightweightDataObject($class $isLightweightDataObject)
 #if($isLightweightDataObject)
     createNodeTypeFor${class.getName()}();
@@ -60,7 +73,7 @@ public class TypeFactory {
 #end
   }
   
-#foreach($class in $classes)
+#foreach($class in $visited)
 #isLightweightDataObject($class $isLightweightDataObject)
 #if($isLightweightDataObject)
 #set($boClass=${class.getAttribute("bo-mo-class")})
@@ -90,7 +103,7 @@ public class TypeFactory {
    */
   public List<String> getReferenceCodeTypes() {
     List<String> classnames = new ArrayList<String>();
-#foreach($class in $classes)
+#foreach($class in $visited)
 #if(${class.getStereotype()} == "referenceCode")
     classnames.add("${class.getQualifiedName()}");
 #end

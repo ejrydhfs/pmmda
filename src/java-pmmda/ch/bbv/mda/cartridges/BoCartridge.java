@@ -245,8 +245,6 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
   @Override
   public void processClass(MetaClass clazz) {
     assert clazz != null;
-    // class is only emitted if the class is relevant and the package should be
-    // generated
     if (!clazz.retrievePackage().booleanValueOfTag(GENERATE)) {
       return;
     }
@@ -296,9 +294,9 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
               processJavaTemplate(root, packages, "CyclicVisitor",
                   retrieveTemplate("visitor-cyclic-bo"), context);
             }
+            processJavaTemplate(root, metaPackage.getAttribute(BO_PACKAGE),
+                "TypeFactory", retrieveTemplate("type-factory"), context);
           }
-          processJavaTemplate(root, metaPackage.getAttribute(BO_PACKAGE),
-              "TypeFactory", retrieveTemplate("type-factory"), context);
         }
         if (metaPackage.booleanValueOfAttribute(BO_LIGHTWEIGHT)) {
           if (hasRootBusinessObjects) {
@@ -423,7 +421,7 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
    * object type.
    * @param clazz class for which the import statements should be retrieved.
    * @param packageName qualified name of the package containing the generated
-   *          artifact.
+   *        artifact.
    * @return list of all import statements for the class.
    * @pre (clazz != null) && (packageName != null)
    */
@@ -439,7 +437,7 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
    * object type.
    * @param clazz class for which the import statements should be retrieved.
    * @param packageName qualified name of the package containing the generated
-   *          artifact.
+   *        artifact.
    * @return list of all import statements for the class.
    * @pre (clazz != null) && (packageName != null)
    */
@@ -455,7 +453,7 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
    * object type.
    * @param clazz class for which the import statements should be retrieved.
    * @param packageName qualified name of the package containing the generated
-   *          artifact.
+   *        artifact.
    * @return list of all import statements for the class.
    * @pre (clazz != null) && (packageName != null)
    */
@@ -487,14 +485,14 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
    * Generates the import statements necessary for the class. The import
    * statement should be only used if the classes belong to another package.
    * @param packageName qualified name of the package containing the generated
-   *          artifact.
+   *        artifact.
    * @param clazz class for which the import statements should be retrieved.
    * @param key key of the tag or attribute constraining the properties, which
-   *          dependencies should be imported.
+   *        dependencies should be imported.
    * @param packageAttribute attribute defining the name of the package of the
-   *          type of the property
+   *        type of the property
    * @param classAttribute attribute defining the name of the class of the type
-   *          of the property
+   *        of the property
    * @return list of all import statements for the class.
    */
   private ImportStatements retrieveImportStatements(String packageName,
@@ -691,9 +689,9 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
    * Preprocesses the classifier of an element.
    * @param element element to preprocess.
    * @param tag tag which type should be infer against the data type translation
-   *          table associated with the cartridge.
+   *        table associated with the cartridge.
    * @param interfaces flag indicating if the translation is for an interface or
-   *          a concrete class.
+   *        a concrete class.
    */
   private void preProcessClassifier(MetaElement element, String tag,
       boolean interfaces) {
