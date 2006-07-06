@@ -10,7 +10,15 @@ package ${packageName};
 
 #set($visited=${cartridge.computeTransitiveClosure(${package})})
 #set($imports=${cartridge.createImports(${packageName})})
-#set($foo=${imports.addClasses(${visited})})
+#foreach($class in $visited)
+#isLightweightDataObject($class $isLightweightDataObject)
+#if($isLightweightDataObject)
+#set($lwName=${class.getAttribute("bo-lw-class")})
+#set($lwPackage=${class.getContext().getAttribute("bo-lw-package")})
+#set($lwQualifiedName="${lwPackage}.${lwName}")
+#set($foo=${imports.addClassName(${lwQualifiedName})})
+#end
+#end
 #set($importStatements=${imports.getImportStatements(4)})
 #foreach($importStatement in $importStatements) 
 import $importStatement;
