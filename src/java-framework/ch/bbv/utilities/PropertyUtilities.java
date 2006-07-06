@@ -129,7 +129,7 @@ public final class PropertyUtilities {
           if (dialectAttribute == null) {
             matchingDatatypesIndex = i;
           } else if (dialect.equalsIgnoreCase(dialectAttribute)) {
-            matchingDatatypesIndex = -1;
+                matchingDatatypesIndex = i;
             break;
           }
         }
