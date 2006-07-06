@@ -28,12 +28,14 @@ package ${package.getAttribute("bo-mo-package")};
 ## generate the import list of the class
 #set($imports=${cartridge.retrieveImportStatementsForBo(${class}, ${package.getAttribute("bo-mo-package")})})
 #set($foo=${imports.addClassName("ch.bbv.dog.DataObject")})
+#set($foo=${imports.addClassName("java.util.Map")})
+#set($foo=${imports.addClassName("java.util.HashMap")})
 #if(!${hasAncestors})
 #set($foo=${imports.addClassName("java.beans.PropertyChangeListener")})
 #set($foo=${imports.addClassName("java.beans.VetoableChangeListener")})
 #set($foo=${imports.addClassName("java.lang.reflect.Field")})
 #set($foo=${imports.addClassName("java.sql.Timestamp")})
-#if (${class.class.booleanValueOfAttribute("bo-changeable")})
+#if (${class.booleanValueOfAttribute("bo-changeable")})
 #set($foo=${imports.addClassName("java.beans.PropertyChangeSupport")})
 #end
 #if (${class.booleanValueOfAttribute("bo-vetoable")})
@@ -770,19 +772,11 @@ $line
   /** 
    * Creates and returns a deep copy of the object and its descendants. The 
    * properties containing keys are not cloned because they are immutable.
-   * @return a deep copy of the instance.
+   * @return a deep copy of the instance
    */
   public ${className} copy() {
-    ${className} clone = null;
-    try {
-      clone = (${className})clone();
-    } catch (CloneNotSupportedException e) {
-      // impossible exception because data object is cloneable.
-      return null;
-    }
-    copy(clone);
-    clone.setModified(isModified());
-    return clone;
+    Map<Object, Object> copies = new HashMap<Object, Object>();
+    return copy(copies);
   }
 #if (!${hasAncestors})
 #if (${class.booleanValueOfAttribute("bo-changeable")})
@@ -891,37 +885,51 @@ $line
 #end
 
   /** 
-   * Copies deeply all the attributes of the class and its ancestors.
-   * @param clone the copy which deep copy should be generated
+   * Copies deeply all the attributes of the class and its ancestors. Multiple 
+   * references to the same data object are handled correctly.
+   * @param copies set of copied objects used to detect circular references
+   * @return the deep copy of the object
    */
-  protected void copy(${className} clone) {
+  protected ${className} copy(Map<Object, Object> copies) {
+    ${className} clone = (${className})copies.get(this);
+    if (clone == null) {
 #if($hasAncestors)
-    super.copy(clone);
+      super.copy(copies);
+	  clone = (${className})copies.get(this);
+#else 
+      try {
+	    clone = (${className})clone();
+        copies.put(this, clone);
+      } catch (CloneNotSupportedException e) {
+	    // impossible exception because data object is cloneable.
+      }
 #end
 #foreach ($property in $properties)
 #isTypeModel($model $property $isTypeModel)
 #if($isTypeModel)
 #set($lName=${property.nameFirstLower()})
-    if (${lName} != null) {
-      clone.${lName} = ${lName}.copy();
-    }
+      if (${lName} != null) {
+        clone.${lName} = ${lName}.copy(copies);
+      }
 #end 
 #end
 #foreach ($aggregation in $aggregations) 
 #set($lName = ${aggregation.nameFirstLower()})
 #set($itemType = ${aggregation.retrieveTypeClassName()})
 #set($keyType=${aggregation.getAttribute("bo-key-class")})
-    clone.${lName} = #containerCreation($aggregation);
+      clone.${lName} = #containerCreation($aggregation);
 #if(${cartridge.isOrdered(${aggregation})})
-    for (${keyType} key : ${lName}.keySet()) {
-      clone.${lName}.put(key, ${lName}.get(key));
-    }
+      for (${keyType} key : ${lName}.keySet()) {
+        clone.${lName}.put(key, ${lName}.get(key));
+      }
 #else
-    for (int i = 0; i < ${lName}.size(); i++) {
-      clone.${lName}.add(${lName}.get(i).copy());
+      for (int i = 0; i < ${lName}.size(); i++) {
+        clone.${lName}.add(${lName}.get(i).copy(copies));
+      }
+#end
+#end
     }
-#end
-#end
+    return clone;
   }
 
   /** 
