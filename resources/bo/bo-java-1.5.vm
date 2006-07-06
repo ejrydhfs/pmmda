@@ -890,7 +890,7 @@ $line
    * @param copies set of copied objects used to detect circular references
    * @return the deep copy of the object
    */
-  protected ${className} copy(Map<Object, Object> copies) {
+  public ${className} copy(Map<Object, Object> copies) {
     ${className} clone = (${className})copies.get(this);
     if (clone == null) {
 #if($hasAncestors)
