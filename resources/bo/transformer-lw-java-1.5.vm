@@ -72,14 +72,15 @@ public class LwTransformer {
 #set($properties=${class.getProperties()})
 #foreach ($property in $properties)
 #if(${property.booleanValueOfTag("bo-lightweight")})
+#getterName($property $getter)
+#setterName($property $setter)	
 #isTypeLightweigth($model $property $isTypeLightweigth)
 #if($isTypeLightweigth)
-    if (item.get${property.nameFirstUpper()}() != null) {
-      lw.set${property.nameFirstUpper()}(transform(item.get${property.nameFirstUpper()}()));
+    if (item.${getter}() != null) {
+      lw.${setter}(transform(item.${getter}()));
     }
 #else
-#getterName($property $getter)
-    lw.set${property.nameFirstUpper()}(item.${getter}());
+    lw.${setter}(item.${getter}());
 #end
 #end
 #end
