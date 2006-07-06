@@ -100,7 +100,7 @@ $line
 #if($isPersistentDataObject)
 #getForwardHdl($property $handle)
   /**
-   * Mapping for 1: 1 relationship ${relation.getName()} as foreign key.
+   * Mapping for 1: 1 relationship ${property.getName()} as foreign key.
    */
   private Integer ${handle};  
 #end
@@ -134,7 +134,7 @@ $line
 #if(${type} == ${class})
 #getReverseHdl($reference $relation $handle)
   /**
-   * Mapping for 1: N relationship ${reference.getName()} as reverse foreign key.
+   * Mapping for 1: N relationship ${relation.getName()} as reverse foreign key.
    */
   private Integer ${handle};
 #end
