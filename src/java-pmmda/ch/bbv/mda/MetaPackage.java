@@ -7,6 +7,7 @@ package ch.bbv.mda;
 
 import java.util.ArrayList;
 import java.util.List;
+import ch.bbv.mda.uml.*;
 
 /**
  * The meta package models a package object as defined in the UML standard. It
@@ -44,10 +45,16 @@ public class MetaPackage extends MetaElement {
   private List<MetaClass> classes;
 
   /**
+   * List of all use cases defined in the package.
+   */
+  private List<MetaUseCase> useCases;
+
+  /**
    * Default constructor of the class.
    */
   public MetaPackage() {
     classes = new ArrayList<MetaClass>();
+    useCases = new ArrayList<MetaUseCase>();
   }
 
   /**
@@ -127,7 +134,84 @@ public class MetaPackage extends MetaElement {
     }
   }
 
-  /**
+/**
+ * Returns the use case with the given index.
+ * @param index index of the requested use case
+ * @return the requested use case
+ * @see #addUseCase(int, MetaUseCase)
+ */
+public MetaUseCase getUseCase(int index) {
+  return useCases.get(index);
+}
+
+/**
+ * Adds the use case in the list of useCases.
+ * @param useCase use case to add
+ * @pre useCase != null
+ */
+public void addUseCase(MetaUseCase useCase) {
+  assert useCase != null;
+  useCases.add(useCase);
+  useCase.setContext(this);
+}
+
+/**
+ * Adds the use casae in the list of useCases.
+ * @param index position where the use case should be inserted in the list
+ * @param useCase use case to add
+ * @pre useCase != null
+ * @see #getUseCase(int)
+ */
+public void addUseCase(int index, MetaUseCase useCase) {
+  assert useCase != null;
+  useCases.add(index, useCase);
+  useCase.setContext(this);
+}
+
+/**
+ * Returns a list of all use cases defined in the object.
+ * @return list of all use cases
+ * @see #setUseCases(List)
+ */
+public List<MetaUseCase> getUseCases() {
+  return useCases;
+}
+
+/**
+ * Sets the list of use cases of the package.
+ * @param useCases new list of use cases
+ * @see #getUseCases()
+ */
+public void setUseCases(List<MetaUseCase> useCases) {
+  removeAllUseCases();
+  useCases.addAll(useCases);
+  for (MetaUseCase useCase : useCases) {
+    useCase.setContext(this);
+  }
+}
+
+/**
+ * Remove all use cases of the package.
+ */
+public void removeAllUseCases() {
+  for (MetaUseCase useCase : useCases) {
+    useCase.setContext(null);
+  }
+  useCases.clear();
+}
+
+/**
+ * Removes a use case from the package.
+ * @param useCase to be removed
+ */
+public void removeUseCase(MetaUseCase useCase) {
+  if (useCases.contains(useCase)) {
+    useCases.remove(useCase);
+    useCase.setContext(null);
+  }
+}
+
+   /**
    * Implements the visitor pattern.
    * @param visitor visitor to process
    */
@@ -136,6 +220,9 @@ public class MetaPackage extends MetaElement {
     visitor.visit(this);
     for (MetaClass clazz : classes) {
       clazz.accept(visitor);
+    }
+    for (MetaUseCase useCase : useCases) {
+      useCase.accept(visitor);
     }
   }
 
@@ -148,5 +235,16 @@ public class MetaPackage extends MetaElement {
   public MetaClass getClass(String name) {
     assert name != null;
     return (MetaClass) findElement(classes, name);
+  }
+
+  /**
+   * Returns the use case with the given name.
+   * @param name simple name of the use case to find
+   * @return the requested use case if found otherwise null
+   * @pre name != null
+   */
+  public MetaUseCase getUseCase(String name) {
+    assert name != null;
+    return (MetaUseCase) findElement(useCases, name);
   }
 }

@@ -206,7 +206,7 @@ public class RoseLocatorVisitor implements RoseVisitor {
       roseNode = roseNode.getParent();
       String currentValue = roseNode.getValue(); 
       if(Util.getType(currentValue).equals(RoseStrings.CLASS_CATEGORY) || Util.getType(currentValue).equals(RoseStrings.CLASS)) {
-        if(Util.getName(currentValue).equals(RoseStrings.LOGICAL_VIEW)) break;
+        if(Util.getName(currentValue).equals(RoseStrings.LOGICAL_VIEW) || Util.getName(currentValue).equals(RoseStrings.USE_CASE_VIEW)) break;
         temp = Util.getName(currentValue) + "." + temp;
       }
     }

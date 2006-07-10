@@ -347,6 +347,9 @@ public class MetaModel extends MetaPackage {
         }
       }
     }
+    if(element == null) {
+    	element = context.getUseCase(qualifiedName);
+    }
     return element;
   }
 
@@ -368,20 +371,18 @@ public class MetaModel extends MetaPackage {
   }
 
   /**
-   * finds the classifier with the given qualified name.
-   * @param model model containing the requested classifier
+   * finds the classifier with the given qualified name. Looks for dataTypes, classes, and use cases.
    * @param qualifiedName the qualified name of the requested classifier
    * @return the requested classifier if found otherwise null
    * @pre (model != null) && (qualifiedName != null)
    */
-  public static MetaClassifier findClassifier(MetaModel model,
-      String qualifiedName) {
-    assert (model != null) && (qualifiedName != null);
-    MetaClassifier classifier = model.findDatatype(qualifiedName);
-    if (classifier == null) {
-      classifier = model.findClass(qualifiedName);
+  public MetaClassifier findClassifier(String qualifiedName) {
+    assert (qualifiedName != null);
+    MetaElement element = findElement(qualifiedName);
+    if ((element != null) && (element instanceof MetaClassifier)) {
+      return (MetaClassifier) element;
     }
-    return classifier;
+    return null;
   }
 
   /**

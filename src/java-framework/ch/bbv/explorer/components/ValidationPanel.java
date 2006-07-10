@@ -49,7 +49,10 @@ public class ValidationPanel extends JComponent {
    * @param results list of validation results to display
    */
   public void setResults(ValidationResult results) {
-    model.setResult(results);
+  	ValidationResult orderedResults = new ValidationResult();
+  	orderedResults.addAll(results.getErrors());
+  	orderedResults.addAll(results.getWarnings());
+    model.setResult(orderedResults);
   }
 
   public ValidationResult getResults() {

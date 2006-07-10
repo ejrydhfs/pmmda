@@ -40,7 +40,13 @@ import org.eclipse.emf.importer.rose.parser.RoseNode;
 import org.eclipse.emf.importer.rose.parser.Util;
 
 import ch.bbv.mda.*;
+import ch.bbv.mda.cartridges.BoConstants;
 import ch.bbv.mda.persistence.eclipse.RosePersistenceHandler;
+import ch.bbv.mda.uml.MetaUseCase;
+
+import com.jgoodies.validation.Severity;
+import com.jgoodies.validation.ValidationResult;
+import com.jgoodies.validation.message.SimpleValidationMessage;
 
 /**
  * Traverses the Rose file and create eCore object in memory.
@@ -58,6 +64,7 @@ public class MdaRoseVisitor implements RoseVisitor
   private MetaPackage metaPackage = null;
   private MetaClass metaClass = null;
   private MetaDatatype metaDataType = null;
+  private ValidationResult vResults = null;
   private String associationName;
   /** Maps between the source objects used as keys and the target objects used
    * as values. Source objects are NSUML entities, target objects are MDA
@@ -98,6 +105,10 @@ public class MdaRoseVisitor implements RoseVisitor
     associationRoseNodes = new HashMap();
   }
 
+  public void setValidationResults(ValidationResult vResults) {
+  	this.vResults = vResults;
+  }
+  
   public void visitList(RoseNode roseNode)
   {
   }
@@ -109,7 +120,7 @@ public class MdaRoseVisitor implements RoseVisitor
     String objectType = Util.getType(roseNodeValue);
     String objectName = Util.getName(roseNodeValue);
 
-    // System.out.println("---> visitObject,,, objectKey - objectType - objectName: " + objectKey + ", " + objectType + ", " + objectName);
+    //System.out.println("---> visitObject,,, objectKey - objectType - objectName: " + objectKey + ", " + objectType + ", " + objectName);
 
     // Get the parent object.
     //
@@ -159,6 +170,9 @@ public class MdaRoseVisitor implements RoseVisitor
     {
       visitRole(roseNode, roseNodeValue, objectKey, objectName, parent);
     }
+    else if (objectType.equals("UseCase")) {
+    	visitUseCase(roseNode, roseNodeValue, objectKey, objectName, parent);
+    }
   }
 
   protected void visitClassCategory(RoseNode roseNode, String roseNodeValue, String objectKey, String objectName, Object parent)
@@ -175,6 +189,7 @@ public class MdaRoseVisitor implements RoseVisitor
 		metaPackage = metaModel.findPackage(objectName);
 		if (metaPackage == null) {
 		  metaPackage = new MetaPackage();
+		  metaPackage.setContext(metaModel); // needed because context is accessed by stereotype before I add it.
           setCommonElementAspects(metaPackage, roseNode);
 		}
 		metaModel.addPackage(metaPackage);
@@ -365,7 +380,9 @@ public class MdaRoseVisitor implements RoseVisitor
       }
       else
       {
-        warning(RoseImporterPlugin.INSTANCE.getString("_UI_UnrecognizedStereotype_message", new Object []{ stereoTypeValue, objectName }));
+      	if(!(stereoTypeValue.equalsIgnoreCase(BoConstants.DATA_OBJECT_STEREOTYPE) || stereoTypeValue.equalsIgnoreCase(BoConstants.REFERENCE_CODE_STEREOTYPE) || stereoTypeValue.equalsIgnoreCase("Actor"))) {
+      		warning(RoseImporterPlugin.INSTANCE.getString("_UI_UnrecognizedStereotype_message", new Object []{ stereoTypeValue, objectName }));
+      	}
 
         // Map to an eClass.
         //
@@ -630,8 +647,8 @@ public class MdaRoseVisitor implements RoseVisitor
         else
         {
           warning(RoseImporterPlugin.INSTANCE.getString("_UI_UnresolvedTypeNameFor_message", new Object []{
-            role1.getRoseSupplier(),
-            ref1.getName() }));
+              role1.getRoseSupplier(),
+              ref1.getName() }));
           roseUtil.getTypeTable().put(ref1, "EObject");
         }
       }
@@ -650,8 +667,8 @@ public class MdaRoseVisitor implements RoseVisitor
         else
         {
           warning(RoseImporterPlugin.INSTANCE.getString("_UI_UnresolvedTypeNameFor_message", new Object []{
-            role2.getRoseSupplier(),
-            ref2.getName() }));
+              role2.getRoseSupplier(),
+              ref2.getName() }));
           roseUtil.getTypeTable().put(ref2, "EObject");
         }
       }
@@ -662,7 +679,34 @@ public class MdaRoseVisitor implements RoseVisitor
       setEReferenceDefaultMultiplicity(ref);
     }
   }
-    
+
+  /**
+   * Added by Adrian Bachofen in order to hold use cases within model
+   */
+  protected void visitUseCase(RoseNode roseNode, String roseNodeValue, String objectKey, String objectName, Object parent)
+  {
+    if (objectName == null || objectName.length() == 0)
+    {
+      String quid = roseNode.getRoseId();
+      if (quid != null)
+      {
+        quid = quid.substring(1, quid.length() - 1);
+      }
+
+      objectName = "Unnamed" + quid;
+      error(RoseImporterPlugin.INSTANCE.getString("_UI_UnnamedClass_message", new Object []{ objectName }));
+    }
+
+
+    // set a typed element within tableobject. This is needed by setETypeClassifier() for proper operation.
+    EClass eElement = ecoreFactory.createEClass();
+    eElement.setName(objectName);
+    roseNode.setNode(eElement);
+    build(roseNode, parent, eElement);
+
+    MetaUseCase metaUseCase = createMetaUseCase(roseNode, eElement, objectName, parent, null);
+  }
+  
   protected EList getExtentFromTableObject(RoseNode roseNode)
   {
     String quid = roseNode.getRoseId();
@@ -726,9 +770,10 @@ public class MdaRoseVisitor implements RoseVisitor
         }
         else
         {
+        	
           warning(RoseImporterPlugin.INSTANCE.getString("_UI_UnresolvedTypeNameFor_message", new Object []{
-            roseNode.getRoseSupplier(),
-            eOperation.getName() }));
+              roseNode.getRoseSupplier(),
+              eOperation.getName() }));
           roseUtil.getTypeTable().put(eOperation, "EString");
         }
       }
@@ -955,8 +1000,8 @@ public class MdaRoseVisitor implements RoseVisitor
         else
         {
           warning(RoseImporterPlugin.INSTANCE.getString("_UI_UnresolvedTypeNameFor_message", new Object []{
-            roseNode.getRoseSupplier(),
-            eOperation.getName() }));
+              roseNode.getRoseSupplier(),
+              eOperation.getName() }));
         }
       }
     }
@@ -1006,8 +1051,12 @@ public class MdaRoseVisitor implements RoseVisitor
     {
     	// Adrian - Warining: qualified version of type not available.
     	String message = "Attribute ";
-    	if(roseNode.getParent() != null) {
-    		message += roseNode.getParent().getClassifierName()+".";
+    	RoseNode node = roseNode.getParent();
+    	while(node != null && !node.getKey().equals("")) {
+    		node = node.getParent();
+    	}
+    	if(node != null) {
+    		message += Util.getName(node.getValue())+".";
     	}
     	message += eAttribute.getName()+" does not define its type entirely. Edit this file with your rose tool an set the type of this attribute again.";
       warning(message);
@@ -1417,7 +1466,7 @@ public class MdaRoseVisitor implements RoseVisitor
       {
         EClass eClass = (EClass)subObject;
         // Adrian
-        MetaClass mClass = (MetaClass)elements.get(eClass);
+        MetaClassifier mClassifier = (MetaClassifier)elements.get(eClass);
         List extend = new ArrayList();
         List unspecified = new ArrayList();
         List mixin = new ArrayList();
@@ -1434,8 +1483,12 @@ public class MdaRoseVisitor implements RoseVisitor
             {
               EClass superClass = (EClass)superObject;
               //Adrian
-              MetaClass mSuperClass = (MetaClass)elements.get(superClass);
-              mClass.addAncestor(mSuperClass);
+              MetaClassifier mSuperClass = (MetaClassifier)elements.get(superClass);
+              if(mClassifier instanceof MetaClass) {
+              	((MetaClass)mClassifier).addAncestor((MetaClass)mSuperClass);
+              } else if (mClassifier instanceof MetaUseCase) {
+              	((MetaUseCase)mClassifier).addAncestor((MetaUseCase)mSuperClass);
+              }
               if (!superClass.isInterface())
               {
                 if ("extend".equals(stereotype))
@@ -2226,6 +2279,7 @@ public class MdaRoseVisitor implements RoseVisitor
   protected void warning(String message)
   {
     System.err.println("-->Warning: " + message);
+    vResults.add(new SimpleValidationMessage(message, Severity.WARNING));
     BasicDiagnostic basicDiagnostic = new BasicDiagnostic(
     	    RoseImporterPlugin.getPlugin().getBundle().getSymbolicName(),
     	    0,
@@ -2408,6 +2462,18 @@ public class MdaRoseVisitor implements RoseVisitor
     return metaDatatype;
   }
   
+  private MetaUseCase createMetaUseCase(RoseNode roseNode, EModelElement eElement, String objectName, Object parent, String stereoTypeValue){
+    MetaUseCase metaUseCase = metaPackage.getUseCase(objectName);
+    if (metaUseCase == null) {
+      metaUseCase = new MetaUseCase();
+      metaPackage.addUseCase(metaUseCase);
+      setCommonElementAspects(metaUseCase, roseNode);
+      metaUseCase.setName(objectName);
+      elements.put(eElement, metaUseCase);
+    }
+    return metaUseCase;
+  }
+
   private void setCommonElementAspects(MetaElement metaElement, RoseNode roseNode){
     if(metaElement == null || roseNode == null) return;
     String documentation = roseNode.getDocumentation();
@@ -2468,6 +2534,9 @@ public class MdaRoseVisitor implements RoseVisitor
   protected String trimType(String type) {
     if(type.startsWith(RoseStrings.LOGICAL_VIEW)) {
       return type.substring(RoseStrings.LOGICAL_VIEW.length()+1);
+    }
+    if(type.startsWith(RoseStrings.USE_CASE_VIEW)) {
+      return type.substring(RoseStrings.USE_CASE_VIEW.length()+1);
     }
     return type;
   }

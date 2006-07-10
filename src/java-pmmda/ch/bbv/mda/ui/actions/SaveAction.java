@@ -25,6 +25,8 @@ import ch.bbv.mda.resources.MessagesMda;
 import ch.bbv.mda.ui.MdaDocument;
 import ch.bbv.mda.ui.MdaExplorer;
 
+import com.jgoodies.validation.ValidationResult;
+
 /**
  * The save action for the user interface of <em>pmMDA</em> application.
  * @author MarcelBaumann
@@ -59,7 +61,9 @@ public class SaveAction extends ExplorerSaveAction {
       if (filename != null) {
         filename = filename.trim();
         if (filename.length() > 0) {
-          explorer.getDocument().save();
+        	ValidationResult vResults = new ValidationResult();
+          explorer.getDocument().save(vResults);
+          explorer.getValidationPanel().setResults(vResults);
         } else {
           JOptionPane.showMessageDialog(explorer.getFrame(),
               MessagesMda.msgIllegalFileNameOrType, Messages.titleError,

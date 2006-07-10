@@ -6,6 +6,8 @@
  */
 package ch.bbv.mda;
 
+import ch.bbv.mda.uml.*;
+
 /**
  * The visitor interface to traverse the MDA model of data objects..
  * @author MarcelBaumann
@@ -30,6 +32,12 @@ public interface Visitor {
    * @param item item to visit
    */
   void visit(MetaClass item);
+
+  /**
+   * Visits use case instances of this type as part of the visitor pattern.
+   * @param item item to visit
+   */
+  void visit(MetaUseCase item);
 
   /**
    * Visits class instances of this type as part of the visitor pattern.

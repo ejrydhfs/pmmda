@@ -7,12 +7,14 @@ package ch.bbv.mda.persistence.rose;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eclipse.emf.ecore.plugin.EcorePlugin;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emf.ecore.plugin.EcorePlugin;
 import org.eclipse.emf.importer.rose.builder.UnitTreeNode;
 
 import ch.bbv.mda.MetaModel;
+
+import com.jgoodies.validation.ValidationResult;
 
 /**
  * @author AdrianBachofen
@@ -31,8 +33,8 @@ public class RoseTransformer {
       roseUtil.getRoseEcoreBuilder().unsettablePrimitive = false;
     }
 	
-    public UnitTreeNode loadRoseModel(String fileName, MetaModel model) throws Exception{
-      roseUtil.loadTree(fileName, model);
+    public UnitTreeNode loadRoseModel(String fileName, MetaModel model, ValidationResult vResults) throws Exception{
+      roseUtil.loadTree(fileName, model, vResults);
       return roseUtil.getUnitTree();
     }
     

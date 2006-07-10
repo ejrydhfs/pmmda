@@ -17,6 +17,7 @@ import ch.bbv.explorer.resources.Messages;
 import ch.bbv.mda.MetaModel;
 import ch.bbv.mda.resources.MessagesMda;
 
+import com.jgoodies.validation.ValidationResult;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.ConversionException;
 
@@ -32,7 +33,7 @@ public class XmlPersistenceHandler implements PersistenceHandler {
    */
   private static Log log = LogFactory.getLog(XmlPersistenceHandler.class);
 
-  public MetaModel readModel(File file) throws PersistenceException {
+  public MetaModel readModel(File file, ValidationResult vResults) throws PersistenceException {
     MetaModel model = null;
     try {
       FileReader reader = new FileReader(file);
@@ -51,7 +52,7 @@ public class XmlPersistenceHandler implements PersistenceHandler {
     return model;
   }
 
-  public void writeModel(MetaModel model, File file) {
+  public void writeModel(MetaModel model, File file, ValidationResult vResults) {
     try {
       FileWriter writer = new FileWriter(file);
       XStream stream = new XStream();
@@ -64,7 +65,7 @@ public class XmlPersistenceHandler implements PersistenceHandler {
     }
   }
 
-  public void updateModel(MetaModel project, File file)
+  public void updateModel(MetaModel project, File file, ValidationResult vResults)
       throws PersistenceException {
     // TODO Auto-generated method stub
   }

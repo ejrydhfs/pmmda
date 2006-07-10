@@ -17,6 +17,8 @@ import ch.bbv.explorer.resources.Messages;
 import ch.bbv.mda.MetaModel;
 import ch.bbv.mda.resources.MessagesMda;
 
+import com.jgoodies.validation.ValidationResult;
+
 /**
  * The serialize persistency handler uses the serialize mechanism of the Java
  * environment to persist a tree of Java beans. The serialize function uses only
@@ -34,7 +36,7 @@ public class SerializePersistenceHandler implements PersistenceHandler {
    */
   private static Log log = LogFactory.getLog(SerializePersistenceHandler.class);
 
-  public MetaModel readModel(File file) throws PersistenceException {
+  public MetaModel readModel(File file, ValidationResult vResults) throws PersistenceException {
     MetaModel project = null;
     try {
       ObjectInput in = new ObjectInputStream(new FileInputStream(file));
@@ -50,7 +52,7 @@ public class SerializePersistenceHandler implements PersistenceHandler {
     return project;
   }
 
-  public void writeModel(MetaModel project, File file)
+  public void writeModel(MetaModel project, File file, ValidationResult vResults)
       throws PersistenceException {
     try {
       ObjectOutput out = new ObjectOutputStream(new FileOutputStream(file));
@@ -61,7 +63,7 @@ public class SerializePersistenceHandler implements PersistenceHandler {
     }
   }
 
-  public void updateModel(MetaModel project, File file)
+  public void updateModel(MetaModel project, File file, ValidationResult vResults)
       throws PersistenceException {
     throw new PersistenceException();
   }

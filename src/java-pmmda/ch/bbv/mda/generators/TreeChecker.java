@@ -7,6 +7,7 @@
 package ch.bbv.mda.generators;
 
 import ch.bbv.mda.*;
+import ch.bbv.mda.uml.*;
 
 /**
  * The tree checker completes the tagged values list of each meta element in the
@@ -69,6 +70,9 @@ public class TreeChecker implements Visitor {
   public void visit(MetaClass metaClass) {
     itemFactory.initialize(metaClass, MetaClass.class);
     complete(metaClass);
+  }
+
+  public void visit(MetaUseCase metaUseCase) {
   }
 
   public void visit(MetaIndexedProperty property) {

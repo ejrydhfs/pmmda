@@ -26,6 +26,8 @@ import ch.bbv.mda.resources.MessagesMda;
 import ch.bbv.mda.ui.MdaDocument;
 import ch.bbv.mda.ui.MdaExplorer;
 
+import com.jgoodies.validation.ValidationResult;
+
 /**
  * The save as action for the user interface of <em>pmMDA</em> application.
  * The action semantic requests handling of various cases.
@@ -121,7 +123,9 @@ public class SaveAsAction extends ExplorerFileAction {
     try {
       MdaExplorer explorer = (MdaExplorer) getExplorer();
       MdaDocument document = explorer.getDocument();
-      document.saveAs(file);
+      ValidationResult vResults = new ValidationResult();
+      document.saveAs(file, vResults);
+      explorer.getValidationPanel().setResults(vResults);
     } catch (PersistenceException e) {
       log.error(e);
       if (e.getCause() instanceof FileNotFoundException) {

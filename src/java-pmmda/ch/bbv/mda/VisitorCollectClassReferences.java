@@ -9,6 +9,7 @@ package ch.bbv.mda;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import ch.bbv.mda.uml.*;
 
 /**
  * The visitor collects all references to classes in the model. The reference
@@ -62,6 +63,10 @@ public class VisitorCollectClassReferences implements Visitor {
 
   public void visit(MetaClass clazz) {
     assert (clazz != null);
+  }
+
+  public void visit(MetaUseCase useCase) {
+    assert (useCase != null);
   }
 
   public void visit(MetaProperty property) {

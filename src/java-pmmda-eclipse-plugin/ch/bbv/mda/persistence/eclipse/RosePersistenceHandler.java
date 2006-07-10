@@ -22,7 +22,8 @@ import ch.bbv.mda.persistence.PersistenceHandler;
 import ch.bbv.mda.persistence.rose.MdaTransformer;
 import ch.bbv.mda.persistence.rose.RoseTransformer;
 import ch.bbv.mda.resources.MessagesMda;
-import ch.bbv.utilities.ResourceUtilities;
+
+import com.jgoodies.validation.ValidationResult;
 
 /**
  * @author AdrianBachofen
@@ -45,10 +46,10 @@ public class RosePersistenceHandler implements PersistenceHandler {
 		mdaTransformer = new MdaTransformer();
 	}
 
-	public MetaModel readModel(File file) throws PersistenceException {
+	public MetaModel readModel(File file, ValidationResult vResults) throws PersistenceException {
 		MetaModel metaModel = new MetaModel();
 		try {
-			unitTree = roseTransformer.loadRoseModel(file.toString(), metaModel);
+			unitTree = roseTransformer.loadRoseModel(file.toString(), metaModel, vResults);
 			if (unitTree == null) {
 				log.error("RosePersistenceHandler#readModel: illegal file - " + file);
 				JOptionPane.showMessageDialog(null, MessagesMda.msgInvalidFormat, Messages.titleError, JOptionPane.ERROR_MESSAGE);
@@ -60,11 +61,11 @@ public class RosePersistenceHandler implements PersistenceHandler {
 		return metaModel;
 	}
 
-	public void writeModel(MetaModel model, File file)
+	public void writeModel(MetaModel model, File file, ValidationResult vResults)
 			throws PersistenceException {
 		if (model.getFilename() != null
 				&& model.getFilename().equals(file.toString()) && file.exists()) {
-			updateModel(model, file);
+			updateModel(model, file, vResults);
 		} else {
 			try {
 				// TODO in case of a rose model within model I could read it and then
@@ -88,11 +89,11 @@ public class RosePersistenceHandler implements PersistenceHandler {
 		}
 	}
 
-	public void updateModel(MetaModel model, File file)
+	public void updateModel(MetaModel model, File file, ValidationResult vResults)
 			throws PersistenceException {
 		try {
 			MetaModel metaModel = new MetaModel();
-			unitTree = roseTransformer.loadRoseModel(file.toString(), metaModel);
+			unitTree = roseTransformer.loadRoseModel(file.toString(), metaModel, vResults);
 			if (unitTree == null) {
 				log.error("RosePersistenceHandler#updateModel: illegal file - " + file);
 				JOptionPane.showMessageDialog(null, MessagesMda.msgInvalidFormat, Messages.titleError, JOptionPane.ERROR_MESSAGE);

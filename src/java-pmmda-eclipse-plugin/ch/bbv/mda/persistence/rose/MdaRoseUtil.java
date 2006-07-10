@@ -17,20 +17,14 @@
 package ch.bbv.mda.persistence.rose;
 
 import java.util.Map;
-import org.eclipse.emf.importer.rose.builder.RoseStrings;
-import org.eclipse.emf.importer.rose.builder.RoseUtil;
-import org.eclipse.emf.importer.rose.builder.RoseWalker;
-import org.eclipse.emf.importer.rose.builder.TableObject;
-import org.eclipse.emf.importer.rose.builder.UnitTreeBuilder;
-import org.eclipse.emf.importer.rose.builder.UnitTreeNode;
-import org.eclipse.emf.importer.rose.parser.RoseLexer;
-import org.eclipse.emf.importer.rose.parser.RoseLoader;
-import org.eclipse.emf.importer.rose.parser.RoseNode;
-import org.eclipse.emf.importer.rose.parser.RoseParser;
-import org.eclipse.emf.importer.rose.parser.Util;
+
 import org.eclipse.emf.ecore.resource.URIConverter;
+import org.eclipse.emf.importer.rose.builder.*;
+import org.eclipse.emf.importer.rose.parser.*;
 
 import ch.bbv.mda.MetaModel;
+
+import com.jgoodies.validation.ValidationResult;
 
 /**
  * @author AdrianBachofen
@@ -68,9 +62,10 @@ public class MdaRoseUtil extends RoseUtil
     return unitTreeRoot;
   }
   
-  public MdaRoseVisitor loadTree(String fileName, MetaModel target) throws Exception
+  public MdaRoseVisitor loadTree(String fileName, MetaModel target, ValidationResult vResults) throws Exception
   {
     MdaRoseVisitor mdaRoseVisitor = new MdaRoseVisitor(this, target);
+    mdaRoseVisitor.setValidationResults(vResults);
     
     // Load the Rose .mdl or .cat file, and create mappings for the objects.
     //
@@ -85,7 +80,7 @@ public class MdaRoseUtil extends RoseUtil
         parser.parse();
         versionTree = parser.getVersionTree();
         modelTree = parser.getModelTree();
-        UnitTreeBuilder unitTreeBuilder = new UnitTreeBuilder(this);
+        MdaUnitTreeBuilder unitTreeBuilder = new MdaUnitTreeBuilder(this);
         unitTreeRoot = createUnitTreeNode(fileName);
         target.setName(unitTreeRoot.getName());
         unitTreeBuilder.traverse(getQualifier(), modelTree, unitTreeRoot);

@@ -19,6 +19,8 @@ import ch.bbv.mda.resources.MessagesMda;
 import ch.bbv.mda.ui.MdaDocument;
 import ch.bbv.mda.ui.MdaExplorer;
 
+import com.jgoodies.validation.ValidationResult;
+
 /**
  * The open action implements the loading of a complete meta model. The model is
  * first loaded from the persistency storage and a graph of meta objects are
@@ -67,8 +69,10 @@ public class OpenAction extends ExplorerFileAction {
         lastResult = false;
         return lastResult;
       }
-      document.load(file);
+      ValidationResult vResults = new ValidationResult();
+      document.load(file, vResults);
       explorer.setDocument(document);
+      explorer.getValidationPanel().setResults(vResults);
     } catch (PersistenceException e) {
       JOptionPane.showMessageDialog(getExplorer().getFrame(), MessageFormat
           .format(MessagesMda.msgIllegalFilename, file.getName()),

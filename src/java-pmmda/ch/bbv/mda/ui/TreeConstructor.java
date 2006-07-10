@@ -16,6 +16,7 @@ import ch.bbv.explorer.ExplorerNode;
 import ch.bbv.explorer.UiNodeType;
 import ch.bbv.explorer.UiNodeTypeFactory;
 import ch.bbv.mda.*;
+import ch.bbv.mda.uml.*;
 
 /**
  * The tree constructor constructs a navigation tree representation of a MDA
@@ -73,6 +74,9 @@ public class TreeConstructor implements Visitor {
 
   public void visit(MetaClass metaClass) {
     constructNode(metaClass);
+  }
+
+  public void visit(MetaUseCase metaUseCase) {
   }
 
   public void visit(MetaProperty metaProperty) {

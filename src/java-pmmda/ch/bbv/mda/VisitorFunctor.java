@@ -8,6 +8,7 @@ package ch.bbv.mda;
 
 import ch.bbv.dog.AbstractVisitorFunctor;
 import ch.bbv.dog.DoFunctor;
+import ch.bbv.mda.uml.*;
 
 /**
  * The visitor functor is the standard functor implementation for the MDA
@@ -61,6 +62,10 @@ public class VisitorFunctor implements AbstractVisitorFunctor, Visitor {
   }
 
   public void visit(MetaClass item) {
+    functor.execute(item);
+  }
+
+  public void visit(MetaUseCase item) {
     functor.execute(item);
   }
 

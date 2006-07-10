@@ -25,6 +25,8 @@ import ch.bbv.mda.persistence.nsuml.Mda2NsUmlTransformer;
 import ch.bbv.mda.persistence.nsuml.NsUml2MdaTransformer;
 import ch.bbv.mda.resources.MessagesMda;
 
+import com.jgoodies.validation.ValidationResult;
+
 /**
  * The NSUML handler manipulates XMI 1.0 / UML 1.3 based models. These models
  * are created with UML modeling such as Poseidon, ArgoUML or with help of
@@ -56,7 +58,7 @@ public class NsUmlPersistenceHandler implements PersistenceHandler {
     mdaTransformer = new Mda2NsUmlTransformer();
   }
 
-  public MetaModel readModel(File file) throws PersistenceException {
+  public MetaModel readModel(File file, ValidationResult vResults) throws PersistenceException {
     MetaModel metaModel = new MetaModel();
     try {
       MModel mModel = nsUmlTransformer.loadArgoModel(file);
@@ -73,11 +75,11 @@ public class NsUmlPersistenceHandler implements PersistenceHandler {
     return metaModel;
   }
 
-  public void writeModel(MetaModel model, File file)
+  public void writeModel(MetaModel model, File file, ValidationResult vResults)
       throws PersistenceException {
     if (model.getFilename() != null
         && model.getFilename().equals(file.toString()) && file.exists()) {
-      updateModel(model, file);
+      updateModel(model, file, vResults);
     } else if (file.getName().endsWith(".xmi")
         || file.getName().endsWith(".zargo")) {
       try {
@@ -99,7 +101,7 @@ public class NsUmlPersistenceHandler implements PersistenceHandler {
     }
   }
 
-  public void updateModel(MetaModel model, File file)
+  public void updateModel(MetaModel model, File file, ValidationResult vResults)
       throws PersistenceException {
     try {
       MModel mModel = nsUmlTransformer.loadArgoModel(file);

@@ -5,11 +5,7 @@
  */
 package ch.bbv.mda.persistence.rose;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
+import java.util.*;
 
 import org.eclipse.emf.importer.rose.builder.RoseStrings;
 import org.eclipse.emf.importer.rose.builder.RoseVisitor;
@@ -17,21 +13,11 @@ import org.eclipse.emf.importer.rose.builder.RoseWalker;
 import org.eclipse.emf.importer.rose.parser.RoseNode;
 import org.eclipse.emf.importer.rose.parser.Util;
 
-import ch.bbv.mda.MetaClass;
-import ch.bbv.mda.MetaClassifier;
-import ch.bbv.mda.MetaDatatype;
-import ch.bbv.mda.MetaElement;
-import ch.bbv.mda.MetaIndexedProperty;
-import ch.bbv.mda.MetaModel;
-import ch.bbv.mda.MetaPackage;
-import ch.bbv.mda.MetaProperty;
-import ch.bbv.mda.Multiplicity;
-import ch.bbv.mda.TaggedValue;
-import ch.bbv.mda.VisibilityCode;
+import ch.bbv.mda.*;
+import ch.bbv.mda.uml.*;
 import ch.bbv.mda.generators.CartridgeFactory;
 import ch.bbv.mda.generators.ItemFactory;
 import ch.bbv.mda.persistence.eclipse.RosePersistenceHandler;
-import ch.bbv.mda.UmlConstants;
 
 public class RoseMdaVisitor implements RoseVisitor {
 
@@ -83,13 +69,17 @@ public class RoseMdaVisitor implements RoseVisitor {
     {
       visitDesign(roseNode, roseNodeValue, objectKey, objectName, parent);
     }
-    if (objectKey.equals("") && objectType.equals(RoseStrings.CLASS_CATEGORY))
+    else if (objectKey.equals("") && objectType.equals(RoseStrings.CLASS_CATEGORY))
     {
       visitClassCategory(roseNode, roseNodeValue, objectKey, objectName, parent);
     }
     else if (objectType.equals(RoseStrings.CLASS))
     {
       visitClass(roseNode, roseNodeValue, objectKey, objectName, parent);
+    }
+    else if (objectType.equals("UseCase"))
+    {
+      visitUseCase(roseNode, roseNodeValue, objectKey, objectName, parent);
     }
     else if (objectType.equals(RoseStrings.OPERATION))
     {
@@ -227,7 +217,7 @@ public class RoseMdaVisitor implements RoseVisitor {
   }
 
   protected RoseNode visitClass(RoseNode roseNode, String roseNodeValue, String objectKey, String objectName, Object parent) {
-    // find class in model
+    // find classifier in model
     MetaClassifier element = findClassifier(roseNode);
     // if found then synchronize package
     if(element != null) {
@@ -269,6 +259,33 @@ public class RoseMdaVisitor implements RoseVisitor {
     }
   }
   
+  protected RoseNode visitUseCase(RoseNode roseNode, String roseNodeValue, String objectKey, String objectName, Object parent) {
+    // find classifier in model
+    MetaClassifier element = findClassifier(roseNode);
+    if(!(element instanceof MetaUseCase)) return roseNode;
+    // if found then synchronize package
+    if(element != null) {
+      updateRoseUseCase(element, roseNode);
+      classTable.put(element, roseNode);
+      putQuid(roseNode, element.getQualifiedName());
+      updateRoseUseCaseInheritanceRelations((MetaUseCase)element, roseNode);
+    }
+    // if not in MetaModel -> delete it in Rose Model
+    else {
+      parent = roseNode.getParent();
+      if(parent != null && parent instanceof RoseNode) {
+        itemsToDelete.add(new ItemToDelete(roseNode, (RoseNode)parent));
+      }
+    }
+    return roseNode;
+  }
+  
+  protected void updateRoseUseCase(MetaElement metaElement, RoseNode roseNode) {
+    MetaElement defaultMetaElement = new MetaUseCase();
+    itemFactory.initialize(defaultMetaElement, MetaUseCase.class);
+    updateGeneralRoseElements(roseNode, metaElement, defaultMetaElement);
+  }
+  
   protected void updateRoseInheritanceRelations(MetaClassifier clazz, RoseNode roseClass) {
     if(!(clazz instanceof MetaClass)) return;
     MetaClass c = (MetaClass)clazz;
@@ -293,6 +310,19 @@ public class RoseMdaVisitor implements RoseVisitor {
       }
     }
     removeRoseRealizeRelations(roseClass, clazz);
+  }
+  
+  protected void updateRoseUseCaseInheritanceRelations(MetaUseCase useCase, RoseNode roseUseCase) {
+    for(MetaUseCase ancestor : useCase.retrieveAncestors()) {
+      RoseNode inheritanceRelation = findRoseInheritanceRelation(roseUseCase, ancestor.getQualifiedName());
+      if(inheritanceRelation != null) {
+        // update it, but currently there is nothing to do
+      } else { // mark them for adding
+        Object[] listEntry = { ancestor, roseUseCase };
+        inheritanceTable.add(listEntry);
+      }
+    }
+    removeRoseInheritanceRelations(roseUseCase, useCase);
   }
   
   protected RoseNode findRoseInheritanceRelation(RoseNode roseClass, String qualifiedNameSupplier) {
@@ -609,7 +639,7 @@ public class RoseMdaVisitor implements RoseVisitor {
   
   public void processNewElements(RoseNode roseNode) {
     processNewPackages(roseNode);
-    processNewClassesAndProperties(roseNode);
+    processNewClassesifiersAndProperties(roseNode);
     processNewInheritanceRelations(roseNode);
     processNewRealizeRelations(roseNode);
   }
@@ -655,7 +685,19 @@ public class RoseMdaVisitor implements RoseVisitor {
     return node;
   }
   
-  protected void processNewClassesAndProperties(RoseNode roseNode) {
+  protected RoseNode addRootUseCasePackage(RoseNode roseModel) {
+    assert(roseModel != null);
+    MetaPackage defaultItem = new MetaPackage();
+    itemFactory.initialize(defaultItem, MetaPackage.class);
+    RoseNode node = roseModel.findNodeWithKey(RoseStrings.ROOT_USECASE_PACKAGE);
+    if(node == null) {
+      node = addRoseRootUseCaseCategory(roseModel);
+      updateRosePackage(defaultItem, node);
+    }
+    return node;
+  }
+  
+  protected void processNewClassesifiersAndProperties(RoseNode roseNode) {
     for(MetaDatatype type : model.getDatatypes()) {
       if(!classTable.containsKey(type)) {
         addDatatype(roseNode, type);
@@ -667,12 +709,22 @@ public class RoseMdaVisitor implements RoseVisitor {
       }
       processNewNestedClasses(roseNode, clazz);
     }
+    for(MetaUseCase useCase : model.getUseCases()) {
+    	if(!classTable.containsKey(useCase)) {
+    		addUseCase(roseNode, null, useCase);
+    	}
+    }
     for(MetaPackage pack : model.getPackages()) {
       for(MetaClass clazz : pack.getClasses()) {
         if(!classTable.containsKey(clazz)) {
           addClass(roseNode, pack, clazz);
         }
         processNewNestedClasses(roseNode, clazz);
+      }
+      for(MetaUseCase useCase : pack.getUseCases()) {
+      	if(!classTable.containsKey(useCase)) {
+      		addUseCase(roseNode, pack, useCase);
+      	}
       }
     }
     for (MetaClass clazz : model.getClasses()) {
@@ -760,6 +812,29 @@ public class RoseMdaVisitor implements RoseVisitor {
     return node;
   }
   
+  public RoseNode addUseCase(RoseNode roseModel, MetaPackage metaPackage, MetaUseCase item) {
+    assert(roseModel != null && item != null);
+    RoseNode node = null;
+
+    if(metaPackage == null) {
+      node = addRootUseCasePackage(roseModel);
+    }
+    else {
+      RoseLocatorVisitor locator = new RoseLocatorVisitor(item.getQualifiedName(), "UseCase");
+      RoseWalker roseWalker = new RoseWalker(roseModel);
+      roseWalker.traverse(locator);
+      node = locator.getResult();
+      if(node != null) return node;
+      node = locator.getBestMatch();
+      if(node == null) node = addPackage(roseModel, metaPackage);
+    }
+    
+    node = addRoseUseCase(node, item.getName(), item.getQualifiedName());
+    updateRoseUseCase(item, node);
+    updateRoseUseCaseInheritanceRelations(item, node);
+    return node;
+  }
+  
   public RoseNode addNestedClass(RoseNode roseModel, MetaClass metaClass, MetaClass item) {
     assert(roseModel != null && metaClass != null && item != null);
     RoseNode node = null;
@@ -818,7 +893,7 @@ public class RoseMdaVisitor implements RoseVisitor {
 
   protected void processNewInheritanceRelations(RoseNode roseModel) {
     for(Object[] listEntry : inheritanceTable) {
-      MetaClass superClass = (MetaClass)listEntry[0];
+      MetaClassifier superClassifier = (MetaClassifier)listEntry[0];
       RoseNode roseClass = (RoseNode)listEntry[1];
       RoseNode superClassList = roseClass.findNodeWithKey(RoseStrings.SUPERCLASSES);
       if(superClassList == null) {
@@ -828,9 +903,9 @@ public class RoseMdaVisitor implements RoseVisitor {
       RoseNode inheritanceRelation = new RoseNode("", RoseStrings.INHERITANCE_RELATIONSHIP, RoseNode.OBJECT);
       superClassList.addNode(inheritanceRelation);
       inheritanceRelation.addNode(new RoseNode(RoseStrings.QUID, formatAttributeValue(getNewQuid()), RoseNode.STRING));
-      inheritanceRelation.addNode(new RoseNode(RoseStrings.SUPPLIER, formatAttributeValue(superClass.getQualifiedName()), RoseNode.STRING));
+      inheritanceRelation.addNode(new RoseNode(RoseStrings.SUPPLIER, formatAttributeValue(superClassifier.getQualifiedName()), RoseNode.STRING));
 
-      String quid = (String)quidTable.get(superClass.getQualifiedName());
+      String quid = (String)quidTable.get(superClassifier.getQualifiedName());
       if(quid != null) inheritanceRelation.addNode(new RoseNode(RoseStrings.QUIDU, quid, RoseNode.STRING));
     }
   }
@@ -860,7 +935,7 @@ public class RoseMdaVisitor implements RoseVisitor {
     // update stereotype
     setOrAddAttribute(roseNode, RoseStrings.STEREOTYPE, element.getStereotype());
     // update visibility
-    if(!Util.getType(roseNode.getValue()).equals(RoseStrings.ASSOCIATION)) {
+    if(!(Util.getType(roseNode.getValue()).equals(RoseStrings.ASSOCIATION) || Util.getType(roseNode.getValue()).equals("UseCase"))) {
       setOrAddAttribute(roseNode, RoseStrings.EXPORTCONTROL, toRoseVisibility(element.getVisibility()));
     }
     
@@ -927,7 +1002,7 @@ public class RoseMdaVisitor implements RoseVisitor {
   }
   
   public RoseNode addUnitReferenceList(RoseNode roseNode) {
-    if(roseNode == null || !(roseNode.getKey().equals("") || roseNode.getKey().equals(RoseStrings.ROOT_CATEGORY)) || !Util.getType(roseNode.getValue()).equals(RoseStrings.CLASS_CATEGORY)) return null;
+    if(roseNode == null || !(roseNode.getKey().equals("") || roseNode.getKey().equals(RoseStrings.ROOT_CATEGORY) || roseNode.getKey().equals(RoseStrings.ROOT_USECASE_PACKAGE)) || !Util.getType(roseNode.getValue()).equals(RoseStrings.CLASS_CATEGORY)) return null;
     RoseNode node = roseNode.findNodeWithValue(RoseStrings.UNIT_REFERENCE_LIST);
     if(node != null && node.getKey().equals(RoseStrings.LOGICAL_MODELS)) return node;
     node = new RoseNode(RoseStrings.LOGICAL_MODELS, RoseStrings.UNIT_REFERENCE_LIST, RoseNode.LIST);
@@ -952,6 +1027,16 @@ public class RoseMdaVisitor implements RoseVisitor {
     String quid = formatAttributeValue(getNewQuid());
     node.addNode(new RoseNode(RoseStrings.QUID, quid, RoseNode.STRING));
     quidTable.put(RoseStrings.LOGICAL_VIEW, quid);
+    return node;
+  }
+  
+  public RoseNode addRoseRootUseCaseCategory(RoseNode roseNode) {
+    if(roseNode == null || !roseNode.getKey().equals("") || !Util.getType(roseNode.getValue()).equals(RoseStrings.DESIGN)) return null;
+    RoseNode node = new RoseNode(RoseStrings.ROOT_USECASE_PACKAGE, RoseStrings.CLASS_CATEGORY + " " + formatAttributeValue(RoseStrings.USE_CASE_VIEW), RoseNode.OBJECT);
+    roseNode.addNode(node);
+    String quid = formatAttributeValue(getNewQuid());
+    node.addNode(new RoseNode(RoseStrings.QUID, quid, RoseNode.STRING));
+    quidTable.put(RoseStrings.USE_CASE_VIEW, quid);
     return node;
   }
   
@@ -1036,6 +1121,16 @@ public class RoseMdaVisitor implements RoseVisitor {
     }
     
     return roseAssociation;
+  }
+  
+  public RoseNode addRoseUseCase(RoseNode node, String name, String qualifiedName) {
+    node = addUnitReferenceList(node);
+    RoseNode roseUseCase = new RoseNode("", "UseCase "+formatAttributeValue(name), RoseNode.OBJECT);
+    node.addNode(roseUseCase);
+    String quid = formatAttributeValue(getNewQuid());
+    roseUseCase.addNode(new RoseNode(RoseStrings.QUID, quid, RoseNode.STRING));
+    quidTable.put(qualifiedName, quid);
+    return roseUseCase;
   }
   
   public RoseNode createTaggedValue(TaggedValue tag) {
@@ -1164,6 +1259,7 @@ public class RoseMdaVisitor implements RoseVisitor {
     assert(qualifiedName != null);
     MetaClassifier temp = findDatatype(qualifiedName);
     if(temp == null) temp = findClass(qualifiedName);
+    if(temp == null) temp = findUseCase(qualifiedName);
     return temp;
   }
   
@@ -1235,6 +1331,29 @@ public class RoseMdaVisitor implements RoseVisitor {
     return null;
   }
   
+  /**
+   * Find a use case within the MetaModel with passed qualified name.
+   * @param qualifiedName of the MetaUseCase to be looked up.
+   * @return MetaUseCase if found, otherwise null.
+   */
+  protected MetaUseCase findUseCase(String qualifiedName) {
+    assert(qualifiedName != null);
+    qualifiedName = convertQualifiedName(qualifiedName);
+    for(MetaUseCase useCase : model.getUseCases()) {
+      if(useCase.getName().equals(qualifiedName)) {
+        return useCase;
+      }
+    }
+    for(MetaPackage pack : model.getPackages()) {
+      for(MetaUseCase useCase : pack.getUseCases()) {
+        if(useCase.getQualifiedName().equals(qualifiedName)) {
+          return useCase;
+        }
+      }
+    }
+    return null;
+  }
+  
   protected String convertQualifiedName(String qualifiedName) {
     assert(qualifiedName != null);
     // replace all :: by .
@@ -1244,6 +1363,7 @@ public class RoseMdaVisitor implements RoseVisitor {
       idx = qualifiedName.indexOf("::", 0);
     }
     if(qualifiedName.startsWith(RoseStrings.LOGICAL_VIEW)) qualifiedName = qualifiedName.substring(RoseStrings.LOGICAL_VIEW.length()+1);
+    if(qualifiedName.startsWith(RoseStrings.USE_CASE_VIEW)) qualifiedName = qualifiedName.substring(RoseStrings.USE_CASE_VIEW.length()+1);
     return qualifiedName;
   }
   
@@ -1281,7 +1401,7 @@ public class RoseMdaVisitor implements RoseVisitor {
       roseNode = roseNode.getParent();
       String currentValue = roseNode.getValue(); 
       if(Util.getType(currentValue).equals(RoseStrings.CLASS_CATEGORY)) {
-        if(Util.getName(currentValue).equals(RoseStrings.LOGICAL_VIEW)) break;
+        if(Util.getName(currentValue).equals(RoseStrings.LOGICAL_VIEW) || Util.getName(currentValue).equals(RoseStrings.USE_CASE_VIEW)) break;
         temp = Util.getName(currentValue) + "." + temp;
       } else if(Util.getType(currentValue).equals(RoseStrings.CLASS)) {
         temp = Util.getName(currentValue) + "." + temp;

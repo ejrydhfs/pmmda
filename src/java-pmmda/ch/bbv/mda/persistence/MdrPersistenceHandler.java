@@ -24,6 +24,8 @@ import ch.bbv.mda.persistence.mdr.MdrLoader;
 import ch.bbv.mda.persistence.mdr.MdrUmlModel;
 import ch.bbv.mda.persistence.nsuml.ArgoWriter;
 
+import com.jgoodies.validation.ValidationResult;
+
 public class MdrPersistenceHandler implements PersistenceHandler {
     /**
      * Logger for all instances of the class.
@@ -48,7 +50,7 @@ public class MdrPersistenceHandler implements PersistenceHandler {
         mdaTransformer = new Mda2MdrTransformer();
     }
 
-    public MetaModel readModel(File file) throws PersistenceException {
+    public MetaModel readModel(File file, ValidationResult vResults) throws PersistenceException {
         MetaModel metaModel = new MetaModel();
         try {
             UmlPackage uml = mdrTransformer.loadArgoModel(file);
@@ -65,7 +67,7 @@ public class MdrPersistenceHandler implements PersistenceHandler {
         return metaModel;
     }
 
-    public void writeModel(MetaModel model, File file)
+    public void writeModel(MetaModel model, File file, ValidationResult vResults)
             throws PersistenceException {
 
             // file doesn't exists
@@ -112,8 +114,8 @@ public class MdrPersistenceHandler implements PersistenceHandler {
         }
     
 
-    public void updateModel(MetaModel model, File file) throws PersistenceException {
-        writeModel(model, file);   
+    public void updateModel(MetaModel model, File file, ValidationResult vResults) throws PersistenceException {
+        writeModel(model, file, vResults);   
     }
     
     /**

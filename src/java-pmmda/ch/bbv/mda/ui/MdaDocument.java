@@ -19,6 +19,8 @@ import ch.bbv.mda.persistence.PersistenceHandler;
 import ch.bbv.mda.persistence.PersistenceHandlerFactory;
 import ch.bbv.mda.pim.CodeTypeMgr;
 
+import com.jgoodies.validation.ValidationResult;
+
 /**
  * The document represents a document loaded in memory containing a MDA model
  * and associated resources.
@@ -55,14 +57,15 @@ public class MdaDocument extends ExplorerDocumentImpl implements
   /**
    * Loads the MDA model and initializes the associated resources.
    * @param file file containing the MDA model
+   * @param vResults warnings and errors discovered during load
    * @throws PersistenceException if model could not be written
    */
-  public void load(File file) throws PersistenceException {
+  public void load(File file, ValidationResult vResults) throws PersistenceException {
     assert file != null;
     PersistenceHandlerFactory factory = new PersistenceHandlerFactory();
     PersistenceHandler handler = factory.getHandler(file);
     assert (handler != null);
-    MetaModel loadedModel = handler.readModel(file);
+    MetaModel loadedModel = handler.readModel(file, vResults);
     if (loadedModel != null) {
       model = loadedModel;
     }
@@ -78,14 +81,15 @@ public class MdaDocument extends ExplorerDocumentImpl implements
 
   /**
    * Saves the MDA model and the associated resources.
+   * @param vResults warnings and errors during save operation.
    * @throws PersistenceException if model could not be written
    * @throws IOException if code values could not be written
    */
-  public void save() throws PersistenceException, IOException {
+  public void save(ValidationResult vResults) throws PersistenceException, IOException {
     PersistenceHandlerFactory factory = new PersistenceHandlerFactory();
     File file = getFile();
     PersistenceHandler handler = factory.getHandler(file);
-    handler.writeModel(model, file);
+    handler.writeModel(model, file, vResults);
     model.getCodeTypeMgr().saveAll();
     setNew(false);
     setModified(false);
@@ -95,10 +99,11 @@ public class MdaDocument extends ExplorerDocumentImpl implements
   /**
    * Saves the MDA model and the associated resources in the new file.
    * @param file file in which the model should be saved
+   * @param vResults warnings and errors during save as operation.
    * @throws PersistenceException if model could not be written
    * @throws IOException if code values could not be written
    */
-  public void saveAs(File file) throws PersistenceException, IOException {
+  public void saveAs(File file, ValidationResult vResults) throws PersistenceException, IOException {
     PersistenceHandlerFactory factory = new PersistenceHandlerFactory();
     CodeTypeMgr codeTypeMgr = model.getCodeTypeMgr();
     File root = codeTypeMgr.getRoot();
@@ -115,7 +120,7 @@ public class MdaDocument extends ExplorerDocumentImpl implements
     codeTypeMgr.setRoot(target);
     codeTypeMgr.saveAll();
     PersistenceHandler handler = factory.getHandler(file);
-    handler.writeModel(model, file);
+    handler.writeModel(model, file, vResults);
     model.setFilename(file.getAbsolutePath());
     setNew(false);
     setModified(false);

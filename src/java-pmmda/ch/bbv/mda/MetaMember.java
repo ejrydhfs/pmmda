@@ -125,17 +125,13 @@ public abstract class MetaMember extends MetaElement {
 
   /**
    * Returns the classifier instance of the member. The algorithm first looks at
-   * the datatypes and if not found at the classes.
+   * the datatypes and if not found at the classes, and last for use cases.
    * @return the classifier associated with the typename of the member if found
    *         otherwise null.
    */
   public MetaClassifier retrieveClassifier() {
     if (classifier == null) {
-      MetaModel model = getModel();
-      classifier = model.findDatatype(typeName);
-      if (classifier == null) {
-        classifier = model.findClass(typeName);
-      }
+      return getModel().findClassifier(typeName);
     }
     return classifier;
   }
