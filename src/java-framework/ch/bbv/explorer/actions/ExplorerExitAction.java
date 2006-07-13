@@ -36,8 +36,8 @@ public class ExplorerExitAction extends ExplorerGlobalActionImpl {
     lastResult = true;
     Explorer explorer = getExplorer();
     ExplorerDocument document = explorer.getDocument();
-    int choice = JOptionPane.YES_OPTION;
     if ((document != null) && document.isModified()) {
+      int choice = JOptionPane.YES_OPTION;
       choice = displayMessage(Messages.msgSaveChanges, document.getName());
       if (choice == JOptionPane.YES_OPTION) {
         if (document.isNew()) {
@@ -48,9 +48,11 @@ public class ExplorerExitAction extends ExplorerGlobalActionImpl {
           lastResult = explorer.getMenuBar().getStandardAction(
               ExplorerMenuBar.Names.SAVE).execute();
         }
+      } else if(choice == JOptionPane.CANCEL_OPTION) {
+      	lastResult = false;
       }
     }
-    if (choice != JOptionPane.CANCEL_OPTION) {
+    if (lastResult) {
       explorer.close();
     }
     return lastResult;
