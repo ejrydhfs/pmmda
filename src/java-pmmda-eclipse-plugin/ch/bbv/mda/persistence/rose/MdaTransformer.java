@@ -30,6 +30,7 @@ public class MdaTransformer {
       RoseMdaVisitor roseMdaVisitor = new RoseMdaVisitor(source);
       RoseWalker roseWalker = new RoseWalker(target);
       roseWalker.traverse(roseMdaVisitor);
+      roseMdaVisitor.deferredQuiduUpdate();
       roseMdaVisitor.processNewElements(target);
       roseMdaVisitor.deleteElements(target);
     }

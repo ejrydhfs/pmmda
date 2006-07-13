@@ -630,7 +630,9 @@ public class MdaRoseVisitor implements RoseVisitor
       boolean ref2Navigable = role2.isNavigable();
       // Adrian - tell user that an association is not added in case of no navigation set
       if(!(ref1Navigable || ref2Navigable)) {
-        warning("AssociationNotNavigable_message: "+referenceName);
+        TableObject obj1 = (TableObject)roseUtil.getQuidTable().get(ref1Quidu);
+        TableObject obj2 = (TableObject)roseUtil.getQuidTable().get(ref2Quidu);
+        warning("Association is not navigable - pmMDA cannot generate reasonable code for it: "+referenceName+" ("+obj1.getName()+" - "+obj2.getName()+" )");
       }
       if (ref1Navigable)
       {
@@ -2360,7 +2362,11 @@ public class MdaRoseVisitor implements RoseVisitor
     if(myClassName != null){
       myClass = (TableObject)roseUtil.getNameTable().get(myClassName);
     }
-    MetaClass mClass = (MetaClass)elements.get(struct);
+    MetaElement mElement = (MetaElement)elements.get(struct);
+    if(!(mElement instanceof MetaClass)) {
+    	return null;
+    }
+    MetaClass mClass = (MetaClass)mElement;
     //System.out.println("Relation: "+eReference.getName()+", from "+mClass.getName()+", to "+myClass.getName());
     //System.out.println("          "+eReference.getLowerBound()+", "+eReference.getUpperBound());
     if(mClass != null && myClass != null){

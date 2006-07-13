@@ -29,6 +29,7 @@ public class RoseMdaVisitor implements RoseVisitor {
   protected ArrayList<Object[]> realizeTable = new ArrayList<Object[]>(); // holds new realize relations
   private List<ItemToDelete> itemsToDelete;
   protected Map quidTable = new HashMap(); // holds quids of classes - used for type references (qualified name : quid with surrounding "")
+  protected ArrayList<Object[]> updateQuiduLaterTable = new ArrayList<Object[]>(); // holds qualifiedTypeNames and roseNodes. The type names cannot be obtained at the time processed. Hence we have to process them at the end.
   protected ItemFactory itemFactory = CartridgeFactory.getInstance().getItemFactory();
   
   public RoseMdaVisitor(MetaModel source) {
@@ -262,7 +263,7 @@ public class RoseMdaVisitor implements RoseVisitor {
   protected RoseNode visitUseCase(RoseNode roseNode, String roseNodeValue, String objectKey, String objectName, Object parent) {
     // find classifier in model
     MetaClassifier element = findClassifier(roseNode);
-    if(!(element instanceof MetaUseCase)) return roseNode;
+    if(element != null && !(element instanceof MetaUseCase)) return roseNode;
     // if found then synchronize package
     if(element != null) {
       updateRoseUseCase(element, roseNode);
@@ -462,9 +463,13 @@ public class RoseMdaVisitor implements RoseVisitor {
       if(quid != null) roseNode.addNode(new RoseNode(RoseStrings.QUIDU, quid, RoseNode.STRING));
     } else {
       type.setValue(formatAttributeValue(unqualifyName(metaProperty.getTypeName())));
-      RoseNode quidu = roseNode.findNodeWithKey(RoseStrings.QUIDU);
-      if(quidu != null) roseNode.deleteNode(quidu);
-      if(quid != null) roseNode.addNode(new RoseNode(RoseStrings.QUIDU, quid, RoseNode.STRING));
+      if(quid != null) {
+        RoseNode quidu = roseNode.findNodeWithKey(RoseStrings.QUIDU);
+        if(quidu != null) roseNode.deleteNode(quidu);
+      	roseNode.addNode(new RoseNode(RoseStrings.QUIDU, quid, RoseNode.STRING));
+      } else {
+      	updateQuiduLater(roseNode, metaProperty.getTypeName());
+      }
     }
     setOrAddAttribute(roseNode, RoseStrings.INITV, metaProperty.getInitialValue());
   }
@@ -492,6 +497,10 @@ public class RoseMdaVisitor implements RoseVisitor {
     MetaIndexedProperty metaProperty = null;
     MetaClassifier metaClass1 = findClassifier(Util.getName(supplier1.getValue()));
     MetaClassifier metaClass2 = findClassifier(Util.getName(supplier2.getValue()));
+    // if one of the classifier is a use case then we do not process this relation (TODO: if one can manipulate usecases and relations within pmMDA then change here).
+    if(metaClass1 instanceof MetaUseCase || metaClass2 instanceof MetaUseCase) {
+    	return roseNode;
+    }
     if(metaClass1 != null && metaClass2 != null) { // if one is null then a class has been deleted and the association is dangling -> delete it
       if(metaClass1 instanceof MetaClass) {
         for(MetaIndexedProperty property : ((MetaClass)metaClass1).getIndexedProperties()) {
@@ -566,9 +575,13 @@ public class RoseMdaVisitor implements RoseVisitor {
       navigableSide.addNode(new RoseNode(RoseStrings.SUPPLIER, formatAttributeValue(((MetaClass)metaProperty.getContext()).getQualifiedName()), RoseNode.STRING));
       if(quid != null) navigableSide.addNode(new RoseNode(RoseStrings.QUIDU, quid, RoseNode.STRING));
     } else {
-      RoseNode quidu = navigableSide.findNodeWithKey(RoseStrings.QUIDU);
-      if(quidu != null) navigableSide.deleteNode(quidu);
-      if(quid != null) navigableSide.addNode(new RoseNode(RoseStrings.QUIDU, quid, RoseNode.STRING));
+      if(quid != null) {
+        RoseNode quidu = navigableSide.findNodeWithKey(RoseStrings.QUIDU);
+        if(quidu != null) navigableSide.deleteNode(quidu);
+      	navigableSide.addNode(new RoseNode(RoseStrings.QUIDU, quid, RoseNode.STRING));
+      } else {
+      	updateQuiduLater(navigableSide, metaProperty.getTypeName());
+      }
     }
   }
   
@@ -626,9 +639,13 @@ public class RoseMdaVisitor implements RoseVisitor {
       navigableSide.addNode(new RoseNode(RoseStrings.SUPPLIER, formatAttributeValue(((MetaClass)metaProperty.getContext()).getQualifiedName()), RoseNode.STRING));
       if(quid != null) navigableSide.addNode(new RoseNode(RoseStrings.QUIDU, quid, RoseNode.STRING));
     } else {
-      RoseNode quidu = navigableSide.findNodeWithKey(RoseStrings.QUIDU);
-      if(quidu != null) navigableSide.deleteNode(quidu);
-      if(quid != null) navigableSide.addNode(new RoseNode(RoseStrings.QUIDU, quid, RoseNode.STRING));
+      if(quid != null) {
+        RoseNode quidu = navigableSide.findNodeWithKey(RoseStrings.QUIDU);
+        if(quidu != null) navigableSide.deleteNode(quidu);
+      	navigableSide.addNode(new RoseNode(RoseStrings.QUIDU, quid, RoseNode.STRING));
+      } else {
+      	updateQuiduLater(navigableSide, metaProperty.getTypeName());
+      }
     }
   }
 
@@ -1452,6 +1469,29 @@ public class RoseMdaVisitor implements RoseVisitor {
     RoseNode quid = roseNode.findNodeWithKey(RoseStrings.QUID);
     if(quid != null && quid.getValue() != null) {
       quidTable.put(qualifiedName, quid.getValue());
+    }
+  }
+
+  protected void updateQuiduLater(RoseNode roseNode, String qualifiedTypeName) {
+    Object[] listEntry = { qualifiedTypeName, roseNode };
+  	updateQuiduLaterTable.add(listEntry);
+  }
+
+  /**
+   * The RoseMdaVisitor visits the model sequentially. Thereof types of propertis might not yet been visited at the time the property is visited.
+   * Properties can only be updated partially at that time. The remainder (link to the type - set the correct quidu) is done in here. Please
+   * call this method after visiting of the rose model is complete.
+   */
+  public void deferredQuiduUpdate() {
+    for(Object[] listEntry : updateQuiduLaterTable) {
+    	String qualifiedTypeName = (String)listEntry[0];
+    	RoseNode roseNode = (RoseNode)listEntry[1];
+      String quid = (String)quidTable.get(qualifiedTypeName);
+      if(quid != null) {
+        RoseNode quidu = roseNode.findNodeWithKey(RoseStrings.QUIDU);
+        if(quidu != null) roseNode.deleteNode(quidu);
+      	roseNode.addNode(new RoseNode(RoseStrings.QUIDU, quid, RoseNode.STRING));
+      }
     }
   }
   
