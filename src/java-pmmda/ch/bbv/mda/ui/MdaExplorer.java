@@ -300,6 +300,8 @@ public class MdaExplorer extends Explorer {
         "marcel.baumann@computer.org", "System Architect"));
     contributors.add(new Contributor("Alexandra Junghans",
         "junghana@student.ethz.ch", "Reviewer"));
+    contributors.add(new Contributor("Adrian Bachofen",
+        "adrian.bachofen@bbv.ch", "Petal Files, .NET"));
     return contributors;
   }
 
