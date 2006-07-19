@@ -11,11 +11,10 @@ import java.util.regex.Pattern;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JTextField;
+import javax.swing.tree.TreeNode;
 
-import ch.bbv.mda.MetaIndexedProperty;
-import ch.bbv.mda.MetaProperty;
-import ch.bbv.mda.Multiplicity;
-import ch.bbv.mda.VisibilityCode;
+import ch.bbv.explorer.ExplorerNode;
+import ch.bbv.mda.*;
 import ch.bbv.mda.validation.IdentifierValidator;
 
 import com.jgoodies.forms.builder.DefaultFormBuilder;
@@ -82,6 +81,12 @@ public class MetaPropertyView extends MetaItemView {
   public void populateView() {
     super.populateView();
     MetaProperty model = (MetaProperty) getDataObject();
+    if(model.getContext() == null) {
+    	TreeNode treeNode = getNode().getParent();
+    	if(treeNode instanceof ExplorerNode) {
+      	model.setContext(((MetaElement)((ExplorerNode)treeNode).getDataObject()).getContext());
+    	}
+    }
     type.setText(model.getTypeName());
     type.setBackground(Color.WHITE);
     volatiles.setSelected(model.isVolatile());
