@@ -7,6 +7,7 @@ package ch.bbv.explorer;
 
 import java.awt.BorderLayout;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.JFrame;
@@ -22,7 +23,11 @@ import org.flexdock.docking.defaults.DefaultDockingPort;
 
 import ch.bbv.application.Library;
 import ch.bbv.application.VersionId;
-import ch.bbv.dog.*;
+import ch.bbv.dog.AbstractVisitorFunctor;
+import ch.bbv.dog.DataObject;
+import ch.bbv.dog.DataObjectMgr;
+import ch.bbv.dog.DataObjectType;
+import ch.bbv.dog.LightweightObject;
 import ch.bbv.explorer.components.ExplorerWindowAdapter;
 import ch.bbv.explorer.components.ValidationPanel;
 import ch.bbv.explorer.resources.Messages;
@@ -226,21 +231,19 @@ public abstract class Explorer implements ExplorerNodeOwner {
    */
   public abstract ExplorerDocument getDocument();
 
-  /**
-   * Returns the user interface node type factory of the explorer.
-   * @return the factory of the explorer
-   */
   public UiNodeTypeFactory getNodeTypeFactory() {
     return factory;
   }
 
-  /**
-   * Returns the data object manager used in the explorer.
-   * @return the data object manager used in the explorer
-   */
+ 
   public DataObjectMgr getManager() {
     return manager;
   }
+  
+  public   Comparator getComparator() {
+    return null;
+  }
+  
 
   /**
    * Returns the validation panel of the explorer.
@@ -336,10 +339,6 @@ public abstract class Explorer implements ExplorerNodeOwner {
     DockingManager.undock(tree.getPane());
   }
 
-  /**
-   * Returns the tree of the explorer.
-   * @return the graphical tree component of the explorer
-   */
   public JTree getTree() {
     return tree.getTree();
   }

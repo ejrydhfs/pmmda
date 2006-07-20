@@ -60,10 +60,12 @@ public interface ExplorerNodeOwner {
    * @return the graphical tree component of the owner
    */
   JTree getTree();
-  
+
   /**
-   * Returns a comparer or null. The comparer is used to order childs of ExplorerNodes. If null then the comparable interface of ExplorerNode is used to sort.
-   * @return Comparator
+   * Returns a comparer or null. The comparer is used to order childs of
+   * ExplorerNodes. If null then the comparable interface of ExplorerNode is
+   * used to sort.
+   * @return the requested comparator if found otherwise null
    */
   Comparator getComparator();
 }
