@@ -443,14 +443,6 @@ public class MetaClass extends MetaClassifier {
   }
 
   /**
-   * Returns the package name of the class.
-   * @return package name of the class.
-   */
-  public String packageName() {
-    return getContext().getName();
-  }
-
-  /**
    * Implements the visitor pattern.
    * @param visitor visitor to process.
    */
@@ -470,17 +462,19 @@ public class MetaClass extends MetaClassifier {
 
   /**
    * Returns the package containing the class.
-   * @return the package owning the class.
+   * @return the package context in which the class is declared
    */
   public MetaPackage retrievePackage() {
-    if(this.isNestedClass()) return ((MetaClass)getContext()).retrievePackage();
+    if (isNestedClass()) {
+      return ((MetaClass) getContext()).retrievePackage();
+    }
     return (MetaPackage) getContext();
   }
 
   /**
    * Retrieves all the class extended in this class. In Java the list can
    * contains at most one item.
-   * @return list of all extended implemented in the class.
+   * @return list of all extended implemented in the class
    */
   public List<MetaClass> retrieveAncestors() {
     List<MetaClass> list = new ArrayList<MetaClass>();
