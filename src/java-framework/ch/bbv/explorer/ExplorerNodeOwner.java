@@ -5,6 +5,8 @@
  */
 package ch.bbv.explorer;
 
+import java.util.Comparator;
+
 import javax.swing.JTree;
 
 import ch.bbv.dog.DataObjectMgr;
@@ -58,4 +60,10 @@ public interface ExplorerNodeOwner {
    * @return the graphical tree component of the owner
    */
   JTree getTree();
+  
+  /**
+   * Returns a comparer or null. The comparer is used to order childs of ExplorerNodes. If null then the comparable interface of ExplorerNode is used to sort.
+   * @return Comparator
+   */
+  Comparator getComparator();
 }

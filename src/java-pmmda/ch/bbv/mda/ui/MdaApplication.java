@@ -23,6 +23,7 @@ import ch.bbv.dog.EmptyHandler;
 import ch.bbv.dog.LightweightObjectHandlerImpl;
 import ch.bbv.dog.validation.Validator;
 import ch.bbv.explorer.Explorer;
+import ch.bbv.mda.MetaElementComparator;
 import ch.bbv.mda.generators.Cartridge;
 import ch.bbv.mda.generators.CartridgeFactory;
 import ch.bbv.mda.validation.RulesFactory;
@@ -59,7 +60,7 @@ public class MdaApplication extends Application {
   /**
    * The explorer visualizing pmMDA
    */
-  private static Explorer explorer;
+  private static MdaExplorer explorer;
 
   /**
    * Entry point of the application.
@@ -115,6 +116,7 @@ public class MdaApplication extends Application {
       resourcesManager.registerResources(cartridge);
     }
     explorer = MdaExplorer.create(args);
+    explorer.setComparator(new MetaElementComparator());
   }
 
   /**

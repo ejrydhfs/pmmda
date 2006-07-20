@@ -7,8 +7,8 @@ package ch.bbv.mda.ui;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 import java.util.prefs.Preferences;
 
 import javax.swing.JMenu;
@@ -42,7 +42,6 @@ import ch.bbv.mda.generators.Cartridge;
 import ch.bbv.mda.generators.CartridgeFactory;
 import ch.bbv.mda.resources.MessagesMda;
 import ch.bbv.mda.ui.actions.*;
-import ch.bbv.utilities.ResourceUtilities;
 
 /**
  * The MDA explorer provides a user interface to view and manipulate model
@@ -84,6 +83,12 @@ public class MdaExplorer extends Explorer {
   private String[] arguments;
 
   private ExplorerGlobalAction generateAllAction;
+
+  /**
+   * Comparator used to sort children of this explorer node. If null then the Comparable Interface of this class
+   * will be used.
+   */
+  private Comparator comparator = null;
 
   /**
    * Creates a new MDA explorer.
@@ -140,13 +145,29 @@ public class MdaExplorer extends Explorer {
     assert document != null;
     this.document = document;
     MetaModel model = document.getModel();
-    TreeConstructor constructor = new TreeConstructor(getNodeTypeFactory());
+    TreeConstructor constructor = new TreeConstructor(getNodeTypeFactory(), this);
     model.accept(constructor);
     setRoot(constructor.getRoot());
     getValidationPanel().clear();
     getMenuBar().documentChanged(document);
   }
 
+  /**
+   * Sets the comparator used to sort the explorer nodes. Children of this object will be sorted according to passed comparator.
+   * @param comparator
+   */
+  public void setComparator(Comparator comparator) {
+  	this.comparator = comparator;
+  }
+
+  /**
+   * Returns a comparer or null. The comparer is used to order childs of ExplorerNodes. If null then the comparable interface of ExplorerNode is used to sort.
+   * @return Comparator
+   */
+  public Comparator getComparator() {
+  	return comparator;
+  }
+  
   /**
    * Initializes the pmmda explorer.
    */
