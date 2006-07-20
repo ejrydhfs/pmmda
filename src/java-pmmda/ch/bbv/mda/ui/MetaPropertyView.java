@@ -84,7 +84,7 @@ public class MetaPropertyView extends MetaItemView {
     if(model.getContext() == null) {
     	TreeNode treeNode = getNode().getParent();
     	if(treeNode instanceof ExplorerNode) {
-      	model.setContext(((MetaElement)((ExplorerNode)treeNode).getDataObject()).getContext());
+      	model.setContext((MetaElement)((ExplorerNode)treeNode).getDataObject());
     	}
     }
     type.setText(model.getTypeName());
