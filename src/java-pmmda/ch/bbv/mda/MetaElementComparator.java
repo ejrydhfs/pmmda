@@ -6,6 +6,7 @@
 package ch.bbv.mda;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 
 import ch.bbv.explorer.ExplorerNode;
@@ -27,9 +28,7 @@ public class MetaElementComparator implements Comparator {
 																					MetaMethod.class, MetaReturn.class, TagDefinition.class, MetaParameter.class, MetaException.class, MetaElement.class};
 
 	static {
-		for(Class clazz : classOrder) {
-			clazzes.add(clazz);
-		}
+		clazzes.addAll(Arrays.asList(classOrder));
 	}
 	
 	//@Override
