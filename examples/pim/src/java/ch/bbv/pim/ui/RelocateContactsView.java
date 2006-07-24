@@ -5,6 +5,8 @@
  */
 package ch.bbv.pim.ui;
 
+import java.util.Comparator;
+
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -105,5 +107,9 @@ public class RelocateContactsView extends JPanel implements ExplorerNodeOwner {
   }
 
   public void nodeRemoved(ExplorerNode parent, ExplorerNode node, int index) {
+  }
+  
+  public Comparator getComparator() {
+  	return null;
   }
 }
