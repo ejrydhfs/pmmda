@@ -2,13 +2,12 @@
    NOT add code outside the marked zones. All changes outside the marked areas 
    will be discarded during the next execution of the MDA generator. 
 */
-   
+
 package ch.bbv.pim;
 
+import ch.bbv.dog.DataObject;
 import java.util.HashSet;
 import java.util.Set;
-
-import ch.bbv.dog.DataObject;
 
 /** 
  * The cyclic visitor is a wrapper class allowing to use visitors with graph
@@ -28,7 +27,7 @@ public class CyclicVisitor implements Visitor {
   
   /**
    * Constructor of the class, which initializes the functor.
-   * @param delegate delegate visitor to execute in protected mode.
+   * @param delegate delegate visitor to execute in protected mode
    */
   public CyclicVisitor(Visitor delegate) {
     this.delegate = delegate;
@@ -50,24 +49,6 @@ public class CyclicVisitor implements Visitor {
 	visitedObjects.clear();
   }
       
-  public void visit(Organization item) {
-    if (!visitedObjects.contains(item)) {
-      visitedObjects.add(item);  
-      delegate.visit(item);
-    }
-  }
-  public void visit(Contact item) {
-    if (!visitedObjects.contains(item)) {
-      visitedObjects.add(item);  
-      delegate.visit(item);
-    }
-  }
-  public void visit(Address item) {
-    if (!visitedObjects.contains(item)) {
-      visitedObjects.add(item);  
-      delegate.visit(item);
-    }
-  }
   public void visit(JournalEntry item) {
     if (!visitedObjects.contains(item)) {
       visitedObjects.add(item);  
@@ -80,7 +61,25 @@ public class CyclicVisitor implements Visitor {
       delegate.visit(item);
     }
   }
+  public void visit(Organization item) {
+    if (!visitedObjects.contains(item)) {
+      visitedObjects.add(item);  
+      delegate.visit(item);
+    }
+  }
   public void visit(AddressBook item) {
+    if (!visitedObjects.contains(item)) {
+      visitedObjects.add(item);  
+      delegate.visit(item);
+    }
+  }
+  public void visit(Contact item) {
+    if (!visitedObjects.contains(item)) {
+      visitedObjects.add(item);  
+      delegate.visit(item);
+    }
+  }
+  public void visit(Address item) {
     if (!visitedObjects.contains(item)) {
       visitedObjects.add(item);  
       delegate.visit(item);

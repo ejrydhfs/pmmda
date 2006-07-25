@@ -6,9 +6,20 @@
  */
 package ch.bbv.explorer;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.Stack;
 
-import ch.bbv.dog.*;
+import ch.bbv.dog.AbstractVisitorFunctor;
+import ch.bbv.dog.DataObject;
+import ch.bbv.dog.DataObjectId;
+import ch.bbv.dog.DoFunctor;
+import ch.bbv.dog.HasId;
+import ch.bbv.dog.LightweightObject;
+import ch.bbv.dog.LwFunctor;
 
 /**
  * The tree construct functor constructs the graph of explorer nodes
@@ -31,8 +42,8 @@ public class TreeConstructFunctor implements DoFunctor, LwFunctor {
   private Map<DataObjectId, ExplorerNode> nodes;
 
   /**
-   * Nodes are ordered with their traversal order to suppor the implementation of
-   * homomorphism based algorithms.
+   * Nodes are ordered with their traversal order to suppor the implementation
+   * of homomorphism based algorithms.
    */
   private Map<Integer, ExplorerNode> orderedNodes;
 

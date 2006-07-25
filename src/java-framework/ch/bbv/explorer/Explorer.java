@@ -7,7 +7,6 @@ package ch.bbv.explorer;
 
 import java.awt.BorderLayout;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.JFrame;
@@ -235,15 +234,9 @@ public abstract class Explorer implements ExplorerNodeOwner {
     return factory;
   }
 
- 
   public DataObjectMgr getManager() {
     return manager;
   }
-  
-  public   Comparator getComparator() {
-    return null;
-  }
-  
 
   /**
    * Returns the validation panel of the explorer.

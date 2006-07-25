@@ -75,6 +75,11 @@ public class UiNodeTypeImpl implements UiNodeType {
    */
   private UiNodeTypeFactory factory;
 
+  /**
+   * The comparator for the explorer nodes of this type.
+   */
+  private Comparator<ExplorerNode> comparator;
+  
   private Map<String, Object> parameters;
 
   /**
@@ -287,6 +292,14 @@ public class UiNodeTypeImpl implements UiNodeType {
     return parameters.get(key);
   }
 
+  public Comparator<ExplorerNode> getComparator() {
+    return comparator;
+  }
+  
+  public void setComparator(Comparator<ExplorerNode> comparator) {
+    this.comparator = comparator;
+  }
+  
   void setFactory(UiNodeTypeFactory factory) {
     this.factory = factory;
   }

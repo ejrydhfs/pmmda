@@ -7,13 +7,30 @@
 package ch.bbv.mda.ui;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import ch.bbv.dog.DataObjectMgr;
 import ch.bbv.dog.DataObjectType;
-import ch.bbv.explorer.*;
+import ch.bbv.explorer.AbstractTypeFactory;
+import ch.bbv.explorer.ChildrenIconSelector;
+import ch.bbv.explorer.ExplorerNode;
+import ch.bbv.explorer.PopupSelectorDefault;
+import ch.bbv.explorer.SimpleIconSelector;
+import ch.bbv.explorer.UiField;
+import ch.bbv.explorer.UiNodeTypeFactory;
+import ch.bbv.explorer.UiNodeTypeImpl;
+import ch.bbv.explorer.UiNodeViewType;
 import ch.bbv.explorer.views.NodeTableView;
-import ch.bbv.mda.*;
+import ch.bbv.mda.MetaClass;
+import ch.bbv.mda.MetaDatatype;
+import ch.bbv.mda.MetaElementComparator;
+import ch.bbv.mda.MetaIndexedProperty;
+import ch.bbv.mda.MetaModel;
+import ch.bbv.mda.MetaPackage;
+import ch.bbv.mda.MetaProperty;
+import ch.bbv.mda.Stereotype;
+import ch.bbv.mda.VisitorFunctor;
 import ch.bbv.mda.graphs.ClassGraphView;
 
 /**
@@ -23,6 +40,12 @@ import ch.bbv.mda.graphs.ClassGraphView;
  * @version $Revision$
  */
 public class TypeFactory extends AbstractTypeFactory {
+
+  /**
+   * The comparator for all elements of the MDA model.6Fs
+   */
+  private static Comparator<ExplorerNode> comparator = new MetaElementComparator();
+
   /**
    * Constructor of the class.
    * @param factory the user interface node type factory to use
@@ -52,7 +75,7 @@ public class TypeFactory extends AbstractTypeFactory {
     DataObjectType type = new DataObjectType(MetaModel.class, MetaModel.class,
         MetaModel.class, VisitorFunctor.class, VisitorFunctor.class, null);
     type.setRoot(true);
-    
+
     UiNodeTypeImpl nodeType = new UiNodeTypeImpl(type, "name",
         MetaModelView.class);
     addRelation(nodeType, "packages", MetaPackage.class, true, true);
@@ -64,6 +87,7 @@ public class TypeFactory extends AbstractTypeFactory {
     addField(params, "name", String.class, true);
     addField(params, "system", Boolean.TYPE, false);
     addField(params, "description", String.class, true);
+    nodeType.setComparator(comparator);
     nodeType.registerView(new UiNodeViewType("default", nodeType,
         NodeTableView.class, params, true));
     register(type, nodeType, new PopupSelectorDefault(nodeType),
@@ -78,7 +102,7 @@ public class TypeFactory extends AbstractTypeFactory {
         MetaPackage.class, MetaPackage.class, VisitorFunctor.class,
         VisitorFunctor.class, null);
     type.setRoot(true);
-    
+
     UiNodeTypeImpl nodeType = new UiNodeTypeImpl(type, "name",
         MetaPackageView.class);
     addRelation(nodeType, "classes", MetaClass.class, true, true);
@@ -86,6 +110,7 @@ public class TypeFactory extends AbstractTypeFactory {
     List<UiField> params = new ArrayList<UiField>();
     addField(params, "name", String.class, true);
     addField(params, "description", String.class, true);
+    nodeType.setComparator(comparator);
     nodeType.registerView(new UiNodeViewType("default", nodeType,
         NodeTableView.class, params, true));
     nodeType.registerView(new UiNodeViewType("class diagram", nodeType,
@@ -101,7 +126,7 @@ public class TypeFactory extends AbstractTypeFactory {
     DataObjectType type = new DataObjectType(MetaClass.class, MetaClass.class,
         MetaClass.class, VisitorFunctor.class, VisitorFunctor.class, null);
     type.setRoot(true);
-    
+
     UiNodeTypeImpl nodeType = new UiNodeTypeImpl(type, "name",
         MetaClassView.class);
     addRelation(nodeType, "properties", MetaProperty.class, true, true);
@@ -114,6 +139,7 @@ public class TypeFactory extends AbstractTypeFactory {
     addField(params, "description", String.class, true);
     nodeType.registerView(new UiNodeViewType("default", nodeType,
         NodeTableView.class, params, true));
+    nodeType.setComparator(comparator);
     nodeType.registerView(new UiNodeViewType("class diagram", nodeType,
         ClassGraphView.class, null, false));
     nodeType.registerView(new UiNodeViewType("code values", nodeType,
@@ -129,9 +155,10 @@ public class TypeFactory extends AbstractTypeFactory {
     DataObjectType type = new DataObjectType(MetaProperty.class,
         MetaProperty.class, MetaProperty.class, VisitorFunctor.class,
         VisitorFunctor.class, null);
-    
+
     UiNodeTypeImpl nodeType = new UiNodeTypeImpl(type, "name",
         MetaPropertyView.class);
+    nodeType.setComparator(comparator);
     nodeType.registerView(new UiNodeViewType("default", nodeType,
         NodeTableView.class, null, true));
     register(type, nodeType, new PopupSelectorDefault(nodeType),
@@ -145,9 +172,10 @@ public class TypeFactory extends AbstractTypeFactory {
     DataObjectType type = new DataObjectType(MetaIndexedProperty.class,
         MetaIndexedProperty.class, MetaIndexedProperty.class,
         VisitorFunctor.class, VisitorFunctor.class, null);
-    
+
     UiNodeTypeImpl nodeType = new UiNodeTypeImpl(type, "name",
         MetaPropertyView.class);
+    nodeType.setComparator(comparator);
     nodeType.registerView(new UiNodeViewType("default", nodeType,
         NodeTableView.class, null, true));
     register(type, nodeType, new PopupSelectorDefault(nodeType),
@@ -161,9 +189,10 @@ public class TypeFactory extends AbstractTypeFactory {
     DataObjectType type = new DataObjectType(MetaDatatype.class,
         MetaDatatype.class, MetaDatatype.class, VisitorFunctor.class,
         VisitorFunctor.class, null);
-    
+
     UiNodeTypeImpl nodeType = new UiNodeTypeImpl(type, "name",
         MetaDatatypeView.class);
+    nodeType.setComparator(comparator);
     nodeType.registerView(new UiNodeViewType("default", nodeType,
         NodeTableView.class, null, true));
     register(type, nodeType, new PopupSelectorDefault(nodeType),
@@ -177,9 +206,10 @@ public class TypeFactory extends AbstractTypeFactory {
     DataObjectType type = new DataObjectType(Stereotype.class,
         Stereotype.class, Stereotype.class, VisitorFunctor.class,
         VisitorFunctor.class, null);
-    
+
     UiNodeTypeImpl nodeType = new UiNodeTypeImpl(type, "name",
         StereotypeView.class);
+    nodeType.setComparator(comparator);
     nodeType.registerView(new UiNodeViewType("default", nodeType,
         NodeTableView.class, null, true));
     register(type, nodeType, new PopupSelectorDefault(nodeType),

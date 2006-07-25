@@ -1,6 +1,14 @@
 <codeType>
   <qualifiedName>ch.bbv.mda.pim.StorageKind</qualifiedName>
   <hierarchical>false</hierarchical>
+  <storageKind>
+    <code>0</code>
+    <sortOrder>1</sortOrder>
+    <active>true</active>
+    <description>code</description>
+    <shortDescription>code</shortDescription>
+  </storageKind>
+  <storageKindName>code</storageKindName>
   <values>
     <code>
       <name>CODE</name>

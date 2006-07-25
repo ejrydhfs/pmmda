@@ -5,6 +5,7 @@
 
 package ch.bbv.pim.lw;
 
+
 /* %% USER DEFINED DECLARATIONS START %% */
 /* %% USER DEFINED DECLARATIONS END   %% */
 
@@ -21,35 +22,35 @@ public interface LwVisitor {
   /** 
    * Returns the current depth in the graph when traversing it with the 
    * visitor. The depth is a positive integer with a minimal value of 1.
-   * @return the current depth of the visitor in the graph.
+   * @return the current depth of the visitor in the graph
    */
   int getDepth();
 
   /** 
    * Sets the current depth in the graph when traversing it with the visitor. 
    * The depth is a positive integer with a minimal value of 1.
-   * @param depth current depth of the visitor in the traversed graph.
+   * @param depth current depth of the visitor in the traversed graph
    */
   void setDepth(int depth);
 
   /** 
-   * Visits the class OrganizationLw as part of the visitor pattern.
-   * @param item item to visit.
-   */
-  void visit(OrganizationLw item);
-  /** 
-   * Visits the class ContactLw as part of the visitor pattern.
-   * @param item item to visit.
-   */
-  void visit(ContactLw item);
-  /** 
    * Visits the class PhoneNumberLw as part of the visitor pattern.
-   * @param item item to visit.
+   * @param item item to visit
    */
   void visit(PhoneNumberLw item);
   /** 
    * Visits the class AddressBookLw as part of the visitor pattern.
-   * @param item item to visit.
+   * @param item item to visit
    */
   void visit(AddressBookLw item);
+  /** 
+   * Visits the class ContactLw as part of the visitor pattern.
+   * @param item item to visit
+   */
+  void visit(ContactLw item);
+  /** 
+   * Visits the class OrganizationLw as part of the visitor pattern.
+   * @param item item to visit
+   */
+  void visit(OrganizationLw item);
 }

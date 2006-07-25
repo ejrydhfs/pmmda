@@ -5,12 +5,12 @@
    
 package ch.bbv.pim;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import ch.bbv.dog.DataObjectMgr;
 import ch.bbv.dog.DataObjectType;
 import ch.bbv.pim.lw.*;
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * The type factory provides meta information about all data objects and
@@ -28,7 +28,7 @@ public class TypeFactory {
   
   /** 
    * Constructor of the class.
-   * @param manager data object manager where the types should be created.
+   * @param manager data object manager where the types should be created
    */
   public TypeFactory(DataObjectMgr manager) {
     this.manager = manager;
@@ -40,8 +40,8 @@ public class TypeFactory {
   public void registerAllTypes() {
     createNodeTypeForOrganization();
     createNodeTypeForContact();
-    createNodeTypeForPhoneNumber();
     createNodeTypeForAddressBook();
+    createNodeTypeForPhoneNumber();
   }
   
 
@@ -68,16 +68,6 @@ public class TypeFactory {
   /** 
    * Creates a new data object type for the data object graph framework.
    */
-  public void createNodeTypeForPhoneNumber() {
-    DataObjectType type = new DataObjectType(PhoneNumberLw.class,
-      PhoneNumber.class, PhoneNumber.class, VisitorFunctor.class, 
-      LwVisitorFunctor.class, LwTransformer.class);
-    manager.register(type);
-  }
-
-  /** 
-   * Creates a new data object type for the data object graph framework.
-   */
   public void createNodeTypeForAddressBook() {
     DataObjectType type = new DataObjectType(AddressBookLw.class,
       AddressBook.class, AddressBook.class, VisitorFunctor.class, 
@@ -86,15 +76,22 @@ public class TypeFactory {
   }
 
   /** 
+   * Creates a new data object type for the data object graph framework.
+   */
+  public void createNodeTypeForPhoneNumber() {
+    DataObjectType type = new DataObjectType(PhoneNumberLw.class,
+      PhoneNumber.class, PhoneNumber.class, VisitorFunctor.class, 
+      LwVisitorFunctor.class, LwTransformer.class);
+    manager.register(type);
+  }
+
+  /** 
    * Returns the list of the classnames of all reference code types defined in 
    * the package.
-   * @return list of class names of all reference code types in the package.
+   * @return list of class names of all reference code types in the package
    */
   public List<String> getReferenceCodeTypes() {
     List<String> classnames = new ArrayList<String>();
-    classnames.add("ch.bbv.pim.JournalEntryType");
-    classnames.add("ch.bbv.pim.Country");
-    classnames.add("ch.bbv.pim.Language");
     return classnames;
   }
 }

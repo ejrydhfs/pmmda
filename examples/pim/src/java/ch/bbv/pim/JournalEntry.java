@@ -5,13 +5,14 @@
 
 package ch.bbv.pim;
 
+import ch.bbv.dog.DataObject;
 import java.beans.PropertyChangeListener;
 import java.beans.VetoableChangeListener;
 import java.lang.reflect.Field;
 import java.sql.Timestamp;
 import java.util.Date;
-
-import ch.bbv.dog.DataObject;
+import java.util.HashMap;
+import java.util.Map;
 
 /* %% USER DEFINED IMPORT START %% */
 /* %% USER DEFINED IMPORT END %% */
@@ -256,19 +257,11 @@ public class JournalEntry implements DataObject {
   /** 
    * Creates and returns a deep copy of the object and its descendants. The 
    * properties containing keys are not cloned because they are immutable.
-   * @return a deep copy of the instance.
+   * @return a deep copy of the instance
    */
   public JournalEntry copy() {
-    JournalEntry clone = null;
-    try {
-      clone = (JournalEntry)clone();
-    } catch (CloneNotSupportedException e) {
-      // impossible exception because data object is cloneable.
-      return null;
-    }
-    copy(clone);
-    clone.setModified(isModified());
-    return clone;
+    Map<Object, Object> copies = new HashMap<Object, Object>();
+    return copy(copies);
   }
 
   public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -333,10 +326,22 @@ public class JournalEntry implements DataObject {
   }
 
   /** 
-   * Copies deeply all the attributes of the class and its ancestors.
-   * @param clone the copy which deep copy should be generated
+   * Copies deeply all the attributes of the class and its ancestors. Multiple 
+   * references to the same data object are handled correctly.
+   * @param copies set of copied objects used to detect circular references
+   * @return the deep copy of the object
    */
-  protected void copy(JournalEntry clone) {
+  public JournalEntry copy(Map<Object, Object> copies) {
+    JournalEntry clone = (JournalEntry)copies.get(this);
+    if (clone == null) {
+      try {
+	    clone = (JournalEntry)clone();
+        copies.put(this, clone);
+      } catch (CloneNotSupportedException e) {
+	    // impossible exception because data object is cloneable.
+      }
+    }
+    return clone;
   }
 
   /** 

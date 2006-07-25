@@ -5,15 +5,12 @@
 
 package ch.bbv.pim;
 
+import ch.bbv.dog.DataObject;
 import java.beans.PropertyChangeListener;
 import java.beans.VetoableChangeListener;
 import java.lang.reflect.Field;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import ch.bbv.dog.DataObject;
+import java.util.*;
 
 /* %% USER DEFINED IMPORT START %% */
 /* %% USER DEFINED IMPORT END %% */
@@ -282,19 +279,11 @@ public class AddressBook implements DataObject {
   /** 
    * Creates and returns a deep copy of the object and its descendants. The 
    * properties containing keys are not cloned because they are immutable.
-   * @return a deep copy of the instance.
+   * @return a deep copy of the instance
    */
   public AddressBook copy() {
-    AddressBook clone = null;
-    try {
-      clone = (AddressBook)clone();
-    } catch (CloneNotSupportedException e) {
-      // impossible exception because data object is cloneable.
-      return null;
-    }
-    copy(clone);
-    clone.setModified(isModified());
-    return clone;
+    Map<Object, Object> copies = new HashMap<Object, Object>();
+    return copy(copies);
   }
 
   public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -359,14 +348,26 @@ public class AddressBook implements DataObject {
   }
 
   /** 
-   * Copies deeply all the attributes of the class and its ancestors.
-   * @param clone the copy which deep copy should be generated
+   * Copies deeply all the attributes of the class and its ancestors. Multiple 
+   * references to the same data object are handled correctly.
+   * @param copies set of copied objects used to detect circular references
+   * @return the deep copy of the object
    */
-  protected void copy(AddressBook clone) {
-    clone.organizations = new ArrayList<Organization>();
-    for (int i = 0; i < organizations.size(); i++) {
-      clone.organizations.add(organizations.get(i).copy());
+  public AddressBook copy(Map<Object, Object> copies) {
+    AddressBook clone = (AddressBook)copies.get(this);
+    if (clone == null) {
+      try {
+	    clone = (AddressBook)clone();
+        copies.put(this, clone);
+      } catch (CloneNotSupportedException e) {
+	    // impossible exception because data object is cloneable.
+      }
+      clone.organizations = new ArrayList<Organization>();
+      for (int i = 0; i < organizations.size(); i++) {
+        clone.organizations.add(organizations.get(i).copy(copies));
+      }
     }
+    return clone;
   }
 
   /** 

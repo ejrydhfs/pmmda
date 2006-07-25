@@ -5,10 +5,7 @@
 
 package ch.bbv.pim.lw;
 
-import ch.bbv.pim.AddressBook;
-import ch.bbv.pim.Contact;
-import ch.bbv.pim.Organization;
-import ch.bbv.pim.PhoneNumber;
+import ch.bbv.pim.*;
 
 /** 
  * The transformer is responsible to transform a tree of data objects into its
@@ -18,7 +15,7 @@ public class LwTransformer {
   /** 
    * Transforms a data object specific class into its lightweight representation.
    * @param item data object instance to synchronize.
-   * @return the lightweight representation of the data object instance.
+   * @return the lightweight representation of the data object instance
    */
   public static OrganizationLw transform(Organization item) {
     assert item != null;
@@ -30,7 +27,7 @@ public class LwTransformer {
   /** 
    * Transforms a data object specific class into its lightweight representation.
    * @param item data object instance to synchronize.
-   * @return the lightweight representation of the data object instance.
+   * @return the lightweight representation of the data object instance
    */
   public static ContactLw transform(Contact item) {
     assert item != null;
@@ -42,11 +39,11 @@ public class LwTransformer {
   /** 
    * Transforms a data object specific class into its lightweight representation.
    * @param item data object instance to synchronize.
-   * @return the lightweight representation of the data object instance.
+   * @return the lightweight representation of the data object instance
    */
-  public static PhoneNumberLw transform(PhoneNumber item) {
+  public static AddressBookLw transform(AddressBook item) {
     assert item != null;
-    PhoneNumberLw lw = new PhoneNumberLw(item.getId());
+    AddressBookLw lw = new AddressBookLw(item.getId());
     synchronize(item, lw);
     return lw;
   }
@@ -54,11 +51,11 @@ public class LwTransformer {
   /** 
    * Transforms a data object specific class into its lightweight representation.
    * @param item data object instance to synchronize.
-   * @return the lightweight representation of the data object instance.
+   * @return the lightweight representation of the data object instance
    */
-  public static AddressBookLw transform(AddressBook item) {
+  public static PhoneNumberLw transform(PhoneNumber item) {
     assert item != null;
-    AddressBookLw lw = new AddressBookLw(item.getId());
+    PhoneNumberLw lw = new PhoneNumberLw(item.getId());
     synchronize(item, lw);
     return lw;
   }
@@ -100,9 +97,12 @@ public class LwTransformer {
    * @param item data object instance to synchronize.
    * @param lw the lightweight representation to synchronize.
    */
-  public static void synchronize(PhoneNumber item, PhoneNumberLw lw) {
+  public static void synchronize(AddressBook item, AddressBookLw lw) {
     assert (item != null) && (lw != null);
-    lw.setNumber(item.getNumber());
+    lw.setName(item.getName());
+    for (Organization i : item.getOrganizations()) {
+      lw.addOrganization((i != null) ? transform(i) : null);
+    }
   }
   
   /** 
@@ -110,12 +110,9 @@ public class LwTransformer {
    * @param item data object instance to synchronize.
    * @param lw the lightweight representation to synchronize.
    */
-  public static void synchronize(AddressBook item, AddressBookLw lw) {
+  public static void synchronize(PhoneNumber item, PhoneNumberLw lw) {
     assert (item != null) && (lw != null);
-    lw.setName(item.getName());
-    for (Organization i : item.getOrganizations()) {
-      lw.addOrganization((i != null) ? transform(i) : null);
-    }
+    lw.setNumber(item.getNumber());
   }
   
 }

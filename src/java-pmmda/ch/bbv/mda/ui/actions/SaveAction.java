@@ -6,7 +6,6 @@
  */
 package ch.bbv.mda.ui.actions;
 
-import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -53,15 +52,14 @@ public class SaveAction extends ExplorerSaveAction {
 
   public boolean execute() {
     MdaExplorer explorer = (MdaExplorer) getExplorer();
-    explorer.getFrame().setCursor(
-        Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+    switchWaitCursor(true);
     try {
       MdaDocument document = explorer.getDocument();
       String filename = document.getModel().getFilename();
       if (filename != null) {
         filename = filename.trim();
         if (filename.length() > 0) {
-        	ValidationResult vResults = new ValidationResult();
+          ValidationResult vResults = new ValidationResult();
           explorer.getDocument().save(vResults);
           explorer.getValidationPanel().setResults(vResults);
         } else {
@@ -75,8 +73,7 @@ public class SaveAction extends ExplorerSaveAction {
       if (e.getCause() instanceof FileNotFoundException) {
         JOptionPane.showMessageDialog(null, e.getLocalizedMessage(),
             Messages.titleWarning, JOptionPane.ERROR_MESSAGE);
-        lastResult = false; // This cause indicates that writter attempt to
-        // write a locked file.
+        lastResult = false;
         return lastResult;
       }
       JOptionPane.showMessageDialog(explorer.getFrame(),
@@ -96,8 +93,7 @@ public class SaveAction extends ExplorerSaveAction {
       lastResult = false;
       return lastResult;
     } finally {
-      explorer.getFrame().setCursor(
-          Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+      switchWaitCursor(false);
     }
     ExplorerDocument document = explorer.getDocument();
     document.setModified(false);

@@ -1,5 +1,5 @@
 /* 
- * copyright 2000-2005 Marcel Baumann
+ * copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -15,8 +15,10 @@ import ch.bbv.dog.validation.ValidationRuleImpl;
 import ch.bbv.dog.validation.Validator;
 import ch.bbv.mda.MetaClass;
 import ch.bbv.mda.MetaIndexedProperty;
+import ch.bbv.mda.MetaMember;
 import ch.bbv.mda.MetaPackage;
 import ch.bbv.mda.MetaProperty;
+import ch.bbv.mda.cartridges.BoConstants;
 import ch.bbv.mda.operators.ModelOperators;
 
 import com.jgoodies.validation.Severity;
@@ -54,7 +56,7 @@ public abstract class TagRule extends ValidationRuleImpl implements
 
   /**
    * Registers the tag rules for all elements of the meta model.
-   * @param validator validator where the rules are registered.
+   * @param validator validator where the rules are registered
    */
   public void register(Validator validator) {
     validator.registerRule(this, MetaPackage.class);
@@ -65,7 +67,7 @@ public abstract class TagRule extends ValidationRuleImpl implements
 
   /**
    * Constructor of the class.
-   * @param prefix prefix of the cartridge owning the rules.
+   * @param prefix prefix of the cartridge owning the rules
    */
   public TagRule(String prefix) {
     super(false, Severity.ERROR);
@@ -76,6 +78,7 @@ public abstract class TagRule extends ValidationRuleImpl implements
     resources = ResourceBundle.getBundle(buffer.toString());
   }
 
+  @Override
   public boolean isImmediate() {
     return false;
   }
@@ -86,29 +89,30 @@ public abstract class TagRule extends ValidationRuleImpl implements
     if (bean instanceof MetaPackage) {
       sucess = validate((MetaPackage) bean, results);
     } else if (bean instanceof MetaClass) {
-      sucess = validate((MetaClass) bean, results);
+      MetaClass clazz = (MetaClass) bean;
+      if (shouldCheck(clazz)) {
+        sucess = validate(clazz, results);
+      }
     } else if (bean instanceof MetaIndexedProperty) {
-      sucess = validate((MetaIndexedProperty) bean, results);
+      MetaIndexedProperty property = (MetaIndexedProperty) bean;
+      if (shouldCheck(property)) {
+        sucess = validate(property, results);
+      }
     } else if (bean instanceof MetaProperty) {
-      sucess = validate((MetaProperty) bean, results);
+      MetaProperty property = (MetaProperty) bean;
+      if (shouldCheck(property)) {
+        sucess = validate(property, results);
+      }
     }
     return sucess;
   }
 
+  @Override
   public boolean execute(Object bean, String property, ValidationResult results) {
-    boolean sucess = true;
-    if (bean instanceof MetaPackage) {
-      sucess = validate((MetaPackage) bean, results);
-    } else if (bean instanceof MetaClass) {
-      sucess = validate((MetaClass) bean, results);
-    } else if (bean instanceof MetaIndexedProperty) {
-      sucess = validate((MetaIndexedProperty) bean, results);
-    } else if (bean instanceof MetaProperty) {
-      sucess = validate((MetaProperty) bean, results);
-    }
-    return sucess;
+    return execute(bean, results);
   }
 
+  @Override
   public boolean execute(Object bean, String property, Object oldValue,
       Object newValue, ValidationResult results) {
     return execute(bean, property, results);
@@ -184,9 +188,9 @@ public abstract class TagRule extends ValidationRuleImpl implements
   /**
    * Adds a warning message to the list of results.
    * @param results results containing the messages.
-   * @param key key of the message.
-   * @param tag tag origin of the error.
-   * @param name name of the item.
+   * @param key key of the message
+   * @param tag tag origin of the error
+   * @param name name of the item
    */
   protected void addWarningMessage(ValidationResult results, String key,
       String tag, String name) {
@@ -206,5 +210,34 @@ public abstract class TagRule extends ValidationRuleImpl implements
     Object[] parameters = { prefix, tag, name };
     String text = MessageFormat.format(resources.getString(key), parameters);
     ValidationMessage message = new SimpleValidationMessage(text, severity);
+    // results.add(message);
+  }
+
+  /**
+   * An element should only be checked if the element is processed in a
+   * cartridge and artifacts generated. The rules are
+   * <ul>
+   * <li>The generate tag of the package must be set to true.</li>
+   * <li>If the class is not a data object or a reference object the generate
+   * tag must be set to true.</li>
+   * </ul>
+   * @param clazz class to be checked
+   * @return true if the element should be checked otherwise false
+   */
+  protected boolean shouldCheck(MetaClass clazz) {
+    MetaPackage packages = clazz.retrievePackage();
+    return (packages.booleanValueOfTag(BoConstants.GENERATE) && ((clazz
+        .findStereotype(BoConstants.DATA_OBJECT_STEREOTYPE) != null)
+        || (clazz.findStereotype(BoConstants.REFERENCE_CODE_STEREOTYPE) != null) || (clazz
+        .booleanValueOfTag(BoConstants.GENERATE))));
+  }
+
+  /**
+   * A member should only be checked if its class should be checked.
+   * @param member member to check
+   * @return true if the member should be validated otherwise false
+   */
+  protected boolean shouldCheck(MetaMember member) {
+    return shouldCheck(member.getContext());
   }
 }

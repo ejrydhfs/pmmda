@@ -1,4 +1,4 @@
-/* copyright 2000-2005 Marcel Baumann
+/* copyright 2000-2006 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -43,7 +43,7 @@ public abstract class MetaMember extends MetaElement {
   /**
    * Returns the type name of the element. If a classifier is defined the name
    * of the classifier is returned otherwise the stored type name.
-   * @return qualified type name of the element.
+   * @return qualified type name of the element
    * @see #setTypeName(String)
    */
   public String getTypeName() {
@@ -52,7 +52,7 @@ public abstract class MetaMember extends MetaElement {
 
   /**
    * Sets the type name of the element. The classifier is updated.
-   * @param typeName new qualified type name of the element.
+   * @param typeName new qualified type name of the element
    * @see #getTypeName()
    */
   public void setTypeName(String typeName) {
@@ -62,7 +62,7 @@ public abstract class MetaMember extends MetaElement {
 
   /**
    * Returns the classifier of the class.
-   * @return the classifier of the member.
+   * @return the classifier of the member
    * @see #setClassifier(MetaClassifier)
    */
   public MetaClassifier getClassifier() {
@@ -71,7 +71,7 @@ public abstract class MetaMember extends MetaElement {
 
   /**
    * Sets the classifier of the member.
-   * @param classifier new classifier of the member.
+   * @param classifier new classifier of the member
    * @see #getClassifier()
    */
   public void setClassifier(MetaClassifier classifier) {
@@ -81,7 +81,7 @@ public abstract class MetaMember extends MetaElement {
 
   /**
    * Returns the flag indicating if the member is static or not.
-   * @return value of the static flag.
+   * @return value of the static flag
    * @see #setStatic(boolean)
    */
   public boolean isStatic() {
@@ -90,7 +90,7 @@ public abstract class MetaMember extends MetaElement {
 
   /**
    * Sets the flag indicating if the member is static or not.
-   * @param statics new value of the flag.
+   * @param statics new value of the flag
    * @see #isStatic()
    */
   public void setStatic(boolean statics) {
@@ -99,7 +99,7 @@ public abstract class MetaMember extends MetaElement {
 
   /**
    * Returns the flag indicating if the member is final or not.
-   * @return value of the static flag.
+   * @return value of the static flag
    * @see #setFinal(boolean)
    */
   public boolean isFinal() {
@@ -108,7 +108,7 @@ public abstract class MetaMember extends MetaElement {
 
   /**
    * Sets the flag indicating if the member is final or not.
-   * @param finals new value of the flag.
+   * @param finals new value of the flag
    * @see #isFinal()
    */
   public void setFinal(boolean finals) {
@@ -117,7 +117,7 @@ public abstract class MetaMember extends MetaElement {
 
   /**
    * Returns the simple name of the type of the element.
-   * @return the class name of the type.
+   * @return the class name of the type
    */
   public String retrieveTypeClassName() {
     return ModelOperators.getComponentName(getTypeName());
@@ -127,12 +127,17 @@ public abstract class MetaMember extends MetaElement {
    * Returns the classifier instance of the member. The algorithm first looks at
    * the datatypes and if not found at the classes, and last for use cases.
    * @return the classifier associated with the typename of the member if found
-   *         otherwise null.
+   *         otherwise null
    */
   public MetaClassifier retrieveClassifier() {
     if (classifier == null) {
       return getModel().findClassifier(typeName);
     }
     return classifier;
+  }
+
+  @Override
+  public MetaClass getContext() {
+    return (MetaClass) super.getContext();
   }
 }

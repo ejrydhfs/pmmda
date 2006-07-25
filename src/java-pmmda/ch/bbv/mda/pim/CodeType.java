@@ -47,6 +47,8 @@ public class CodeType implements DataObject {
   private boolean hierarchical;
 
   private StorageKind storageKind;
+  
+  private String storageKindName;
 
   /**
    * The code values defined for the code type are the set of legal values for 
@@ -207,6 +209,8 @@ public class CodeType implements DataObject {
     if (((this.storageKind != null) && !this.storageKind.equals(storageKind)) || 
         ((this.storageKind == null) && (storageKind != null)))  {    
       this.storageKind = storageKind;
+      this.storageKindName = storageKind.getShortDescription();
+
       setModified(true);
     }
   }    

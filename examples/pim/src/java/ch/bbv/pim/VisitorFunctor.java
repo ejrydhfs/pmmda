@@ -2,7 +2,7 @@
    NOT add code outside the marked zones. All changes outside the marked areas 
    will be discarded during the next execution of the MDA generator. 
 */
-   
+
 package ch.bbv.pim;
 
 import ch.bbv.dog.AbstractVisitorFunctor;
@@ -19,6 +19,11 @@ public class VisitorFunctor implements Visitor, AbstractVisitorFunctor {
    */
   private DoFunctor functor; 
 
+  /** 
+   * The current depth of the visitor when traversing a graph.
+   */
+  private int depth;
+  
   /**
    * Default constructor of the class.
    */
@@ -27,16 +32,11 @@ public class VisitorFunctor implements Visitor, AbstractVisitorFunctor {
   
   /**
    * Constructor of the class, which initializes the functor.
-   * @param functor functor of the visitor.
+   * @param functor functor of the visitor
    */
   public VisitorFunctor(DoFunctor functor) {
     this.functor = functor;
   }
-
-  /** 
-   * The current depth of the visitor when traversing a graph.
-   */
-  private int depth;
 
   public int getDepth() {
     return depth;
@@ -54,18 +54,6 @@ public class VisitorFunctor implements Visitor, AbstractVisitorFunctor {
     this.functor = (DoFunctor)functor;
   }    
 
-  public void visit(Organization item) {
-    functor.execute(item);
-  }
-
-  public void visit(Contact item) {
-    functor.execute(item);
-  }
-
-  public void visit(Address item) {
-    functor.execute(item);
-  }
-
   public void visit(JournalEntry item) {
     functor.execute(item);
   }
@@ -74,7 +62,19 @@ public class VisitorFunctor implements Visitor, AbstractVisitorFunctor {
     functor.execute(item);
   }
 
+  public void visit(Organization item) {
+    functor.execute(item);
+  }
+
   public void visit(AddressBook item) {
+    functor.execute(item);
+  }
+
+  public void visit(Contact item) {
+    functor.execute(item);
+  }
+
+  public void visit(Address item) {
     functor.execute(item);
   }
 }

@@ -7,6 +7,7 @@
 package ch.bbv.explorer;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 
 import ch.bbv.dog.DataObjectType;
@@ -117,7 +118,7 @@ public interface UiNodeType {
    * current view is set back to the default one. The default view is the first
    * one in the list of known user interface views with the default flag.
    * @param name name of the new current view. If null no current view is
-   *          defined.
+   *        defined.
    * @pre name != null
    * @see #getCurrentView()
    */
@@ -200,4 +201,16 @@ public interface UiNodeType {
    * @see #getParameter(String)
    */
   Object setParameter(String key, Object value);
+
+  /**
+   * Returns the comparator used to sort the nodes of this type.
+   * @return the comparator if defined otherwise null
+   */
+  Comparator<ExplorerNode> getComparator();
+
+  /**
+   * Sets the comparator used to sort the nodes of this type.
+   * @param comparator new compartor of the nodes of this type.
+   */
+  void setComparator(Comparator<ExplorerNode> comparator);
 }

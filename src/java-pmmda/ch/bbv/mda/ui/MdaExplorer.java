@@ -7,14 +7,19 @@ package ch.bbv.mda.ui;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.prefs.Preferences;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
-import org.apache.commons.cli.*;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.OptionGroup;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.Parser;
+import org.apache.commons.cli.PosixParser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.flexdock.docking.Dockable;
@@ -34,14 +39,23 @@ import ch.bbv.explorer.UiNodeTypeFactory;
 import ch.bbv.explorer.ExplorerMenuBar.Names;
 import ch.bbv.explorer.about.Contributor;
 import ch.bbv.explorer.about.Licences;
-import ch.bbv.explorer.actions.*;
+import ch.bbv.explorer.actions.ExplorerAboutAction;
+import ch.bbv.explorer.actions.ExplorerExitAction;
+import ch.bbv.explorer.actions.ExplorerFileAction;
+import ch.bbv.explorer.actions.ExplorerGlobalAction;
+import ch.bbv.explorer.actions.ExplorerSimpleDialogAction;
 import ch.bbv.explorer.components.ValidationPanel;
 import ch.bbv.explorer.resources.Messages;
 import ch.bbv.mda.MetaModel;
 import ch.bbv.mda.generators.Cartridge;
 import ch.bbv.mda.generators.CartridgeFactory;
 import ch.bbv.mda.resources.MessagesMda;
-import ch.bbv.mda.ui.actions.*;
+import ch.bbv.mda.ui.actions.GenerateAllAction;
+import ch.bbv.mda.ui.actions.GenerateCartridgeAction;
+import ch.bbv.mda.ui.actions.NewAction;
+import ch.bbv.mda.ui.actions.OpenAction;
+import ch.bbv.mda.ui.actions.SaveAction;
+import ch.bbv.mda.ui.actions.SaveAsAction;
 
 /**
  * The MDA explorer provides a user interface to view and manipulate model
@@ -83,12 +97,6 @@ public class MdaExplorer extends Explorer {
   private String[] arguments;
 
   private ExplorerGlobalAction generateAllAction;
-
-  /**
-   * Comparator used to sort children of this explorer node. If null then the Comparable Interface of this class
-   * will be used.
-   */
-  private Comparator comparator = null;
 
   /**
    * Creates a new MDA explorer.
@@ -145,29 +153,14 @@ public class MdaExplorer extends Explorer {
     assert document != null;
     this.document = document;
     MetaModel model = document.getModel();
-    TreeConstructor constructor = new TreeConstructor(getNodeTypeFactory(), this);
+    TreeConstructor constructor = new TreeConstructor(getNodeTypeFactory(),
+        this);
     model.accept(constructor);
     setRoot(constructor.getRoot());
     getValidationPanel().clear();
     getMenuBar().documentChanged(document);
   }
 
-  /**
-   * Sets the comparator used to sort the explorer nodes. Children of this object will be sorted according to passed comparator.
-   * @param comparator
-   */
-  public void setComparator(Comparator comparator) {
-  	this.comparator = comparator;
-  }
-
-  /**
-   * Returns a comparer or null. The comparer is used to order childs of ExplorerNodes. If null then the comparable interface of ExplorerNode is used to sort.
-   * @return Comparator
-   */
-  public Comparator getComparator() {
-  	return comparator;
-  }
-  
   /**
    * Initializes the pmmda explorer.
    */

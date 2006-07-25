@@ -5,8 +5,6 @@
  */
 package ch.bbv.mda.ui.actions;
 
-import java.awt.Cursor;
-
 import javax.swing.JOptionPane;
 
 import ch.bbv.application.Locator;
@@ -50,28 +48,26 @@ public class GenerateCartridgeAction extends ExplorerGlobalActionImpl {
   }
 
   public boolean execute() {
-    getExplorer().getFrame().setCursor(
-        Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+    switchWaitCursor(true);
     MetaModel model = (MetaModel) getExplorer().getRoot().getDataObject();
-    CartridgeFactory factory = CartridgeFactory.getInstance();
     if (model != null) {
-      Validator validator = (Validator) Locator.getInstance().getComponent(
-          Validator.NAME);
-      ValidateNodeAction.validateTree(model, validator, getExplorer());
-      if (getExplorer().getValidationPanel().getResults().hasErrors()) {
-        JOptionPane.showMessageDialog(getExplorer().getFrame(),
-            MessagesMda.msgModelhasErrors, Messages.titleError,
-            JOptionPane.ERROR_MESSAGE);
-        getExplorer().getFrame().setCursor(
-            Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-        lastResult = false;
-        return lastResult;
+      CartridgeFactory factory = CartridgeFactory.getInstance();
+      if (factory.shouldValidate()) {
+        Validator validator = (Validator) Locator.getInstance().getComponent(
+            Validator.NAME);
+        ValidateNodeAction.validateTree(model, validator, getExplorer());
+        if (getExplorer().getValidationPanel().getResults().hasErrors()) {
+          JOptionPane.showMessageDialog(getExplorer().getFrame(),
+              MessagesMda.msgModelhasErrors, Messages.titleError,
+              JOptionPane.ERROR_MESSAGE);
+          switchWaitCursor(false);
+          lastResult = false;
+          return lastResult;
+        }
       }
-
       factory.execute(cartridge, model);
     }
-    getExplorer().getFrame().setCursor(
-        Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+    switchWaitCursor(false);
     lastResult = true;
     return lastResult;
   }

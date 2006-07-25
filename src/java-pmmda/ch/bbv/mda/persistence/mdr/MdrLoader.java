@@ -27,14 +27,23 @@ import org.netbeans.api.xmi.XMIReaderFactory;
 import org.netbeans.api.xmi.XMIWriterFactory;
 import org.netbeans.lib.jmi.xmi.ReaderFactory;
 import org.netbeans.lib.jmi.xmi.WriterFactory;
-import org.omg.uml.foundation.core.*;
+import org.omg.uml.foundation.core.Attribute;
+import org.omg.uml.foundation.core.Classifier;
+import org.omg.uml.foundation.core.DataType;
+import org.omg.uml.foundation.core.Generalization;
+import org.omg.uml.foundation.core.Interface;
+import org.omg.uml.foundation.core.Operation;
+import org.omg.uml.foundation.core.Parameter;
+import org.omg.uml.foundation.core.Stereotype;
+import org.omg.uml.foundation.core.TagDefinition;
+import org.omg.uml.foundation.core.TaggedValue;
+import org.omg.uml.foundation.core.UmlClass;
 import org.omg.uml.foundation.datatypes.ParameterDirectionKindEnum;
 import org.omg.uml.foundation.datatypes.VisibilityKind;
 import org.omg.uml.foundation.datatypes.VisibilityKindEnum;
 import org.omg.uml.modelmanagement.UmlPackage;
 
 import ch.bbv.mda.persistence.PersistenceException;
-
 
 /**
  * Reads and writes a UML 1.4 model in XMI compliant format as supported in the
@@ -80,42 +89,41 @@ public class MdrLoader {
    * Initializes the repository.
    * @return The UmlPackage extent.
    * @throws PersistenceException When an error during repository initialization
-   *           occurs.
+   *         occurs.
    */
   public org.omg.uml.UmlPackage init() throws PersistenceException {
     assert (packages == null || repository == null);
     // TODO: Ueberarbeiten. Funktioniert so. ist aber haesslich!
     try {
-    
+
       MDRManager manager = MDRManager.getDefault();
       if (manager == null) {
         log.error("Could not retrieve the MDR manager");
       }
-      
+
       repository = manager.getDefaultRepository();
-     
+
       mof = (ModelPackage) repository.getExtent(MOF_INSTANCE);
-      if(mof != null){
-          mof.refDelete();
-          mof = null;
+      if (mof != null) {
+        mof.refDelete();
+        mof = null;
       }
-    
+
       if (mof == null) {
-          mof = (ModelPackage) repository.createExtent(MOF_INSTANCE);
+        mof = (ModelPackage) repository.createExtent(MOF_INSTANCE);
       }
-      
+
       packages = (org.omg.uml.UmlPackage) repository.getExtent(UML_INSTANCE);
-      if(packages != null){
-          packages.refDelete();
-          packages = null;
+      if (packages != null) {
+        packages.refDelete();
+        packages = null;
       }
-      
-      
+
       if (packages == null) {
         packages = (org.omg.uml.UmlPackage) repository.createExtent(
             UML_INSTANCE, getUmlPackage());
       }
-      
+
     } catch (CreationFailedException e) {
       throw new PersistenceException(
           "The creation of the UmlPackage extent failed", e);
@@ -141,13 +149,14 @@ public class MdrLoader {
    * @param file The file to read.
    * @return The UML package extent.
    * @throws PersistenceException When a problem during read occurs or the
-   *           repository has not been initialized.
+   *         repository has not been initialized.
    */
-  public org.omg.uml.UmlPackage read(InputStream file) throws PersistenceException {
+  public org.omg.uml.UmlPackage read(InputStream file)
+      throws PersistenceException {
     assert (packages != null) || (repository != null);
     try {
       final XMIReaderFactory factory = new ReaderFactory();
-   
+
       factory.createXMIReader().read(file, "asdf", packages);
     } catch (IOException e) {
       throw new PersistenceException("The specified file could not be read", e);
@@ -156,27 +165,27 @@ public class MdrLoader {
     }
     return packages;
   }
-  
-//  public org.omg.uml.UmlPackage read(File file) throws PersistenceException {
-//      assert (packages != null) || (repository != null);
-//      try {
-//        final XMIReaderFactory factory = new ReaderFactory();
-//        final String uri = file.toURL().toString();
-//        
-//        factory.createXMIReader().read(uri, packages);
-//      } catch (IOException e) {
-//        throw new PersistenceException("The specified file could not be read", e);
-//      } catch (MalformedXMIException e) {
-//        throw new PersistenceException("The XMI file structure is malformed", e);
-//      }
-//      return packages;
-//    }
+
+  // public org.omg.uml.UmlPackage read(File file) throws PersistenceException {
+  // assert (packages != null) || (repository != null);
+  // try {
+  // final XMIReaderFactory factory = new ReaderFactory();
+  // final String uri = file.toURL().toString();
+  //        
+  // factory.createXMIReader().read(uri, packages);
+  // } catch (IOException e) {
+  // throw new PersistenceException("The specified file could not be read", e);
+  // } catch (MalformedXMIException e) {
+  // throw new PersistenceException("The XMI file structure is malformed", e);
+  // }
+  // return packages;
+  // }
 
   /**
    * Writes the repository into a XMI file.
    * @param file The file to write the repository into.
    * @throws PersistenceException When either the repository has not been
-   *           initialized or an error during file write occurs.
+   *         initialized or an error during file write occurs.
    */
   public void write(File file) throws PersistenceException {
     assert (packages != null || repository != null);
@@ -206,10 +215,10 @@ public class MdrLoader {
   public UmlPackage createUmlPackage(String pkgName) {
     assert (packages != null || repository != null);
     // packages are always VK_PUBLIC
- 
+
     return packages.getModelManagement().getUmlPackage().createUmlPackage(
         pkgName, VisibilityKindEnum.VK_PUBLIC, false, false, false, false);
-    
+
   }
 
   /**
@@ -378,13 +387,14 @@ public class MdrLoader {
    */
   public TaggedValue createTaggedValue(MdrUmlElement element, String name) {
     assert (name != null || element != null);
-    final TaggedValue taggedValue = packages.getCore().getTaggedValue().createTaggedValue(name, VisibilityKindEnum.VK_PUBLIC, false, null);
-    TagDefinition tagDefinition = packages.getCore().getTagDefinition().createTagDefinition();
+    final TaggedValue taggedValue = packages.getCore().getTaggedValue()
+        .createTaggedValue(name, VisibilityKindEnum.VK_PUBLIC, false, null);
+    TagDefinition tagDefinition = packages.getCore().getTagDefinition()
+        .createTagDefinition();
     tagDefinition.setName(name);
     taggedValue.setType(tagDefinition);
     return taggedValue;
   }
-  
 
   /**
    * Creates a Stereotype
@@ -393,38 +403,37 @@ public class MdrLoader {
    */
   public Stereotype createStereotype(String name) {
     assert (name != null);
-    final Stereotype stereotype = packages.getCore().getStereotype().createStereotype();
+    final Stereotype stereotype = packages.getCore().getStereotype()
+        .createStereotype();
     stereotype.setName(name);
-    
+
     return stereotype;
   }
 
   /**
    * Creates a Data Type
-   * @param name The name of the datatype 
+   * @param name The name of the datatype
    * @return The Datatype instance.
    */
   public MdrUmlDataType createDataType(String name) {
-      final DataType dataType = packages.getCore().getDataType().createDataType();
-      dataType.setName(name);
-      MdrUmlDataType mdrDataType = new MdrUmlDataType(dataType);
-      return mdrDataType;
+    final DataType dataType = packages.getCore().getDataType().createDataType();
+    dataType.setName(name);
+    MdrUmlDataType mdrDataType = new MdrUmlDataType(dataType);
+    return mdrDataType;
   }
-  
-  
+
   /**
-   * 
    * @param modifier
    * @return
    */
- private VisibilityKind mapModifier(int modifier) {
+  private VisibilityKind mapModifier(int modifier) {
     VisibilityKind vis = null;
-    
+
     if (modifier == 0) {
       vis = VisibilityKindEnum.VK_PACKAGE;
     } else if (Modifier.isPrivate(modifier)) {
       vis = VisibilityKindEnum.VK_PRIVATE;
-    }else if (Modifier.isProtected(modifier)) {
+    } else if (Modifier.isProtected(modifier)) {
       vis = VisibilityKindEnum.VK_PROTECTED;
     } else if (Modifier.isPublic(modifier)) {
       vis = VisibilityKindEnum.VK_PUBLIC;
@@ -472,6 +481,5 @@ public class MdrLoader {
     }
     return null;
   }
-
 
 }

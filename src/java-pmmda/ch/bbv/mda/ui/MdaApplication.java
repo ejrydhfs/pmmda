@@ -23,7 +23,6 @@ import ch.bbv.dog.EmptyHandler;
 import ch.bbv.dog.LightweightObjectHandlerImpl;
 import ch.bbv.dog.validation.Validator;
 import ch.bbv.explorer.Explorer;
-import ch.bbv.mda.MetaElementComparator;
 import ch.bbv.mda.generators.Cartridge;
 import ch.bbv.mda.generators.CartridgeFactory;
 import ch.bbv.mda.validation.RulesFactory;
@@ -87,7 +86,7 @@ public class MdaApplication extends Application {
    * Constructor of the class.
    * @param args command line arguments
    * @throws ComponentException occured when creating and starting the
-   *           application
+   *         application
    */
   public MdaApplication(String[] args) throws ComponentException {
     MdaApplication.args = args;
@@ -116,7 +115,6 @@ public class MdaApplication extends Application {
       resourcesManager.registerResources(cartridge);
     }
     explorer = MdaExplorer.create(args);
-    explorer.setComparator(new MetaElementComparator());
   }
 
   /**

@@ -466,26 +466,11 @@ public abstract class CartridgeImpl implements Cartridge {
     context.put(MODEL_KEY, clazz.getModel());
     context.put(PACKAGE_KEY, clazz.getContext());
     context.put(CLASS_KEY, clazz);
-    context.put(PROPERTIES_KEY, modelOperators.getTransitiveFieldsFor(clazz));
-    context.put(AGGREGATIONS_KEY, modelOperators
+    context.put(PROPERTIES_KEY, ModelOperators.getTransitiveFieldsFor(clazz));
+    context.put(AGGREGATIONS_KEY, ModelOperators
         .getTransitiveIndexedFieldsFor(clazz));
     context.put("nestedClasses", clazz.getNestedClasses());
     return context;
-  }
-
-  /**
-   * Adds a property with a default value to the properties if it is missing.
-   * @param property property name to add if not defined.
-   * @param value value of the property to add if not defined.
-   * @deprecated
-   * @pre (properties != null) && (property != null)
-   * @post properties.getProperty(property) != null
-   */
-  protected void addUndefinedProperty(String property, String value) {
-    String propertyValue = properties.getProperty(property);
-    if (propertyValue == null) {
-      properties.setProperty(property, value);
-    }
   }
 
   /**

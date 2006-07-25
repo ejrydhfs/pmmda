@@ -79,12 +79,6 @@ public class OpenAction extends ExplorerFileAction {
           Messages.titleError, JOptionPane.ERROR_MESSAGE);
       lastResult = false;
       return lastResult;
-    } catch (NullPointerException e) {
-      JOptionPane.showMessageDialog(getExplorer().getFrame(), MessageFormat
-          .format(MessagesMda.msgIllegalFilename, file.getName()),
-          Messages.titleError, JOptionPane.ERROR_MESSAGE);
-      lastResult = false;
-      return lastResult;
     } finally {
       switchWaitCursor(false);
     }

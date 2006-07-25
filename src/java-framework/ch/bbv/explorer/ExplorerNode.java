@@ -140,10 +140,10 @@ public class ExplorerNode implements MutableTreeNode, Cloneable, Comparable {
    * @see #getChildren()
    */
   public void addChild(ExplorerNode child) {
-  	TreeNode parent = this.getParent();
-  	if(parent != null && parent instanceof ExplorerNode) {
-  		remove(this);
-  	}
+    TreeNode parent = this.getParent();
+    if (parent != null && parent instanceof ExplorerNode) {
+      remove(this);
+    }
     child.setParent(this);
     int index = add(child);
     ExplorerNodeOwner owner = getNodeOwner();
@@ -153,28 +153,26 @@ public class ExplorerNode implements MutableTreeNode, Cloneable, Comparable {
   }
 
   /**
-   * Inserts a new node at the correct positon in the children list. Thereof we always has a sorted tree.
-   * @param newChild to be added/inserted
-   * @return int index position where the newChild has been inserted.
+   * Inserts a new node at the correct positon in the children list. Thereof we
+   * always has a sorted tree.
+   * @param child to be added
+   * @return int index position where the new child has been inserted.
    */
-	protected int add(ExplorerNode newChild) {
-		int index;
-		if (children == null) {
-	    children = new ArrayList<ExplorerNode>();
-			index = 0;
-		} else {
-			Comparator comparator = null;
-			if(getNodeOwner() != null) {
-				comparator = getNodeOwner().getComparator();
-			}
-			index = Collections.binarySearch(children, newChild, comparator);
-		}
-		if (index < 0) {
-			index = -index - 1;
-		}
-    children.add(index, newChild);
-		return index;
-	}
+  protected int add(ExplorerNode child) {
+    int index;
+    if (children == null) {
+      children = new ArrayList<ExplorerNode>();
+      index = 0;
+    } else {
+      Comparator<ExplorerNode> comparator = getNodeType().getComparator();
+      index = Collections.binarySearch(children, child, comparator);
+    }
+    if (index < 0) {
+      index = -index - 1;
+    }
+    children.add(index, child);
+    return index;
+  }
 
   /**
    * Inserts the child node at the given index in this node.
@@ -195,11 +193,11 @@ public class ExplorerNode implements MutableTreeNode, Cloneable, Comparable {
    * Handles the event that the node has changed.
    */
   public void nodeChanged() {
-  	TreeNode parent = this.getParent();
-  	if(parent != null && parent instanceof ExplorerNode) {
-  		((ExplorerNode)parent).remove(this);
-  		((ExplorerNode)parent).addChild(this);
-  	}
+    TreeNode parent = this.getParent();
+    if (parent != null && parent instanceof ExplorerNode) {
+      ((ExplorerNode) parent).remove(this);
+      ((ExplorerNode) parent).addChild(this);
+    }
     ExplorerNodeOwner owner = getNodeOwner();
     if (owner != null) {
       owner.nodeChanged(this);
@@ -367,20 +365,23 @@ public class ExplorerNode implements MutableTreeNode, Cloneable, Comparable {
     }
     return clone;
   }
-  
+
   /**
    * Implements the Comparable interface
    * @param o object to compare to
-   * @return int - 0 corresponds to equal, -1 corresponds to less, 1 corresponds to more
+   * @return int - 0 corresponds to equal, -1 corresponds to less, 1 corresponds
+   *         to more
    */
   public int compareTo(Object o) {
-  	if(this.getClass().equals(o.getClass())) {
-  		if(this.getName() == null) return 1;
-  		if(o instanceof ExplorerNode) {
-	  		if(((ExplorerNode)o).getName() == null) return -1;
-	  		return this.getName().compareTo(((ExplorerNode)o).getName());
-  		}
-  	}
-  	return -1;
+    if (this.getClass().equals(o.getClass())) {
+      if (this.getName() == null)
+        return 1;
+      if (o instanceof ExplorerNode) {
+        if (((ExplorerNode) o).getName() == null)
+          return -1;
+        return this.getName().compareTo(((ExplorerNode) o).getName());
+      }
+    }
+    return -1;
   }
 }

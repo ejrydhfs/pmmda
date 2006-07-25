@@ -5,18 +5,14 @@
 
 package ch.bbv.pim;
 
+import ch.bbv.dog.DataObject;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.beans.VetoableChangeListener;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-
-import ch.bbv.dog.DataObject;
+import java.util.*;
 
 /* %% USER DEFINED IMPORT START %% */
 /* %% USER DEFINED IMPORT END %% */
@@ -735,19 +731,11 @@ public class Contact implements DataObject {
   /** 
    * Creates and returns a deep copy of the object and its descendants. The 
    * properties containing keys are not cloned because they are immutable.
-   * @return a deep copy of the instance.
+   * @return a deep copy of the instance
    */
   public Contact copy() {
-    Contact clone = null;
-    try {
-      clone = (Contact)clone();
-    } catch (CloneNotSupportedException e) {
-      // impossible exception because data object is cloneable.
-      return null;
-    }
-    copy(clone);
-    clone.setModified(isModified());
-    return clone;
+    Map<Object, Object> copies = new HashMap<Object, Object>();
+    return copy(copies);
   }
 
   public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -812,35 +800,47 @@ public class Contact implements DataObject {
   }
 
   /** 
-   * Copies deeply all the attributes of the class and its ancestors.
-   * @param clone the copy which deep copy should be generated
+   * Copies deeply all the attributes of the class and its ancestors. Multiple 
+   * references to the same data object are handled correctly.
+   * @param copies set of copied objects used to detect circular references
+   * @return the deep copy of the object
    */
-  protected void copy(Contact clone) {
-    if (workAddress != null) {
-      clone.workAddress = workAddress.copy();
+  public Contact copy(Map<Object, Object> copies) {
+    Contact clone = (Contact)copies.get(this);
+    if (clone == null) {
+      try {
+	    clone = (Contact)clone();
+        copies.put(this, clone);
+      } catch (CloneNotSupportedException e) {
+	    // impossible exception because data object is cloneable.
+      }
+      if (workAddress != null) {
+        clone.workAddress = workAddress.copy(copies);
+      }
+      if (homeAddress != null) {
+        clone.homeAddress = homeAddress.copy(copies);
+      }
+      if (workNumber != null) {
+        clone.workNumber = workNumber.copy(copies);
+      }
+      if (homeNumber != null) {
+        clone.homeNumber = homeNumber.copy(copies);
+      }
+      if (workMobileNumber != null) {
+        clone.workMobileNumber = workMobileNumber.copy(copies);
+      }
+      if (workFaxNumber != null) {
+        clone.workFaxNumber = workFaxNumber.copy(copies);
+      }
+      if (organization != null) {
+        clone.organization = organization.copy(copies);
+      }
+      clone.entries = new ArrayList<JournalEntry>();
+      for (int i = 0; i < entries.size(); i++) {
+        clone.entries.add(entries.get(i).copy(copies));
+      }
     }
-    if (homeAddress != null) {
-      clone.homeAddress = homeAddress.copy();
-    }
-    if (workNumber != null) {
-      clone.workNumber = workNumber.copy();
-    }
-    if (homeNumber != null) {
-      clone.homeNumber = homeNumber.copy();
-    }
-    if (workMobileNumber != null) {
-      clone.workMobileNumber = workMobileNumber.copy();
-    }
-    if (workFaxNumber != null) {
-      clone.workFaxNumber = workFaxNumber.copy();
-    }
-    if (organization != null) {
-      clone.organization = organization.copy();
-    }
-    clone.entries = new ArrayList<JournalEntry>();
-    for (int i = 0; i < entries.size(); i++) {
-      clone.entries.add(entries.get(i).copy());
-    }
+    return clone;
   }
 
   /** 

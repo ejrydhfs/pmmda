@@ -14,6 +14,11 @@ package ch.bbv.mda;
  */
 public class Stereotype extends AdornmentType {
   /**
+   * Serial version identifier coded as back compatibility date.
+   */
+  private static final long serialVersionUID = 20041201;
+
+  /**
    * Default constructor of the class.
    */
   public Stereotype() {

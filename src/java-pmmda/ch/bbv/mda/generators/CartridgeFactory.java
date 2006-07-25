@@ -7,7 +7,13 @@ package ch.bbv.mda.generators;
 
 import java.text.MessageFormat;
 import java.text.NumberFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -20,7 +26,13 @@ import ch.bbv.application.ComponentException;
 import ch.bbv.application.ComponentImpl;
 import ch.bbv.application.Locator;
 import ch.bbv.dog.validation.Validator;
-import ch.bbv.mda.*;
+import ch.bbv.mda.MetaClass;
+import ch.bbv.mda.MetaDatatype;
+import ch.bbv.mda.MetaElement;
+import ch.bbv.mda.MetaIndexedProperty;
+import ch.bbv.mda.MetaModel;
+import ch.bbv.mda.MetaPackage;
+import ch.bbv.mda.MetaProperty;
 
 /**
  * The cartridge factory handles all registered cartridges and provides support
@@ -36,6 +48,17 @@ public class CartridgeFactory extends ComponentImpl implements Component {
    * Name of the component to find it through the locator service.
    */
   public static final String NAME = "Cartridge Factory";
+
+  /**
+   * The property defining if the model should be validated before artifacts are
+   * generated.
+   */
+  public static final String SHOULD_VALIDATE = "pmmda.should-validate";
+
+  /**
+   * The prefix of a cartridge declaration in the properties
+   */
+  private static final String CARTRIDGE_PREFIX = "pmmda.cartridges.";
 
   /**
    * Logger for all instances of the class.
@@ -78,7 +101,7 @@ public class CartridgeFactory extends ComponentImpl implements Component {
    * Returns the singleton instance of the class. The services of the
    * application framework are used to provide access to the single instance of
    * the class in the application.
-   * @return singleton instance of the class.
+   * @return singleton instance of the class
    */
   public static CartridgeFactory getInstance() {
     return (CartridgeFactory) Locator.getInstance().getComponent(NAME);
@@ -86,8 +109,8 @@ public class CartridgeFactory extends ComponentImpl implements Component {
 
   /**
    * Constructor of the class.
-   * @param name name of the instance as accessible through the locator.
-   * @param properties properties used to configure the factory.
+   * @param name name of the instance as accessible through the locator
+   * @param properties properties used to configure the factory
    */
   public CartridgeFactory(String name, Properties properties) {
     super(name);
@@ -95,6 +118,7 @@ public class CartridgeFactory extends ComponentImpl implements Component {
     cartridgeDescriptors = new ArrayList<CartridgeDescriptor>();
     listeners = new ArrayList<CartridgeListener>();
     this.properties = properties;
+    addUndefinedProperty(SHOULD_VALIDATE, "true");
     itemFactory = new ItemFactory();
     format = NumberFormat.getInstance();
     format.setParseIntegerOnly(true);
@@ -114,16 +138,15 @@ public class CartridgeFactory extends ComponentImpl implements Component {
   /**
    * All defined cartridges are read from the properties and created. The name
    * of the class is trimmed to avoid space problems with the property file.
-   * @throws ComponentException if an initialization problem occurs.
+   * @throws ComponentException if an initialization problem occurs
    */
   public void initialize() throws ComponentException {
     super.initialize();
     int i = 1;
-    String propertyName = "pm-mda.cartridges." + format.format(i);
-    String propertyValue = properties.getProperty(propertyName);
+    String propertyValue = properties.getProperty(CARTRIDGE_PREFIX
+        + format.format(i));
     while (propertyValue != null) {
       propertyValue = propertyValue.trim();
-
       CartridgeDescriptor descriptor = new CartridgeDescriptor();
       cartridgeDescriptors.add(descriptor);
       descriptor.setClassname(propertyValue);
@@ -150,30 +173,48 @@ public class CartridgeFactory extends ComponentImpl implements Component {
         }
       }
       i++;
-      propertyName = "pm-mda.cartridges." + format.format(i);
-      propertyValue = properties.getProperty(propertyName);
+      propertyValue = properties.getProperty(CARTRIDGE_PREFIX
+          + format.format(i));
     }
   }
 
   /**
    * Returns the item factory of the cartridge factory.
-   * @return the item factory of the cartridge factory.
+   * @return the item factory of the cartridge factory
    */
   public ItemFactory getItemFactory() {
     return itemFactory;
   }
 
   /**
+   * Returns the properties of the factory and the registered cartridges.
+   * @return the requested properties
+   */
+  public Properties getProperties() {
+    return properties;
+  }
+
+  /**
+   * Returns the value of the validate flag indicating if the model should be
+   * validated before artifacts are generated.
+   * @return the value of the flag
+   */
+  public boolean shouldValidate() {
+    String property = properties.getProperty(SHOULD_VALIDATE);
+    return (property != null) && Boolean.valueOf(property);
+  }
+
+  /**
    * Returns the list of loaded and instantiated cartridges.
-   * @return list of instantiated cartridges.
+   * @return list of instantiated cartridges
    */
   public Collection<Cartridge> getCartridges() {
-    return cartridges.values();
+    return Collections.unmodifiableCollection(cartridges.values());
   }
 
   /**
    * Returns the list of all defined cartridge descriptors.
-   * @return list of catridge descriptors.
+   * @return list of catridge descriptors
    */
   public Collection<CartridgeDescriptor> getCartridgeDescriptors() {
     return cartridgeDescriptors;
@@ -181,8 +222,8 @@ public class CartridgeFactory extends ComponentImpl implements Component {
 
   /**
    * Returns the cartridge with the given abbreviation.
-   * @param abbreviation abbreviation of the requested cartridge.
-   * @return the requested cartridge if found otherwise null.
+   * @param abbreviation abbreviation of the requested cartridge
+   * @return the requested cartridge if found otherwise null
    * @pre abbreviation != null
    */
   public Cartridge getCartridge(String abbreviation) {
@@ -195,7 +236,7 @@ public class CartridgeFactory extends ComponentImpl implements Component {
    * are communicated to the meta factory for MDA elements. All newly created or
    * read elements will contains all mandatory tagged values either with the
    * default value or the one defined by the user. Obsolete tags are removed.
-   * @param cartridge cartridge to register.
+   * @param cartridge cartridge to register
    * @pre cartridge != null
    */
   public void register(Cartridge cartridge) {
@@ -219,7 +260,7 @@ public class CartridgeFactory extends ComponentImpl implements Component {
 
   /**
    * Registers a listener in the factory.
-   * @param listener listener to register.
+   * @param listener listener to register
    * @pre listener != null
    * @see #unregister(CartridgeListener)
    */
@@ -232,7 +273,7 @@ public class CartridgeFactory extends ComponentImpl implements Component {
 
   /**
    * Unregisters a listener from the factory.
-   * @param listener listener to unregister.
+   * @param listener listener to unregister
    * @pre listener != null
    * @see #register(CartridgeListener)
    */
@@ -244,8 +285,8 @@ public class CartridgeFactory extends ComponentImpl implements Component {
   /**
    * Returns the list of cartridges and their dependancies sorted using the
    * dependency depth. A cartridge is dependant of itself.
-   * @param cartridges cartridges to process.
-   * @return the list of dependant cartridges.
+   * @param cartridges cartridges to process
+   * @return the list of dependant cartridges
    * @pre cartridges != null
    */
   public List<Cartridge> generateOrder(Collection<Cartridge> cartridges) {
@@ -259,8 +300,8 @@ public class CartridgeFactory extends ComponentImpl implements Component {
 
   /**
    * Executes the cartridge on the given model.
-   * @param cartridge cartridge to execute on the model.
-   * @param model model to process.
+   * @param cartridge cartridge to execute on the model
+   * @param model model to process
    * @pre (cartridge != null) && (model != null)
    */
   public void execute(Cartridge cartridge, MetaModel model) {
@@ -271,8 +312,8 @@ public class CartridgeFactory extends ComponentImpl implements Component {
 
   /**
    * Executes the cartridge on the given model.
-   * @param cartridge cartridge to execute on the model.
-   * @param metaPackage package to process.
+   * @param cartridge cartridge to execute on the model
+   * @param metaPackage package to process
    * @pre (cartridge != null) && (metaPackage != null)
    */
   public void execute(Cartridge cartridge, MetaPackage metaPackage) {
@@ -286,8 +327,8 @@ public class CartridgeFactory extends ComponentImpl implements Component {
 
   /**
    * Executes the cartridge on the given class.
-   * @param cartridge cartridge to execute.
-   * @param clazz class to process.
+   * @param cartridge cartridge to execute
+   * @param clazz class to process
    * @pre (cartridge != null) && (clazz != null)
    */
   public void execute(Cartridge cartridge, MetaClass clazz) {
@@ -300,8 +341,8 @@ public class CartridgeFactory extends ComponentImpl implements Component {
 
   /**
    * Processes the cartridge on the given model.
-   * @param cartridge cartridge to execute on the model.
-   * @param model model to process.
+   * @param cartridge cartridge to execute on the model
+   * @param model model to process
    */
   protected void process(Cartridge cartridge, MetaModel model) {
     logProgressInfo(cartridge, model, "{0} Catridge processing model {1}");
@@ -355,8 +396,8 @@ public class CartridgeFactory extends ComponentImpl implements Component {
 
   /**
    * Preprocesses the cartridge on the given element.
-   * @param cartridge cartridge being preprocessed.
-   * @param model element being preprocessed.
+   * @param cartridge cartridge being preprocessed
+   * @param model element being preprocessed
    */
   protected void preprocess(Cartridge cartridge, MetaModel model) {
     for (Cartridge supplier : cartridge.getUsedCartridges()) {
@@ -380,8 +421,8 @@ public class CartridgeFactory extends ComponentImpl implements Component {
 
   /**
    * Preprocesses the cartridge on the given element.
-   * @param cartridge catridge being processed.
-   * @param datatype element being processed.
+   * @param cartridge catridge being processed
+   * @param datatype element being processed
    */
   protected void preprocess(Cartridge cartridge, MetaDatatype datatype) {
     for (Cartridge supplier : cartridge.getUsedCartridges()) {
@@ -395,8 +436,8 @@ public class CartridgeFactory extends ComponentImpl implements Component {
 
   /**
    * Preprocesses the cartridge on the given element.
-   * @param cartridge cartridge being preprocessed.
-   * @param metaPackage element being preprocessed.
+   * @param cartridge cartridge being preprocessed
+   * @param metaPackage element being preprocessed
    */
   protected void preprocess(Cartridge cartridge, MetaPackage metaPackage) {
     if (metaPackage.isSystem()) {
@@ -418,8 +459,8 @@ public class CartridgeFactory extends ComponentImpl implements Component {
 
   /**
    * Preprocesses the cartridge on the given element.
-   * @param cartridge cartridge being preprocessed.
-   * @param clazz element being preprocessed.
+   * @param cartridge cartridge being preprocessed
+   * @param clazz element being preprocessed
    */
   protected void preprocess(Cartridge cartridge, MetaClass clazz) {
     if (clazz.isSystem()) {
@@ -436,8 +477,8 @@ public class CartridgeFactory extends ComponentImpl implements Component {
   /**
    * Registers the mandatory tags for the given meta element class needed in the
    * cartrige.
-   * @param cartridge cartridge to register.
-   * @param clazz meta element class to complete with tags.
+   * @param cartridge cartridge to register
+   * @param clazz meta element class to complete with tags
    */
   protected void registerTaggedValueTypes(Cartridge cartridge, Class clazz) {
     getItemFactory().registerTypes(clazz, cartridge.getTaggedValueTypes(clazz));
@@ -446,8 +487,8 @@ public class CartridgeFactory extends ComponentImpl implements Component {
   /**
    * Registers the obsolete tags for the given meta element class needed in the
    * cartrige.
-   * @param cartridge cartridge to register.
-   * @param clazz meta element class to complete with tags.
+   * @param cartridge cartridge to register
+   * @param clazz meta element class to complete with tags
    */
   protected void registerObsoleteTaggedValueTypes(Cartridge cartridge,
       Class clazz) {
@@ -457,9 +498,9 @@ public class CartridgeFactory extends ComponentImpl implements Component {
 
   /**
    * Logs the progess information during processing.
-   * @param cartridge cartridge being applied.
-   * @param element element being processed.
-   * @param message message to log.
+   * @param cartridge cartridge being applied
+   * @param element element being processed
+   * @param message message to log
    */
   private void logProgressInfo(Cartridge cartridge, MetaElement element,
       String message) {
@@ -471,8 +512,8 @@ public class CartridgeFactory extends ComponentImpl implements Component {
 
   /**
    * Returns the list of dependant cartridges of the given cartridge.
-   * @param cartridge catridge to process.
-   * @param dependants list of dependant cartridges.
+   * @param cartridge catridge to process
+   * @param dependants list of dependant cartridges
    */
   private void generateOrder(Cartridge cartridge,
       Collection<Cartridge> dependants) {
@@ -483,6 +524,20 @@ public class CartridgeFactory extends ComponentImpl implements Component {
     }
     if (!dependants.contains(cartridge)) {
       dependants.add(cartridge);
+    }
+  }
+
+  /**
+   * Adds a property with a default value to the properties if it is missing.
+   * @param property property name to add if not defined
+   * @param value value of the property to add if not defined
+   * @pre (properties != null) && (property != null)
+   * @post properties.getProperty(property) != null
+   */
+  private void addUndefinedProperty(String property, String value) {
+    String propertyValue = properties.getProperty(property);
+    if (propertyValue == null) {
+      properties.setProperty(property, value);
     }
   }
 }

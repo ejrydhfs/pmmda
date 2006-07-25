@@ -147,19 +147,24 @@ public class ExplorerTreeView {
   }
 
   /**
-   * Implements the mouse listener for the explorer view.
+   * Implements the mouse listener for the explorer view. Both mouse pressed and
+   * released events are handled for portability reasons. For example under
+   * Windows the trigger is set on released, under OS X it is set on pressed.
    * @author Marcel Baumann
    * @version $Revision$
    */
   private final class ExplorerMouseListener extends MouseAdapter {
+    @Override
+    public void mousePressed(MouseEvent event) {
+      evaluatePopup(event);
+    }
 
-    /**
-     * Checks if the mouse event should activate the display of the popup menu
-     * upon a mouse clicked. If yes displays the popup menu.
-     * @param event mouse event to handle
-     */
     @Override
     public void mouseReleased(MouseEvent event) {
+      evaluatePopup(event);
+    }
+
+    private void evaluatePopup(MouseEvent event) {
       if (event.isPopupTrigger()) {
         TreePath path = getTree()
             .getPathForLocation(event.getX(), event.getY());

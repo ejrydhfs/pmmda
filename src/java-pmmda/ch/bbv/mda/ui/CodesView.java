@@ -14,7 +14,12 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Date;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -168,11 +173,13 @@ public class CodesView extends JPanel implements NodeView {
       this.menu = menu;
     }
 
-    /**
-     * Checks if the mouse event should activate the display of the popup menu
-     * upon a mouse clicked. If yes displays the popup menu.
-     * @param event mouse event to handle.
-     */
+    @Override
+    public void mousePressed(MouseEvent event) {
+      if (event.isPopupTrigger()) {
+        menu.show((Component) event.getSource(), event.getX(), event.getY());
+      }
+    }
+
     @Override
     public void mouseReleased(MouseEvent event) {
       if (event.isPopupTrigger()) {
@@ -268,12 +275,13 @@ public class CodesView extends JPanel implements NodeView {
 
   /**
    * Creates an instance of the class.
-   * @param type user interface type of the nodes to display.
-   * @param object parameters list for the constructor.
-   * @return a new instance of the class.
+   * @param type user interface type of the nodes to display
+   * @param object parameters list for the constructor
+   * @return a new instance of the class
    * @pre type != null
    */
   public static CodesView create(UiNodeType type, Object object) {
+    assert type != null;
     return new CodesView();
   }
 
@@ -344,6 +352,8 @@ public class CodesView extends JPanel implements NodeView {
   public void store() {
     MetaClass clazz = (MetaClass) node.getDataObject();
     try {
+      type.setHierarchical(hierarchical.isSelected());
+      type.setStorageKind((StorageKind) storageKind.getSelectedCode());
       getCodeTypeMgr().save(clazz);
     } catch (IOException e) {
       log.error(e);
@@ -408,7 +418,7 @@ public class CodesView extends JPanel implements NodeView {
 
   /**
    * Returns the code type manager of the MDA model.
-   * @return the code type manager of the MDA model.
+   * @return the code type manager of the MDA model
    */
   private CodeTypeMgr getCodeTypeMgr() {
     return ((MdaExplorer) node.getNodeOwner()).getDocument().getModel()
@@ -417,7 +427,7 @@ public class CodesView extends JPanel implements NodeView {
 
   /**
    * Enables the popup menu of the view.
-   * @param enabled flag indicating if the menu is enabled or not.
+   * @param enabled flag indicating if the menu is enabled or not
    */
   private void setMenuEnabled(boolean enabled) {
     menu.setEnabled(enabled);

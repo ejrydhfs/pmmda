@@ -5,9 +5,7 @@
  */
 package ch.bbv.mda.ui.actions;
 
-import java.awt.Cursor;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 import javax.swing.JOptionPane;
 
@@ -44,38 +42,37 @@ public class GenerateAllAction extends ExplorerGlobalActionImpl {
   }
 
   public boolean execute() {
-    getExplorer().getFrame().setCursor(
-        Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+    switchWaitCursor(true);
     MetaModel model = (MetaModel) getExplorer().getRoot().getDataObject();
-    CartridgeFactory factory = CartridgeFactory.getInstance();
     if (model != null) {
-      Validator validator = (Validator) Locator.getInstance().getComponent(
-          Validator.NAME);
-      ValidateNodeAction.validateTree(model, validator, getExplorer());
-      if (getExplorer().getValidationPanel().getResults().hasErrors()) {
-        JOptionPane.showMessageDialog(getExplorer().getFrame(),
-            MessagesMda.msgModelhasErrors, Messages.titleError,
-            JOptionPane.ERROR_MESSAGE);
-        getExplorer().getFrame().setCursor(
-            Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-        lastResult = false;
-        return lastResult;
+      CartridgeFactory factory = CartridgeFactory.getInstance();
+      if (factory.shouldValidate()) {
+        Validator validator = (Validator) Locator.getInstance().getComponent(
+            Validator.NAME);
+        ValidateNodeAction.validateTree(model, validator, getExplorer());
+        if (getExplorer().getValidationPanel().getResults().hasErrors()) {
+          JOptionPane.showMessageDialog(getExplorer().getFrame(),
+              MessagesMda.msgModelhasErrors, Messages.titleError,
+              JOptionPane.ERROR_MESSAGE);
+          switchWaitCursor(false);
+          lastResult = false;
+          return lastResult;
+        }
       }
-      List<Cartridge> cartridges = new ArrayList<Cartridge>(factory
-          .getCartridges());
+      Collection<Cartridge> cartridges = factory.getCartridges();
+      int size = cartridges.size();
+      int i = 0;
       StatusBar statusBar = getExplorer().getStatusBar();
-      for (int i = 0; i < cartridges.size(); i++) {
-        Cartridge cartridge = cartridges.get(i);
+      for (Cartridge cartridge : cartridges) {
         statusBar.setInfo("Generate" + cartridge.getPrefix());
-        statusBar.setProgress(i / cartridges.size() * 100);
+        statusBar.setProgress(++i / size * 100);
         factory.execute(cartridge, model);
       }
       statusBar.setProgress(100);
       statusBar.setInfo("Generate All done");
       statusBar.setProgress(0);
     }
-    getExplorer().getFrame().setCursor(
-        Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+    switchWaitCursor(false);
     lastResult = true;
     return lastResult;
   }

@@ -15,7 +15,7 @@ TODO
   classname, prefix, loaded, active, dependants
 - Have a self contained jar file running with java -jar pmMDA
 
-Version 0.3.0-RC4 (15 May 2006)
+Version 0.3.0-RC4 (15 August 2006)
 ---------------------------------
 The following new features were added.
 - Support of multiple stereotypes on meta elements.
@@ -28,6 +28,8 @@ The following errors were corrected.
 - Tool tips for tagged values without a loaded cartridge prefix in their name 
   do not anymore generate an exception in the log.
 - Errors in the installation notes and developers' FAQ were corrected.
+- Inconsistencies were discovered when testing under OS X 10.4.x and removed.
+  The pmMDA should be fully operational under OS X.
 
 Version 0.3.0-RC3 (15 April 2006)
 ---------------------------------
