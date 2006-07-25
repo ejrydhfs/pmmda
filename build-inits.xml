@@ -24,7 +24,7 @@
     <property name="scripts.lib.dir" value="${scripts.dir}/lib" />
     <property name="pmdrules.dir" value="${scripts.dir}/resources/rulesets" />
     <path id="jdkjars.classpath">
-      <fileset dir="${java.jdk}/lib">
+      <fileset dir="${java.lib}">
         <include name="**/*tools.jar" />
       </fileset>
     </path>
