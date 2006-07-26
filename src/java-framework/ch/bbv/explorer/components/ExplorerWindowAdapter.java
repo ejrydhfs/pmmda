@@ -45,8 +45,12 @@ public class ExplorerWindowAdapter extends WindowAdapter {
     ExplorerGlobalAction action = explorer.getMenuBar().getStandardAction(
         Names.EXIT);
     if (action != null) {
-      action.execute();
+      if(action.execute()){
+      	System.exit(0);
+      }
+    } else {
+      explorer.close();
+    	System.exit(0);
     }
-    explorer.close();
   }
 }

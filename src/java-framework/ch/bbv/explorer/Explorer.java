@@ -221,6 +221,7 @@ public abstract class Explorer implements ExplorerNodeOwner {
     frame.add(treeViewPane, BorderLayout.CENTER);
     statusBar = new StatusBar();
     frame.add(statusBar, BorderLayout.SOUTH);
+    frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
     frame.addWindowListener(new ExplorerWindowAdapter(this));
   }
 
