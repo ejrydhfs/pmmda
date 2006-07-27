@@ -10,6 +10,7 @@
 #else
 #set($packageName=${package.getAttribute("bo-mo-package")})
 #end
+#set($hasCycles=${cartridge.hasCycles(${package})})
 
 package ${packageName};
 
@@ -18,6 +19,11 @@ package ${packageName};
 #set($foo=${imports.addClasses(${visited})})
 #set($foo=${imports.addClassName("ch.bbv.dog.AbstractVisitorFunctor")})
 #set($foo=${imports.addClassName("ch.bbv.dog.DoFunctor")})
+#if($hasCycles)
+#set($foo=${imports.addClassName("java.util.Set")})
+#set($foo=${imports.addClassName("java.util.HashSet")})
+#set($foo=${imports.addClassName("ch.bbv.dog.DataObject")})
+#end
 #set($importStatements=${imports.getImportStatements(4)})
 #foreach($importStatement in $importStatements) 
 import $importStatement;
@@ -37,12 +43,22 @@ public class VisitorFunctor implements Visitor, AbstractVisitorFunctor {
   /** 
    * The current depth of the visitor when traversing a graph.
    */
-  private int depth;
-  
+  private int depth; 
+#if($hasCycles) 
+	
+  /**
+   * The objects already visited during the traversal of the graph.
+   */
+  private Set<DataObject> visitedObjects;
+#end
+
   /**
    * Default constructor of the class.
    */
   public VisitorFunctor() {
+#if($hasCycles)
+	visitedObjects = new HashSet<DataObject>();
+#end
   }
   
   /**
@@ -50,7 +66,12 @@ public class VisitorFunctor implements Visitor, AbstractVisitorFunctor {
    * @param functor functor of the visitor
    */
   public VisitorFunctor(DoFunctor functor) {
+    this();
     this.functor = functor;
+  }
+  
+  public void reset() {
+    depth = 0;
   }
 
   public int getDepth() {
@@ -77,9 +98,18 @@ public class VisitorFunctor implements Visitor, AbstractVisitorFunctor {
 #set($name=${class.getAttribute("bo-mo-class")})
 #end
 
+#if($hasCycles)
+  public void visit(${name} item) {
+	if (!visitedObjects.contains(item)) {
+      visitedObjects.add(item);  
+      functor.execute(item);
+    }
+  }
+#else
   public void visit(${name} item) {
     functor.execute(item);
   }
+#end
 #end
 #end
 }

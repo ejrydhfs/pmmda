@@ -276,39 +276,38 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
   }
 
   @Override
-  public void postProcessPackage(MetaPackage metaPackage) {
-    if (metaPackage.booleanValueOfTag(GENERATE)) {
-      VelocityContext context = createContext(metaPackage);
-      boolean cyclicVisitor = Boolean.parseBoolean(getContext().getProperty(
-          CYCLIC_WRAPPER_KEY));
+  public void postProcessPackage(MetaPackage packages) {
+    if (packages.booleanValueOfTag(GENERATE)) {
+      VelocityContext context = createContext(packages);
       try {
-        boolean hasRootBusinessObjects = hasRootBusinessObjects(metaPackage);
+        boolean hasRootBusinessObjects = hasRootBusinessObjects(packages);
+        boolean hasCycles = this.hasCycles(packages);
         if (hasDataObjects) {
-          String packages = metaPackage.getAttribute(IF_PACKAGE);
+          String packageName = packages.getAttribute(IF_PACKAGE);
           if (hasRootBusinessObjects) {
-            processJavaTemplate(root, packages, "Visitor",
+            processJavaTemplate(root, packageName, "Visitor",
                 retrieveTemplate("visitor-if-bo"), context);
-            processJavaTemplate(root, packages, "VisitorFunctor",
+            processJavaTemplate(root, packageName, "VisitorFunctor",
                 retrieveTemplate("visitor-functor-bo"), context);
-            if (cyclicVisitor) {
-              processJavaTemplate(root, packages, "CyclicVisitor",
+            if (hasCycles) {
+              processJavaTemplate(root, packageName, "CyclicVisitor",
                   retrieveTemplate("visitor-cyclic-bo"), context);
             }
-            processJavaTemplate(root, metaPackage.getAttribute(BO_PACKAGE),
+            processJavaTemplate(root, packages.getAttribute(BO_PACKAGE),
                 "TypeFactory", retrieveTemplate("type-factory"), context);
           }
         }
-        if (metaPackage.booleanValueOfAttribute(BO_LIGHTWEIGHT)) {
+        if (packages.booleanValueOfAttribute(BO_LIGHTWEIGHT)) {
           if (hasRootBusinessObjects) {
-            String packages = metaPackage.getAttribute(LW_PACKAGE);
-            processJavaTemplate(root, packages, "LwVisitor",
+            String packageName = packages.getAttribute(LW_PACKAGE);
+            processJavaTemplate(root, packageName, "LwVisitor",
                 retrieveTemplate("visitor-if-lw"), context);
-            processJavaTemplate(root, packages, "LwVisitorFunctor",
+            processJavaTemplate(root, packageName, "LwVisitorFunctor",
                 retrieveTemplate("visitor-functor-lw"), context);
-            processJavaTemplate(root, packages, "LwTransformer",
+            processJavaTemplate(root, packageName, "LwTransformer",
                 retrieveTemplate("transformer-lw"), context);
-            if (cyclicVisitor) {
-              processJavaTemplate(root, packages, "LwCyclicVisitor",
+            if (hasCycles) {
+              processJavaTemplate(root, packageName, "LwCyclicVisitor",
                   retrieveTemplate("visitor-cyclic-lw"), context);
             }
           }
@@ -465,10 +464,10 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
   }
 
   /**
-   * Returns true if the package contqains at least one business object being a
+   * Returns true if the package contains at least one business object being a
    * root.
    * @param packages packages to check
-   * @return true if at least one class was found otherwise false.
+   * @return true if at least one class was found otherwise false
    */
   public boolean hasRootBusinessObjects(MetaPackage packages) {
     boolean hasRootBusinessObjects = false;
@@ -479,6 +478,25 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
       }
     }
     return hasRootBusinessObjects;
+  }
+  
+  /**
+   * Returns true if the package contains at least one business object being a
+   * root of a graph with cycles.
+   * @param packages packages to check
+   * @return true if at least one class was found otherwise false
+   */
+  public boolean hasCycles(MetaPackage packages) {
+    boolean hasCyclicBusinessObjectGraph = false;
+    for (MetaClass clazz : packages.getClasses()) {
+      hasCyclicBusinessObjectGraph = clazz.booleanValueOfTag(IS_ROOT)
+        && clazz.booleanValueOfTag(HAS_CYCLES);
+      if (hasCyclicBusinessObjectGraph) {
+        break;
+      }
+    }
+    return hasCyclicBusinessObjectGraph;
+    
   }
 
   /**

@@ -32,25 +32,33 @@ public interface LwVisitor {
    * @param depth current depth of the visitor in the traversed graph
    */
   void setDepth(int depth);
+  
+  /**
+   * Resets the visitor so that it can be used to traverse a graph.
+   */
+  void reset();
+
+  /** 
+   * Visits the class ContactLw as part of the visitor pattern.
+   * @param item item to visit
+   */
+  void visit(ContactLw item);
 
   /** 
    * Visits the class PhoneNumberLw as part of the visitor pattern.
    * @param item item to visit
    */
   void visit(PhoneNumberLw item);
-  /** 
-   * Visits the class AddressBookLw as part of the visitor pattern.
-   * @param item item to visit
-   */
-  void visit(AddressBookLw item);
-  /** 
-   * Visits the class ContactLw as part of the visitor pattern.
-   * @param item item to visit
-   */
-  void visit(ContactLw item);
+
   /** 
    * Visits the class OrganizationLw as part of the visitor pattern.
    * @param item item to visit
    */
   void visit(OrganizationLw item);
+
+  /** 
+   * Visits the class AddressBookLw as part of the visitor pattern.
+   * @param item item to visit
+   */
+  void visit(AddressBookLw item);
 }

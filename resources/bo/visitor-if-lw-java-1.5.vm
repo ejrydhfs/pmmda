@@ -50,11 +50,16 @@ public interface LwVisitor {
    * @param depth current depth of the visitor in the traversed graph
    */
   void setDepth(int depth);
-
+  
+  /**
+   * Resets the visitor so that it can be used to traverse a graph.
+   */
+  void reset();
 #foreach($class in $visited)
 #isLightweightDataObject($class $isLightweightDataObject)
 #if($isLightweightDataObject)
 #set($name=${class.getAttribute("bo-lw-class")})
+
   /** 
    * Visits the class ${name} as part of the visitor pattern.
    * @param item item to visit

@@ -5,6 +5,7 @@
 #set($sign="#")
 #emitFileHeader()
 #set($packageName=${package.getAttribute("bo-lw-package")})
+#set($hasCycles=${cartridge.hasCycles(${package})})
 
 package ${packageName};
 
@@ -21,6 +22,11 @@ package ${packageName};
 #end
 #set($foo=${imports.addClassName("ch.bbv.dog.AbstractVisitorFunctor")})
 #set($foo=${imports.addClassName("ch.bbv.dog.LwFunctor")})
+#if($hasCycles)
+#set($foo=${imports.addClassName("java.util.Set")})
+#set($foo=${imports.addClassName("java.util.HashSet")})
+#set($foo=${imports.addClassName("ch.bbv.dog.LightweightObject")})
+#end
 #set($importStatements=${imports.getImportStatements(4)})
 #foreach($importStatement in $importStatements) 
 import $importStatement;
@@ -41,6 +47,35 @@ public class LwVisitorFunctor implements LwVisitor, AbstractVisitorFunctor {
    * The current depth of the visitor when traversing a graph.
    */
   private int depth;
+#if($hasCycles) 
+	
+  /**
+   * The objects already visited during the traversal of the graph.
+   */
+  private Set<LightweightObject> visitedObjects;
+#end
+
+  /**
+   * Default constructor of the class.
+   */
+  public LwVisitorFunctor() {
+#if($hasCycles)
+	visitedObjects = new HashSet<LightweightObject>();
+#end
+  }
+ 
+  /**
+   * Constructor of the class, which initializes the functor.
+   * @param functor functor of the visitor
+   */
+  public LwVisitorFunctor(LwFunctor functor) {
+    this();
+    this.functor = functor;
+  }
+  
+  public void reset() {
+    depth = 0;
+  }
 
   public int getDepth() {
     return depth;
@@ -62,9 +97,18 @@ public class LwVisitorFunctor implements LwVisitor, AbstractVisitorFunctor {
 #if($isLightweightDataObject)
 #set($name=${class.getAttribute("bo-lw-class")})
 
+#if($hasCycles)
+  public void visit(${name} item) {
+	if (!visitedObjects.contains(item)) {
+      visitedObjects.add(item);  
+      functor.execute(item);
+    }
+  }
+#else
   public void visit(${name} item) {
     functor.execute(item);
   }
+#end
 #end
 #end
 }

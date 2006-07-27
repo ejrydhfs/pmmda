@@ -50,6 +50,10 @@ public interface Visitor {
    */
   void setDepth(int depth);
   
+  /**
+   * Resets the visitor so that it can be used to traverse a graph.
+   */
+  void reset();
 #foreach($class in $visited)
 #if($hasInterface)
 #set($name=${class.getAttribute("bo-if-class")})

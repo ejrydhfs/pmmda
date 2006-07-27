@@ -35,12 +35,22 @@ public interface Visitor {
    */
   void setDepth(int depth);
   
+  /**
+   * Resets the visitor so that it can be used to traverse a graph.
+   */
+  void reset();
 
   /** 
    * Visits the class JournalEntry as part of the visitor pattern.
    * @param item item to visit
    */
   void visit(JournalEntry item);
+
+  /** 
+   * Visits the class Address as part of the visitor pattern.
+   * @param item item to visit
+   */
+  void visit(Address item);
 
   /** 
    * Visits the class PhoneNumber as part of the visitor pattern.
@@ -65,10 +75,4 @@ public interface Visitor {
    * @param item item to visit
    */
   void visit(Contact item);
-
-  /** 
-   * Visits the class Address as part of the visitor pattern.
-   * @param item item to visit
-   */
-  void visit(Address item);
 }

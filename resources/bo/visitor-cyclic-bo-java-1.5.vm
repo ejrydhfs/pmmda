@@ -57,10 +57,8 @@ public class CyclicVisitor implements Visitor {
     delegate.setDepth(depth);
   }
 
-  /**
-   * Resets the visitor before using it again to traverse a graph.
-   */
   public void reset() {
+    setDepth(0);
 	visitedObjects.clear();
   }
       

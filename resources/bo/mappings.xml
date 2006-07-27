@@ -21,6 +21,9 @@
       <tag name="bo-is-root" type="boolean" context="class"
         default-value="false"
         description="flag specifies if a class is a root class in data object graph." />
+      <tag name="bo-has-cycles" type="boolean" context="class"
+        default-value="false"
+        description="flag specifies if the data object graph under the root has cycles." />
       <tag name="bo-is-hierarchical" type="boolean" context="class"
         default-value="false"
         description="True defines that reference codes are hierarchically structured." />

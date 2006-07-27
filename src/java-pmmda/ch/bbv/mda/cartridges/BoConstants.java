@@ -127,11 +127,6 @@ public final class BoConstants {
   /**
    * Key for a property of the cartridge used to retrieve user values.
    */
-  public static final String CYCLIC_WRAPPER_KEY = "bo-cartridge.generate-cyclic-visitor";
-
-  /**
-   * Key for a property of the cartridge used to retrieve user values.
-   */
   public static final String REFERENCE_CODE_FOLDER_KEY = "bo-cartridge.reference-code-folder";
 
   /**
@@ -274,6 +269,12 @@ public final class BoConstants {
   public static final String IS_ROOT = "bo-is-root";
 
   /**
+   * Flag indicating if a class is a root class of a data object graph with
+   * cycle or not.
+   */
+  public static final String HAS_CYCLES = "bo-has-cycles";
+
+  /**
    * Defines the class of the key used to order the indexed property. This tag
    * is only relevant if the indexed property is ordered.
    */
@@ -345,7 +346,7 @@ public final class BoConstants {
    * to a navigable property.
    */
   public static final String USED_FOR_NAVIGATION = "bo-used-for-navigation";
-  
+
   /**
    * Attribute indicating if the class has an interface.
    */

@@ -62,6 +62,7 @@ public class LwCyclicVisitor implements LwVisitor {
   }
     
   public void reset() {
+    setDepth(0);
 	visitedObjects.clear();
   }
       

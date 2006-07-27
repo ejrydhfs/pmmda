@@ -24,6 +24,25 @@ public class LwVisitorFunctor implements LwVisitor, AbstractVisitorFunctor {
    */
   private int depth;
 
+  /**
+   * Default constructor of the class.
+   */
+  public LwVisitorFunctor() {
+  }
+ 
+  /**
+   * Constructor of the class, which initializes the functor.
+   * @param functor functor of the visitor
+   */
+  public LwVisitorFunctor(LwFunctor functor) {
+    this();
+    this.functor = functor;
+  }
+  
+  public void reset() {
+    depth = 0;
+  }
+
   public int getDepth() {
     return depth;
   }
@@ -40,15 +59,15 @@ public class LwVisitorFunctor implements LwVisitor, AbstractVisitorFunctor {
     this.functor = (LwFunctor)functor;
   }    
 
-  public void visit(ContactLw item) {
-    functor.execute(item);
-  }
-
   public void visit(PhoneNumberLw item) {
     functor.execute(item);
   }
 
   public void visit(AddressBookLw item) {
+    functor.execute(item);
+  }
+
+  public void visit(ContactLw item) {
     functor.execute(item);
   }
 
