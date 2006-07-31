@@ -101,7 +101,8 @@ public final class MdaUtilities {
 
   /**
    * Adds the stereotype with the given name to the item. If the stereotype is
-   * not defined in the model, creates and registers it in the model.
+   * not defined in the model, creates and registers it in the model otherwise
+   * no activities are performed.
    * @param item item to which the stereotype should be added
    * @param name the name of the stereotype to add
    */
@@ -113,7 +114,6 @@ public final class MdaUtilities {
         stereotype.setName(name);
         item.getModel().addStereotype(stereotype);
       }
-      item.addStereotype(stereotype);
     }
   }
 }

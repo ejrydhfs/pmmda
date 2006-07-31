@@ -32,9 +32,9 @@ import ch.bbv.mda.MetaModel;
 import ch.bbv.mda.MetaPackage;
 import ch.bbv.mda.MetaProperty;
 import ch.bbv.mda.Multiplicity;
-import ch.bbv.mda.Stereotype;
 import ch.bbv.mda.TaggedValue;
 import ch.bbv.mda.UmlConstants;
+import ch.bbv.mda.operators.MdaUtilities;
 import ch.bbv.mda.persistence.ExternalTransformer;
 import ch.bbv.mda.persistence.PersistenceException;
 
@@ -303,27 +303,16 @@ public class Mdr2MdaTransformer extends ExternalTransformer {
   /**
    * Extracts tags and stereotypes from the MDR element and add them to the meta
    * element. The visibility of the item is also set.
-   * @param source MDR element to parse.
-   * @param item meta item to synchronize.
+   * @param source MDR element to parse
+   * @param item meta item to synchronize
    */
   private void extractStereotypeAndTags(MdrUmlElement source, MetaElement item) {
-    // MStereotype mStereotype = source.getStereotype();
     for (MdrUmlStereotype mStereotype : source.getStereotypes()) {
       if (mStereotype != null) {
-        String name = mStereotype.getName();
-        if ((name != null) && (name.trim().length() > 0)) {
-          Stereotype stereotype = item.getModel().findStereotype(name);
-          if (stereotype == null) {
-            stereotype = new Stereotype(name);
-            item.getModel().addStereotype(stereotype);
-          }
-          item.addStereotype(stereotype);
-        }
+        MdaUtilities.addStereotype(item, mStereotype.getName());
       }
     }
-
     item.setVisibility(source.getVisibility());
-
     for (Iterator i = source.getTaggedValues().iterator(); i.hasNext();) {
       MdrTaggedValue tag = (MdrTaggedValue) i.next();
       String tagName = tag.getName();
@@ -338,7 +327,7 @@ public class Mdr2MdaTransformer extends ExternalTransformer {
         item.setDescription(tag.getValue());
       } else {
         if (tagName == null) {
-          log.warn("Tagged Value has no name.");
+          log.warn("Tagged Value has no name and has value." + tag.getValue());
           continue;
         }
         TaggedValue taggedValue = item.getTaggedValue(tagName);
@@ -491,8 +480,7 @@ public class Mdr2MdaTransformer extends ExternalTransformer {
    */
   private void extractStereotypes(MdrUmlModel source, MetaModel target) {
     for (MdrUmlStereotype mStereotype : source.getStereotypes()) {
-      Stereotype stereotype = new Stereotype(mStereotype.getName());
-      target.addStereotype(stereotype);
+      MdaUtilities.addStereotype(target, mStereotype.getName());
     }
   }
 }
