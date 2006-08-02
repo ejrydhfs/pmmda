@@ -353,7 +353,7 @@
       </question>
       <answer>
         <p>
-          You need first to install the official forrest release version 0.6
+          You need first to install the official forrest release version 0.7
           available under
           <link href="ext:forrest">forrest</link>
           . Second you must add the validator library to your ant libraries in
