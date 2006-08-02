@@ -65,7 +65,12 @@ public class LwCyclicVisitor implements LwVisitor {
     setDepth(0);
 	visitedObjects.clear();
   }
-      
+
+  public boolean shouldVisit(LightweightObject object) {
+    assert object != null;
+    return !visitedObjects.contains(object);
+  }      
+  
 #foreach($class in $visited)
 #isLightweightDataObject($class $isLightweightDataObject)
 #if($isLightweightDataObject)

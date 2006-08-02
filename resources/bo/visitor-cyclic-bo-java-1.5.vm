@@ -61,7 +61,11 @@ public class CyclicVisitor implements Visitor {
     setDepth(0);
 	visitedObjects.clear();
   }
-      
+  
+  public boolean shouldVisit(DataObject object) {
+    assert object != null;
+    return !visitedObjects.contains(object);
+  }      
 #foreach($class in $visited)
 #isDataObject($class $isDataObject)
 #if($isDataObject)

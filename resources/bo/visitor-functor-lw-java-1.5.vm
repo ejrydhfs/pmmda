@@ -22,10 +22,10 @@ package ${packageName};
 #end
 #set($foo=${imports.addClassName("ch.bbv.dog.AbstractVisitorFunctor")})
 #set($foo=${imports.addClassName("ch.bbv.dog.LwFunctor")})
+#set($foo=${imports.addClassName("ch.bbv.dog.LightweightObject")})
 #if($hasCycles)
 #set($foo=${imports.addClassName("java.util.Set")})
 #set($foo=${imports.addClassName("java.util.HashSet")})
-#set($foo=${imports.addClassName("ch.bbv.dog.LightweightObject")})
 #end
 #set($importStatements=${imports.getImportStatements(4)})
 #foreach($importStatement in $importStatements) 
@@ -75,6 +75,9 @@ public class LwVisitorFunctor implements LwVisitor, AbstractVisitorFunctor {
   
   public void reset() {
     depth = 0;
+#if($hasCycles)
+	visitedObjects.clear();
+#end
   }
 
   public int getDepth() {
@@ -84,6 +87,15 @@ public class LwVisitorFunctor implements LwVisitor, AbstractVisitorFunctor {
   public void setDepth(int depth) {
     this.depth = depth;
   }
+
+  public boolean shouldVisit(LightweightObject object) {
+    assert object != null;
+#if($hasCycles)
+    return !visitedObjects.contains(object);
+#else
+	return true;
+#end
+  }      
 
   public Object getFunctor() {
     return functor;

@@ -14,7 +14,7 @@ package ch.bbv.dog;
 public interface DoFunctor {
   /**
    * Execute the functor on the given data object.
-   * @param object data object instance to process.
+   * @param object data object instance to process
    * @pre object != null
    */
   void execute(DataObject object);

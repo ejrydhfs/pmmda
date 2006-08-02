@@ -5,7 +5,15 @@
  */
 package ch.bbv.mda.persistence.nsuml;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -18,7 +26,16 @@ import org.apache.commons.logging.LogFactory;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import ru.novosoft.uml.foundation.core.*;
+import ru.novosoft.uml.foundation.core.MAbstraction;
+import ru.novosoft.uml.foundation.core.MAssociation;
+import ru.novosoft.uml.foundation.core.MAssociationEnd;
+import ru.novosoft.uml.foundation.core.MAttribute;
+import ru.novosoft.uml.foundation.core.MClass;
+import ru.novosoft.uml.foundation.core.MClassifier;
+import ru.novosoft.uml.foundation.core.MDataType;
+import ru.novosoft.uml.foundation.core.MGeneralization;
+import ru.novosoft.uml.foundation.core.MInterface;
+import ru.novosoft.uml.foundation.core.MModelElement;
 import ru.novosoft.uml.foundation.data_types.MAggregationKind;
 import ru.novosoft.uml.foundation.data_types.MExpression;
 import ru.novosoft.uml.foundation.data_types.MMultiplicity;
@@ -29,7 +46,18 @@ import ru.novosoft.uml.model_management.MModel;
 import ru.novosoft.uml.model_management.MPackage;
 import ru.novosoft.uml.xmi.IncompleteXMIException;
 import ru.novosoft.uml.xmi.XMIWriter;
-import ch.bbv.mda.*;
+import ch.bbv.mda.MetaClass;
+import ch.bbv.mda.MetaDatatype;
+import ch.bbv.mda.MetaElement;
+import ch.bbv.mda.MetaIndexedProperty;
+import ch.bbv.mda.MetaModel;
+import ch.bbv.mda.MetaPackage;
+import ch.bbv.mda.MetaProperty;
+import ch.bbv.mda.Multiplicity;
+import ch.bbv.mda.Stereotype;
+import ch.bbv.mda.TaggedValue;
+import ch.bbv.mda.UmlConstants;
+import ch.bbv.mda.VisibilityCode;
 import ch.bbv.mda.operators.MdaUtilities;
 import ch.bbv.mda.persistence.ExternalTransformer;
 import ch.bbv.mda.persistence.FilterIterator;
@@ -122,7 +150,7 @@ public class NsUml2MdaTransformer extends ExternalTransformer {
    */
   public void synchronize(MModel source, MetaModel target) {
     target.setName(source.getName());
-    extractDataTypes(source, target);
+    extractDatatypes(source, target);
     extractStereotypes(source, target);
     for (Iterator<MPackage> i = new FilterIterator<MPackage>(source
         .getOwnedElements(), MPackage.class); i.hasNext();) {
@@ -467,17 +495,30 @@ public class NsUml2MdaTransformer extends ExternalTransformer {
     }
   }
 
-  private void extractDataTypes(MModel source, MetaModel target) {
+  /**
+   * Helper method to extract the datatypes out of the model.
+   * @param source the NSUML source model
+   * @param target the PMMDA target model
+   */
+  private void extractDatatypes(MModel source, MetaModel target) {
     for (Iterator<MDataType> i = new FilterIterator<MDataType>(source
         .getOwnedElements(), MDataType.class); i.hasNext();) {
-      MDataType mDataType = i.next();
-      MetaDatatype datatype = new MetaDatatype();
-      datatype.setName(mDataType.getName());
-      extractStereotypeAndTags(mDataType, datatype);
-      target.addDatatype(datatype);
+      MDataType mDatatype = i.next();
+      String name = mDatatype.getName();
+      if (target.findDatatype(name) == null) {
+        MetaDatatype datatype = new MetaDatatype();
+        datatype.setName(mDatatype.getName());
+        extractStereotypeAndTags(mDatatype, datatype);
+        target.addDatatype(datatype);
+      }
     }
   }
 
+  /**
+   * Helper method to extract the stereotypes out of the model.
+   * @param source the MDR source model
+   * @param target the PMMDA target model
+   */
   private void extractStereotypes(MModel source, MetaModel target) {
     for (Iterator<MStereotype> i = new FilterIterator<MStereotype>(source
         .getOwnedElements(), MStereotype.class); i.hasNext();) {
@@ -487,8 +528,8 @@ public class NsUml2MdaTransformer extends ExternalTransformer {
       if (stereotype == null) {
         stereotype = new Stereotype(name);
         target.addStereotype(stereotype);
+        extractStereotypeAndTags(mStereotype, stereotype);
       }
-      extractStereotypeAndTags(mStereotype, stereotype);
     }
   }
 

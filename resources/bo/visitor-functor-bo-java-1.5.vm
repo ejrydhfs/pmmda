@@ -19,6 +19,7 @@ package ${packageName};
 #set($foo=${imports.addClasses(${visited})})
 #set($foo=${imports.addClassName("ch.bbv.dog.AbstractVisitorFunctor")})
 #set($foo=${imports.addClassName("ch.bbv.dog.DoFunctor")})
+#set($foo=${imports.addClassName("ch.bbv.dog.DataObject")})
 #if($hasCycles)
 #set($foo=${imports.addClassName("java.util.Set")})
 #set($foo=${imports.addClassName("java.util.HashSet")})
@@ -72,6 +73,9 @@ public class VisitorFunctor implements Visitor, AbstractVisitorFunctor {
   
   public void reset() {
     depth = 0;
+#if($hasCycles)
+	visitedObjects.clear();
+#end
   }
 
   public int getDepth() {
@@ -81,7 +85,16 @@ public class VisitorFunctor implements Visitor, AbstractVisitorFunctor {
   public void setDepth(int depth) {
     this.depth = depth;
   }
-    
+   
+  public boolean shouldVisit(DataObject object) {
+    assert object != null;
+#if($hasCycles)
+    return !visitedObjects.contains(object);
+#else
+	return true;
+#end
+  }      
+
   public Object getFunctor() {
     return functor;
   }

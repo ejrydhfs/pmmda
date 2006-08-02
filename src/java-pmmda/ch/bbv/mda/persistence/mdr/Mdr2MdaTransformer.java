@@ -12,7 +12,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.zip.ZipInputStream;
 
@@ -32,6 +31,7 @@ import ch.bbv.mda.MetaModel;
 import ch.bbv.mda.MetaPackage;
 import ch.bbv.mda.MetaProperty;
 import ch.bbv.mda.Multiplicity;
+import ch.bbv.mda.Stereotype;
 import ch.bbv.mda.TaggedValue;
 import ch.bbv.mda.UmlConstants;
 import ch.bbv.mda.operators.MdaUtilities;
@@ -106,7 +106,7 @@ public class Mdr2MdaTransformer extends ExternalTransformer {
   public void synchronize(MdrUmlModel source, MetaModel target) {
     this.sourceModel = source;
     target.setName(source.getName());
-    extractDataTypes(source, target);
+    extractDatatypes(source, target);
     extractStereotypes(source, target);
 
     // extract packages
@@ -313,14 +313,14 @@ public class Mdr2MdaTransformer extends ExternalTransformer {
       }
     }
     item.setVisibility(source.getVisibility());
-    for (Iterator i = source.getTaggedValues().iterator(); i.hasNext();) {
-      MdrTaggedValue tag = (MdrTaggedValue) i.next();
+    for (MdrTaggedValue tag : source.getTaggedValues()) {
       String tagName = tag.getName();
       if (item instanceof MetaProperty) {
+        MetaProperty property = (MetaProperty) item;
         if ("transient".equals(tagName)) {
-          ((MetaProperty) item).setTransient(booleanValue(tag.getValue()));
+          property.setTransient(booleanValue(tag.getValue()));
         } else if ("volatile".equals(tagName)) {
-          ((MetaProperty) item).setVolatile(booleanValue(tag.getValue()));
+          property.setVolatile(booleanValue(tag.getValue()));
         }
       }
       if (UmlConstants.DOCUMENTATION_TAG.equals(tagName)) {
@@ -460,27 +460,38 @@ public class Mdr2MdaTransformer extends ExternalTransformer {
   }
 
   /**
-   * Helper method to extract the datatypes out of the model
-   * @param source the source model (mdr)
-   * @param target the target model (pmmda)
+   * Helper method to extract the datatypes out of the model.
+   * @param source the MDR source model
+   * @param target the PMMDA target model
    */
-  private void extractDataTypes(MdrUmlModel source, MetaModel target) {
-    for (MdrUmlDataType mDataType : source.getDataTypes()) {
-      MetaDatatype datatype = new MetaDatatype();
-      datatype.setName(mDataType.getName());
-      extractStereotypeAndTags(mDataType, datatype);
-      target.addDatatype(datatype);
+  private void extractDatatypes(MdrUmlModel source, MetaModel target) {
+    for (MdrUmlDataType mDatatype : source.getDataTypes()) {
+      String name = mDatatype.getName();
+      if (target.findDatatype(name) == null) {
+        MetaDatatype datatype = new MetaDatatype();
+        datatype.setName(mDatatype.getName());
+        extractStereotypeAndTags(mDatatype, datatype);
+        target.addDatatype(datatype);
+      }
     }
   }
 
   /**
-   * Helper method to extract the stereotypes out of the model
-   * @param source the source model (mdr)
-   * @param target the target model (pmmda)
+   * Helper method to extract the stereotypes out of the model.
+   * @param source the MDR source model
+   * @param target the PMMDA target model
    */
   private void extractStereotypes(MdrUmlModel source, MetaModel target) {
     for (MdrUmlStereotype mStereotype : source.getStereotypes()) {
-      MdaUtilities.addStereotype(target, mStereotype.getName());
+      String name = mStereotype.getName();
+      if ((name != null) && (name.trim().length() > 0)) {
+        Stereotype stereotype = target.findStereotype(name);
+        if (stereotype == null) {
+          stereotype = new Stereotype();
+          stereotype.setName(name);
+          target.addStereotype(stereotype);
+        }
+      }
     }
   }
 }

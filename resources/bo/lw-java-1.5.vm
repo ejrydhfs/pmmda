@@ -430,8 +430,9 @@ $line
 #if(${property.booleanValueOfTag("bo-lightweight")})
 #isTypeLightweigth($model $property $isTypeLightweigth)
 #if(${isTypeLightweigth} && !${property.booleanValueOfAttribute("bo-used-for-navigation")})
-    if (${property.nameFirstLower()} != null) {
-      ${property.nameFirstLower()}.accept(visitor);
+#set($propertyName=${property.nameFirstLower()})
+    if ((${propertyName} != null) && visitor.shouldVisit(${propertyName})) {
+      ${propertyName}.accept(visitor);
     }
 #end
 #end
@@ -443,7 +444,9 @@ $line
 #set($upName = ${aggregation.nameFirstUpperPlural()})
 #getType($model $aggregation $type)
     for (${type.getAttribute("bo-lw-class")} item : get${upName}()) {
-      item.accept(visitor);
+      if ((item != null) && visitor.shouldVisit(item)) {
+        item.accept(visitor);
+	  }
     }
 #end
 #end

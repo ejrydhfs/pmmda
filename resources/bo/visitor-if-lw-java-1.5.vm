@@ -19,6 +19,7 @@ package ${packageName};
 #set($foo=${imports.addClassName(${lwQualifiedName})})
 #end
 #end
+#set($foo=${imports.addClassName("ch.bbv.dog.LightweightObject")})
 #set($importStatements=${imports.getImportStatements(4)})
 #foreach($importStatement in $importStatements) 
 import $importStatement;
@@ -55,6 +56,14 @@ public interface LwVisitor {
    * Resets the visitor so that it can be used to traverse a graph.
    */
   void reset();
+  
+  /**
+   * Returns true if the object should be visited otherwise false. This method
+   * is used to detect cycles.
+   * @param object data object to visit
+   * @pre object != null
+   */
+  boolean shouldVisit(LightweightObject object);
 #foreach($class in $visited)
 #isLightweightDataObject($class $isLightweightDataObject)
 #if($isLightweightDataObject)
