@@ -214,7 +214,7 @@ $line
 #set($keyType=${aggregation.getAttribute("bo-key-class")})
 #set($visibility = ${aggregation.retrieveVisibilityText()})
 #set($type=false)
-#set($type=${model.findClass(${aggregation.ypeName()})})
+#set($type=${model.findClass(${aggregation.getTypeName()})})
 #if(${aggregation.canBeRead()})
 #if(${cartridge.isOrdered(${aggregation})})
 
