@@ -6,6 +6,7 @@
 package ch.bbv.pim.lw;
 
 import ch.bbv.dog.AbstractVisitorFunctor;
+import ch.bbv.dog.LightweightObject;
 import ch.bbv.dog.LwFunctor;
 
 /** 
@@ -51,6 +52,11 @@ public class LwVisitorFunctor implements LwVisitor, AbstractVisitorFunctor {
     this.depth = depth;
   }
 
+  public boolean shouldVisit(LightweightObject object) {
+    assert object != null;
+	return true;
+  }      
+
   public Object getFunctor() {
     return functor;
   }
@@ -63,15 +69,15 @@ public class LwVisitorFunctor implements LwVisitor, AbstractVisitorFunctor {
     functor.execute(item);
   }
 
-  public void visit(AddressBookLw item) {
-    functor.execute(item);
-  }
-
   public void visit(ContactLw item) {
     functor.execute(item);
   }
 
   public void visit(OrganizationLw item) {
+    functor.execute(item);
+  }
+
+  public void visit(AddressBookLw item) {
     functor.execute(item);
   }
 }

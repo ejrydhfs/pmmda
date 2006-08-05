@@ -31,7 +31,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-import static ch.bbv.dnm.users.common.ApplicationConstants.*;
+import static ch.bbv.dnm.users.common.UserApplicationConstants.*;
 
 /**
  * The class defines the server application connecting to the database and to
@@ -105,7 +105,7 @@ public class UserApplication extends Application {
    * Default constructor used in the EJB generated source artifacts for the
    * session bean.
    * @throws ComponentException if an error occured creating the client
-   *           application
+   *         application
    */
   public UserApplication() throws ComponentException {
     this(USE_J2EE, "REPLACE");
@@ -116,7 +116,7 @@ public class UserApplication extends Application {
    * @param mode mode of the client application
    * @param synchronization synchronization mode of the O/R system
    * @throws ComponentException if an error occured creating the client
-   *           application
+   *         application
    * @pre (mode != null) && (synchronization != null)
    */
   public UserApplication(String mode, String synchronization)
@@ -130,12 +130,12 @@ public class UserApplication extends Application {
     if (mode.equalsIgnoreCase(USE_DIRECT)) {
       log.info("Application started in direct mode");
       manager = new DataObjectMgr(new PersistenceHandlerOjb(false, sync),
-          new LightweightObjectHandlerImpl(), null, USERS_DATABASE);
+          new LightweightObjectHandlerImpl(), null, SCHEMA);
       setDataObjectMgr(manager);
     } else if (mode.equalsIgnoreCase(USE_CORBA)) {
       log.info("Application started in CORBA mode");
       manager = new DataObjectMgr(new PersistenceHandlerOjb(false, sync),
-          new LightweightObjectHandlerImpl(), null, USERS_DATABASE);
+          new LightweightObjectHandlerImpl(), null, SCHEMA);
       setDataObjectMgr(manager);
       orb = ORB.init(args, null);
       register(orb, ORB_NAME);
@@ -143,14 +143,14 @@ public class UserApplication extends Application {
     } else if (mode.equalsIgnoreCase(USE_J2EE)) {
       log.info("Application started in J2EE mode");
       manager = new DataObjectMgr(new PersistenceHandlerOjb(true, sync),
-          new LightweightObjectHandlerImpl(), null, USERS_DATABASE);
+          new LightweightObjectHandlerImpl(), null, SCHEMA);
       setDataObjectMgr(manager);
     }
     TypeFactory factory = new TypeFactory(manager);
     factory.registerAllTypes();
     initialize();
     startup();
-    manager.getDataObjectHandler().openDatasource(USERS_DATABASE, false);
+    manager.getDataObjectHandler().openDatasource(SCHEMA, false);
     // starts the ORB main loop
     if (mode.equalsIgnoreCase(USE_CORBA)) {
       orb.run();

@@ -15,6 +15,10 @@ import java.util.*;
 /* %% USER DEFINED IMPORT START %% */
 /* %% USER DEFINED IMPORT END %% */
 
+/**
+ * The address book contains a set of addresses with their properties.
+ * @author Marcel Baumann
+ */
 public class AddressBook implements DataObject {
 
 /* %% USER DEFINED DECLARATION START %% */
@@ -25,6 +29,9 @@ public class AddressBook implements DataObject {
    */
   private static final long serialVersionUID = 99990101;
 
+  /**
+   * The name of the address book a displayed to users.
+   */
   private String name;
 
   private List<Organization> organizations;
@@ -378,7 +385,9 @@ public class AddressBook implements DataObject {
    */  
   protected void traverse(Visitor visitor) {
     for (Organization item : getOrganizations()) {
-      item.accept(visitor);
+      if ((item != null) && visitor.shouldVisit(item)) {
+        item.accept(visitor);
+	  }
     }
   }  
 

@@ -10,6 +10,10 @@ import ch.bbv.dog.LightweightObject;
 /* %% USER DEFINED IMPORT START %% */
 /* %% USER DEFINED IMPORT END %% */
 
+/**
+ * A contact is a person or a company with its communication information.
+ * @author Marcel Baumann
+ */
 public class ContactLw  implements LightweightObject {
 
 /* %% USER DEFINED DECLARATION START %% */
@@ -28,6 +32,9 @@ public class ContactLw  implements LightweightObject {
 
   private String workEmail;
 
+  /**
+   * The work number of the contact.
+   */
   private PhoneNumberLw workNumber;
 
   /** 
@@ -216,7 +223,7 @@ public class ContactLw  implements LightweightObject {
    * @param visitor visitor to act on the data object.
    */  
   protected void traverse(LwVisitor visitor) {
-    if (workNumber != null) {
+    if ((workNumber != null) && visitor.shouldVisit(workNumber)) {
       workNumber.accept(visitor);
     }
   }  

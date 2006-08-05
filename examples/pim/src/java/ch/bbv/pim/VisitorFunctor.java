@@ -6,6 +6,7 @@
 package ch.bbv.pim;
 
 import ch.bbv.dog.AbstractVisitorFunctor;
+import ch.bbv.dog.DataObject;
 import ch.bbv.dog.DoFunctor;
 
 /** 
@@ -50,7 +51,12 @@ public class VisitorFunctor implements Visitor, AbstractVisitorFunctor {
   public void setDepth(int depth) {
     this.depth = depth;
   }
-    
+   
+  public boolean shouldVisit(DataObject object) {
+    assert object != null;
+	return true;
+  }      
+
   public Object getFunctor() {
     return functor;
   }
@@ -59,7 +65,15 @@ public class VisitorFunctor implements Visitor, AbstractVisitorFunctor {
     this.functor = (DoFunctor)functor;
   }    
 
-  public void visit(Address item) {
+  public void visit(Contact item) {
+    functor.execute(item);
+  }
+
+  public void visit(Organization item) {
+    functor.execute(item);
+  }
+
+  public void visit(JournalEntry item) {
     functor.execute(item);
   }
 
@@ -71,15 +85,7 @@ public class VisitorFunctor implements Visitor, AbstractVisitorFunctor {
     functor.execute(item);
   }
 
-  public void visit(JournalEntry item) {
-    functor.execute(item);
-  }
-
-  public void visit(Contact item) {
-    functor.execute(item);
-  }
-
-  public void visit(Organization item) {
+  public void visit(Address item) {
     functor.execute(item);
   }
 }

@@ -16,6 +16,10 @@ import java.util.Map;
 /* %% USER DEFINED IMPORT START %% */
 /* %% USER DEFINED IMPORT END %% */
 
+/**
+ * The address defines a postal address on earth.
+ * @author Marcel Baumann
+ */
 public class Address implements DataObject {
 
 /* %% USER DEFINED DECLARATION START %% */
@@ -26,16 +30,34 @@ public class Address implements DataObject {
    */
   private static final long serialVersionUID = 99990101;
 
+  /**
+   * The street of the address with the street name and number.
+   */
   private String street;
 
+  /**
+   * The optional postal box code of the address.
+   */
   private String poBox;
 
+  /**
+   * The city where the address is located.
+   */
   private String city;
 
+  /**
+   * The optional state in which the address is located.
+   */
   private String state;
 
+  /**
+   * The postal code of the address. The format follows
+   */
   private String postalCode;
 
+  /**
+   * The country in which the address is defined.
+   */
   private Country country;
 
   /** 

@@ -14,6 +14,11 @@ import java.util.HashMap;
 /* %% USER DEFINED IMPORT START %% */
 /* %% USER DEFINED IMPORT END %% */
 
+/**
+ * The class models a legal country defined on earch. The set of countries are 
+ * defined in an ISO standard.
+ * @author Marcel Baumann
+ */
 public class Country extends ReferenceCodeImpl {
   /**
    * The code value associated with the reference code.

@@ -11,6 +11,11 @@ import java.util.*;
 /* %% USER DEFINED IMPORT START %% */
 /* %% USER DEFINED IMPORT END %% */
 
+/**
+ * The main URL of the organization defining the Internet site where 
+ * information about it can be found.
+ * @author Marcel Baumann
+ */
 public class OrganizationLw  implements LightweightObject {
 
 /* %% USER DEFINED DECLARATION START %% */
@@ -21,8 +26,14 @@ public class OrganizationLw  implements LightweightObject {
    */
   private static final long serialVersionUID = 99990101;
 
+  /**
+   * The name of the organization as defined in its legal statutes.
+   */
   private String name;
 
+  /**
+   * The main number of the organization.
+   */
   private PhoneNumberLw mainNumber;
 
   private List<ContactLw> contacts;
@@ -210,11 +221,13 @@ public class OrganizationLw  implements LightweightObject {
    * @param visitor visitor to act on the data object.
    */  
   protected void traverse(LwVisitor visitor) {
-    if (mainNumber != null) {
+    if ((mainNumber != null) && visitor.shouldVisit(mainNumber)) {
       mainNumber.accept(visitor);
     }
     for (ContactLw item : getContacts()) {
-      item.accept(visitor);
+      if ((item != null) && visitor.shouldVisit(item)) {
+        item.accept(visitor);
+	  }
     }
   }  
 }

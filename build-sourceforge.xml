@@ -2,8 +2,8 @@
   <property file="build.properties" />
   <import file="build-inits.xml" />
   <import file="build-examples.xml" />
-  <property name="forrest.plugins-dir" value="${forrest.home}/build/plugins" />
   <import file="${forrest.home}/main/forrest.build.xml" />
+  <property name="forrest.plugins-dir" value="${forrest.home}/build/plugins" />
 
   <!--
   <typedef resource="dependencies.properties" />
@@ -126,6 +126,7 @@
     <copy file="${lib.dir}/${xpp3.lib}" todir="${pmmda-lib.dir}" />
     <copy file="${lib.dir}/${xstream.lib}" todir="${pmmda-lib.dir}" />
     <copy file="${scripts.dir}/dist/pmMDA.bat" todir="${pmmda-dist.dir}" />
+    <copy file="${scripts.dir}/dist/pmMDA.sh" todir="${pmmda-dist.dir}" />
     <copy file="${scripts.dir}/dist/pmMDA.properties" todir="${pmmda-dist.dir}" />
     <copy file="${scripts.dir}/dist/logging.properties" todir="${pmmda-dist.dir}" />
     <copy file="${src.pmmda.dir}/ReleaseNotes.txt" todir="${pmmda-dist.dir}" />

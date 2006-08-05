@@ -15,6 +15,11 @@ import java.util.*;
 /* %% USER DEFINED IMPORT START %% */
 /* %% USER DEFINED IMPORT END %% */
 
+/**
+ * The main URL of the organization defining the Internet site where 
+ * information about it can be found.
+ * @author Marcel Baumann
+ */
 public class Organization implements DataObject {
 
 /* %% USER DEFINED DECLARATION START %% */
@@ -25,14 +30,31 @@ public class Organization implements DataObject {
    */
   private static final long serialVersionUID = 99990101;
 
+  /**
+   * The name of the organization as defined in its legal statutes.
+   */
   private String name;
 
+  /**
+   * The main email address of the organization. Often it is the information 
+   * address.
+   */
   private String mainEmail;
 
+  /**
+   * The main URL address of the organization where information about the 
+   * organization can be found.
+   */
   private URL mainUrl;
 
+  /**
+   * The main number of the organization.
+   */
   private PhoneNumber mainNumber;
 
+  /**
+   * The legal main address of the organization.
+   */
   private Address mainAddress;
 
   private List<Contact> contacts;
@@ -490,14 +512,16 @@ public class Organization implements DataObject {
    * @param visitor visitor to act on the data object
    */  
   protected void traverse(Visitor visitor) {
-    if (mainNumber != null) {
+    if ((mainNumber != null) && visitor.shouldVisit(mainNumber)) {
       mainNumber.accept(visitor);
     }
-    if (mainAddress != null) {
+    if ((mainAddress != null) && visitor.shouldVisit(mainAddress)) {
       mainAddress.accept(visitor);
     }
     for (Contact item : getContacts()) {
-      item.accept(visitor);
+      if ((item != null) && visitor.shouldVisit(item)) {
+        item.accept(visitor);
+	  }
     }
   }  
 

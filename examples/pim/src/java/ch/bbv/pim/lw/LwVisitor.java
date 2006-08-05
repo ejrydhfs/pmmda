@@ -5,6 +5,7 @@
 
 package ch.bbv.pim.lw;
 
+import ch.bbv.dog.LightweightObject;
 
 /* %% USER DEFINED DECLARATIONS START %% */
 /* %% USER DEFINED DECLARATIONS END   %% */
@@ -37,12 +38,20 @@ public interface LwVisitor {
    * Resets the visitor so that it can be used to traverse a graph.
    */
   void reset();
+  
+  /**
+   * Returns true if the object should be visited otherwise false. This method
+   * is used to detect cycles.
+   * @param object data object to visit
+   * @pre object != null
+   */
+  boolean shouldVisit(LightweightObject object);
 
   /** 
-   * Visits the class ContactLw as part of the visitor pattern.
+   * Visits the class AddressBookLw as part of the visitor pattern.
    * @param item item to visit
    */
-  void visit(ContactLw item);
+  void visit(AddressBookLw item);
 
   /** 
    * Visits the class PhoneNumberLw as part of the visitor pattern.
@@ -51,14 +60,14 @@ public interface LwVisitor {
   void visit(PhoneNumberLw item);
 
   /** 
+   * Visits the class ContactLw as part of the visitor pattern.
+   * @param item item to visit
+   */
+  void visit(ContactLw item);
+
+  /** 
    * Visits the class OrganizationLw as part of the visitor pattern.
    * @param item item to visit
    */
   void visit(OrganizationLw item);
-
-  /** 
-   * Visits the class AddressBookLw as part of the visitor pattern.
-   * @param item item to visit
-   */
-  void visit(AddressBookLw item);
 }

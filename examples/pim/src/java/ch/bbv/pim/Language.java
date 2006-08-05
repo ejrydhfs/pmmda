@@ -14,6 +14,11 @@ import java.util.HashMap;
 /* %% USER DEFINED IMPORT START %% */
 /* %% USER DEFINED IMPORT END %% */
 
+/**
+ * The language as used by human beings to display information. The languages 
+ * are defined in an ISO standard.
+ * @author Marcel Baumann
+ */
 public class Language extends ReferenceCodeImpl {
   /**
    * The code value associated with the reference code.

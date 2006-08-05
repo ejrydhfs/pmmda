@@ -17,18 +17,6 @@ public class LwTransformer {
    * @param item data object instance to synchronize.
    * @return the lightweight representation of the data object instance
    */
-  public static OrganizationLw transform(Organization item) {
-    assert item != null;
-    OrganizationLw lw = new OrganizationLw(item.getId());
-    synchronize(item, lw);
-    return lw;
-  }
-  
-  /** 
-   * Transforms a data object specific class into its lightweight representation.
-   * @param item data object instance to synchronize.
-   * @return the lightweight representation of the data object instance
-   */
   public static ContactLw transform(Contact item) {
     assert item != null;
     ContactLw lw = new ContactLw(item.getId());
@@ -61,19 +49,15 @@ public class LwTransformer {
   }
   
   /** 
-   * Synchronizes a data object specific class into its lightweight representation.
+   * Transforms a data object specific class into its lightweight representation.
    * @param item data object instance to synchronize.
-   * @param lw the lightweight representation to synchronize.
+   * @return the lightweight representation of the data object instance
    */
-  public static void synchronize(Organization item, OrganizationLw lw) {
-    assert (item != null) && (lw != null);
-    lw.setName(item.getName());
-    if (item.getMainNumber() != null) {
-      lw.setMainNumber(transform(item.getMainNumber()));
-    }
-    for (Contact i : item.getContacts()) {
-      lw.addContact((i != null) ? transform(i) : null);
-    }
+  public static OrganizationLw transform(Organization item) {
+    assert item != null;
+    OrganizationLw lw = new OrganizationLw(item.getId());
+    synchronize(item, lw);
+    return lw;
   }
   
   /** 
@@ -113,6 +97,22 @@ public class LwTransformer {
   public static void synchronize(PhoneNumber item, PhoneNumberLw lw) {
     assert (item != null) && (lw != null);
     lw.setNumber(item.getNumber());
+  }
+  
+  /** 
+   * Synchronizes a data object specific class into its lightweight representation.
+   * @param item data object instance to synchronize.
+   * @param lw the lightweight representation to synchronize.
+   */
+  public static void synchronize(Organization item, OrganizationLw lw) {
+    assert (item != null) && (lw != null);
+    lw.setName(item.getName());
+    if (item.getMainNumber() != null) {
+      lw.setMainNumber(transform(item.getMainNumber()));
+    }
+    for (Contact i : item.getContacts()) {
+      lw.addContact((i != null) ? transform(i) : null);
+    }
   }
   
 }

@@ -5,6 +5,7 @@
 
 package ch.bbv.pim;
 
+import ch.bbv.dog.DataObject;
 
 /* %% USER DEFINED DECLARATIONS START %% */
 /* %% USER DEFINED DECLARATIONS END   %% */
@@ -39,6 +40,14 @@ public interface Visitor {
    * Resets the visitor so that it can be used to traverse a graph.
    */
   void reset();
+  
+  /**
+   * Returns true if the object should be visited otherwise false. This method
+   * is used to detect cycles.
+   * @param object data object to visit
+   * @pre object != null
+   */
+  boolean shouldVisit(DataObject object);
 
   /** 
    * Visits the class JournalEntry as part of the visitor pattern.
@@ -47,10 +56,10 @@ public interface Visitor {
   void visit(JournalEntry item);
 
   /** 
-   * Visits the class Address as part of the visitor pattern.
+   * Visits the class AddressBook as part of the visitor pattern.
    * @param item item to visit
    */
-  void visit(Address item);
+  void visit(AddressBook item);
 
   /** 
    * Visits the class PhoneNumber as part of the visitor pattern.
@@ -59,20 +68,20 @@ public interface Visitor {
   void visit(PhoneNumber item);
 
   /** 
-   * Visits the class Organization as part of the visitor pattern.
+   * Visits the class Address as part of the visitor pattern.
    * @param item item to visit
    */
-  void visit(Organization item);
-
-  /** 
-   * Visits the class AddressBook as part of the visitor pattern.
-   * @param item item to visit
-   */
-  void visit(AddressBook item);
+  void visit(Address item);
 
   /** 
    * Visits the class Contact as part of the visitor pattern.
    * @param item item to visit
    */
   void visit(Contact item);
+
+  /** 
+   * Visits the class Organization as part of the visitor pattern.
+   * @param item item to visit
+   */
+  void visit(Organization item);
 }

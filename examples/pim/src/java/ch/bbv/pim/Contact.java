@@ -17,6 +17,10 @@ import java.util.*;
 /* %% USER DEFINED IMPORT START %% */
 /* %% USER DEFINED IMPORT END %% */
 
+/**
+ * A contact is a person or a company with its communication information.
+ * @author Marcel Baumann
+ */
 public class Contact implements DataObject {
 
 /* %% USER DEFINED DECLARATION START %% */
@@ -51,12 +55,21 @@ public class Contact implements DataObject {
 
   private Date birthday;
 
+  /**
+   * The work address of the contact.
+   */
   private Address workAddress;
 
   private Address homeAddress;
 
+  /**
+   * The work number of the contact.
+   */
   private PhoneNumber workNumber;
 
+  /**
+   * The home number of the contact.
+   */
   private PhoneNumber homeNumber;
 
   private PhoneNumber workMobileNumber;
@@ -65,6 +78,9 @@ public class Contact implements DataObject {
 
   private Organization organization;
 
+  /**
+   * The language used to communicate with the contact.
+   */
   private Language language;
 
   private List<JournalEntry> entries;
@@ -850,26 +866,28 @@ public class Contact implements DataObject {
    * @param visitor visitor to act on the data object
    */  
   protected void traverse(Visitor visitor) {
-    if (workAddress != null) {
+    if ((workAddress != null) && visitor.shouldVisit(workAddress)) {
       workAddress.accept(visitor);
     }
-    if (homeAddress != null) {
+    if ((homeAddress != null) && visitor.shouldVisit(homeAddress)) {
       homeAddress.accept(visitor);
     }
-    if (workNumber != null) {
+    if ((workNumber != null) && visitor.shouldVisit(workNumber)) {
       workNumber.accept(visitor);
     }
-    if (homeNumber != null) {
+    if ((homeNumber != null) && visitor.shouldVisit(homeNumber)) {
       homeNumber.accept(visitor);
     }
-    if (workMobileNumber != null) {
+    if ((workMobileNumber != null) && visitor.shouldVisit(workMobileNumber)) {
       workMobileNumber.accept(visitor);
     }
-    if (workFaxNumber != null) {
+    if ((workFaxNumber != null) && visitor.shouldVisit(workFaxNumber)) {
       workFaxNumber.accept(visitor);
     }
     for (JournalEntry item : getEntries()) {
-      item.accept(visitor);
+      if ((item != null) && visitor.shouldVisit(item)) {
+        item.accept(visitor);
+	  }
     }
   }  
 
