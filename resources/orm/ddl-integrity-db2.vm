@@ -2,7 +2,7 @@
 ## Licensed under the Apache License, Version 2.0 (the "Licence");
 ## you may not use this file except in compliance with the License.
 ## $Id$ 
-#set($schema=${package.getAttribute("orm-schema-name")})
+#set($schema=${package.getAttribute("orm-schema")})
 #if(${schema})#set($schema="")#else#set($schema=${schema} + ".")#end
 #set($table=${class.getAttribute("orm-table-name")})
 #foreach($property in $properties)

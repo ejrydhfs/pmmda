@@ -5,7 +5,13 @@
 #if(${prefix})
 <?xml version="1.0" ?>
 <!DOCTYPE database SYSTEM "http://jakarta.apache.org/turbine/dtd/database.dtd">
-<database name="default" 
+#set($schema=${package.valueOfTag("orm-schema")})
+#if($schema)
+#set($schema=${schema.toUpperCase()})
+<database name="${schema}" 
+#else
+<database name="default"
+#end
 	defaultIdMethod="none"
 	defaultJavaType="object"
 	baseClass="BaseObject"
@@ -14,11 +20,10 @@
 </database>
 #else
 #set($DATA_OBJECT="dataObject")
-#set($schema=${package.valueOfTag("orm-schema-name")})
-#if(${schema})#set($schema=${schema.toUpperCase()})#set($schema=${schema} + ".")#else#set($schema="")#end
+#if(${schema})#set($schema=${schema} + ".")#else#set($schema="")#end
 #set($table=${class.getAttribute("orm-table-name")})
 
-<table name="${table}"
+<table name="${schema}${table}"
 	   javaName="${package.getAttribute("bo-mo-package")}.${class.getAttribute("bo-mo-class")}"
 	   idMethod="none">
 ## ==============================================================
@@ -123,7 +128,7 @@
 #if($isPersistentDataObject)
 #getForwardFk($property $column)
 
-  <index name="${table}_${column}_IDX">
+  <index name="${schema}${table}_${column}_IDX">
     <index-column name="${column}" /> 
   </index>
 
@@ -140,7 +145,7 @@
 #if($isPersistentDataObject)
 #getForwardFk($aggregation $column)
 
-  <index name="${table}_${column}_IDX">
+  <index name="${schema}${table}_${column}_IDX">
     <index-column name="${column}" /> 
   </index>
 #end
@@ -157,7 +162,7 @@
 #if(${type} == ${class})
 #getReverseFk($reference $relation $column)
 
-  <index name="${table}_${column}_IDX">
+  <index name="${schema}${table}_${column}_IDX">
     <index-column name="${column}" /> 
   </index>
 #end
@@ -173,7 +178,7 @@
 #if($isPersistentDataObject)
 #set($foreignTableName=${type.getAttribute("orm-table-name")})
 #getForwardFk($property $column)
-  <foreign-key foreignTable="${foreignTableName}" name="${table}_${foreignTableName}_${column}_IR1">
+  <foreign-key foreignTable="${schema}${foreignTableName}" name="${table}_${foreignTableName}_${column}_IR1">
 	  <reference local="${column}" foreign="ID"/>
   </foreign-key>
 #end
@@ -190,7 +195,7 @@
 #set($foreignTableName=${type.getAttribute("orm-table-name")})
 #getForwardFk($property $column)
 
-  <foreign-key foreignTable="${foreignTableName}" name="${table}_${foreignTableName}_${column}_IR2">
+  <foreign-key foreignTable="${schema}${foreignTableName}" name="${table}_${foreignTableName}_${column}_IR2">
 	  <reference local="${column}" foreign="ID"/>
   </foreign-key>
 #end
@@ -208,7 +213,7 @@
 #set($foreignTable=${reference.getAttribute("orm-table-name")})
 #getReverseFk($reference $relation $column)
 
-  <foreign-key foreignTable="${foreignTable}" name="${table}_${foreignTable}_${column}_IR3">
+  <foreign-key foreignTable="${schema}${foreignTable}" name="${table}_${foreignTable}_${column}_IR3">
 	  <reference local="${column}" foreign="ID"/>
   </foreign-key>
 #end
