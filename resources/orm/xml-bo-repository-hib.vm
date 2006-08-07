@@ -3,7 +3,9 @@
 ## you may not use this file except in compliance with the License.
 ## $Id$ 
 #set($schema=${package.valueOfTag("orm-schema")})
-#if(${schema})#set($schema=${schema.toUpperCase()})#set($schema=${schema} + ".")#else#set($schema="")#end
+#if($schema)
+#set($schema=${schema.toUpperCase()})
+#end
 ## ----------------------------------------------------------------------------------
 ##  Print header
 ## ----------------------------------------------------------------------------------
@@ -26,14 +28,14 @@
 ##  Print class tags
 ## ----------------------------------------------------------------------------------
 #else	
-	
+#if(${schema})#set($schema=${schema.toUpperCase()})#set($schema="${schema}.")#else#set($schema="")#end
 #if(${class.getStereotype().equalsIgnoreCase("dataObject")})
 #set($shouldGenerateFkIndex=${configuration.getProperty("orm-cartridge.generate-fk-index").equalsIgnoreCase("true")})
 #set($inheritanceMode=${configuration.getProperty("orm-cartridge.inheritance")})
 #set($table=${class.getAttribute("orm-table-name")})
   <class name="${package.getAttribute("bo-mo-package")}.${class.getAttribute("bo-mo-class")}"
     table="${table}"
-	lazy="false" 
+    lazy="false" 
     mutable="true">
     <id name="id" column="ID" type="integer">
       <generator class="increment"/>
@@ -41,7 +43,7 @@
     <timestamp name="timestamp" column="TS"/>
 ## generates all primitive properties as a column. A primitive property is 
 ## either a simple property or an indexed property with a cardinality of 1
-## having as type a class not being a data object.
+## having as type a class being or notbeing a data object.
 #foreach($property in $properties)
 #if(!${property.isTransient()} && ${property.booleanValueOfTag("persistence")})
 #set($notNull=!${property.booleanValueOfTag("orm-can-be-null")})	
@@ -49,13 +51,12 @@
 #set($columnType=${cartridge.getDatatype(${property}, "JAVA")})	
 #set($columnName=${property.getAttribute("orm-column-name").toUpperCase()})
 #getType($model $property $type)
-
 #isPersistentDataObject($type $isPersistentDataObject)
 #if($isPersistentDataObject)
 #getForwardFk($property $column)
     <many-to-one name="${property.nameFirstLower()}"
       column="${column}"
-      class="${type.qualifiedName()}"
+      class="${type.getQualifiedName()}"
       not-null="${notNull}"
 #if($shouldGenerateFkIndex)
       index="${table}_${columnName}_IDX"
@@ -92,7 +93,6 @@
 #if($isPersistentDataObject)
 #set($typePackage=${type.getContext()})
 #getForwardFk($aggregation $columnFK)
-
 #set($interface=$aggregation.getAttribute("bo-interface-class"))
 #if($interface == "List")
 	<list name="${aggregation.getName()}" lazy="false">
@@ -117,7 +117,6 @@
       <one-to-many class="${typePackage.getAttribute("bo-mo-package")}.${type.getAttribute("bo-mo-class")}"/>
     </map>
 #end
-
 #end
 #end
 #end

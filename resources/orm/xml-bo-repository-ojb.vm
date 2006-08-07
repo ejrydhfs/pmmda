@@ -29,7 +29,7 @@
     locking="true"/>
 ## generates all primitive properties as a column. A primitive property is 
 ## either a simple property or an indexed property with a cardinality of 1
-## having as type a class not being a data object.
+## having as type a class being or not a data object.
 #foreach($property in $properties)
 #if(!${property.isTransient()} && ${property.booleanValueOfTag("persistence")})
 #set($columnType=${cartridge.getDatatype(${property}, "JDBC")})	

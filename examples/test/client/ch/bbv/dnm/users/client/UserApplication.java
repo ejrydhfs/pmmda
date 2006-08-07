@@ -74,7 +74,7 @@ public class UserApplication extends Application {
    */
   public UserApplication(String mode, String orm, String synchronization)
       throws ComponentException {
-    this(mode, synchronization, orm, false);
+    this(mode, orm, synchronization, false);
   }
 
   /**
@@ -98,10 +98,12 @@ public class UserApplication extends Application {
       PersistenceHandler.Mode sync = PersistenceHandler.Mode
           .valueOf(synchronization);
       if (USE_OJB.equalsIgnoreCase(orm)) {
+        log.info("Application started with OJB");
         manager = new DataObjectMgr(new CacheHandler(new PersistenceHandlerOjb(
             false, sync), true, true), new LightweightObjectHandlerImpl(),
             null, SCHEMA);
       } else if (USE_HIBERNATE.equalsIgnoreCase(orm)) {
+        log.info("Application started with Hibernate");
         manager = new DataObjectMgr(new CacheHandler(
             new PersistenceHandlerHib(), true, true),
             new LightweightObjectHandlerImpl(), null, SCHEMA);

@@ -3,7 +3,7 @@
 ## you may not use this file except in compliance with the License.
 ## $Id$ 
 #set($schema=${package.getAttribute("orm-schema")})
-#if(${schema})#set($schema="")#else#set($schema=${schema} + ".")#end
+#if(${schema})#set($schema="")#else#set($schema="${schema}.")#end
 #set($table=${class.getAttribute("orm-table-name")})
 #foreach($property in $properties)
 #if(${property.isReferenceType()})

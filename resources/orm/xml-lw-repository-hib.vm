@@ -3,7 +3,9 @@
 ## you may not use this file except in compliance with the License.
 ## $Id$ 
 #set($schema=${package.valueOfTag("orm-schema")})
-#if(${schema})#set($schema=${schema.toUpperCase()})#set($schema=${schema} + ".")#else#set($schema="")#end
+#if($schema)
+#set($schema=${schema.toUpperCase()})
+#end
 #if(${prefix})
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
@@ -15,8 +17,8 @@
 	default-access="field">	
 #elseif(${postfix})
 </hibernate-mapping>
-
 #else	
+#if(${schema})#set($schema=${schema.toUpperCase()})#set($schema="${schema}.")#else#set($schema="")#end
 #isLightweightDataObject($class $isLightweightDataObject)
 #if($isLightweightDataObject)
 #set($shouldGenerateFkIndex=${configuration.getProperty("orm-cartridge.generate-fk-index").equalsIgnoreCase("true")})
@@ -43,8 +45,6 @@
 #getType($model $property $type)
 #isDataObject($type $isDataObject)
 ## identifies a forward reference 1-0..1 or 1-1
-
-
 #if($isDataObject && ${type.booleanValueOfTag("persistence")})
 #getForwardFk($property $column)
     <many-to-one name="${property.nameFirstLower()}"
@@ -97,14 +97,11 @@
 ##    access="anonymous"/>
 
 ##<many-to-one name="${reference.nameFirstLower()}" column="${column}" not-null="true"/>
-
 #end
 #end
 #end
 #end
-
 #foreach($aggregation in $aggregations)
-
 #if($aggregation.booleanValueOfTag("bo-lightweight") && ${aggregation.getMultiplicity().getUpperBound()} == 1 )
 #set($notNull=!${property.booleanValueOfTag("orm-can-be-null")})	
 #set($columnName=${aggregation.getAttribute("orm-column-name")})
@@ -127,9 +124,7 @@
 #if($isPersistentDataObject)
 #set($typePackage=${type.getContext()})
 #getForwardFk($aggregation $columnFK)
-
 #set($interface=$aggregation.getAttribute("bo-interface-class"))
-
 #if($interface == "List")
 	<list name="${aggregation.getName()}" lazy="false">
       <key column="${table}_${columnFK}"/>
@@ -153,10 +148,7 @@
 	  <one-to-many class="${typePackage.getAttribute("bo-lw-package")}.${type.getAttribute("bo-lw-class")}"/>
     </bag>
 #end
-
-	
 #end
-
 #end
 #end
   </class>

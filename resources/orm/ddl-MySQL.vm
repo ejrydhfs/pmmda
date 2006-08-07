@@ -15,7 +15,7 @@
 #set($postTable="TYPE=InnoDB")
 #end
 #set($schema=${package.valueOfTag("orm-schema")})
-#if(${schema})#set($schema=${schema.toUpperCase()})#set($schema=${schema} + ".")#else#set($schema="")#end
+#if(${schema})#set($schema=${schema.toUpperCase()})#set($schema="${schema}.")#else#set($schema="")#end
 #set($table=${class.getAttribute("orm-table-name")})
 DROP TABLE IF EXISTS ${schema}${table};
 CREATE TABLE ${schema}${table} (

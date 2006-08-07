@@ -9,7 +9,7 @@
 ## nothind to do	
 #else	
 #set($schema=${package.valueOfTag("orm-schema")})
-#if(${schema})#set($schema=${schema.toUpperCase()})#set($schema="${schema}")#else#set($schema="")#end
+#if(${schema})#set($schema=${schema.toUpperCase()})#set($schema="${schema}.")#else#set($schema="")#end
 #set($table=${class.getAttribute("orm-table-name")})
 #if(${context.get("configuration").get("orm-cartridge.generate-constraints")})
 #set($constraints=" ON DELETE RESTRICT;")
