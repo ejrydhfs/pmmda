@@ -65,6 +65,10 @@
 #end
 #if(${columnType} == "BOOLEAN")
 	  type="BOOLEANINT"
+#elseif(${columnType} == "String")
+	  type="VARCHAR"
+#elseif(${columnType} == "Date")
+	  type="DATE"
 #else
 	  type="${columnType}"
 #end
@@ -103,7 +107,7 @@
 #### references to the class having indexed properties with cardinality 1-N
 #set($references=$model.getClassReferences($class))
 #foreach($reference in $references)
-#isPersistentDataObject($type $isPersistentDataObject)
+#isPersistentDataObject($reference $isPersistentDataObject)
 #if($isPersistentDataObject)
 #set($relations=${reference.getIndexedProperties()})
 #foreach($relation in $relations)
