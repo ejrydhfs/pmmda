@@ -26,7 +26,7 @@ import org.hibernate.cfg.Configuration;
  */
 class DatabaseMgrHib {
 
-  private static String CFG_FILE_POSTFIX = ".cfg.xml";
+  private static String CFG_FILE = "hibernate.cfg.xml";
 
   /**
    * List of all opened databases.
@@ -43,14 +43,13 @@ class DatabaseMgrHib {
   /**
    * Opens a database with the given name
    * @param databaseName name of the database to open. The name has to
-   *          correspond with the filename of the hibernate configuration file.
-   *          E.g.: Filename myTestDB.cfg.xml -> Name = myTestDB
+   *        correspond with the filename of the hibernate configuration file.
+   *        E.g.: Filename myTestDB.cfg.xml -> Name = myTestDB
    * @pre databaseName != null
    */
   public void openDatabase(String databaseName) {
     assert databaseName != null;
-    Configuration config = new Configuration().configure(databaseName
-        + CFG_FILE_POSTFIX);
+    Configuration config = new Configuration().configure(CFG_FILE);
     SessionFactory sessionFactory = config.buildSessionFactory();
     databases.put(databaseName, sessionFactory);
   }
