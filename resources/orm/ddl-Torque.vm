@@ -21,6 +21,14 @@
 #elseif(${postfix})
 </database>
 #else
+#set($inheritance=${configuration.getProperty("orm-cartridge.inheritance")})
+#if(${inheritance.equalsIgnoreCase("extend")})
+#set($properties=${class.getProperties()})
+#set($aggregations=${class.getIndexedProperties()})
+#elseif(${inheritance.equalsIgnoreCase("expand")})
+#set($properties=${utilities.getTransitiveFieldsFor(${class})})
+#set($aggregations=${utilities.getTransitiveIndexedFieldsFor(${class})})
+#end
 #set($DATA_OBJECT="dataObject")
 #if(${schema})#set($schema="${schema}.")#else#set($schema="")#end
 #set($table=${class.getAttribute("orm-table-name")})

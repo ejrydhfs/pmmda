@@ -8,6 +8,14 @@
 #elseif(${postfix})
 ## nothind to do	
 #else	
+#set($inheritance=${configuration.getProperty("orm-cartridge.inheritance")})
+#if(${inheritance.equalsIgnoreCase("extend")})
+#set($properties=${class.getProperties()})
+#set($aggregations=${class.getIndexedProperties()})
+#elseif(${inheritance.equalsIgnoreCase("expand")})
+#set($properties=${utilities.getTransitiveFieldsFor(${class})})
+#set($aggregations=${utilities.getTransitiveIndexedFieldsFor(${class})})
+#end
 #set($DATA_OBJECT="dataObject")
 #set($shouldGenerateFkIndex=${configuration.getProperty("orm-cartridge.generate-fk-index").equalsIgnoreCase("true")})
 #set($database=${configuration.getProperty("orm-cartridge.database")})

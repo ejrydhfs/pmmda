@@ -5,11 +5,26 @@
  */
 package ch.bbv.mda.cartridges;
 
-import static ch.bbv.mda.cartridges.OrmConstants.*;
+import static ch.bbv.mda.cartridges.OrmConstants.COLUMN_NAME;
+import static ch.bbv.mda.cartridges.OrmConstants.COLUMN_POSTFIX_KEY;
+import static ch.bbv.mda.cartridges.OrmConstants.COLUMN_PREFIX_KEY;
+import static ch.bbv.mda.cartridges.OrmConstants.COLUMN_SIZE;
+import static ch.bbv.mda.cartridges.OrmConstants.DATABASE_KEY;
+import static ch.bbv.mda.cartridges.OrmConstants.GENERATOR_KEY;
+import static ch.bbv.mda.cartridges.OrmConstants.IS_PRIMARY;
+import static ch.bbv.mda.cartridges.OrmConstants.ORM_KEY;
+import static ch.bbv.mda.cartridges.OrmConstants.ORM_TYPE_JDBC;
+import static ch.bbv.mda.cartridges.OrmConstants.ORM_TYPE_SQL;
+import static ch.bbv.mda.cartridges.OrmConstants.SCHEMA;
+import static ch.bbv.mda.cartridges.OrmConstants.SOURCE_ROOT_FOLDER_KEY;
+import static ch.bbv.mda.cartridges.OrmConstants.TABLE_NAME;
+import static ch.bbv.mda.cartridges.OrmConstants.TABLE_POSTFIX_KEY;
+import static ch.bbv.mda.cartridges.OrmConstants.TABLE_PREFIX_KEY;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.logging.Log;
@@ -23,7 +38,14 @@ import org.apache.velocity.VelocityContext;
 
 import ch.bbv.application.VersionId;
 import ch.bbv.dog.validation.Validator;
-import ch.bbv.mda.*;
+import ch.bbv.mda.MetaClass;
+import ch.bbv.mda.MetaDatatype;
+import ch.bbv.mda.MetaElement;
+import ch.bbv.mda.MetaModel;
+import ch.bbv.mda.MetaPackage;
+import ch.bbv.mda.MetaProperty;
+import ch.bbv.mda.TaggedValue;
+import ch.bbv.mda.UmlConstants;
 import ch.bbv.mda.generators.Cartridge;
 import ch.bbv.mda.generators.CartridgeFactory;
 import ch.bbv.mda.generators.CartridgeImpl;
@@ -68,41 +90,14 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
    */
   private static Log log = LogFactory.getLog(OrmCartridge.class);
 
-  /**
-   * Writer used to generate the associated artifact.
-   */
-  private PrintWriter ddlWriter;
-
-  /**
-   * Writer used to generate the associated artifact.
-   */
-  private PrintWriter ddlIntegrityWriter;
-
-  /**
-   * Writer used to generate the DDL utils XML artifacts.
-   */
-  private PrintWriter ddlXmlWriter;
-
-  /**
-   * Writer used to generate the associated artifact.
-   */
-  private PrintWriter ormBoWriter;
-
-  /**
-   * Writer used to generate the associated artifact.
-   */
-  private PrintWriter ormLwWriter;
+  private Map<String, OrmSchema> schemas;
 
   /**
    * Root directory of the generated source files.
    */
   private File root;
 
-  /**
-   * Flag indicating if currently processed class is the first of the package or
-   * not.
-   */
-  private boolean isFirstClassOfPackage;
+  private File ddlXmlFile;
 
   /**
    * Flag indicating if the DDL generation is done with Apache database DdlUtils
@@ -111,27 +106,11 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
   private boolean useGeneratorDdlUtils;
 
   /**
-   * File containing the DDL XML description for DDL utils transformation.
-   */
-  private File ddlXmlFile;
-
-  /**
-   * Contains database key: brand of database to gernerate for
-   * @see OrmConstants
-   */
-  private String databaseKey = "";
-
-  /**
-   * Contains database key: brand of orm to generate for
-   * @see OrmConstants
-   */
-  private String ormKey = "";
-
-  /**
    * Default constructor of the class.
    */
   public OrmCartridge() {
     super("Object Relational Mapper Cartridge", PREFIX, new VersionId(0, 3, 0));
+    schemas = new HashMap<String, OrmSchema>();
   }
 
   @Override
@@ -142,8 +121,6 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
     CartridgeFactory factory = CartridgeFactory.getInstance();
     factory.getItemFactory().registerListener(TaggedValue.class,
         new OrmTagListener(this));
-    databaseKey = getContext().getProperty(DATABASE_KEY);
-    ormKey = getContext().getProperty(ORM_KEY);
     useGeneratorDdlUtils = "ddlUtils".equalsIgnoreCase(getContext()
         .getProperty(GENERATOR_KEY));
   }
@@ -156,38 +133,45 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
 
   @Override
   public void preProcessDatatype(MetaDatatype datatype) {
+    String database = getContext().getProperty(DATABASE_KEY);
     datatype.addAttribute(ORM_TYPE_SQL, translateDatatype(datatype, "SQL",
-        databaseKey, false));
+        database, false));
     datatype.addAttribute(ORM_TYPE_JDBC, translateDatatype(datatype, "JDBC",
         null, false));
   }
 
   @Override
-  public void processModel(MetaModel model) {
+  public void preProcessModel(MetaModel model) {
     assert model != null;
     root = mkdirs(getContext().getProperty(SOURCE_ROOT_FOLDER_KEY));
-    try {
-      ormBoWriter = FileOperators.createPrintWriter(new File(root, ormKey
-          + "_bo_user.xml"));
-      ormLwWriter = FileOperators.createPrintWriter(new File(root, ormKey
-          + "_lw_user.xml"));
-      ddlXmlFile = new File(root, model.getName() + "-DdlUtils.xml");
-      ddlXmlWriter = FileOperators.createPrintWriter(ddlXmlFile);
-      ddlWriter = FileOperators.createPrintWriter(new File(root, model
-          .getName()
-          + "-createTables" + databaseKey + ".sql"));
-      ddlIntegrityWriter = FileOperators.createPrintWriter(new File(root, model
-          .getName()
-          + "-createIntegrity" + databaseKey + ".sql"));
-    } catch (IOException e) {
-      log.error(e);
-    }
   }
 
   @Override
-  public void processPackage(MetaPackage packages) {
+  public void preProcessPackage(MetaPackage packages) {
     assert packages != null;
-    isFirstClassOfPackage = true;
+    String schemaName = packages.valueOfTag(SCHEMA);
+    if ((schemaName != null) && !schemas.containsKey(schemaName)) {
+      OrmSchema schema = new OrmSchema(schemaName);
+      schemas.put(schemaName, schema);
+      try {
+        String orm = getContext().getProperty(ORM_KEY);
+        String database = getContext().getProperty(DATABASE_KEY);
+        schema.ormBoWriter = FileOperators.createPrintWriter(new File(root,
+            schemaName + "-" + orm + "_bo_user.xml"));
+        schema.ormLwWriter = FileOperators.createPrintWriter(new File(root,
+            schemaName + "-" + orm + "_lw_user.xml"));
+        if (useGeneratorDdlUtils) {
+          ddlXmlFile = new File(root, schemaName + "-DdlUtils.xml");
+          schema.ddlXmlWriter = FileOperators.createPrintWriter(ddlXmlFile);
+        }
+        schema.ddlWriter = FileOperators.createPrintWriter(new File(root, schemaName
+            + "-createTables" + "-" + database + ".sql"));
+        schema.ddlIntegrityWriter = FileOperators.createPrintWriter(new File(
+            root, schemaName + "-createIntegrity" + "-" + database + ".sql"));
+      } catch (IOException e) {
+        log.error(e);
+      }
+    }
   }
 
   @Override
@@ -235,35 +219,41 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
         || !clazz.booleanValueOfTag(UmlConstants.PERSISTENCE_TAG)) {
       return;
     }
-    if (isFirstClassOfPackage) {
+    String orm = getContext().getProperty(ORM_KEY);
+    String database = getContext().getProperty(DATABASE_KEY);
+    OrmSchema schema = schemas.get(clazz.retrievePackage().valueOfTag(SCHEMA));
+    assert (schema != null);
+    if (schema.getState() == OrmSchema.SchemaState.prefix) {
       VelocityContext context = createContext((MetaPackage) clazz.getContext());
       context.put("prefix", Boolean.TRUE);
-      ormBoWriter.print(processTemplate(retrieveTemplate("xml-bo-repository",
-          ormKey), context));
-      ormLwWriter.print(processTemplate(retrieveTemplate("xml-lw-repository",
-          ormKey), context));
-      ddlXmlWriter.print(processTemplate(retrieveTemplate("ddl", "Torque"),
-          context));
-      if (!useGeneratorDdlUtils) {
-        ddlWriter.print(processTemplate(retrieveTemplate("ddl", databaseKey),
-            context));
-        ddlIntegrityWriter.print(processTemplate(retrieveTemplate(
-            "ddl-integrity", databaseKey), context));
+      schema.ormBoWriter.print(processTemplate(retrieveTemplate(
+          "xml-bo-repository", orm), context));
+      schema.ormLwWriter.print(processTemplate(retrieveTemplate(
+          "xml-lw-repository", orm), context));
+      if (useGeneratorDdlUtils) {
+        schema.ddlXmlWriter.print(processTemplate(retrieveTemplate("ddl",
+            "Torque"), context));
+      } else {
+        schema.ddlWriter.print(processTemplate(
+            retrieveTemplate("ddl", database), context));
+        schema.ddlIntegrityWriter.print(processTemplate(retrieveTemplate(
+            "ddl-integrity", database), context));
       }
-      isFirstClassOfPackage = false;
+      schema.setState(OrmSchema.SchemaState.body);
     }
     VelocityContext context = createPersistencyContext(clazz);
-    ormBoWriter.print(processTemplate(retrieveTemplate("xml-bo-repository",
-        ormKey), context));
-    ormLwWriter.print(processTemplate(retrieveTemplate("xml-lw-repository",
-        ormKey), context));
-    ddlXmlWriter.print(processTemplate(retrieveTemplate("ddl", "Torque"),
-        context));
-    if (!useGeneratorDdlUtils) {
-      ddlWriter.print(processTemplate(retrieveTemplate("ddl", databaseKey),
+    schema.ormBoWriter.print(processTemplate(retrieveTemplate(
+        "xml-bo-repository", orm), context));
+    schema.ormLwWriter.print(processTemplate(retrieveTemplate(
+        "xml-lw-repository", orm), context));
+    if (useGeneratorDdlUtils) {
+      schema.ddlXmlWriter.print(processTemplate(retrieveTemplate("ddl",
+          "Torque"), context));
+    } else {
+      schema.ddlWriter.print(processTemplate(retrieveTemplate("ddl", database),
           context));
-      ddlIntegrityWriter.print(processTemplate(retrieveTemplate(
-          "ddl-integrity", databaseKey), context));
+      schema.ddlIntegrityWriter.print(processTemplate(retrieveTemplate(
+          "ddl-integrity", database), context));
     }
   }
 
@@ -272,36 +262,39 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
     VelocityContext context = new VelocityContext();
     context.put("postfix", Boolean.TRUE);
     String orm = getContext().getProperty(ORM_KEY);
-    ormBoWriter.print(processTemplate(
-        retrieveTemplate("xml-bo-repository", orm), context));
-    ormLwWriter.print(processTemplate(
-        retrieveTemplate("xml-lw-repository", orm), context));
-    if (!useGeneratorDdlUtils) {
-      ddlWriter.print(processTemplate(retrieveTemplate("ddl", databaseKey),
-          context));
-      ddlIntegrityWriter.print(processTemplate(retrieveTemplate(
-          "ddl-integrity", databaseKey), context));
-    } else {
-      ddlXmlWriter.print(processTemplate(retrieveTemplate("ddl", "Torque"),
-          context));
-    }
-    FileOperators.closePrintWriter(ormBoWriter);
-    FileOperators.closePrintWriter(ormLwWriter);
-    FileOperators.closePrintWriter(ddlXmlWriter);
-    if (useGeneratorDdlUtils) {
-      Database db = new DatabaseIO().read(ddlXmlFile);
-      Platform platform = PlatformFactory
-          .createNewPlatformInstance(databaseKey);
-      SqlBuilder builder = platform.getSqlBuilder();
-      builder.setWriter(ddlWriter);
-      try {
-        builder.createTables(db);
-      } catch (IOException e) {
-        log.error("Could not write the DDL description file with ddl Utils", e);
+    String database = getContext().getProperty(DATABASE_KEY);
+    for (OrmSchema schema : schemas.values()) {
+      schema.ormBoWriter.print(processTemplate(retrieveTemplate(
+          "xml-bo-repository", orm), context));
+      schema.ormLwWriter.print(processTemplate(retrieveTemplate(
+          "xml-lw-repository", orm), context));
+      if (useGeneratorDdlUtils) {
+        schema.ddlXmlWriter.print(processTemplate(retrieveTemplate("ddl",
+            "Torque"), context));
+      } else {
+        schema.ddlWriter.print(processTemplate(
+            retrieveTemplate("ddl", database), context));
+        schema.ddlIntegrityWriter.print(processTemplate(retrieveTemplate(
+            "ddl-integrity", database), context));
       }
+      FileOperators.closePrintWriter(schema.ormBoWriter);
+      FileOperators.closePrintWriter(schema.ormLwWriter);
+      FileOperators.closePrintWriter(schema.ddlXmlWriter);
+      if (useGeneratorDdlUtils) {
+        Database db = new DatabaseIO().read(ddlXmlFile);
+        Platform platform = PlatformFactory.createNewPlatformInstance(database);
+        SqlBuilder builder = platform.getSqlBuilder();
+        builder.setWriter(schema.ddlWriter);
+        try {
+          builder.createTables(db);
+        } catch (IOException e) {
+          log.error("Could not write the DDL description file with ddl Utils",
+              e);
+        }
+      }
+      FileOperators.closePrintWriter(schema.ddlWriter);
+      FileOperators.closePrintWriter(schema.ddlIntegrityWriter);
     }
-    FileOperators.closePrintWriter(ddlWriter);
-    FileOperators.closePrintWriter(ddlIntegrityWriter);
   }
 
   /**
@@ -348,15 +341,6 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
   }
 
   /**
-   * Flag indicating if the class is the first one being processed in the
-   * package.
-   * @return value of the flag.
-   */
-  public boolean isFirstClassOfPackage() {
-    return isFirstClassOfPackage;
-  }
-
-  /**
    * Returns the size parameter for the element. In case where no size is set
    * within the model then the default size of the type is used.
    * @param element element which size parameter should be returned.
@@ -364,11 +348,12 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
    * @return the requested size parameter if defined otherwise "0".
    */
   public String getSizeParameter(MetaElement element, int index) {
+    String database = getContext().getProperty(DATABASE_KEY);
     String sizes = element.valueOfTag(COLUMN_SIZE);
     if (sizes == null && element instanceof MetaProperty) {
       sizes = PropertyUtilities.getInfoOfType(getConfiguration(),
-          ((MetaProperty) element).getTypeName(), "SQL", databaseKey,
-          "default", false);
+          ((MetaProperty) element).getTypeName(), "SQL", database, "default",
+          false);
     }
     String size;
     if (sizes != null) {

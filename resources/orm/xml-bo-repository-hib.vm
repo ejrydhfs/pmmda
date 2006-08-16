@@ -6,9 +6,6 @@
 #if($schema)
 #set($schema=${schema.toUpperCase()})
 #end
-## ----------------------------------------------------------------------------------
-##  Print header
-## ----------------------------------------------------------------------------------
 #if(${prefix})
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
@@ -18,20 +15,21 @@
 	auto-import="false"
 	schema="${schema}"
 	default-access="field">
-## ----------------------------------------------------------------------------------
-##  Print footer
-## ----------------------------------------------------------------------------------
 #elseif(${postfix})
 </hibernate-mapping>
 
-## ----------------------------------------------------------------------------------
-##  Print class tags
-## ----------------------------------------------------------------------------------
 #else	
+#set($inheritance=${configuration.getProperty("orm-cartridge.inheritance")})
+#if(${inheritance.equalsIgnoreCase("extend")})
+#set($properties=${class.getProperties()})
+#set($aggregations=${class.getIndexedProperties()})
+#elseif(${inheritance.equalsIgnoreCase("expand")})
+#set($properties=${utilities.getTransitiveFieldsFor(${class})})
+#set($aggregations=${utilities.getTransitiveIndexedFieldsFor(${class})})
+#end
 #if(${schema})#set($schema=${schema.toUpperCase()})#set($schema="${schema}.")#else#set($schema="")#end
 #if(${class.getStereotype().equalsIgnoreCase("dataObject")})
 #set($shouldGenerateFkIndex=${configuration.getProperty("orm-cartridge.generate-fk-index").equalsIgnoreCase("true")})
-#set($inheritanceMode=${configuration.getProperty("orm-cartridge.inheritance")})
 #set($table=${class.getAttribute("orm-table-name")})
   <class name="${package.getAttribute("bo-mo-package")}.${class.getAttribute("bo-mo-class")}"
     table="${table}"

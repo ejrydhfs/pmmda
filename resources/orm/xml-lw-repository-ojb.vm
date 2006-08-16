@@ -9,13 +9,26 @@
 #else
 #isLightweightDataObject($class $isLightweightDataObject)
 #if($isLightweightDataObject)
+#set($inheritance=${configuration.getProperty("orm-cartridge.inheritance")})
+#if(${inheritance.equalsIgnoreCase("extend")})
+#set($properties=${class.getProperties()})
+#set($aggregations=${class.getIndexedProperties()})
+#elseif(${inheritance.equalsIgnoreCase("expand")})
+#set($properties=${utilities.getTransitiveFieldsFor(${class})})
+#set($aggregations=${utilities.getTransitiveIndexedFieldsFor(${class})})
+#end
 #set($shouldGenerateFkIndex=${configuration.getProperty("orm-cartridge.generate-fk-index").equalsIgnoreCase("true")})
-#set($inheritanceMode=${configuration.getProperty("orm-cartridge.inheritance")})
 #set($schema=${package.valueOfTag("orm-schema")})
 #if(${schema})#set($schema=${schema.toUpperCase()})#set($schema="${schema}.")#else#set($schema="")#end
 #set($table=${class.getAttribute("orm-table-name")})
 <class-descriptor class="${package.getAttribute("bo-lw-package")}.${class.getAttribute("bo-lw-class")}"
   table="${schema}${table}">
+#set($subClasses=${model.findSubClasses($class)})
+#foreach($subClass in $subClasses)
+#if(${subClass.getStereotype().equalsIgnoreCase("dataObject")})
+  <extent-class class-ref="${subClass.getQualifiedName()}" />
+#end
+#end
   <field-descriptor name="id" 
     column="ID" 
     jdbc-type="INTEGER" 
@@ -195,12 +208,6 @@
 #end
 #end
 #end
-#end
-#end
-#set($subClasses=${model.findSubClasses($class)})
-#foreach($subClass in $subClasses)
-#if(${subClass.getStereotype().equalsIgnoreCase("dataObject")})
-  <extent-class class-ref="${subClass.getQualifiedName()}"/>
 #end
 #end
 </class-descriptor>

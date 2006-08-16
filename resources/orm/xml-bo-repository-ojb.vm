@@ -7,6 +7,14 @@
 #elseif(${postfix})
 ## no prefix is necessary for OJB declarative file
 #else
+#set($inheritance=${configuration.getProperty("orm-cartridge.inheritance")})
+#if(${inheritance.equalsIgnoreCase("extend")})
+#set($properties=${class.getProperties()})
+#set($aggregations=${class.getIndexedProperties()})
+#elseif(${inheritance.equalsIgnoreCase("expand")})
+#set($properties=${utilities.getTransitiveFieldsFor(${class})})
+#set($aggregations=${utilities.getTransitiveIndexedFieldsFor(${class})})
+#end
 #if(${class.getStereotype().equalsIgnoreCase("dataObject")})
 #set($shouldGenerateFkIndex=${configuration.getProperty("orm-cartridge.generate-fk-index").equalsIgnoreCase("true")})
 #set($inheritanceMode=${configuration.getProperty("orm-cartridge.inheritance")})
@@ -15,6 +23,14 @@
 #set($table=${class.getAttribute("orm-table-name")})
 <class-descriptor class="${package.getAttribute("bo-mo-package")}.${class.getAttribute("bo-mo-class")}"
   table="${schema}${table}">
+#set($subClasses=${model.findSubClasses($class)})
+#foreach($subClass in $subClasses)
+## commented out due to a problem with OJB 1.0.1 and 1.0.3, if you have problems
+## please comment it out
+#if(${subClass.getStereotype().equalsIgnoreCase("dataObject")})
+  <extent-class class-ref="${subClass.getQualifiedName()}" />
+#end
+#end
   <field-descriptor name="id" 
     column="ID" 
     jdbc-type="INTEGER" 
@@ -221,13 +237,6 @@
 #end
 #end
 #end
-#end
-#set($subClasses=${model.findSubClasses($class)})
-#foreach($subClass in $subClasses)
-## commented out due to a problem with OJB 1.0.1 and 1.0.3
-###if(${subClass.getStereotype().equalsIgnoreCase("dataObject")})
-##  <extent-class class-ref="${subClass.getQualifiedName()}"/>
-###end
 #end
 </class-descriptor>
 #end

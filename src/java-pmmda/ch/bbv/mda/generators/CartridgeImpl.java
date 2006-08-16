@@ -390,7 +390,7 @@ public abstract class CartridgeImpl implements Cartridge {
     } catch (ParseErrorException e) {
       log.error(e);
     } catch (ResourceNotFoundException e) {
-      // the template could not be found and null is returned
+      log.error(e);
     } catch (Exception e) {
       log.error(e);
     }

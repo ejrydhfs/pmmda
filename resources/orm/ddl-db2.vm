@@ -7,6 +7,14 @@
 #elseif(${postfix})
 ## nothind to do	
 #else	
+#set($inheritance=${configuration.getProperty("orm-cartridge.inheritance")})
+#if(${inheritance.equalsIgnoreCase("extend")})
+#set($properties=${class.getProperties()})
+#set($aggregations=${class.getIndexedProperties()})
+#elseif(${inheritance.equalsIgnoreCase("expand")})
+#set($properties=${utilities.getTransitiveFieldsFor(${class})})
+#set($aggregations=${utilities.getTransitiveIndexedFieldsFor(${class})})
+#end
 #set($dollar="$")
 #set($tableName=${class.getAttribute("orm-table-name")})
 #set($spaceName=${tableName})
