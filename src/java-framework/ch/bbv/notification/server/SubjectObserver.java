@@ -10,9 +10,9 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.bbv.application.Locator;
+import ch.bbv.application.Application;
 import ch.bbv.dog.DataObject;
-import ch.bbv.dog.DataObjectManager;
+import ch.bbv.dog.DataObjectMgr;
 import ch.bbv.notification.communication.ClientProfile;
 import ch.bbv.notification.communication.EventInfo;
 
@@ -74,7 +74,8 @@ public class SubjectObserver implements PropertyChangeListener{
 	}
 	
 	private DataObject getDOG(int id){
-		DataObjectManager manager = (DataObjectManager) Locator.getInstance().getComponent(DataObjectManager.NAME);
+		Application app = Application.getApplication();
+		DataObjectMgr manager = (DataObjectMgr) app.getDataObjectMgr();
 		//TODO:PEB pass datasource name!
 		return manager.getDataObjectHandler().retrieve("orm-dnm",DataObject.class,id);
 	}
