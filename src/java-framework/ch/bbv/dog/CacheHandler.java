@@ -43,6 +43,11 @@ public class CacheHandler implements DataObjectHandler, CachesHandler {
    * Cache containing the copied data object graphs.
    */
   private Map<DataObjectId, DataObject> copiesCache;
+  
+  /**
+   * Cache containing a descriptor for retrieved lists 
+   */
+  private ArrayList<ListDescriptor> listsCache;
 
   /**
    * Flag indicating if data object graphs should be cached.
@@ -79,6 +84,7 @@ public class CacheHandler implements DataObjectHandler, CachesHandler {
     this.copiedEnabled = copiedEnabled;
     originalsCache = new HashMap<DataObjectId, DataObject>();
     copiesCache = new HashMap<DataObjectId, DataObject>();
+    listsCache = new ArrayList<ListDescriptor>();
   }
 
   /**
@@ -143,6 +149,13 @@ public class CacheHandler implements DataObjectHandler, CachesHandler {
     originalsCache.clear();
   }
 
+  /**
+   * Flushes the content of the lists cache.
+   */
+  public void clearLists() {
+    listsCache.clear();
+  }
+
   public void openDatasource(String datasource, boolean readonly) {
     assert (datasource != null);
     handler.openDatasource(datasource, readonly);
@@ -166,10 +179,16 @@ public class CacheHandler implements DataObjectHandler, CachesHandler {
   public List<DataObject> retrieve(String datasource, Class clazz,
       String constraints) {
     assert (datasource != null) && (clazz != null) && (constraints != null);
-    List<DataObject> copies = new ArrayList<DataObject>();
-    List<DataObject> roots = handler.retrieve(datasource, clazz, constraints);
-    for (DataObject root : roots) {
-      copies.add(updateCacheWithClientGraph(root));
+    List<DataObject> copies = null;
+    ListDescriptor ld = retrieveFromCaches(clazz, constraints);
+    if(ld != null) {
+    	copies = new ArrayList<DataObject>();
+    	for(Integer id : ld.ids) {
+    		copies.add(retrieveFromCaches(clazz, id));
+    	}
+    } else {
+	    List<DataObject> roots = handler.retrieve(datasource, clazz, constraints);
+	    copies = updateCacheWithClientGraph(clazz, constraints, roots);
     }
     return copies;
   }
@@ -194,7 +213,13 @@ public class CacheHandler implements DataObjectHandler, CachesHandler {
     functor.reset(infos);
     visitor.setFunctor(functor);
     DataObjectType.invokeVisitor(clazz, root, visitor);
-    root = updateCacheWithClientGraph(root);
+    // TODO Adrian - currently we update only the root within the cache
+    //							 if root references objects which already within the cache as root or referenced by other roots then we don't update them.
+    //							 Thereof we clear the cache in case of a store operation
+    // root = updateCacheWithClientGraph(root);
+    clearOriginals();
+    clearCopies();
+    clearLists();
     return infos;
   }
 
@@ -296,6 +321,21 @@ public class CacheHandler implements DataObjectHandler, CachesHandler {
     }
     return root;
   }
+  
+  /**
+   * Obtains a list descriptor with a cached list previously retrieved
+   * @param clazz type of the list elements
+   * @param constraints used to retrieve the list
+   * @return null if no corresponding list cached otherwise ListDescriptor
+   */
+  private ListDescriptor retrieveFromCaches(Class clazz, String constraints) {
+  	for(ListDescriptor ld : listsCache) {
+  		if(ld.clazz == clazz && (ld.constraints == constraints || ld.constraints.equals(constraints))) {
+  			return ld;
+  		}
+  	}
+  	return null;
+  }
 
   /**
    * Updates the caches with all root objects part of the the graph. First the
@@ -349,6 +389,23 @@ public class CacheHandler implements DataObjectHandler, CachesHandler {
     }
     return root;
   }
+  
+  private List<DataObject> updateCacheWithClientGraph(Class clazz, String constraints, List<DataObject> roots) {
+  	assert constraints == null || constraints.equals("");
+  	if( !cachedEnabled ) {
+  		return roots;
+  	}
+  	List<DataObject> copies = new ArrayList<DataObject>();
+    ListDescriptor ld = new ListDescriptor();
+    ld.clazz = clazz;
+    ld.constraints = constraints;
+    for (DataObject root : roots) {
+      copies.add(updateCacheWithClientGraph(root));
+      ld.ids.add(root.getId());
+    }
+    listsCache.add(ld);
+    return copies;
+  }
 
   /**
    * Returns the visitor of the class.
@@ -359,5 +416,15 @@ public class CacheHandler implements DataObjectHandler, CachesHandler {
     DataObjectMgr manager = Application.getApplication().getDataObjectMgr();
     DataObjectType type = manager.getType(clazz);
     return type.createVisitorInstance();
+  }
+  
+  private class ListDescriptor {
+  	public Class clazz;
+  	public String constraints;
+  	public List<Integer> ids;
+  	
+  	public ListDescriptor() {
+  		ids = new ArrayList<Integer>();
+  	}
   }
 }
