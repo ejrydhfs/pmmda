@@ -68,6 +68,35 @@ public class ExplorerNode implements MutableTreeNode, Cloneable, Comparable {
     setLightweightObject(lwObject);
     setDataObject(boObject);
   }
+  
+  @Override public boolean equals(Object o){
+	  if(o == this) return true;
+	  if(o == null) return false;
+	  if(! (o instanceof ExplorerNode)) return false;
+	  ExplorerNode n = (ExplorerNode)o;
+	  boolean equalOwner = false;
+	  if(n.owner == null && this.owner == null){
+		  equalOwner = true;
+	  }
+	  if(! equalOwner && n.owner != null && this.owner != null && n.owner.equals(this.owner)){
+		  equalOwner = true;
+	  }
+	  
+	  boolean equalParent = false;
+	  if(n.parent == null && this.parent == null){
+		  equalParent = true;
+	  }
+	  if(! equalParent && n.parent != null && this.parent != null && n.parent.equals(this.parent)){
+		  equalParent = true;
+	  }
+	  
+	  return n.getName().equals(this.getName()) /*&& equalOwner && equalParent*/;
+  }
+  
+  @Override public int hashCode(){
+	  int count = this.boObject.hashCode() + getName().hashCode();
+	  return count * 17 ^ 3;
+  }
 
   /**
    * Returns the name of the node. The name is retrieved from the lightweight
