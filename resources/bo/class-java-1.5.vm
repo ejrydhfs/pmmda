@@ -215,6 +215,8 @@ $line
 #set($visibility = ${aggregation.retrieveVisibilityText()})
 #set($type=false)
 #set($type=${model.findClass(${aggregation.getTypeName()})})
+#getterName($aggregation $getter)
+#setterName($aggregation $setter)
 #if(${aggregation.canBeRead()})
 #if(${cartridge.isOrdered(${aggregation})})
 
@@ -258,7 +260,7 @@ $line
 #if(${aggregation.canBeWritten()})
    * @see ${sign}${setter}(int, ${itemType})
 #end    
-   * @see java.util.List${sign}get(int)
+   * @see java.util.Collection${sign}get(int)
    */
   ${visibility} ${itemType} get${usName}(int index) {
     return ${lName}.get(index);  
@@ -315,7 +317,7 @@ $line
    * the specified collection is modified while the operation is in progress. 
    * @param c collection whose elements are to be added to this list
    * @return true if this list changed as a result of the call
-   * @see java.util.List${sign}addAll(Collection)
+   * @see java.util.Collection${sign}addAll(Collection)
    */
   ${visibility} boolean add${upName}(Collection<$itemType> c) {
 #if($isPersistentAggregation)
@@ -338,7 +340,7 @@ $line
 #if(${aggregation.canBeWritten()})
    * @see ${sign}${getter}(int)
 #end    
-   * @see java.util.List${sign}add(int, Object)
+   * @see java.util.Collection${sign}add(int, Object)
    */
   ${visibility} void set${usName}(int index, ${itemType} element) {
     ${lName}.add(index, element);
@@ -349,7 +351,7 @@ $line
    * ${lName}.
    * @param element to be appended to this list
    * @return true (as per the general contract of the Collection.add method)
-   * @see java.util.List${sign}add(Object)
+   * @see java.util.Collection${sign}add(Object)
    * @pre element != null
    */
   ${visibility} boolean add${usName}(${itemType} element) {
@@ -363,7 +365,7 @@ $line
    * (o==null ? get(i)==null : o.equals(get(i))) (if such an element exists). 
    * @param element element to be removed from this list, if present
    * @return true if this list contained the specified element
-   * @see java.util.List${sign}remove(Object)
+   * @see java.util.Collection${sign}remove(Object)
    */
   ${visibility} boolean remove${usName}(${itemType} element) {
     return ${lName}.remove(element);
