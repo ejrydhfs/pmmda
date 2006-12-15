@@ -47,8 +47,10 @@ $line
 #end
 #if(${hasInterfaces})
 #set($implements=" implements ")
+#set($interfaceSeparator="")
 #foreach ($interface in $interfaces)
-#set($implements="${implements}${interface.getName()}, ")
+#set($implements="${implements}${interfaceSeparator}${interface.getName()}")
+#set($interfaceSeparator=", ")
 #end
 #else
 #set($implements="")

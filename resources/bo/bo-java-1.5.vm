@@ -74,7 +74,7 @@ $line
 #set($implements=" implements ")
 #foreach ($interface in $interfaces)
 #set($interfaceName=${interface.getAttribute("bo-mo-class")})
-#set($implements="${implements}, $interfaceName")
+#set($implements="${implements}${interfaceName}, ")
 #end
 #set($implements="${implements}DataObject")
 ${class.retrieveVisibilityText()} class ${className}${extends}${implements} {
