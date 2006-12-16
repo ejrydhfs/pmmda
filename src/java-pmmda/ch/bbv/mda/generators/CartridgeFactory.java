@@ -7,13 +7,7 @@ package ch.bbv.mda.generators;
 
 import java.text.MessageFormat;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -26,13 +20,9 @@ import ch.bbv.application.ComponentException;
 import ch.bbv.application.ComponentImpl;
 import ch.bbv.application.Locator;
 import ch.bbv.dog.validation.Validator;
-import ch.bbv.mda.MetaClass;
-import ch.bbv.mda.MetaDatatype;
-import ch.bbv.mda.MetaElement;
-import ch.bbv.mda.MetaIndexedProperty;
-import ch.bbv.mda.MetaModel;
-import ch.bbv.mda.MetaPackage;
-import ch.bbv.mda.MetaProperty;
+import ch.bbv.mda.*;
+
+import com.jgoodies.validation.ValidationResult;
 
 /**
  * The cartridge factory handles all registered cartridges and provides support
@@ -302,40 +292,43 @@ public class CartridgeFactory extends ComponentImpl implements Component {
    * Executes the cartridge on the given model.
    * @param cartridge cartridge to execute on the model
    * @param model model to process
+   * @param messages ValidationResults is the container where additional messages for the user are added.
    * @pre (cartridge != null) && (model != null)
    */
-  public void execute(Cartridge cartridge, MetaModel model) {
+  public void execute(Cartridge cartridge, MetaModel model, ValidationResult messages) {
     assert (cartridge != null) && (model != null);
-    preprocess(cartridge, model);
-    process(cartridge, model);
+    preprocess(cartridge, model, messages);
+    process(cartridge, model, messages);
   }
 
   /**
    * Executes the cartridge on the given model.
    * @param cartridge cartridge to execute on the model
    * @param metaPackage package to process
+   * @param messages ValidationResults is the container where additional messages for the user are added.
    * @pre (cartridge != null) && (metaPackage != null)
    */
-  public void execute(Cartridge cartridge, MetaPackage metaPackage) {
+  public void execute(Cartridge cartridge, MetaPackage metaPackage, ValidationResult messages) {
     assert (cartridge != null) && (metaPackage != null);
     if (metaPackage.isSystem()) {
       return;
     }
-    preprocess(cartridge, metaPackage);
-    process(cartridge, metaPackage);
+    preprocess(cartridge, metaPackage, messages);
+    process(cartridge, metaPackage, messages);
   }
 
   /**
    * Executes the cartridge on the given class.
    * @param cartridge cartridge to execute
    * @param clazz class to process
+   * @param messages ValidationResults is the container where additional messages for the user are added.
    * @pre (cartridge != null) && (clazz != null)
    */
-  public void execute(Cartridge cartridge, MetaClass clazz) {
+  public void execute(Cartridge cartridge, MetaClass clazz, ValidationResult messages) {
     assert (cartridge != null) && (clazz != null);
     if (!clazz.isSystem()) {
-      preprocess(cartridge, clazz);
-      process(cartridge, clazz);
+      preprocess(cartridge, clazz, messages);
+      process(cartridge, clazz, messages);
     }
   }
 
@@ -343,54 +336,57 @@ public class CartridgeFactory extends ComponentImpl implements Component {
    * Processes the cartridge on the given model.
    * @param cartridge cartridge to execute on the model
    * @param model model to process
+   * @param messages ValidationResults is the container where additional messages for the user are added.
    */
-  protected void process(Cartridge cartridge, MetaModel model) {
+  protected void process(Cartridge cartridge, MetaModel model, ValidationResult messages) {
     logProgressInfo(cartridge, model, "{0} Catridge processing model {1}");
-    cartridge.processModel(model);
+    cartridge.processModel(model, messages);
 
     if (!((MetaPackage) model).getClasses().isEmpty()) {
-      process(cartridge, (MetaPackage) model);
+      process(cartridge, (MetaPackage) model, messages);
     }
     for (MetaPackage metaPackage : model.getPackages()) {
-      process(cartridge, metaPackage);
+      process(cartridge, metaPackage, messages);
     }
     logProgressInfo(cartridge, model, "{0} Catridge post-processing model {1}");
-    cartridge.postProcessModel(model);
+    cartridge.postProcessModel(model, messages);
   }
 
   /**
    * Processes the cartridge on the given model.
    * @param cartridge cartridge to execute on the model.
    * @param metaPackage package to process.
+   * @param messages ValidationResults is the container where additional messages for the user are added.
    */
-  protected void process(Cartridge cartridge, MetaPackage metaPackage) {
+  protected void process(Cartridge cartridge, MetaPackage metaPackage, ValidationResult messages) {
     assert ((cartridge != null) && (metaPackage != null));
     if (metaPackage.isSystem()) {
       return;
     }
     logProgressInfo(cartridge, metaPackage,
         "{0} Catridge processing package {1}");
-    cartridge.processPackage(metaPackage);
+    cartridge.processPackage(metaPackage, messages);
 
     for (MetaClass clazz : metaPackage.getClasses()) {
-      process(cartridge, clazz);
+      process(cartridge, clazz, messages);
     }
     logProgressInfo(cartridge, metaPackage,
         "{0} Catridge post-processing package {1}");
-    cartridge.postProcessPackage(metaPackage);
+    cartridge.postProcessPackage(metaPackage, messages);
   }
 
   /**
    * Processes the cartridge on the given model.
    * @param cartridge cartridge to execute on the model.
    * @param clazz item to process.
+   * @param messages ValidationResults is the container where additional messages for the user are added.
    * @pre (cartridge != null) && (clazz != null)
    */
-  protected void process(Cartridge cartridge, MetaClass clazz) {
+  protected void process(Cartridge cartridge, MetaClass clazz, ValidationResult messages) {
     assert (cartridge != null) && (clazz != null);
     if (!clazz.isSystem()) {
       logProgressInfo(cartridge, clazz, "{0} Catridge processing class {1}");
-      cartridge.processClass(clazz);
+      cartridge.processClass(clazz, messages);
     }
   }
 
@@ -398,24 +394,25 @@ public class CartridgeFactory extends ComponentImpl implements Component {
    * Preprocesses the cartridge on the given element.
    * @param cartridge cartridge being preprocessed
    * @param model element being preprocessed
+   * @param messages ValidationResults is the container where additional messages for the user are added.
    */
-  protected void preprocess(Cartridge cartridge, MetaModel model) {
+  protected void preprocess(Cartridge cartridge, MetaModel model, ValidationResult messages) {
     for (Cartridge supplier : cartridge.getUsedCartridges()) {
-      supplier.preProcessModel(model);
+      supplier.preProcessModel(model, messages);
     }
     logProgressInfo(cartridge, model, "{0} Catridge pre-processing model {1}");
-    cartridge.preProcessModel(model);
+    cartridge.preProcessModel(model, messages);
 
     if (!((MetaPackage) model).getClasses().isEmpty()) {
-      preprocess(cartridge, (MetaPackage) model);
+      preprocess(cartridge, (MetaPackage) model, messages);
     }
 
     for (MetaDatatype item : model.getDatatypes()) {
-      preprocess(cartridge, item);
+      preprocess(cartridge, item, messages);
     }
 
     for (MetaPackage item : model.getPackages()) {
-      preprocess(cartridge, item);
+      preprocess(cartridge, item, messages);
     }
   }
 
@@ -423,14 +420,15 @@ public class CartridgeFactory extends ComponentImpl implements Component {
    * Preprocesses the cartridge on the given element.
    * @param cartridge catridge being processed
    * @param datatype element being processed
+   * @param messages ValidationResults is the container where additional messages for the user are added.
    */
-  protected void preprocess(Cartridge cartridge, MetaDatatype datatype) {
+  protected void preprocess(Cartridge cartridge, MetaDatatype datatype, ValidationResult messages) {
     for (Cartridge supplier : cartridge.getUsedCartridges()) {
-      supplier.preProcessDatatype(datatype);
+      supplier.preProcessDatatype(datatype, messages);
     }
     logProgressInfo(cartridge, datatype,
         "{0} Catridge pre-processing datatype {1}");
-    cartridge.preProcessDatatype(datatype);
+    cartridge.preProcessDatatype(datatype, messages);
 
   }
 
@@ -438,22 +436,23 @@ public class CartridgeFactory extends ComponentImpl implements Component {
    * Preprocesses the cartridge on the given element.
    * @param cartridge cartridge being preprocessed
    * @param metaPackage element being preprocessed
+   * @param messages ValidationResults is the container where additional messages for the user are added.
    */
-  protected void preprocess(Cartridge cartridge, MetaPackage metaPackage) {
+  protected void preprocess(Cartridge cartridge, MetaPackage metaPackage, ValidationResult messages) {
     if (metaPackage.isSystem()) {
       return;
     }
 
     for (Cartridge supplier : cartridge.getUsedCartridges()) {
-      supplier.preProcessPackage(metaPackage);
+      supplier.preProcessPackage(metaPackage, messages);
     }
     logProgressInfo(cartridge, metaPackage,
         "{0} Catridge pre-processing package {1}");
-    cartridge.preProcessPackage(metaPackage);
+    cartridge.preProcessPackage(metaPackage, messages);
 
     // List dependencies = resolveDependencies(mPackage.getClasses());
     for (MetaClass clazz : metaPackage.getClasses()) {
-      preprocess(cartridge, clazz);
+      preprocess(cartridge, clazz, messages);
     }
   }
 
@@ -461,17 +460,18 @@ public class CartridgeFactory extends ComponentImpl implements Component {
    * Preprocesses the cartridge on the given element.
    * @param cartridge cartridge being preprocessed
    * @param clazz element being preprocessed
+   * @param messages ValidationResults is the container where additional messages for the user are added.
    */
-  protected void preprocess(Cartridge cartridge, MetaClass clazz) {
+  protected void preprocess(Cartridge cartridge, MetaClass clazz, ValidationResult messages) {
     if (clazz.isSystem()) {
       return;
     }
 
     for (Cartridge supplier : cartridge.getUsedCartridges()) {
-      supplier.preProcessClass(clazz);
+      supplier.preProcessClass(clazz, messages);
     }
     logProgressInfo(cartridge, clazz, "{0} Catridge pre-processing class {1}");
-    cartridge.preProcessClass(clazz);
+    cartridge.preProcessClass(clazz, messages);
   }
 
   /**

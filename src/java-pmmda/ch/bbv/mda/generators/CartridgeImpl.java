@@ -8,6 +8,7 @@ package ch.bbv.mda.generators;
 import static ch.bbv.mda.cartridges.OrmConstants.COLUMN_NAME;
 
 import java.io.*;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -34,6 +35,9 @@ import ch.bbv.mda.operators.FileOperators;
 import ch.bbv.mda.operators.ModelOperators;
 import ch.bbv.utilities.PropertyUtilities;
 import ch.bbv.utilities.ReflectUtilities;
+
+import com.jgoodies.validation.ValidationResult;
+import com.jgoodies.validation.message.SimpleValidationMessage;
 
 /**
  * The default cartridge implementation provides a set of utility methods to
@@ -188,31 +192,31 @@ public abstract class CartridgeImpl implements Cartridge {
   public void registerRules(Validator validator) {
   }
 
-  public void preProcessModel(MetaModel model) {
+  public void preProcessModel(MetaModel model, ValidationResult messages) {
   }
 
-  public void processModel(MetaModel model) {
+  public void processModel(MetaModel model, ValidationResult messages) {
   }
 
-  public void postProcessModel(MetaModel model) {
+  public void postProcessModel(MetaModel model, ValidationResult messages) {
   }
 
-  public void preProcessDatatype(MetaDatatype datatype) {
+  public void preProcessDatatype(MetaDatatype datatype, ValidationResult messages) {
   }
 
-  public void preProcessPackage(MetaPackage metaPackage) {
+  public void preProcessPackage(MetaPackage metaPackage, ValidationResult messages) {
   }
 
-  public void processPackage(MetaPackage metaPackage) {
+  public void processPackage(MetaPackage metaPackage, ValidationResult messages) {
   }
 
-  public void postProcessPackage(MetaPackage metaPackage) {
+  public void postProcessPackage(MetaPackage metaPackage, ValidationResult messages) {
   }
 
-  public void preProcessClass(MetaClass clazz) {
+  public void preProcessClass(MetaClass clazz, ValidationResult messages) {
   }
 
-  public void processClass(MetaClass clazz) {
+  public void processClass(MetaClass clazz, ValidationResult messages) {
   }
 
   /**
@@ -309,15 +313,16 @@ public abstract class CartridgeImpl implements Cartridge {
    * @param classname name of the file containing the artifact.
    * @param template velocity template to execute.
    * @param context velocity context of the template.
+   * @param messages ValidationResults is the container where additional messages for the user are added.
    * @throws IOException An exception occured when trying to create the file.
    * @pre (root != null) && (packageName != null) && (classname != null) &&
    *      (template != null) && (context != null)
    */
   protected void processJavaTemplate(File root, String packageName,
-      String classname, Template template, VelocityContext context)
+      String classname, Template template, VelocityContext context, ValidationResult messages)
       throws IOException {
     processTemplate(root, packageName, classname + JAVA_EXTENSION, template,
-        context);
+        context, messages);
   }
 
   /**
@@ -328,12 +333,13 @@ public abstract class CartridgeImpl implements Cartridge {
    * @param filename name of the file containing the artifact.
    * @param template velocity template to execute.
    * @param context velocity context of the template.
+   * @param messages ValidationResults is the container where additional messages for the user are added.
    * @throws IOException An exception occured when trying to create the file.
    * @pre (root != null) && (packageName != null) && (filename != null) &&
    *      (template != null) && (context != null)
    */
   protected void processTemplate(File root, String packageName,
-      String filename, Template template, VelocityContext context)
+      String filename, Template template, VelocityContext context, ValidationResult messages)
       throws IOException {
     assert (root != null) && (packageName != null) && (filename != null)
         && (template != null) && (context != null);
@@ -341,9 +347,11 @@ public abstract class CartridgeImpl implements Cartridge {
     tempFile.deleteOnExit();
     PrintWriter writer = new PrintWriter(new BufferedOutputStream(
         new FileOutputStream(tempFile)));
-    writer.print(processTemplate(template, context));
+    writer.print(processTemplate(template, context, messages));
     writer.close();
     File file = FileOperators.createFile(root, packageName, filename);
+  	logTemplateProcessing(this, template, file, "{0} Catridge processing template {1} and generating file: {2}");
+  	String messageText = "{0} Catridge processing template {1} and generating file: {2}";
     if (!FileOperators.equals(tempFile, file)) {
       file.delete();
       if (log.isInfoEnabled()) {
@@ -351,7 +359,12 @@ public abstract class CartridgeImpl implements Cartridge {
             + file.getCanonicalPath());
       }
       FileUtils.copyFile(tempFile, file);
+    } else {
+    	messageText += " - output file has not been changed.";
     }
+    Object[] arguments = { this.getPrefix(), template.getName(), file.getAbsoluteFile() };
+  	SimpleValidationMessage message = new SimpleValidationMessage(MessageFormat.format(messageText, arguments));
+  	messages.add(message);
     tempFile.delete();
   }
 
@@ -401,10 +414,11 @@ public abstract class CartridgeImpl implements Cartridge {
    * Processes the given velocity template with the given context.
    * @param template template to process.
    * @param context context of the template to process.
+   * @param messages ValidationResults is the container where additional messages for the user are added.
    * @return the result of the template processing as string.
    * @pre template != null && context != null
    */
-  protected String processTemplate(Template template, VelocityContext context) {
+  protected String processTemplate(Template template, VelocityContext context, ValidationResult messages) {
     assert (template != null) && (context != null);
     StringWriter writer = new StringWriter();
     try {
@@ -673,4 +687,20 @@ public abstract class CartridgeImpl implements Cartridge {
   protected boolean getBooleanProperty(String property) {
    return "true".equalsIgnoreCase(properties.getProperty(property)); 
   }
+
+  /**
+   * Logs information about processing a template.
+   * @param cartridge cartridge being applied
+   * @param template template being processed
+   * @param file file beeing generated
+   * @param message message to log
+   */
+  private void logTemplateProcessing(Cartridge cartridge, Template template, File file,
+      String message) {
+    if (log.isInfoEnabled()) {
+      Object[] arguments = { cartridge.getPrefix(), template.getName(), file.getAbsoluteFile() };
+      log.info(MessageFormat.format(message, arguments));
+    }
+  }
+
 }

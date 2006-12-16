@@ -5,21 +5,7 @@
  */
 package ch.bbv.mda.cartridges;
 
-import static ch.bbv.mda.cartridges.OrmConstants.COLUMN_NAME;
-import static ch.bbv.mda.cartridges.OrmConstants.COLUMN_POSTFIX_KEY;
-import static ch.bbv.mda.cartridges.OrmConstants.COLUMN_PREFIX_KEY;
-import static ch.bbv.mda.cartridges.OrmConstants.COLUMN_SIZE;
-import static ch.bbv.mda.cartridges.OrmConstants.DATABASE_KEY;
-import static ch.bbv.mda.cartridges.OrmConstants.GENERATOR_KEY;
-import static ch.bbv.mda.cartridges.OrmConstants.IS_PRIMARY;
-import static ch.bbv.mda.cartridges.OrmConstants.ORM_KEY;
-import static ch.bbv.mda.cartridges.OrmConstants.ORM_TYPE_JDBC;
-import static ch.bbv.mda.cartridges.OrmConstants.ORM_TYPE_SQL;
-import static ch.bbv.mda.cartridges.OrmConstants.SCHEMA;
-import static ch.bbv.mda.cartridges.OrmConstants.SOURCE_ROOT_FOLDER_KEY;
-import static ch.bbv.mda.cartridges.OrmConstants.TABLE_NAME;
-import static ch.bbv.mda.cartridges.OrmConstants.TABLE_POSTFIX_KEY;
-import static ch.bbv.mda.cartridges.OrmConstants.TABLE_PREFIX_KEY;
+import static ch.bbv.mda.cartridges.OrmConstants.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,14 +24,7 @@ import org.apache.velocity.VelocityContext;
 
 import ch.bbv.application.VersionId;
 import ch.bbv.dog.validation.Validator;
-import ch.bbv.mda.MetaClass;
-import ch.bbv.mda.MetaDatatype;
-import ch.bbv.mda.MetaElement;
-import ch.bbv.mda.MetaModel;
-import ch.bbv.mda.MetaPackage;
-import ch.bbv.mda.MetaProperty;
-import ch.bbv.mda.TaggedValue;
-import ch.bbv.mda.UmlConstants;
+import ch.bbv.mda.*;
 import ch.bbv.mda.generators.Cartridge;
 import ch.bbv.mda.generators.CartridgeFactory;
 import ch.bbv.mda.generators.CartridgeImpl;
@@ -55,6 +34,8 @@ import ch.bbv.mda.operators.FileOperators;
 import ch.bbv.mda.operators.ModelOperators;
 import ch.bbv.mda.ui.TaggedValuesView;
 import ch.bbv.utilities.PropertyUtilities;
+
+import com.jgoodies.validation.ValidationResult;
 
 /**
  * The OJB persistence handler generates all persistency artifacts to make all
@@ -132,7 +113,7 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
   }
 
   @Override
-  public void preProcessDatatype(MetaDatatype datatype) {
+  public void preProcessDatatype(MetaDatatype datatype, ValidationResult messages) {
     String database = getContext().getProperty(DATABASE_KEY);
     datatype.addAttribute(ORM_TYPE_SQL, translateDatatype(datatype, "SQL",
         database, false));
@@ -141,13 +122,13 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
   }
 
   @Override
-  public void preProcessModel(MetaModel model) {
+  public void preProcessModel(MetaModel model, ValidationResult messages) {
     assert model != null;
     root = mkdirs(getContext().getProperty(SOURCE_ROOT_FOLDER_KEY));
   }
 
   @Override
-  public void preProcessPackage(MetaPackage packages) {
+  public void preProcessPackage(MetaPackage packages, ValidationResult messages) {
     assert packages != null;
     String schemaName = packages.valueOfTag(SCHEMA);
     if ((schemaName != null) && !schemas.containsKey(schemaName)) {
@@ -175,7 +156,7 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
   }
 
   @Override
-  public void preProcessClass(MetaClass clazz) {
+  public void preProcessClass(MetaClass clazz, ValidationResult messages) {
     assert clazz != null;
     if (clazz.booleanValueOfTag(UmlConstants.PERSISTENCE_TAG)) {
       Properties context = getContext();
@@ -212,7 +193,7 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
   }
 
   @Override
-  public void processClass(MetaClass clazz) {
+  public void processClass(MetaClass clazz, ValidationResult messages) {
     assert clazz != null;
     if (!clazz.retrievePackage().booleanValueOfTag(BoConstants.GENERATE)
         || !clazz.hasStereotype(BoConstants.DATA_OBJECT_STEREOTYPE)
@@ -227,55 +208,55 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
       VelocityContext context = createContext((MetaPackage) clazz.getContext());
       context.put("prefix", Boolean.TRUE);
       schema.ormBoWriter.print(processTemplate(retrieveTemplate(
-          "xml-bo-repository", orm), context));
+          "xml-bo-repository", orm), context, messages));
       schema.ormLwWriter.print(processTemplate(retrieveTemplate(
-          "xml-lw-repository", orm), context));
+          "xml-lw-repository", orm), context, messages));
       if (useGeneratorDdlUtils) {
         schema.ddlXmlWriter.print(processTemplate(retrieveTemplate("ddl",
-            "Torque"), context));
+            "Torque"), context, messages));
       } else {
         schema.ddlWriter.print(processTemplate(
-            retrieveTemplate("ddl", database), context));
+            retrieveTemplate("ddl", database), context, messages));
         schema.ddlIntegrityWriter.print(processTemplate(retrieveTemplate(
-            "ddl-integrity", database), context));
+            "ddl-integrity", database), context, messages));
       }
       schema.setState(OrmSchema.SchemaState.body);
     }
     VelocityContext context = createPersistencyContext(clazz);
     schema.ormBoWriter.print(processTemplate(retrieveTemplate(
-        "xml-bo-repository", orm), context));
+        "xml-bo-repository", orm), context, messages));
     schema.ormLwWriter.print(processTemplate(retrieveTemplate(
-        "xml-lw-repository", orm), context));
+        "xml-lw-repository", orm), context, messages));
     if (useGeneratorDdlUtils) {
       schema.ddlXmlWriter.print(processTemplate(retrieveTemplate("ddl",
-          "Torque"), context));
+          "Torque"), context, messages));
     } else {
       schema.ddlWriter.print(processTemplate(retrieveTemplate("ddl", database),
-          context));
+          context, messages));
       schema.ddlIntegrityWriter.print(processTemplate(retrieveTemplate(
-          "ddl-integrity", database), context));
+          "ddl-integrity", database), context, messages));
     }
   }
 
   @Override
-  public void postProcessModel(MetaModel model) {
+  public void postProcessModel(MetaModel model, ValidationResult messages) {
     VelocityContext context = new VelocityContext();
     context.put("postfix", Boolean.TRUE);
     String orm = getContext().getProperty(ORM_KEY);
     String database = getContext().getProperty(DATABASE_KEY);
     for (OrmSchema schema : schemas.values()) {
       schema.ormBoWriter.print(processTemplate(retrieveTemplate(
-          "xml-bo-repository", orm), context));
+          "xml-bo-repository", orm), context, messages));
       schema.ormLwWriter.print(processTemplate(retrieveTemplate(
-          "xml-lw-repository", orm), context));
+          "xml-lw-repository", orm), context, messages));
       if (useGeneratorDdlUtils) {
         schema.ddlXmlWriter.print(processTemplate(retrieveTemplate("ddl",
-            "Torque"), context));
+            "Torque"), context, messages));
       } else {
         schema.ddlWriter.print(processTemplate(
-            retrieveTemplate("ddl", database), context));
+            retrieveTemplate("ddl", database), context, messages));
         schema.ddlIntegrityWriter.print(processTemplate(retrieveTemplate(
-            "ddl-integrity", database), context));
+            "ddl-integrity", database), context, messages));
       }
       FileOperators.closePrintWriter(schema.ormBoWriter);
       FileOperators.closePrintWriter(schema.ormLwWriter);

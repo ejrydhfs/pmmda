@@ -20,6 +20,8 @@ import ch.bbv.mda.MetaClass;
 import ch.bbv.mda.MetaPackage;
 import ch.bbv.mda.generators.Cartridge;
 
+import com.jgoodies.validation.ValidationResult;
+
 /**
  * The EJB cartridge generates all the artifacts for the data object framework
  * for a client server application based on J2EE or CORBA architecture.
@@ -52,7 +54,7 @@ public class EjbCartridge extends JavaCartridge implements Cartridge {
   }
 
   @Override
-  public void preProcessPackage(MetaPackage packages) {
+  public void preProcessPackage(MetaPackage packages, ValidationResult messages) {
     assert packages != null;
     Properties context = getContext();
     StringBuilder buffer = new StringBuilder();
@@ -67,7 +69,7 @@ public class EjbCartridge extends JavaCartridge implements Cartridge {
   }
 
   @Override
-  public void processPackage(MetaPackage packages) {
+  public void processPackage(MetaPackage packages, ValidationResult messages) {
     assert packages != null;
     isPackageInterface = packages
         .hasStereotype(BoConstants.INTERFACE_STEREOTYPE);
@@ -89,13 +91,13 @@ public class EjbCartridge extends JavaCartridge implements Cartridge {
             .valueOfTag(CtoConstants.CTO_PACKAGE_IDL), packages
             .valueOfTag(SERVER_NAME)
             + CtoConstants.IDL_EXTENSION, retrieveTemplate("server-corba-idl",
-            null), context);
+            null), context, messages);
         processJavaTemplate(serverRoot, packages.getAttribute(SERVER_PACKAGE),
             packages.valueOfTag(SERVER_NAME) + "Corba", retrieveTemplate(
-                "server-corba", null), context);
+                "server-corba", null), context, messages);
         processJavaTemplate(clientRoot, packages.getAttribute(CLIENT_PACKAGE),
             packages.valueOfTag(SERVER_NAME) + "CorbaWrapper",
-            retrieveTemplate("server-corba-wrapper", null), context);
+            retrieveTemplate("server-corba-wrapper", null), context, messages);
       }
       if (getBooleanProperty(GENERATE_BEAN_KEY)) {
         String j2eeServer = getContext().getProperty(J2EE_SERVER_KEY);
@@ -107,26 +109,26 @@ public class EjbCartridge extends JavaCartridge implements Cartridge {
             BoConstants.ROOT_COMMON_FOLDER_KEY);
         processJavaTemplate(commonRoot, packages.getAttribute(SERVER_PACKAGE),
             packages.valueOfTag(SERVER_NAME) + "Session", retrieveTemplate(
-                "server-session-if", null), context);
+                "server-session-if", null), context, messages);
         processJavaTemplate(serverRoot, packages.getAttribute(SERVER_PACKAGE),
             packages.valueOfTag(SERVER_NAME) + "SessionBean", retrieveTemplate(
-                "server-session", null), context);
+                "server-session", null), context, messages);
         processJavaTemplate(commonRoot, packages.getAttribute(SERVER_PACKAGE),
             packages.valueOfTag(SERVER_NAME) + "Home", retrieveTemplate(
-                "server-home", null), context);
+                "server-home", null), context, messages);
         processJavaTemplate(clientRoot, packages.getAttribute(CLIENT_PACKAGE),
             packages.valueOfTag(SERVER_NAME) + "Wrapper", retrieveTemplate(
-                "server-wrapper", null), context);
+                "server-wrapper", null), context, messages);
         processTemplate(serverRoot, packages.getAttribute(SERVER_PACKAGE),
             packages.valueOfTag(SERVER_NAME) + "-ejb-jar.xml",
-            retrieveTemplate("server-descriptor", null), context);
+            retrieveTemplate("server-descriptor", null), context, messages);
         processTemplate(serverRoot, packages.getAttribute(SERVER_PACKAGE),
             packages.valueOfTag(SERVER_NAME) + getExtension(j2eeServer),
             retrieveTemplate("server-" + j2eeServer + "-descriptor", null),
-            context);
+            context, messages);
         processTemplate(serverRoot, packages.getAttribute(SERVER_PACKAGE),
             packages.valueOfTag(SERVER_NAME) + "-jbosscmp-jdbc.xml",
-            retrieveTemplate("server-jboss-jdbc-descriptor", null), context);
+            retrieveTemplate("server-jboss-jdbc-descriptor", null), context, messages);
       }
     } catch (IOException e) {
       log.error("ejb write template generation failed", e);

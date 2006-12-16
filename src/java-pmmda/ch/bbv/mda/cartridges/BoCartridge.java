@@ -27,6 +27,8 @@ import ch.bbv.mda.operators.FileOperators;
 import ch.bbv.mda.operators.MdaUtilities;
 import ch.bbv.mda.operators.ModelOperators;
 
+import com.jgoodies.validation.ValidationResult;
+
 /**
  * The data object cartridge is responsible for the generation of all data
  * object types and the associated helper classes. The code generator is able to
@@ -118,7 +120,7 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
   }
 
   @Override
-  public void preProcessDatatype(MetaDatatype datatype) {
+  public void preProcessDatatype(MetaDatatype datatype, ValidationResult messages) {
     datatype.addAttribute(BO_TYPE_JAVA, translateDatatype(datatype, LANGUAGE,
         false));
   }
@@ -142,10 +144,11 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
    * representation package.</dd>
    * </ul>
    * @param packages the package, which attributes should be computed.
+   * @param messages ValidationResults is the container where additional messages for the user are added.
    * @pre packages != null
    */
   @Override
-  public void preProcessPackage(MetaPackage packages) {
+  public void preProcessPackage(MetaPackage packages, ValidationResult messages) {
     assert (packages != null);
     this.packages = packages;
     String name = packages.getQualifiedName();
@@ -176,10 +179,11 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
    * class postfix.</dd>
    * </ul>
    * @param clazz the class, which attributes should be computed
+   * @param messages ValidationResults is the container where additional messages for the user are added.
    * @pre clazz != null
    */
   @Override
-  public void preProcessClass(MetaClass clazz) {
+  public void preProcessClass(MetaClass clazz, ValidationResult messages) {
     assert clazz != null;
     String name = clazz.getName();
     clazz.addAttribute(IF_CLASS, expandIdentifier(IF_CLASS_PREFIX_KEY, name,
@@ -216,7 +220,7 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
   }
 
   @Override
-  public void processPackage(MetaPackage packages) {
+  public void processPackage(MetaPackage packages, ValidationResult messages) {
     assert packages != null;
     this.packages = packages;
     String rootDirectory = packages.valueOfTag(ROOT);
@@ -243,7 +247,7 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
   }
 
   @Override
-  public void processClass(MetaClass clazz) {
+  public void processClass(MetaClass clazz, ValidationResult messages) {
     assert clazz != null;
     if (!clazz.retrievePackage().booleanValueOfTag(GENERATE)) {
       return;
@@ -255,20 +259,20 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
       context.put(CODE_BLOCKS, blocks);
       if (clazz.hasStereotype(DATA_OBJECT_STEREOTYPE)) {
         processJavaTemplate(root, packages.getAttribute(BO_PACKAGE), clazz
-            .getAttribute(BO_CLASS), retrieveTemplate("bo"), context);
+            .getAttribute(BO_CLASS), retrieveTemplate("bo"), context, messages);
         if (hasLightweight(clazz)) {
           blocks = extractUserCode(packages.getAttribute(LW_PACKAGE), clazz
               .getAttribute(LW_CLASS));
           context.put(CODE_BLOCKS, blocks);
           processJavaTemplate(root, packages.getAttribute(LW_PACKAGE), clazz
-              .getAttribute(LW_CLASS), retrieveTemplate("lw"), context);
+              .getAttribute(LW_CLASS), retrieveTemplate("lw"), context, messages);
         }
       } else if (clazz.hasStereotype(REFERENCE_CODE_STEREOTYPE)) {
         processJavaTemplate(root, packages.getAttribute(BO_PACKAGE), clazz
-            .getAttribute(BO_CLASS), retrieveTemplate("code"), context);
+            .getAttribute(BO_CLASS), retrieveTemplate("code"), context, messages);
       } else if (clazz.booleanValueOfTag(BO_GENERATE)) {
         processJavaTemplate(root, packages.getAttribute(BO_PACKAGE), clazz
-            .getAttribute(BO_CLASS), retrieveTemplate("class"), context);
+            .getAttribute(BO_CLASS), retrieveTemplate("class"), context, messages);
       }
     } catch (IOException e) {
       log.error(e);
@@ -276,7 +280,7 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
   }
 
   @Override
-  public void postProcessPackage(MetaPackage packages) {
+  public void postProcessPackage(MetaPackage packages, ValidationResult messages) {
     if (packages.booleanValueOfTag(GENERATE)) {
       VelocityContext context = createContext(packages);
       try {
@@ -286,29 +290,29 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
           String packageName = packages.getAttribute(IF_PACKAGE);
           if (hasRootBusinessObjects) {
             processJavaTemplate(root, packageName, "Visitor",
-                retrieveTemplate("visitor-if-bo"), context);
+                retrieveTemplate("visitor-if-bo"), context, messages);
             processJavaTemplate(root, packageName, "VisitorFunctor",
-                retrieveTemplate("visitor-functor-bo"), context);
+                retrieveTemplate("visitor-functor-bo"), context, messages);
             if (hasCycles) {
               processJavaTemplate(root, packageName, "CyclicVisitor",
-                  retrieveTemplate("visitor-cyclic-bo"), context);
+                  retrieveTemplate("visitor-cyclic-bo"), context, messages);
             }
             processJavaTemplate(root, packages.getAttribute(BO_PACKAGE),
-                "TypeFactory", retrieveTemplate("type-factory"), context);
+                "TypeFactory", retrieveTemplate("type-factory"), context, messages);
           }
         }
         if (packages.booleanValueOfAttribute(BO_LIGHTWEIGHT)) {
           if (hasRootBusinessObjects) {
             String packageName = packages.getAttribute(LW_PACKAGE);
             processJavaTemplate(root, packageName, "LwVisitor",
-                retrieveTemplate("visitor-if-lw"), context);
+                retrieveTemplate("visitor-if-lw"), context, messages);
             processJavaTemplate(root, packageName, "LwVisitorFunctor",
-                retrieveTemplate("visitor-functor-lw"), context);
+                retrieveTemplate("visitor-functor-lw"), context, messages);
             processJavaTemplate(root, packageName, "LwTransformer",
-                retrieveTemplate("transformer-lw"), context);
+                retrieveTemplate("transformer-lw"), context, messages);
             if (hasCycles) {
               processJavaTemplate(root, packageName, "LwCyclicVisitor",
-                  retrieveTemplate("visitor-cyclic-lw"), context);
+                  retrieveTemplate("visitor-cyclic-lw"), context, messages);
             }
           }
         }

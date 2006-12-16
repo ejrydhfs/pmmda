@@ -18,6 +18,8 @@ import ch.bbv.mda.generators.Cartridge;
 import ch.bbv.mda.generators.CartridgeFactory;
 import ch.bbv.mda.resources.MessagesMda;
 
+import com.jgoodies.validation.ValidationResult;
+
 /**
  * The generate data object action generates the data objects for the model
  * displayed in the explorer. The cartdridge is instantiated, initialized and
@@ -65,7 +67,8 @@ public class GenerateCartridgeAction extends ExplorerGlobalActionImpl {
           return lastResult;
         }
       }
-      factory.execute(cartridge, model);
+      ValidationResult messages = getExplorer().getValidationPanel().getResults();
+      factory.execute(cartridge, model, messages);
     }
     switchWaitCursor(false);
     lastResult = true;

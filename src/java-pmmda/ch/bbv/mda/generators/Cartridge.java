@@ -8,6 +8,8 @@ package ch.bbv.mda.generators;
 import java.util.List;
 import java.util.Properties;
 
+import com.jgoodies.validation.ValidationResult;
+
 import ch.bbv.application.VersionId;
 import ch.bbv.dog.validation.Validator;
 import ch.bbv.mda.*;
@@ -129,66 +131,75 @@ public interface Cartridge {
    * Preprocesses the project and computes all the attributes used in the
    * cartridge for the model. The context of the model is also computed.
    * @param model MDA model to process.
+   * @param messages ValidationResults is the container where additional messages for the user are added.
    * @pre model != null
    */
-  void preProcessModel(MetaModel model);
+  void preProcessModel(MetaModel model, ValidationResult messages);
 
   /**
    * Processes the project. The context contains the project information.
    * @param model MDA model to process.
+   * @param messages ValidationResults is the container where additional messages for the user are added.
    * @pre model != null
    */
-  void processModel(MetaModel model);
+  void processModel(MetaModel model, ValidationResult messages);
 
   /**
    * Postprocesses the project. The context contains the project information.
    * @param model MDA model to process.
+   * @param messages ValidationResults is the container where additional messages for the user are added.
    * @pre model != null
    */
-  void postProcessModel(MetaModel model);
+  void postProcessModel(MetaModel model, ValidationResult messages);
 
   /**
    * Preprocesses the datatype and computes all the attributes used in the
    * cartidge for the datatype.
    * @param datatype datatype to process.
+   * @param messages ValidationResults is the container where additional messages for the user are added.
    * @pre datatype != null
    */
-  void preProcessDatatype(MetaDatatype datatype);
+  void preProcessDatatype(MetaDatatype datatype, ValidationResult messages);
 
   /**
    * Preprocesses the package and computes all the attributes used in the
    * cartridge for the package. The context of the package is also computed.
+   * @param messages ValidationResults is the container where additional messages for the user are added.
    * @param metaPackage MDA package to process.
    * @pre metaPackage != null
    */
-  void preProcessPackage(MetaPackage metaPackage);
+  void preProcessPackage(MetaPackage metaPackage, ValidationResult messages);
 
   /**
    * Processes the given package.
    * @param metaPackage MDA package to process.
+   * @param messages ValidationResults is the container where additional messages for the user are added.
    * @pre metaPackage != null
    */
-  void processPackage(MetaPackage metaPackage);
+  void processPackage(MetaPackage metaPackage, ValidationResult messages);
 
   /**
    * Postprocesses the given package.
    * @param metaPackage MDA package to process.
+   * @param messages ValidationResults is the container where additional messages for the user are added.
    * @pre metaPackage != null
    */
-  void postProcessPackage(MetaPackage metaPackage);
+  void postProcessPackage(MetaPackage metaPackage, ValidationResult messages);
 
   /**
    * Preprocesses the class and computes all the attributes used in the
    * cartridge for the class. The context of the class is also computed.
    * @param clazz MDA class to process.
+   * @param messages ValidationResults is the container where additional messages for the user are added.
    * @pre clazz != null
    */
-  void preProcessClass(MetaClass clazz);
+  void preProcessClass(MetaClass clazz, ValidationResult messages);
 
   /**
    * Processes the given class.
    * @param clazz MDA clas to process.
+   * @param messages ValidationResults is the container where additional messages for the user are added.
    * @pre clazz != null
    */
-  void processClass(MetaClass clazz);
+  void processClass(MetaClass clazz, ValidationResult messages);
 }

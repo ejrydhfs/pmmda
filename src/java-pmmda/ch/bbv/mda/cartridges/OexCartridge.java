@@ -22,6 +22,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 
+import com.jgoodies.validation.ValidationResult;
+
 import ch.bbv.application.VersionId;
 import ch.bbv.mda.MetaClass;
 import ch.bbv.mda.MetaIndexedProperty;
@@ -60,9 +62,10 @@ public class OexCartridge extends JavaCartridge implements Cartridge {
    * Returns a list of visible fields of the class. Visible fields are displayed
    * in the explorer user interface.
    * @param clazz class to analyze.
+   * @param messages ValidationResults is the container where additional messages for the user are added.
    * @return the list of visible fields of the class.
    */
-  public Collection getVisibleFields(MetaClass clazz) {
+  public Collection getVisibleFields(MetaClass clazz, ValidationResult messages) {
     Map<String, MetaProperty> fields = new HashMap<String, MetaProperty>();
     for (MetaIndexedProperty object : clazz.getIndexedProperties()) {
       String className = object.getTypeName();
@@ -89,7 +92,7 @@ public class OexCartridge extends JavaCartridge implements Cartridge {
   }
 
   @Override
-  public void preProcessPackage(MetaPackage packages) {
+  public void preProcessPackage(MetaPackage packages, ValidationResult messages) {
     assert packages != null;
     Properties context = getContext();
     StringBuilder buffer = new StringBuilder();
@@ -97,11 +100,11 @@ public class OexCartridge extends JavaCartridge implements Cartridge {
     buffer.append(qualifiedName).append(
         context.getProperty(RICH_CLIENT_PACKAGE_POSTFIX_KEY));
     packages.addAttribute(OEX_RICH_CLIENT_PACKAGE, buffer.toString());
-    super.preProcessPackage(packages);
+    super.preProcessPackage(packages, messages);
   }
 
   @Override
-  public void postProcessPackage(MetaPackage packages) {
+  public void postProcessPackage(MetaPackage packages, ValidationResult messages) {
     assert packages != null;
     File sourceRoot = getRoot(ROOT_RICH_CLIENT_KEY,
         BoConstants.ROOT_CLIENT_FOLDER_KEY);
@@ -112,7 +115,7 @@ public class OexCartridge extends JavaCartridge implements Cartridge {
       try {
         processJavaTemplate(sourceRoot, packages
             .getAttribute(OEX_RICH_CLIENT_PACKAGE), "TypeFactory",
-            retrieveTemplate("type-factory"), context);
+            retrieveTemplate("type-factory"), context, messages);
       } catch (IOException e) {
         log.error(e);
       }

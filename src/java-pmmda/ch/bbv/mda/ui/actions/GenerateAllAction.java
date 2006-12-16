@@ -21,6 +21,8 @@ import ch.bbv.mda.generators.Cartridge;
 import ch.bbv.mda.generators.CartridgeFactory;
 import ch.bbv.mda.resources.MessagesMda;
 
+import com.jgoodies.validation.ValidationResult;
+
 /**
  * Generate the artifacts for all registered and active catridges. If the
  * validation of the model detects errors a warning message is displayed.
@@ -63,10 +65,11 @@ public class GenerateAllAction extends ExplorerGlobalActionImpl {
       int size = cartridges.size();
       int i = 0;
       StatusBar statusBar = getExplorer().getStatusBar();
+      ValidationResult messages = getExplorer().getValidationPanel().getResults();
       for (Cartridge cartridge : cartridges) {
         statusBar.setInfo("Generate" + cartridge.getPrefix());
         statusBar.setProgress(++i / size * 100);
-        factory.execute(cartridge, model);
+        factory.execute(cartridge, model, messages);
       }
       statusBar.setProgress(100);
       statusBar.setInfo("Generate All done");

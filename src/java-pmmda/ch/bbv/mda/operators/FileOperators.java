@@ -120,9 +120,11 @@ public class FileOperators {
       file = new File(directory, filename);
     }
     if (file == null) {
+      //System.out.println("FileOperators#createFile: unable to create file: " +root.getAbsolutePath()+packageName+filename);
       throw new IOException("file not created " + root.getAbsolutePath() + "/"
           + packageName + "/" + filename);
     }
+    //System.out.println("FileOperators#createFile: created file: " +file.getAbsolutePath());
     return file;
   }
 

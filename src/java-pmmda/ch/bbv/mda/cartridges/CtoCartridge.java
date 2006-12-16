@@ -25,6 +25,8 @@ import ch.bbv.mda.generators.CartridgeFactory;
 import ch.bbv.mda.generators.CartridgeImpl;
 import ch.bbv.mda.operators.ModelOperators;
 
+import com.jgoodies.validation.ValidationResult;
+
 /**
  * The data transfer object handler generates all DTO artifacts to make all data
  * objects of a set of packagages transmitable through CORBA middlware.
@@ -117,7 +119,7 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
   }
 
   @Override
-  public void preProcessDatatype(MetaDatatype datatype) {
+  public void preProcessDatatype(MetaDatatype datatype, ValidationResult messages) {
     assert datatype != null;
     String idlType = java2idl.get(datatype
         .getAttribute(BoConstants.BO_TYPE_JAVA));
@@ -127,7 +129,7 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
   }
 
   @Override
-  public void preProcessPackage(MetaPackage packages) {
+  public void preProcessPackage(MetaPackage packages, ValidationResult messages) {
     assert packages != null;
     String attribute = expandIdentifier(null, packages.getQualifiedName(),
         TRANSFORM_PACKAGE_POSTFIX);
@@ -136,7 +138,7 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
   }
 
   @Override
-  public void preProcessClass(MetaClass clazz) {
+  public void preProcessClass(MetaClass clazz, ValidationResult messages) {
     assert clazz != null;
     Properties context = getContext();
     String name = clazz.getName();
@@ -165,14 +167,14 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
   }
 
   @Override
-  public void processPackage(MetaPackage packages) {
+  public void processPackage(MetaPackage packages, ValidationResult messages) {
     assert packages != null;
     isPackageInterface = packages
         .hasStereotype(BoConstants.INTERFACE_STEREOTYPE);
   }
 
   @Override
-  public void processClass(MetaClass clazz) {
+  public void processClass(MetaClass clazz, ValidationResult messages) {
     assert clazz != null;
     if (!isPackageInterface
         && !clazz.retrievePackage().booleanValueOfTag(BoConstants.GENERATE)) {
@@ -186,19 +188,19 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
         VelocityContext context = createContext(clazz);
         processTemplate(idlRoot, metaPackage.valueOfTag(CTO_PACKAGE_IDL), clazz
             .getAttribute(CTO_MO_CLASS)
-            + IDL_EXTENSION, retrieveTemplate("idl-dto-bo", null), context);
+            + IDL_EXTENSION, retrieveTemplate("idl-dto-bo", null), context, messages);
         processJavaTemplate(javaRoot, metaPackage
             .getAttribute(CTO_BO2DTO_PACKAGE), clazz
             .getAttribute(CTO_BO2DTO_CLASS), retrieveTemplate("java-bo2dto",
-            null), context);
+            null), context, messages);
         if (clazz.booleanValueOfAttribute(BoConstants.BO_LIGHTWEIGHT)) {
           processTemplate(idlRoot, metaPackage.valueOfTag(CTO_PACKAGE_IDL),
               clazz.getAttribute(CTO_LW_CLASS) + IDL_EXTENSION,
-              retrieveTemplate("idl-dto-lw", null), context);
+              retrieveTemplate("idl-dto-lw", null), context, messages);
           processJavaTemplate(javaRoot, metaPackage
               .getAttribute(CTO_LW2DTO_PACKAGE), clazz
               .getAttribute(CTO_LW2DTO_CLASS), retrieveTemplate("java-lw2dto",
-              null), context);
+              null), context, messages);
         }
       }
     } catch (IOException e) {
