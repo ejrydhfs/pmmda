@@ -358,7 +358,7 @@ public abstract class Explorer implements ExplorerNodeOwner {
   /**
    * Displays the explorer window.
    */
-  void display() {
+  protected void display() {
     frame.setLocation(100, 100);
     frame.pack();
     frame.setSize(800, 600);
