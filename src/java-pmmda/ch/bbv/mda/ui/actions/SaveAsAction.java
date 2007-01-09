@@ -71,12 +71,12 @@ public class SaveAsAction extends ExplorerFileAction {
     switchWaitCursor(true);
     try {
       String extension = FilenameUtils.getExtension(file.getCanonicalPath());
-      if (extension == null) {
+      if (extension == null || extension.equals("")) {
         file = MdaFileTypes.getInstance().normalizeFile(
             getFileChooser().getFileFilter(), file);
       }
       extension = FilenameUtils.getExtension(file.getCanonicalPath());
-      if (extension == null) {
+      if (extension == null || extension.equals("")) {
         JOptionPane.showMessageDialog(getExplorer().getFrame(),
             MessagesMda.msgIllegalFileNameOrType, Messages.titleError,
             JOptionPane.ERROR_MESSAGE);
