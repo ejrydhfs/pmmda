@@ -436,7 +436,7 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
   }
 
   /**
-   * Generates the import statements necessary for the class definint the data
+   * Generates the import statements necessary for the class defining the data
    * object type.
    * @param clazz class for which the import statements should be retrieved.
    * @param packageName qualified name of the package containing the generated
@@ -452,7 +452,7 @@ public class BoCartridge extends JavaCartridge implements Cartridge {
   }
 
   /**
-   * Generates the import statements necessary for the class definint the data
+   * Generates the import statements necessary for the class defining the data
    * object type.
    * @param clazz class for which the import statements should be retrieved.
    * @param packageName qualified name of the package containing the generated
