@@ -189,7 +189,8 @@ public class PersistenceHandlerFactory {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+        	// in case of file not found return the older version
+          handler = getNsUmlHandler();
         }
         return handler;
 
