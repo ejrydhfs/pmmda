@@ -197,7 +197,7 @@ public interface Cartridge {
 
   /**
    * Processes the given class.
-   * @param clazz MDA clas to process.
+   * @param clazz MDA class to process.
    * @param messages ValidationResults is the container where additional messages for the user are added.
    * @pre clazz != null
    */
