@@ -144,6 +144,12 @@
     <class name="java.util.Date" type="DATE" null="true" param="0" />
     <class name="java.sql.Date" type="DATE" null="true" param="0" />
   </datatypes>
+  <datatypes language="SQL" dialect="MSSQLSERVER">
+    <datatype name="System.Drawing.Image" type="IMAGE" null="true" param="0" />
+  </datatypes>
+  <datatypes language="SQL" dialect="MySQL">
+    <datatype name="System.Drawing.Image" type="BLOB" null="true" param="0" />
+  </datatypes>
   <datatypes language="JDBC">
     <datatype name="boolean" type="BOOLEAN" null="false" param="0" />
     <datatype name="byte" type="TINYINT" null="false" param="0" />
