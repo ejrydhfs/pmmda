@@ -64,6 +64,7 @@ public class ZipFileUtilities {
       input.close();
       inputStream.close();
       output.close();
+      System.gc(); // Attempt to solve the deletion failure: Currently there is no better method known to unlock files. 
       boolean isSuccess = file.delete();
       if (!isSuccess) {
         throw new PersistenceException();

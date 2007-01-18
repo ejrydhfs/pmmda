@@ -93,6 +93,7 @@ public class MdrPersistenceHandler implements PersistenceHandler {
 
                     if (file.getName().endsWith(".xmi")) {
                         if (file.exists()) {
+                        		System.gc(); // Attempt to solve the deletion failure: Currently there is no better method known to unlock files. 
                             file.delete();
                         }
                         temporaryFile.renameTo(file);
@@ -104,6 +105,7 @@ public class MdrPersistenceHandler implements PersistenceHandler {
                         }else{
                             ArgoWriter.writeEntry(file, temporaryFile);
                         }
+                        System.gc(); // Attempt to solve the deletion failure: Currently there is no better method known to unlock files. 
                         temporaryFile.delete();
                     }
 

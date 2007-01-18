@@ -93,6 +93,7 @@ public class NsUmlPersistenceHandler implements PersistenceHandler {
         } else {
           temporaryFile.deleteOnExit();
           ArgoWriter.writeEntry(file, temporaryFile);
+          System.gc(); // Attempt to solve the deletion failure: Currently there is no better method known to unlock files. 
           temporaryFile.delete();
         }
       } catch (Exception e) {
@@ -109,12 +110,14 @@ public class NsUmlPersistenceHandler implements PersistenceHandler {
       File temporaryFile = File.createTempFile("pmMDA", ".xmi");
       nsUmlTransformer.writeArgoModel(mModel, temporaryFile);
       if (file.getName().endsWith(".xmi")) {
+        System.gc(); // Attempt to solve the deletion failure: Currently there is no better method known to unlock files. 
         file.delete();
         temporaryFile.renameTo(file);
       } else {
         temporaryFile.deleteOnExit();
         InputStream input = new FileInputStream(temporaryFile);
         ZipFileUtilities.replaceEntry(file, getArgoModelFileName(file), input);
+        System.gc(); // Attempt to solve the deletion failure: Currently there is no better method known to unlock files. 
         temporaryFile.delete();
       }
     } catch (Exception e) {
