@@ -107,6 +107,11 @@ public abstract class CartridgeImpl implements Cartridge {
   public static final String AGGREGATIONS_KEY = "aggregations";
 
   /**
+   * Velocity context key to identify the object stored in the context.
+   */
+  public static final String NESTEDCLASSES_KEY = "nestedClasses";
+
+  /**
    * logger for all instances of the class.
    */
   private static Log log = LogFactory.getLog(CartridgeImpl.class);
@@ -353,6 +358,7 @@ public abstract class CartridgeImpl implements Cartridge {
   	logTemplateProcessing(this, template, file, "{0} Catridge processing template {1} and generating file: {2}");
   	String messageText = "{0} Catridge processing template {1} and generating file: {2}";
     if (!FileOperators.equals(tempFile, file)) {
+      System.gc(); // Attempt to solve the deletion failure: Currently there is no better method known to unlock files. 
       file.delete();
       if (log.isInfoEnabled()) {
         log.info("writing file with new artifact content "
@@ -365,6 +371,7 @@ public abstract class CartridgeImpl implements Cartridge {
     Object[] arguments = { this.getPrefix(), template.getName(), file.getAbsoluteFile() };
   	SimpleValidationMessage message = new SimpleValidationMessage(MessageFormat.format(messageText, arguments));
   	messages.add(message);
+    System.gc(); // Attempt to solve the deletion failure: Currently there is no better method known to unlock files. 
     tempFile.delete();
   }
 
@@ -483,7 +490,7 @@ public abstract class CartridgeImpl implements Cartridge {
     context.put(PROPERTIES_KEY, ModelOperators.getTransitiveFieldsFor(clazz));
     context.put(AGGREGATIONS_KEY, ModelOperators
         .getTransitiveIndexedFieldsFor(clazz));
-    context.put("nestedClasses", clazz.getNestedClasses());
+    context.put(NESTEDCLASSES_KEY, clazz.getNestedClasses());
     return context;
   }
 
