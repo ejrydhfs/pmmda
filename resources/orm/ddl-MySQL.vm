@@ -47,7 +47,7 @@ CREATE TABLE ${schema}${table} (
 ## support MySQL version < 4.1. Boolean was introduced as alias only in version 4.1
 #if(${columnType.equalsIgnoreCase("BOOLEAN")})
   ${columnName} INTEGER${nullInfo},
-#elseif(${columnType.equalsIgnoreCase("STRING")}) 
+#elseif(${columnType.equalsIgnoreCase("STRING")})
   ${columnName} VARCHAR(${cartridge.getSizeParameter(${property}, 0)})${nullInfo},
 #elseif(${columnType.equalsIgnoreCase("VARCHAR")}) 
   ${columnName} VARCHAR(${cartridge.getSizeParameter(${property}, 0)})${nullInfo},
