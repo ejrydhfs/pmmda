@@ -607,11 +607,9 @@ $line
 #if($isPersistentAggregation)
     for($itemType item : c) {
       setForeignKey(item, "${keyName}", getId());
-    }
-#end
 #if($owner)
-    for($itemType item : c) {
       item.set${owner}(this);
+#end
     }
 #end
     return ${lName}.addAll(c);
