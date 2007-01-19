@@ -6,10 +6,7 @@
  */
 package ch.bbv.mda.persistence;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.io.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipInputStream;
@@ -59,7 +56,7 @@ public class PersistenceHandlerFactory {
         } else if (filename.endsWith(".zargo")) {
             handler = getZargoHandler(file);
         } else if (filename.endsWith(".xmi")) {
-            handler = getMdrHandler();
+            handler = getXMIHandler(file);
         } else if (filename.endsWith("zargo2")) {
             handler = getMdrHandler();
         } else if (filename.endsWith(".ecore")) {
@@ -159,34 +156,7 @@ public class PersistenceHandlerFactory {
             }
 
             source = new BufferedInputStream(input);
-
-            StringBuffer sb = new StringBuffer();
-            // read the first 500 characters of the file
-            // the part we are looking for should be within the first 120 characters
-            int character;
-            int counter = 0;
-            while (counter < 500 && (character = source.read()) != -1) {
-                sb.append((char) character);
-                counter++;
-            }
-            
-            // pattern: xmi.version = "nummer"
-            Pattern pattern = Pattern
-                    .compile("xmi.version(\\s)*=(\\s)*['|\"]([0-9]+\\.[0-9]+)['|\"]");
-
-            Matcher matcher = pattern.matcher(sb);
-            // find matching
-            if (matcher.find()) {
-                if (matcher.group(3).equals("1.0")) {
-                    handler = getNsUmlHandler();
-                } else if (matcher.group(3).equals("1.2")) {
-                    handler = getMdrHandler();
-                } else {
-                    throw new RuntimeException("XMI Version "
-                            + matcher.group(3)
-                            + " is not supported.");
-                }
-            }
+            handler = getXMIHandler(source);
 
         } catch (Exception e) {
         	// in case of file not found return the older version
@@ -194,5 +164,59 @@ public class PersistenceHandlerFactory {
         }
         return handler;
 
+    }
+    
+    /**
+     * Returns the appropriate xmi handler (nsuml for xmi 1.0 or mdr for xmi 1.2). If file not accessible or otherwise unavailable return handler for xmi 1.0
+     * @param file to determine xmi version of
+     * @return PersistenceHandler to parse file
+     */
+    private PersistenceHandler getXMIHandler(File file) {
+    	try {
+    		return getXMIHandler(new FileInputStream(file));
+    	} catch (FileNotFoundException e) {
+    		// do nothing
+    	}
+      return getNsUmlHandler();
+    }
+    
+    /**
+     * Returns the appropriate xmi handler (nsuml for xmi 1.0 or mdr for xmi 1.2). If source unavailable return handler for xmi 1.0
+     * @param source InputStream to determine xmi version of
+     * @return PersistenceHandler to parse file
+     */
+    private PersistenceHandler getXMIHandler(InputStream source) {
+      // read the first 500 characters of the file
+      // the part we are looking for should be within the first 120 characters
+      int character;
+      int counter = 0;
+      StringBuffer sb = new StringBuffer();
+      try {
+	      while (counter < 500 && (character = source.read()) != -1) {
+	          sb.append((char) character);
+	          counter++;
+	      }
+      } catch (IOException e) {
+      	// if unable to determine version provide the older handler
+        return getNsUmlHandler();
+      }
+      // pattern: xmi.version = "nummer"
+      Pattern pattern = Pattern
+              .compile("xmi.version(\\s)*=(\\s)*['|\"]([0-9]+\\.[0-9]+)['|\"]");
+
+      Matcher matcher = pattern.matcher(sb);
+      // find matching
+      if (matcher.find()) {
+          if (matcher.group(3).equals("1.0")) {
+              return getNsUmlHandler();
+          } else if (matcher.group(3).equals("1.2")) {
+              return getMdrHandler();
+          } else {
+              throw new RuntimeException("XMI Version "
+                      + matcher.group(3)
+                      + " is not supported.");
+          }
+      }
+      return getNsUmlHandler();
     }
 }
