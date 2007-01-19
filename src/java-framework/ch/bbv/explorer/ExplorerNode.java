@@ -94,7 +94,10 @@ public class ExplorerNode implements MutableTreeNode, Cloneable, Comparable {
   }
   
   @Override public int hashCode(){
-	  int count = this.boObject.hashCode() + getName().hashCode();
+	  int count = this.boObject.hashCode();
+	  if(getName() != null) {
+	  	count += getName().hashCode();
+	  }
 	  return count * 17 ^ 3;
   }
 
