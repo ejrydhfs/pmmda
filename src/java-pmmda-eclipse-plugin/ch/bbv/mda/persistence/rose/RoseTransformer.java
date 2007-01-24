@@ -25,34 +25,42 @@ public class RoseTransformer {
 	private static Log log = LogFactory.getLog(RoseTransformer.class);
 	protected MdaRoseUtil roseUtil;
     
-    public RoseTransformer(){ 
-      ResourceSet result = new ResourceSetImpl();
-      result.getURIConverter().getURIMap().putAll(EcorePlugin.computePlatformURIMap());
-      roseUtil = new MdaRoseUtil(result.getURIConverter());
-      roseUtil.getRoseEcoreBuilder().noQualify = false;
-      roseUtil.getRoseEcoreBuilder().unsettablePrimitive = false;
-    }
+  public RoseTransformer(){ 
+    ResourceSet result = new ResourceSetImpl();
+    result.getURIConverter().getURIMap().putAll(EcorePlugin.computePlatformURIMap());
+    roseUtil = new MdaRoseUtil(result.getURIConverter());
+    roseUtil.getRoseEcoreBuilder().noQualify = false;
+    roseUtil.getRoseEcoreBuilder().unsettablePrimitive = false;
+  }
 	
-    public UnitTreeNode loadRoseModel(String fileName, MetaModel model, ValidationResult vResults) throws Exception{
-      roseUtil.loadTree(fileName, model, vResults);
-      return roseUtil.getUnitTree();
-    }
+  /**
+   * Loads the rose model in file into the passed MetaModel.
+   * @param fileName to read rose model from
+   * @param model to read rose model into
+   * @param vResults messages to inform user about happenings during reading the model.
+   * @return UnitTreeNode as the root of the rose model (ecore format)
+   * @throws Exception
+   */
+  public UnitTreeNode loadRoseModel(String fileName, MetaModel model, ValidationResult vResults) throws Exception{
+    roseUtil.loadTree(fileName, model, vResults);
+    return roseUtil.getUnitTree();
+  }
     
 	public UnitTreeNode loadRoseModel(String file){
-    	UnitTreeNode unitTree = null;
-    	try{
-            unitTree = roseUtil.createRoseUnitTreeAndTable(file.toString(), null);
-            roseUtil.createExtent4RoseUnitTree(unitTree);
-            // TODO Comment next line out for release version 
-            //roseUtil.showRoseUnitTree(unitTree);
-    	}
-    	catch(Exception e){
-        	log.error(e);
-    	}
-        return unitTree;
+    UnitTreeNode unitTree = null;
+    try{
+      unitTree = roseUtil.createRoseUnitTreeAndTable(file.toString(), null);
+      roseUtil.createExtent4RoseUnitTree(unitTree);
+      // TODO Comment next line out for release version 
+      //roseUtil.showRoseUnitTree(unitTree);
+    }
+    catch(Exception e){
+     	log.error(e);
+    }
+    return unitTree;
 	}
 
-    public MdaRoseUtil getRoseUtil() {
-      return roseUtil;
-    }
+  public MdaRoseUtil getRoseUtil() {
+    return roseUtil;
+  }
 }
