@@ -19,6 +19,11 @@ import ch.bbv.mda.generators.CartridgeFactory;
 import ch.bbv.mda.generators.ItemFactory;
 import ch.bbv.mda.persistence.eclipse.RosePersistenceHandler;
 
+/**
+ * Synchronizes a MDA model with a Rose Model. Elements within the Rose Model are updated, new elements are added, and missing elements in the MDA model are deleted from the Rose Model.
+ * @author AdrianBachofen
+ *
+ */
 public class RoseMdaVisitor implements RoseVisitor {
 
   protected MetaModel model;
