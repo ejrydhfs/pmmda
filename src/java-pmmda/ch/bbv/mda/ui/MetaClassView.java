@@ -73,13 +73,13 @@ public class MetaClassView extends MetaItemView {
 
   @Override
   public void commitChanges() {
-    super.commitChanges();
     MetaClass model = (MetaClass) getDataObject();
     model.setVisibility((VisibilityCode) visibility.getSelectedCode());
     model.setAbstract(abstracts.isSelected());
     model.setFinal(finals.isSelected());
     model.setInterface(interfaces.isSelected());
     model.setStatic(statics.isSelected());
+    super.commitChanges();
     getModel().nodeChanged();
   }
 

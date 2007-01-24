@@ -68,8 +68,8 @@ public class MetaPackageView extends MetaItemView {
       changePackageName(model);
       addParentPackages(model);
     }
-    super.commitChanges();
     model.setSystem(system.isSelected());
+    super.commitChanges();
     getModel().nodeChanged();
   }
 

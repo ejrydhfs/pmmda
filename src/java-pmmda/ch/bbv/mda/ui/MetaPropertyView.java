@@ -110,7 +110,6 @@ public class MetaPropertyView extends MetaItemView {
 
   @Override
   public void commitChanges() {
-    super.commitChanges();
     MetaProperty model = (MetaProperty) getDataObject();
     model.setInitialValue(initialValue.getText());
     String text = type.getText();
@@ -122,6 +121,7 @@ public class MetaPropertyView extends MetaItemView {
     model.setTransient(transients.isSelected());
     model.setFinal(finals.isSelected());
     model.setStatic(statics.isSelected());
+    super.commitChanges();
     getModel().nodeChanged();
   }
 
