@@ -9,6 +9,7 @@ package ch.bbv.explorer.nodeactions;
 import ch.bbv.explorer.ExplorerNode;
 import ch.bbv.explorer.UiNodeType;
 import ch.bbv.explorer.UiRelation;
+import ch.bbv.explorer.resources.Messages;
 
 /**
  * The node action adds a new explorer node as last child of the node on which
@@ -51,6 +52,8 @@ public class AddNodeAction extends AbstractNodeAction {
         relation.addProperty(parent.getDataObject(), node.getDataObject());
       }
       node.nodeChanged();
+      ExpandNodeAction expandAction = new ExpandNodeAction(type, Messages.actionExpandAll);
+      expandAction.execute(parent);
     }
   }
 }
