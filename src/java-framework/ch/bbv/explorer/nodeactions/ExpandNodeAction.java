@@ -50,8 +50,6 @@ public class ExpandNodeAction extends AbstractNodeAction {
       expand((ExplorerNode) node.getChildAt(i), tree);
     }
     TreePath treePath = new TreePath(node.getPath());
-    if (treePath.getParentPath() != null) {
-      tree.expandPath(treePath);
-    }
+    tree.expandPath(treePath);
   }
 }

@@ -49,8 +49,6 @@ public class CollapseNodeAction extends AbstractNodeAction {
       collapse((ExplorerNode) node.getChildAt(i), tree);
     }
     TreePath treePath = new TreePath(node.getPath());
-    if (treePath.getParentPath() != null) {
-      tree.collapsePath(treePath);
-    }
+    tree.collapsePath(treePath);
   }
 }
