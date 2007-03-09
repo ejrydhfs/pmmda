@@ -55,6 +55,19 @@ public class MetaProperty extends MetaMember {
    * @serial
    */
   private boolean composition;
+  
+
+  @Override
+  public MetaProperty copy(){
+	  MetaProperty clone = new MetaProperty();
+	  clone.aggregation = this.aggregation;
+	  clone.composition = this.composition;
+	  clone.initialValue = new String(this.initialValue);
+	  clone.multiplicity = new Multiplicity(this.getMultiplicity().getLowerBound(), this.getMultiplicity().getUpperBound());
+	  clone.transients = this.transients;
+	  clone.volatiles = this.volatiles;
+	  return clone;
+  }
 
   /**
    * Default constructor of the class.
@@ -214,5 +227,6 @@ public class MetaProperty extends MetaMember {
     String mode = getTaggedValue("bo-mode").getValue();
     return (mode.equals("READ_WRITE") || mode.equals("WRITE"));
   }
+  
   /* %% USER DEFINED CODE END %% */
 }
