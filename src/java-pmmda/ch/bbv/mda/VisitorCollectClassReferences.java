@@ -65,6 +65,10 @@ public class VisitorCollectClassReferences implements Visitor {
     assert (clazz != null);
   }
 
+  public void visit(MetaView view) {
+    assert (view != null);
+  }
+
   public void visit(MetaUseCase useCase) {
     assert (useCase != null);
   }

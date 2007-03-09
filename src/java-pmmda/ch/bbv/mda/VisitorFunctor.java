@@ -65,6 +65,10 @@ public class VisitorFunctor implements AbstractVisitorFunctor, Visitor {
     functor.execute(item);
   }
 
+  public void visit(MetaView item) {
+	functor.execute(item);
+  }
+
   public void visit(MetaUseCase item) {
     functor.execute(item);
   }

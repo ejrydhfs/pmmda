@@ -14,8 +14,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipInputStream;
 
@@ -53,6 +55,7 @@ import ch.bbv.mda.MetaIndexedProperty;
 import ch.bbv.mda.MetaModel;
 import ch.bbv.mda.MetaPackage;
 import ch.bbv.mda.MetaProperty;
+import ch.bbv.mda.MetaView;
 import ch.bbv.mda.Multiplicity;
 import ch.bbv.mda.Stereotype;
 import ch.bbv.mda.TaggedValue;
@@ -61,6 +64,8 @@ import ch.bbv.mda.VisibilityCode;
 import ch.bbv.mda.operators.MdaUtilities;
 import ch.bbv.mda.persistence.ExternalTransformer;
 import ch.bbv.mda.persistence.FilterIterator;
+import ch.bbv.mda.ui.ViewConstants;
+import ch.persi.xml.XmlNode;
 
 /**
  * The NSUML transformer defines rules how to transform a NSUML element into the
@@ -70,7 +75,7 @@ import ch.bbv.mda.persistence.FilterIterator;
  * @author Marcel Baumann
  * @version $Revision$
  */
-public class NsUml2MdaTransformer extends ExternalTransformer {
+public class NsUml2MdaTransformer extends ExternalTransformer implements ViewConstants{
   /**
    * Logger of the class.
    */
@@ -82,12 +87,17 @@ public class NsUml2MdaTransformer extends ExternalTransformer {
    * instances.
    */
   private Map<Object, MetaElement> elements;
+  
+  private static Map<String, List<MetaView>> views;
 
   /**
    * Default constructor of the class.
    */
   public NsUml2MdaTransformer() {
     elements = new HashMap<Object, MetaElement>();
+    if (views == null){
+		  views = new HashMap<String, List<MetaView>>();
+	  }
   }
 
   /**
@@ -158,6 +168,7 @@ public class NsUml2MdaTransformer extends ExternalTransformer {
       extractPackage(mSubPackage, target);
     }
     extractRelations(source, target);
+    extractViews();
     postProcessModel(target);
     for (Iterator<MClass> i = new FilterIterator<MClass>(source
         .getOwnedElements(), MClass.class); i.hasNext();) {
@@ -186,11 +197,14 @@ public class NsUml2MdaTransformer extends ExternalTransformer {
       context.addPackage(metaPackage);
     }
     extractStereotypeAndTags(source, metaPackage);
-
+    if ( collectedViews == null){
+    	collectedViews = new HashMap<MTaggedValue, MetaPackage>();
+    }
     for (Iterator<MClassifier> i = new FilterIterator<MClassifier>(source
         .getOwnedElements(), MClassifier.class); i.hasNext();) {
       MClassifier mClass = i.next();
       extractClass(mClass, metaPackage);
+      collectViews(mClass,metaPackage);
     }
 
     for (Iterator<MPackage> i = new FilterIterator<MPackage>(source
@@ -199,7 +213,58 @@ public class NsUml2MdaTransformer extends ExternalTransformer {
       extractPackage(mSubPackage, context);
     }
   }
+  
+  private Map<MTaggedValue, MetaPackage> collectedViews;
+  
+  private void collectViews(MClassifier source, MetaPackage pack){
+	  assert (source != null) && (pack != null);
+		 
+	  for (Iterator<MAttribute> iterator = new FilterIterator<MAttribute>(source.getOwnedElements(), MAttribute.class); iterator.hasNext();) 
+	  {
+		  MAttribute attr = iterator.next();
+		  for (Iterator i = attr.getTaggedValues().iterator(); i.hasNext();) {
+		      MTaggedValue tag = (MTaggedValue) i.next();
+		      if (tag.getTag().equals(VIEW_TAG)){
+		    	  collectedViews.put(tag,pack);
+		      }
+		  }
+	  }
+  }
+  
+  protected void extractViews(){
+	  if (collectedViews == null){
+		  return;
+	  }
+	  
+	  for (MTaggedValue tag : collectedViews.keySet()) {
+	      //hasViews = true;
+    	  XmlNode xml = new XmlNode();
+    	  xml.parse(tag.getValue());
+    	  
+    	  for(Iterator<XmlNode> iter = xml.getAll(VIEW_NODE); iter.hasNext();){
+	    	  MetaView metaView = new MetaView();
+    		  XmlNode view = iter.next();
+    		  String name = view.getAttribute(NAME);
+    		  name = name.substring(name.lastIndexOf(".")+1);
+    		  metaView.setName(name);
+    		  metaView.setDescription(view.getAttribute(DESCRIPTION));
+    		  metaView.setVisibility(VisibilityCode.getCode(Integer.parseInt(view.getAttribute(VISIBILITY))));
+  
+    		  if ( views.containsKey(name) ){
+    			  List<MetaView> values = views.get(name);
+    			  values.add(metaView);
+    		  } else {
+    			  List<MetaView> values = new ArrayList<MetaView>();
+    			  values.add(metaView);
+    			  views.put(name,values);
+    		  }
+    		  MetaPackage pack = collectedViews.get(tag);
+    		  pack.addView(metaView);
+    	  }
+	  }
+  }
 
+  
   /**
    * Extracts the information from the NSUML class and overwrites the ones of
    * the MDA class defined in the given context.
@@ -224,7 +289,6 @@ public class NsUml2MdaTransformer extends ExternalTransformer {
     elements.put(source, metaClass);
     metaClass.setAbstract(source.isAbstract());
     extractStereotypeAndTags(source, metaClass);
-
     if (source instanceof MInterface) {
       metaClass.setInterface(true);
     }

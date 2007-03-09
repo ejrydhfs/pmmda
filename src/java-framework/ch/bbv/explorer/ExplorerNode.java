@@ -7,10 +7,12 @@ package ch.bbv.explorer;
 
 import java.util.*;
 
+import javax.swing.JTree;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
 
 import ch.bbv.dog.DataObject;
+import ch.bbv.dog.DataObjectMgr;
 import ch.bbv.dog.LightweightObject;
 
 /**
@@ -67,6 +69,10 @@ public class ExplorerNode implements MutableTreeNode, Cloneable, Comparable {
     this.nodeType = nodeType;
     setLightweightObject(lwObject);
     setDataObject(boObject);
+  }
+  
+  public MutableTreeNode asTreeNode(){
+	  return this;
   }
   
   @Override public boolean equals(Object o){
@@ -388,15 +394,84 @@ public class ExplorerNode implements MutableTreeNode, Cloneable, Comparable {
     ExplorerNode clone = null;
     try {
       clone = (ExplorerNode) super.clone();
+      //clone = new ExplorerNode(this.nodeType, this.lwObject, this.boObject);     
       clone.children = new ArrayList<ExplorerNode>(children.size());
       for (ExplorerNode node : children) {
-        clone.addChild(node.clone());
+        //clone.children.add(node);
+    	clone.addChild(node.clone());
       }
+    
     } catch (CloneNotSupportedException e) {
       // impossible error because the class implements cloneable
     }
     return clone;
   }
+ 
+  /**
+   * this method is used by the view creation dialog, somthing is wrong with the clone mehtod, these
+   * will collapse the Explorertree after showing the view dialog. 
+   */
+  private static Map<String, ExplorerNode> nodes;
+  public ExplorerNode clonebyCopy(ExplorerNodeOwner owner){
+	  if ( nodes == null){
+		  nodes  = new HashMap<String, ExplorerNode>();
+	  } 
+	  ExplorerNode clone = null;
+	  clone = new ExplorerNode(this.nodeType, this.lwObject, this.boObject);
+	  if ( this.owner != null) {
+		  ExplorerNodeOwner copyOwner = new ExplorerNodeOwnerWrapper(this.owner.getNodeTypeFactory());
+	      clone.owner = copyOwner;
+	  } else {
+		  assert owner != null;
+		  clone.owner = owner;
+	  }
+	  nodes.put(clone.getName(), clone);
+	  
+	  if (this.parent != null){
+		  clone.parent = nodes.get(this.parent.getName());
+	  }
+      clone.children = new ArrayList<ExplorerNode>(children.size());
+      for (ExplorerNode node : this.children) {
+        clone.children.add(node.clonebyCopy(clone.owner));
+      }
+      return clone;
+  }
+  
+  private class ExplorerNodeOwnerWrapper implements ExplorerNodeOwner {
+	  
+		private UiNodeTypeFactory factory;
+		
+		public ExplorerNodeOwnerWrapper(UiNodeTypeFactory factory){
+			this.factory = factory;
+		}
+
+		public void nodeInserted(ExplorerNode node, int index) {
+			assert false : "not implemented yet";
+		}
+		
+		public void nodeRemoved(ExplorerNode parent, ExplorerNode node, int index) {
+			assert false : "not implemented yet";
+		}
+		
+		public void nodeChanged(ExplorerNode node) {
+			assert false : "not implemented yet";
+		}
+		
+		public UiNodeTypeFactory getNodeTypeFactory() {
+			return factory;	
+		}
+
+		public DataObjectMgr getManager() {
+			assert false : "not implemented yet";
+			return null;
+		}
+
+		public JTree getTree() {
+			assert false : "not implemented yet";
+			return null;
+		}
+	  }
+  
 
   /**
    * Implements the Comparable interface
@@ -416,4 +491,5 @@ public class ExplorerNode implements MutableTreeNode, Cloneable, Comparable {
     }
     return -1;
   }
+  
 }

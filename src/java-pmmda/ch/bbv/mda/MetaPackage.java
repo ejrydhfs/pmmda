@@ -43,6 +43,8 @@ public class MetaPackage extends MetaElement {
    * List of all classes defined in the package.
    */
   private List<MetaClass> classes;
+  
+  private List<MetaView> views;
 
   /**
    * List of all use cases defined in the package.
@@ -54,6 +56,7 @@ public class MetaPackage extends MetaElement {
    */
   public MetaPackage() {
     classes = new ArrayList<MetaClass>();
+    views = new ArrayList<MetaView>();
     useCases = new ArrayList<MetaUseCase>();
   }
 
@@ -131,6 +134,44 @@ public class MetaPackage extends MetaElement {
     if (classes.contains(clazz)) {
       classes.remove(clazz);
       clazz.setContext(null);
+    }
+  }
+  
+  public void addView(MetaView view){
+	  assert view != null;
+	  views.add(view);
+	  view.setContext(this);
+  }
+  
+  public void addView(int index, MetaView view){
+	  assert view != null;
+	  views.add(index, view);
+	  view.setContext(this);
+  }
+  
+  public List<MetaView> getViews(){
+	  return views;
+  }
+  
+  public void setViews(List<MetaView> views) {
+    removeAllViews();
+    this.views.addAll(views);
+    for (MetaView view : views) {
+      view.setContext(this);
+    }
+  }
+  
+  public void removeAllViews() {
+    for (MetaView view : views) {
+      view.setContext(null);
+    }
+    views.clear();
+  }
+  
+  public void removeView(MetaView view) {
+    if (views.contains(view)) {
+      views.remove(view);
+      view.setContext(null);
     }
   }
 
@@ -221,8 +262,11 @@ public void removeUseCase(MetaUseCase useCase) {
     for (MetaClass clazz : classes) {
       clazz.accept(visitor);
     }
+    for (MetaView view : views) {
+        view.accept(visitor);
+    }
     for (MetaUseCase useCase : useCases) {
-      useCase.accept(visitor);
+        useCase.accept(visitor);
     }
   }
 

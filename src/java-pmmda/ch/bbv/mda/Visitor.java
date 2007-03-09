@@ -28,6 +28,12 @@ public interface Visitor {
   void visit(MetaPackage item);
 
   /**
+   * Visits view instances of this type as part of the visitor pattern.
+   * @param item item to visit
+   */
+  void visit(MetaView item);
+
+  /**
    * Visits class instances of this type as part of the visitor pattern.
    * @param item item to visit
    */

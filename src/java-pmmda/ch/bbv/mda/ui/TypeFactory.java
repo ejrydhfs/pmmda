@@ -29,6 +29,7 @@ import ch.bbv.mda.MetaIndexedProperty;
 import ch.bbv.mda.MetaModel;
 import ch.bbv.mda.MetaPackage;
 import ch.bbv.mda.MetaProperty;
+import ch.bbv.mda.MetaView;
 import ch.bbv.mda.Stereotype;
 import ch.bbv.mda.VisitorFunctor;
 import ch.bbv.mda.graphs.ClassGraphView;
@@ -66,6 +67,27 @@ public class TypeFactory extends AbstractTypeFactory {
     createNodeTypeForMetaIndexedProperty();
     createNodeTypeForMetaDataType();
     createNodeTypeForStereotype();
+    createNodeTypeForMetaView();
+  }
+  
+  public void createNodeTypeForMetaView(){
+	  DataObjectType type = new DataObjectType(MetaView.class,
+				MetaView.class, MetaView.class, VisitorFunctor.class,
+				VisitorFunctor.class, null);
+		type.setRoot(true);
+
+		UiNodeTypeImpl nodeType = new UiNodeTypeImpl(type, "name",
+				MetaViewView.class);
+		
+		List<UiField> params = new ArrayList<UiField>();
+		addField(params, "name", String.class, true);
+		addField(params, "system", Boolean.TYPE, false);
+		addField(params, "description", String.class, true);
+		nodeType.registerView(new UiNodeViewType("default", nodeType,
+				NodeTableView.class, params, true));
+		register(type, nodeType, new PopupSelectorDefault(nodeType),
+				new MetaClassIconSelector(getIconFactory(), "view"));
+		
   }
 
   /**
@@ -106,7 +128,7 @@ public class TypeFactory extends AbstractTypeFactory {
     UiNodeTypeImpl nodeType = new UiNodeTypeImpl(type, "name",
         MetaPackageView.class);
     addRelation(nodeType, "classes", MetaClass.class, true, true);
-
+    addRelation(nodeType, "view", MetaView.class,true,true);
     List<UiField> params = new ArrayList<UiField>();
     addField(params, "name", String.class, true);
     addField(params, "description", String.class, true);

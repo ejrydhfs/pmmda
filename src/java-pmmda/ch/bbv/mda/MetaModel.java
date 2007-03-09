@@ -264,7 +264,10 @@ public class MetaModel extends MetaPackage {
       metaPackage.accept(visitor);
     }
     for (MetaClass clazz : getClasses()) {
-      clazz.accept(visitor);
+        clazz.accept(visitor);
+    }
+    for (MetaView view : getViews()) {
+        view.accept(visitor);
     }
     for (MetaDatatype datatype : getDatatypes()) {
       datatype.accept(visitor);
@@ -328,6 +331,7 @@ public class MetaModel extends MetaPackage {
       qualifiedName = qualifiedName.substring(lastMatchedLgth + 1);
     }
     StringTokenizer tokenizer = new StringTokenizer(qualifiedName, ".");
+    
     MetaClass clazz = context.getClass(tokenizer.nextToken());
     if (clazz != null) {
       element = clazz;

@@ -72,6 +72,10 @@ public class TreeChecker implements Visitor {
     complete(metaClass);
   }
 
+  public void visit(MetaView metaView) {
+	  assert metaView != null;
+  }
+	  
   public void visit(MetaUseCase metaUseCase) {
   }
 
