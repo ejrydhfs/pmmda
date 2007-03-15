@@ -1,7 +1,7 @@
 /* copyright 2005 Adrian Bachofen
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
- * $Id$
+ * $Id: 
  */
 package ch.bbv.mda.persistence.eclipse;
 
@@ -28,7 +28,7 @@ import com.jgoodies.validation.ValidationResult;
 /**
  * @author AdrianBachofen
  * 
- * Reads *.mdl (Rational Rose) files and creates the MetaModel
+ * Reads *.mdl (Rational Rose) files and creates the MetaModel.
  */
 public class RosePersistenceHandler implements PersistenceHandler {
 	public static String TaggedValueToolIdentifier = "pmMDA";
