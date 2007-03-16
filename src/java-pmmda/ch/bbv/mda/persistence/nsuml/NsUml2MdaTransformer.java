@@ -168,7 +168,6 @@ public class NsUml2MdaTransformer extends ExternalTransformer implements ViewCon
       extractPackage(mSubPackage, target);
     }
     extractRelations(source, target);
-    extractViews();
     postProcessModel(target);
     for (Iterator<MClass> i = new FilterIterator<MClass>(source
         .getOwnedElements(), MClass.class); i.hasNext();) {
@@ -180,9 +179,12 @@ public class NsUml2MdaTransformer extends ExternalTransformer implements ViewCon
       MClassifier mClass = i.next();
       extractClass(mClass, target);
     }
+    extractViews();
+    
   }
 
-  /**
+
+/**
    * Extracts the information from the NSUML package and overwrites the ones of
    * the MDA package defined in the given context.
    * @param source NSUML package used as source of the synchronization.
@@ -204,7 +206,6 @@ public class NsUml2MdaTransformer extends ExternalTransformer implements ViewCon
         .getOwnedElements(), MClassifier.class); i.hasNext();) {
       MClassifier mClass = i.next();
       extractClass(mClass, metaPackage);
-      collectViews(mClass,metaPackage);
     }
 
     for (Iterator<MPackage> i = new FilterIterator<MPackage>(source
@@ -216,18 +217,13 @@ public class NsUml2MdaTransformer extends ExternalTransformer implements ViewCon
   
   private Map<MTaggedValue, MetaPackage> collectedViews;
   
-  private void collectViews(MClassifier source, MetaPackage pack){
-	  assert (source != null) && (pack != null);
-		 
-	  for (Iterator<MAttribute> iterator = new FilterIterator<MAttribute>(source.getOwnedElements(), MAttribute.class); iterator.hasNext();) 
-	  {
-		  MAttribute attr = iterator.next();
-		  for (Iterator i = attr.getTaggedValues().iterator(); i.hasNext();) {
-		      MTaggedValue tag = (MTaggedValue) i.next();
-		      if (tag.getTag().equals(VIEW_TAG)){
-		    	  collectedViews.put(tag,pack);
-		      }
-		  }
+  private void collectViews(MAttribute attr, MetaPackage pack){
+	  assert (attr != null) && (pack != null);
+	  for (Iterator i = attr.getTaggedValues().iterator(); i.hasNext();) {
+	      MTaggedValue tag = (MTaggedValue) i.next();
+	      if (tag.getTag().equals(VIEW_TAG)){
+	    	  collectedViews.put(tag,pack);
+	      }
 	  }
   }
   
@@ -237,7 +233,6 @@ public class NsUml2MdaTransformer extends ExternalTransformer implements ViewCon
 	  }
 	  
 	  for (MTaggedValue tag : collectedViews.keySet()) {
-	      //hasViews = true;
     	  XmlNode xml = new XmlNode();
     	  xml.parse(tag.getValue());
     	  
@@ -295,11 +290,15 @@ public class NsUml2MdaTransformer extends ExternalTransformer implements ViewCon
 
     for (Iterator<MAttribute> i = new FilterIterator<MAttribute>(source
         .getFeatures(), MAttribute.class); i.hasNext();) {
-      extractProperty(i.next(), metaClass);
+    	MAttribute attr = i.next();
+      extractProperty(attr, metaClass);
+      collectViews(attr, context);
     }
     for (Iterator<MAttribute> i = new FilterIterator<MAttribute>(source
         .getOwnedElements(), MAttribute.class); i.hasNext();) {
-      extractProperty(i.next(), metaClass);
+    	MAttribute attr = i.next();
+      extractProperty(attr, metaClass);
+      collectViews(attr, context);
     }
 
     for (Iterator<MClassifier> i = new FilterIterator<MClassifier>(source
