@@ -42,6 +42,7 @@ import org.eclipse.emf.importer.rose.parser.Util;
 import ch.bbv.mda.*;
 import ch.bbv.mda.cartridges.BoConstants;
 import ch.bbv.mda.persistence.eclipse.RosePersistenceHandler;
+import ch.bbv.mda.ui.ViewConstants;
 import ch.bbv.mda.uml.MetaUseCase;
 
 import com.jgoodies.validation.Severity;
@@ -49,7 +50,7 @@ import com.jgoodies.validation.ValidationResult;
 import com.jgoodies.validation.message.SimpleValidationMessage;
 
 /**
- * Traverses the Rose file and create eCore object in memory.
+ * Traverses the Rose file and create eCore and MDA model in memory.
  */
 public class MdaRoseVisitor implements RoseVisitor
 {
@@ -74,7 +75,14 @@ public class MdaRoseVisitor implements RoseVisitor
   /** Holds the association RoseNode for EReferences
    */
   private Map associationRoseNodes;
-
+  /** Holds view element definitions. All tagged values with VIEW_TAG are stored in here for postprocessing. 
+   *  They are stored together with the MetaElements belonging to the view.
+   */
+  private class ViewElement {
+  	public MetaElement metaElement;
+  	public TaggedValue taggedValue;
+  }
+  private List<ViewElement> viewElements; 
 
   protected Map eStructuralFeatureToXMLNamespaceMap = new HashMap();
 
@@ -103,6 +111,7 @@ public class MdaRoseVisitor implements RoseVisitor
     this.metaPackage = metaModel;
     elements = new HashMap();
     associationRoseNodes = new HashMap();
+    viewElements = new ArrayList<ViewElement>();
   }
 
   public void setValidationResults(ValidationResult vResults) {
@@ -2513,6 +2522,13 @@ public class MdaRoseVisitor implements RoseVisitor
           if(tool != null && Util.getName(tool.getValue()).equals(RosePersistenceHandler.TaggedValueToolIdentifier) && name != null && value != null) {
             TaggedValue tv = new TaggedValue(Util.getName(name.getValue()), Util.getName(value.getValue()));
             metaElement.addTaggedValue(tv);
+            // in case where this is a VIEW_TAG then remember it for postprocessing (we have to create all views at the end because first we have to create all packages)
+            if(tv.getTag().equals(ViewConstants.VIEW_TAG)) {
+            	ViewElement viewElement = new ViewElement();
+            	viewElement.metaElement = metaElement;
+            	viewElement.taggedValue = tv;
+            	viewElements.add(viewElement);
+            }
           }
         }
       }
