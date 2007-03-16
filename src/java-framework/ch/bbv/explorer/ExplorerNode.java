@@ -192,7 +192,7 @@ public class ExplorerNode implements MutableTreeNode, Cloneable, Comparable {
 
   /**
    * Inserts a new node at the correct positon in the children list. Thereof we
-   * always has a sorted tree.
+   * always have a sorted tree.
    * @param child to be added
    * @return int index position where the new child has been inserted.
    */
@@ -394,13 +394,11 @@ public class ExplorerNode implements MutableTreeNode, Cloneable, Comparable {
     ExplorerNode clone = null;
     try {
       clone = (ExplorerNode) super.clone();
-      //clone = new ExplorerNode(this.nodeType, this.lwObject, this.boObject);     
       clone.children = new ArrayList<ExplorerNode>(children.size());
       for (ExplorerNode node : children) {
         //clone.children.add(node);
     	clone.addChild(node.clone());
       }
-    
     } catch (CloneNotSupportedException e) {
       // impossible error because the class implements cloneable
     }
@@ -491,5 +489,4 @@ public class ExplorerNode implements MutableTreeNode, Cloneable, Comparable {
     }
     return -1;
   }
-  
 }
