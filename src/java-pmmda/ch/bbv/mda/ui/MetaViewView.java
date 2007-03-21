@@ -1,51 +1,20 @@
 package ch.bbv.mda.ui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.JTree;
+import javax.swing.*;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 
 import ch.bbv.dog.DataObjectMgr;
 import ch.bbv.dog.ui.ReferenceCodeComboBox;
-import ch.bbv.explorer.ExplorerNode;
-import ch.bbv.explorer.ExplorerNodeOwner;
-import ch.bbv.explorer.ExplorerTree;
-import ch.bbv.explorer.NodePropertiesView;
-import ch.bbv.explorer.UiNodeType;
-import ch.bbv.explorer.UiNodeTypeFactory;
-import ch.bbv.mda.MetaClass;
-import ch.bbv.mda.MetaDatatype;
-import ch.bbv.mda.MetaElement;
-import ch.bbv.mda.MetaIndexedProperty;
-import ch.bbv.mda.MetaModel;
-import ch.bbv.mda.MetaPackage;
-import ch.bbv.mda.MetaProperty;
-import ch.bbv.mda.MetaView;
-import ch.bbv.mda.Stereotype;
-import ch.bbv.mda.TaggedValue;
-import ch.bbv.mda.VisibilityCode;
+import ch.bbv.explorer.*;
+import ch.bbv.mda.*;
 import ch.bbv.mda.uml.MetaUseCase;
 import ch.bbv.mda.validation.IdentifierValidator;
 import ch.persi.xml.XmlNode;
@@ -493,9 +462,7 @@ public class MetaViewView extends NodePropertiesView implements
 		// add and replace
 		westTree.remove(getWestPanel());
 		getEastPanel().remove(eastViewTree);
-		// ExplorerNode root2 = getModel().getRoot().clone();
 		ExplorerNode root = buildViewTreeRoot();
-		
 
 		attributeTree.setRoot(root, this);
 		westScrollPane = new JScrollPane(attributeTree.getTree());
@@ -604,7 +571,7 @@ public class MetaViewView extends NodePropertiesView implements
 		// tagsView.commitChanges();
 		for (Iterator<MetaView.FieldDefinition> i = model.getFields().iterator(); i.hasNext();) {
 			MetaView.FieldDefinition cur = i.next();
-			MetaElement el = rootModel.findElement(cur.getFullQualifiedName());
+			MetaElement el = rootModel.findElement(cur.getFullyQualifiedName());
 			XmlNode xmlDef = null;
 			boolean update = false;
 			if (el.getTaggedValue(VIEW_TAG) != null) {
@@ -800,7 +767,7 @@ public class MetaViewView extends NodePropertiesView implements
 	}
 
 	/**
-	 * if a existing view is loaded, load the name, description and the
+	 * if an existing view is loaded, load the name, description and the
 	 * visibility
 	 */
 	private void loadFieldValues(MetaView metaView) {
@@ -818,7 +785,7 @@ public class MetaViewView extends NodePropertiesView implements
 		List<MetaView.FieldDefinition> defs = originalView.getDelta(newView
 				.getFields());
 		for (MetaView.FieldDefinition def : defs) {
-			MetaElement el = rootModel.findElement(def.getFullQualifiedName());
+			MetaElement el = rootModel.findElement(def.getFullyQualifiedName());
 			if (el.getTaggedValue(VIEW_TAG) != null) {
 				XmlNode xmlDef = new XmlNode();
 				xmlDef.parse(el.getTaggedValue(VIEW_TAG).getValue());
@@ -848,7 +815,7 @@ public class MetaViewView extends NodePropertiesView implements
 			int newCode, MetaModel rootModel) {
 		List<MetaView.FieldDefinition> defs = originalView.getFields();
 		for (MetaView.FieldDefinition def : defs) {
-			MetaElement el = rootModel.findElement(def.getFullQualifiedName());
+			MetaElement el = rootModel.findElement(def.getFullyQualifiedName());
 			if (el.getTaggedValue(VIEW_TAG) != null) {
 				XmlNode xmlDef = new XmlNode();
 				xmlDef.parse(el.getTaggedValue(VIEW_TAG).getValue());
