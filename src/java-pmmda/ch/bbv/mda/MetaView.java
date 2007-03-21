@@ -38,10 +38,12 @@ public class MetaView extends MetaElement {
 	 * returns the delta between the fields of the current instance and the
 	 * input parameter defs. The return list contains all elements which are in
 	 * the current list but not in the list given by argument.
+	 * @param defs list of field definitions to determine the difference to
+	 * @return List of field definitions not passed by defs parameter
 	 */
 	public List<FieldDefinition> getDelta(List<FieldDefinition> defs) {
+		if (defs == null) return this.fields;
 		List<FieldDefinition> delta = new ArrayList<FieldDefinition>();
-		if (defs == null) return delta;
 		for (FieldDefinition definition : this.fields) {
 			if (!defs.contains(definition)) {
 				delta.add(definition);
@@ -95,7 +97,7 @@ public class MetaView extends MetaElement {
 	 * the constructor
 	 */
 	public MetaView() {
-		this("View");
+		this("NewView");
 	}
 
 	public MetaView(String name) {
@@ -211,21 +213,21 @@ public class MetaView extends MetaElement {
 		}
 
 		/**
-		 * returns getFullQualifiedName()
-		 * 
-		 * @see getFullQualifiedName()
+		 * returns getFullyQualifiedName()
+		 * @return fully qualified name of this field
+		 * @see #getFullyQualifiedName()
 		 */
 		@Override
 		public String toString() {
-			return getFullQualifiedName();
+			return getFullyQualifiedName();
 		}
 
 		/**
-		 * getting the full qualified attribute name
+		 * getting the fully qualified attribute name
 		 * 
-		 * @return the full qualified attribute name as <code>String</code>
+		 * @return the fully qualified attribute name as <code>String</code>
 		 */
-		public String getFullQualifiedName() {
+		public String getFullyQualifiedName() {
 			return builder.toString();
 		}
 
