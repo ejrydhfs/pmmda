@@ -19,6 +19,8 @@ public class MetaView extends MetaElement {
 	private String description;
 
 	private List<FieldDefinition> fields;
+	
+	private List<FieldDefinition> savedFields;
 
 	public boolean hasMoreFields(List<FieldDefinition> defs) {
 		return this.fields.size() > defs.size();
@@ -132,7 +134,33 @@ public class MetaView extends MetaElement {
 	 * which are used by the view
 	 */
 	public void clearFields() {
+		savedFields = new ArrayList<FieldDefinition>(fields.size());
+		for (FieldDefinition current : fields) {
+			savedFields.add(current.clone());
+		}
 		fields.clear();
+	}
+	
+	/**
+	 * get all saved attributes of the current view!
+	 * <b>This Method is used by the class generator</b>
+	 * @return all saved <code>FieldDefinition</code> of the current View
+	 * in a <code>List of FieldDefinitions</code> 
+	 */
+	public List<FieldDefinition> getFields(){
+		return this.savedFields == null ? this.fields : this.savedFields;
+	}
+	
+	/**
+	 * get all selected attributes of the current view.
+	 * This method is for internal use in MetaViewView, internal
+	 * we can't work with getFields() because of refreshing problems
+	 * in the viewtree.
+	 * @return all <code>FieldDefinition</code> in a
+	 *         <code>List of FieldDefinitions</code>
+	 */
+	public List<FieldDefinition> getFieldBuffer() {
+		return fields;
 	}
 
 	/**
@@ -184,6 +212,7 @@ public class MetaView extends MetaElement {
 			this.attribute = attribute;
 			this.pack = pack;
 			this.clazz = clazz;
+			System.out.println("the Values of field: " + attribute + " " + pack + " " + clazz);
 			this.metaElement = metaElement;
 			builder = new StringBuilder(100);
 			builder.append(pack).append(clazz).append(".").append(attribute);
@@ -213,9 +242,9 @@ public class MetaView extends MetaElement {
 		}
 
 		/**
-		 * returns getFullyQualifiedName()
-		 * @return fully qualified name of this field
-		 * @see #getFullyQualifiedName()
+		 * returns getFullQualifiedName()
+		 * 
+		 * @see getFullQualifiedName()
 		 */
 		@Override
 		public String toString() {
@@ -247,15 +276,6 @@ public class MetaView extends MetaElement {
 
 	}
 
-	/**
-	 * get all selected attributes of the current view
-	 * 
-	 * @return all <code>FieldDefintion</code> in a
-	 *         <code>List of FieldDefinitions</code>
-	 */
-	public List<FieldDefinition> getFields() {
-		return fields;
-	}
 
 	/**
 	 * Implements the visitor pattern.

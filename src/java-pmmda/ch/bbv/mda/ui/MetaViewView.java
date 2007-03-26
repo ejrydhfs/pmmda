@@ -1,20 +1,51 @@
 package ch.bbv.mda.ui;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 
 import ch.bbv.dog.DataObjectMgr;
 import ch.bbv.dog.ui.ReferenceCodeComboBox;
-import ch.bbv.explorer.*;
-import ch.bbv.mda.*;
+import ch.bbv.explorer.ExplorerNode;
+import ch.bbv.explorer.ExplorerNodeOwner;
+import ch.bbv.explorer.ExplorerTree;
+import ch.bbv.explorer.NodePropertiesView;
+import ch.bbv.explorer.UiNodeType;
+import ch.bbv.explorer.UiNodeTypeFactory;
+import ch.bbv.mda.MetaClass;
+import ch.bbv.mda.MetaDatatype;
+import ch.bbv.mda.MetaElement;
+import ch.bbv.mda.MetaIndexedProperty;
+import ch.bbv.mda.MetaModel;
+import ch.bbv.mda.MetaPackage;
+import ch.bbv.mda.MetaProperty;
+import ch.bbv.mda.MetaView;
+import ch.bbv.mda.Stereotype;
+import ch.bbv.mda.TaggedValue;
+import ch.bbv.mda.VisibilityCode;
 import ch.bbv.mda.uml.MetaUseCase;
 import ch.bbv.mda.validation.IdentifierValidator;
 import ch.persi.xml.XmlNode;
@@ -193,6 +224,13 @@ public class MetaViewView extends NodePropertiesView implements
 					// no node is selected
 					return;
 				}
+				
+				if (!(node.getDataObject() instanceof MetaProperty)){
+					JOptionPane.showMessageDialog(null,"Only Property can added to View", "error", 
+							JOptionPane.ERROR_MESSAGE);
+					return; //
+				}
+				
 				ExplorerNode originalNode = node.clone();
 				ExplorerNode parent = (ExplorerNode) node.getParent();
 				ExplorerNode root = (ExplorerNode) node.getRoot();
@@ -273,13 +311,36 @@ public class MetaViewView extends NodePropertiesView implements
 				ExplorerNode node = (ExplorerNode) getViewTree().getTree()
 						.getLastSelectedPathComponent();
 				if (node == null) {
-					// no node selected
+					// no node selected or 
 					return;
 				}
+				if (!(node.getDataObject() instanceof MetaProperty)){
+					//show message, no attribute is selected
+					return;
+				}
+				
+				/*
+				MetaProperty prop = (MetaProperty)node.getDataObject();
+				String fullyQualifiedName = prop.getQualifiedName();
+				String attribute = node.getName();
+				StringBuilder b = new StringBuilder(fullyQualifiedName);
+				String tmpClazz = fullyQualifiedName.substring(0, fullyQualifiedName.lastIndexOf("."));
+				String clazz = "." + tmpClazz.substring(tmpClazz.lastIndexOf(".") + 1, tmpClazz.length());
+				String pack = fullyQualifiedName.substring(0, tmpClazz.lastIndexOf("."));
+				*/
+				
 				ExplorerNode originalNode = node.clone();
 				ExplorerNode parent = (ExplorerNode) node.getParent();
 				ExplorerNode root = (ExplorerNode) node.getRoot();
 				fields.remove(node.getName());
+				
+				/*
+				MetaView v = (MetaView)getDataObject();
+				MetaView.FieldDefinition def = new MetaView.FieldDefinition(attribute, pack, clazz, prop);
+				if (v.getFields().contains(def)){
+					v.getFields().remove(def);
+				}*/
+				
 
 				if (!parent.equals(root)) {
 					isPackage = true;
@@ -313,11 +374,8 @@ public class MetaViewView extends NodePropertiesView implements
 					viewModel.removeNodeFromParent(originalNode);
 				}
 
-				ExplorerNode rootNodeAttribute = (ExplorerNode) getAttributeTree()
-						.getModel().getRoot();
-				DefaultTreeModel model = (DefaultTreeModel) getAttributeTree()
-
-				.getModel();
+				ExplorerNode rootNodeAttribute = (ExplorerNode) getAttributeTree().getModel().getRoot();
+				DefaultTreeModel model = (DefaultTreeModel) getAttributeTree().getModel();
 				if (isPackage) {
 					ExplorerNode attributeTreeRoot = (ExplorerNode) model
 							.getRoot();
@@ -523,6 +581,15 @@ public class MetaViewView extends NodePropertiesView implements
 			this.descriptionPane.setEnabled(false);
 			this.visibility.setEditable(false);
 			this.visibility.setEnabled(false);
+		} else {
+			this.buttonToLeft.setEnabled(true);
+			this.buttonToRight.setEnabled(true);
+			this.nameText.setEditable(true);
+			this.descriptionText.setEditable(true);
+			this.descriptionText.setEnabled(true);
+			this.descriptionPane.setEnabled(true);
+			this.visibility.setEditable(true);
+			this.visibility.setEnabled(true);
 		}
 	}
 
@@ -561,15 +628,15 @@ public class MetaViewView extends NodePropertiesView implements
 			}
 
 			// handle case: remove fields from view
-			if (getOriginalMetaView().hasMoreFields(model.getFields())
-					|| getOriginalMetaView().hasOtherFields(model.getFields())) 
+			if (getOriginalMetaView().hasMoreFields(model.getFieldBuffer())
+					|| getOriginalMetaView().hasOtherFields(model.getFieldBuffer())) 
 			{
 				removeView(getOriginalMetaView(), model, rootModel);
 			}
 		}
 
 		// tagsView.commitChanges();
-		for (Iterator<MetaView.FieldDefinition> i = model.getFields().iterator(); i.hasNext();) {
+		for (Iterator<MetaView.FieldDefinition> i = model.getFieldBuffer().iterator(); i.hasNext();) {
 			MetaView.FieldDefinition cur = i.next();
 			MetaElement el = rootModel.findElement(cur.getFullyQualifiedName());
 			XmlNode xmlDef = null;
@@ -739,7 +806,10 @@ public class MetaViewView extends NodePropertiesView implements
 		for (ExplorerNode field : classNode.getChildren()) {
 			MetaView.FieldDefinition def = new MetaView.FieldDefinition(field.getName(), 
 					classNode.getParent().toString(), "." + getClassName(field), (MetaProperty)field.getDataObject());
-			getOriginalMetaView().appendField(def);
+			if (!getOriginalMetaView().getFieldBuffer().contains(def)){
+				getOriginalMetaView().appendField(def);
+			}
+
 		}
 
 	}
@@ -751,6 +821,9 @@ public class MetaViewView extends NodePropertiesView implements
 	private void putToFields(String name, String packageName) {
 		if (this.fields == null) {
 			this.fields = new HashMap<String, String>();
+		}
+		if (fields.containsKey(name) && fields.get(name).equals(packageName)){
+			return;//field already in view
 		}
 		this.fields.put(name, packageName);
 	}
@@ -783,7 +856,7 @@ public class MetaViewView extends NodePropertiesView implements
 	private void removeView(MetaView originalView, MetaView newView,
 			MetaModel rootModel) {
 		List<MetaView.FieldDefinition> defs = originalView.getDelta(newView
-				.getFields());
+				.getFieldBuffer());
 		for (MetaView.FieldDefinition def : defs) {
 			MetaElement el = rootModel.findElement(def.getFullyQualifiedName());
 			if (el.getTaggedValue(VIEW_TAG) != null) {
@@ -793,7 +866,8 @@ public class MetaViewView extends NodePropertiesView implements
 				boolean hasRemoved = false;
 				for (int x = 0, l = nodes.size(); x < l; x++) {
 					XmlNode view = nodes.get(x);
-					if (view.getAttribute(NAME).equals(def.getPackage() + "." + newView.getName())) {
+					//if (view.getAttribute(NAME).equals(def.getPackage() + "." + newView.getName())) {
+					if (view.getAttribute(NAME).equals(newView.getQualifiedName())) {
 						view.remove();
 						hasRemoved = true;
 					}
@@ -813,7 +887,7 @@ public class MetaViewView extends NodePropertiesView implements
 	 */
 	private void updateTaggedValues(MetaView originalView, String newName,
 			int newCode, MetaModel rootModel) {
-		List<MetaView.FieldDefinition> defs = originalView.getFields();
+		List<MetaView.FieldDefinition> defs = originalView.getFieldBuffer();
 		for (MetaView.FieldDefinition def : defs) {
 			MetaElement el = rootModel.findElement(def.getFullyQualifiedName());
 			if (el.getTaggedValue(VIEW_TAG) != null) {
@@ -867,6 +941,7 @@ public class MetaViewView extends NodePropertiesView implements
 						String clazz = "." + getClassName(current);
 						packageName = fields.get(el.getName()).toString();
 						MetaProperty metaE = (MetaProperty)el.getDataObject();
+						System.out.println("save: " + packageName + clazz + el.getName());
 						MetaView.FieldDefinition def = new MetaView.FieldDefinition(el.getName(), packageName, clazz, metaE);
 						model.appendField(def);
 					}
