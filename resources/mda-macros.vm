@@ -22,7 +22,9 @@ ${spaces}/**
 #foreach($_line in $_lines)
 ${spaces} * ${_line}
 #end
+#if(${element.valueOfTag("author")})
 ${spaces} * @author ${element.valueOfTag("author")}
+#end
 ${spaces} */
 #end
 #end
