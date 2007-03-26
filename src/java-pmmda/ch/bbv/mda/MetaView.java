@@ -212,7 +212,6 @@ public class MetaView extends MetaElement {
 			this.attribute = attribute;
 			this.pack = pack;
 			this.clazz = clazz;
-			System.out.println("the Values of field: " + attribute + " " + pack + " " + clazz);
 			this.metaElement = metaElement;
 			builder = new StringBuilder(100);
 			builder.append(pack).append(clazz).append(".").append(attribute);

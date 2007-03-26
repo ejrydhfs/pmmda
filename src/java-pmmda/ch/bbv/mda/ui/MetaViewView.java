@@ -235,6 +235,11 @@ public class MetaViewView extends NodePropertiesView implements
 				ExplorerNode parent = (ExplorerNode) node.getParent();
 				ExplorerNode root = (ExplorerNode) node.getRoot();
 				ExplorerNode packageNode = getPackage(node, node.getRoot());
+				if (fields.containsKey(node.getName()) && fields.get(node.getName()).equals(packageNode.getName())){
+					JOptionPane.showMessageDialog(null,"This Property is already added to this view", "error", 
+							JOptionPane.ERROR_MESSAGE);
+					return;
+				}
 				fields.put(node.getName(), packageNode.getName());
 
 				if (!parent.equals(root)) {
@@ -941,7 +946,6 @@ public class MetaViewView extends NodePropertiesView implements
 						String clazz = "." + getClassName(current);
 						packageName = fields.get(el.getName()).toString();
 						MetaProperty metaE = (MetaProperty)el.getDataObject();
-						System.out.println("save: " + packageName + clazz + el.getName());
 						MetaView.FieldDefinition def = new MetaView.FieldDefinition(el.getName(), packageName, clazz, metaE);
 						model.appendField(def);
 					}
