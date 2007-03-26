@@ -62,7 +62,7 @@ public class MetaProperty extends MetaMember {
 	  MetaProperty clone = new MetaProperty();
 	  clone.aggregation = this.aggregation;
 	  clone.composition = this.composition;
-	  clone.initialValue = new String(this.initialValue);
+	  clone.initialValue = new String(this.initialValue == null ? "" : this.initialValue);
 	  clone.multiplicity = new Multiplicity(this.getMultiplicity().getLowerBound(), this.getMultiplicity().getUpperBound());
 	  clone.transients = this.transients;
 	  clone.volatiles = this.volatiles;
