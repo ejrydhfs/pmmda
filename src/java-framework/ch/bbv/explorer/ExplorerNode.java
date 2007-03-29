@@ -267,6 +267,16 @@ public class ExplorerNode implements MutableTreeNode, Cloneable, Comparable {
       remove(index);
     }
   }
+  
+  /**
+   * Removes all children of this node.
+   *
+   */
+  public void removeAllChildren() {
+  	while(!children.isEmpty()) {
+  		remove(0);
+  	}
+  }
 
   /**
    * @inheritDoc
@@ -377,6 +387,18 @@ public class ExplorerNode implements MutableTreeNode, Cloneable, Comparable {
   }
 
   /**
+   * Returns direct child with passed name.
+   * @param name of a child to find
+   * @return child as ExplorerNode if found, otherwise null.
+   */
+  public ExplorerNode findChild(String name) {
+  	for(ExplorerNode e : children) {
+  		if(e.getName().equals(name)) return e;
+  	}
+  	return null;
+  }
+  
+  /**
    * @inheritDoc
    * @see Object#toString()
    */
@@ -396,8 +418,7 @@ public class ExplorerNode implements MutableTreeNode, Cloneable, Comparable {
       clone = (ExplorerNode) super.clone();
       clone.children = new ArrayList<ExplorerNode>(children.size());
       for (ExplorerNode node : children) {
-        //clone.children.add(node);
-    	clone.addChild(node.clone());
+      	clone.addChild(node.clone());
       }
     } catch (CloneNotSupportedException e) {
       // impossible error because the class implements cloneable
@@ -418,7 +439,7 @@ public class ExplorerNode implements MutableTreeNode, Cloneable, Comparable {
 	  clone = new ExplorerNode(this.nodeType, this.lwObject, this.boObject);
 	  if ( this.owner != null) {
 		  ExplorerNodeOwner copyOwner = new ExplorerNodeOwnerWrapper(this.owner.getNodeTypeFactory());
-	      clone.owner = copyOwner;
+	    clone.owner = copyOwner;
 	  } else {
 		  assert owner != null;
 		  clone.owner = owner;
