@@ -2128,6 +2128,7 @@ public class MdaRoseVisitor implements RoseVisitor
   }
   
   public void setViews() {
+  	if(viewElements == null) return;
   	for(ViewElement v : viewElements) {
   	  XmlNode xml = new XmlNode();
   	  xml.parse(v.taggedValue.getValue());
@@ -2139,11 +2140,19 @@ public class MdaRoseVisitor implements RoseVisitor
   		  metaView.setName(name.substring(name.lastIndexOf(".")+1));
   		  metaView.setDescription(view.getAttribute(ViewConstants.DESCRIPTION));
   		  metaView.setVisibility(VisibilityCode.getCode(Integer.parseInt(view.getAttribute(ViewConstants.VISIBILITY))));
-
    		  MetaView.FieldDefinition fieldDefinition = new MetaView.FieldDefinition(v.metaProperty);
   		  metaView.appendField(fieldDefinition);
-  		  if(!v.pack.getViews().contains(metaView)) {
-  		  	v.pack.addView(metaView);
+
+  		  int idx = name.lastIndexOf(".");
+  		  MetaPackage metaPackage = null;
+  		  if(idx >=0) {
+    		  metaPackage = metaModel.findPackage(name.substring(0, idx));
+  		  }
+  		  if(metaPackage == null) {
+  		  	metaPackage = v.pack;
+  		  }
+  		  if(!metaPackage.getViews().contains(metaView)) {
+  		  	metaPackage.addView(metaView);
   		  }
   	  }
   	}
