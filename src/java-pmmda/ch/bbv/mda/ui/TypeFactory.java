@@ -104,6 +104,7 @@ public class TypeFactory extends AbstractTypeFactory {
     addRelation(nodeType, "classes", MetaClass.class, true, true);
     addRelation(nodeType, "datatypes", MetaDatatype.class, true, true);
     addRelation(nodeType, "stereotypes", Stereotype.class, true, true);
+    addRelation(nodeType, "view", MetaView.class,true,true);
 
     List<UiField> params = new ArrayList<UiField>();
     addField(params, "name", String.class, true);
