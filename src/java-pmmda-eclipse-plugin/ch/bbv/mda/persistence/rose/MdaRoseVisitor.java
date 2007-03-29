@@ -2149,7 +2149,7 @@ public class MdaRoseVisitor implements RoseVisitor
     		  metaPackage = metaModel.findPackage(name.substring(0, idx));
   		  }
   		  if(metaPackage == null) {
-  		  	metaPackage = v.pack;
+  		  	metaPackage = metaModel;
   		  }
   		  if(!metaPackage.getViews().contains(metaView)) {
   		  	metaPackage.addView(metaView);
