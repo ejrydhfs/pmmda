@@ -17,42 +17,11 @@ public class MetaView extends MetaElement {
 	private static final long serialVersionUID = 7526472295622776147L;
 
 	private String description;
-
-	private List<FieldDefinition> fields;
 	
-	private List<FieldDefinition> savedFields;
-
-	public boolean hasMoreFields(List<FieldDefinition> defs) {
-		return this.fields.size() > defs.size();
-	}
-
-	public boolean hasOtherFields(List<FieldDefinition> defs) {
-		for (int i = 0; i < fields.size(); i++) {
-			FieldDefinition cur = fields.get(i);
-			if (!defs.contains(cur)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	/**
-	 * returns the delta between the fields of the current instance and the
-	 * input parameter defs. The return list contains all elements which are in
-	 * the current list but not in the list given by argument.
-	 * @param defs list of field definitions to determine the difference to
-	 * @return List of field definitions not passed by defs parameter
+	 * fields (properties) contained within this view. They are available after composition of a view is complete.
 	 */
-	public List<FieldDefinition> getDelta(List<FieldDefinition> defs) {
-		if (defs == null) return this.fields;
-		List<FieldDefinition> delta = new ArrayList<FieldDefinition>();
-		for (FieldDefinition definition : this.fields) {
-			if (!defs.contains(definition)) {
-				delta.add(definition);
-			}
-		}
-		return delta;
-	}
+	private List<FieldDefinition> fields;
 
 	@Override
 	public boolean equals(Object o) {
@@ -61,6 +30,8 @@ public class MetaView extends MetaElement {
 
 		MetaView other = (MetaView) o;
 		if (!other.getName().equals(this.getName())) return false;
+
+		if (!other.getVisibility().equals(this.getVisibility())) return false;
 
 		if (other.description == null ^ this.description == null) return false;
 
@@ -76,8 +47,8 @@ public class MetaView extends MetaElement {
 			if (!other.fields.get(i).equals(this.fields.get(i)))
 				return false;
 		}
-		return true;
 
+		return true;
 	}
 
 	@Override
@@ -102,6 +73,10 @@ public class MetaView extends MetaElement {
 		this("NewView");
 	}
 
+	/**
+	 * Constructor for a MetaView, which is setting its name.
+	 * @param name for the new MetaView.
+	 */
 	public MetaView(String name) {
 		setName(name);
 		fields = new ArrayList<FieldDefinition>();
@@ -129,40 +104,30 @@ public class MetaView extends MetaElement {
 	}
 
 	/**
-	 * its strong required call this method after each view creation<br>
-	 * the method will be clear the internal buffer of selected attributes,
-	 * which are used by the view
-	 */
-	public void clearFields() {
-		savedFields = new ArrayList<FieldDefinition>(fields.size());
-		for (FieldDefinition current : fields) {
-			savedFields.add(current.clone());
-		}
-		fields.clear();
-	}
-	
-	/**
 	 * get all saved attributes of the current view!
 	 * <b>This Method is used by the class generator</b>
 	 * @return all saved <code>FieldDefinition</code> of the current View
 	 * in a <code>List of FieldDefinitions</code> 
 	 */
 	public List<FieldDefinition> getFields(){
-		return this.savedFields == null ? this.fields : this.savedFields;
+		return fields;
 	}
 	
 	/**
-	 * get all selected attributes of the current view.
-	 * This method is for internal use in MetaViewView, internal
-	 * we can't work with getFields() because of refreshing problems
-	 * in the viewtree.
-	 * @return all <code>FieldDefinition</code> in a
-	 *         <code>List of FieldDefinitions</code>
+	 * Searches a FieldDefinition with equal properties. If found then that FieldDefinition is returned.
+	 * The equal operator is used to determine whether the FieldDefinition match.
+	 * @param searchedField to be searched within this MetaView
+	 * @return null if not found, otherwise the corresponding FieldDefinition.
 	 */
-	public List<FieldDefinition> getFieldBuffer() {
-		return fields;
+	public FieldDefinition findField(FieldDefinition searchedField) {
+		for(FieldDefinition field : fields) {
+			if(field.equals(searchedField)) {
+				return field;
+			}
+		}
+		return null;
 	}
-
+	
 	/**
 	 * this class capsulate easy creation and access the full qualified names of
 	 * the selected view attributes<br>
@@ -171,14 +136,6 @@ public class MetaView extends MetaElement {
 	 */
 	public static class FieldDefinition {
 
-		private StringBuilder builder;
-
-		private String attribute;
-
-		private String pack;
-
-		private String clazz;
-		
 		private MetaProperty metaElement;
 
 		@Override
@@ -186,64 +143,28 @@ public class MetaView extends MetaElement {
 			if (this == o) return true;
 			if (!(o instanceof FieldDefinition)) return false;
 			FieldDefinition other = (FieldDefinition) o;
-			return other.attribute.equals(this.attribute) && other.pack.equals(this.pack) && other.clazz.equals(clazz);
+			return other.metaElement.equals(this.metaElement);
 		}
 
 		@Override
 		public int hashCode() {
-			return attribute.hashCode() + pack.hashCode() + clazz.hashCode();
+			return metaElement.hashCode();
 		}
 
 		/**
 		 * create a new <code>FieldDefinition</code> for given attribute
 		 * 
-		 * @param attribute
-		 *            the selected attribute as <code>String</code>
-		 * @param pack
-		 *            the package and class of the attribute as
-		 *            <code>String</code>
-		 * @param clazz
-		 * 			  the class name as <code>String</code>
-		 * 
-		 * @param metaElement this attribute contains the all tagged values and is used by the
-		 * view generator.
+		 * @param metaElement is the MetaProperty we want to have within this FieldDefinition and hence we want to add to this MetaView.
 		 */
-		public FieldDefinition(String attribute, String pack, String clazz, MetaProperty metaElement) {
-			this.attribute = attribute;
-			this.pack = pack;
-			this.clazz = clazz;
+
+		public FieldDefinition(MetaProperty metaElement) {
 			this.metaElement = metaElement;
-			builder = new StringBuilder(100);
-			builder.append(pack).append(clazz).append(".").append(attribute);
 		}
 
 		/**
-		 * getting the attribute represents this <code>FieldDefinition</code>
+		 * returns getFullyQualifiedName()
 		 * 
-		 * @return the attribute name as <code>String</code>
-		 */
-		public String getAttribute() {
-			return this.attribute;
-		}
-
-		/**
-		 * getting the class/package of the attribute represents this
-		 * <code>FieldDefinition</code>
-		 * 
-		 * @return the package with class name as <code>String</code>
-		 */
-		public String getPackage() {
-			return this.pack;
-		}
-
-		public String getClassName() {
-			return this.clazz;
-		}
-
-		/**
-		 * returns getFullQualifiedName()
-		 * 
-		 * @see getFullQualifiedName()
+		 * @see #getFullyQualifiedName()
 		 */
 		@Override
 		public String toString() {
@@ -256,12 +177,12 @@ public class MetaView extends MetaElement {
 		 * @return the fully qualified attribute name as <code>String</code>
 		 */
 		public String getFullyQualifiedName() {
-			return builder.toString();
+			return metaElement.getQualifiedName();
 		}
 
 		@Override
 		public FieldDefinition clone() {
-			FieldDefinition clone = new FieldDefinition(this.attribute,this.pack, this.clazz, this.metaElement.copy());
+			FieldDefinition clone = new FieldDefinition(this.metaElement.copy());
 			return clone;
 		}
 		
@@ -291,12 +212,14 @@ public class MetaView extends MetaElement {
 		MetaView clone = null;
 		try {
 			clone = (MetaView) super.clone();
+
 			List<FieldDefinition> fieldDefs = new ArrayList<FieldDefinition>(
 					this.fields.size() * 2);
 			for (FieldDefinition definition : fields) {
 				fieldDefs.add(definition.clone());
 			}
 			clone.fields = fieldDefs;
+		
 		} catch (CloneNotSupportedException e) {
 			// impossible exception because super class implements clonable
 			e.printStackTrace();
