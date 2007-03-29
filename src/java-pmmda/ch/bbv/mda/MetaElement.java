@@ -396,6 +396,17 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
     return new ArrayList<TaggedValue>(taggedValues.values());
   }
 
+  /**
+   * Sets all the tagged values as passed.
+   * @param tagList list of tagged values to be set.
+   */
+  public void setTags(List<TaggedValue> tagList) {
+  	taggedValues.clear();
+  	for(TaggedValue tag : tagList) {
+  		this.setTaggedValue(tag.getTag(), tag);
+  	}
+  }
+
   public LightweightObject deepCopy() {
     return null;
   }
