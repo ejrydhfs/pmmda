@@ -96,6 +96,7 @@ public class MdaRoseUtil extends RoseUtil
         mdaRoseVisitor.setEReferences();
         mdaRoseVisitor.setSuper();
         mdaRoseVisitor.setETypeClassifier();
+        mdaRoseVisitor.setViews();
         setIDs(unitTreeRoot);
         validate(unitTreeRoot);
       }

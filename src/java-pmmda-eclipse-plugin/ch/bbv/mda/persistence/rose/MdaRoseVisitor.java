@@ -44,6 +44,7 @@ import ch.bbv.mda.cartridges.BoConstants;
 import ch.bbv.mda.persistence.eclipse.RosePersistenceHandler;
 import ch.bbv.mda.ui.ViewConstants;
 import ch.bbv.mda.uml.MetaUseCase;
+import ch.persi.xml.XmlNode;
 
 import com.jgoodies.validation.Severity;
 import com.jgoodies.validation.ValidationResult;
@@ -79,7 +80,8 @@ public class MdaRoseVisitor implements RoseVisitor
    *  They are stored together with the MetaElements belonging to the view.
    */
   private class ViewElement {
-  	public MetaElement metaElement;
+  	public MetaProperty metaProperty;
+  	public MetaPackage pack;
   	public TaggedValue taggedValue;
   }
   private List<ViewElement> viewElements; 
@@ -2124,6 +2126,28 @@ public class MdaRoseVisitor implements RoseVisitor
       }
     }
   }
+  
+  public void setViews() {
+  	for(ViewElement v : viewElements) {
+  	  XmlNode xml = new XmlNode();
+  	  xml.parse(v.taggedValue.getValue());
+  	  
+  	  for(Iterator<XmlNode> iter = xml.getAll(ViewConstants.VIEW_NODE); iter.hasNext();){
+    	  MetaView metaView = new MetaView();
+  		  XmlNode view = iter.next();
+  		  String name = view.getAttribute(ViewConstants.NAME);
+  		  metaView.setName(name.substring(name.lastIndexOf(".")+1));
+  		  metaView.setDescription(view.getAttribute(ViewConstants.DESCRIPTION));
+  		  metaView.setVisibility(VisibilityCode.getCode(Integer.parseInt(view.getAttribute(ViewConstants.VISIBILITY))));
+
+   		  MetaView.FieldDefinition fieldDefinition = new MetaView.FieldDefinition(v.metaProperty);
+  		  metaView.appendField(fieldDefinition);
+  		  if(!v.pack.getViews().contains(metaView)) {
+  		  	v.pack.addView(metaView);
+  		  }
+  	  }
+  	}
+  }
 
   protected EClassifier getBasicType(String value)
   {
@@ -2523,10 +2547,15 @@ public class MdaRoseVisitor implements RoseVisitor
             TaggedValue tv = new TaggedValue(Util.getName(name.getValue()), Util.getName(value.getValue()));
             metaElement.addTaggedValue(tv);
             // in case where this is a VIEW_TAG then remember it for postprocessing (we have to create all views at the end because first we have to create all packages)
-            if(tv.getTag().equals(ViewConstants.VIEW_TAG)) {
+            if(tv.getTag().equals(ViewConstants.VIEW_TAG) && metaElement instanceof MetaProperty) {
             	ViewElement viewElement = new ViewElement();
-            	viewElement.metaElement = metaElement;
+            	viewElement.metaProperty = (MetaProperty)metaElement;
             	viewElement.taggedValue = tv;
+            	MetaElement pack = metaElement;
+            	while((pack != null) && !(pack instanceof MetaPackage)) {
+            		pack = pack.getContext();
+            	}
+            	viewElement.pack = (MetaPackage)pack;
             	viewElements.add(viewElement);
             }
           }
