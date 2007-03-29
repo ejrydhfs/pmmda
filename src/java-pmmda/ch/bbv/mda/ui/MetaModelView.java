@@ -5,6 +5,7 @@
  */
 package ch.bbv.mda.ui;
 
+import java.awt.GridBagLayout;
 import java.io.File;
 
 import javax.swing.JPanel;
@@ -99,7 +100,7 @@ public class MetaModelView extends NodePropertiesView {
    * @return the panel containing all components
    */
   protected JPanel buildPanel() {
-    FormLayout layout = new FormLayout("right:pref, 3dlu, pref:grow", "");
+    FormLayout layout = new FormLayout("right:pref, 3dlu, fill:pref:grow", "");
     DefaultFormBuilder builder = new DefaultFormBuilder(layout);
     builder.setDefaultDialogBorder();
     builder.appendSeparator("General");
