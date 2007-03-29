@@ -1,51 +1,19 @@
 package ch.bbv.mda.ui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.JTree;
+import javax.swing.*;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 
 import ch.bbv.dog.DataObjectMgr;
 import ch.bbv.dog.ui.ReferenceCodeComboBox;
-import ch.bbv.explorer.ExplorerNode;
-import ch.bbv.explorer.ExplorerNodeOwner;
-import ch.bbv.explorer.ExplorerTree;
-import ch.bbv.explorer.NodePropertiesView;
-import ch.bbv.explorer.UiNodeType;
-import ch.bbv.explorer.UiNodeTypeFactory;
-import ch.bbv.mda.MetaClass;
-import ch.bbv.mda.MetaDatatype;
-import ch.bbv.mda.MetaElement;
-import ch.bbv.mda.MetaIndexedProperty;
-import ch.bbv.mda.MetaModel;
-import ch.bbv.mda.MetaPackage;
-import ch.bbv.mda.MetaProperty;
-import ch.bbv.mda.MetaView;
-import ch.bbv.mda.Stereotype;
-import ch.bbv.mda.TaggedValue;
-import ch.bbv.mda.VisibilityCode;
+import ch.bbv.explorer.*;
+import ch.bbv.mda.*;
 import ch.bbv.mda.uml.MetaUseCase;
 import ch.bbv.mda.validation.IdentifierValidator;
 import ch.persi.xml.XmlNode;
@@ -74,9 +42,17 @@ public class MetaViewView extends NodePropertiesView implements
 	private final static int TEXT_AREA_SIZE = 20;
 
 	/**
-	 * Pattern for validating identifiers
+	 * UI related members
 	 */
-	static Pattern validName;
+	private JPanel eastPanel;
+
+	private JScrollPane westPanel;
+
+	private JPanel centerPanel;
+
+	private JPanel westTree;
+
+	private JScrollPane eastViewTree;
 
 	private JTextField nameText;
 
@@ -86,27 +62,18 @@ public class MetaViewView extends NodePropertiesView implements
 
 	private ReferenceCodeComboBox visibility;
 
-	private JScrollPane westScrollPane;
-
-	private JPanel eastPanel;
-
-	private JPanel centerPanel;
-
-	private JPanel westTree;
-
-	private JScrollPane eastViewTree;
-
-	private GridBagConstraints eastTreeConstraints;
-
 	private JButton buttonToRight;
 
 	private JButton buttonToLeft;
 
 	private ExplorerTree viewTree;
 
-	private MetaView originalMetaView;
+	private ExplorerTree modelTree;
 
-	private ExplorerTree attributeTree;
+	/**
+	 * View originally available. This is the view before modification by this NodePropertiesView
+	 */
+	private MetaView originalMetaView;
 
 	/**
 	 * default constructor
@@ -115,19 +82,38 @@ public class MetaViewView extends NodePropertiesView implements
 		initialize();
 	}
 
-	/**
+	/*
 	 * the UI Sector
 	 */
 
+	private JScrollPane getWestPanel() {
+		return westPanel;
+	}
+
+	private JPanel getEastPanel() {
+		return eastPanel;
+	}
+
+	private JPanel getCenterPanel() {
+		return centerPanel;
+	}
+	
 	private void initWestPanel() {
-		westScrollPane = createAttributeTree();
+		westPanel = createModelTree();
 	}
 
-	private JTree getAttributeTree() {
-		return attributeTree.getTree();
+	protected JTree getModelTree() {
+		return modelTree.getTree();
 	}
 
-	private ExplorerTree getViewTree() {
+	private JScrollPane createModelTree() {
+		modelTree = new ExplorerTree();
+		JScrollPane panel = new JScrollPane(modelTree.getTree());
+		panel.setPreferredSize(new Dimension(400, 400));
+		return panel;
+	}
+
+	protected ExplorerTree getViewTree() {
 		return viewTree;
 	}
 
@@ -136,20 +122,13 @@ public class MetaViewView extends NodePropertiesView implements
 		return viewTree.getTree();
 	}
 
-	private JScrollPane createAttributeTree() {
-		attributeTree = new ExplorerTree();
-		JScrollPane panel = new JScrollPane(attributeTree.getTree());
-		panel.setPreferredSize(new Dimension(400, 400));
-		return panel;
-	}
-
 	private void initEastPanel() {
 		eastPanel = new JPanel(new BorderLayout());
 		eastPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 
 		// view tree
 		eastViewTree = new JScrollPane(createViewTree());
-		eastTreeConstraints = new GridBagConstraints();
+		GridBagConstraints eastTreeConstraints = new GridBagConstraints();
 		eastTreeConstraints.gridx = 0;
 		eastTreeConstraints.gridy = 0;
 		eastTreeConstraints.gridwidth = GridBagConstraints.HORIZONTAL;
@@ -161,13 +140,11 @@ public class MetaViewView extends NodePropertiesView implements
 		getEastPanel().add(eastViewTree, BorderLayout.CENTER);
 
 		// add properties form
-		getEastPanel().add(createPropertiesForm(), BorderLayout.SOUTH);
+		getEastPanel().add(createViewPropertiesForm(), BorderLayout.SOUTH);
 	}
 
-	private JPanel createPropertiesForm() {
-		initalizeFields();
-		// FormLayout layout = new FormLayout(
-		// "right:pref, 3dlu, pref, 4dlu, right:pref, 3dlu, pref");
+	private JPanel createViewPropertiesForm() {
+		initalizeViewProperties();
 		FormLayout layout = new FormLayout(
 				"center:pref, 4dlu, left:pref, 3dlu", "");
 		DefaultFormBuilder builder = new DefaultFormBuilder(layout);
@@ -192,116 +169,18 @@ public class MetaViewView extends NodePropertiesView implements
 		centerPanel = builder.getPanel();
 	}
 
-	/**
-	 * this map contains the attribute to package mapping. the key is the
-	 * attribte name the value is the package name
-	 */
-	private Map<String, String> fields;
-
 	private JButton getButtonToRight() {
 		JButton b = new JButton(">>");
 		b.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				boolean mustRemove = true;
-				boolean isPackage = false;
-				ExplorerNode node = (ExplorerNode) getAttributeTree().getLastSelectedPathComponent();
-				if (node.getDataObject().getClass().equals(MetaModel.class)){
-					JOptionPane.showMessageDialog(null,"adding the full model to the view is not allowed", "error", 
-							JOptionPane.ERROR_MESSAGE);
-					return; //
-				} else if (node.getDataObject().getClass().equals(MetaPackage.class)){
-					JOptionPane.showMessageDialog(null,"adding a full package to the view is not allowed", "error", 
-							JOptionPane.ERROR_MESSAGE);
-					return; //add complett packages is also not allowed
-				}
 				
-				
-				if (fields == null) {
-					fields = new HashMap<String, String>();
-				}
-
-				if (node == null) {
-					// no node is selected
+				// First obtain and check node
+				ExplorerNode node = (ExplorerNode) getModelTree().getLastSelectedPathComponent();
+				if (node == null) {	// no node is selected
 					return;
 				}
 				
-				if (!(node.getDataObject() instanceof MetaProperty)){
-					JOptionPane.showMessageDialog(null,"Only Property can added to View", "error", 
-							JOptionPane.ERROR_MESSAGE);
-					return; //
-				}
-				
-				ExplorerNode originalNode = node.clone();
-				ExplorerNode parent = (ExplorerNode) node.getParent();
-				ExplorerNode root = (ExplorerNode) node.getRoot();
-				ExplorerNode packageNode = getPackage(node, node.getRoot());
-				if (fields.containsKey(node.getName()) && fields.get(node.getName()).equals(packageNode.getName())){
-					JOptionPane.showMessageDialog(null,"This Property is already added to this view", "error", 
-							JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-				fields.put(node.getName(), packageNode.getName());
-
-				if (!parent.equals(root)) {
-					isPackage = true;
-					// search full path
-					if (parent.getChildCount() > 1) {
-						ExplorerNode cloneOfParent = parent.clone();
-						ExplorerNode[] nodesToRemove = new ExplorerNode[cloneOfParent
-								.getChildCount()];
-						int x = 0;
-						for (Iterator<ExplorerNode> i = cloneOfParent
-								.getChildren().iterator(); i.hasNext(); x++) {
-							ExplorerNode item = i.next();
-							if (!item.getName().equals(node.getName())) {
-								nodesToRemove[x] = item;
-							}
-						}
-						for (int i = 0; i < nodesToRemove.length; i++) {
-							if (nodesToRemove[i] != null)
-								nodesToRemove[i].removeFromParent();
-						}
-						node = cloneOfParent;
-					} else {
-						node = parent;
-						originalNode = parent;
-					}
-				}
-
-				DefaultTreeModel attributeModel = (DefaultTreeModel) getAttributeTree()
-						.getModel();
-				if (mustRemove) {
-					attributeModel.removeNodeFromParent(originalNode);
-				}
-				ExplorerNode rootNodeView = (ExplorerNode) getViewTree()
-						.getTree().getModel().getRoot();
-				DefaultTreeModel model = (DefaultTreeModel) getViewTree()
-						.getTree().getModel();
-				if (isPackage) {
-					ExplorerNode viewTreeRoot = (ExplorerNode) model.getRoot();
-					Enumeration enu = viewTreeRoot.asTreeNode().children();
-					boolean found = false;
-					while (enu != null && enu.hasMoreElements()) {
-						ExplorerNode current = (ExplorerNode) enu.nextElement();
-						if (current.equals(parent)) {
-							for (Iterator<ExplorerNode> nodes = node
-									.getChildren().iterator(); nodes.hasNext();) {
-								model.insertNodeInto(nodes.next(), current,
-										current.getChildCount());
-							}
-							found = true;
-							break;
-						}
-					}
-					if (!found) {
-						model.insertNodeInto(node, rootNodeView, rootNodeView
-								.getChildCount());
-					}
-				} else {
-					model.insertNodeInto(node, rootNodeView, rootNodeView
-							.getChildCount());
-				}
-				getViewTree().getTree().expandRow(0);
+				nodeToTree(getModelTree(), getViewTree().getTree(), node);
 			}
 		});
 		return b;
@@ -311,109 +190,174 @@ public class MetaViewView extends NodePropertiesView implements
 		JButton b = new JButton("<<");
 		b.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				boolean mustRemove = true;
-				boolean isPackage = false;
-				ExplorerNode node = (ExplorerNode) getViewTree().getTree()
-						.getLastSelectedPathComponent();
-				if (node == null) {
-					// no node selected or 
-					return;
-				}
-				if (!(node.getDataObject() instanceof MetaProperty)){
-					//show message, no attribute is selected
+				
+				// First obtain and check node
+				ExplorerNode node = (ExplorerNode) getViewTree().getTree().getLastSelectedPathComponent();
+				if (node == null) {	// no node is selected
 					return;
 				}
 				
-				/*
-				MetaProperty prop = (MetaProperty)node.getDataObject();
-				String fullyQualifiedName = prop.getQualifiedName();
-				String attribute = node.getName();
-				StringBuilder b = new StringBuilder(fullyQualifiedName);
-				String tmpClazz = fullyQualifiedName.substring(0, fullyQualifiedName.lastIndexOf("."));
-				String clazz = "." + tmpClazz.substring(tmpClazz.lastIndexOf(".") + 1, tmpClazz.length());
-				String pack = fullyQualifiedName.substring(0, tmpClazz.lastIndexOf("."));
-				*/
-				
-				ExplorerNode originalNode = node.clone();
-				ExplorerNode parent = (ExplorerNode) node.getParent();
-				ExplorerNode root = (ExplorerNode) node.getRoot();
-				fields.remove(node.getName());
-				
-				/*
-				MetaView v = (MetaView)getDataObject();
-				MetaView.FieldDefinition def = new MetaView.FieldDefinition(attribute, pack, clazz, prop);
-				if (v.getFields().contains(def)){
-					v.getFields().remove(def);
-				}*/
-				
-
-				if (!parent.equals(root)) {
-					isPackage = true;
-					// search full path
-					if (parent.getChildCount() > 1) {
-						ExplorerNode cloneOfParent = parent.clone();
-						ExplorerNode[] nodesToRemove = new ExplorerNode[cloneOfParent
-								.getChildCount()];
-						int x = 0;
-						for (Iterator<ExplorerNode> i = cloneOfParent
-								.getChildren().iterator(); i.hasNext(); x++) {
-							ExplorerNode item = i.next();
-							if (!item.getName().equals(node.getName())) {
-								nodesToRemove[x] = item;
-							}
-						}
-						for (int i = 0; i < nodesToRemove.length; i++) {
-							if (nodesToRemove[i] != null)
-								nodesToRemove[i].removeFromParent();
-						}
-						node = cloneOfParent;
-					} else {
-						node = parent;
-						originalNode = parent;
-					}
-				}
-
-				DefaultTreeModel viewModel = (DefaultTreeModel) getViewTree()
-						.getTree().getModel();
-				if (mustRemove) {
-					viewModel.removeNodeFromParent(originalNode);
-				}
-
-				ExplorerNode rootNodeAttribute = (ExplorerNode) getAttributeTree().getModel().getRoot();
-				DefaultTreeModel model = (DefaultTreeModel) getAttributeTree().getModel();
-				if (isPackage) {
-					ExplorerNode attributeTreeRoot = (ExplorerNode) model
-							.getRoot();
-					Enumeration enu = attributeTreeRoot.asTreeNode().children();
-					boolean found = false;
-					while (enu != null && enu.hasMoreElements()) {
-						ExplorerNode current = (ExplorerNode) enu.nextElement();
-						if (current.equals(parent)) {
-							for (Iterator<ExplorerNode> nodes = node
-									.getChildren().iterator(); nodes.hasNext();) {
-								model.insertNodeInto(nodes.next(), current,
-										current.getChildCount());
-							}
-							found = true;
-							break;
-						}
-					}
-					if (!found) {
-						model.insertNodeInto(node, rootNodeAttribute,
-								rootNodeAttribute.getChildCount());
-					}
-				} else {
-					model.insertNodeInto(node, rootNodeAttribute,
-							rootNodeAttribute.getChildCount());
-				}
-
-				getAttributeTree().expandRow(0);
+				nodeToTree(getViewTree().getTree(), getModelTree(), node);
 			}
 		});
 		return b;
 	}
 
-	private void initalizeFields() {
+	/**
+	 * Moves a node (MetaModel, MetaPackage, MetaClass, MetaProperty, etc.) to the right and assigns it to the view
+	 * @param fromTree tree to remove node from
+	 * @param toTree to assign node to.
+	 * @param node to be assigned to the view.
+	 */
+	protected void nodeToTree(JTree fromTree, JTree toTree, ExplorerNode node) {
+		if(node.getDataObject() instanceof MetaProperty) {
+			propertyToTree(fromTree, toTree, node);
+		} else {
+			while(node.getChildCount() > 0) {
+				ExplorerNode child = (ExplorerNode)node.getChildAt(0);
+				nodeToTree(fromTree, toTree, child);
+			}
+		}
+	}
+	
+	/**
+	 * Moves a property to the passed tree. The passed node must be a property
+	 * @param fromTree tree to remove node from
+	 * @param toTree to assign node to.
+	 * @param node property to be assigned to the view
+	 */
+	private void propertyToTree(JTree fromTree, JTree toTree, ExplorerNode node) {
+		assert node.getDataObject() instanceof MetaProperty;
+		
+		// remove node from modelTree
+		ExplorerNode clonedNode = node.clonebyCopy(null); // save original node, before removing it. Used for adding it to the view.
+		removeNodeFromTree((DefaultTreeModel) fromTree.getModel(), node);
+
+		// add selected property to viewTree
+		DefaultTreeModel model = (DefaultTreeModel) toTree.getModel();
+		addNodeToTree(model, clonedNode);
+
+		// expand viewTree
+		toTree.expandRow(0);
+	}
+	
+	/**
+	 * Finds the corresponding node in the model. First we obtain the entire path to the passed node and then we search for this path within the model.
+	 * Nodes within the model and within the path to node are equal if name match.
+	 * @param model to search for the node with same path
+	 * @param node to be searched within model
+	 * @return null if none found, otherwise Explorernode with same path as passed node.
+	 */
+	private ExplorerNode findNodeInTree(DefaultTreeModel model, ExplorerNode node) {
+		ExplorerNode currentTreeNode = (ExplorerNode) model.getRoot();
+		ExplorerNode[] path = node.getPath();
+		for(int i=1; i<path.length; i++) {
+			for(ExplorerNode n : currentTreeNode.getChildren()) {
+				if(n.getName().equals(path[i].getName())) {
+					currentTreeNode = n;
+					break;
+				}
+			}
+			if(!currentTreeNode.getName().equals(path[i].getName())) {
+				currentTreeNode = null;
+				break;
+			}
+		}
+		return currentTreeNode;
+	}
+
+	/**
+	 * Passed explorer node will be removed from tree. If parent of node has no furhter children, then parent will be removed as well and so on.
+	 * @param model DefaultTreeModel to remove node from
+	 * @param node ExplorerNode to be removed from model
+	 */
+	private void removeNodeFromTree(DefaultTreeModel model, ExplorerNode node) {
+		TreeNode parent = node.getParent();
+		model.removeNodeFromParent(node);
+		while(parent != null && parent.getChildCount() == 0 && parent.getParent() != null) {
+			if(!(parent instanceof ExplorerNode)) break;
+			node = (ExplorerNode)parent;
+			parent = parent.getParent();
+			model.removeNodeFromParent(node);
+		}
+	}
+	
+	/**
+	 * Adds a node to the tree. It starts at the beginning of a nodes path and checks whether a corresponding node is already 
+	 * available. If not it adds one, if yes it just proceeds. Thereof only nodes within the path that are not yet part of the tree will be added.
+	 * @param model to add the node and its entire path to.
+	 * @param node to be added to the TreeModel.
+	 */
+	private void addNodeToTree(DefaultTreeModel model, ExplorerNode node) {
+		ExplorerNode[] path = node.getPath();
+		assert path.length > 1;
+		ExplorerNode parent = (ExplorerNode)model.getRoot();
+		ExplorerNode existingNode = findNodeInTree(model, path[1]);
+		for(int i=1; i<path.length; i++) {
+			if(existingNode == null) {
+				ExplorerNode newChild = path[i].clone();
+				newChild.removeAllChildren();
+				parent.addChild(newChild);
+				parent = newChild;
+			} else if (i+1 < path.length) {
+				existingNode = findNodeInTree(model, path[i+1]);
+				if(existingNode != null) {
+				  parent = existingNode;
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Finds the ExplorerNode within passed tree having the same qualified name as the passed element.
+	 * @param tree to search for the corresponding ExplorerNode.
+	 * @param element defining qualified name for the ExplorerNode to be searched.
+	 * @return null if not found, ExplorerElement if found.
+	 */
+	private ExplorerNode findElementInTree(JTree tree, MetaElement element) {
+		String qualifiedName = element.getQualifiedName();
+		ExplorerNode node = (ExplorerNode)tree.getModel().getRoot();
+		while(node != null && !qualifiedName.equals("")) {
+			int idx = qualifiedName.indexOf(".");
+			String name;
+			if(idx >= 0) {
+				name = qualifiedName.substring(0, idx);
+			} else {
+				name = qualifiedName;
+			}
+			if(qualifiedName.length() > name.length()) {
+				qualifiedName = qualifiedName.substring(name.length()+1);
+			} else {
+				qualifiedName = "";
+			}
+			node = node.findChild(name);
+		}
+		return node;
+	}
+
+	/**
+	 * Returns all leaves of the passed ExplorerNode. Only leaves being MetaProperties are passed back.
+	 * @param root ExplorerNode to obtain leaves from. If it is a leaf itself then it is returned.
+	 * @return List containing all leaves beeing an instance of MetaProperty.
+	 */
+	private List<ExplorerNode> getLeaves(ExplorerNode root) {
+		List<ExplorerNode> leaves = new ArrayList<ExplorerNode>();
+		if(root.isLeaf() && root.getDataObject() instanceof MetaProperty) {
+			leaves.add(root);
+		}
+		Enumeration enu = root.children();
+		while (enu.hasMoreElements()) {
+			ExplorerNode current = (ExplorerNode) enu.nextElement();
+			if(current.isLeaf() && current.getDataObject() instanceof MetaProperty) {
+				leaves.add(current);
+			} else if (!current.isLeaf()){
+				leaves.addAll(getLeaves(current));
+			}
+		}
+		return leaves;
+	}
+	
+	private void initalizeViewProperties() {
 		nameText = new JTextField(TEXT_FIELD_SIZE);
 		// nameText.addFocusListener(new VerificationActions());
 		descriptionText = new JTextArea(3, TEXT_AREA_SIZE);
@@ -464,11 +408,6 @@ public class MetaViewView extends NodePropertiesView implements
 		cc.gridx = 2;
 		cc.gridy = 0;
 		add(getEastPanel(), cc);
-
-		validName = Pattern.compile("^[0-9\\.]" // no number and no dot at the
-				// beginning of the identifier
-				+ "|[^\\w&&[^\\.]]" // no special characters other than dot
-				+ "|\\.[0-9]"); // no number after a dot
 	}
 
 	/**
@@ -491,16 +430,13 @@ public class MetaViewView extends NodePropertiesView implements
 	@Override
 	public void validateView(ValidationResult result) {
 		if (isValidationRequired()) {
-			String nameError = this.validateViewName(nameText.getText());
+			String nameError = validateViewName(nameText.getText());
 			if ( nameError != null) {
 				result.addError(nameError);
 				JOptionPane.showMessageDialog(null,nameError, "validation error", JOptionPane.ERROR_MESSAGE);
-				super.validateView(result);
-				return;//do not also check the other condition if a error found
-			}
-			if (this.fields == null || fields.isEmpty()) {
+			} else if (getLeaves(getViewTree().getRoot()).size() <= 0) {
 				result.addError("Invalid content for this view");
-				String error = "Invalid content for this view. Please select one or more fields";
+				String error = "Invalid content for this view. Please add at least one field.";
 				JOptionPane.showMessageDialog(null, error, "validation error",JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -515,61 +451,44 @@ public class MetaViewView extends NodePropertiesView implements
 		return constructor.getRoot();
 	}
 	
-	/**
+	/*
 	 * Overriden methods from the framework
 	 */
 	@Override
 	public void populateView() {
 		validationCounter = 0;// @see validateView
-		// TODO this is a hack mb, hack is required while in swing add is not
-		// add and replace
+
 		westTree.remove(getWestPanel());
 		getEastPanel().remove(eastViewTree);
 		ExplorerNode root = buildViewTreeRoot();
-
-		attributeTree.setRoot(root, this);
-		westScrollPane = new JScrollPane(attributeTree.getTree());
+		modelTree.setRoot(root, this);
+		westPanel = new JScrollPane(modelTree.getTree());
 		westTree.add(getWestPanel());
+		
 		UiNodeType nodeType = getNodeTypeFactory().getNodeTypeForBo(MetaView.class);
 		ExplorerNode node = null;
-		if (isExistingView() || isViewEvent()) {
-			// edit existing view
-			MetaView metaView = (MetaView) this.getDataObject();
-			originalMetaView = metaView.clone();
-			loadFieldValues(metaView);
-			String viewName = this.getNode().getName();
-			assert viewName != null;
-			node = new ExplorerNode(nodeType, metaView, metaView);
-			node.setNodeOwner(root.getNodeOwner());
-			List<ExplorerNode> x = getNodesForView(this.getNode().getParent().toString()
-					+ "." + viewName, root);
-			for (ExplorerNode childNode : x) {
-				node.addChild(childNode);
-			}
-		} else {
-			// create new view
-			node = new ExplorerNode(nodeType, new MetaView(), new MetaView());
-			nameText.setText(null);
-			descriptionText.setText(null);
-		}
-
+		MetaView metaView = (MetaView)getDataObject();
+		originalMetaView = metaView.clone();
+		loadFieldValues(metaView);
+		node = new ExplorerNode(nodeType, metaView, metaView);
+		node.setNodeOwner(root.getNodeOwner());
 		viewTree = new ExplorerTree();
 		viewTree.setRoot(node, this);
+		for(MetaView.FieldDefinition field : metaView.getFields()) {
+			ExplorerNode eNode = findElementInTree(modelTree.getTree(), field.asMetaProperty());
+			if(eNode != null) {
+				nodeToTree(modelTree.getTree(), viewTree.getTree(), eNode);
+			}
+		}
+
 		JTree tree = viewTree.getTree();
 		eastViewTree = new JScrollPane(tree);
 		getEastPanel().add(eastViewTree, BorderLayout.CENTER);
 
-		if (isViewEvent()) {
-			for (int i = 0; i < tree.getRowCount(); i++) {
-				tree.expandRow(i);
-			}
+		// now expand the entire view
+		for (int i = 0; i < tree.getRowCount(); i++) {
+			tree.expandRow(i);
 		}
-
-		if (nodes != null && !nodes.isEmpty()) {
-			nodes.clear();
-			// nodes = null;
-		}
-
 	}
 
 	/**
@@ -607,246 +526,141 @@ public class MetaViewView extends NodePropertiesView implements
 	}
 
 	/**
+	 * Removes the properties no longer contained in this view.
+	 * The difference is computed by comparing the originalView (a clone made when we populated this view) and the passed newView.
+	 * @param newView to check for removed properties 
+	 */
+	private void removeDeletedPropertiesFromView(MetaView newView) {
+		// determine the difference between original MetaView and passed MetaView.
+		List<MetaProperty> toBeRemoved = new ArrayList<MetaProperty>();
+		for(MetaView.FieldDefinition originalField : getOriginalMetaView().getFields()) {
+			MetaView.FieldDefinition field = newView.findField(originalField);
+			if(field == null) {
+				toBeRemoved.add(originalField.asMetaProperty());
+			}
+		}
+		
+		// now remove our view content from properties within list (toBeRemoved)
+		MetaModel rootModel = (MetaModel) getModel().getRoot().getDataObject();
+		for(MetaProperty property : toBeRemoved) {
+			property = (MetaProperty)rootModel.findElement(property.getQualifiedName());
+			TaggedValue taggedValue = property.getTaggedValue(VIEW_TAG); 
+			if (taggedValue != null) {
+				XmlNode xmlDef = new XmlNode();
+				xmlDef.parse(taggedValue.getValue());
+				List<XmlNode> nodes = xmlDef.getAllAsList(VIEW_NODE);
+				boolean removedOne = false;
+				for(XmlNode viewNode : nodes) {
+					if (viewNode.getAttribute(NAME).equals(getQualifiedName(newView))) {
+						viewNode.remove();
+						removedOne = true;
+						break;
+					}
+				}
+				// if the field are used only in one view, the tagged value is
+				// not longer required
+				if (nodes.size() == 1 && removedOne) {
+					property.removeTaggedValue(VIEW_TAG);
+				} else {
+					taggedValue.setValue(xmlDef.asXml());
+				}
+			}
+		}
+	}
+
+	/**
+	 * Adds newly assigned properties. TaggedValues of those properties newly assigned to this view are added.
+	 * Properties having been already part of the view before editing, are updated.
+	 * @param newView view having additional or changed properties assigned (compared to getOriginalMetaView())
+	 */
+	private void addNewOrChangedPropertiesToView(MetaView newView) {
+		// now add our view content to the properties within the list (toBeAdded)
+		MetaModel rootModel = (MetaModel) getModel().getRoot().getDataObject();
+		for(MetaView.FieldDefinition newField : newView.getFields()) {
+			MetaProperty property = newField.asMetaProperty();
+			property = (MetaProperty)rootModel.findElement(property.getQualifiedName());
+			TaggedValue taggedValue = property.getTaggedValue(VIEW_TAG); 
+			if (taggedValue == null) {
+				taggedValue = new TaggedValue(VIEW_TAG, new XmlNode(ROOT_NODE).asXml());
+				property.addTaggedValue(taggedValue);
+			}
+			XmlNode xmlDef = new XmlNode();
+			xmlDef.parse(taggedValue.getValue());
+			List<XmlNode> nodes = xmlDef.getAllAsList(VIEW_NODE);
+			boolean alreadyExists = false;
+			for(XmlNode viewNode : nodes) {
+				if (viewNode.getAttribute(NAME).equals(getQualifiedName(newView))) {
+					alreadyExists = true;
+					viewNode.setAttribute(NAME, getQualifiedName(newView));
+					viewNode.setAttribute(DESCRIPTION, newView.getDescription());
+					viewNode.setAttribute(VISIBILITY, Integer.toString(newView.getVisibility().getCode()));
+					break;
+				}
+			}
+			
+			if(!alreadyExists) {
+				XmlNode viewNode = xmlDef.append(VIEW_NODE);
+				viewNode.setAttribute(NAME, getQualifiedName(newView));
+				viewNode.setAttribute(DESCRIPTION, newView.getDescription());
+				viewNode.setAttribute(VISIBILITY, Integer.toString(newView.getVisibility().getCode()));
+			}
+			taggedValue.setValue(xmlDef.asXml());
+		}
+	}
+
+	/**
 	 * overrides commitChanges from the framework
 	 */
 	@Override
 	public void commitChanges() {
-		MetaView model = (MetaView) getDataObject();
+		MetaView newView = (MetaView) getDataObject();
 		String viewName = nameText.getText();
-		model.setName(viewName.trim());
-		model.setVisibility((VisibilityCode) visibility.getSelectedCode());
-		model.setDescription(descriptionText.getText());
-		addFieldsToMetaView(model, null);
+		newView.setName(viewName.trim());
+		newView.setVisibility((VisibilityCode) visibility.getSelectedCode());
+		newView.setDescription(descriptionText.getText());
+		setFieldsToMetaView(newView, getViewTree().getRoot());
 
-		MetaModel rootModel = (MetaModel) getModel().getRoot().getDataObject();
-		if (isExistingView()) {
-			if (model.equals(getOriginalMetaView())) {
-				return; // no changes
-			}
-
-			// handle case: chance name or visibility
-			if (!getOriginalMetaView().getName().equals(model.getName())
-					|| getOriginalMetaView().getVisibility().getCode() != model.getVisibility().getCode()) 
-			{
-				updateTaggedValues(getOriginalMetaView(), model.getName(),
-						model.getVisibility().getCode(), rootModel);
-			}
-
-			// handle case: remove fields from view
-			if (getOriginalMetaView().hasMoreFields(model.getFieldBuffer())
-					|| getOriginalMetaView().hasOtherFields(model.getFieldBuffer())) 
-			{
-				removeView(getOriginalMetaView(), model, rootModel);
-			}
-		}
-
-		// tagsView.commitChanges();
-		for (Iterator<MetaView.FieldDefinition> i = model.getFieldBuffer().iterator(); i.hasNext();) {
-			MetaView.FieldDefinition cur = i.next();
-			MetaElement el = rootModel.findElement(cur.getFullyQualifiedName());
-			XmlNode xmlDef = null;
-			boolean update = false;
-			if (el.getTaggedValue(VIEW_TAG) != null) {
-				boolean alreadyExists = false;
-				xmlDef = new XmlNode();
-				xmlDef.parse(el.getTaggedValue(VIEW_TAG).getValue());
-				List<XmlNode> nodes = xmlDef.getAllAsList(VIEW_NODE);
-				for (int x = 0, l = nodes.size(); x < l; x++) {
-					XmlNode view = nodes.get(x);
-					if (view.getAttribute(NAME).equals(
-							this.node.getParent().toString() + "."
-									+ model.getName())) {
-						// view is exists
-						alreadyExists = true;
-						break;
-					}
-				}
-				if (alreadyExists) {
-					continue;
-				}
-				update = true;
-			} else {
-				xmlDef = new XmlNode(ROOT_NODE);
-			}
-			XmlNode viewNode = xmlDef.append(VIEW_NODE);
-			viewNode.setAttribute(NAME, this.node.getParent().toString() + "." + model.getName());
-			viewNode.setAttribute(DESCRIPTION, model.getDescription());
-			viewNode.setAttribute(VISIBILITY, Integer.toString(visibility.getSelectedCode().getCode()));
-			if (update) {
-				el.getTaggedValue(VIEW_TAG).setValue(xmlDef.asXML());
-			} else {
-				el.addTaggedValue(new TaggedValue(VIEW_TAG, xmlDef.asXML()));
-			}
-		}
-		model.clearFields();
+		// remove tagged values. Build difference and remove them
+		removeDeletedPropertiesFromView(newView);
+		// add tagged values - values being part of this view before modification will be updated as well.
+		addNewOrChangedPropertiesToView(newView);
+		
 		getModel().nodeChanged();
-		if (fields != null) {
-			fields.clear();
-		}
 		this.originalMetaView = null;
 	}
 
-	/**
+	/*
 	 * END overriden method from the framework
 	 */
 
-	/**
+	/*
 	 * HELPER methods section
 	 */
+	
+	/**
+	 * Helper member to obtain qualified name of a new view. This helper is necessary because in case of a newly created view the context is not yet set during commit.
+	 * We thereof obtain the parent ExplorerNode of this MetaView and construct the qualified name with help of that.
+	 * @param MetaView to obtain the qualified name from.
+	 * @return qualified name. If for some reason there is no parent ExplorerNode or if it is of wrong type, then the name of the view is returned. 
+	 */
+	private String getQualifiedName(MetaView view) {
+		if(view.getContext() == null && getModel().getParent() != null) {
+			ExplorerNode parent = ((ExplorerNode)getModel().getParent());
+			if(parent.getDataObject() instanceof MetaPackage) {
+				return ((MetaPackage)parent.getDataObject()).getQualifiedName()+"."+view.getName();
+			}
+		}
+		return view.getQualifiedName();
+	}
+	
 	private MetaView getOriginalMetaView() {
 		return this.originalMetaView;
 	}
 
 	/**
-	 * returns true if the display event == view
-	 */
-	private boolean isViewEvent() {
-		return this.isEditable() == false && this.isNewObject() == false;
-	}
-
-	/**
-	 * returns true if the view not new and editable
-	 */
-	private boolean isExistingView() {
-		return (!this.isNewObject()) && this.isEditable();
-	}
-
-	/**
-	 * returns all nodes for the given view, founded in the given tree model.
-	 * The method travers the complett tree and search for view definitions with
-	 * the name given by argument view
-	 */
-	private List<ExplorerNode> nodes;
-
-	private List<ExplorerNode> getNodesForView(String view,
-			ExplorerNode attributeTree) {
-		if (nodes == null) {
-			nodes = new ArrayList<ExplorerNode>();
-		}
-		for (ExplorerNode child : attributeTree.getChildren()) {
-			if (child.getDataObject().getClass().equals(MetaProperty.class)
-					|| child.getDataObject().getClass().equals(MetaIndexedProperty.class)) {
-				MetaProperty property = (MetaProperty) child.getDataObject();
-				if (property.getTaggedValue(VIEW_TAG) != null) {
-					XmlNode def = new XmlNode();
-					def.parse(property.getTaggedValue(VIEW_TAG).getValue());
-					for (Iterator<XmlNode> views = def.getAll(VIEW_NODE); views.hasNext();) {
-						XmlNode viewNode = views.next();
-						if (viewNode.getAttribute(NAME).equals(view)) {
-							ExplorerNode realclassNode = (ExplorerNode) child.getParent();
-							ExplorerNode classNode = realclassNode.clone();
-							List<Integer> indexes = new ArrayList<Integer>();
-							for (int i = 0; i < classNode.getChildCount(); i++) {
-								ExplorerNode c = (ExplorerNode) classNode
-										.getChildAt(i);
-								if (!c.getName().equals(child.getName())) {
-									indexes.add(new Integer(i));
-								}
-							}
-
-							// the follwoing code is requried while
-							// classNode.remove(index) changes the index length
-							// and then a ArrayIndexOutOfBoundsException is
-							// thrown
-							boolean first = true;
-							for (int i = 0, l = indexes.size(); i < l; i++) {
-								if (first) {
-									classNode.remove(indexes.get(i).intValue());
-									first = false;
-								} else {
-									int index = indexes.get(i).intValue();
-									classNode.remove(index - i);
-								}
-							}
-							addToOriginalMetaView(classNode);
-
-							// in the case from one class are two or more
-							// attributes are used in the view. its required the
-							// class
-							// only one time
-							ExplorerNode n = retrievNode(classNode.getName(),
-									nodes);
-							if (n != null) {
-								nodes.remove(n);
-								nodes.add(mergeNodes(n, classNode));
-							} else {
-								nodes.add(classNode);
-							}
-							putToFields(child.getName(), classNode.getParent().toString());
-						}
-					}
-				}
-			}
-			getNodesForView(view, child);
-		}
-		return nodes;
-	}
-
-	private ExplorerNode retrievNode(String name, List<ExplorerNode> lst) {
-		for (ExplorerNode node : lst) {
-			if (node.getName().equals(name)) {
-				return node;
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * if a class has two or more attributes in the view, its required display
-	 * the class only one time with two attributes instead of two times the same
-	 * class with one attribute. This method merge two class nodes. All
-	 * attributes from the source nodes will be added to the target node.
-	 */
-	private ExplorerNode mergeNodes(ExplorerNode target, ExplorerNode source) {
-		for (ExplorerNode c : source.getChildren()) {
-			target.addChild(c);
-		}
-		return target;
-	}
-
-	/**
-	 * build the OriginalMetaView for supporting the commitChanges method
-	 */
-	private void addToOriginalMetaView(ExplorerNode classNode) {
-		for (ExplorerNode field : classNode.getChildren()) {
-			MetaView.FieldDefinition def = new MetaView.FieldDefinition(field.getName(), 
-					classNode.getParent().toString(), "." + getClassName(field), (MetaProperty)field.getDataObject());
-			if (!getOriginalMetaView().getFieldBuffer().contains(def)){
-				getOriginalMetaView().appendField(def);
-			}
-
-		}
-
-	}
-
-	/**
-	 * if we load a existing view, build up the fields map, these map is
-	 * required for the commitChanges and there helper methods.
-	 */
-	private void putToFields(String name, String packageName) {
-		if (this.fields == null) {
-			this.fields = new HashMap<String, String>();
-		}
-		if (fields.containsKey(name) && fields.get(name).equals(packageName)){
-			return;//field already in view
-		}
-		this.fields.put(name, packageName);
-	}
-
-	/**
-	 * returns the package for the given class or attribute node
-	 */
-	private ExplorerNode getPackage(TreeNode current, TreeNode root) {
-		if (current.getParent().equals(root)) {
-			return (ExplorerNode) current;
-		} else {
-			return getPackage(current.getParent(), root);
-		}
-	}
-
-	/**
 	 * if an existing view is loaded, load the name, description and the
 	 * visibility
+	 * @param metaView to load MetaViewView ui elements from
 	 */
 	private void loadFieldValues(MetaView metaView) {
 		nameText.setText(metaView.getName());
@@ -854,129 +668,18 @@ public class MetaViewView extends NodePropertiesView implements
 		visibility.setSelectedCode(metaView.getVisibility());
 	}
 
-	/**
-	 * if in edit mode fields remove from the view, this method removes the
-	 * reference in the tagged value.
-	 */
-	private void removeView(MetaView originalView, MetaView newView,
-			MetaModel rootModel) {
-		List<MetaView.FieldDefinition> defs = originalView.getDelta(newView
-				.getFieldBuffer());
-		for (MetaView.FieldDefinition def : defs) {
-			MetaElement el = rootModel.findElement(def.getFullyQualifiedName());
-			if (el.getTaggedValue(VIEW_TAG) != null) {
-				XmlNode xmlDef = new XmlNode();
-				xmlDef.parse(el.getTaggedValue(VIEW_TAG).getValue());
-				List<XmlNode> nodes = xmlDef.getAllAsList(VIEW_NODE);
-				boolean hasRemoved = false;
-				for (int x = 0, l = nodes.size(); x < l; x++) {
-					XmlNode view = nodes.get(x);
-					//if (view.getAttribute(NAME).equals(def.getPackage() + "." + newView.getName())) {
-					if (view.getAttribute(NAME).equals(newView.getQualifiedName())) {
-						view.remove();
-						hasRemoved = true;
-					}
-				}
-				// if the field are used only in one view, the tagged value is
-				// not longer required
-				if (nodes.size() == 1 && hasRemoved) {
-					el.removeTaggedValue(VIEW_TAG);
-				}
-			}
+  /**
+   * Adds all properties within the tree of the root ExplorerNode to the passed metaView. Previously stored fields are cleared.
+   * @param metaView to add properties. Properties are added as MetaField.FieldDefinition
+   * @param root identifies the ExplorerNode tree, we want to add MetaProperties from.
+   */
+	private void setFieldsToMetaView(MetaView metaView, ExplorerNode root) {
+		List<ExplorerNode> properties = getLeaves(root);
+		metaView.getFields().clear();
+		for(ExplorerNode node : properties) {
+			MetaView.FieldDefinition field = new MetaView.FieldDefinition((MetaProperty)node.getDataObject());
+			metaView.appendField(field);
 		}
-	}
-
-	/**
-	 * in the case of name or visibility code is changed, this method update all
-	 * existing tagged values for the renamed view
-	 */
-	private void updateTaggedValues(MetaView originalView, String newName,
-			int newCode, MetaModel rootModel) {
-		List<MetaView.FieldDefinition> defs = originalView.getFieldBuffer();
-		for (MetaView.FieldDefinition def : defs) {
-			MetaElement el = rootModel.findElement(def.getFullyQualifiedName());
-			if (el.getTaggedValue(VIEW_TAG) != null) {
-				XmlNode xmlDef = new XmlNode();
-				xmlDef.parse(el.getTaggedValue(VIEW_TAG).getValue());
-				List<XmlNode> nodes = xmlDef.getAllAsList(VIEW_NODE);
-				for (int x = 0, l = nodes.size(); x < l; x++) {
-					XmlNode view = nodes.get(x);
-					if (view.getAttribute(NAME).equals(def.getPackage() + "." + originalView.getName())) {
-						// view.remove();
-						view.removeAttribute(NAME);
-						view.setAttribute(NAME, def.getPackage() + "." + newName);
-						view.removeAttribute(VISIBILITY);
-						view.setAttribute(VISIBILITY, Integer.toString(newCode));
-						el.getTaggedValue(VIEW_TAG).setValue(xmlDef.asXML());
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * adding the selectet fields to the view.
-	 */
-	private String packageName;
-
-	private void addFieldsToMetaView(MetaView model, ExplorerNode root) {
-		if (root == null) {
-			root = (ExplorerNode) getViewTree().getTreeModel().getRoot();
-		}
-
-		Enumeration enu = root.children();
-		while (enu.hasMoreElements()) {
-			ExplorerNode current = (ExplorerNode) enu.nextElement();
-			if (current.getDataObject().getClass().equals(MetaPackage.class)) {
-				packageName = current.toString();
-			}
-			if (current.getDataObject().getClass().equals(MetaProperty.class)
-					|| current.getDataObject().getClass().equals(MetaIndexedProperty.class)) {
-				String clazz = "." + current.getParent().toString();
-				MetaProperty metaE = (MetaProperty)current.getDataObject();
-				MetaView.FieldDefinition def = new MetaView.FieldDefinition(current.getName(), packageName, clazz, metaE);
-				model.appendField(def);
-			}
-			if (current.getChildCount() > 0) {
-				List<ExplorerNode> childs = current.getChildren();
-				for (Iterator<ExplorerNode> iter = childs.iterator(); iter.hasNext();) {
-					ExplorerNode el = iter.next();
-					if (el.getDataObject().getClass().equals(MetaProperty.class)
-							|| el.getDataObject().getClass().equals(MetaIndexedProperty.class)) {
-						String clazz = "." + getClassName(current);
-						packageName = fields.get(el.getName()).toString();
-						MetaProperty metaE = (MetaProperty)el.getDataObject();
-						MetaView.FieldDefinition def = new MetaView.FieldDefinition(el.getName(), packageName, clazz, metaE);
-						model.appendField(def);
-					}
-					addFieldsToMetaView(model, el);
-				}
-			}
-		}
-	}
-
-	/**
-	 * returns the class name for a current attribute node
-	 */
-	private String getClassName(TreeNode current) {
-		ExplorerNode n = (ExplorerNode) current;
-		if (n.getDataObject().getClass().equals(MetaClass.class)) {
-			return current.toString();
-		} else {
-			return getClassName(n.getParent());
-		}
-	}
-
-	private JScrollPane getWestPanel() {
-		return westScrollPane;
-	}
-
-	private JPanel getEastPanel() {
-		return eastPanel;
-	}
-
-	private JPanel getCenterPanel() {
-		return centerPanel;
 	}
 	
 	/**
@@ -985,6 +688,7 @@ public class MetaViewView extends NodePropertiesView implements
 	 * displayValidation
 	 * commitValidation
 	 * ont the framework
+	 * @return true if not during populateView process.
 	 */
 	private boolean isValidationRequired(){
 		return ++validationCounter > 1;
@@ -1008,8 +712,6 @@ public class MetaViewView extends NodePropertiesView implements
 		
 	}
 	
-	
-
 	// ExploerNode interface, do not comment this methods, javadoc taken the
 	// comments from the interface
 	public DataObjectMgr getManager() {
@@ -1031,13 +733,14 @@ public class MetaViewView extends NodePropertiesView implements
 	}
 
 	public void nodeInserted(ExplorerNode node, int index) {
-		// TODO Auto-generated method stub
-
+    int[] childIndices = new int[1];
+    childIndices[0] = index;
+    viewTree.getTreeModel().nodesWereInserted(node, childIndices);
+    modelTree.getTreeModel().nodesWereInserted(node, childIndices);
 	}
 
 	public void nodeRemoved(ExplorerNode parent, ExplorerNode node, int index) {
 		// TODO Auto-generated method stub
-
 	}
 
 }
