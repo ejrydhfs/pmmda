@@ -212,6 +212,8 @@ public class MetaViewView extends NodePropertiesView implements
 	protected void nodeToTree(JTree fromTree, JTree toTree, ExplorerNode node) {
 		if(node.getDataObject() instanceof MetaProperty) {
 			propertyToTree(fromTree, toTree, node);
+		} else if (node.getChildCount() == 0){
+			removeNodeFromTree((DefaultTreeModel) fromTree.getModel(), node);
 		} else {
 			while(node.getChildCount() > 0) {
 				ExplorerNode child = (ExplorerNode)node.getChildAt(0);
