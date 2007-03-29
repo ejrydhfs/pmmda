@@ -61,11 +61,21 @@ public class MetaProperty extends MetaMember {
   public MetaProperty copy(){
 	  MetaProperty clone = new MetaProperty();
 	  clone.aggregation = this.aggregation;
+	  clone.setClassifier(this.getClassifier());
 	  clone.composition = this.composition;
+	  clone.setContext(this.getContext());
+	  clone.setDescription(this.getDescription());
+	  clone.setFinal(this.isFinal());
 	  clone.initialValue = new String(this.initialValue == null ? "" : this.initialValue);
 	  clone.multiplicity = new Multiplicity(this.getMultiplicity().getLowerBound(), this.getMultiplicity().getUpperBound());
+	  clone.setName(this.getName());
+	  clone.setStereotypes(this.getStereotypes());
+	  clone.setTags(this.getTags());
 	  clone.transients = this.transients;
+	  clone.setVisibility(this.getVisibility());
 	  clone.volatiles = this.volatiles;
+	  clone.setStatic(this.isStatic());
+	  clone.setSystem(this.isSystem());
 	  return clone;
   }
 
