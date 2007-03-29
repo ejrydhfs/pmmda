@@ -532,40 +532,16 @@ public class MetaViewView extends NodePropertiesView implements
 	 */
 	private void removeDeletedPropertiesFromView(MetaView newView) {
 		// determine the difference between original MetaView and passed MetaView.
-		List<MetaProperty> toBeRemoved = new ArrayList<MetaProperty>();
+		List<MetaView.FieldDefinition> toBeRemoved = new ArrayList<MetaView.FieldDefinition>();
 		for(MetaView.FieldDefinition originalField : getOriginalMetaView().getFields()) {
 			MetaView.FieldDefinition field = newView.findField(originalField);
 			if(field == null) {
-				toBeRemoved.add(originalField.asMetaProperty());
+				toBeRemoved.add(originalField);
 			}
 		}
 		
 		// now remove our view content from properties within list (toBeRemoved)
-		MetaModel rootModel = (MetaModel) getModel().getRoot().getDataObject();
-		for(MetaProperty property : toBeRemoved) {
-			property = (MetaProperty)rootModel.findElement(property.getQualifiedName());
-			TaggedValue taggedValue = property.getTaggedValue(VIEW_TAG); 
-			if (taggedValue != null) {
-				XmlNode xmlDef = new XmlNode();
-				xmlDef.parse(taggedValue.getValue());
-				List<XmlNode> nodes = xmlDef.getAllAsList(VIEW_NODE);
-				boolean removedOne = false;
-				for(XmlNode viewNode : nodes) {
-					if (viewNode.getAttribute(NAME).equals(getQualifiedName(newView))) {
-						viewNode.remove();
-						removedOne = true;
-						break;
-					}
-				}
-				// if the field are used only in one view, the tagged value is
-				// not longer required
-				if (nodes.size() == 1 && removedOne) {
-					property.removeTaggedValue(VIEW_TAG);
-				} else {
-					taggedValue.setValue(xmlDef.asXml());
-				}
-			}
-		}
+		newView.removeFromProperties(toBeRemoved, getQualifiedName(newView), (MetaModel)getModel().getRoot().getDataObject());
 	}
 
 	/**
@@ -574,38 +550,7 @@ public class MetaViewView extends NodePropertiesView implements
 	 * @param newView view having additional or changed properties assigned (compared to getOriginalMetaView())
 	 */
 	private void addNewOrChangedPropertiesToView(MetaView newView) {
-		// now add our view content to the properties within the list (toBeAdded)
-		MetaModel rootModel = (MetaModel) getModel().getRoot().getDataObject();
-		for(MetaView.FieldDefinition newField : newView.getFields()) {
-			MetaProperty property = newField.asMetaProperty();
-			property = (MetaProperty)rootModel.findElement(property.getQualifiedName());
-			TaggedValue taggedValue = property.getTaggedValue(VIEW_TAG); 
-			if (taggedValue == null) {
-				taggedValue = new TaggedValue(VIEW_TAG, new XmlNode(ROOT_NODE).asXml());
-				property.addTaggedValue(taggedValue);
-			}
-			XmlNode xmlDef = new XmlNode();
-			xmlDef.parse(taggedValue.getValue());
-			List<XmlNode> nodes = xmlDef.getAllAsList(VIEW_NODE);
-			boolean alreadyExists = false;
-			for(XmlNode viewNode : nodes) {
-				if (viewNode.getAttribute(NAME).equals(getQualifiedName(newView))) {
-					alreadyExists = true;
-					viewNode.setAttribute(NAME, getQualifiedName(newView));
-					viewNode.setAttribute(DESCRIPTION, newView.getDescription());
-					viewNode.setAttribute(VISIBILITY, Integer.toString(newView.getVisibility().getCode()));
-					break;
-				}
-			}
-			
-			if(!alreadyExists) {
-				XmlNode viewNode = xmlDef.append(VIEW_NODE);
-				viewNode.setAttribute(NAME, getQualifiedName(newView));
-				viewNode.setAttribute(DESCRIPTION, newView.getDescription());
-				viewNode.setAttribute(VISIBILITY, Integer.toString(newView.getVisibility().getCode()));
-			}
-			taggedValue.setValue(xmlDef.asXml());
-		}
+		newView.addToProperties(newView.getFields(), getQualifiedName(newView), (MetaModel)getModel().getRoot().getDataObject());
 	}
 
 	/**
