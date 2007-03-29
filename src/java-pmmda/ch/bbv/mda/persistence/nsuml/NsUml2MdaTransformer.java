@@ -88,16 +88,21 @@ public class NsUml2MdaTransformer extends ExternalTransformer implements ViewCon
    */
   private Map<Object, MetaElement> elements;
   
-  private static Map<String, List<MetaView>> views;
-
+  private class ViewElement {
+  	public MetaProperty metaProperty;
+  	public TaggedValue taggedValue;
+  	public MetaPackage pack;
+  }
+  /**
+   * contains view definitions per property. Each property having a ViewConstants.VIEW_TAG tagged value associated is stored in here.
+   */
+  private List<ViewElement> collectedViews; 
+  
   /**
    * Default constructor of the class.
    */
   public NsUml2MdaTransformer() {
     elements = new HashMap<Object, MetaElement>();
-    if (views == null){
-		  views = new HashMap<String, List<MetaView>>();
-	  }
   }
 
   /**
@@ -179,7 +184,7 @@ public class NsUml2MdaTransformer extends ExternalTransformer implements ViewCon
       MClassifier mClass = i.next();
       extractClass(mClass, target);
     }
-    extractViews();
+    extractViews(target);
     
   }
 
@@ -200,7 +205,7 @@ public class NsUml2MdaTransformer extends ExternalTransformer implements ViewCon
     }
     extractStereotypeAndTags(source, metaPackage);
     if ( collectedViews == null){
-    	collectedViews = new HashMap<MTaggedValue, MetaPackage>();
+    	collectedViews = new ArrayList<ViewElement>();
     }
     for (Iterator<MClassifier> i = new FilterIterator<MClassifier>(source
         .getOwnedElements(), MClassifier.class); i.hasNext();) {
@@ -215,46 +220,49 @@ public class NsUml2MdaTransformer extends ExternalTransformer implements ViewCon
     }
   }
   
-  private Map<MTaggedValue, MetaPackage> collectedViews;
-  
-  private void collectViews(MAttribute attr, MetaPackage pack){
-	  assert (attr != null) && (pack != null);
+  private void collectViews(MetaProperty property, MetaClass clazz, MAttribute attr){
+	  assert (property != null) && (clazz != null) && (attr != null);
 	  for (Iterator i = attr.getTaggedValues().iterator(); i.hasNext();) {
 	      MTaggedValue tag = (MTaggedValue) i.next();
 	      if (tag.getTag().equals(VIEW_TAG)){
-	    	  collectedViews.put(tag,pack);
+	      	ViewElement viewElement = new ViewElement();
+	      	viewElement.metaProperty = property;
+	      	viewElement.pack = clazz.retrievePackage();
+	      	viewElement.taggedValue = new TaggedValue(tag.getTag(), tag.getValue());
+	    	  collectedViews.add(viewElement);
 	      }
 	  }
   }
   
-  protected void extractViews(){
+  protected void extractViews(MetaModel metaModel){
 	  if (collectedViews == null){
 		  return;
 	  }
 	  
-	  for (MTaggedValue tag : collectedViews.keySet()) {
+	  for (ViewElement v : collectedViews) {
     	  XmlNode xml = new XmlNode();
-    	  xml.parse(tag.getValue());
+    	  xml.parse(v.taggedValue.getValue());
     	  
     	  for(Iterator<XmlNode> iter = xml.getAll(VIEW_NODE); iter.hasNext();){
 	    	  MetaView metaView = new MetaView();
     		  XmlNode view = iter.next();
     		  String name = view.getAttribute(NAME);
-    		  name = name.substring(name.lastIndexOf(".")+1);
-    		  metaView.setName(name);
+    		  metaView.setName(name.substring(name.lastIndexOf(".")+1));
     		  metaView.setDescription(view.getAttribute(DESCRIPTION));
     		  metaView.setVisibility(VisibilityCode.getCode(Integer.parseInt(view.getAttribute(VISIBILITY))));
-  
-    		  if ( views.containsKey(name) ){
-    			  List<MetaView> values = views.get(name);
-    			  values.add(metaView);
-    		  } else {
-    			  List<MetaView> values = new ArrayList<MetaView>();
-    			  values.add(metaView);
-    			  views.put(name,values);
+     		  MetaView.FieldDefinition fieldDefinition = new MetaView.FieldDefinition(v.metaProperty);
+    		  metaView.appendField(fieldDefinition);
+    		  int idx = name.lastIndexOf(".");
+    		  MetaPackage metaPackage = null;
+    		  if(idx >=0) {
+      		  metaPackage = metaModel.findPackage(name.substring(0, idx));
     		  }
-    		  MetaPackage pack = collectedViews.get(tag);
-    		  pack.addView(metaView);
+    		  if(metaPackage == null) {
+    		  	metaPackage = v.pack;
+    		  }
+    		  if(!metaPackage.getViews().contains(metaView)) {
+    		  	metaPackage.addView(metaView);
+    		  }
     	  }
 	  }
   }
@@ -292,13 +300,11 @@ public class NsUml2MdaTransformer extends ExternalTransformer implements ViewCon
         .getFeatures(), MAttribute.class); i.hasNext();) {
     	MAttribute attr = i.next();
       extractProperty(attr, metaClass);
-      collectViews(attr, context);
     }
     for (Iterator<MAttribute> i = new FilterIterator<MAttribute>(source
         .getOwnedElements(), MAttribute.class); i.hasNext();) {
     	MAttribute attr = i.next();
       extractProperty(attr, metaClass);
-      collectViews(attr, context);
     }
 
     for (Iterator<MClassifier> i = new FilterIterator<MClassifier>(source
@@ -387,6 +393,7 @@ public class NsUml2MdaTransformer extends ExternalTransformer implements ViewCon
       property.setMultiplicity(multiplicity);
     }
     extractStereotypeAndTags(attribute, property);
+    collectViews(property, context, attribute);
   }
 
   /**
