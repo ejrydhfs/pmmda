@@ -240,30 +240,30 @@ public class NsUml2MdaTransformer extends ExternalTransformer implements ViewCon
 	  }
 	  
 	  for (ViewElement v : collectedViews) {
-    	  XmlNode xml = new XmlNode();
-    	  xml.parse(v.taggedValue.getValue());
-    	  
-    	  for(Iterator<XmlNode> iter = xml.getAll(VIEW_NODE); iter.hasNext();){
-	    	  MetaView metaView = new MetaView();
-    		  XmlNode view = iter.next();
-    		  String name = view.getAttribute(NAME);
-    		  metaView.setName(name.substring(name.lastIndexOf(".")+1));
-    		  metaView.setDescription(view.getAttribute(DESCRIPTION));
-    		  metaView.setVisibility(VisibilityCode.getCode(Integer.parseInt(view.getAttribute(VISIBILITY))));
-     		  MetaView.FieldDefinition fieldDefinition = new MetaView.FieldDefinition(v.metaProperty);
-    		  metaView.appendField(fieldDefinition);
-    		  int idx = name.lastIndexOf(".");
-    		  MetaPackage metaPackage = null;
-    		  if(idx >=0) {
-      		  metaPackage = metaModel.findPackage(name.substring(0, idx));
-    		  }
-    		  if(metaPackage == null) {
-    		  	metaPackage = v.pack;
-    		  }
-    		  if(!metaPackage.getViews().contains(metaView)) {
-    		  	metaPackage.addView(metaView);
-    		  }
-    	  }
+  	  XmlNode xml = new XmlNode();
+  	  xml.parse(v.taggedValue.getValue());
+  	  
+  	  for(Iterator<XmlNode> iter = xml.getAll(VIEW_NODE); iter.hasNext();){
+    	  MetaView metaView = new MetaView();
+  		  XmlNode view = iter.next();
+  		  String name = view.getAttribute(NAME);
+  		  metaView.setName(name.substring(name.lastIndexOf(".")+1));
+  		  metaView.setDescription(view.getAttribute(DESCRIPTION));
+  		  metaView.setVisibility(VisibilityCode.getCode(Integer.parseInt(view.getAttribute(VISIBILITY))));
+   		  MetaView.FieldDefinition fieldDefinition = new MetaView.FieldDefinition(v.metaProperty);
+  		  metaView.appendField(fieldDefinition);
+  		  int idx = name.lastIndexOf(".");
+  		  MetaPackage metaPackage = null;
+  		  if(idx >=0) {
+    		  metaPackage = metaModel.findPackage(name.substring(0, idx));
+  		  }
+  		  if(metaPackage == null) {
+  		  	metaPackage = metaModel;
+  		  }
+  		  if(!metaPackage.getViews().contains(metaView)) {
+  		  	metaPackage.addView(metaView);
+  		  }
+  	  }
 	  }
   }
 
