@@ -1,4 +1,4 @@
-/* copyright 2000-2006 Marcel Baumann
+/* copyright 2000-2007 Marcel Baumann
  * Licensed under the Apache License, Version 2.0 (the "Licence");
  * you may not use this file except in compliance with the License.
  * $Id$
@@ -148,7 +148,8 @@ public class GenericNodePropertiesView extends NodePropertiesView {
     builder.setDefaultDialogBorder();
     generateRows(builder, Messages.titleNodeViewSimpleProperties,
         primitivePropertyViews);
-    generateRows(builder, Messages.titleNodeViewDataObjects, simplePropertyViews);
+    generateRows(builder, Messages.titleNodeViewDataObjects,
+        simplePropertyViews);
     generateRows(builder, Messages.titleNodeViewIndexedProperties,
         indexedPropertyViews);
     generateRows(builder, Messages.titleNodeViewMappedProperties,
@@ -164,7 +165,7 @@ public class GenericNodePropertiesView extends NodePropertiesView {
    * @param properties properties to display in the form
    */
   protected void generateRows(DefaultFormBuilder builder, String seperator,
-      List< ? extends PropertyView> properties) {
+      List<? extends PropertyView> properties) {
     int size = properties.size();
     if (size > 0) {
       builder.appendSeparator(seperator);
@@ -196,12 +197,14 @@ public class GenericNodePropertiesView extends NodePropertiesView {
         .getPropertyDescriptors(object);
     for (int i = 0; i < descriptors.length; i++) {
       PropertyDescriptor descriptor = descriptors[i];
+      String name = descriptor.getName();
+      String displayName = TextUtilities.fromCamelCase(descriptor
+          .getDisplayName());
       if (descriptor instanceof IndexedPropertyDescriptor) {
         continue;
       } else if (descriptor instanceof MappedPropertyDescriptor) {
-        MappedPropertyView propertyView = new MappedPropertyView(descriptor
-            .getName(), descriptor.getPropertyType(), TextUtilities
-            .fromCamelCase(descriptor.getDisplayName()));
+        MappedPropertyView propertyView = new MappedPropertyView(name,
+            descriptor.getPropertyType(), displayName);
         mappedPropertyViews.add(propertyView);
       } else {
         if (Arrays.binarySearch(DataObject.SYSTEM_SIMPLE_PROPERTIES, descriptor
@@ -211,12 +214,14 @@ public class GenericNodePropertiesView extends NodePropertiesView {
               java.util.Collection.class)
               || containsInterface(clazz.getInterfaces(), java.util.Map.class)) {
             // handle indexed or mapped properties with multiple items.
-            if (getNode().getNodeType().getRelation(descriptor.getName()) == null) {
-              IndexedPropertyView propertyView = new IndexedPropertyView(
-                  descriptor.getName(), descriptor.getPropertyType(),
-                  TextUtilities.fromCamelCase(descriptor.getDisplayName()));
-              indexedPropertyViews.add(propertyView);
+            if (Arrays.binarySearch(DataObject.SYSTEM_INDEXED_PROPERTIES, name) < 0) {
+              if (getNode().getNodeType().getRelation(name) == null) {
+                IndexedPropertyView propertyView = new IndexedPropertyView(
+                    name, descriptor.getPropertyType(), displayName);
+                indexedPropertyViews.add(propertyView);
+              }
             }
+
           } else {
             // handle simple properties with at most one item.
             if (containsInterface(clazz.getInterfaces(), DataObject.class)) {
@@ -225,9 +230,8 @@ public class GenericNodePropertiesView extends NodePropertiesView {
               if (nodeType != null) {
                 // only registered data object types are added
                 DataObjectType type = nodeType.getDataObjectType();
-                DataObjectPropertyView view = new DataObjectPropertyView(
-                    descriptor.getName(), clazz, TextUtilities
-                        .fromCamelCase(descriptor.getDisplayName()), type);
+                DataObjectPropertyView view = new DataObjectPropertyView(name,
+                    clazz, displayName, type);
                 simplePropertyViews.add(view);
               } else {
                 if (log.isDebugEnabled()) {
@@ -236,9 +240,8 @@ public class GenericNodePropertiesView extends NodePropertiesView {
                 }
               }
             } else {
-              PrimitivePropertyView view = new PrimitivePropertyView(descriptor
-                  .getName(), clazz, TextUtilities.fromCamelCase(descriptor
-                  .getDisplayName()));
+              PrimitivePropertyView view = new PrimitivePropertyView(name,
+                  clazz, displayName);
               primitivePropertyViews.add(view);
             }
           }
