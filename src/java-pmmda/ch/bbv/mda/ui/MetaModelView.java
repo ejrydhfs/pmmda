@@ -5,7 +5,6 @@
  */
 package ch.bbv.mda.ui;
 
-import java.awt.GridBagLayout;
 import java.io.File;
 
 import javax.swing.JPanel;
