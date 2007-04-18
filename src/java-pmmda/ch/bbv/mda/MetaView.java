@@ -3,6 +3,9 @@ package ch.bbv.mda;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.bbv.mda.ui.ViewConstants;
+import ch.persi.xml.XmlNode;
+
 /**
  * this meta element represents an view definition
  * 
@@ -80,6 +83,8 @@ public class MetaView extends MetaElement {
 	public MetaView(String name) {
 		setName(name);
 		fields = new ArrayList<FieldDefinition>();
+		TaggedValue author = new TaggedValue("author", "pmMDA");
+		this.addTaggedValue(author);
 	}
 
 	/**
@@ -126,6 +131,93 @@ public class MetaView extends MetaElement {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Removes this view from all its properties. Entires in the tagged values of its properties will be removed. The properties within the FieldDefinition will remain.
+	 */
+	public void removeFromModel() {
+		removeFromProperties(fields, getQualifiedName(), getModel());
+	}
+	
+	/**
+	 * removes information about this view from passed properties.
+	 * @param propertiesToBeRemoved list of FieldDefinitions to remove this view from
+	 * @param qualifiedName of this view. This is necessary because in case of a new view, it is not yet set at the time we use this method.
+	 * @param rootModel MetaModel this View is belonging to. Necessary to process new views not having yet a model assigned.
+	 */
+	public void removeFromProperties(List<FieldDefinition> propertiesToBeRemoved, String qualifiedName, MetaModel rootModel) {
+		// now remove our view content from properties within list (propertiesToBeRemoved)
+		for(FieldDefinition fieldDefinition : propertiesToBeRemoved) {
+			MetaProperty property = (MetaProperty)rootModel.findElement(fieldDefinition.asMetaProperty().getQualifiedName());
+			TaggedValue taggedValue = property.getTaggedValue(ViewConstants.VIEW_TAG); 
+			if (taggedValue != null) {
+				XmlNode xmlDef = new XmlNode();
+				xmlDef.parse(taggedValue.getValue());
+				List<XmlNode> nodes = xmlDef.getAllAsList(ViewConstants.VIEW_NODE);
+				boolean removedOne = false;
+				for(XmlNode viewNode : nodes) {
+					if (viewNode.getAttribute(ViewConstants.NAME).equals(qualifiedName)) {
+						viewNode.remove();
+						removedOne = true;
+						break;
+					}
+				}
+				// if the field are used only in one view, the tagged value is
+				// not longer required
+				if (nodes.size() == 1 && removedOne) {
+					property.removeTaggedValue(ViewConstants.VIEW_TAG);
+				} else {
+					taggedValue.setValue(xmlDef.asXml());
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Adds this view to the MetaModel. For every FieldDefinition contained within this view a tagged value entrie is made in its corresponding property. If there is already an entry it is updated to the current vlaues of the MetaView.
+	 */
+	public void addToModel() {
+		addToProperties(fields, getQualifiedName(), getModel());
+	}
+	
+	/**
+	 * Adds information about this view to passed properties. If there is already an entry then it is updated with current information about this view.
+	 * @param propertiesToBeAdded list of properties where we want to register this view, meaning creating an entry in the view tagged value.
+	 * @param qualifiedName of this view. This is necessary because in case of a new view, it is not yet set at the time we use this method.
+	 * @param rootModel MetaModel this View is belonging to. Necessary to process new views not having yet a model assigned.
+	 */
+	public void addToProperties(List<FieldDefinition> propertiesToBeAdded, String qualifiedName, MetaModel rootModel) {
+		for(MetaView.FieldDefinition newField : propertiesToBeAdded) {
+			MetaProperty property = newField.asMetaProperty();
+			property = (MetaProperty)rootModel.findElement(property.getQualifiedName());
+			TaggedValue taggedValue = property.getTaggedValue(ViewConstants.VIEW_TAG); 
+			if (taggedValue == null) {
+				taggedValue = new TaggedValue(ViewConstants.VIEW_TAG, new XmlNode(ViewConstants.VIEW_TAG).asXml());
+				property.addTaggedValue(taggedValue);
+			}
+			XmlNode xmlDef = new XmlNode();
+			xmlDef.parse(taggedValue.getValue());
+			List<XmlNode> nodes = xmlDef.getAllAsList(ViewConstants.VIEW_NODE);
+			boolean alreadyExists = false;
+			for(XmlNode viewNode : nodes) {
+				if (viewNode.getAttribute(ViewConstants.NAME).equals(qualifiedName)) {
+					alreadyExists = true;
+					viewNode.setAttribute(ViewConstants.NAME, qualifiedName);
+					viewNode.setAttribute(ViewConstants.DESCRIPTION, getDescription());
+					viewNode.setAttribute(ViewConstants.VISIBILITY, Integer.toString(getVisibility().getCode()));
+					break;
+				}
+			}
+			
+			if(!alreadyExists) {
+				XmlNode viewNode = xmlDef.append(ViewConstants.VIEW_NODE);
+				viewNode.setAttribute(ViewConstants.NAME, qualifiedName);
+				viewNode.setAttribute(ViewConstants.DESCRIPTION, getDescription());
+				viewNode.setAttribute(ViewConstants.VISIBILITY, Integer.toString(getVisibility().getCode()));
+			}
+			taggedValue.setValue(xmlDef.asXml());
+		}
 	}
 	
 	/**
