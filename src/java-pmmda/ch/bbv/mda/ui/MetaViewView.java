@@ -3,7 +3,8 @@ package ch.bbv.mda.ui;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 
 import javax.swing.*;
@@ -16,7 +17,6 @@ import ch.bbv.explorer.*;
 import ch.bbv.mda.*;
 import ch.bbv.mda.uml.MetaUseCase;
 import ch.bbv.mda.validation.IdentifierValidator;
-import ch.persi.xml.XmlNode;
 
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
