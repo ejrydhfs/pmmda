@@ -69,7 +69,11 @@ public class GenerateAllAction extends ExplorerGlobalActionImpl {
       for (Cartridge cartridge : cartridges) {
         statusBar.setInfo("Generate" + cartridge.getPrefix());
         statusBar.setProgress(++i / size * 100);
-        factory.execute(cartridge, model, messages);
+        try{
+        	factory.execute(cartridge, model, messages);
+        } catch (Throwable t) {
+        	messages.addError(cartridge.getName()+" failed");
+        }
       }
       statusBar.setProgress(100);
       statusBar.setInfo("Generate All done");

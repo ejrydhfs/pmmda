@@ -51,6 +51,7 @@ public class GenerateCartridgeAction extends ExplorerGlobalActionImpl {
 
   public boolean execute() {
     switchWaitCursor(true);
+    getExplorer().getValidationPanel().clear();
     MetaModel model = (MetaModel) getExplorer().getRoot().getDataObject();
     if (model != null) {
       CartridgeFactory factory = CartridgeFactory.getInstance();
@@ -68,10 +69,15 @@ public class GenerateCartridgeAction extends ExplorerGlobalActionImpl {
         }
       }
       ValidationResult messages = getExplorer().getValidationPanel().getResults();
-      factory.execute(cartridge, model, messages);
+      try {
+      	factory.execute(cartridge, model, messages);
+        lastResult = true;
+      } catch (Throwable t) {
+      	messages.addError(cartridge.getName()+" failed");
+        lastResult = false;
+      }
     }
     switchWaitCursor(false);
-    lastResult = true;
     return lastResult;
   }
 
