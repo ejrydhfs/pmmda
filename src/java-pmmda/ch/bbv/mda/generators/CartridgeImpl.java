@@ -268,6 +268,25 @@ public abstract class CartridgeImpl implements Cartridge {
     }
     return types;
   }
+  
+  public List<TagDefinition> getAllTaggedValueTypes() {
+    List<TagDefinition> types = new ArrayList<TagDefinition>();
+    StringBuilder buffer = new StringBuilder();
+    buffer.append("configuration.tags.tag");
+    for (int i = 0;; i++) {
+      String tag = PropertyUtilities.getAttributeAt(configuration, buffer, i,
+          "name");
+      if (tag == null) {
+        break;
+      }
+      String type = PropertyUtilities.getAttributeAt(configuration, buffer, i,
+          "type");
+      String defaultValue = PropertyUtilities.getAttributeAt(configuration,
+          buffer, i, "default-value");
+      types.add(new TagDefinition(tag, defaultValue, convertType(type)));
+    }
+    return types;
+  }
 
   public List<TagDefinition> getObsoleteTaggedValueTypes(Class clazz) {
     List<TagDefinition> types = new ArrayList<TagDefinition>();

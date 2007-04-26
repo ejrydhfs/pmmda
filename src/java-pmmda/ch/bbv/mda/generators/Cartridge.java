@@ -55,6 +55,12 @@ public interface Cartridge {
   List<TagDefinition> getTaggedValueTypes(Class clazz);
 
   /**
+   * Returns the list of all tagged value types.
+   * @return the list of all tagged values. If none exists an empty list is returned.
+   */
+  List<TagDefinition> getAllTaggedValueTypes();
+
+  /**
    * Returns the list of obsolete tagged value types for the given class type.
    * The class should be a descended of meta element.
    * @param clazz class, which tagged value types should be returned.
