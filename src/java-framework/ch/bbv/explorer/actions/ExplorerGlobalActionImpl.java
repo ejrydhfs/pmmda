@@ -133,6 +133,7 @@ public abstract class ExplorerGlobalActionImpl extends AbstractAction implements
         sucess = true;
         break;
       case 2:
+      case -1:
         sucess = false;
       }
     }

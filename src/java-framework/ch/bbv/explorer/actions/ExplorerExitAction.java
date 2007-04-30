@@ -48,7 +48,7 @@ public class ExplorerExitAction extends ExplorerGlobalActionImpl {
           lastResult = explorer.getMenuBar().getStandardAction(
               ExplorerMenuBar.Names.SAVE).execute();
         }
-      } else if(choice == JOptionPane.CANCEL_OPTION) {
+      } else if(choice == JOptionPane.CANCEL_OPTION || choice == JOptionPane.CLOSED_OPTION) {
       	lastResult = false;
       }
     }
