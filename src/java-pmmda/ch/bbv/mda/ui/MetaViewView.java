@@ -293,23 +293,20 @@ public class MetaViewView extends NodePropertiesView implements
 	private void addNodeToTree(DefaultTreeModel model, ExplorerNode node) {
 		ExplorerNode[] path = node.getPath();
 		assert path.length > 1;
-		ExplorerNode parent = (ExplorerNode)model.getRoot();
-		ExplorerNode existingNode = findNodeInTree(model, path[1]);
-		for(int i=1; i<path.length; i++) {
-			if(existingNode == null) {
+		ExplorerNode parent = (ExplorerNode) model.getRoot();
+		for (int i = 1; i < path.length; i++) {
+			ExplorerNode existingNode = findNodeInTree(model, path[i]);
+			if (existingNode != null) {
+				parent = existingNode;
+			} else {
 				ExplorerNode newChild = path[i].clone();
 				newChild.removeAllChildren();
 				parent.addChild(newChild);
 				parent = newChild;
-			} else if (i+1 < path.length) {
-				existingNode = findNodeInTree(model, path[i+1]);
-				if(existingNode != null) {
-				  parent = existingNode;
-				}
 			}
 		}
 	}
-	
+
 	/**
 	 * Finds the ExplorerNode within passed tree having the same qualified name as the passed element.
 	 * @param tree to search for the corresponding ExplorerNode.
