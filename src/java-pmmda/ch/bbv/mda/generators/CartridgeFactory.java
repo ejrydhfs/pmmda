@@ -331,6 +331,23 @@ public class CartridgeFactory extends ComponentImpl implements Component {
       process(cartridge, clazz, messages);
     }
   }
+  
+  /**
+   * Returns all classes treated in any cartridge registered with this factory.
+   * @return List<Class> being treated by any cartridge.
+   */
+  public List<Class> getClasses() {
+    List<Class> classes = new ArrayList<Class>();
+  	for(Cartridge cartridge : getCartridges()) {
+  		List<Class> cartridgeClasses = cartridge.getClasses();
+  		for(Class clazz : cartridgeClasses) {
+  			if(!classes.contains(clazz)) {
+  				classes.add(clazz);
+  			}
+  		}
+  	}
+  	return classes;
+  }
 
   /**
    * Processes the cartridge on the given model.

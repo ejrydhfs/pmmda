@@ -42,6 +42,12 @@ public interface Cartridge {
    * @pre (properties != null)
    */
   void initialize(Properties properties);
+  
+  /**
+   * Returns all classes known to the cartridge.
+   * @return List<Class> of all classes known to the cartridge.
+   */
+  List<Class> getClasses();
 
   /**
    * Returns the list of tagged value types for the given class type. The class

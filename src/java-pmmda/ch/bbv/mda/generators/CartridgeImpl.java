@@ -245,6 +245,26 @@ public abstract class CartridgeImpl implements Cartridge {
       log.error("Configuration file not found", e);
     }
   }
+  
+  public List<Class> getClasses() {
+    List<Class> classes = new ArrayList<Class>();
+    StringBuilder buffer = new StringBuilder();
+    buffer.append("configuration.tags.tag");
+    for (int i = 0;; i++) {
+      String tag = PropertyUtilities.getAttributeAt(configuration, buffer, i,
+          "name");
+      if (tag == null) {
+        break;
+      }
+      String context = PropertyUtilities.getAttributeAt(configuration, buffer,
+          i, "context");
+      Class clazz = convertContext(context);
+      if(!classes.contains(clazz)) {
+      	classes.add(clazz);
+      }
+    }
+    return classes;
+  }
 
   public List<TagDefinition> getTaggedValueTypes(Class clazz) {
     List<TagDefinition> types = new ArrayList<TagDefinition>();
@@ -648,6 +668,8 @@ public abstract class CartridgeImpl implements Cartridge {
       clazz = MetaPackage.class;
     } else if ("class".equals(context)) {
       clazz = MetaClass.class;
+    } else if ("view".equals(context)) {
+      clazz = MetaView.class;
     } else if ("property".equals(context)) {
       clazz = MetaProperty.class;
     } else if ("indexed-property".equals(context)) {
