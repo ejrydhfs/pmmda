@@ -20,10 +20,10 @@ import java.sql.Timestamp;
 public interface DataObject extends HasId {
   /**
    * List of simple system properties which should not be handled through
-   * introspection.
+   * introspection. The names have to be ordered!
    */
   static final String[] SYSTEM_SIMPLE_PROPERTIES = { "class", "id", "modified",
-      "new", "timestamp" };
+      "new", "propertyInstanceManager", "timestamp"  };
   
   /**
    * List of indexed framework properties which should not be handled through

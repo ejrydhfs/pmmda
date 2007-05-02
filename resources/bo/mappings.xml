@@ -64,9 +64,19 @@
       <tag name="bo-container-class" type="java.lang.String"
         context="indexed-property" default-value="java.util.ArrayList"
         description="defines the implementation of the container class." />
+    
       <tag name="bo-key-class" type="java.lang.String"
         context="indexed-property"
         description="defines the class of the key used to order the collection." />
+      
+      <tag name="bo-extendable" type="boolean"
+        context="class" default-value="false"
+        description="marks a class as extendable" />
+        
+      <tag name="bo-extendable" type="boolean"
+        context="package" default-value="false"
+        description="marks a class as extendable" />
+    
     </tags>
     <obsolete-tags>
       <obsolete-tag name="bo-constructor-parameter" type="boolean"

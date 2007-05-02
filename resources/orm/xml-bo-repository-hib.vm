@@ -118,6 +118,16 @@
 #end
 #end
 #end
+
+<!-- data objects -->
+#if(${class.booleanValueOfTag("bo-extendable")})
+  <list name="propertyValues" table="${table}PROPERTYVALUES">
+			<key column="listId" />
+			<list-index column="sortOrder" />
+			<one-to-many class="ch.bbv.dynamicproperties.core.PropertyValue" />
+  </list>
+#end
+
   </class>
 #end
 #end

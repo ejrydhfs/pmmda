@@ -20,6 +20,9 @@ import org.apache.commons.logging.LogFactory;
 
 import ch.bbv.dog.DataObject;
 import ch.bbv.dog.DataObjectType;
+import ch.bbv.dynamicproperties.core.DynamicProperty;
+import ch.bbv.dynamicproperties.core.Property;
+import ch.bbv.dynamicproperties.core.PropertyValue;
 import ch.bbv.explorer.NodePropertiesView;
 import ch.bbv.explorer.UiNodeType;
 import ch.bbv.explorer.resources.Messages;
@@ -44,226 +47,284 @@ import com.jgoodies.forms.layout.FormLayout;
  * </ul>
  * The formatted text field features are used to check if the inputed data have
  * the expected format. The class is well behaved in case the bean is null.
+ * 
  * @author MarcelBaumann
  * @version $Revision$
  */
 public class GenericNodePropertiesView extends NodePropertiesView {
-  /**
-   * Serial version identifier coded as back compatibility date.
-   */
-  private static final long serialVersionUID = 20041201;
+	/**
+	 * Serial version identifier coded as back compatibility date.
+	 */
+	private static final long serialVersionUID = 20041201;
 
-  /**
-   * Logger for all instances of the class.
-   */
-  private static Log log = LogFactory.getLog(GenericNodePropertiesView.class);
+	/**
+	 * Logger for all instances of the class.
+	 */
+	private static Log log = LogFactory.getLog(GenericNodePropertiesView.class);
 
-  /**
-   * List of all views for simple properties.
-   */
-  private List<PrimitivePropertyView> primitivePropertyViews;
+	/**
+	 * List of all views for simple properties.
+	 */
+	private List<PrimitivePropertyView> primitivePropertyViews;
 
-  /**
-   * List of all views for simple data object properties.
-   */
-  private List<DataObjectPropertyView> simplePropertyViews;
+	/**
+	 * List of all views for simple data object properties.
+	 */
+	private List<DataObjectPropertyView> simplePropertyViews;
 
-  /**
-   * List of all views for indexed properties.
-   */
-  private List<IndexedPropertyView> indexedPropertyViews;
+	/**
+	 * List of all views for indexed properties.
+	 */
+	private List<IndexedPropertyView> indexedPropertyViews;
 
-  /**
-   * List of all views for mapped properties.
-   */
-  private List<MappedPropertyView> mappedPropertyViews;
+	/**
+	 * List of all views for mapped properties.
+	 */
+	private List<MappedPropertyView> mappedPropertyViews;
+	
+	private List<DynamicPropertyView> dynamicPropertyViews;
 
-  /**
-   * Class of the instance displayed in the generic properties view.
-   */
-  private Class type;
+	/**
+	 * Class of the instance displayed in the generic properties view.
+	 */
+	private Class type;
 
-  /**
-   * Default constructor of the class.
-   */
-  public GenericNodePropertiesView() {
-    primitivePropertyViews = new ArrayList<PrimitivePropertyView>();
-    simplePropertyViews = new ArrayList<DataObjectPropertyView>();
-    indexedPropertyViews = new ArrayList<IndexedPropertyView>();
-    mappedPropertyViews = new ArrayList<MappedPropertyView>();
-  }
+	/**
+	 * Default constructor of the class.
+	 */
+	public GenericNodePropertiesView() {
+		primitivePropertyViews = new ArrayList<PrimitivePropertyView>();
+		simplePropertyViews = new ArrayList<DataObjectPropertyView>();
+		indexedPropertyViews = new ArrayList<IndexedPropertyView>();
+		mappedPropertyViews = new ArrayList<MappedPropertyView>();
+		dynamicPropertyViews = new ArrayList<DynamicPropertyView>();
+	}
 
-  @Override
-  public void populateView() {
-    DataObject bean = getModel().getDataObject();
-    if (type == null) {
-      // first time the dialog is populated, the visible fields are infered
-      // and the associated user interface items are created.
-      type = bean.getClass();
-      if (log.isDebugEnabled()) {
-        log.debug("Creating generic node properties view " + type.getName());
-      }
-      retrieveProperties(bean);
-      initialize();
-    }
-    for (PropertyView view : primitivePropertyViews) {
-      view.setModel(bean);
-    }
-    for (DataObjectPropertyView view : simplePropertyViews) {
-      view.setModel(bean);
-    }
-    for (IndexedPropertyView view : indexedPropertyViews) {
-      view.setModel(bean);
-    }
-    for (MappedPropertyView view : mappedPropertyViews) {
-      view.setModel(bean);
-    }
-  }
+	@Override
+	public void populateView() {
+		DataObject bean = getModel().getDataObject();
+		if (type == null) {
+			// first time the dialog is populated, the visible fields are
+			// infered
+			// and the associated user interface items are created.
+			type = bean.getClass();
+			if (log.isDebugEnabled()) {
+				log.debug("Creating generic node properties view "
+						+ type.getName());
+			}
+			
+			retrieveProperties(bean);
+			initialize();
+		}
+		for (PropertyView view : primitivePropertyViews) {
+			view.setModel(bean);
+		}
+		for (DataObjectPropertyView view : simplePropertyViews) {
+			view.setModel(bean);
+		}
+		for (IndexedPropertyView view : indexedPropertyViews) {
+			view.setModel(bean);
+		}
+		for (MappedPropertyView view : mappedPropertyViews) {
+			view.setModel(bean);
+		}	
+		for (DynamicPropertyView view : dynamicPropertyViews) {
+			view.setModel(bean);
+		}	
+	}
 
-  @Override
-  public void commitChanges() {
-    for (PropertyView view : primitivePropertyViews) {
-      view.update();
-    }
-  }
+	@Override
+	public void commitChanges() {
+		for (PropertyView view : primitivePropertyViews) {
+			view.update();
+		}
+	}
 
-  @Override
-  public void cancelChanges() {
-    // no operations
-  }
+	@Override
+	public void cancelChanges() {
+		// no operations
+	}
 
-  @Override
-  public void setViewEditable(boolean editable) {
-    for (PropertyView view : primitivePropertyViews) {
-      view.setEditable(editable);
-    }
-  }
+	@Override
+	public void setViewEditable(boolean editable) {
+		for (PropertyView view : primitivePropertyViews) {
+			view.setEditable(editable);
+		}
+	}
 
-  /**
-   * Initializes the form layout of the generic view.
-   */
-  protected void initialize() {
-    FormLayout layout = new FormLayout("right:pref, 3dlu, pref", "");
-    DefaultFormBuilder builder = new DefaultFormBuilder(layout);
-    builder.setDefaultDialogBorder();
-    generateRows(builder, Messages.titleNodeViewSimpleProperties,
-        primitivePropertyViews);
-    generateRows(builder, Messages.titleNodeViewDataObjects,
-        simplePropertyViews);
-    generateRows(builder, Messages.titleNodeViewIndexedProperties,
-        indexedPropertyViews);
-    generateRows(builder, Messages.titleNodeViewMappedProperties,
-        mappedPropertyViews);
-    JPanel panel = builder.getPanel();
-    add(panel);
-  }
+	/**
+	 * Initializes the form layout of the generic view.
+	 */
+	protected void initialize() {
+		FormLayout layout = new FormLayout("right:pref, 3dlu, pref", "");
+		DefaultFormBuilder builder = new DefaultFormBuilder(layout);
+		builder.setDefaultDialogBorder();
+		generateRows(builder, Messages.titleNodeViewSimpleProperties,
+				primitivePropertyViews);
+		generateRows(builder, Messages.titleNodeViewDataObjects,
+				simplePropertyViews);
+		generateRows(builder, Messages.titleNodeViewIndexedProperties,
+				indexedPropertyViews);
+		generateRows(builder, Messages.titleNodeViewMappedProperties,
+				mappedPropertyViews);
+		generateDynamicRows(builder, "DynamicProps", dynamicPropertyViews);
+	
+		JPanel panel = builder.getPanel();
+		add(panel);
+	}
 
-  /**
-   * Generates the rows for the form layout of the generic view.
-   * @param builder form builder to use
-   * @param seperator the human readable seperators for a sub form
-   * @param properties properties to display in the form
-   */
-  protected void generateRows(DefaultFormBuilder builder, String seperator,
-      List<? extends PropertyView> properties) {
-    int size = properties.size();
-    if (size > 0) {
-      builder.appendSeparator(seperator);
-      for (int i = 0; i < size; i++) {
-        PropertyView view = properties.get(i);
-        builder.append(view.getLabel(), view.getComponent());
-      }
-    }
-  }
+	/**
+	 * Generates the rows for the form layout of the generic view.
+	 * 
+	 * @param builder
+	 *            form builder to use
+	 * @param seperator
+	 *            the human readable seperators for a sub form
+	 * @param properties
+	 *            properties to display in the form
+	 */
+	protected void generateRows(DefaultFormBuilder builder, String seperator,
+			List<? extends PropertyView> properties) {
+		int size = properties.size();
+		if (size > 0) {
+			builder.appendSeparator(seperator);
+			for (int i = 0; i < size; i++) {
+				PropertyView view = properties.get(i);
+				builder.append(view.getLabel(), view.getComponent());
+			}
+		}
+	}
 
-  /**
-   * Retrieves the properties of the data object. The following rules are
-   * defined.
-   * <ul>
-   * <li>Indexed property descriptors are only added if the type of their
-   * elements is not a data object type. Indexed properties with data objects
-   * are always displayed in the navigator.</li>
-   * <li>Mapped property descriptors are only added if the type of their
-   * elements is not a data object type. Mapped properties with data objects are
-   * always displayed in the navigator.</li>
-   * <li>Simple properties are displayed if they contains at most one item or
-   * if their elements are not data objects.</li>
-   * </ul>
-   * @param object data object which properties should be infered
-   */
-  protected void retrieveProperties(DataObject object) {
-    type = object.getClass();
-    PropertyDescriptor[] descriptors = PropertyUtils
-        .getPropertyDescriptors(object);
-    for (int i = 0; i < descriptors.length; i++) {
-      PropertyDescriptor descriptor = descriptors[i];
-      String name = descriptor.getName();
-      String displayName = TextUtilities.fromCamelCase(descriptor
-          .getDisplayName());
-      if (descriptor instanceof IndexedPropertyDescriptor) {
-        continue;
-      } else if (descriptor instanceof MappedPropertyDescriptor) {
-        MappedPropertyView propertyView = new MappedPropertyView(name,
-            descriptor.getPropertyType(), displayName);
-        mappedPropertyViews.add(propertyView);
-      } else {
-        if (Arrays.binarySearch(DataObject.SYSTEM_SIMPLE_PROPERTIES, descriptor
-            .getName()) < 0) {
-          Class clazz = descriptor.getPropertyType();
-          if (containsInterface(clazz.getInterfaces(),
-              java.util.Collection.class)
-              || containsInterface(clazz.getInterfaces(), java.util.Map.class)) {
-            // handle indexed or mapped properties with multiple items.
-            if (Arrays.binarySearch(DataObject.SYSTEM_INDEXED_PROPERTIES, name) < 0) {
-              if (getNode().getNodeType().getRelation(name) == null) {
-                IndexedPropertyView propertyView = new IndexedPropertyView(
-                    name, descriptor.getPropertyType(), displayName);
-                indexedPropertyViews.add(propertyView);
-              }
-            }
+	/**
+	 * Generates the rows for the form layout of the generic view of dynamic
+	 * properties
+	 * 
+	 * @param builder
+	 *            the form builder
+	 * @param seperator
+	 *            the human readable sepeartors for a sub form
+	 * @param properties
+	 *            properties to display in the form
+	 */
+	protected void generateDynamicRows(DefaultFormBuilder builder,
+			String seperator, List<? extends PropertyView> properties) {
+		if (properties != null && !properties.isEmpty()) {
+			builder.appendSeparator(seperator);
+			for (PropertyView value : properties) {
+				builder.append(value.getLabel(), value.getComponent());
+			}
+		}
+	}
 
-          } else {
-            // handle simple properties with at most one item.
-            if (containsInterface(clazz.getInterfaces(), DataObject.class)) {
-              UiNodeType nodeType = getModel().getNodeType().getFactory()
-                  .getNodeTypeForBo(clazz);
-              if (nodeType != null) {
-                // only registered data object types are added
-                DataObjectType type = nodeType.getDataObjectType();
-                DataObjectPropertyView view = new DataObjectPropertyView(name,
-                    clazz, displayName, type);
-                simplePropertyViews.add(view);
-              } else {
-                if (log.isDebugEnabled()) {
-                  log.debug("Data object simple property is not available "
-                      + type.getName() + ":" + descriptor.getName());
-                }
-              }
-            } else {
-              PrimitivePropertyView view = new PrimitivePropertyView(name,
-                  clazz, displayName);
-              primitivePropertyViews.add(view);
-            }
-          }
-        }
-      }
-    }
-  }
+	/**
+	 * Retrieves the properties of the data object. The following rules are
+	 * defined.
+	 * <ul>
+	 * <li>Indexed property descriptors are only added if the type of their
+	 * elements is not a data object type. Indexed properties with data objects
+	 * are always displayed in the navigator.</li>
+	 * <li>Mapped property descriptors are only added if the type of their
+	 * elements is not a data object type. Mapped properties with data objects
+	 * are always displayed in the navigator.</li>
+	 * <li>Simple properties are displayed if they contains at most one item or
+	 * if their elements are not data objects.</li>
+	 * </ul>
+	 * 
+	 * @param object
+	 *            data object which properties should be infered
+	 */
+	protected void retrieveProperties(DataObject object) {
+		type = object.getClass();
+		PropertyDescriptor[] descriptors = PropertyUtils
+				.getPropertyDescriptors(object);
+		for (int i = 0; i < descriptors.length; i++) {
+			PropertyDescriptor descriptor = descriptors[i];
+			String name = descriptor.getName();
+			String displayName = TextUtilities.fromCamelCase(descriptor
+					.getDisplayName());
+			if (descriptor instanceof IndexedPropertyDescriptor) {
+				continue;
+			} else if (descriptor instanceof MappedPropertyDescriptor) {
+				MappedPropertyView propertyView = new MappedPropertyView(name,
+						descriptor.getPropertyType(), displayName);
+				mappedPropertyViews.add(propertyView);
+			} else {
+				if (Arrays.binarySearch(DataObject.SYSTEM_SIMPLE_PROPERTIES,
+						descriptor.getName()) < 0) {
+					Class clazz = descriptor.getPropertyType();
+					if (containsInterface(clazz.getInterfaces(),
+							java.util.Collection.class)
+							|| containsInterface(clazz.getInterfaces(),
+									java.util.Map.class)) {
+						// handle indexed or mapped properties with multiple
+						// items.
+						if (Arrays.binarySearch(
+								DataObject.SYSTEM_INDEXED_PROPERTIES, name) < 0) {
+							if (getNode().getNodeType().getRelation(name) == null) {
+								IndexedPropertyView propertyView = new IndexedPropertyView(
+										name, descriptor.getPropertyType(),
+										displayName);
+								indexedPropertyViews.add(propertyView);
+							}
+						}
 
-  /**
-   * Returns true if the given class is contained in the interface list.
-   * @param interfaces list of interfaces to check
-   * @param clazz search interface class definition
-   * @return true if the interface was found otherwise false
-   * @pre (interfaces != null) && (clazz != null)
-   */
-  protected boolean containsInterface(Class[] interfaces, Class clazz) {
-    assert (interfaces != null) && (clazz != null);
-    for (int i = 0; i < interfaces.length; i++) {
-      if (clazz == interfaces[i]) {
-        return true;
-      }
-    }
-    return false;
-  }
+					} else {
+						// handle simple properties with at most one item.
+						if (containsInterface(clazz.getInterfaces(),
+								DataObject.class)) {
+							UiNodeType nodeType = getModel().getNodeType()
+									.getFactory().getNodeTypeForBo(clazz);
+							if (nodeType != null) {
+								// only registered data object types are added
+								DataObjectType type = nodeType
+										.getDataObjectType();
+								DataObjectPropertyView view = new DataObjectPropertyView(
+										name, clazz, displayName, type);
+								simplePropertyViews.add(view);
+							} else {
+								if (log.isDebugEnabled()) {
+									log
+											.debug("Data object simple property is not available "
+													+ type.getName()
+													+ ":"
+													+ descriptor.getName());
+								}
+							}
+						} else {
+							PrimitivePropertyView view = new PrimitivePropertyView(
+									name, clazz, displayName);
+							primitivePropertyViews.add(view);
+						}
+					}
+				}
+			}
+		}
+		if(object instanceof DynamicProperty){
+			for(PropertyValue propertyValue:((DynamicProperty)object).getProperties()){
+				DynamicPropertyView view = new DynamicPropertyView(propertyValue);
+				dynamicPropertyViews.add(view);
+			}
+		}
+		
+	}
+
+	/**
+	 * Returns true if the given class is contained in the interface list.
+	 * 
+	 * @param interfaces
+	 *            list of interfaces to check
+	 * @param clazz
+	 *            search interface class definition
+	 * @return true if the interface was found otherwise false
+	 * @pre (interfaces != null) && (clazz != null)
+	 */
+	protected boolean containsInterface(Class[] interfaces, Class clazz) {
+		assert (interfaces != null) && (clazz != null);
+		for (int i = 0; i < interfaces.length; i++) {
+			if (clazz == interfaces[i]) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

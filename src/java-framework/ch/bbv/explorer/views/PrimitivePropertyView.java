@@ -35,7 +35,7 @@ class PrimitivePropertyView extends PropertyView {
     } else if (Boolean.class.equals(type) || Boolean.TYPE.equals(type)) {
       checkBox = new JCheckBox();
     } else if (Date.class.equals(type)) {
-      dateChooser = new JDateChooser(true);
+      dateChooser = new JDateChooser();
     } else {
       formattedText = UiSwingUtilities.getField(type);
     }
@@ -124,7 +124,7 @@ class PrimitivePropertyView extends PropertyView {
       if (value != null) {
         dateChooser.setDate((Date) value);
       } else {
-        dateChooser = new JDateChooser(true);
+        dateChooser = new JDateChooser();
       }
     } else {
       if (TypeUtilities.isPrimitiveNumber(type)) {

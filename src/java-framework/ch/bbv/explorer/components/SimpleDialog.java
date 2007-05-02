@@ -9,9 +9,18 @@ package ch.bbv.explorer.components;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 
 import ch.bbv.explorer.ExplorerUtilities;
 
@@ -82,12 +91,15 @@ public class SimpleDialog extends JDialog implements ActionListener {
     applyButton = new JButton(APPLY_BUTTON_LABEL);
     applyButton.addActionListener(this);
     JPanel panel = new JPanel(new FlowLayout());
+    
     if (displayCancel) {
       panel.add(cancelButton);
     }
+    
     if (displayApply) {
       panel.add(applyButton);
     }
+    
     panel.add(okButton);
     getContentPane().add(panel, BorderLayout.SOUTH);
     ExplorerUtilities.centerOnParent(this);
@@ -123,7 +135,7 @@ public class SimpleDialog extends JDialog implements ActionListener {
    * @param view the new view of the dialog
    */
   public void setView(JPanel view) {
-    getContentPane().add(view, BorderLayout.CENTER);
+    getContentPane().add(view, BorderLayout.NORTH);
     pack();
     ExplorerUtilities.centerOnParent(this);
   }

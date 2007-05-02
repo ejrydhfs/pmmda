@@ -1,0 +1,55 @@
+#if(${class.booleanValueOfTag("bo-extendable")})
+  /**
+   * Returns the Property value with the given name
+   * 
+   * @param name the name of the property
+   **/
+  public PropertyValue getProperty(String name){
+    for(PropertyValue value:propertyValues){
+      if(value.getProperty().getName().equals(name)){
+        value.removePropertyChangeListener(this);
+	    value.addPropertyChangeListener(this);
+	    return value;
+      }
+    }
+    return null;
+  }
+  
+  /**
+   * Returns the list of all properties
+   * @return the list of all properties
+   **/
+  public List<PropertyValue> getProperties(){
+  	
+  	for(PropertyValue value:propertyValues){
+	  value.removePropertyChangeListener(this);
+	  value.addPropertyChangeListener(this);
+	}
+  	return propertyValues;
+  }
+  
+  public void propertyChange(PropertyChangeEvent event) {
+	setModified(true);
+  }
+#end  
+
+#if(${class.booleanValueOfTag("bo-is-root")} && ${package.booleanValueOfTag("bo-extendable")})
+  
+  /**
+   * Returns the property instance manager
+   * @return the property instance manager
+   **/
+  public PropertyInstanceManager getPropertyInstanceManager(){
+    return propertyInstanceManager;
+  }
+  
+  /**
+   * Sets the property instance manager
+   * @param manager the property instance manager
+   **/
+  public void setPropertyInstanceManager(PropertyInstanceManager manager){
+    this.propertyInstanceManager = manager;
+  }
+  
+#end
+  

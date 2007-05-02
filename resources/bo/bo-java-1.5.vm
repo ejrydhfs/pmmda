@@ -24,12 +24,29 @@ package ${package.getAttribute("bo-mo-package")};
 #hasDataObjectAncestor($class $hasAncestors)
 #set($ancestors=${class.retrieveAncestors()})
 #set($interfaces=${class.retrieveInterfaces()})
+
+
+
 #set($hasAncestors = (${ancestors.size()} > 0))
 ## generate the import list of the class
 #set($imports=${cartridge.retrieveImportStatementsForBo(${class}, ${package.getAttribute("bo-mo-package")})})
 #set($foo=${imports.addClassName("ch.bbv.dog.DataObject")})
 #set($foo=${imports.addClassName("java.util.Map")})
 #set($foo=${imports.addClassName("java.util.HashMap")})
+
+
+## Import for dynamic properties
+#if(${class.booleanValueOfTag("bo-extendable")})
+  #set($foo=${imports.addClassName("ch.bbv.dynamicproperties.core.PropertyValue")})
+  #set($foo=${imports.addClassName("ch.bbv.dynamicproperties.DataObjectManager")})
+  #set($foo=${imports.addClassName("ch.bbv.dynamicproperties.core.DynamicProperty")})
+  #set($foo=${imports.addClassName("java.util.List")})
+#end
+
+#if(${class.booleanValueOfTag("bo-is-root")} && ${package.booleanValueOfTag("bo-extendable")})
+  #set($foo=${imports.addClassName("ch.bbv.dynamicproperties.PropertyInstanceManager")})
+#end
+
 #if(!${hasAncestors})
 #set($foo=${imports.addClassName("java.beans.PropertyChangeListener")})
 #set($foo=${imports.addClassName("java.beans.VetoableChangeListener")})
@@ -51,6 +68,7 @@ package ${package.getAttribute("bo-mo-package")};
 #set($visitorPackageName="${visitorPackageName}.Visitor")
 #set($foo=${imports.addClassName(${visitorPackageName})})
 #end
+
 #set($importStatements=${imports.getImportStatements(4)})
 #foreach($importStatement in $importStatements) 
 import $importStatement;
@@ -72,11 +90,20 @@ $line
 #set($extends="")
 #end
 #set($implements=" implements ")
+
 #foreach ($interface in $interfaces)
-#set($interfaceName=${interface.getAttribute("bo-mo-class")})
-#set($implements="${implements}${interfaceName}, ")
+  #set($interfaceName=${interface.getAttribute("bo-mo-class")})
+  #set($implements="${implements}${interfaceName}, ")
 #end
+
 #set($implements="${implements}DataObject")
+
+#if (${class.booleanValueOfTag("bo-extendable")})
+  #set($implements="${implements}, DynamicProperty")  
+#end
+
+
+
 ${class.retrieveVisibilityText()} class ${className}${extends}${implements} {
 
 /* %% USER DEFINED DECLARATION START %% */
@@ -141,6 +168,21 @@ $line
 #end
 #end
 #end
+
+##@uk
+## private list for dynamic properties
+#if (${class.booleanValueOfTag("bo-extendable")})
+  /**
+   * List to store dynamic properties. Dynamic properties implements the DataObject interface
+   * to be compatible with the DataObject Graph.
+   **/
+   private List<PropertyValue> propertyValues;
+#end
+
+#if(${class.booleanValueOfTag("bo-is-root")} && ${package.booleanValueOfTag("bo-extendable")})
+   private PropertyInstanceManager propertyInstanceManager;
+#end
+
 #if(!${hasAncestors})
 
   /** 
@@ -183,6 +225,13 @@ $line
 #set($itemType=${aggregation.retrieveTypeClassName()})
     ${aggregation.nameFirstLower()} = #containerCreation($aggregation);
 #end
+
+## @uk
+## Create instance of the list for storing property values
+#if (${class.booleanValueOfTag("bo-extendable")})
+	this.propertyValues = DataObjectManager.instance().createProperties(this.getClass());
+#end
+
 #if(!${hasAncestors})
 #if (${class.getAttribute("bo-changeable")} == "true")
     changeSupport = new PropertyChangeSupport(this);
@@ -982,6 +1031,12 @@ $line
 #end
 #end
   }  
+  
+## @uk
+## Create instance of the list for storing property values
+#if (${class.booleanValueOfTag("bo-extendable")} || ${class.booleanValueOfTag("bo-is-root")})
+	#parse("bo/bo-java-dynamic-properties.vm")
+#end
 
 /* %% USER DEFINED PROTECTED/PRIVATE CODE START %% */
 #set($lines=${blocks.get("private definitions")})
