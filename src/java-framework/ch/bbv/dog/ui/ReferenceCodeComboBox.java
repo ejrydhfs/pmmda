@@ -140,8 +140,8 @@ public class ReferenceCodeComboBox extends JComboBox {
     int index = getSelectedIndex();
     ReferenceCode code = null;
     if (hasEmptyValue) {
-      if (index > 1) {
-        code = codes.get(index + 1);
+      if (index > 0) {
+        code = codes.get(index - 1);
       }
     } else {
       code = codes.get(index);
