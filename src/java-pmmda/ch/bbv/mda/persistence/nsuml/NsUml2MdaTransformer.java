@@ -5,20 +5,8 @@
  */
 package ch.bbv.mda.persistence.nsuml;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 import java.util.zip.ZipInputStream;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -28,16 +16,8 @@ import org.apache.commons.logging.LogFactory;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import ru.novosoft.uml.foundation.core.MAbstraction;
-import ru.novosoft.uml.foundation.core.MAssociation;
-import ru.novosoft.uml.foundation.core.MAssociationEnd;
-import ru.novosoft.uml.foundation.core.MAttribute;
-import ru.novosoft.uml.foundation.core.MClass;
-import ru.novosoft.uml.foundation.core.MClassifier;
-import ru.novosoft.uml.foundation.core.MDataType;
-import ru.novosoft.uml.foundation.core.MGeneralization;
-import ru.novosoft.uml.foundation.core.MInterface;
-import ru.novosoft.uml.foundation.core.MModelElement;
+import ru.novosoft.uml.behavior.collaborations.MAssociationEndRole;
+import ru.novosoft.uml.foundation.core.*;
 import ru.novosoft.uml.foundation.data_types.MAggregationKind;
 import ru.novosoft.uml.foundation.data_types.MExpression;
 import ru.novosoft.uml.foundation.data_types.MMultiplicity;
@@ -48,19 +28,7 @@ import ru.novosoft.uml.model_management.MModel;
 import ru.novosoft.uml.model_management.MPackage;
 import ru.novosoft.uml.xmi.IncompleteXMIException;
 import ru.novosoft.uml.xmi.XMIWriter;
-import ch.bbv.mda.MetaClass;
-import ch.bbv.mda.MetaDatatype;
-import ch.bbv.mda.MetaElement;
-import ch.bbv.mda.MetaIndexedProperty;
-import ch.bbv.mda.MetaModel;
-import ch.bbv.mda.MetaPackage;
-import ch.bbv.mda.MetaProperty;
-import ch.bbv.mda.MetaView;
-import ch.bbv.mda.Multiplicity;
-import ch.bbv.mda.Stereotype;
-import ch.bbv.mda.TaggedValue;
-import ch.bbv.mda.UmlConstants;
-import ch.bbv.mda.VisibilityCode;
+import ch.bbv.mda.*;
 import ch.bbv.mda.operators.MdaUtilities;
 import ch.bbv.mda.persistence.ExternalTransformer;
 import ch.bbv.mda.persistence.FilterIterator;
@@ -172,8 +140,6 @@ public class NsUml2MdaTransformer extends ExternalTransformer implements ViewCon
       MPackage mSubPackage = i.next();
       extractPackage(mSubPackage, target);
     }
-    extractRelations(source, target);
-    postProcessModel(target);
     for (Iterator<MClass> i = new FilterIterator<MClass>(source
         .getOwnedElements(), MClass.class); i.hasNext();) {
       MClassifier mClass = i.next();
@@ -184,8 +150,9 @@ public class NsUml2MdaTransformer extends ExternalTransformer implements ViewCon
       MClassifier mClass = i.next();
       extractClass(mClass, target);
     }
+    extractRelations(source, target);
+    postProcessModel(target);
     extractViews(target);
-    
   }
 
 
@@ -446,13 +413,6 @@ public class NsUml2MdaTransformer extends ExternalTransformer implements ViewCon
     return tag;
   }
 
-  private void extractRelations(MModel source, MetaModel target) {
-    for (Iterator<MPackage> i = new FilterIterator<MPackage>(source
-        .getOwnedElements(), MPackage.class); i.hasNext();) {
-      extractRelations(target, i.next());
-    }
-  }
-
   /**
    * Extracts all inheritance, implement, composition and aggregation relations
    * defined in the given package and its children. Generalizations are
@@ -460,11 +420,11 @@ public class NsUml2MdaTransformer extends ExternalTransformer implements ViewCon
    * terminology. The relations are mapped to the model of modern programming
    * languages. Aggregations with a upper cardinality of 1 are mapped to simple
    * properties, all others are mapped to indexed properties.
-   * @param target meta model to complete with the defined relations.
    * @param mPackage package, which relations should be extracted.
+   * @param target meta model to complete with the defined relations.
    * @pre (target != null) && (mPackage != null)
    */
-  private void extractRelations(MetaModel target, MPackage mPackage) {
+  private void extractRelations(MPackage mPackage, MetaModel target) {
     assert (target != null) && (mPackage != null);
     for (Iterator<MGeneralization> i = new FilterIterator<MGeneralization>(
         mPackage.getOwnedElements(), MGeneralization.class); i.hasNext();) {
@@ -538,12 +498,15 @@ public class NsUml2MdaTransformer extends ExternalTransformer implements ViewCon
       if (owned != null) {
         property.setTypeName(owned.getQualifiedName());
       }
+      property.setIsRelation(true);
       if (e1.getAggregation() == MAggregationKind.AGGREGATE) {
         property.setAggregation(true);
       }
       if (e1.getAggregation() == MAggregationKind.COMPOSITE) {
         property.setComposition(true);
       }
+      property.setIsNavigableToContext(e1.isNavigable());
+      property.setIsNavigableToClassifier(e2.isNavigable());
       extractStereotypeAndTags(association, property);
       if (multiplicity != null) {
         property.setMultiplicity(multiplicity);
@@ -561,7 +524,7 @@ public class NsUml2MdaTransformer extends ExternalTransformer implements ViewCon
 
     for (Iterator<MPackage> i = new FilterIterator<MPackage>(mPackage
         .getOwnedElements(), MPackage.class); i.hasNext();) {
-      extractRelations(target, i.next());
+      extractRelations(i.next(), target);
     }
   }
 
