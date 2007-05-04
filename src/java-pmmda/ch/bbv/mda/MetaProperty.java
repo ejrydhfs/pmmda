@@ -56,6 +56,22 @@ public class MetaProperty extends MetaMember {
    */
   private boolean composition;
   
+  /**
+   * Indicates whether this MetaProperty is a pure property or a reference to a classifier.
+   * True indicates a relation, false indicates a member.
+   */
+  private boolean isRelation;
+  
+  /**
+   * True indicates that one can navigate from the property towards my context (MetaClass).
+   */
+  private boolean isNavigableToContext;
+  
+  /**
+   * True indicates that one can navigate towards the property.
+   */
+  private boolean isNavigableToClassifier;
+  
 
   @Override
   public MetaProperty copy(){
@@ -76,6 +92,9 @@ public class MetaProperty extends MetaMember {
 	  clone.volatiles = this.volatiles;
 	  clone.setStatic(this.isStatic());
 	  clone.setSystem(this.isSystem());
+	  clone.setIsRelation(this.isRelation);
+	  clone.setIsNavigableToClassifier(this.isNavigableToClassifier);
+	  clone.setIsNavigableToContext(this.isNavigableToContext);
 	  return clone;
   }
 
@@ -194,6 +213,54 @@ public class MetaProperty extends MetaMember {
     this.composition = composition;
   }
 
+  /**
+   * Returns true if this MetaProperty is referenced by a relation, false if it is a member.
+   * @return true if relation, false if a real property.
+   */
+  public boolean isRelation() {
+  	return isRelation;
+  }
+  
+  /**
+   * True if it is a true relation or reference, false if it is a true member.
+   * @param isRelation set to true if relation, otherwise false.
+   */
+  public void setIsRelation(boolean isRelation) {
+  	this.isRelation = isRelation;
+  }
+  
+  /**
+   * True if one can navigate from related property to my context. In case of a true member this has to be false.
+   * @return true if navigable to my context, false if not navigable or if true member.
+   */
+  public boolean isNavigableToContext() {
+  	return isNavigableToContext;
+  }
+  
+  /**
+   * True if one can navigate from property to the containing context (class). False if not or if this property is not part of a relation.
+   * @param isNavigableToContext true if navigable.
+   */
+  public void setIsNavigableToContext(boolean isNavigableToContext) {
+  	this.isNavigableToContext = isNavigableToContext;
+  }
+  
+  /**
+   * True if one can navigate from the containing context (class) to the property (classifier). False if not or if this property is not part of a relation.
+   * @return true if navigable.
+   */
+  public boolean isNavigableToClassifier() {
+  	return isNavigableToClassifier;
+  }
+
+  /**
+   * True if one can navigate from the containing context (class) to the property (classifier). False if not or if this property is not part of a relation.
+   * @param isNavigableToClassifier true if navigable.
+   */
+  public void setIsNavigableToClassifier(boolean isNavigableToClassifier) {
+  	this.isNavigableToClassifier = isNavigableToClassifier;
+  }
+  
   /**
    * Implements the visitor pattern.
    * @param visitor visitor to process
