@@ -40,6 +40,7 @@ public class PreferencesDialog extends SimpleDialog {
    */
   public PreferencesDialog(JFrame owner) {
     super(owner);
+    setTitle("Preferences");
     JPanel content = new JPanel(new BorderLayout());
     tabbedPane = new JTabbedPane();
     tabbedPane.addTab("Cartridges", new CartridgesPanel(CartridgeFactory
