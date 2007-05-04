@@ -81,8 +81,12 @@ public class Mda2NsUmlTransformer {
   public void synchronize(MetaModel source, MModel target) {
     assert (source != null) && (target != null);
     mModel = target;
-    target.setName(source.getName());
     this.metaModel = source;
+    target.setName(source.getName());
+    elements.put(source, target);
+    extractTags(source, target);
+    extractStereotypeAndVisibility(source, target);
+
     extractDataTypes(source, target);
     for (MetaPackage item : source.getPackages()) {
       extractPackage(item, target);
