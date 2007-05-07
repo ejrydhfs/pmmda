@@ -5,6 +5,7 @@
  */
 package ch.bbv.explorer;
 
+import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,7 +57,8 @@ public abstract class NodePropertiesView extends JPanel {
    * Default constructor of the class.
    */
   public NodePropertiesView() {
-    nodePropertiesSubViews = new ArrayList<NodePropertiesView>();
+    nodePropertiesSubViews = new ArrayList<NodePropertiesView>();   
+    setLayout(new BorderLayout());
   }
 
   /**

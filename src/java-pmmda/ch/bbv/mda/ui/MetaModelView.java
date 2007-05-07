@@ -5,6 +5,7 @@
  */
 package ch.bbv.mda.ui;
 
+import java.awt.BorderLayout;
 import java.io.File;
 
 import javax.swing.JPanel;
@@ -58,7 +59,7 @@ public class MetaModelView extends NodePropertiesView {
     root.setEditable(false);
     filename = new JTextField(TEXT_FIELD_SIZE);
     filename.setEditable(false);
-    add(buildPanel());
+    add(buildPanel(), BorderLayout.CENTER);
   }
 
   @Override
@@ -109,6 +110,7 @@ public class MetaModelView extends NodePropertiesView {
     JPanel panel = builder.getPanel();
     ValidationComponentUtils.setMandatory(name, true);
     ValidationComponentUtils.updateComponentTreeMandatoryBorder(panel);
+    
     return panel;
   }
 }
