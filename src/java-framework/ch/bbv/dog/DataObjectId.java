@@ -90,6 +90,9 @@ public final class DataObjectId implements Serializable {
    * @inheritDoc Object#hashCode
    */
   public int hashCode() {
+	if(id == null){
+	  return super.hashCode();
+	}
     return id.hashCode() ^ clazz.hashCode();
   }
 }

@@ -86,7 +86,7 @@ public class CollectFunctor implements DoFunctor {
    * timestamp.
    * @return list of collected updates.
    */
-  public List getUpdates() {
+  public List<DataObjectUpdate> getUpdates() {
     for (DataObjectUpdate update : updates) {
       DataObject object = update.getObject();
       update.setId(object.getId());
@@ -102,9 +102,9 @@ public class CollectFunctor implements DoFunctor {
    * @param dataObjects data object list to compare to.
    * @return the list of missing data objects from the collected ones.
    */
-  public List getMissingObjectsFrom(List<DataObject> dataObjects) {
+  public List<DataObject> getMissingObjectsFrom(List<DataObject> dataObjects) {
     List<DataObject> deleted = new ArrayList<DataObject>();
-    Map ids = createIds(dataObjects);
+    Map ids = createIds(objects);
     for (DataObject original : dataObjects) {
       if (!ids.containsKey(new DataObjectId(original))) {
         deleted.add(original);

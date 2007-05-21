@@ -19,6 +19,7 @@ import ch.bbv.dog.DataObjectUpdate;
 import ch.bbv.dog.LightweightObject;
 import ch.bbv.dog.persistence.CollectFunctor;
 import ch.bbv.dog.persistence.PersistenceHandler;
+import ch.bbv.dynamicproperties.core.Property;
 
 /**
  * The data object persistence handler retrieves and stores data object graphs
@@ -93,16 +94,16 @@ public class PersistenceHandlerHib implements PersistenceHandler {
 	public List<DataObject> retrieve(String datasource, Class clazz,
 			String constraints) {
 		assert (datasource != null) && (clazz != null);
-		if (constraints != null) {
-			// FIXME throw new RuntimeException("retrieve: constraints not
-			// implemented yet!");
-		}
+	
 		Session session = databaseMgr.getDatabase(datasource)
 				.getCurrentSession();
 		session.beginTransaction();
 		Criteria criteria = session.createCriteria(clazz);
+		
 		List<DataObject> result = (List<DataObject>) (criteria.list());
+		
 		session.getTransaction().commit();
+		
 		return result;
 	}
 
@@ -121,16 +122,12 @@ public class PersistenceHandlerHib implements PersistenceHandler {
 	public List<LightweightObject> retrieveLw(String datasource, Class clazz,
 			String constraints) {
 		assert (datasource != null) && (clazz != null);
-		if (constraints != null) {
-			// FIXME throw new RuntimeException("retrieveLW: constraints not
-			// implemented yet!");
-		}
+		
 		Session session = databaseMgr.getDatabase(datasource)
 				.getCurrentSession();
 		session.beginTransaction();
 		Criteria criteria = session.createCriteria(clazz);
-		List<LightweightObject> result = (List<LightweightObject>) (criteria
-				.list());
+		List<LightweightObject> result = (List<LightweightObject>) (criteria.list());
 		session.getTransaction().commit();
 		return result;
 	}
@@ -151,7 +148,7 @@ public class PersistenceHandlerHib implements PersistenceHandler {
 		collect.reset();
 		DataObjectType.invokeVisitor(clazz, root, visitor);
 		List<DataObject> objects = collect.getObjects();
-		List deleted = collect.getMissingObjectsFrom(originals);
+		List<DataObject> deleted = collect.getMissingObjectsFrom(originals);
 		List<DataObject> inserted = collect.getNewObjects();
 		List<DataObject> updated = collect.getUdpatedObjects();
 
@@ -257,21 +254,35 @@ public class PersistenceHandlerHib implements PersistenceHandler {
 
 		try {
 			session.beginTransaction();
-
-			for (Object item : deletedObjects) {
-				session.delete(item);
-			}
-
-			for (DataObject item : insertedObjects) {
-				item.setModified(false);
-				session.save(item);
-			}
-
+			
 			for (DataObject item : updatedObjects) {
 				item.setModified(false);
 				session.saveOrUpdate(item);
 			}
-
+			
+			session.flush();
+			//session.clear();
+			
+			for (Object item : deletedObjects) {
+				
+				if(item instanceof Property){
+					//((Property)item).setType(null);
+				}
+				
+				session.delete(item);
+			}
+			
+			session.flush();
+			//session.clear();
+			
+			for (DataObject item : insertedObjects) {
+				item.setModified(false);
+				session.save(item);
+			}
+			
+			session.flush();
+			//session.clear();
+		
 			session.getTransaction().commit();
 		} catch (RuntimeException e) {
 			log.error(e);
