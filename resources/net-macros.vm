@@ -1,0 +1,125 @@
+#######################################################
+## Velocity template
+## 
+## Macros for pmMDA.NET
+##
+## Author: M. Pedersen
+##
+## Copyright 2005 http://www.bbv.ch
+## Licensed under the Apache License, Version 2.0 (the "License");
+##     http://www.apache.org/licenses/LICENSE-2.0
+##
+#######################################################
+## Test whether a property can be read
+## @param $element MetaElement of which the readable flag is emmited
+## @param $isReadable Contains the readable flag
+###macro(isReadable $metaElement $isReadable)
+###set($isReadable="false")
+###set($mode=${metaElement.getTaggedValue("bo-mode")})
+###if(${mode.equals("READ")} || ${mode.equals("READ_WRITE")})
+###set($isReadable="true")
+###end
+###end
+## Test whether a property can be written
+## @param $element MetaElement of which the writable flag is emmited
+## @param $isReadable Contains the wrttable flag
+###macro(isWritable $metaElement $isWritable)
+###set($isWritable="false")
+###set($mode=${metaElement.getTaggedValue("bo-mode")})
+###if(${mode.equals("WRITE")} || ${mode.equals("READ_WRITE")})
+###set($isWritable="true")
+###end
+###end
+## Emits the xml documentation of a meta element
+## @param $element MetaElement which description should be emitted
+## @param $netHelper A helper class for .net.
+## @param $spaces leading spaces for the indentation of the comment.
+#macro(emitXMLDocu $metaElement $netHelper $spaces)
+#set($lines = ${netHelper.getXmlDocLines(${metaElement})})
+#if(${lines.size()} > 0)
+${spaces}/// <summary>
+#foreach($line in $lines)
+${spaces}/// ${line}
+#end
+${spaces}/// </summary>
+#end
+#end
+## Emits the xml documentation of a meta property
+## @param $element MetaElement which description should be emitted
+## @param $spaces leading spaces for the indentation of the comment.
+#macro(emitXMLDocuForProperty $metaProperty $netHelper $spaces)
+#if(${metaProperty.canBeRead()} && ${metaProperty.canBeWritten()})
+${spaces}/// <summary>
+${spaces}/// Gets or sets the value of the ${metaProperty.getName()} property.
+${spaces}/// </summary>
+#else
+#if(${metaProperty.canBeWritten()})
+${spaces}/// <summary>
+${spaces}/// Sets the value of the ${metaProperty.getName()} property.
+${spaces}/// </summary>
+#end
+#if(${metaProperty.canBeRead()})
+${spaces}/// <summary>
+${spaces}/// Gets the value of the ${metaProperty.getName()} property.
+${spaces}/// </summary>
+#end
+#end
+#set($lines = ${netHelper.getXmlDocLines(${metaProperty})})
+#if(${lines.size()} > 0)
+${spaces}/// <remarks>
+#foreach($line in $lines)
+${spaces}/// ${line}
+#end
+${spaces}/// </remarks>
+#end
+#end
+## Returns true if the element is a lightweight object.
+#macro(isLightweightObject $element $result)
+#set($DATA_OBJECT="DataObject")
+#set($result=${DATA_OBJECT.equalsIgnoreCase(${element.getStereotype()})} && ${element.booleanValueOfAttribute(".net-lightweight")})
+#end
+## Prints the file header for C# files
+#macro(printFileHeaderCSharp)
+/* ********************************************************************** 
+ * Copyright 2005 BBV Software Services AG (http://www.bbv.ch)
+ *  
+ * Licensed under the Apache License, Version 2.0 (the "Licence"); 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * you may not use this file except in compliance with the License.
+ * **********************************************************************/
+ 
+/* 
+ * This source code was generated automatically with the pmMDA generator. Do 
+ * not modify the content. The content of the file will be overrwritten if
+ * this script is regenerated.
+ */
+#end
+## Prints the file header for MySql scripts
+#macro(printFileHeaderForMySqlScrips)
+/* 
+ * MySql DDL script for data integrity
+ * 
+ * This DDL script was generated automatically with the pmMDA generator. Do 
+ * not modify the content. The content of the file will be overrwritten if
+ * this script is regenerated.
+ */
+#end
+## Prints the file header for Microsoft Sql Server 2000 scripts
+#macro(printFileHeaderForSqlServerScrips)
+/* 
+ * Microsoft SQL Server 2000 DDL script for data integrity
+ * 
+ * This DDL script was generated automatically with the pmMDA generator. Do 
+ * not modify the content. The content of the file will be overrwritten if
+ * this script is regenerated.
+ */
+#end
+#macro(printFileHeaderForNHibernate)
+<!--
+  NHibernate configuration file
+  
+  This file was generated automatically with the pmMDA generator. Do
+  not modify the content. The content of the file will be overrwritten
+  if this configuration file is regenerated.
+-->
+#end
