@@ -27,7 +27,7 @@ public class MdaTransformer {
     }
     
     public void synchronize(MetaModel source, RoseNode target) {
-      RoseMdaVisitor roseMdaVisitor = new RoseMdaVisitor(source);
+      Mda2RoseTransformer roseMdaVisitor = new Mda2RoseTransformer(source);
       RoseWalker roseWalker = new RoseWalker(target);
       roseWalker.traverse(roseMdaVisitor);
       roseMdaVisitor.deferredQuiduUpdate();

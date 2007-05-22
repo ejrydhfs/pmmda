@@ -53,7 +53,7 @@ import com.jgoodies.validation.message.SimpleValidationMessage;
 /**
  * Traverses the Rose file and create eCore and MDA model in memory.
  */
-public class MdaRoseVisitor implements RoseVisitor
+public class Rose2MdaTransformer implements RoseVisitor
 {
   public boolean noQualify = false;
   public boolean unsettablePrimitive = "true".equals(System.getProperty("EMF_UNSETTABLE_PRIMITIVE"));
@@ -103,7 +103,7 @@ public class MdaRoseVisitor implements RoseVisitor
   protected RoseNode role1 = null;
   protected RoseNode role2 = null;
 
-  public MdaRoseVisitor(MdaRoseUtil roseUtil, MetaModel metaModel)
+  public Rose2MdaTransformer(MdaRoseUtil roseUtil, MetaModel metaModel)
   {
     super();
     this.roseUtil = roseUtil;

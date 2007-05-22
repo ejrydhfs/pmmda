@@ -24,7 +24,7 @@ import ch.bbv.mda.persistence.eclipse.RosePersistenceHandler;
  * @author AdrianBachofen
  *
  */
-public class RoseMdaVisitor implements RoseVisitor {
+public class Mda2RoseTransformer implements RoseVisitor {
 
   protected MetaModel model;
   protected Map packageTable = new HashMap();
@@ -37,7 +37,7 @@ public class RoseMdaVisitor implements RoseVisitor {
   protected ArrayList<Object[]> updateQuiduLaterTable = new ArrayList<Object[]>(); // holds qualifiedTypeNames and roseNodes. The type names cannot be obtained at the time processed. Hence we have to process them at the end.
   protected ItemFactory itemFactory = CartridgeFactory.getInstance().getItemFactory();
   
-  public RoseMdaVisitor(MetaModel source) {
+  public Mda2RoseTransformer(MetaModel source) {
     model = source;
     itemsToDelete = new ArrayList<ItemToDelete>();
   }

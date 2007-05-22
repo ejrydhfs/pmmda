@@ -62,9 +62,9 @@ public class MdaRoseUtil extends RoseUtil
     return unitTreeRoot;
   }
   
-  public MdaRoseVisitor loadTree(String fileName, MetaModel target, ValidationResult vResults) throws Exception
+  public Rose2MdaTransformer loadTree(String fileName, MetaModel target, ValidationResult vResults) throws Exception
   {
-    MdaRoseVisitor mdaRoseVisitor = new MdaRoseVisitor(this, target);
+    Rose2MdaTransformer mdaRoseVisitor = new Rose2MdaTransformer(this, target);
     mdaRoseVisitor.setValidationResults(vResults);
     
     // Load the Rose .mdl or .cat file, and create mappings for the objects.
