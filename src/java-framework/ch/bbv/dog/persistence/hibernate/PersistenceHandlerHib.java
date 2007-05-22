@@ -19,7 +19,6 @@ import ch.bbv.dog.DataObjectUpdate;
 import ch.bbv.dog.LightweightObject;
 import ch.bbv.dog.persistence.CollectFunctor;
 import ch.bbv.dog.persistence.PersistenceHandler;
-import ch.bbv.dynamicproperties.core.Property;
 
 /**
  * The data object persistence handler retrieves and stores data object graphs
@@ -263,12 +262,7 @@ public class PersistenceHandlerHib implements PersistenceHandler {
 			session.flush();
 			//session.clear();
 			
-			for (Object item : deletedObjects) {
-				
-				if(item instanceof Property){
-					//((Property)item).setType(null);
-				}
-				
+			for (Object item : deletedObjects) {	
 				session.delete(item);
 			}
 			
