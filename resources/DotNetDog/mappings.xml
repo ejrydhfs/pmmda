@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?> 
+ <cartridge name="DotNetDog" version="0.3.0">
+  <configuration>
+    <uses>
+      <cartridge name="bo" />
+    </uses>
+    <stereotypes>
+      <stereotype name="dataObject" context="class"
+        description="Indicates if the class is a data object or not" />
+      <stereotype name="referenceCode" context="class"
+        description="indicates if the class is a reference code or not" />
+    </stereotypes>
+    <tags>
+      <tag name=".net-ignore" type="boolean" context="package" default-value="false"
+        description="If true then no .net sources or nhibernate sources will be generated." />
+      <tag name=".net-ignore" type="boolean" context="class" default-value="false"
+        description="If true then no .net sources or nhibernate sources will be generated." />
+      <tag name=".net-ignore" type="boolean" context="property" default-value="false"
+        description="If true then no .net sources or nhibernate sources will be generated." />
+      <tag name=".net-ignore" type="boolean" context="indexed-property" default-value="false"
+        description="If true then no .net sources or nhibernate sources will be generated." />
+      <tag name=".net-collection-type" type="ch.bbv.mda.cartridges.dotNet.CollectionTypeCode" context="indexed-property" default-value="Bag"
+        description="Defines the collection type (Bag, List, Set) for indexed-properties." />
+      <tag name=".net-bo-paged" type="boolean" context="indexed-property" default-value="false"
+        description="Defines whether this indexed-property shall be paged (incremental loading of large lists)." />
+      <tag name=".net-bo-paging-amount" type="int" context="indexed-property" default-value="50"
+        description="Defines the collection type (Bag, List, Set) for indexed-properties." />
+      <tag name=".net-bo-paging-max-loaded-item-count" type="int" context="indexed-property" default-value="100"
+        description="Defines the collection type (Bag, List, Set) for indexed-properties." />
+      <tag name=".net-bo-lazy-loadable" type="boolean" context="indexed-property" 
+        default-value="true" description="If true then indexed property list is loaded from database upon access. If false then indexed property is loaded together with its possessing class."/>
+      <tag name=".net-bo-partial" type="boolean" context="class" 
+        default-value="false" description="If true then classes are marked as partial. If false then a normal class definiton is emitted."/>
+    </tags>
+    <obsolete-tags>
+      <obsolete-tag name="dog-change-event" type="boolean" context="property" />
+      <obsolete-tag name="dog-veto-event" type="boolean" context="property" />
+      <obsolete-tag name="dog-lightweight" type="boolean" context="property" />
+      <obsolete-tag name="dog-change-event" type="boolean" context="indexed-property" />
+      <obsolete-tag name="dog-veto-event" type="boolean" context="indexed-property" />
+      <obsolete-tag name="dog-lightweight" type="boolean" context="indexed-property" />
+      <obsolete-tag name=".net-dog-is-hierarchical" type="boolean" context="class" />
+      <obsolete-tag name="dog-paged" type="boolean" context="indexed-property" />
+      <obsolete-tag name="dog-paging-amount" type="int" context="indexed-property" />
+      <obsolete-tag name="dog-paging-max-loaded-item-count" type="int" context="indexed-property" />
+    </obsolete-tags>
+    <properties>
+      <property name="net.dog.interface-package-postfix" default-value=""/>
+      <property name="net.dog.data-objects-package-postfix" default-value=""/>
+      <property name="net.dog.lightweight-objects-package-postfix" default-value=".lw"/>
+      <property name="net.dog.interface-class-prefix" default-value="I"/>
+      <property name="net.dog.data-objects-class-prefix" default-value=""/>
+      <property name="net.dog.lightweight-objects-class-prefix" default-value="Lw"/>
+      <property name="net.dog.interface-class-postfix" default-value=""/>
+      <property name="net.dog.data-objects-class-postfix" default-value=""/>
+      <property name="net.dog.lightweight-objects-class-postfix" default-value=""/>
+    </properties>
+  </configuration>
+  <datatypes></datatypes>
+</cartridge>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?> 
+ <cartridge name="DotNetNHibernate" version="0.3.0">
+  <configuration>
+    <uses>
+      <cartridge name="bo" />
+      <cartridge name="orm" />
+      <cartridge name="DotNetDog" />
+    </uses>
+    <stereotypes>
+    </stereotypes>
+    <tags>
+      <tag name=".net-nhibernate-assembly" type="java.lang.String" context="package" default-value="DefaultAssembly"
+        description="Assembly name where nhibernate shall look for the datatypes to be made persistent." />
+      <tag name=".net-nhibernate-inheritance-strategy" type="ch.bbv.mda.cartridges.dotNet.InheritanceStrategyTypeCode" context="class" default-value="Table per subclass"
+        description="Kind of nhibernate inheritance strategy to be used (Table per subclass, Table per concrete class, able per class hierarchy)." />
+      <tag name=".net-nhibernate-column-hibernate-type" type="ch.bbv.mda.cartridges.dotNet.NHibernateTypeCode" context="property" default-value="AUTOMATIC"
+        description="Sets the column type within the database: AUTOMATIC = 0; STRING = 1; BOOLEAN = 2; BYTE = 3; CHAR = 4; INT16 = 5; INT32 = 6; INT64 = 7; SINGLE = 8; DOUBLE = 9; DECIMAL = 10; GUID = 11; DATE_TIME = 12; TIME_SPAN = 13; CULTURE_INFO = 14; TYPE = 15; BINARY = 16" />
+    </tags>
+    <obsolete-tags>
+      <obsolete-tag name="or-schema-name" type="java.lang.String" context="package" />
+      <obsolete-tag name="or-table-name" type="java.lang.String" context="class" />
+      <obsolete-tag name="or-can-be-null" type="boolean" context="property" />
+      <obsolete-tag name="or-column-name" type="java.lang.String" context="property" />
+      <obsolete-tag name="or-column-size" type="java.lang.String" context="property" />
+      <obsolete-tag name="or-column-type" type="ch.bbv.mda.cartridges.JdbcTypeCode" context="property" />
+      <obsolete-tag name=".net-nhibernate-persistence" type="boolean" context="property" />
+      <obsolete-tag name="or-can-be-null" type="boolean" context="indexed-property" />
+      <obsolete-tag name="or-column-name" type="java.lang.String" context="indexed-property" />
+      <obsolete-tag name="or-column-size" type="java.lang.String" context="indexed-property" />
+      <obsolete-tag name="or-column-type" type="ch.bbv.mda.cartridges.JdbcTypeCode" context="indexed-property" />
+      <obsolete-tag name=".net-nhibernate-persistence" type="boolean" context="indexed-property" />
+    </obsolete-tags>
+    <properties>
+      <property name="net.nhibernate.database-provider" default-value="MySQL"/>
+      <property name="net.nhibernate.table-prefix" default-value=""/>
+      <property name="net.nhibernate.table-postfix" default-value=""/>
+      <property name="net.nhibernate.column-prefix" default-value=""/>
+      <property name="net.nhibernat.column-postfix" default-value=""/>
+      <property name="net.nhibernate.generate-fk-index" default-value="false"/>
+      <property name="net.nhibernate.root-folder" default-value="./gendir"/>
+    </properties>
+  </configuration>
+  <datatypes language="SQL" dialect="MSSQLSERVER">
+    <datatype name="System.Drawing.Image" type="IMAGE" null="true" param="0" />
+  </datatypes>
+  <datatypes language="SQL" dialect="MySQL">
+    <datatype name="System.Drawing.Image" type="BLOB" null="true" param="0" />
+  </datatypes>
+</cartridge>

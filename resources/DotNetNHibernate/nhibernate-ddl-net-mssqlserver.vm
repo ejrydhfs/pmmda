@@ -1,0 +1,379 @@
+#######################################################
+## Velocity template
+## 
+## Generates the Microsoft SQL Server 2000 ddl scripts for db creation
+##
+## Author: M. Pedersen
+##
+## Copyright 2005 http://www.bbv.ch
+## Licensed under the Apache License, Version 2.0 (the "License");
+##     http://www.apache.org/licenses/LICENSE-2.0
+##
+#######################################################
+##
+## printPropertiesIndex
+## Prints the "CREATE INDEX" SQL statements to the ddl.
+## Note that somtimes the tableName doesn't correspond with the class name.
+## E.g. For the "Table per class hierarchy" inheritance strategy, the 
+## indexes for the properties defined in all classes (base and derived)
+## will be created for the same table.
+## @param class The class for which the indexes are created
+## @param tableName Name of the table the indexes are generated for.
+#macro(printPropertiesIndex $class $tableName)
+#set($dataObjectStereoTyp="DataObject")
+#if(${dataObjectStereoTyp.equalsIgnoreCase(${class.getStereotype()})})
+#if(${class.booleanValueOfTag("persistence")})
+#set($table=${class.getAttribute(".net-nhibernate-table-name")})
+#set($hasAncestor=${class.retrieveAncestors().size()}>0)
+#set($shouldGenerateFkIndex=${configuration.getProperty("net.nhibernate.generate-fk-index").equalsIgnoreCase("true")})
+#if($shouldGenerateFkIndex)
+## **** properties ****************************************
+#foreach($property in ${class.getProperties()})
+#if(${property.booleanValueOfTag("persistence")})
+#getType($model $property $type)
+#isPersistentDataObject($type $isPersistentDataObject)
+#if($isPersistentDataObject)
+#set($name=${property.nameUpper()})
+#set($columnName=${property.getAttribute(".net-nhibernate-column-name")})
+
+CREATE UNIQUE INDEX ${table}_${name}_IDX ON 
+  [${table}](${columnName}_FK);
+GO
+#end
+#end
+#end
+## **** indexed properties ********************************
+#foreach($indexedProperty in ${class.getIndexedProperties()})
+#if(${indexedProperty.booleanValueOfTag("persistence")})
+#if(${indexedProperty.getMultiplicity().getUpperBound()}==1)
+#set($typeName=${indexedProperty.getTypeName()})
+#set($type=false)
+#set($type=${model.findClass(${typeName})})
+#isPersistentDataObject($type $isPersistentDataObject)
+#if($isPersistentDataObject)
+#set($name=${indexedProperty.nameUpper()})
+#set($columnName=${indexedProperty.getAttribute(".net-nhibernate-column-name")})
+
+CREATE UNIQUE INDEX ${table}_${name}_IDX ON 
+  [${table}](${columnName}_FK);
+GO
+#end
+#end
+#end
+#end
+## **** reverse references ********************************
+#set($references=$model.getClassReferences($class))
+#foreach($reference in $references)
+#if(${dataObjectStereoTyp.equalsIgnoreCase(${reference.getStereotype()})} && ${reference.booleanValueOfTag("persistence")})
+#set($relations=${reference.getIndexedProperties()})
+#foreach($relation in $relations)
+#if(${relation.booleanValueOfTag("persistence")})
+#getType($model $relation $type)	
+#if(${type} == ${class})
+#set($refTable=${reference.getAttribute(".net-nhibernate-table-name")})
+#set($relColumn=${relation.getAttribute(".net-nhibernate-column-name")})
+#set($name="${refTable}_${relColumn}")
+#set($columnName=${indexedProperty.getAttribute(".net-nhibernate-column-name")})
+
+CREATE UNIQUE INDEX ${name}_IDX ON 
+  [${table}](${name}_FK);
+GO
+#end
+#end
+#end
+#end
+#end
+#end
+## **** add the index for all derived classes *************
+#if(${class.getAttribute(".net-nhibernate-inheritance-strategy")}=="Table per class hierarchy")
+#foreach($derivedClass in ${netHelper.getDerivedClasses(${class})})
+#printPropertiesIndex(${derivedClass} ${tableName})
+#end
+#end
+#if(${class.getAttribute(".net-nhibernate-inheritance-strategy")}=="Table per concrete class")
+#foreach($baseClass in ${class.retrieveAncestors()})
+#printPropertiesIndex(${baseClass} ${tableName})
+#end
+#end
+#end
+#end
+#end
+##
+## printIndex
+## Prints the index of a specified class to the dll script.
+## @param class The class for which the indexes are created.
+#macro(printIndex $class)
+#set($dataObjectStereoTyp="DataObject")
+#if(${dataObjectStereoTyp.equalsIgnoreCase(${class.getStereotype()})})
+#if(${class.booleanValueOfTag("persistence")})
+#set($schemaName=${class.retrievePackage().valueOfTag("orm-schema-name")})
+#if(${schemaName} && !${schemaName.equals("")})#set($schemaName="${schemaName}.")#else#set($schemaName="")#end
+#set($table=${class.getAttribute(".net-nhibernate-table-name")})
+#set($fullTableName="${schemaName}${table}")
+#set($hasAncestor=${class.retrieveAncestors().size()}>0)
+#set($inheritanceStrategy=${class.getAttribute(".net-nhibernate-inheritance-strategy")})
+#if($inheritanceStrategy=="Table per subclass" && ${hasAncestor})
+#set($primaryKey="${baseClass.getName()}_ID_FK")
+#else
+#set($primaryKey="ID")
+#end
+
+CREATE UNIQUE INDEX ${table}_IDX ON 
+  [${table}](${primaryKey});
+GO
+#printPropertiesIndex(${class} ${table})
+#end
+#end
+#end
+##
+## printTrigger
+## Prints the triggers for timestamps
+## @param class The class for which the triggers are created.
+#macro(printTrigger $class)
+#set($dataObjectStereoTyp="DataObject")
+#if(${dataObjectStereoTyp.equalsIgnoreCase(${class.getStereotype()})})
+#if(${class.booleanValueOfTag("persistence")})
+#set($schemaName=${class.retrievePackage().valueOfTag("orm-schema")})
+#if(!${schemaName})#set($schemaName="")#end
+#set($table=${class.getAttribute(".net-nhibernate-table-name")})
+#set($fullTableName="${schemaName}.${table}")
+#set($hasAncestor=${class.retrieveAncestors().size()}>0)
+#set($inheritanceStrategy=${class.getAttribute(".net-nhibernate-inheritance-strategy")})
+#if($inheritanceStrategy=="Table per subclass" && ${hasAncestor})
+#set($primaryKey="${baseClass.getName()}_ID_FK")
+#else
+#set($primaryKey="ID")
+#end
+#if(!${hasAncestor})
+SET QUOTED_IDENTIFIER OFF 
+GO
+SET ANSI_NULLS ON 
+GO
+CREATE TRIGGER [${table}_UPDATE] ON [${table}] 
+FOR UPDATE, INSERT
+AS
+    SET NOCOUNT ON
+	UPDATE [${table}] SET TS = GETDATE()
+	FROM   [${table}], INSERTED
+        WHERE  [${table}].ID = INSERTED.ID
+    SET NOCOUNT OFF
+GO
+SET QUOTED_IDENTIFIER OFF 
+GO
+SET ANSI_NULLS ON 
+GO
+#end
+#end
+#end
+#end
+##
+## printPropertyRows
+## Prints the table rows for a specified class
+## @param class The class for which the rows are created.
+#macro(printPropertyRows $class)
+## **** propeties *****************************************
+#foreach($property in ${class.getProperties()})
+#if(${property.booleanValueOfTag("persistence")})
+#if(!${property.booleanValueOfTag("orm-can-be-null")} || ${property.isPrimaryKey()})#set($nullInfo=" NOT NULL")#else#set($nullInfo="")#end
+#set($columnName="")
+#set($columnName=${property.getAttribute(".net-nhibernate-column-name")})
+#getType($model $property $type)
+#isPersistentDataObject($type $isPersistentDataObject)
+#if($isPersistentDataObject)
+  ${columnName}_FK INTEGER,
+#else
+#set($columnType="")
+#set($columnType=${property.getAttribute(".net-nhibernate-column-db-type").toUpperCase()})
+#if($columnType=="BOOLEAN")
+## Microsoft SQL Server does not support BOOLEAN - map to INTEGER
+  ${columnName} INTEGER${nullInfo},
+#elseif($columnType=="VARCHAR")
+  ${columnName} VARCHAR(${property.getAttribute(".net-nhibernate-column-size")})${nullInfo},
+#else
+  ${columnName} ${columnType}${nullInfo},
+#end
+#end
+#end
+#end
+## indexed properties with cardinality 1-1 and 1-0..1 are generated as foreign keys.
+## This situation should never arise because this is a simple property.
+#foreach($indexedProperty in ${class.getIndexedProperties()})
+#if(${indexedProperty.booleanValueOfTag("persistence")})
+#if(${indexedProperty.getMultiplicity().getUpperBound()}==1)
+#set($columnType=${indexedProperty.getAttribute(".net-nhibernate-column-db-type")})
+#set($columnName=${indexedProperty.getAttribute(".net-nhibernate-column-name")})
+#set($typeName=${indexedProperty.getTypeName()})
+#set($type=false)
+#set($type=${model.findClass(${typeName})})
+#isPersistentDataObject($type $isPersistentDataObject)
+#if($isPersistentDataObject)
+  ${columnName}_FK INTEGER,
+#end
+#end
+#end
+#end
+## references to the class having indexed properties with cardinality 1-N to the
+## class are generated as reverse foreign keys in the class.
+#set($references=$model.getClassReferences($class))
+#foreach($reference in $references)
+#if(${reference.booleanValueOfTag("persistence")})
+#isPersistentDataObject($reference $isPersistentDataObject)
+#if($isPersistentDataObject)
+#set($relations=${reference.getIndexedProperties()})
+#foreach($relation in $relations)
+#if(${relation.booleanValueOfTag("persistence")})
+#getType($model $relation $type)
+#if(${type} == ${class})
+  ${reference.getAttribute(".net-nhibernate-table-name")}_${relation.getAttribute(".net-nhibernate-column-name")}_FK INTEGER,
+#end
+#end
+#end
+#end
+#end
+#end
+#if(${class.getAttribute(".net-nhibernate-inheritance-strategy")}=="Table per class hierarchy")
+#foreach($derivedClass in ${netHelper.getDerivedClasses(${class})})
+#printPropertyRows(${derivedClass})
+#end
+#end
+#if (${class.getAttribute(".net-nhibernate-inheritance-strategy")}=="Table per concrete class")
+#foreach($baseClass in ${class.retrieveAncestors()})
+#printPropertyRows(${baseClass})
+#end
+#end
+#end
+##
+## printIndexesForIndexedProperties
+## Prints the index column for if this class is used as item for indexed property
+#macro(printIndexesForIndexedProperties $class)
+#set($references=$model.getClassReferences($class))
+#foreach($reference in $references)
+#if(${reference.booleanValueOfTag("persistence")})
+#isPersistentDataObject($reference $isPersistentDataObject)
+#if($isPersistentDataObject)
+#foreach($indexedProperty in ${reference.getIndexedProperties()})
+#if(${indexedProperty.booleanValueOfTag("persistence")})
+#set($collectionType=${indexedProperty.valueOfTag(".net-collection-type")})
+#if($collectionType=="List")
+#getType($model $indexedProperty $type)
+#if(${type} == ${class})
+  ${type.getAttribute(".net-nhibernate-table-name")}_${indexedProperty.getAttribute(".net-nhibernate-column-name")}_INDEX INTEGER,
+#end
+#end
+#end
+#end
+#end
+#end
+#end
+#end
+##
+## printTable
+## Prints the SQL statement "CREATE TABLE" for a specified class.
+#macro(printTable $class)
+#set($dataObjectStereoTyp="DataObject")
+#if(${dataObjectStereoTyp.equalsIgnoreCase(${class.getStereotype()})})
+#if(${class.booleanValueOfTag("persistence")})
+#set($schemaName=${class.retrievePackage().valueOfTag("orm-schema")})
+#if(!${schemaName})#set($schemaName="")#end
+#set($table=${class.getAttribute(".net-nhibernate-table-name")})
+#set($fullTableName="${schemaName}.${table}")
+#set($shouldGenerateFkIndex=${configuration.getProperty("net.nhibernate.generate-fk-index").equalsIgnoreCase("true")})
+#set($properties=${netHelper.getAllProperties(${class})})
+#set($indexedProperties=${netHelper.getAllIndexedProperties(${class})})
+#set($hasAncestor=${class.retrieveAncestors().size()}>0)
+#set($inheritanceStrategy=${class.getAttribute(".net-nhibernate-inheritance-strategy")})
+#set($primaryKey="ID")
+#isDataObject($class $isDataObject)
+
+/* Table ${table} */
+if exists (select * from dbo.sysobjects where id = object_id(N'[${table}_UPDATE]') and OBJECTPROPERTY(id, N'IsTrigger') = 1)
+drop trigger [${table}_UPDATE]
+GO
+if exists (select * from dbo.sysobjects where id = object_id(N'[${table}]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+drop table [${table}]
+GO
+CREATE TABLE [${table}] (
+#if($inheritanceStrategy=="Table per subclass")
+#if(${hasAncestor})
+#set($baseClass=${class.retrieveAncestors().get(0)})
+  ${baseClass.getName()}_ID_FK INTEGER NOT NULL,
+#set($primaryKey="${baseClass.getName()}_ID_FK")
+#else
+  ID INTEGER IDENTITY NOT NULL PRIMARY KEY CLUSTERED,
+  TS DATETIME NOT NULL DEFAULT (GETDATE()),
+#end
+#end
+#if($inheritanceStrategy=="Table per concrete class" || $inheritanceStrategy=="Table per class hierarchy")
+  ID INTEGER IDENTITY NOT NULL PRIMARY KEY CLUSTERED,
+  TS DATETIME NOT NULL DEFAULT (GETDATE()),
+#end
+#if($inheritanceStrategy=="Table per class hierarchy")
+  TYPE VARCHAR(255) NOT NULL,
+#end
+#printPropertyRows(${class})
+#printIndexesForIndexedProperties(${class})
+)
+GO
+#printTrigger(${class})
+#printIndex(${class})
+#if($inheritanceStrategy=="Table per subclass" || $inheritanceStrategy=="Table per concrete class")
+#foreach($derivedClass in ${netHelper.getDerivedClasses(${class})})
+#printTable(${derivedClass})
+#end
+#end
+#end
+#end
+#end
+##
+## prints ddl for a table holding a reference code
+##
+#macro(printReferenceCodeTable $class)
+#set($codeType=${model.getCodeTypeMgr().retrieve(${class})})
+#set($storageKind=${codeType.getStorageKind()})
+#if(${storageKind.getShortDescription()}=="database")
+#set($table=${class.getAttribute(".net-nhibernate-table-name")})
+/* Reference Code Table ${table} */
+if exists (select * from dbo.sysobjects where id = object_id(N'[${table}]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+drop table [${table}]
+GO
+CREATE TABLE [${table}] (
+	Code INTEGER NOT NULL,
+	ShortDescription VARCHAR(50) NOT NULL,
+	Description VARCHAR(255) NULL,
+	SortOrder INTEGER NULL,
+	ValidFrom DATETIME NULL,
+	ValidTo DATETIME NULL,
+	Active BIT NOT NULL 
+        CONSTRAINT [DF_${table}_Active] DEFAULT ((1)),
+        CONSTRAINT [PK_${table}] PRIMARY KEY CLUSTERED (Code) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+CREATE UNIQUE INDEX ${table}_UniqueShortDescription ON 
+  [${table}](ShortDescription);
+GO
+#foreach($codeValue in ${codeType.getValues()})
+#set($codeStart='NULL')
+#if(${codeValue.getStart()})
+#set($codeStart="'${netHelper.formatDate(${codeValue.getStart()})}'")
+#end
+#set($codeEnd='NULL')
+#if(${codeValue.getEnd()})
+#set($codeEnd="'${netHelper.formatDate(${codeValue.getEnd()})}'")
+#end
+INSERT INTO ${table} (Code,ShortDescription,Description,SortOrder,ValidFrom,ValidTo,Active)
+  VALUES(${codeValue.getCodeId()},'${codeValue.getShortDescription()}','${codeValue.getDescription()}',${codeValue.getSortOrder()},${codeStart},${codeEnd},1);
+GO
+#end
+#end
+#end
+##
+## **** Start Main ****************************************
+##
+#printFileHeaderForSqlServerScrips()
+
+#foreach($class in ${netHelper.getBaseDataObjects()})
+#printTable($class)
+#end
+#foreach($class in ${netHelper.getReferenceCodes()})
+#printReferenceCodeTable($class)
+#end

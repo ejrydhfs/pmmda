@@ -1,0 +1,285 @@
+#######################################################
+## Velocity template
+## 
+## Generates the NHibernate repository for the business objects
+##
+## Author: M. Pedersen
+##
+## Copyright 2005 http://www.bbv.ch
+## Licensed under the Apache License, Version 2.0 (the "License");
+##     http://www.apache.org/licenses/LICENSE-2.0
+##
+#######################################################
+#set($variableBackup=[])
+## 
+## ********************************** Macros **********************************
+## 
+## Prints the NHibernate property mapping for the specified property
+## @param property the property used to print the NHibernate <property> tag.
+#macro(printProperty $property)
+#set($quotes='"')
+#set($notNull=${property.booleanValueOfAttribute("orm-can-be-null")})
+#getType($model $property $type)
+#set($columnName=${property.getAttribute(".net-nhibernate-column-name")})
+#set($columnType=${property.getAttribute(".net-nhibernate-column-hibernate-type")})
+#set($propertyMappingEntry="<property name=${quotes}m_${property.nameFirstLower()}${quotes} column=${quotes}${columnName}${quotes} access=${quotes}field${quotes}")
+#if(($columnType == "STRING") || ($columnType == "String") || ($columnType == "string"))
+#set($columnSize=${property.getAttribute(".net-nhibernate-column-size")})
+#set($propertyMappingEntry="${propertyMappingEntry} length=${quotes}${columnSize}${quotes}")
+#end
+#set($propertyMappingEntry="${propertyMappingEntry} type=${quotes}${columnType}${quotes} not-null=${quotes}${notNull}${quotes}/>")
+${propertyMappingEntry}
+#end
+## 
+## Prints a specified property as many to one to the NHibernte mapping file.
+## @param property to print as many to one.
+#macro(printPropertyAsManyToOne $property)
+#set($columnNameAttribute=".net-nhibernate-column-name")
+#set($columnName="${property.getAttribute(${columnNameAttribute})}_FK")
+#set($notNull=${property.booleanValueOfTag("orm-can-be-null")})
+###set($package=${model.findPackage(${property.retrieveTypePackageName()})})
+#set($package=${model.findPackage(${netHelper.retrieveTypePackageName(${property})})})
+#set($netAssembly=${package.valueOfTag(".net-nhibernate-assembly")})
+#set($type=${netHelper.getFullyQualifiedDotnetType(${property.getTypeName()}, ${netAssembly})})
+<many-to-one name=${quotes}m_${property.nameFirstLower()}${quotes} column=${quotes}${columnName}${quotes} class=${quotes}${type}${quotes} access=${quotes}field${quotes} not-null=${quotes}${notNull}${quotes}/>
+#end
+## Prints the NHibernate property mapping for the specified reference code
+## @param class the properties to be printed belong to.
+## @param property the property used to print the NHibernate <property> tag.
+#macro(printReferenceCodeProperty $property)
+#set($quotes='"')
+#set($notNull=${property.booleanValueOfAttribute("orm-can-be-null")})
+#set($columnName=${property.getAttribute(".net-nhibernate-column-name")})
+<property name=${quotes}m_${property.nameFirstLower()}${quotes} column=${quotes}${columnName}${quotes} access=${quotes}PmMda.Net.Dog.Reference.ReferenceCodeFieldAccessor, pmMDA.NET.Common${quotes} type=${quotes}Int32${quotes} not-null=${quotes}${notNull}${quotes}/>
+#end
+##
+## Prints the mapping information for a specified property
+##
+#macro(printProperties $class $spaces)
+#set($shortTableName=${class.getAttribute(".net-nhibernate-table-name")})
+## **** Properties ****************************************
+#foreach($property in ${class.getProperties()})
+#if(!${property.booleanValueOfTag(".net-ignore")})
+#if(${property.booleanValueOfTag("persistence")})
+##set($propertyType = ${property.getTypeName()})
+#getType($model $property $propertyType)
+#isPersistentDataObject($propertyType $isPersistentDataObject)
+#isReferenceCode($propertyType $isReferenceCode)
+#if($isPersistentDataObject)
+## Property type is a data object which is persistant. --> Save it as NHibernate many-to-one
+${spaces}#printPropertyAsManyToOne($property)
+#elseif($isReferenceCode)
+${spaces}#printReferenceCodeProperty($property)
+#else
+## Property type is not a data object or is not persistant. --> Save it as NHibernate property
+${spaces}#printProperty($property)
+#end
+#end
+#end
+#end
+##
+## Indexed properties
+#foreach($indexedProperty in ${class.getIndexedProperties()})
+#if(!${indexedProperty.booleanValueOfTag(".net-ignore")})
+#if(${indexedProperty.booleanValueOfTag("persistence")})
+##
+## one-to-many aggregation
+#set($package=${model.findPackage(${netHelper.retrieveTypePackageName(${indexedProperty})})})
+#set($netAssembly=${package.valueOfTag(".net-nhibernate-assembly")})
+#set($propertyType=${netHelper.getFullyQualifiedDotnetType(${indexedProperty.getTypeName()}, ${netAssembly})})
+#set($columnName=${indexedProperty.getAttribute(".net-nhibernate-column-name")})
+#set($lazyLoadable=${indexedProperty.booleanValueOfTag(".net-bo-lazy-loadable")})
+#set($columnName="${shortTableName}_${columnName}_FK")
+#set($collectionType=${indexedProperty.valueOfTag(".net-collection-type")})
+#if($collectionType=="Bag")
+#if($lazyLoadable)
+${spaces}<bag name=${quotes}m_${indexedProperty.nameFirstLower()}${quotes} access=${quotes}PmMda.Net.NHibernate.LazyLoad.LazyCollectionFieldAccessor, pmMDA.NET.Common${quotes} lazy=${quotes}true${quotes}>
+#else
+${spaces}<bag name=${quotes}m_${indexedProperty.nameFirstLower()}${quotes} access=${quotes}field${quotes}>
+#end
+${spaces}  <key column=${quotes}${columnName}${quotes}/>
+${spaces}  <one-to-many class=${quotes}${propertyType}${quotes}/>
+${spaces}</bag>
+#end
+#if($collectionType=="List")
+#getType($model $indexedProperty $type)
+#if($lazyLoadable)
+${spaces}<list name=${quotes}m_${indexedProperty.nameFirstLower()}${quotes} access=${quotes}PmMda.Net.NHibernate.LazyLoad.LazyCollectionFieldAccessor, pmMDA.NET.Common${quotes} lazy=${quotes}true${quotes}>
+#else
+${spaces}<list name=${quotes}m_${indexedProperty.nameFirstLower()}${quotes} access=${quotes}field${quotes}>
+#end
+${spaces}  <key column=${quotes}${columnName}${quotes}/>
+${spaces}  <index column=${quotes}${type.getAttribute(".net-nhibernate-table-name")}_${indexedProperty.getAttribute(".net-nhibernate-column-name")}_INDEX${quotes}/>
+${spaces}  <one-to-many class=${quotes}${propertyType}${quotes}/>
+${spaces}</list>
+#end
+#if($collectionType=="Set")
+#if($lazyLoadable)
+${spaces}<set name=${quotes}m_${indexedProperty.nameFirstLower()}${quotes} access=${quotes}PmMda.Net.NHibernate.LazyLoad.LazyCollectionFieldAccessor, pmMDA.NET.Common${quotes} lazy=${quotes}true${quotes}>
+#else
+${spaces}<set name=${quotes}m_${indexedProperty.nameFirstLower()}${quotes} access=${quotes}field${quotes}>
+#end
+${spaces}  <key column=${quotes}${columnName}${quotes}/>
+${spaces}  <one-to-many class=${quotes}${propertyType}${quotes}/>
+${spaces}</set>
+#end
+#end
+#end
+#end
+#end
+##
+## Print the properties which are defined in the base (=super) class of the specified class.
+##
+#macro(printBaseProperties $class $spaces)
+#set($dataObjectStereoTyp="DataObject")
+#foreach($baseClass in ${class.retrieveAncestors()})
+#if(${dataObjectStereoTyp.equalsIgnoreCase(${baseClass.getStereotype()})})
+#printProperties(${baseClass} ${spaces})
+#printBaseProperties(${baseClass} ${spaces})
+#end
+#end
+#end
+##
+## Prints all mapping entries for a specified class.
+##
+#macro(printClass $class $spaces)
+#set($quotes='"')
+#set($dataObjectStereoTyp="DataObject")
+#if(${dataObjectStereoTyp.equalsIgnoreCase(${class.getStereotype()})})
+#set($packageAttribute=".net-data-object-package")
+#set($classAttribute=".net-data-object-class")
+#set($inheritanceStrategy=${class.getAttribute(".net-nhibernate-inheritance-strategy")})
+#set($package=${class.retrievePackage()})
+#set($netAssembly=${package.valueOfTag(".net-nhibernate-assembly")})
+#set($className="${package.getAttribute(${packageAttribute})}.${class.getAttribute(${classAttribute})}")
+#set($className=${netHelper.getFullyQualifiedDotnetType(${className}, ${netAssembly})})
+#set($schemaName=${class.retrievePackage().valueOfTag("orm-schema")})
+#if(${schemaName} && !${schemaName.equals("")})#set($schemaName="${schemaName}.")#else#set($schemaName="")#end
+#set($table=${class.getAttribute(".net-nhibernate-table-name")})
+#set($tableName="${schemaName}${table}")
+#set($hasAncestor=${class.retrieveAncestors().size()}>0)
+## ********************************** prints class subclass or joined-class *************
+#if($inheritanceStrategy=="Table per subclass")
+## For each class there is a table. The tables contain just the properties defined in this class.
+#if($hasAncestor)
+${spaces}<joined-subclass name=${quotes}${className}${quotes} table=${quotes}`${tableName}`${quotes}>
+#set($baseClass=${class.retrieveAncestors().get(0)})
+${spaces}  <key column=${quotes}${baseClass.getName()}_ID_FK${quotes}/>
+#else
+${spaces}<class name=${quotes}${className}${quotes} table=${quotes}`${tableName}`${quotes}>
+#end
+#end
+#if($inheritanceStrategy=="Table per concrete class")
+## For each class there is a table which contains all properties (includes derived proeprties).
+${spaces}<class name=${quotes}${className}${quotes} table=${quotes}`${tableName}`${quotes}>
+#end
+#if($inheritanceStrategy=="Table per class hierarchy")
+## For each class hierarchy exists one table with all possible properties. Property names must
+## be unique and properties must have the orm-can-be-null tagged value set to true.
+#if($hasAncestor)
+${spaces}<subclass name=${quotes}${className}${quotes} discriminator-value=${quotes}${class.getQualifiedName()}${quotes}>
+#else
+${spaces}<class name=${quotes}${className}${quotes} table=${quotes}`${tableName}`${quotes} discriminator-value=${quotes}${class.getQualifiedName()}${quotes}>
+#end
+#end
+## ********************************** Print id and timestamp ****************************
+#if(!$hasAncestor || $inheritanceStrategy=="Table per concrete class")
+${spaces}  <id name="m_id" column="ID" type="integer" access=${quotes}field${quotes}>
+${spaces}    <generator class="identity"/>
+${spaces}  </id>
+#if($inheritanceStrategy=="Table per class hierarchy" && !$hasAncestor)
+${spaces}  <discriminator column=${quotes}TYPE${quotes} type=${quotes}string${quotes}/>
+#end
+${spaces}  <property name="m_timestamp" column="TS" type="PmMda.Net.NHibernate.PmMdaTimestampType, pmMDA.NET.Common" not-null="false" access="field"/>
+#end
+## ********************************** Print properties **********************************
+#printProperties(${class} "${spaces}  ")
+#if($inheritanceStrategy=="Table per concrete class")
+#printBaseProperties(${class} "${spaces}  ")
+#end
+## ********************************** Print derived classes *****************************
+#if($inheritanceStrategy=="Table per subclass" || $inheritanceStrategy=="Table per class hierarchy")
+#set($dummy=${variableBackup.add(${hasAncestor})})
+##
+#foreach($derivedClass in ${netHelper.getDerivedClasses(${class})})
+#isPersistentDataObject($derivedClass $isPersistentDataObject)
+#if($isPersistentDataObject)
+#printClass(${derivedClass} "${spaces}  ")
+#end
+#end
+##
+#set($backupIndex=${variableBackup.size()} - 1)
+#set($hasAncestor=${variableBackup.get(${backupIndex})})
+#set($dummy=${variableBackup.remove(${backupIndex})})
+#end
+#if($inheritanceStrategy=="Table per subclass")
+#if($hasAncestor)
+${spaces}</joined-subclass>
+#else
+${spaces}</class>
+#end
+#end
+#if($inheritanceStrategy=="Table per concrete class")
+${spaces}</class>
+#end
+#if($inheritanceStrategy=="Table per class hierarchy")
+#if($hasAncestor)
+${spaces}</subclass>
+#else
+${spaces}</class>
+#end
+#end
+#if($inheritanceStrategy=="Table per concrete class")
+#foreach($derivedClass in ${netHelper.getDerivedClasses(${class})})
+#isPersistentDataObject($derivedClass $isPersistentDataObject)
+#if($isPersistentDataObject)
+#printClass(${derivedClass} ${spaces})
+#end
+#end
+#end
+#end
+#end
+##
+## Prints hibernate configuration for reference codes
+##
+#macro(printReferenceCode $class $spaces)
+#set($codeType=${model.getCodeTypeMgr().retrieve(${class})})
+#set($storageKind=${codeType.getStorageKind()})
+#if(${storageKind.getShortDescription()}=="database")
+#set($package=${class.retrievePackage()})
+#set($packageAttribute=".net-data-object-package")
+#set($classAttribute=".net-data-object-class")
+#set($netAssembly=${package.valueOfTag(".net-nhibernate-assembly")})
+#set($className="${package.getAttribute(${packageAttribute})}.${class.getAttribute(${classAttribute})}")
+#set($className=${netHelper.getFullyQualifiedDotnetType(${className}, ${netAssembly})})
+#set($schemaName=${class.retrievePackage().valueOfTag("orm-schema")})
+#if(${schemaName} && !${schemaName.equals("")})#set($schemaName="${schemaName}.")#else#set($schemaName="")#end
+#set($table=${class.getAttribute(".net-nhibernate-table-name")})
+#set($tableName="${schemaName}${table}")
+${spaces}<class name=${quotes}${className}${quotes} table=${quotes}`${tableName}`${quotes}>
+${spaces}  <id name=${quotes}m_code${quotes} column=${quotes}Code${quotes} type=${quotes}integer${quotes} access=${quotes}field${quotes}>
+${spaces}    <generator class=${quotes}identity${quotes}/>
+${spaces}  </id>
+${spaces}  <property name=${quotes}m_sortOrder${quotes} column=${quotes}SortOrder${quotes} access=${quotes}field${quotes} type=${quotes}integer${quotes} not-null=${quotes}false${quotes}/>
+${spaces}  <property name=${quotes}m_shortDescription${quotes} column=${quotes}ShortDescription${quotes} access=${quotes}field${quotes} type=${quotes}String${quotes} not-null=${quotes}false${quotes}/>
+${spaces}  <property name=${quotes}m_description${quotes} column=${quotes}Description${quotes} access=${quotes}field${quotes} type=${quotes}String${quotes} not-null=${quotes}false${quotes}/>
+${spaces}  <property name=${quotes}m_active${quotes} column=${quotes}Active${quotes} access=${quotes}field${quotes} type=${quotes}Boolean${quotes} not-null=${quotes}false${quotes}/>
+${spaces}  <property name=${quotes}m_validFrom${quotes} column=${quotes}ValidFrom${quotes} access=${quotes}field${quotes} type=${quotes}DateTime${quotes} not-null=${quotes}false${quotes}/>
+${spaces}  <property name=${quotes}m_validTo${quotes} column=${quotes}ValidTo${quotes} access=${quotes}field${quotes} type=${quotes}DateTime${quotes} not-null=${quotes}false${quotes}/>
+${spaces}</class>
+#end
+#end
+##
+## ********************************** Start Main ****************************************
+##
+#set($quotes='"')
+<?xml version=${quotes}1.0${quotes} encoding=${quotes}utf-8${quotes} ?>
+#printFileHeaderForNHibernate()
+<hibernate-mapping auto-import=${quotes}false${quotes} xmlns=${quotes}urn:nhibernate-mapping-2.0${quotes}>
+#foreach($class in ${netHelper.getBaseDataObjects()})
+#printClass($class "  ")
+#end
+#foreach($class in ${netHelper.getReferenceCodes()})
+#printReferenceCode($class "  ")
+#end
+</hibernate-mapping>

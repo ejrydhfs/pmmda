@@ -1,0 +1,177 @@
+#######################################################
+## Velocity template
+## 
+## Generates the MySql ddl script for the db integrity
+##
+## Author: M. Pedersen
+##
+## Copyright 2005 http://www.bbv.ch
+## Licensed under the Apache License, Version 2.0 (the "License");
+##     http://www.apache.org/licenses/LICENSE-2.0
+##
+#######################################################
+##
+## getReferencedColumn
+## Get the column name for foreign keys which references the specified class.
+## @param class The class wich is referenced by a foreign key.
+## @ referencedColumn After this macro succeed referencedColumn will contain the primary key name
+## of the table used to store object for the specified class.
+##
+#macro(getReferencedColumn $class $referencedColumn)
+#set($referencedColumn="ID")
+#set($inheritanceStrategy=${class.getAttribute(".net-nhibernate-inheritance-strategy")})
+#if($inheritanceStrategy=="Table per subclass")
+#set($ancestors=${class.retrieveAncestors()})
+#if(${ancestors.size()}>0)
+#set($referencedColumn="${ancestors.get(0).getName()}_ID_FK")
+#end
+#end
+#end
+##
+## getTableName
+## Gets the table name for a specified class
+## @param class Class to get the table name for.
+## @param tableName After this macro succeed tableName contains the table name.
+##
+#macro(getTableName $class $tableName)
+#set($inheritanceStrategy=${class.getAttribute(".net-nhibernate-inheritance-strategy")})
+#if($inheritanceStrategy=="Table per subclass" || $inheritanceStrategy=="Table per concrete class")
+#set($tableName=${class.getAttribute(".net-nhibernate-table-name")})
+#end##if($inheritanceStrategy=="Table per subclass" || $inheritanceStrategy=="Table per concrete class")
+#if($inheritanceStrategy=="Table per class hierarchy")
+#set($dummyClass=${class})## Working with $class does not work (Velocity bug?!)
+#set($ancestors=${dummyClass.retrieveAncestors()})
+#if(${ancestors.size()}>0)
+#getTableName(${ancestors.get(0)} ${tableName})
+#else##${ancestors.size()}<=0
+#set($tableName=${dummyClass.getAttribute(".net-nhibernate-table-name")})
+#end##if(${ancestors.size()}>0)
+#end##if($inheritanceStrategy=="Table per class hierarchy")
+#end
+##
+## printIntegritiesForTable
+## Prints the sql statements for a specified class with the specified table name
+## Use printIntegritie if you just want to generate the integrities for a specified class.
+## Note that somtimes the tableName doesn't correspond with the class name.
+## E.g. For the "Table per class hierarchy" inheritance strategy, the 
+## interity statements for all properties defined in all classes (base and derived)
+## will be created for the same table.
+## @param class The class to print the integrities for.
+## @param tableName The table name used to create the integrity statements
+#macro(printIntegritiesForTable $class $tableName)
+#isPersistentDataObject($class $isPersistentDataObject)
+#if($isPersistentDataObject)
+#set($databaseName=${class.retrievePackage().valueOfTag(".net-nhibernate-schema")})
+#if(${databaseName} && !${databaseName.equals("")})#set($databaseName="${databaseName}.")#else#set($databaseName="")#end
+#set($fullTableName="${databaseName}${tableName}")
+## properties
+#foreach($property in ${class.getProperties()})
+#if(${property.booleanValueOfTag("persistence")})
+#getType($model $property $type)
+#isPersistentDataObject($type $isPersistentDataObject)
+#if($isPersistentDataObject)
+#set($columnName=${property.getAttribute(".net-nhibernate-column-name")})
+#getTableName(${type} ${foreignTableName})
+#getReferencedColumn(${type} ${referencedColumn})
+ALTER TABLE ${fullTableName} ADD CONSTRAINT ${tableName}_${columnName}_IR 
+  FOREIGN KEY (${columnName}_FK)
+  REFERENCES ${databaseName}${foreignTableName}(${referencedColumn})
+  ON DELETE RESTRICT;
+
+#end
+#end
+#end
+## aggregations with cardinality 1-1 and 1-0..1 are generated as foreign keys.
+## This situation should never arise because this is a simple property.
+#foreach($indexedProperty in ${class.getIndexedProperties()})
+#if(${indexedProperty.booleanValueOfTag("persistence")})
+#if(${indexedProperty.getMultiplicity().getUpperBound()}==1)
+#getType($model $indexedProperty $type)
+#isPersistentDataObject($type $isPersistentDataObject)
+#if($isPersistentDataObject)
+#set($columnName=${indexedProperty.getAttribute(".net-nhibernate-column-name")})
+#set($foreignKeyName=${class.getAttribute(".net-nhibernate-table-name")})
+#getTableName(${type} ${foreignTableName})
+#getReferencedColumn(${type} ${referencedColumn})
+ALTER TABLE ${fullTableName} ADD CONSTRAINT ${tableName}_${foreignTableName}_${columnName}_IR 
+  FOREIGN KEY (${foreignKeyName}_${columnName}_FK)
+  REFERENCES ${databaseName}${foreignTableName}(${referencedColumn})
+  ON DELETE RESTRICT;
+
+#end
+#end
+#end
+#end
+## references to the class having indexed properties with cardinality 1-N to the
+## class are generated as reverse foreign keys in the class.
+#set($references=$model.getClassReferences($class))
+#foreach($reference in $references)
+#isDataObject($reference $isDataObject)
+#if($isDataObject && ${reference.booleanValueOfTag("persistence")})
+#set($relations=${reference.getIndexedProperties()})
+#foreach($relation in $relations)
+#if(${relation.booleanValueOfTag("persistence")})
+#getType($model $relation $type)
+#if((${type} == ${class}) && ${type.booleanValueOfTag("persistence")})
+#set($columnName=${relation.getAttribute(".net-nhibernate-column-name")})	
+#getTableName(${reference} ${foreignTableName})
+#getReferencedColumn(${reference} ${referencedColumn})
+#set($foreignKeyName=${reference.getAttribute(".net-nhibernate-table-name")})
+###set($foreignTableName=${reference.getAttribute(".net-nhibernate-table-name")})
+##
+##Reference: ${reference.getName()}
+##Column: ${referencedColumn}
+##
+ALTER TABLE ${fullTableName} ADD CONSTRAINT ${tableName}_${foreignTableName}_${columnName}_IR 
+  FOREIGN KEY (${foreignKeyName}_${columnName}_FK)
+  REFERENCES ${databaseName}${foreignTableName}(${referencedColumn})
+  ON DELETE RESTRICT;
+
+#end
+#end
+#end
+#end
+#end
+#set($inheritanceStrategy=${class.getAttribute(".net-nhibernate-inheritance-strategy")})
+#if($inheritanceStrategy=="Table per concrete class")
+#foreach($baseClass in ${class.retrieveAncestors()})
+#printIntegritiesForTable(${baseClass} ${tableName})
+#end
+#end
+#if($inheritanceStrategy=="Table per class hierarchy")
+#foreach($derivedClass in ${netHelper.getDerivedClasses(${class})})
+#printIntegritiesForTable(${derivedClass} ${tableName})
+#end
+#end
+#set($processDerivedOnConcreteStrategy=false)
+#if($inheritanceStrategy=="Table per concrete class")
+#getTableName(${class} ${newTableName})
+#set($processDerivedOnConcreteStrategy=${tableName}==${newTableName})
+#end
+#if(${processDerivedOnConcreteStrategy} || $inheritanceStrategy=="Table per subclass")
+#foreach($derivedClass in ${netHelper.getDerivedClasses(${class})})
+#getTableName(${derivedClass} ${tableName})
+#printIntegritiesForTable(${derivedClass} ${tableName})
+#end
+#end
+#end
+#end
+##
+## printIntegrities
+## Prints the interity statements for a specified class
+## @param class The class to create the integrity statements for.
+#macro(printIntegrities $class)
+#isPersistentDataObject($class $isPersistentDataObject)
+#if($isPersistentDataObject)
+#getTableName(${class} ${tableName})
+#printIntegritiesForTable(${class} ${tableName})
+#end
+#end
+##
+## **** Start Main ****
+#printFileHeaderForMySqlScrips()
+ 
+## The derived classes will be processed automatically within the printIntegritiesForTable macro.
+#foreach($class in ${netHelper.getBaseDataObjects()})
+#printIntegrities($class)
+#end

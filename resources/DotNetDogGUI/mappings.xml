@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?> 
+ <cartridge name="DotNetDogGUI" version="0.3.0">
+  <configuration>
+    <uses>
+      <cartridge name="bo" />
+    </uses>
+    <stereotypes>
+      <stereotype name="dataObject" context="class"
+        description="Indicates if the class is a data object or not" />
+    </stereotypes>
+    <tags>
+      <tag name=".net-gui-editable-controls" type="boolean" context="class" default-value="false"
+        description="If set to true gui controls are separated into a base class and a derived class. The derived class can be modified manually. If set to false then a single combined control is generated." />
+    </tags>
+    <obsolete-tags></obsolete-tags>
+    <properties></properties>
+  </configuration>
+  <datatypes language="UI" dialect="DotNetWinForm">
+    <datatype name="System.Drawing.Image" type="System.Windows.Forms.PictureBox"/>
+  </datatypes>
+</cartridge>
