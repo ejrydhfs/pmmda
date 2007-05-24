@@ -124,9 +124,9 @@ public final class TextUtilities {
    * Encodes the passed string to a hexadecimal String
    * @param string String to be encoded
    * @return String encoded String.
-   * @see #decode(String)
+   * @see #decodeFromHex(String)
    */
-	public static String encode(String string){
+	public static String encodeToHex(String string){
 		return String.valueOf((Hex.encodeHex(string.getBytes())));
 	}
 	
@@ -134,9 +134,9 @@ public final class TextUtilities {
 	 * Decodes a passed hexadecimal string to a human readable string.
 	 * @param string String to be decoded.
 	 * @return String decoded string, if decoding fails an empty String is returned.
-	 * @see #encode(String)
+	 * @see #encodeToHex(String)
 	 */
-	public static String decode(String string){
+	public static String decodeFromHex(String string){
 		try {
 			
 			return new String(Hex.decodeHex(string.toCharArray()));
