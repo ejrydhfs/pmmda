@@ -15,6 +15,7 @@ package ${package.getAttribute("ejb-client-package")};
 #set($foo=${imports.addClassName("javax.naming.Context")})
 #set($foo=${imports.addClassName("javax.naming.InitialContext")})
 #set($foo=${imports.addClassName("javax.rmi.PortableRemoteObject")})
+#set($foo=${imports.addClassName("java.util.Properties")})
 #set($foo=${imports.addPackageName(${package.getAttribute("bo-mo-package")})})
 #if(${package.booleanValueOfAttribute("bo-lightweight")})  
 #set($foo=${imports.addPackageName(${package.getAttribute("bo-lw-package")})})
@@ -86,13 +87,21 @@ public class ${className} extends ComponentImpl implements DataObjectHandler {
    */
   public ${className}(String name) {
     super(name);
+    try {
+	  initialize();
+	} catch (ComponentException e) {
+	  e.printStackTrace();
+	}
   }
 
   public void initialize() throws ComponentException {
     super.initialize();
     try {
-      Context jndiContext = new InitialContext();
-      Object ref = jndiContext.lookup("dog/${serverName}");
+      Properties property = new Properties();
+	  property.put(Context.INITIAL_CONTEXT_FACTORY, "org.jnp.interfaces.NamingContextFactory");
+	  property.put(Context.PROVIDER_URL, "127.0.0.1:1099");
+	  Context jndiContext = new InitialContext(property);
+      Object ref = jndiContext.lookup("dog-${serverName}");
       ${serverName}Home home = (${serverName}Home)PortableRemoteObject.narrow(
         ref, ${serverName}Home.class);
       server = home.create();
