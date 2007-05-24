@@ -6,6 +6,9 @@
  */
 package ch.bbv.utilities;
 
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.binary.Hex;
+
 /**
  * A set of convenience methods to manipulate identifiers and transform them to
  * respect the coding guidelines of the Java programming language. The methods
@@ -116,4 +119,31 @@ public final class TextUtilities {
     }
     return buffer.toString();
   }
+  
+  /**
+   * Encodes the passed string to a hexadecimal String
+   * @param string String to be encoded
+   * @return String encoded String.
+   * @see #decode(String)
+   */
+	public static String encode(String string){
+		return String.valueOf((Hex.encodeHex(string.getBytes())));
+	}
+	
+	/**
+	 * Decodes a passed hexadecimal string to a human readable string.
+	 * @param string String to be decoded.
+	 * @return String decoded string, if decoding fails an empty String is returned.
+	 * @see #encode(String)
+	 */
+	public static String decode(String string){
+		try {
+			
+			return new String(Hex.decodeHex(string.toCharArray()));
+		} catch (DecoderException e) {
+			e.printStackTrace();
+		}
+		return "";
+	}
+
 }
