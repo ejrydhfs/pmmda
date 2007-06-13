@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<!--  configuration for Derby -->
+<hibernate-configuration>
+  <session-factory>
+    <!-- Derby configuration
+      <property name="connection.driver_class">
+      org.apache.derby.jdbc.EmbeddedDriver
+      </property>
+      <property name="connection.url">jdbc:derby:OJB</property>
+      <property name="connection.username"></property>
+      <property name="connection.password"></property>
+    -->
+    <!-- MySQL configuration -->
+    <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
+    <property name="connection.url">jdbc:mysql:///test</property>
+    <property name="connection.username">root</property>
+    <property name="connection.password"></property>
+
+    <!-- JDBC connection pool (use the built-in) -->
+    <property name="connection.pool_size">1</property>
+
+    <!-- Derby configuration
+      <property name="dialect">org.hibernate.dialect.DerbyDialect</property>
+    -->
+    <!-- MySQL configuration -->
+    <property name="dialect">org.hibernate.dialect.MySQLMyISAMDialect</property>
+
+    <!-- Enable Hibernate's automatic session context management -->
+    <property name="current_session_context_class">thread</property>
+
+    <!-- Disable the second-level cache  -->
+    <property name="cache.provider_class">
+      org.hibernate.cache.NoCacheProvider
+    </property>
+
+    <!-- Echo all executed SQL to stdout -->
+    <property name="show_sql">true</property>
+	
+    <!-- Drop and re-create the database schema on startup -->
+    <!-- only activate for first startup!   
+    <property name="hbm2ddl.auto">create</property>  -->
+		
+    <!-- Mappings -->
+    <mapping resource="TEST-hib_bo_user.xml" />
+    <mapping resource="TEST-hib_lw_user.xml" />
+	<mapping resource="coremapping.hbm.xml" />
+  </session-factory>
+</hibernate-configuration>

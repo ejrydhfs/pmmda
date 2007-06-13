@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping auto-import="false" schema="TEST"
+	default-access="field" default-cascade="all">
+	<class name="ch.bbv.RootClass" table="ROOTCLASS" lazy="false"
+		mutable="true">
+		<id name="id" column="ID" type="integer">
+			<generator class="increment" />
+		</id>
+		<timestamp name="timestamp" column="TS" />
+		  <list name="contacts" cascade="all" lazy="false">
+            <key column="contact_id"/>
+            <index column="idx"/>
+            <one-to-many class="ch.bbv.Contact"/>
+        </list>
+		<!-- data objects -->
+		<many-to-one name="propertyInstanceManager"
+			class="ch.bbv.dynamicproperties.PropertyInstanceManager">
+		</many-to-one>
+	</class>
+	<class name="ch.bbv.Contact" table="CONTACT" lazy="false"
+		mutable="true">
+		<id name="id" column="ID" type="integer">
+			<generator class="increment" />
+		</id>
+		<timestamp name="timestamp" column="TS" />
+		<property name="name" column="NAME" type="string"
+			not-null="true" />
+		<property name="city" column="CITY" type="string"
+			not-null="true" />
+
+		<!-- data objects -->
+		<list name="propertyValues" table="CONTACTPROPERTYVALUES" lazy="false">
+			<key column="listId" />
+			<list-index column="sortOrder" />
+			<one-to-many
+				class="ch.bbv.dynamicproperties.core.PropertyValue" />
+		</list>
+
+	</class>
+</hibernate-mapping>
+

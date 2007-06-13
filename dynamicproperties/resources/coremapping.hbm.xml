@@ -1,0 +1,327 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+	"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<!-- 
+/*********************************************************************** 
+ * Copyright 2007 BBV Software Services AG (http://www.bbv.ch)
+ *  
+ * Licensed under the Apache License, Version 2.0 (the "Licence"); 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * you may not use this file except in compliance with the License.
+ * 
+ * $Id$
+ * 
+ * History:
+ * 2007/06/06      Ueli Kurmann     Initial Release
+ ***********************************************************************/
+ -->
+
+<hibernate-mapping auto-import="false" schema="TEST"
+	default-access="field" default-cascade="all">
+
+	<class name="ch.bbv.dynamicproperties.core.PropertyType"
+		table="PROPERTYTYPE" lazy="false" mutable="true">
+		<!-- DataObject -->
+		<id name="id" column="ID" type="integer">
+			<generator class="increment" />
+		</id>
+		<timestamp name="timestamp" column="TS" />
+
+		<!-- PropertyType -->
+		<property name="name" column="NAME" />
+		<property name="viewer" column="VIEWER" />
+		<property name="editor" column="EDITOR" />
+	</class>
+
+	<!-- SimpleType -->
+	<joined-subclass
+		extends="ch.bbv.dynamicproperties.core.PropertyType"
+		name="ch.bbv.dynamicproperties.core.SimpleType" table="SIMPLETYPE"
+		lazy="false">
+
+		<key column="ID" />
+
+		<!-- SimpleType -->
+		<property name="type" column="TYPE" />
+	</joined-subclass>
+
+	<!-- ComplexType -->
+	<joined-subclass
+		extends="ch.bbv.dynamicproperties.core.PropertyType"
+		name="ch.bbv.dynamicproperties.core.ComplexType" table="COMPLEXTYPE"
+		lazy="false">
+
+		<key column="ID" />
+
+		<!-- ComplexType 
+		<map name="properties" table="COMPLEXTYPEPROPERTIES"
+			lazy="false">
+			<key column="id" />
+			<map-key column="name" type="string" />
+			<many-to-many class="ch.bbv.dynamicproperties.core.Property"
+				column="property_id" />
+		</map>-->
+		<list name="properties" table="COMPLEXPROPERTIES"
+			lazy="false">
+			<key column="propertyListId" />
+			<list-index column="sortOrder" />
+			<one-to-many
+				class="ch.bbv.dynamicproperties.core.Property" />
+		</list>
+		
+		
+	</joined-subclass>
+
+	<!-- ListType -->
+	<joined-subclass
+		extends="ch.bbv.dynamicproperties.core.PropertyType"
+		name="ch.bbv.dynamicproperties.core.ListType" table="LISTTYPE"
+		lazy="false">
+
+		<key column="ID" />
+
+		<!-- ListType -->
+		<many-to-one name="type"
+			class="ch.bbv.dynamicproperties.core.PropertyType"
+			column="propertyTypeId" not-null="true" />
+	</joined-subclass>
+
+	<!-- Enumeration Type -->
+	<joined-subclass
+		extends="ch.bbv.dynamicproperties.core.PropertyType"
+		name="ch.bbv.dynamicproperties.core.EnumerationType"
+		table="ENUMERATIONTYPE" lazy="false">
+
+		<key column="ID" />
+	</joined-subclass>
+
+	<!--  Hierarchical Enumeration Type -->
+	<joined-subclass
+		extends="ch.bbv.dynamicproperties.core.EnumerationType"
+		name="ch.bbv.dynamicproperties.core.HierarchicalEnumerationType"
+		table="HIERARCHICALENUMERATIONTYPE" lazy="false">
+
+		<key column="ID" />
+
+		<list name="rootElements" table="HIERARCHICALENUMEARTIONROOT"
+			lazy="false">
+			<key column="rootEnumListId" />
+			<list-index column="sortOrder" />
+			<one-to-many
+				class="ch.bbv.dynamicproperties.core.HierarchicalEnumerationElement" />
+		</list>
+	</joined-subclass>
+
+	<!--  Linear Enumeration Type -->
+	<joined-subclass
+		extends="ch.bbv.dynamicproperties.core.EnumerationType"
+		name="ch.bbv.dynamicproperties.core.LinearEnumerationType"
+		table="LINEARENUMERATIONTYPE" lazy="false">
+
+		<key column="ID" />
+
+		<list name="enumerations" table="HIERARCHICALENUMEARTIONROOT"
+			lazy="false">
+			<key column="listId" />
+			<list-index column="sortOrder" />
+			<one-to-many
+				class="ch.bbv.dynamicproperties.core.EnumerationElement" />
+		</list>
+	</joined-subclass>
+
+
+	<!-- Property Value -->
+	<class name="ch.bbv.dynamicproperties.core.PropertyValue"
+		table="PROPERTYVALUE" lazy="false" mutable="true">
+		<!-- DataObject -->
+		<id name="id" column="ID" type="integer">
+			<generator class="increment" />
+		</id>
+		<timestamp name="timestamp" column="TS" />
+
+		<!-- PropertyValue -->
+		<many-to-one name="property"
+			class="ch.bbv.dynamicproperties.core.Property" column="property_id"
+			not-null="false" />
+	</class>
+
+	<!-- Simple Value -->
+	<joined-subclass name="ch.bbv.dynamicproperties.core.SimpleValue"
+		extends="ch.bbv.dynamicproperties.core.PropertyValue"
+		table="SIMPLEVALUE" lazy="false">
+
+		<key column="ID" />
+
+		<!-- Simple Value -->
+		<property name="value" column="value" type="serializable"
+			length="257" />
+	</joined-subclass>
+
+	<!-- List Value -->
+	<joined-subclass name="ch.bbv.dynamicproperties.core.ListValue"
+		extends="ch.bbv.dynamicproperties.core.PropertyValue"
+		table="LISTVALUE" lazy="false">
+
+		<key column="ID" />
+
+		<!-- List Value -->
+		<many-to-one name="anonymousElementAttribute"
+			class="ch.bbv.dynamicproperties.core.Property"
+			column="anonymousElementAttributeId" not-null="false" />
+
+
+		<list name="values" table="LISTVALUES" lazy="false">
+			<key column="listId" />
+			<list-index column="sortOrder" />
+			<one-to-many
+				class="ch.bbv.dynamicproperties.core.PropertyValue" />
+			<!-- <element type="serializable" length="1024" />  -->
+		</list>
+	</joined-subclass>
+
+	<!-- Complex Value -->
+	<joined-subclass
+		extends="ch.bbv.dynamicproperties.core.PropertyValue"
+		name="ch.bbv.dynamicproperties.core.ComplexValue" table="COMPLEXVALUE"
+		lazy="false">
+
+		<key column="ID" />
+
+		<!-- Complex Value -->
+		<map name="properties" table="COMPLEXPROPERTYVALUES"
+			lazy="false">
+			<key column="id" />
+			<index-many-to-many column="property_id"
+				class="ch.bbv.dynamicproperties.core.Property" />
+			<many-to-many
+				class="ch.bbv.dynamicproperties.core.PropertyValue"
+				column="propertyValueId" />
+		</map>
+	</joined-subclass>
+
+	<!-- Enumeration Value -->
+	<joined-subclass
+		extends="ch.bbv.dynamicproperties.core.PropertyValue"
+		name="ch.bbv.dynamicproperties.core.EnumerationValue"
+		table="ENUMERATIONVALUE" lazy="false">
+
+		<key column="ID" />
+
+		<!-- Enumeration Value -->
+		<property name="enumKey" type="integer" column="CODE" />
+	</joined-subclass>
+
+	<class name="ch.bbv.dynamicproperties.core.Property"
+		table="PROPERTY" lazy="false" mutable="true">
+		<!-- DataObject -->
+		<id name="id" column="ID" type="integer">
+			<generator class="increment" />
+		</id>
+		<timestamp name="timestamp" column="TS" />
+
+		<!-- Property -->
+		<property name="name" type="string" />
+		<property name="defaultValue" type="serializable" length="257" />
+		<property name="format" type="string" />
+		<property name="description" type="string" />
+		<many-to-one name="type" cascade="none"
+			class="ch.bbv.dynamicproperties.core.PropertyType">
+		</many-to-one>
+	</class>
+
+	<class name="ch.bbv.dynamicproperties.core.Multilingualism"
+		table="MULTILINGUALISM" lazy="false" mutable="true">
+		<!-- DataObject -->
+		<id name="id" column="ID" type="integer">
+			<generator class="increment" />
+		</id>
+		<timestamp name="timestamp" column="TS" />
+
+		<!-- Multilingualism -->
+		<map name="translations" table="TRANSLATIONS" lazy="false">
+			<key column="id" />
+			<map-key column="code" type="string" />
+			<element type="string" column="WORD" />
+		</map>
+	</class>
+
+	<class name="ch.bbv.dynamicproperties.core.EnumerationElement"
+		table="ENUMERATIONELEMENT">
+		<!-- DataObject -->
+		<id name="id" column="ID" type="integer">
+			<generator class="increment" />
+		</id>
+		<timestamp name="timestamp" column="TS" />
+
+		<property name="code" type="integer" column="CODE" />
+		<property name="sortOrder" type="integer" column="SORTORDER" />
+		<property name="active" type="boolean" column="ACTIVE" />
+		<property name="description" type="string" column="DESCRIPTION" />
+		<property name="shortDescription" type="string"
+			column="SHORTDESCRIPTION" />
+		<property name="fromDate" type="date" column="FROMDATE" />
+		<property name="toDate" type="date" column="TODATE" />
+	</class>
+
+	<joined-subclass
+		name="ch.bbv.dynamicproperties.core.HierarchicalEnumerationElement"
+		extends="ch.bbv.dynamicproperties.core.EnumerationElement"
+		table="HIERARCHICALENUMERATIONELEMENT">
+
+		<key column="ID" />
+
+		<many-to-one name="parent"
+			class="ch.bbv.dynamicproperties.core.HierarchicalEnumerationElement"
+			not-null="false">
+		</many-to-one>
+
+		<list name="children" table="HIERARCHICALENUMEARTIONCHILDREN"
+			lazy="false">
+			<key column="listId" />
+			<list-index column="sortOrder" />
+			<one-to-many
+				class="ch.bbv.dynamicproperties.core.HierarchicalEnumerationElement" />
+		</list>
+	</joined-subclass>
+
+	<!-- DataObjectManager -->
+	<class name="ch.bbv.dynamicproperties.PropertyInstanceManager"
+		table="PROPERTYINSTANCEMANAGER" lazy="false">
+
+		<!-- DataObject -->
+		<id name="id" column="ID" type="integer">
+			<generator class="increment" />
+		</id>
+		<timestamp name="timestamp" column="TS" />
+
+		<!-- DataObjectManager -->
+		<map name="lookupTable" table="PROPERTIESOFACLASS" cascade="all"
+			lazy="false">
+			<key column="id" />
+			<index column="type" type="class" />
+			<one-to-many class="ch.bbv.dynamicproperties.PropertiesOfAClass" />
+		</map>
+		
+		<list name="propertyTypes" table="PROPERTYTYPES" lazy="false">
+			<key column="propertyTypeListId" />
+			<list-index column="sortOrder" />
+			<one-to-many class="ch.bbv.dynamicproperties.core.PropertyType" />
+		</list>
+	</class>
+
+	<class name="ch.bbv.dynamicproperties.PropertiesOfAClass"
+		table="PROPERTIESOFACLASSLISTELEMENT" lazy="false">
+		<id name="id" column="ID" type="integer">
+			<generator class="increment" />
+		</id>
+		<timestamp name="timestamp" column="TS" />
+
+		<list name="properties" table="ElementListValue" lazy="false">
+			<key column="listId" />
+			<list-index column="sortOrder" />
+			<one-to-many class="ch.bbv.dynamicproperties.core.Property" />
+		</list>
+	</class>
+</hibernate-mapping>
