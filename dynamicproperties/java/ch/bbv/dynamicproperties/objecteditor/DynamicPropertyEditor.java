@@ -17,7 +17,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTree;
 
-import ch.bbv.Contact;
+
 import ch.bbv.dynamicproperties.PropertyInstanceManager;
 import ch.bbv.dynamicproperties.core.Property;
 
@@ -53,17 +53,5 @@ public class DynamicPropertyEditor extends JPanel {
     private JTree createTypeTree() {
         typeTree = new JTree();
         return typeTree;
-    }
-
-    public static void main(String[] args) {
-        PropertyInstanceManager manager = PropertyInstanceManager.instance();
-        manager.addDataObject(Contact.class);
-        manager.addProperty(Contact.class, new Property("FieldA", PropertyInstanceManager.getType(Integer.class)));
-        manager.addProperty(Contact.class, new Property("FieldB", PropertyInstanceManager.getType(Integer.class)));
-
-        JFrame frame = new JFrame();
-        frame.add(new DynamicPropertyEditor());
-        frame.pack();
-        frame.setVisible(true);
     }
 }
