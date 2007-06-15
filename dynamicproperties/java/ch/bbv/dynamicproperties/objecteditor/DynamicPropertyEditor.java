@@ -13,13 +13,10 @@
 
 package ch.bbv.dynamicproperties.objecteditor;
 
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTree;
 
-
 import ch.bbv.dynamicproperties.PropertyInstanceManager;
-import ch.bbv.dynamicproperties.core.Property;
 
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
