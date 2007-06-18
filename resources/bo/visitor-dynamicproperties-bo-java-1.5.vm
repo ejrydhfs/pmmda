@@ -1,0 +1,128 @@
+## copyright 2000-2006 Marcel Baumann
+## Licensed under the Apache License, Version 2.0 (the "Licence");
+## you may not use this file except in compliance with the License.
+## $Id$ 
+#set($sign="#")
+#emitFileHeader()
+#set($hasInterface=${class.booleanValueOfAttribute("bo-has-interface")})   
+#if ($hasInterface)
+#set($packageName=${package.getAttribute("bo-if-package")})
+#else
+#set($packageName=${package.getAttribute("bo-mo-package")})
+#end
+#set($hasCycles=${cartridge.hasCycles(${package})})
+
+package ${packageName};
+
+#set($visited=${cartridge.computeTransitiveClosure(${package})})
+#set($imports=${cartridge.createImports(${packageName})})
+#set($foo=${imports.addClasses(${visited})})
+#set($foo=${imports.addClassName("ch.bbv.dog.AbstractVisitorFunctor")})
+#set($foo=${imports.addClassName("ch.bbv.dog.DoFunctor")})
+#set($foo=${imports.addClassName("ch.bbv.dog.DataObject")})
+#if($hasCycles)
+#set($foo=${imports.addClassName("java.util.Set")})
+#set($foo=${imports.addClassName("java.util.HashSet")})
+#set($foo=${imports.addClassName("ch.bbv.dog.DataObject")})
+#end
+#set($importStatements=${imports.getImportStatements(4)})
+#foreach($importStatement in $importStatements) 
+import $importStatement;
+#end
+
+/** 
+ * The visitor with functor class implements the visitor pattern for the graph 
+ * of all data object classes defined in the package. The list of all relevant
+ * classes is generated from the MDA model.
+ */
+public class DynamicPropertyVisitor implements Visitor, AbstractVisitorFunctor {  
+  /** 
+   * Functor of the visitor.
+   */
+  private DoFunctor functor; 
+
+  /** 
+   * The current depth of the visitor when traversing a graph.
+   */
+  private int depth; 
+#if($hasCycles) 
+	
+  /**
+   * The objects already visited during the traversal of the graph.
+   */
+  private Set<DataObject> visitedObjects;
+#end
+
+  /**
+   * Default constructor of the class.
+   */
+  public VisitorFunctor() {
+#if($hasCycles)
+	visitedObjects = new HashSet<DataObject>();
+#end
+  }
+  
+  /**
+   * Constructor of the class, which initializes the functor.
+   * @param functor functor of the visitor
+   */
+  public VisitorFunctor(DoFunctor functor) {
+    this();
+    this.functor = functor;
+  }
+  
+  public void reset() {
+    depth = 0;
+#if($hasCycles)
+	visitedObjects.clear();
+#end
+  }
+
+  public int getDepth() {
+    return depth;
+  }
+  
+  public void setDepth(int depth) {
+    this.depth = depth;
+  }
+   
+  public boolean shouldVisit(DataObject object) {
+    assert object != null;
+#if($hasCycles)
+    return !visitedObjects.contains(object);
+#else
+	return true;
+#end
+  }      
+
+  public Object getFunctor() {
+    return functor;
+  }
+  
+  public void setFunctor(Object functor) {
+    this.functor = (DoFunctor)functor;
+  }    
+#foreach($class in $visited)
+#isDataObject($class $isDataObject)
+#if($isDataObject)
+#if($hasInterface)
+#set($name=${class.getAttribute("bo-if-class")})
+#else
+#set($name=${class.getAttribute("bo-mo-class")})
+#end
+
+#if($hasCycles)
+  public void visit(${name} item) {
+	if (!visitedObjects.contains(item)) {
+      visitedObjects.add(item);  
+      functor.execute(item);
+    }
+  }
+#else
+  public void visit(${name} item) {
+    functor.execute(item);
+  }
+#end
+#end
+#end
+}
