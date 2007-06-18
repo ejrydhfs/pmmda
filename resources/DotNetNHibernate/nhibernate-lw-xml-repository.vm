@@ -103,21 +103,21 @@ ${spaces}<many-to-one name=${quotes}m_${property.nameFirstLower()}${quotes} colu
 #set($columnName="${shortTableName}_${columnName}_FK")
 #set($collectionType=${indexedProperty.valueOfTag(".net-collection-type")})
 #if($collectionType=="Bag")
-${spaces}<bag name=${quotes}m_${indexedProperty.nameFirstLower()}${quotes} access=${quotes}field${quotes}>
+${spaces}<bag name=${quotes}m_${indexedProperty.nameFirstLower()}${quotes} access=${quotes}field${quotes} #printOneToManyWhereAttribute(${class})>
 ${spaces}  <key column=${quotes}${columnName}${quotes}/>
 ${spaces}  <one-to-many class=${quotes}${propertyType}${quotes}/>
 ${spaces}</bag>
 #end
 #if($collectionType=="List")
 #getType($model $indexedProperty $type)
-${spaces}<list name=${quotes}m_${indexedProperty.nameFirstLower()}${quotes} access=${quotes}field${quotes}>
+${spaces}<list name=${quotes}m_${indexedProperty.nameFirstLower()}${quotes} access=${quotes}field${quotes} #printOneToManyWhereAttribute(${class})>
 ${spaces}  <key column=${quotes}${columnName}${quotes}/>
 ${spaces}  <index column=${quotes}${type.getAttribute(".net-nhibernate-table-name")}_${indexedProperty.getAttribute(".net-nhibernate-column-name")}_INDEX${quotes}/>
 ${spaces}  <one-to-many class=${quotes}${propertyType}${quotes}/>
 ${spaces}</list>
 #end
 #if($collectionType=="Set")
-${spaces}<set name=${quotes}m_${indexedProperty.nameFirstLower()}${quotes} access=${quotes}field${quotes}>
+${spaces}<set name=${quotes}m_${indexedProperty.nameFirstLower()}${quotes} access=${quotes}field${quotes} #printOneToManyWhereAttribute(${class})>
 ${spaces}  <key column=${quotes}${columnName}${quotes}/>
 ${spaces}  <one-to-many class=${quotes}${propertyType}${quotes}/>
 ${spaces}</set>
@@ -278,13 +278,23 @@ ${spaces}</class>
 #end
 #end
 #end
+## Prints the where attribute for a one-to-many association since NHibernate 1.2 doesnt add discriminator restriction
+## automatically. For further info see 'NHibernate 1.2 Migration Guide' 
+#macro( printOneToManyWhereAttribute $class )
+#set($hasAncestor=${class.retrieveAncestors().size()}>0) ## ADDED BY ZIR
+#set($inheritanceStrategy=${class.getAttribute(".net-nhibernate-inheritance-strategy")})
+#if($hasAnchestor && ($inheritanceStrategy=="Table per class hierarchy")) 
+	where=${quotes}discriminator = `${class.getQualifiedName()}`${quotes}
+#end
+#end
+## macro end
 ##
 ## **************************************** Start Main ****************************************
 ##
 #set($quotes='"')
 <?xml version=${quotes}1.0${quotes} encoding=${quotes}utf-8${quotes} ?>
 #printFileHeaderForNHibernate()
-<hibernate-mapping auto-import=${quotes}false${quotes} xmlns=${quotes}urn:nhibernate-mapping-2.0${quotes}>
+<hibernate-mapping auto-import=${quotes}false${quotes} xmlns=${quotes}urn:nhibernate-mapping-2.2${quotes}>
 #foreach($class in ${netHelper.getBaseDataObjects()})
 #printClassLw($class "  ")
 #end

@@ -93,9 +93,9 @@ ${spaces}#printProperty($property)
 #set($collectionType=${indexedProperty.valueOfTag(".net-collection-type")})
 #if($collectionType=="Bag")
 #if($lazyLoadable)
-${spaces}<bag name=${quotes}m_${indexedProperty.nameFirstLower()}${quotes} access=${quotes}PmMda.Net.NHibernate.LazyLoad.LazyCollectionFieldAccessor, pmMDA.NET.Common${quotes} lazy=${quotes}true${quotes}>
+${spaces}<bag name=${quotes}m_${indexedProperty.nameFirstLower()}${quotes} access=${quotes}PmMda.Net.NHibernate.LazyLoad.LazyCollectionFieldAccessor, pmMDA.NET.Common${quotes} #printOneToManyWhereAttribute(${class})>
 #else
-${spaces}<bag name=${quotes}m_${indexedProperty.nameFirstLower()}${quotes} access=${quotes}field${quotes}>
+${spaces}<bag name=${quotes}m_${indexedProperty.nameFirstLower()}${quotes} access=${quotes}field${quotes} lazy=${quotes}false${quotes} #printOneToManyWhereAttribute(${class})>
 #end
 ${spaces}  <key column=${quotes}${columnName}${quotes}/>
 ${spaces}  <one-to-many class=${quotes}${propertyType}${quotes}/>
@@ -104,9 +104,9 @@ ${spaces}</bag>
 #if($collectionType=="List")
 #getType($model $indexedProperty $type)
 #if($lazyLoadable)
-${spaces}<list name=${quotes}m_${indexedProperty.nameFirstLower()}${quotes} access=${quotes}PmMda.Net.NHibernate.LazyLoad.LazyCollectionFieldAccessor, pmMDA.NET.Common${quotes} lazy=${quotes}true${quotes}>
+${spaces}<list name=${quotes}m_${indexedProperty.nameFirstLower()}${quotes} access=${quotes}PmMda.Net.NHibernate.LazyLoad.LazyCollectionFieldAccessor, pmMDA.NET.Common${quotes} #printOneToManyWhereAttribute(${class})>
 #else
-${spaces}<list name=${quotes}m_${indexedProperty.nameFirstLower()}${quotes} access=${quotes}field${quotes}>
+${spaces}<list name=${quotes}m_${indexedProperty.nameFirstLower()}${quotes} access=${quotes}field${quotes} lazy=${quotes}false${quotes} #printOneToManyWhereAttribute(${class})>
 #end
 ${spaces}  <key column=${quotes}${columnName}${quotes}/>
 ${spaces}  <index column=${quotes}${type.getAttribute(".net-nhibernate-table-name")}_${indexedProperty.getAttribute(".net-nhibernate-column-name")}_INDEX${quotes}/>
@@ -115,9 +115,9 @@ ${spaces}</list>
 #end
 #if($collectionType=="Set")
 #if($lazyLoadable)
-${spaces}<set name=${quotes}m_${indexedProperty.nameFirstLower()}${quotes} access=${quotes}PmMda.Net.NHibernate.LazyLoad.LazyCollectionFieldAccessor, pmMDA.NET.Common${quotes} lazy=${quotes}true${quotes}>
+${spaces}<set name=${quotes}m_${indexedProperty.nameFirstLower()}${quotes} access=${quotes}PmMda.Net.NHibernate.LazyLoad.LazyCollectionFieldAccessor, pmMDA.NET.Common${quotes} #printOneToManyWhereAttribute(${class})>
 #else
-${spaces}<set name=${quotes}m_${indexedProperty.nameFirstLower()}${quotes} access=${quotes}field${quotes}>
+${spaces}<set name=${quotes}m_${indexedProperty.nameFirstLower()}${quotes} access=${quotes}field${quotes} lazy=${quotes}false${quotes} #printOneToManyWhereAttribute(${class})>
 #end
 ${spaces}  <key column=${quotes}${columnName}${quotes}/>
 ${spaces}  <one-to-many class=${quotes}${propertyType}${quotes}/>
@@ -162,24 +162,24 @@ ${spaces}</set>
 #if($inheritanceStrategy=="Table per subclass")
 ## For each class there is a table. The tables contain just the properties defined in this class.
 #if($hasAncestor)
-${spaces}<joined-subclass name=${quotes}${className}${quotes} table=${quotes}`${tableName}`${quotes}>
+${spaces}<joined-subclass name=${quotes}${className}${quotes} table=${quotes}`${tableName}`${quotes} lazy=${quotes}false${quotes}>
 #set($baseClass=${class.retrieveAncestors().get(0)})
 ${spaces}  <key column=${quotes}${baseClass.getName()}_ID_FK${quotes}/>
 #else
-${spaces}<class name=${quotes}${className}${quotes} table=${quotes}`${tableName}`${quotes}>
+${spaces}<class name=${quotes}${className}${quotes} table=${quotes}`${tableName}`${quotes} lazy=${quotes}false${quotes}>
 #end
 #end
 #if($inheritanceStrategy=="Table per concrete class")
 ## For each class there is a table which contains all properties (includes derived proeprties).
-${spaces}<class name=${quotes}${className}${quotes} table=${quotes}`${tableName}`${quotes}>
+${spaces}<class name=${quotes}${className}${quotes} table=${quotes}`${tableName}`${quotes} lazy=${quotes}false${quotes}>
 #end
 #if($inheritanceStrategy=="Table per class hierarchy")
 ## For each class hierarchy exists one table with all possible properties. Property names must
 ## be unique and properties must have the orm-can-be-null tagged value set to true.
 #if($hasAncestor)
-${spaces}<subclass name=${quotes}${className}${quotes} discriminator-value=${quotes}${class.getQualifiedName()}${quotes}>
+${spaces}<subclass name=${quotes}${className}${quotes} discriminator-value=${quotes}${class.getQualifiedName()}${quotes} lazy=${quotes}false${quotes}>
 #else
-${spaces}<class name=${quotes}${className}${quotes} table=${quotes}`${tableName}`${quotes} discriminator-value=${quotes}${class.getQualifiedName()}${quotes}>
+${spaces}<class name=${quotes}${className}${quotes} table=${quotes}`${tableName}`${quotes} discriminator-value=${quotes}${class.getQualifiedName()}${quotes} lazy=${quotes}false${quotes}>
 #end
 #end
 ## ********************************** Print id and timestamp ****************************
@@ -269,13 +269,23 @@ ${spaces}  <property name=${quotes}m_validTo${quotes} column=${quotes}ValidTo${q
 ${spaces}</class>
 #end
 #end
+## Prints the where attribute for a one-to-many association since NHibernate 1.2 doesnt add discriminator restriction
+## automatically. For further info see 'NHibernate 1.2 Migration Guide' 
+#macro( printOneToManyWhereAttribute $class )
+#set($hasAncestor=${class.retrieveAncestors().size()}>0) ## ADDED BY ZIR
+#set($inheritanceStrategy=${class.getAttribute(".net-nhibernate-inheritance-strategy")})
+#if($hasAnchestor && ($inheritanceStrategy=="Table per class hierarchy")) 
+	where=${quotes}discriminator = `${class.getQualifiedName()}`${quotes}
+#end
+#end
+## macro end
 ##
 ## ********************************** Start Main ****************************************
 ##
 #set($quotes='"')
 <?xml version=${quotes}1.0${quotes} encoding=${quotes}utf-8${quotes} ?>
 #printFileHeaderForNHibernate()
-<hibernate-mapping auto-import=${quotes}false${quotes} xmlns=${quotes}urn:nhibernate-mapping-2.0${quotes}>
+<hibernate-mapping auto-import=${quotes}false${quotes} xmlns=${quotes}urn:nhibernate-mapping-2.2${quotes}>
 #foreach($class in ${netHelper.getBaseDataObjects()})
 #printClass($class "  ")
 #end
