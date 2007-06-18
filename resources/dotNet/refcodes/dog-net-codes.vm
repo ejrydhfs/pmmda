@@ -1,0 +1,203 @@
+#######################################################
+## Velocity template
+## 
+## Generates CSharp reference codes.
+##
+## Author: M. Pedersen
+##
+## Copyright 2005 http://www.bbv.ch
+## Licensed under the Apache License, Version 2.0 (the "License");
+##     http://www.apache.org/licenses/LICENSE-2.0
+##
+#######################################################
+##
+## **** initialization ************************************
+##
+#set($spaces="")
+#if($class.booleanValueOf("bo-is-hierarchical"))
+#set($extends="HierarchicalReferenceCodeImpl")
+#else
+#set($extends="ReferenceCodeImpl")
+#end
+#set($className=${class.getAttribute(".net-data-object-class")})
+#set($codeType=${model.getCodeTypeMgr().retrieve(${class})})
+#set($storageKind=${codeType.getStorageKind()})
+##
+## **** print file header *********************************
+##
+#printFileHeaderCSharp()
+
+using System;
+using System.Collections;
+using PmMda.Net.Dog.Reference;
+
+##
+## **** Package *******************************************
+##
+#if (${package})
+
+namespace ${package.getAttribute(".net-data-object-package")} {
+#set($spaces="  ")
+#end
+
+##
+## **** class *********************************************
+##
+#emitXMLDocu($class $netHelper $spaces)
+${spaces}[Serializable]
+${spaces}public class ${className} : $extends {
+${spaces}
+#foreach($code in ${codeType.getValues()})
+#if(${storageKind.getShortDescription()}=="code")
+#set($desc="")
+#set($desc=${code.getDescription()})
+${spaces}  /// <summary>
+${spaces}  /// Reference Code ID: ${desc}
+${spaces}  /// </summary>
+${spaces}  public const int ${code.getName().toUpperCase()}_ID = ${code.getCodeId()};
+${spaces}
+#end
+#end
+#foreach($code in ${codeType.getValues()})
+#if(${storageKind.getShortDescription()}=="code")
+#set($uName=${code.getName().toUpperCase()})
+#set($shortDesc="")
+#set($shortDesc=${code.getShortDescription()})
+#set($desc="")
+#set($desc=${code.getDescription()})
+${spaces}  /// <summary>
+${spaces}  /// Reference Code: ${desc}
+${spaces}  /// </summary>
+${spaces}  public static readonly ${className} ${uName} = new ${className}(${uName}_ID, ${code.getSortOrder()}, "${shortDesc}", "${desc}");
+${spaces}
+#end
+#end
+${spaces}  private static SortedList m_codes;
+${spaces}
+${spaces}  //keep native type array of referenceCodeObjects
+${spaces}  private static IReferenceCode[] m_codeArray;
+${spaces}
+${spaces}  static ${className}()
+${spaces}  {
+${spaces}    m_codes = new SortedList();
+#if(${storageKind.getShortDescription()}=="code")
+#foreach($code in ${codeType.getValues()})
+#set($uName=${code.getName().toUpperCase()})
+${spaces}    m_codes.Add(${uName}_ID, ${uName});
+#end
+#end
+${spaces}  
+${spaces}    m_codeArray = new IReferenceCode[m_codes.Count];
+#if(${storageKind.getShortDescription()}=="code")
+${spaces}    m_codes.Values.CopyTo(m_codeArray,0);
+${spaces}    ReferenceCodeImpl.PublishCodes(new ${className}());
+#end
+${spaces}  }
+${spaces}  
+/* %% USER DEFINED DECLARATION START %% */
+#set($lines=${blocks.get("declarations")})
+#foreach($line in $lines)
+$line
+#end
+/* %% USER DEFINED DECLARATION END %% */
+${spaces}  
+/* %% USER DEFINED CONSTRUCTORS START %% */
+#set($lines=${blocks.get("constructors")})
+#foreach($line in $lines)
+$line
+#end
+/* %% USER DEFINED CONSTRUCTORS END %% */
+${spaces}  
+/* %% USER DEFINED CODE START %% */
+#set($lines=${blocks.get("definitions")})
+#foreach($line in $lines)
+$line
+#end
+/* %% USER DEFINED CODE END %% */
+${spaces}  
+${spaces}  public static IReferenceCode[] Codes 
+${spaces}  {
+${spaces}    get
+${spaces}    {
+#if(${storageKind.getShortDescription()}!="code")
+${spaces}      if(m_codes.Count <= 0) {
+${spaces}        SetCodes(GetAllCodes(typeof(${className})));
+${spaces}      }
+#end
+${spaces}      return m_codeArray;
+${spaces}    }
+${spaces}  }
+${spaces}  
+${spaces}  public static ${className} GetCode(int value) {
+#if(${storageKind.getShortDescription()}!="code")
+${spaces}    if(m_codes.Count <= 0) {
+${spaces}      SetCodes(GetAllCodes(typeof(${className})));
+${spaces}    }
+#end
+${spaces}    return (${className}) m_codes[value];
+${spaces}  }
+${spaces}  
+${spaces}  private ${className}(int code, int sortOrder, string shortDescription, string description)
+${spaces}    : base(code, sortOrder, shortDescription, description, true) {
+${spaces}    
+${spaces}  }
+${spaces}  
+${spaces}  public ${className}() {
+${spaces}  }
+${spaces}  
+${spaces}  public static ${className} Parse(string s)
+${spaces}  {
+${spaces}    foreach(IReferenceCode refCode in m_codeArray) {
+${spaces}      if(refCode.ShortDescription != null && 0==string.Compare(refCode.ShortDescription, s, true)) {
+${spaces}        return (${className})refCode;
+${spaces}      }
+${spaces}    }
+${spaces}    throw new FormatException("Unknown reference code element: " + s);
+${spaces}  }
+${spaces}  
+${spaces}  public override string ToString() 
+${spaces}  {
+${spaces}    return base.ShortDescription;
+${spaces}  }
+${spaces}  
+${spaces}  public static explicit operator int (${className} refCodeElement) 
+${spaces}  {
+${spaces}    return refCodeElement.Code;
+${spaces}  }
+${spaces}  
+${spaces}  public static explicit operator ${className} (int code) 
+${spaces}  {
+${spaces}    return GetCode(code);
+${spaces}  }
+${spaces}  
+${spaces}  public override IReferenceCode[] StaticCodes
+${spaces}  {
+${spaces}    get
+${spaces}    {
+${spaces}      return ${className}.Codes;
+${spaces}    }
+${spaces}  }
+#if(${storageKind.getShortDescription()}!="code")
+${spaces}  
+${spaces}  private static void SetCodes(IReferenceCode[] referenceCodes) {
+${spaces}    bool hasChanged = false;
+${spaces}    foreach (IReferenceCode referenceCode in referenceCodes) {
+${spaces}      if(m_codes.ContainsKey(referenceCode.Code)) {continue;}
+${spaces}      m_codes.Add(referenceCode.Code,referenceCode);
+${spaces}      hasChanged = true;
+${spaces}    }
+${spaces}    if(hasChanged) {
+${spaces}      m_codeArray = new IReferenceCode[m_codes.Count];
+${spaces}      m_codes.Values.CopyTo(m_codeArray,0);
+${spaces}    }
+${spaces}  }
+${spaces}
+${spaces}  protected override void SetStaticCodes(IReferenceCode[] codes)
+${spaces}  {
+${spaces}    SetCodes(codes);
+${spaces}  }
+#end
+${spaces}}
+#if (${package})
+}
+#end

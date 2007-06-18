@@ -1,0 +1,287 @@
+#####################################################################
+## Velocity template
+## 
+## Generates a .NET Control used to display and edit the
+## primitive properties of a data object.
+##
+## Author:            M. Pedersen
+## Copyright 2005 (c) http://www.bbv.ch
+## Licensed under the Apache License, Version 2.0 (the "License");
+##                    http://www.apache.org/licenses/LICENSE-2.0
+##
+#####################################################################
+##
+## **** initialization ************************************
+##
+#set($sign="#")
+#set($quotes='"')
+#set($namespace=${package.getAttribute(".net-data-object-package")})
+#set($namespace="${namespace}.GUI")
+#set($doClassName=${class.getAttribute(".net-data-object-class")})
+#set($doPackageName=${class.retrievePackage().getAttribute(".net-data-object-package")})
+#if($doPackageName)
+#set($doQualifiedClassName="${doPackageName}.${doClassName}")
+#else
+#set($doQualifiedClassName=${doClassName})
+#end
+#set($doClassNameFirstLower=${netHelper.nameFirstLower(${doClassName})})
+#set($doFieldName="m_${doClassNameFirstLower}")
+#set($abstractControl=${class.booleanValueOfAttribute(".net-gui-editable-controls")})
+#set($className="Primitive${doClassName}Properties")
+#if($abstractControl)
+#set($controlsAccessModifier="protected")
+#set($className="Abstract${className}")
+#else
+#set($controlsAccessModifier="private")
+#end
+#set($primitiveProperties=${netHelper.getPrimitivePropertiesForGUI(${class})})
+#set($primitivePropertiesCount=${primitiveProperties.size()})
+##
+## **** print file header *********************************
+##
+#printFileHeaderCSharp()
+
+##
+## **** usings ********************************************
+##
+using System;
+using System.ComponentModel;
+using System.Windows.Forms;
+using bbv.Common.Windows.Forms;
+using PmMda.Net.Dog;
+
+namespace ${namespace}
+{
+  /// <summary>
+  /// TODO: 
+  /// </summary>
+  public class ${className} : bbv.Common.Windows.Forms.UserControl
+  {
+    /// <summary>
+    /// TODO: 
+    /// </summary>
+    private ${doQualifiedClassName} ${doFieldName};
+    /// <summary>
+    /// TODO: 
+    /// </summary>
+    private PrimitivePropertyChangedEventHandler m_ehPrimitivePropertyChanged;
+    /// <summary>
+    /// TODO: 
+    /// </summary>
+    private bool m_propertyValueChanged;
+#set($index = 0)
+#foreach($primitiveProperty in $primitiveProperties)
+#set($propertyNameUpper=${primitiveProperty.nameFirstUpper()})
+    /// <summary>
+    /// TODO: 
+    /// </summary>
+    private ${netHelper.getControlClass(${primitiveProperty})} ${netHelper.getControlFieldName(${primitiveProperty})};
+#if(${netHelper.hasLabel(${primitiveProperty})})
+    /// <summary>
+    /// TODO: 
+    /// </summary>
+    private bbv.Common.Windows.Forms.Label label${propertyNameUpper};
+#end
+#if($index < $primitivePropertiesCount - 1)
+    /// <summary>
+    /// TODO: 
+    /// </summary>
+    private bbv.Common.Windows.Forms.Panel panelSpace${propertyNameUpper};
+#end
+#set($index=$index+1)
+#end
+    /// <summary>
+    /// Required designer variable.
+    /// </summary>
+    private System.ComponentModel.IContainer components;
+    
+    /// <summary>
+    /// TODO: 
+    /// </summary>
+#if($abstractControl)
+    protected ${className}()
+#else
+    public ${className}()
+#end
+    {
+      InitializeComponent();
+	  // new ref code model
+	  PostInit();
+      
+      ${doFieldName} = null;
+      m_ehPrimitivePropertyChanged = new PrimitivePropertyChangedEventHandler(PrimitivePropertyChanged);
+      m_propertyValueChanged = false;
+    }
+    
+	// new ref code model
+	private void PostInit() 
+    {
+#foreach($primitiveProperty in $primitiveProperties)
+#set($propertyNameUpper=${primitiveProperty.nameFirstUpper()})
+#getType($model $primitiveProperty $propertyType)
+#isReferenceCode($propertyType $isReferenceCode)
+#if(${isReferenceCode})
+      this.${netHelper.getControlFieldName(${primitiveProperty})}.Items.Clear();
+      foreach(${propertyType} code in ${propertyType}.Codes) 
+      {
+        this.${netHelper.getControlFieldName(${primitiveProperty})}.Items.Add(code.Description);
+      }
+#end
+#end
+    }
+
+	protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
+    
+    public ${doQualifiedClassName} ${doClassName} 
+    {
+      get 
+      {
+        return ${doFieldName};
+      }
+      set 
+      {
+        if (${doFieldName} != value) 
+        {
+          if (${doFieldName} != null) 
+          {
+            ${doFieldName}.PrimitivePropertyChanged -= m_ehPrimitivePropertyChanged;
+          }
+          ${doFieldName} = value;
+          if (${doFieldName} != null) 
+          {
+            ${doFieldName}.PrimitivePropertyChanged += m_ehPrimitivePropertyChanged;
+          }
+          UpdateGUI();
+        }
+      }
+    }
+    
+    private void UpdateGUI() 
+    {
+      if (${doFieldName} != null) 
+      {
+#foreach($primitiveProperty in $primitiveProperties)
+#set($propertyNameUpper=${primitiveProperty.nameFirstUpper()})
+        ${netHelper.getControlFieldName(${primitiveProperty})}.Enabled = true;
+        if (!${netHelper.getControlFieldName(${primitiveProperty})}.Focused)
+        {
+          Read${propertyNameUpper}FromPd();
+        }
+#end
+      }
+      else
+      {
+#foreach($primitiveProperty in $primitiveProperties)
+#set($propertyNameUpper=${primitiveProperty.nameFirstUpper()})
+        ${netHelper.getControlFieldName(${primitiveProperty})}.Enabled = true;
+        ${netHelper.getControlFieldName(${primitiveProperty})}.Text = string.Empty;
+#end
+      }
+    }
+       
+    private void PrimitivePropertyChanged(object sender, PrimitivePropertyChangedEventArgs e)
+    {
+      UpdateGUI();
+    }
+#foreach($primitiveProperty in $primitiveProperties)
+
+${netHelper.getUpdateMethod(${primitiveProperty}, "    ", ${doFieldName})}
+
+${netHelper.getReadFromPdMethod(${primitiveProperty}, "    ", ${doFieldName})}
+#end
+    
+    ${sign}region Component Designer generated code
+    
+    /// <summary> 
+    /// Required method for Designer support - do not modify 
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
+#set($index = 0)
+#foreach($primitiveProperty in $primitiveProperties)
+#set($propertyNameUpper=${primitiveProperty.nameFirstUpper()})
+      this.${netHelper.getControlFieldName(${primitiveProperty})} = new ${netHelper.getControlClass(${primitiveProperty})}();
+#if(${netHelper.hasLabel(${primitiveProperty})})
+      this.label${propertyNameUpper} = new bbv.Common.Windows.Forms.Label();
+#end
+#if($index < $primitivePropertiesCount - 1)
+      this.panelSpace${propertyNameUpper} = new bbv.Common.Windows.Forms.Panel();
+#end
+#set($index=$index+1)
+#end
+      this.SuspendLayout();
+###set($index = 0)
+#set($posY = 0)
+#set($index = 0)
+#foreach($primitiveProperty in $primitiveProperties)
+#set($propertyNameUpper=${primitiveProperty.nameFirstUpper()})
+###set($textBoxY = ($index * 44) + 18)
+#if(${netHelper.hasLabel(${primitiveProperty})})
+###set($labelY = $index * 44)
+      // 
+      // label${propertyNameUpper}
+      // 
+      this.label${propertyNameUpper}.AccessType = bbv.Common.Windows.Forms.AccessTypes.InOut;
+      this.label${propertyNameUpper}.Dock = System.Windows.Forms.DockStyle.Top;
+      this.label${propertyNameUpper}.Location = new System.Drawing.Point(0, ${posY});
+      this.label${propertyNameUpper}.Name = ${quotes}label${propertyNameUpper}${quotes};
+      this.label${propertyNameUpper}.Size = new System.Drawing.Size(344, 18);
+      this.label${propertyNameUpper}.TabIndex = 13;
+      this.label${propertyNameUpper}.Text = ${quotes}${propertyNameUpper}${quotes};
+      this.label${propertyNameUpper}.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+#set($posY=$posY + 18)
+#end
+${netHelper.getControlInitialization(${primitiveProperty}, "      ", ${posY})}
+#set($posY=$posY + 20)
+#if($index < $primitivePropertiesCount - 1)
+      // 
+      // panelSpace${propertyNameUpper}
+      // 
+      this.panelSpace${propertyNameUpper}.AccessType = bbv.Common.Windows.Forms.AccessTypes.InOut;
+      this.panelSpace${propertyNameUpper}.Dock = System.Windows.Forms.DockStyle.Top;
+      this.panelSpace${propertyNameUpper}.Location = new System.Drawing.Point(0, ${posY});
+      this.panelSpace${propertyNameUpper}.Name = ${quotes}panelSpace${propertyNameUpper}${quotes};
+      this.panelSpace${propertyNameUpper}.Size = new System.Drawing.Size(344, 6);
+      this.panelSpace${propertyNameUpper}.TabIndex = 18;
+#set($posY=$posY + 6)
+#end
+#set($index = $index + 1)
+#end
+      // 
+      // Primitive${className}Properties
+      // 
+#set($index = 0)
+#foreach($primitiveProperty in $primitiveProperties)
+#set($propertyNameUpper=${primitiveProperty.nameFirstUpper()})
+      this.Controls.Add(this.${netHelper.getControlFieldName(${primitiveProperty})});
+#if(${netHelper.hasLabel(${primitiveProperty})})
+      this.Controls.Add(this.label${propertyNameUpper});
+#end
+#if($index < $primitivePropertiesCount - 1)
+      this.Controls.Add(this.panelSpace${propertyNameUpper});
+#end
+#set($index=$index+1)
+#end
+      this.Name = ${quotes}${className}${quotes};
+      this.Size = new System.Drawing.Size(344, 170);
+      this.ResumeLayout(false);
+    }
+    
+    ${sign}endregion
+#foreach($primitiveProperty in $primitiveProperties)
+
+${netHelper.getChangeEventMethods(${primitiveProperty}, "    ", ${doFieldName})}
+#end
+  }
+}

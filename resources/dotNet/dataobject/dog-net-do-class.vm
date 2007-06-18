@@ -1,0 +1,1816 @@
+#######################################################
+## Velocity template
+## 
+## Generates CSharp classes for the Data Objects
+##
+## Author: M. Pedersen
+## Copyright 2005 http://www.bbv.ch
+## Licensed under the Apache License, Version 2.0 (the "License");
+##     http://www.apache.org/licenses/LICENSE-2.0
+##
+#######################################################
+##
+## **** initialization ************************************
+##
+#set($sign="#")
+#set($quotes='"')
+#set($dollar="$")
+#set($className=${class.getAttribute(".net-data-object-class")})
+#set($isPersistent=${class.booleanValueOfTag("persistence")})
+#set($spaces="")
+#set($properties=${class.getProperties()})
+#set($indexedProperties=${class.getIndexedProperties()})
+#set($ancestors=${class.retrieveAncestors()})
+#set($interfaces=${class.retrieveInterfaces()})
+#set($baseClassIsDataObject=${netHelper.isBaseClassDataObject(${class})})
+#if (${baseClassIsDataObject})
+#set($modifier="public override")
+#else
+#set($modifier="public virtual")
+#end
+#set($extends = ${netHelper.getExtendString(${class})})
+##
+## **** print file header *********************************
+##
+#printFileHeaderCSharp()
+
+##
+## **** usings ********************************************
+##
+using System;
+using System.Collections;
+using System.Reflection;
+using System.ComponentModel;
+using System.Runtime.Serialization;
+using Iesi.Collections;
+using PmMda.Net.Dog;
+using PmMda.Net.Dog.Updates;
+using PmMda.Net.Dog.Paging;
+using PmMda.Net.Dog.Sorting;
+using PmMda.Net.NHibernate.LazyLoad;
+#foreach($usingStatement in ${netHelper.getUsingStatements(${class})})
+using $usingStatement;
+#end
+
+/* %% USER DEFINED USING STATEMENTS START %% */
+#set($lines=${blocks.get("usings")})
+#foreach($line in $lines)
+$line
+#end
+/* %% USER DEFINED USING STATEMENTS END   %% */
+#if (${package})
+
+namespace ${package.getAttribute(".net-data-object-package")}
+{
+#set($spaces="  ")
+#end
+${spaces}
+##
+## **** class *********************************************
+##
+#emitXMLDocu($class $netHelper $spaces)
+${spaces}[Serializable]
+#if(${class.booleanValueOfTag(".net-bo-partial")}) 
+${spaces}${class.retrieveVisibilityText()} partial class ${className}${extends}
+#else
+${spaces}${class.retrieveVisibilityText()} class ${className}${extends}
+#end
+${spaces}{
+${spaces}  /* %% USER DEFINED DECLARATION START %% */
+#set($lines=${blocks.get("declarations")})
+#foreach($line in $lines)
+$line
+#end
+${spaces}  /* %% USER DEFINED DECLARATION END %% */
+##
+## **** predefined fields *********************************
+##
+#if (!${baseClassIsDataObject})
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Unique identifier of the data object instance distinguishing it from all
+${spaces}  /// other instances of the same data object type.
+${spaces}  /// </summary>
+${spaces}  /// <remarks>
+${spaces}  /// If this data object is new the id is <c>null</c>.
+${spaces}  /// Otherwise the id is an <c>int</c>.
+${spaces}  /// </remarks>
+${spaces}  private object m_id;
+${spaces}  /// <summary>
+${spaces}  /// Timestamp used to implement optimistic locking.
+${spaces}  /// </summary>
+${spaces}  private DateTime m_timestamp;
+${spaces}  /// <summary>
+${spaces}  /// Stores the value of the  <see cref="PersistenceState"/> property
+${spaces}  /// </summary>
+${spaces}  private PersistenceState m_persistenceState;
+${spaces}  /// <summary>
+${spaces}  /// This list contains the objects deleted children. 
+${spaces}  /// It is filled during a remove and will be cleared after a commit action.
+${spaces}  /// </summary>
+${spaces}  protected IList m_deletedChildren = new ArrayList();
+
+${spaces}  /// <summary>
+${spaces}  /// Contains the value for the <see cref="Update"/> property.
+${spaces}  /// </summary>
+${spaces}  [NonSerialized]
+${spaces}  protected DataObjectUpdate m_update;
+#end
+##
+## **** fields for properties *****************************
+##
+#foreach($property in $properties)
+#if(!${property.booleanValueOfTag(".net-ignore")})
+#emitXMLDocu($property $netHelper "${spaces}  ")
+#if($property.isVolatile())
+#set($propertyPrefix="private volatile")
+#else
+#set($propertyPrefix="private")
+#end
+#if($property.isTransient())
+${spaces}  [NonSerialized]
+#end
+${spaces}  ${propertyPrefix} ${netHelper.convertJavaTypeToDotnet(${property.getTypeName()})} m_${property.nameFirstLower()};
+#end
+#end
+${spaces}  
+##
+## **** fields for indexed properties (1..n mapping) ******
+##
+#foreach($indexedProperty in $indexedProperties)
+#if(!${indexedProperty.booleanValueOfTag(".net-ignore")})
+#emitXMLDocu($indexedProperty $netHelper "${spaces}  ")
+#if($indexedProperty.isVolatile())
+#set($propertyPrefix="private volatile")
+#else
+#set($propertyPrefix="private")
+#end
+#if($indexedProperty.isTransient())
+${spaces}  [NonSerialized]
+#end
+#set($collectionType=${indexedProperty.valueOfTag(".net-collection-type")})
+#if($collectionType.equalsIgnoreCase("Bag") || $collectionType.equalsIgnoreCase("List"))
+#set($interfaceType="IList")
+#end
+#if($collectionType.equalsIgnoreCase("Set"))
+#set($interfaceType="ISet")
+#end
+${spaces}  ${propertyPrefix} ${interfaceType} m_${indexedProperty.nameFirstLower()};
+#if(${indexedProperty.booleanValueOfTag(".net-bo-paged")})
+#set($pagingAmountField="m_${indexedProperty.nameFirstLower()}PagingAmount")
+#set($maxLoadedItemCountField="m_${indexedProperty.nameFirstLower()}MaxLoadedItemCount")
+${spaces}  /// <summary>
+${spaces}  /// Paging amount for the ${indexedProperty.namePlural()}.
+${spaces}  /// </summary>
+${spaces}  private int ${pagingAmountField};
+${spaces}  /// <summary>
+${spaces}  /// Maximum loaded ${indexedProperty.namePlural()} count.
+${spaces}  /// </summary>
+${spaces}  private int ${maxLoadedItemCountField};
+#end
+#if($collectionType.equalsIgnoreCase("Bag"))
+${spaces}  /// <summary>
+${spaces}  /// The order of the ${indexedProperty.namePlural()}.
+${spaces}  /// </summary>
+${spaces}  private DataObjectOrder m_${indexedProperty.nameFirstLower()}Order;
+#end
+#end
+#end
+##
+## **** Properties event methods **************************
+##
+#foreach($property in $properties)
+#if(!${property.booleanValueOfTag(".net-ignore")})
+#if(${property.booleanValueOfTag("bo-change-event")})
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Occurs when the property <see cref=${quotes}${property.nameFirstUpper()}${quotes}/>
+${spaces}  /// has changed.
+${spaces}  /// </summary>
+${spaces}  public event PmMda.Net.Dog.PropertyChangedEventHandler ${property.nameFirstUpper()}Changed;
+#end
+#if(${property.booleanValueOfTag("bo-veto-event")})
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Occurs when the property <see cref=${quotes}${property.nameFirstUpper()}${quotes}/>
+${spaces}  /// is changing.
+${spaces}  /// </summary>
+${spaces}  /// <remarks>
+${spaces}  /// Set the <see cref=${quotes}PropertyChangingEventArgs.Cancel${quotes}>Cancel</see>
+${spaces}  /// property to <c>true</c> if the changing of the value should be aborted.
+${spaces}  /// </remarks>
+${spaces}  public event PropertyChangingEventHandler ${property.nameFirstUpper()}Changing;
+#end
+#end
+#end
+##
+## **** Default constructor *******************************
+##
+${spaces}  
+${spaces}  /// <overloads>
+${spaces}  /// Instances a new instance of the <see cref=${quotes}${className}${quotes}/> class.
+${spaces}  /// </overloads>
+${spaces}  /// <summary>
+${spaces}  /// Instances a new instance of the <see cref=${quotes}${className}${quotes}/> class.
+${spaces}  /// </summary>
+${spaces}  public ${className}()
+${spaces}  {
+#if (!${baseClassIsDataObject})
+${spaces}    m_id = null;
+${spaces}    m_persistenceState = PersistenceState.New;
+${spaces}    m_timestamp = new DateTime(0);
+${spaces}    m_update = new DataObjectUpdate(this);
+#end
+#foreach($indexedProperty in $indexedProperties)
+#if(!${indexedProperty.booleanValueOfTag(".net-ignore")})
+#set($collectionType=${indexedProperty.valueOfTag(".net-collection-type")})
+#if($collectionType.equalsIgnoreCase("Bag") || $collectionType.equalsIgnoreCase("List"))
+#set($collectionClass="ArrayList")
+#end
+#if($collectionType.equalsIgnoreCase("Set"))
+#set($collectionClass="HybridSet")
+#end
+${spaces}    m_${indexedProperty.nameFirstLower()} = new ${collectionClass}();
+#if(${indexedProperty.booleanValueOfTag(".net-bo-paged")})
+#set($pagingAmountField="m_${indexedProperty.nameFirstLower()}PagingAmount")
+#set($maxLoadedItemCountField="m_${indexedProperty.nameFirstLower()}MaxLoadedItemCount")
+${spaces}    ${pagingAmountField} = ${indexedProperty.valueOfTag(".net-bo-paging-amount")};
+${spaces}    ${maxLoadedItemCountField} = ${indexedProperty.valueOfTag(".net-bo-paging-max-loaded-item-count")};
+#end
+#if($collectionType.equalsIgnoreCase("Bag"))
+${spaces}    m_${indexedProperty.nameFirstLower()}Order = new DataObjectOrder();
+${spaces}    m_${indexedProperty.nameFirstLower()}Order.OrderChanged += new OrderDelegate(On${indexedProperty.nameFirstUpper()}OrderModified);
+#end
+#end
+#end
+${spaces}    /* %% USER DEFINED INITIALIZATION START %% */
+#set($lines=${blocks.get("initializations")})
+#foreach($line in $lines)
+$line
+#end
+${spaces}    /* %% USER DEFINED INITIALIZATION END   %% */
+${spaces}  }
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Instances a new instance of the <see cref=${quotes}${className}${quotes}/> class.
+${spaces}  /// </summary>
+${spaces}  /// <remarks>
+${spaces}  /// This constructor is called by .NET remoting to deserialize a data object.
+${spaces}  /// </remarks>
+${spaces}  /// <exception cref="PagingException">
+${spaces}  /// No <see cref="DataObjectManager">data object manager</see> is registered in the
+${spaces}  /// <see cref="PmMda.Net.Application.Locator">locator</see>.<br/>
+${spaces}  /// - or -<br/>
+${spaces}  /// The count of persistent items of an indexed property could not be reloaded.<br/>
+${spaces}  /// - or -<br/>
+${spaces}  /// The items of a paged collection could not be reloaded.<br/>
+${spaces}  /// - or -<br/>
+${spaces}  /// This data object has been modified by another transaction and an exception is thrown
+${spaces}  /// as a result. Note that this exception is only thrown in special cases. See the
+${spaces}  /// <see cref="IPagedCollection.DefaultOwnerModifiedAction"/> property for further information.
+${spaces}  /// </exception>
+${spaces}  protected ${className}(SerializationInfo info, StreamingContext context)
+#if (${baseClassIsDataObject})
+${spaces}    : base(info, context)
+#end
+${spaces}  {
+#if (!${baseClassIsDataObject})
+${spaces}    m_id = info.GetValue("m_id",typeof(Int32));
+${spaces}    m_timestamp = info.GetDateTime("m_timestamp");
+${spaces}    m_persistenceState = (PersistenceState)info.GetValue("m_persistenceState", typeof(PersistenceState));
+${spaces}    m_update = new DataObjectUpdate(this);
+#end
+${spaces}    
+#foreach($property in $properties)
+#if(!${property.booleanValueOfTag(".net-ignore")})
+#set($fieldName="m_${property.nameFirstLower()}")
+#set($propertyType=${netHelper.convertJavaTypeToDotnet(${property.getTypeName()})})
+##${spaces}    ${fieldName} = (${propertyType}) info.GetValue(${quotes}${fieldName}${quotes}, typeof(${propertyType}));
+${spaces}    ${fieldName} = (${propertyType}) PmMda.Net.Dog.Serialization.SerializationHelper.retrieveFromInfo(${quotes}${fieldName}${quotes}, typeof(${propertyType}), info);
+#end
+#end
+${spaces}
+#foreach($indexedProperty in $indexedProperties)
+#if(!${indexedProperty.booleanValueOfTag(".net-ignore")})
+#set($collectionType=${indexedProperty.valueOfTag(".net-collection-type")})
+#set($paged=${indexedProperty.booleanValueOfTag(".net-bo-paged")})
+#set($fieldName="m_${indexedProperty.nameFirstLower()}")
+#if(${paged})
+#set($collectionClassName="Paged${collectionType}")
+#set($pagingAmountProperty="${indexedProperty.nameFirstUpperPlural()}PagingAmount")
+#set($maxLoadedItemCountProperty="${indexedProperty.nameFirstUpperPlural()}MaxLoadedItemCount")
+#set($pagingAmountField="m_${indexedProperty.nameFirstLower()}PagingAmount")
+#set($maxLoadedItemCountField="m_${indexedProperty.nameFirstLower()}MaxLoadedItemCount")
+#set($itemType=${netHelper.convertJavaTypeToDotnet(${indexedProperty.getTypeName()})})
+${spaces}    ${pagingAmountField} = ${indexedProperty.valueOfTag(".net-bo-paging-amount")};
+${spaces}    ${maxLoadedItemCountField} = ${indexedProperty.valueOfTag(".net-bo-paging-max-loaded-item-count")};
+${spaces}    ${fieldName} = new ${collectionClassName}(this, typeof(${itemType}), ${quotes}${fieldName}${quotes}, ${pagingAmountProperty}, ${maxLoadedItemCountProperty});
+#if($collectionType.equalsIgnoreCase("Bag"))
+${spaces}    m_${indexedProperty.nameFirstLower()}Order = ((PagedBag) ${fieldName}).Order;
+${spaces}    m_${indexedProperty.nameFirstLower()}Order.OrderChanged += new OrderDelegate(On${indexedProperty.nameFirstUpper()}OrderModified);
+#end
+#else
+#if($collectionType.equalsIgnoreCase("Bag") || $collectionType.equalsIgnoreCase("List"))
+#set($interfaceType="IList")
+#end
+#if($collectionType.equalsIgnoreCase("Set"))
+#set($interfaceType="ISet")
+#end
+#set($fieldName="m_${indexedProperty.nameFirstLower()}")
+##${spaces}    ${fieldName} = (${interfaceType}) info.GetValue(${quotes}${fieldName}${quotes}, typeof(${interfaceType}));
+${spaces}    ${fieldName} = (${interfaceType}) PmMda.Net.Dog.Serialization.SerializationHelper.retrieveFromInfo(${quotes}${fieldName}${quotes}, typeof(${interfaceType}), info);
+#if($collectionType.equalsIgnoreCase("Bag"))
+${spaces}    m_${indexedProperty.nameFirstLower()}Order = new DataObjectOrder();
+${spaces}    m_${indexedProperty.nameFirstLower()}Order.OrderChanged += new OrderDelegate(On${indexedProperty.nameFirstUpper()}OrderModified);
+#end
+#end
+#end
+#end
+${spaces}    /* %% USER DEFINED SERIALIZATION INITIALIZATION START %% */
+#set($lines=${blocks.get("serial_initializations")})
+#foreach($line in $lines)
+$line
+#end
+${spaces}    /* %% USER DEFINED SERIALIZATION INITIALIZATION END   %% */
+${spaces}  }
+${spaces}  
+${spaces}  /* %% USER DEFINED CONSTRUCTORS START %% */
+#set($lines=${blocks.get("constructors")})
+#foreach($line in $lines)
+$line
+#end
+${spaces}  /* %% USER DEFINED CONSTRUCTORS END %% */
+${spaces}  
+${spaces}  /* %% USER DEFINED CODE START %% */
+#set($lines=${blocks.get("definitions")})
+#foreach($line in $lines)
+$line
+#end
+${spaces}  /* %% USER DEFINED CODE END %% */
+##
+## **** predefined properties *****************************
+##
+${spaces}  
+${spaces}  ${sign}region IDataObject Members
+${spaces}  
+#if (!${baseClassIsDataObject})
+${spaces}  /// <summary>
+${spaces}  /// Sets or gets the identifier of this data object.
+${spaces}  /// </summary>
+${spaces}  /// <remarks>
+${spaces}  /// Never set the identifier from your code. The identifier is calculated
+${spaces}  /// and set from the DOG framework.
+${spaces}  /// </remarks>
+${spaces}  [Browsable(false)]
+${spaces}  public object Id
+${spaces}  {
+${spaces}    get
+${spaces}    {
+${spaces}      return m_id;
+${spaces}    }
+${spaces}    set
+${spaces}    {
+${spaces}      m_id = value;
+${spaces}    }
+${spaces}  }
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Gets the timestamp used to implement optimistic locking.
+${spaces}  /// </summary>
+${spaces}  /// <remarks>
+${spaces}  /// This timestamp is set by the DOG framework using reflection.
+${spaces}  /// The timestamp value of a new data object is not defined!
+${spaces}  /// </remarks>
+${spaces}  [Browsable(true)]
+${spaces}  public DateTime Timestamp
+${spaces}  {
+${spaces}    get
+${spaces}    {
+${spaces}      return m_timestamp;
+${spaces}    }
+${spaces}  }
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Gets whether this data object is new.
+${spaces}  /// </summary>
+${spaces}  /// <value>
+${spaces}  /// <c>true</c> if this object is a new one; otherwise, <c>false</c>.
+${spaces}  /// </value>
+${spaces}  [Browsable(true)]
+${spaces}  public bool IsNew 
+${spaces}  {
+${spaces}    get
+${spaces}    {
+${spaces}      if (m_id == null)
+${spaces}      {
+${spaces}        m_persistenceState = PersistenceState.New;
+${spaces}      }
+${spaces}      else if (m_persistenceState == PersistenceState.New)
+${spaces}      {
+${spaces}        m_persistenceState = PersistenceState.Unchanged;
+${spaces}      }
+${spaces}      return m_persistenceState == PersistenceState.New;
+${spaces}    }
+${spaces}  }
+${spaces}
+${spaces}  /// <summary>
+${spaces}  /// Gets whether this data object is modified.
+${spaces}  /// </summary>
+${spaces}  /// <value>
+${spaces}  /// <c>true</c> if this object is modified; otherwise, <c>false</c>.
+${spaces}  /// </value>
+${spaces}  [Browsable(true)]
+${spaces}  public bool Modified 
+${spaces}  {
+${spaces}    get
+${spaces}    {
+${spaces}      return m_persistenceState == PersistenceState.Modified;
+${spaces}    }
+${spaces}  }
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Gets the updates that have been made on this data object since its last storage.
+${spaces}  /// </summary>
+${spaces}  /// <remarks>
+${spaces}  /// <para>
+${spaces}  /// This property is used within the pmMDA.NET framework to optimize
+${spaces}  /// the network traffic. Developers who use this data objects can ignore that property.
+${spaces}  /// </para>
+${spaces}  /// <para>
+${spaces}  /// <b>Note to implementers:</b><br/>
+${spaces}  /// User defined persistent properties must call the <see cref="DataObjectUpdate.AddUpdate"/>
+${spaces}  /// method if they have been modified. Single properties are modified if their value
+${spaces}  /// has changed. Indexed property are modified if items were added, inserted or removed.
+${spaces}  /// See the <see cref="IUpdate"/> interface for a description of all updates which have to
+${spaces}  /// be registered.
+${spaces}  /// </para>
+${spaces}  /// </remarks>
+${spaces}  [Browsable(false)]
+${spaces}  public DataObjectUpdate Update 
+${spaces}  {
+${spaces}    get
+${spaces}    {
+${spaces}      return m_update;
+${spaces}    }
+${spaces}  }
+${spaces}  /// <summary>
+${spaces}  /// Marks an unchaned object as modified. 
+${spaces}  /// </summary>
+${spaces}  public void SetModified()
+${spaces}  {
+${spaces}    if (m_persistenceState == PersistenceState.Unchanged)
+${spaces}    {
+${spaces}      m_persistenceState = PersistenceState.Modified;
+${spaces}    }
+${spaces}  }
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Marks an object as deleted. New and already deleted objects are marked as destroyed.
+${spaces}  /// </summary>
+${spaces}  public void SetDeleted()
+${spaces}  {
+${spaces}    if (PersistenceState == PersistenceState.Destroyed)
+${spaces}    {
+${spaces}      return;
+${spaces}    }
+${spaces}    if (PersistenceState == PersistenceState.New)
+${spaces}    {
+${spaces}     m_persistenceState = PersistenceState.Destroyed;
+${spaces}    }
+${spaces}    else
+${spaces}    {
+${spaces}      m_persistenceState = PersistenceState.Deleted;
+${spaces}    }
+${spaces}  }
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Creates and returns a deep copy of the data object and its descendants.
+${spaces}  /// </summary>
+${spaces}  public virtual IDataObject Copy()
+${spaces}  {
+${spaces}    Hashtable copies = new Hashtable();
+${spaces}    return Copy(copies);
+${spaces}  }
+${spaces}
+#end
+${spaces}  /// <summary>
+${spaces}  /// Creates and returns a deep copy of the data object and its descendants.
+${spaces}  /// </summary>
+${spaces}  /// <param name="copies">Copies holds all referenced objects being copied so far. An already copied object shall not be copied again. This prevents infinite loops on cyclic references.</param>
+${spaces}  ${modifier} IDataObject Copy(Hashtable copies)
+${spaces}  {
+${spaces}    if(copies.ContainsKey(this)) 
+${spaces}    {
+${spaces}      return (IDataObject)copies[this];
+${spaces}    }
+${spaces}    return Copy(new ${class.getAttribute(".net-data-object-class")}(), copies);
+${spaces}  }
+${spaces}
+${spaces}  /// <summary>
+${spaces}  /// Creates and returns a deep copy of the data object and its descendants.
+${spaces}  /// </summary>
+${spaces}  /// <param name="copy">Copy to be filled with this item information.</param>
+${spaces}  /// <param name="copies">Copies holds all referenced objects being copied so far. An already copied object shall not be copied again. This prevents infinite loops on cyclic references.</param>
+${spaces}  protected IDataObject Copy(${class.getAttribute(".net-data-object-class")} copy, Hashtable copies)
+${spaces}  {
+#if (${baseClassIsDataObject})
+${spaces}    copy = (${class.getAttribute(".net-data-object-class")}) base.Copy(copy, copies);
+#end
+#foreach ($property in $properties)
+#if(!${property.booleanValueOfTag(".net-ignore")})
+#set($propertyFieldName="m_${property.nameFirstLower()}")
+#isTypeModel($model $property $isTypeModel)	
+#if($isTypeModel)
+${spaces}    if (${propertyFieldName} != null)
+${spaces}    {
+${spaces}      copy.${property.nameFirstUpper()} = (${property.retrieveTypeClassName()}) ${propertyFieldName}.Copy(copies);
+${spaces}    }
+#else
+${spaces}    copy.${property.nameFirstUpper()} = ${propertyFieldName};
+#end 
+#end
+#end
+#foreach ($indexedProperty in $indexedProperties) 
+#if(!${indexedProperty.booleanValueOfTag(".net-ignore")})
+#set($propertyFieldName="m_${indexedProperty.nameFirstLower()}")
+#set($collectionType=${indexedProperty.valueOfTag(".net-collection-type")})
+#if($collectionType.equalsIgnoreCase("Bag") || $collectionType.equalsIgnoreCase("List"))
+#set($collectionClass="ArrayList")
+#end
+#if($collectionType.equalsIgnoreCase("Set"))
+#set($collectionClass="HybridSet")
+#end
+${spaces}    copy.${propertyFieldName} = new ${collectionClass}();
+${spaces}    foreach (IDataObject item in ${propertyFieldName})
+${spaces}    {
+${spaces}      copy.Add${indexedProperty.nameFirstUpper()}((${indexedProperty.retrieveTypeClassName()})item.Copy(copies));
+${spaces}    }
+#end
+#end
+#if (!${baseClassIsDataObject})
+${spaces}    copies.Add(this, copy);
+#end
+${spaces}    return copy;
+${spaces}  }
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Resets the data of the paged collection to the persistent state of this data object.
+${spaces}  /// </summary>
+${spaces}  /// <remarks>
+${spaces}  /// <para>
+${spaces}  /// This method is called by the pmMDA.NET framework. No need to call this method
+${spaces}  /// from your code.
+${spaces}  /// </para>
+${spaces}  /// <para>
+${spaces}  /// <b>Note to implementers:</b><br/>
+${spaces}  /// Every paged indexed property must be reseted by calling the
+${spaces}  /// <see cref="IPagedCollection"/>.<see cref="IPagedCollection.ResetPaging"/> method
+${spaces}  /// if the field is an <see cref="IPagedCollection"/>. Otherwise the field must be 
+${spaces}  /// recreated as paged collection.<br/>
+${spaces}  /// Example:<br/>
+${spaces}  /// <code>
+${spaces}  /// public virtual void ResetPaging()
+${spaces}  /// {
+${spaces}  ///   if (m_myManualPagedProperty is IPagedCollection)
+${spaces}  ///   {
+${spaces}  ///     ((IPagedCollection) m_myManualPagedProperty).ResetPaging();
+${spaces}  ///   }
+${spaces}  ///   else
+${spaces}  ///   {
+${spaces}  ///     m_myManualPagedProperty = new PagedSet(this, typeof(ItemClass), ${quotes}m_myManualPagedProperty${quotes}, MyManualPagedPropertiesPagingAmount, MyManualPagedPropertiesMaxLoadedItemCount);
+${spaces}  ///     // - or - m_myManualPagedProperty = new PagedList(/*...*/);
+${spaces}  ///     // - or - m_myManualPagedProperty = new PagedBag(/*...*/);
+${spaces}  ///   }
+${spaces}  /// }
+${spaces}  /// </code>
+${spaces}  /// Do not forget to call <c>base.ResetPaging</c> at the end of the overriden method
+${spaces}  /// If your <see cref="IDataObject">data object</see> derive from another
+${spaces}  /// <see cref="IDataObject">data object</see>.
+${spaces}  /// </para>
+${spaces}  /// </remarks>
+${spaces}  /// <exception cref="PagingException">
+${spaces}  /// The count of persistent items of at least one indexed property cannot be found.<br/>
+${spaces}  /// - or -<br/>
+${spaces}  /// The items of a paged collection could not be reloaded.<br/>
+${spaces}  /// - or -<br/>
+${spaces}  /// This data object has been modified by another transaction and an exception is thrown
+${spaces}  /// as a result. Note that this exception is only thrown in special cases. See the
+${spaces}  /// <see cref="IPagedCollection.DefaultOwnerModifiedAction"/> property for further information.
+${spaces}  /// </exception>
+${spaces}  ${modifier} void ResetPaging()
+${spaces}  {
+#foreach($indexedProperty in $indexedProperties)
+#if(!${indexedProperty.booleanValueOfTag(".net-ignore")})
+#if(${indexedProperty.booleanValueOfTag(".net-bo-paged")})
+#set($fieldName="m_${indexedProperty.nameFirstLower()}")
+#set($collectionType="Paged${collectionType}")
+#set($itemType=${netHelper.convertJavaTypeToDotnet(${indexedProperty.getTypeName()})})
+#set($pagingAmountProperty="${indexedProperty.nameFirstUpperPlural()}PagingAmount")
+#set($maxLoadedItemCountProperty="${indexedProperty.nameFirstUpperPlural()}MaxLoadedItemCount")
+${spaces}    if (${fieldName} is IPagedCollection)
+${spaces}    {
+${spaces}      ((IPagedCollection) ${fieldName}).ResetPaging();
+${spaces}    }
+${spaces}    else 
+${spaces}    {
+${spaces}      ${fieldName} = new ${collectionType}(this, typeof(${itemType}), ${quotes}${fieldName}${quotes}, ${pagingAmountProperty}, ${maxLoadedItemCountProperty});
+${spaces}    }
+#end
+#end
+#end
+#if(${baseClassIsDataObject})
+${spaces}    
+${spaces}    base.ResetPaging();
+#end
+${spaces}  }
+${spaces}  
+#if(!${baseClassIsDataObject})
+${spaces}  /// <summary>
+${spaces}  /// Occurs when the value of a primitive property has changed.
+${spaces}  /// </summary>
+${spaces}  /// <remarks>
+${spaces}  /// Primitive properties have a primitive type such as int, long, string, float, ... .
+${spaces}  /// </remarks>
+${spaces}  public event PrimitivePropertyChangedEventHandler PrimitivePropertyChanged;
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Occurs when the value of a single property has changed.
+${spaces}  /// </summary>
+${spaces}  /// <remarks>
+${spaces}  /// Single properties have the type <see cref="IDataObject"/>.
+${spaces}  /// </remarks>
+${spaces}  public event SinglePropertyChangedEventHandler SinglePropertyChanged;
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Occurs when an indexed property has changed.
+${spaces}  /// </summary>
+${spaces}  /// <remarks>
+${spaces}  /// <para>
+${spaces}  /// Indexed properties are a list of <see cref="IDataObject">data objects</see>.
+${spaces}  /// </para>
+${spaces}  /// <para>
+${spaces}  /// Indexed property do change if items were added, inserted, removed, or replaced
+${spaces}  /// and <b>not</b> if the data of an item has changed.
+${spaces}  /// </para>
+${spaces}  /// </remarks>
+${spaces}  public event IndexedPropertyChangedEventHandler IndexedPropertyChanged;
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Raises the <see cref="PrimitivePropertyChanged"/> event.
+${spaces}  /// </summary>
+${spaces}  /// <remarks>
+${spaces}  /// <para>
+${spaces}  /// Raising an event invokes the event handler through a delegate. For more information,
+${spaces}  /// see <a href="http://msdn.microsoft.com/library/en-us/cpguide/html/cpconprovidingeventfunctionality.asp">Raising an Event</a>.
+${spaces}  /// </para>
+${spaces}  /// <para>
+${spaces}  /// The OnPrimitivePropertyChanged method also allows derived classes to handle the
+${spaces}  /// event without attaching a delegate. This is the preferred technique for handling
+${spaces}  /// the event in a derived class.
+${spaces}  /// </para>
+${spaces}  /// <para>
+${spaces}  /// <b>Notes to Inheritors:</b> Make sure you call <c>base.OnPrimitivePropertyChanged</c>
+${spaces}  /// to ensure that the <see cref="PrimitivePropertyChanged"/> event is raised.
+${spaces}  /// </para>
+${spaces}  /// </remarks>
+${spaces}  /// <param name="e">
+${spaces}  /// A <see cref="PropertyEventArgs"/> that contains the event data. 
+${spaces}  /// </param>
+${spaces}  protected virtual void OnPrimitivePropertyChanged(PrimitivePropertyChangedEventArgs e) 
+${spaces}  {
+${spaces}    if (PrimitivePropertyChanged != null) 
+${spaces}    {
+${spaces}      PrimitivePropertyChanged(this, e);
+${spaces}    }
+${spaces}  }
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Raises the <see cref="SinglePropertyChanged"/> event.
+${spaces}  /// </summary>
+${spaces}  /// <remarks>
+${spaces}  /// <para>
+${spaces}  /// Raising an event invokes the event handler through a delegate. For more information,
+${spaces}  /// see <a href="http://msdn.microsoft.com/library/en-us/cpguide/html/cpconprovidingeventfunctionality.asp">Raising an Event</a>.
+${spaces}  /// </para>
+${spaces}  /// <para>
+${spaces}  /// The OnSinglePropertyChanged method also allows derived classes to handle the
+${spaces}  /// event without attaching a delegate. This is the preferred technique for handling
+${spaces}  /// the event in a derived class.
+${spaces}  /// </para>
+${spaces}  /// <para>
+${spaces}  /// <b>Notes to Inheritors:</b> Make sure you call <c>base.OnSinglePropertyChanged</c>
+${spaces}  /// to ensure that the <see cref="SinglePropertyChanged"/> event is raised.
+${spaces}  /// </para>
+${spaces}  /// </remarks>
+${spaces}  /// <param name="e">
+${spaces}  /// A <see cref="PropertyEventArgs"/> that contains the event data. 
+${spaces}  /// </param>
+${spaces}  protected virtual void OnSinglePropertyChanged(SinglePropertyChangedEventArgs e) 
+${spaces}  {
+${spaces}    if (SinglePropertyChanged != null) 
+${spaces}    {
+${spaces}      SinglePropertyChanged(this, e);
+${spaces}    }
+${spaces}  }
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Raises the <see cref="IndexedPropertyChanged"/> event.
+${spaces}  /// </summary>
+${spaces}  /// <remarks>
+${spaces}  /// <para>
+${spaces}  /// Raising an event invokes the event handler through a delegate. For more information,
+${spaces}  /// see <a href="http://msdn.microsoft.com/library/en-us/cpguide/html/cpconprovidingeventfunctionality.asp">Raising an Event</a>.
+${spaces}  /// </para>
+${spaces}  /// <para>
+${spaces}  /// The OnIndexedPropertyChanged method also allows derived classes to handle the
+${spaces}  /// event without attaching a delegate. This is the preferred technique for handling
+${spaces}  /// the event in a derived class.
+${spaces}  /// </para>
+${spaces}  /// <para>
+${spaces}  /// <b>Notes to Inheritors:</b> Make sure you call <c>base.OnIndexedPropertyChanged</c>
+${spaces}  /// to ensure that the <see cref="IndexedPropertyChanged"/> event is raised.
+${spaces}  /// </para>
+${spaces}  /// </remarks>
+${spaces}  /// <param name="e">
+${spaces}  /// A <see cref="PropertyEventArgs"/> that contains the event data. 
+${spaces}  /// </param>
+${spaces}  protected virtual void OnIndexedPropertyChanged(IndexedPropertyChangedEventArgs e) 
+${spaces}  {
+${spaces}    if (IndexedPropertyChanged != null) 
+${spaces}    {
+${spaces}      IndexedPropertyChanged(this, e);
+${spaces}    }
+${spaces}  }
+${spaces}  
+#end
+${spaces}  
+${spaces}  ${sign}endregion
+##
+## **** Properties ****************************************
+##
+#foreach($property in $properties)
+#if(!${property.booleanValueOfTag(".net-ignore")})
+#set($typeName=${property.getTypeName()})
+#set($type=false)
+#set($type=${model.findClass(${typeName})})
+#set($changeable=${property.booleanValueOfTag("bo-change-event")})
+#set($changingEvent=${property.booleanValueOfTag("bo-veto-event")})
+#if(${type})
+#isDataObject($type $typeIsDataObject)
+#isReferenceCode($type $typeIsRefCode)
+#else
+#set($typeIsDataObject=false)
+#set($typeIsRefCode=false)
+#end
+${spaces}  
+#emitXMLDocuForProperty($property $netHelper "${spaces}  ")
+#set($propertyType=${netHelper.convertJavaTypeToDotnet(${property.getTypeName()})})
+${spaces}  [Browsable(true)]
+${spaces}  ${property.retrieveVisibilityText()} virtual ${propertyType} ${property.nameFirstUpper()}
+${spaces}  {
+#if(${property.canBeRead()})
+${spaces}    get
+${spaces}    {
+${spaces}      return m_${property.nameFirstLower()};
+${spaces}    }
+#end
+#if(${property.canBeWritten()})
+${spaces}    set
+${spaces}    {
+#if(${typeIsRefCode})
+${spaces}      if (m_${property.nameFirstLower()} == null || m_${property.nameFirstLower()}.Code != value.Code)
+#else
+${spaces}      if (m_${property.nameFirstLower()} != value)
+#end
+${spaces}      {
+#if($changingEvent)
+${spaces}        PropertyChangingEventArgs e = new PropertyChangingEventArgs(this, ${quotes}${property.nameFirstUpper()}${quotes}, m_${property.nameFirstLower()}, value);
+${spaces}        On${property.nameFirstUpper()}Changing(e);
+${spaces}        if (e.Cancel)
+${spaces}        {
+${spaces}          return;
+${spaces}        }
+#end
+${spaces}        ${propertyType} oldValue = m_${property.nameFirstLower()};
+${spaces}        m_${property.nameFirstLower()} = value;
+#if($typeIsDataObject)
+${spaces}        if (m_${property.nameFirstLower()} == null) 
+${spaces}        {
+${spaces}          m_update.AddUpdate(new PrimitiveFieldUpdate(${quotes}m_${property.nameFirstLower()}${quotes}, null));
+${spaces}        }
+${spaces}        else 
+${spaces}        {
+${spaces}          m_update.AddUpdate(new SingleFieldUpdate(m_${property.nameFirstLower()}.Update, ${quotes}m_${property.nameFirstLower()}${quotes}));
+${spaces}        }
+#else
+${spaces}        m_update.AddUpdate(new PrimitiveFieldUpdate(${quotes}m_${property.nameFirstLower()}${quotes}, m_${property.nameFirstLower()}));
+#end
+${spaces}        SetModified();
+#if($typeIsDataObject)
+${spaces}        OnSinglePropertyChanged(new SinglePropertyChangedEventArgs(this, ${quotes}${property.nameFirstUpper()}${quotes}, oldValue, value));
+#else
+${spaces}        OnPrimitivePropertyChanged(new PrimitivePropertyChangedEventArgs(this, ${quotes}${property.nameFirstUpper()}${quotes}, oldValue, value));
+#end
+#if($changeable)
+${spaces}        On${property.nameFirstUpper()}Changed(new PmMda.Net.Dog.PropertyChangedEventArgs(this, ${quotes}${property.nameFirstUpper()}${quotes}));
+#end
+${spaces}      }
+${spaces}    }
+#end
+${spaces}  }
+#end
+#end
+##
+## **** Indexed properties (1..n mapping) *****************
+##
+#foreach($indexedProperty in $indexedProperties)
+#if(!${indexedProperty.booleanValueOfTag(".net-ignore")})
+#set($itemType = ${netHelper.convertJavaTypeToDotnet(${indexedProperty.getTypeName()})})
+#set($upperSingularName = ${indexedProperty.nameFirstUpperSingular()})
+#set($upperPluralName = ${indexedProperty.nameFirstUpperPlural()})
+#set($fieldName = "m_${indexedProperty.nameFirstLower()}")
+#set($collectionType=${indexedProperty.valueOfTag(".net-collection-type")})
+#if($collectionType.equalsIgnoreCase("Bag") || $collectionType.equalsIgnoreCase("List"))
+#set($interfaceType="IList")
+#end
+#if($collectionType.equalsIgnoreCase("Set"))
+#set($interfaceType="ISet")
+#end
+${spaces}  
+${spaces}  ${sign}region ${indexedProperty.getName()}
+${spaces}  
+#if(${paged})
+#set($pagingAmountProperty="${indexedProperty.nameFirstUpperPlural()}PagingAmount")
+#set($maxLoadedItemCountProperty="${indexedProperty.nameFirstUpperPlural()}MaxLoadedItemCount")
+#set($pagingAmountField="m_${indexedProperty.nameFirstLower()}PagingAmount")
+#set($maxLoadedItemCountField="m_${indexedProperty.nameFirstLower()}MaxLoadedItemCount")
+${spaces}  /// <summary>
+${spaces}  /// Gets or sets the paging amount of the paged indexed property ${upperPluralName}.
+${spaces}  /// </summary>
+${spaces}  /// <exception cref="ArgumentOutOfRangeException">
+${spaces}  /// The paging amount is less than one.<br/>
+${spaces}  /// - or -<br/>
+${spaces}  /// The paging amount is greather than than the <see cref=${quotes}${maxLoadedItemCountField}${quotes}>maximum loaded item count</see>.
+${spaces}  /// </exception>
+${spaces}  [Browsable(true)]
+${spaces}  public int ${pagingAmountProperty}
+${spaces}  {
+${spaces}    get
+${spaces}    {
+${spaces}      return ${pagingAmountField};
+${spaces}    }
+${spaces}    set
+${spaces}    {
+${spaces}      if (${pagingAmountField} != value)
+${spaces}      {
+${spaces}        if (value < 1)
+${spaces}        {
+${spaces}          throw new ArgumentOutOfRangeException("value", "The paging amount is less than one.");
+${spaces}        }
+${spaces}        if (value >= ${maxLoadedItemCountProperty})
+${spaces}        {
+${spaces}          throw new ArgumentOutOfRangeException("value", "The paging amount is greather than the maximum loaded item count.");
+${spaces}        }
+${spaces}        ${pagingAmountField} = value;
+${spaces}        if (${fieldName} is IPagedCollection)
+${spaces}        {
+${spaces}           ((IPagedCollection) ${fieldName}).PagingAmount = value;
+${spaces}        }
+${spaces}      }
+${spaces}    }
+${spaces}  }
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Gets or sets the maximal loaded item count of the paged indexed property ${upperPluralName}.
+${spaces}  /// </summary>
+${spaces}  /// <exception cref="ArgumentOutOfRangeException">
+${spaces}  /// The new value is less than one.<br/>
+${spaces}  /// - or -<br/>
+${spaces}  /// The new value is greather than than the <see cref=${quotes}${maxLoadedItemCountField}${quotes}>maximum loaded item count</see>.
+${spaces}  /// </exception>
+${spaces}  [Browsable(true)]
+${spaces}  public int ${maxLoadedItemCountProperty}
+${spaces}  {
+${spaces}    get
+${spaces}    {
+${spaces}      return ${maxLoadedItemCountField};
+${spaces}    }
+${spaces}    set
+${spaces}    {
+${spaces}      if (${maxLoadedItemCountField} != value)
+${spaces}      {
+${spaces}        if (value < 1)
+${spaces}        {
+${spaces}          throw new ArgumentOutOfRangeException("value", "The maximal loaded item count is less than one.");
+${spaces}        }
+${spaces}        if (value <= ${pagingAmountProperty})
+${spaces}        {
+${spaces}          throw new ArgumentOutOfRangeException("value", "The maximum loaded item count is less than the paging amount.");
+${spaces}        }
+${spaces}        ${maxLoadedItemCountField} = value;
+${spaces}        if (${fieldName} is IPagedCollection)
+${spaces}        {
+${spaces}           ((IPagedCollection) ${fieldName}).MaxLoadedItemCount = value;
+${spaces}        }
+${spaces}      }
+${spaces}    }
+${spaces}  }
+${spaces}  
+#end
+${spaces}  /// <summary>
+${spaces}  /// Gets the count of ${upperPluralName}.
+${spaces}  /// </summary>
+${spaces}  [Browsable(true)]
+${spaces}  public virtual int ${upperPluralName}Count
+${spaces}  {
+${spaces}    get
+${spaces}    {
+${spaces}      return ${fieldName}.Count;
+${spaces}    }
+${spaces}  }
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Determines whether the specified <paramref name="element"/> is in the
+${spaces}  /// indexed property ${quotes}${upperPluralName}${quotes}.
+${spaces}  /// </summary>
+${spaces}  /// <param name="element">The element to locate in the indexed property.</param>
+${spaces}  /// <returns>
+${spaces}  /// <c>true</c> if the <paramref name="element"/> is in the indexed property;
+${spaces}  /// otherwise, <c>false</c>
+${spaces}  /// </returns>
+${spaces}  /// <exception cref="PagingException">
+${spaces}  /// The element in the indexed property could not be reloaded.
+${spaces}  /// </exception>
+${spaces}  public virtual bool Contains${upperSingularName}(${itemType} element)
+${spaces}  {
+${spaces}    return ${fieldName}.Contains(element);
+${spaces}  }
+${spaces}  
+#if(${indexedProperty.canBeRead()})
+${spaces}  /// <summary>
+${spaces}  /// Gets all element of this indexed property.
+${spaces}  /// </summary>
+${spaces}  /// <value>
+${spaces}  /// All elements of this indexed property as array.
+${spaces}  /// </value>
+#if(${paged})
+${spaces}  /// <remarks>
+${spaces}  /// In paged indexed properties it is very likely that items have to be reloaded 
+${spaces}  /// to create and fill the returned array. This makes this method very slow!
+${spaces}  /// Use the <see cref="Enumerate${upperPluralName}"/> methods to iterate over the
+${spaces}  /// items of this indexed property.
+${spaces}  /// </remarks>
+${spaces}  /// <exception cref="PagingException">
+${spaces}  /// The elements in the indexed property could not be reloaded.
+${spaces}  /// </exception>
+#end
+${spaces}  [Browsable(true)]
+${spaces}  public virtual ${itemType}[] ${upperPluralName}
+${spaces}  {
+${spaces}    get
+${spaces}    {
+${spaces}      ${itemType}[] ret = new ${itemType}[${upperPluralName}Count];
+${spaces}      Type fieldType = ${fieldName}.GetType();
+${spaces}      MethodInfo copyToMethod = fieldType.GetMethod("CopyTo", new Type[] {typeof(Array), typeof(int)});
+${spaces}      copyToMethod.Invoke(${fieldName}, new object[] {ret, 0});
+${spaces}      return ret;
+${spaces}    }
+${spaces}  }
+${spaces}  
+${spaces}  /// <overloads>
+${spaces}  /// Enumerates items in the indexed property ${upperPluralName}.
+${spaces}  /// </overloads>
+${spaces}  /// <summary>
+${spaces}  /// Enumerates all items in the indexed property ${upperPluralName}.
+${spaces}  /// </summary>
+${spaces}  /// <returns>
+${spaces}  /// An <see cref="IEnumerable"/> to iterate over the items of the indexed property
+${spaces}  /// ${upperPluralName} using the <c>foreach</c> keyword or the
+${spaces}  /// <see cref="IEnumerable.GetEnumerator"/> method.
+${spaces}  /// </returns>
+${spaces}  /// <example>
+${spaces}  /// foreach (${itemType} item in my${className}.Enumerate${upperPluralName}()).
+${spaces}  /// {
+${spaces}  ///   // do something with the item.
+${spaces}  /// }
+${spaces}  /// </example>
+${spaces}  public virtual IEnumerable Enumerate${upperPluralName}()
+${spaces}  {
+${spaces}    return ${fieldName};
+${spaces}  }
+${spaces}  
+#if(${paged})
+#if($collectionType.equalsIgnoreCase("Bag") || $collectionType.equalsIgnoreCase("List"))
+${spaces}  /// <summary>
+${spaces}  /// Enumerates the specified range of items in the indexed property ${upperPluralName}.
+${spaces}  /// </summary>
+${spaces}  /// <param name="firstIndex">The index of the first item to iterate.</param>
+${spaces}  /// <param name="lastIndex">The index of the last item to iterate.</param>
+${spaces}  /// <returns>
+${spaces}  /// An <see cref="IEnumerable"/> to iterate over the specified range of items
+${spaces}  /// using the <c>foreach</c> keyword or the <see cref="IEnumerable.GetEnumerator"/>
+${spaces}  /// method.
+${spaces}  /// </returns>
+${spaces}  /// <example>
+${spaces}  /// foreach (${itemType} item in my${className}.Enumerate${upperPluralName}(10, 19)).
+${spaces}  /// {
+${spaces}  ///   // do something with the item.
+${spaces}  /// }
+${spaces}  /// </example>
+${spaces}  /// <exception cref="ArgumentOutOfRangeException">
+${spaces}  /// <paramref name="firstIndex"/> is less than zero.<br/>
+${spaces}  /// - or -<br/>
+${spaces}  /// The <paramref name="lastIndex"/> is less  than the <paramref name="firstIndex"/>.<br/>
+${spaces}  /// - or -<br/>
+${spaces}  /// The <paramref name="lastIndex"/> is greather than or equal to the count of items in
+${spaces}  /// indexed property.
+${spaces}  /// </exception>
+${spaces}  public virtual IEnumerable Enumerate${upperPluralName}(int firstIndex, int lastIndex)
+${spaces}  {
+${spaces}    return new ListRangeEnumerable(${fieldName}, firstIndex, lastIndex);
+${spaces}  }
+${spaces}  
+#end
+#if($collectionType.equalsIgnoreCase("Set"))
+${spaces}  /// <summary>
+${spaces}  /// Enumerates the specified range of items in the indexed property ${upperPluralName}.
+${spaces}  /// </summary>
+${spaces}  /// <param name="firstItem">
+${spaces}  /// The first item to iterate or <c>null</c> to start the iteration with the first
+${spaces}  /// item in the indexed property.
+${spaces}  /// </param>
+${spaces}  /// <param name="lastItem">
+${spaces}  /// The last item to iterate or <c>null</c> to iterate to the last item in the
+${spaces}  /// indexed property.
+${spaces}  /// </param>
+${spaces}  /// <returns>
+${spaces}  /// An <see cref="IEnumerable"/> to iterate over the specified range of items
+${spaces}  /// using the <c>foreach</c> keyword or the <see cref="IEnumerable.GetEnumerator"/>
+${spaces}  /// method.
+${spaces}  /// </returns>
+${spaces}  /// <example>
+${spaces}  /// ${itemType} first /* = your code */;
+${spaces}  /// ${itemType} last /* = your code */;
+${spaces}  /// foreach (${itemType} item in my${className}.Enumerate${upperPluralName}(first, last)).
+${spaces}  /// {
+${spaces}  ///   // do something with the item.
+${spaces}  /// }
+${spaces}  /// </example>
+${spaces}  public virtual IEnumerable Enumerate${upperPluralName}(${itemType} firstItem, ${itemType} lastItem)
+${spaces}  {
+${spaces}    if (${fieldName} is PagedSet)
+${spaces}    {
+${spaces}      return ((PagedSet) ${fieldName}).Enumerate(firstItem, lastItem);
+${spaces}    }
+${spaces}    else
+${spaces}    {
+${spaces}      return new SetRangeEnumerable(${fieldName}, firstItem, lastItem);
+${spaces}    }
+${spaces}  }
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Gets the successor of the specified <paramref name="previous"/> item.
+${spaces}  /// </summary>
+${spaces}  /// <param name="previous">The item whose successor is requested.</param>
+${spaces}  public virtual ${itemType} GetNext${upperSingularName}(${itemType} previous)
+${spaces}  {
+${spaces}    if (${fieldName} is PagedSet)
+${spaces}    {
+${spaces}      PagedSet pagedSet = (PagedSet) ${fieldName};
+${spaces}      if (previous == null)
+${spaces}      {
+${spaces}        return (${itemType}) pagedSet.First();
+${spaces}      }
+${spaces}      else
+${spaces}      {
+${spaces}        return (${itemType}) pagedSet.GetNext(previous);
+${spaces}      }
+${spaces}    }
+${spaces}    else
+${spaces}    {
+${spaces}      IEnumerator enumerator = ${fieldName}.GetEnumerator();
+${spaces}      if (previous == null)
+${spaces}      {
+${spaces}        if (enumerator.MoveNext())
+${spaces}        {
+${spaces}          return (${itemType}) enumerator.Current;
+${spaces}        }
+${spaces}        return null;
+${spaces}      }
+${spaces}      else
+${spaces}      {
+${spaces}        while (enumerator.MoveNext())
+${spaces}        {
+${spaces}          if (previous.Equals(enumerator.Current))
+${spaces}          {
+${spaces}            if (enumerator.MoveNext())
+${spaces}            {
+${spaces}              return (${itemType}) enumerator.Current;
+${spaces}            }
+${spaces}            return null;
+${spaces}          }
+${spaces}        }
+${spaces}        return null;
+${spaces}      }
+${spaces}    }
+${spaces}  }
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Gets the foregoing item of the specified <paramref name="current"/> item.
+${spaces}  /// </summary>
+${spaces}  /// <param name="current">The item whose antecessor is requested.</param>
+${spaces}  public virtual ${itemType} GetPrevious${upperSingularName}(${itemType} current) 
+${spaces}  {
+${spaces}    if (current == null) 
+${spaces}    {
+${spaces}      throw new ArgumentNullException("current");
+${spaces}    }
+${spaces}    if (${fieldName} is PagedSet)
+${spaces}    {
+${spaces}      PagedSet pagedSet = (PagedSet) ${fieldName};
+${spaces}      return (${itemType}) pagedSet.GetPrevious(current);
+${spaces}    }
+${spaces}    else 
+${spaces}    {
+${spaces}      ${itemType} previous = null;
+${spaces}      IEnumerator enumerator = ${fieldName}.GetEnumerator();
+${spaces}      while (enumerator.MoveNext())
+${spaces}      {
+${spaces}        if (current.Equals(enumerator.Current)) 
+${spaces}        {
+${spaces}          return previous;
+${spaces}        }
+${spaces}        previous = (${itemType}) enumerator.Current;
+${spaces}      }
+${spaces}    }
+${spaces}    return null;
+${spaces}  }
+${spaces}  
+#end
+#end
+#if($collectionType.equalsIgnoreCase("Bag") || $collectionType.equalsIgnoreCase("List"))
+${spaces}  /// <summary>
+${spaces}  /// Searches for the specified <paramref name="element"/> and returns the zero-based
+${spaces}  /// index of the first occurrence within the entire indexed property "${upperPluralName}".
+${spaces}  /// </summary>
+${spaces}  /// <remarks>
+${spaces}  /// The zero-based index of the first occurrence of the <paramref name="element"/> within
+${spaces}  /// the entire indexed property, if found; otherwise, -1.
+${spaces}  /// </remarks>
+${spaces}  /// <param name="element">The element to locate in the indexed property.</param>
+${spaces}  /// <exception cref="PagingException">
+${spaces}  /// The elements in the indexed property could not be reloaded.
+${spaces}  /// </exception>
+${spaces}  public virtual int IndexOf${upperSingularName}(${itemType} element)
+${spaces}  {
+${spaces}    return ${fieldName}.IndexOf(element);
+${spaces}  }
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Gets an element of the indexed property.
+${spaces}  /// </summary>
+${spaces}  /// <param name=${quotes}index${quotes}>Index of the element to get.</param>
+${spaces}  /// <exception cref="PagingException">
+${spaces}  /// The elements in the indexed property could not be reloaded.
+${spaces}  /// </exception>
+${spaces}  public virtual ${itemType} Get${upperSingularName}(int index)
+${spaces}  {
+${spaces}    return (${itemType}) ${fieldName}[index];
+${spaces}  }
+#end
+#end
+#if(${indexedProperty.canBeWritten()})
+#if($collectionType.equalsIgnoreCase("Bag") || $collectionType.equalsIgnoreCase("List"))
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Sets an element of the indexed property.
+${spaces}  /// </summary>
+${spaces}  /// <param name=${quotes}index${quotes}>Index of the element to set.</param>
+${spaces}  /// <param name=${quotes}element${quotes}>The new value to set at the specified index.</param>
+${spaces}  /// <exception cref="PagingException">
+${spaces}  /// The elements in the indexed property could not be reloaded.
+${spaces}  /// </exception>
+${spaces}  public virtual void Set${upperSingularName}(int index, ${itemType} element)
+${spaces}  {
+${spaces}    IDataObject oldItem = (IDataObject) ${fieldName}[index];
+${spaces}    ${fieldName}[index] = element;
+${spaces}    m_update.AddUpdate(new ItemReplacementUpdate(element.Update, ${quotes}${fieldName}${quotes}, index));
+${spaces}    SetModified();
+${spaces}    OnIndexedPropertyChanged(new IndexedPropertyChangedEventArgs(this, ${quotes}${indexedProperty.getName()}${quotes}, IndexedPropertyAction.Set, new IDataObject[] {element}, new int[] {index}));
+${spaces}  }
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Inserts an <paramref name="element"/> into the indexed property ${upperPluralName}
+${spaces}  /// at the specified <paramref name="index"/>.
+${spaces}  /// </summary>
+${spaces}  /// <remarks>
+${spaces}  /// If index is equal to <see cref=${quotes}${upperPluralName}Count${quotes}/>, the 
+${spaces}  /// <paramref name="element"/> is added to the end of the indexed property.
+${spaces}  /// </remarks>
+${spaces}  /// <param name="index">The zero-based index at which value should be inserted.</param>
+${spaces}  /// <param name="element">The element to insert.</param>
+${spaces}  /// <exception cref="PagingException">
+${spaces}  /// The indexed property is paged and the element could not be inserted. This exception
+${spaces}  /// may have different reasons. See the <see cref="Exception.InnerException"/> of this
+${spaces}  /// exception for further information.
+${spaces}  /// </exception>
+${spaces}  public virtual void Insert${upperSingularName}(int index, ${itemType} element)
+${spaces}  {
+${spaces}    ${fieldName}.Insert(index, element);
+${spaces}    m_update.AddUpdate(new ItemInsertionUpdate(element.Update, ${quotes}${fieldName}${quotes}, index));
+${spaces}    SetModified();
+${spaces}    OnIndexedPropertyChanged(new IndexedPropertyChangedEventArgs(this, ${quotes}${indexedProperty.getName()}${quotes}, IndexedPropertyAction.Inserted, new IDataObject[] {element}, new int[] {index}));
+${spaces}  }
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Removes the element at the specified <paramref name="index"/> from the indexed property
+${spaces}  /// ${upperPluralName}.
+${spaces}  /// </summary>
+${spaces}  /// <param name="index">The zero-based index of the element to remove.</param>
+${spaces}  /// <exception cref="PagingException">
+${spaces}  /// The indexed property is paged and the element could not be removed. This exception
+${spaces}  /// may have different reasons. See the <see cref="Exception.InnerException"/> of this
+${spaces}  /// exception for further information.
+${spaces}  /// </exception>
+${spaces}  public virtual void Remove${upperSingularName}At(int index)
+${spaces}  {
+${spaces}    IDataObject element = (IDataObject) ${fieldName}[index];
+${spaces}    ${fieldName}.RemoveAt(index);
+${spaces}    element.SetDeleted();
+${spaces}    m_deletedChildren.Add(element);
+${spaces}    m_update.AddUpdate(new ItemRemovalAtUpdate(${quotes}${fieldName}${quotes}, index));
+${spaces}    SetModified();
+${spaces}    OnIndexedPropertyChanged(new IndexedPropertyChangedEventArgs(this, ${quotes}${indexedProperty.getName()}${quotes}, IndexedPropertyAction.Removed, new IDataObject[] {element}, new int[] {index}));
+${spaces}  }
+#end
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Appends elements to the indexed property.
+${spaces}  /// </summary>
+${spaces}  /// <param name=${quotes}elements${quotes}>The elements to append.</param>
+${spaces}  /// <exception cref="PagingException">
+${spaces}  /// The indexed property is paged and at least one element could not be added. This exception
+${spaces}  /// may have different reasons. See the <see cref="Exception.InnerException"/> of this
+${spaces}  /// exception for further information.
+${spaces}  /// </exception>
+${spaces}  public virtual void Add${upperPluralName}(params ${itemType}[] elements)
+${spaces}  {
+${spaces}    foreach (${itemType} element in elements)
+${spaces}    {
+${spaces}      ${fieldName}.Add(element);
+${spaces}      m_update.AddUpdate(new ItemAdditionUpdate(element.Update, ${quotes}${fieldName}${quotes}));
+${spaces}    }
+${spaces}    if (elements.Length > 0)
+${spaces}    {
+${spaces}      SetModified();
+${spaces}      int firstAddedIndex = ${fieldName}.Count - elements.Length;
+${spaces}      OnIndexedPropertyChanged(new IndexedPropertyChangedEventArgs(this, ${quotes}${indexedProperty.getName()}${quotes}, IndexedPropertyAction.Added, elements, null));
+${spaces}    }
+${spaces}  }
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Appends one element to the indexed property.
+${spaces}  /// </summary>
+${spaces}  /// <param name=${quotes}element${quotes}>The element to append.</param>
+${spaces}  /// <exception cref="PagingException">
+${spaces}  /// The indexed property is paged and the <paramref name="element"/> could not be added.
+${spaces}  /// This exception may have different reasons. See the
+${spaces}  /// <see cref="Exception.InnerException"/> of this exception for further information.
+${spaces}  /// </exception>
+${spaces}  public virtual void Add${upperSingularName}(${itemType} element)
+${spaces}  {
+${spaces}    ${fieldName}.Add(element);
+${spaces}    m_update.AddUpdate(new ItemAdditionUpdate(element.Update, ${quotes}${fieldName}${quotes}));
+${spaces}    SetModified();
+${spaces}    OnIndexedPropertyChanged(new IndexedPropertyChangedEventArgs(this, ${quotes}${indexedProperty.getName()}${quotes}, IndexedPropertyAction.Added, new IDataObject[] {element}, null));
+${spaces}  }
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Removes an element from the indexed property.
+${spaces}  /// </summary>
+${spaces}  /// <param name=${quotes}element${quotes}>The element to remove.</param>
+${spaces}  /// <exception cref="PagingException">
+${spaces}  /// The indexed property is paged and the <paramref name="element"/> could not be removed.
+${spaces}  /// This exception may have different reasons. See the
+${spaces}  /// <see cref="Exception.InnerException"/> of this exception for further information.
+${spaces}  /// </exception>
+${spaces}  public virtual void Remove${upperSingularName}(${itemType} element)
+${spaces}  {
+${spaces}    ${fieldName}.Remove(element);
+${spaces}    element.SetDeleted();
+${spaces}    m_deletedChildren.Add(element);
+${spaces}    m_update.AddUpdate(new ItemRemovalUpdate(element.Update, ${quotes}${fieldName}${quotes}));
+${spaces}    SetModified();
+${spaces}    OnIndexedPropertyChanged(new IndexedPropertyChangedEventArgs(this, ${quotes}${indexedProperty.getName()}${quotes}, IndexedPropertyAction.Removed, new IDataObject[] {element}, null));
+${spaces}  }
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Removes all elements from the indexed property.
+${spaces}  /// </summary>
+${spaces}  public virtual void Clear${upperPluralName}()
+${spaces}  {
+${spaces}    if (${fieldName}.Count > 0)
+${spaces}    {
+${spaces}      IDataObject[] removedElements = new IDataObject[${fieldName}.Count];
+${spaces}      ${fieldName}.CopyTo(removedElements, 0);
+${spaces}      m_update.AddUpdate(new ListClearingUpdate(${quotes}${fieldName}${quotes}));
+${spaces}      ${fieldName}.Clear();
+${spaces}      SetModified();
+${spaces}      OnIndexedPropertyChanged(new IndexedPropertyChangedEventArgs(this, ${quotes}${indexedProperty.getName()}${quotes}, IndexedPropertyAction.Cleared, removedElements, null));
+${spaces}    }
+${spaces}  }
+#end
+${spaces}  
+#if($collectionType.equalsIgnoreCase("Bag"))
+${spaces}  /// <summary>
+${spaces}  /// Gets the order in which the ${indexedProperty.namePlural()} are sorted.
+${spaces}  /// </summary>
+${spaces}  /// <remarks>
+${spaces}  /// If the order is modified, the ${indexedProperty.namePlural()} are resorted.
+${spaces}  /// Paged collections will loose their paged items. 
+${spaces}  /// </remarks>
+${spaces}  /// <value>
+${spaces}  /// The order in which the ${indexedProperty.namePlural()} are sorted.
+${spaces}  /// </value>
+${spaces}  public virtual DataObjectOrder ${indexedProperty.nameFirstUpper()}Order 
+${spaces}  {
+${spaces}    get 
+${spaces}    {
+${spaces}      return m_${indexedProperty.nameFirstLower()}Order;
+${spaces}    }
+${spaces}  }
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Called if the <see cref=${quotes}${indexedProperty.nameFirstUpper()}Order${quotes}/> has been modified.
+${spaces}  /// </summary>
+${spaces}  /// <remarks>
+${spaces}  /// Ensures that the ${indexedProperty.namePlural()} are sorted correctly.
+${spaces}  /// </remarks>
+${spaces}  private void On${indexedProperty.nameFirstUpper()}OrderModified(object sender, OrderEventArgs e) 
+${spaces}  {
+${spaces}    if (${fieldName} is PagedBag) 
+${spaces}    {
+${spaces}      ((PagedBag) ${fieldName}).ClearCache();
+${spaces}    }
+${spaces}    else 
+${spaces}    {
+${spaces}      ${fieldName} = m_${indexedProperty.nameFirstLower()}Order.Sort(${fieldName});
+${spaces}    }
+${spaces}  }
+${spaces}  
+#end
+${spaces}  ${sign}endregion
+#end
+#end
+##
+## **** Properties event methods **************************
+##
+${spaces}  
+${spaces}  ${sign}region Event methods
+#foreach($property in $properties)
+#if(!${property.booleanValueOfTag(".net-ignore")})
+#if(${property.booleanValueOfTag("bo-change-event")})
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Raises the <see cref=${quotes}${property.nameFirstUpper()}Changed${quotes}/> event.
+${spaces}  /// </summary>
+${spaces}  /// <remarks>
+${spaces}  /// <b>Notes to Inheritors:</b> When overriding On${property.nameFirstUpper()}Changed
+${spaces}  /// in a derived class, be sure to call the base class's On${property.nameFirstUpper()}Changed
+${spaces}  /// method so that registered delegates receive the event.
+${spaces}  /// </remarks>
+${spaces}  /// <param name=${quotes}e${quotes}>Contains the event data.</param>
+${spaces}  protected virtual void On${property.nameFirstUpper()}Changed(PmMda.Net.Dog.PropertyChangedEventArgs e)
+${spaces}  {
+${spaces}    if (${property.nameFirstUpper()}Changed != null)
+${spaces}    {
+${spaces}      ${property.nameFirstUpper()}Changed(this, e);
+${spaces}    }
+${spaces}  }
+#end
+#if(${property.booleanValueOfTag("bo-veto-event")})
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Raises the <see cref=${quotes}${property.nameFirstUpper()}Changing${quotes}/> event.
+${spaces}  /// </summary>
+${spaces}  /// <remarks>
+${spaces}  /// <param>
+${spaces}  /// Set the <see cref=${quotes}PropertyChangingEventArgs.Cancel${quotes}>Cancel</see>
+${spaces}  /// property of the parameter <paramref name=${quotes}e${quotes}/> to <c>true</c> if
+${spaces}  /// the changing of the value should be aborted.
+${spaces}  /// </param>
+${spaces}  /// <param>
+${spaces}  /// <b>Notes to Inheritors:</b> When overriding On${property.nameFirstUpper()}Changing
+${spaces}  /// in a derived class, be sure to call the base class's On${property.nameFirstUpper()}Changing
+${spaces}  /// method so that registered delegates receive the event.
+${spaces}  /// </param>
+${spaces}  /// </remarks>
+${spaces}  /// <param name=${quotes}e${quotes}>Contains the event data.</param>
+${spaces}  protected virtual void On${property.nameFirstUpper()}Changing(PropertyChangingEventArgs e)
+${spaces}  {
+${spaces}    if (${property.nameFirstUpper()}Changing != null)
+${spaces}    {
+${spaces}      ${property.nameFirstUpper()}Changing(this, e);
+${spaces}    }
+${spaces}  }
+#end
+#end
+#end
+${spaces}  
+${spaces}  ${sign}endregion
+##
+## **** Visitor pattern methodes **************************
+##
+#if (${baseClassIsDataObject})
+#set($acceptMethodModifier="protected override")
+#else
+#set($acceptMethodModifier="protected virtual")
+#end
+${spaces}  
+${spaces}  ${sign}region Visitor methods
+#if (!${baseClassIsDataObject})
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Implements the visitor pattern in the data object class. The accept
+${spaces}  /// method dispatches the visitor to all its relevant children. A relevant
+${spaces}  /// child is always another data object.
+${spaces}  /// </summary>
+${spaces}  /// <param name=${quotes}visitor${quotes}>Visitor to act on the data object.</param>
+${spaces}  public void Accept(IDataObjectVisitor visitor)
+${spaces}  {
+${spaces}    if (!visitor.Visited(this))
+${spaces}    {
+${spaces}      visitor.Depth++;
+${spaces}      AcceptProperties(visitor);
+${spaces}      visitor.Visit(this);
+${spaces}      AcceptIndexedProperties(visitor);
+${spaces}      visitor.Depth--;
+${spaces}    }
+${spaces}  }
+#end
+${spaces}  
+#if (${baseClassIsDataObject})
+#set($acceptMethodModifier="protected override")
+#else
+#set($acceptMethodModifier="protected virtual")
+#end
+${spaces}  
+#if (!${baseClassIsDataObject})
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Implements the visitor pattern in the data object class for persistent attributes only. The accept
+${spaces}  /// method dispatches the visitor to all its p children. A relevant
+${spaces}  /// child is always another data object and persistent.
+${spaces}  /// </summary>
+${spaces}  /// <param name=${quotes}visitor${quotes}>Visitor to act on the persistent part of the data object.</param>
+${spaces}  public void AcceptPersistency(IDataObjectVisitor visitor)
+${spaces}  {
+${spaces}    if (!visitor.Visited(this))
+${spaces}    {
+${spaces}      visitor.Depth++;
+${spaces}      AcceptPersistentProperties(visitor);
+${spaces}      visitor.Visit(this);
+${spaces}      AcceptPersistentIndexedProperties(visitor);
+${spaces}      visitor.Depth--;
+${spaces}    }
+${spaces}  }
+#end
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Visits all indexed properties
+${spaces}  /// </summary>
+${spaces}  /// <param name=${quotes}visitor${quotes}>Visitor to act on the data object.</param>
+${spaces}  /// <seealso cref=${quotes}Accept${quotes}/>
+${spaces}  ${acceptMethodModifier} void AcceptIndexedProperties(IDataObjectVisitor visitor)
+${spaces}  {
+#if(${baseClassIsDataObject})
+${spaces}	 base.AcceptIndexedProperties(visitor);
+#end
+#foreach ($indexedProperty in $indexedProperties) 
+#if(!${indexedProperty.booleanValueOfTag(".net-ignore")})
+#isTypeModel($model $indexedProperty $isTypeModel)
+#if($isTypeModel)
+#set($itemType = ${indexedProperty.retrieveTypeClassName()})
+#set($fieldName = "m_${indexedProperty.nameFirstLower()}")
+${spaces}    // ${indexedProperty.nameFirstUpperPlural()}
+#if(${indexedProperty.booleanValueOfTag(".net-bo-paged")})
+${spaces}
+${spaces}    if (!visitor.VisitUnloadedItems && ${fieldName} is IPagedCollection)
+${spaces}    {
+${spaces}      foreach(IDataObject item in ((IPagedCollection) ${fieldName}).LocalItems)
+${spaces}      {
+${spaces}        item.Accept(visitor);
+${spaces}      }
+${spaces}    }
+${spaces}    else
+${spaces}    {
+${spaces}      if (visitor.VisitUnloadedItems || !(${fieldName} is LazyICollectionWrapper))
+${spaces}      {
+${spaces}        foreach(IDataObject item in ${fieldName})
+${spaces}        {
+${spaces}          item.Accept(visitor);
+${spaces}        }
+${spaces}      }
+${spaces}    }
+#else
+${spaces}    if (visitor.VisitUnloadedItems || !(${fieldName} is LazyICollectionWrapper))
+${spaces}    {
+${spaces}      foreach(IDataObject item in ${fieldName})
+${spaces}      {
+${spaces}        item.Accept(visitor);
+${spaces}      }
+${spaces}    }
+#end
+${spaces}    
+#end
+#end
+#end
+${spaces}  }
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Visits all persistent indexed properties
+${spaces}  /// </summary>
+${spaces}  /// <param name=${quotes}visitor${quotes}>Visitor to act on the persistent part of the data object.</param>
+${spaces}  /// <seealso cref=${quotes}Accept${quotes}/>
+${spaces}  ${acceptMethodModifier} void AcceptPersistentIndexedProperties(IDataObjectVisitor visitor)
+${spaces}  {
+#if($isPersistent)
+#if(${baseClassIsDataObject})
+${spaces}	 base.AcceptPersistentIndexedProperties(visitor);
+#else
+${spaces}    //process deleted collection elements
+${spaces}    foreach (IDataObject item in m_deletedChildren)
+${spaces}    {
+${spaces}      if (item.PersistenceState == PersistenceState.Deleted)
+${spaces}      {
+${spaces}        item.AcceptPersistency(visitor);
+${spaces}      }
+${spaces}    }
+#end
+#foreach ($indexedProperty in $indexedProperties) 
+#if(!${indexedProperty.booleanValueOfTag(".net-ignore")})
+#if(${indexedProperty.booleanValueOfTag("persistence")})
+#isTypeModel($model $indexedProperty $isTypeModel)
+#if($isTypeModel)
+#set($itemType = ${indexedProperty.retrieveTypeClassName()})
+#set($fieldName = "m_${indexedProperty.nameFirstLower()}")
+${spaces}    // ${indexedProperty.nameFirstUpperPlural()}
+#if(${indexedProperty.booleanValueOfTag(".net-bo-paged")})
+${spaces}    if (!visitor.VisitUnloadedItems && ${fieldName} is IPagedCollection)
+${spaces}    {
+${spaces}      foreach(IDataObject item in ((IPagedCollection) ${fieldName}).LocalItems)
+${spaces}      {
+${spaces}        item.AcceptPersistency(visitor);
+${spaces}      }
+${spaces}    }
+${spaces}    else
+${spaces}    {
+${spaces}      if (visitor.VisitUnloadedItems || !(${fieldName} is LazyICollectionWrapper))
+${spaces}      {
+${spaces}        foreach(IDataObject item in ${fieldName})
+${spaces}        {
+${spaces}          item.AcceptPersistency(visitor);
+${spaces}        }
+${spaces}      }
+${spaces}    }
+#else
+${spaces}    if (visitor.VisitUnloadedItems || !(${fieldName} is LazyICollectionWrapper))
+${spaces}    {
+${spaces}      foreach(IDataObject item in ${fieldName})
+${spaces}      {
+${spaces}        item.AcceptPersistency(visitor);
+${spaces}      }
+${spaces}    }
+#end
+${spaces}    
+#end
+#end
+#end
+#end
+#end
+${spaces}  }
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Visits all properties
+${spaces}  /// </summary>
+${spaces}  /// <param name=${quotes}visitor${quotes}>Visitor to act on the data object.</param>
+${spaces}  /// <seealso cref=${quotes}Accept${quotes}/>
+${spaces}  ${acceptMethodModifier} void AcceptProperties(IDataObjectVisitor visitor)
+${spaces}  {
+#foreach ($property in $properties)
+#if(!${property.booleanValueOfTag(".net-ignore")})
+#isTypeModel($model $property $isTypeModel)
+#if($isTypeModel)
+${spaces}    if (m_${property.nameFirstLower()} != null)
+${spaces}    {
+${spaces}      m_${property.nameFirstLower()}.Accept(visitor);
+${spaces}    }
+#end
+#end
+#end
+#if(${baseClassIsDataObject})
+${spaces}    base.AcceptProperties(visitor);
+#end
+${spaces}  }
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Visits all persistent properties
+${spaces}  /// </summary>
+${spaces}  /// <param name=${quotes}visitor${quotes}>Visitor to act on the persistent part of the data object.</param>
+${spaces}  /// <seealso cref=${quotes}Accept${quotes}/>
+${spaces}  ${acceptMethodModifier} void AcceptPersistentProperties(IDataObjectVisitor visitor)
+${spaces}  {
+#if($isPersistent)
+#foreach ($property in $properties)
+#if(!${property.booleanValueOfTag(".net-ignore")})
+#if(${property.booleanValueOfTag("persistence")})
+#isTypeModel($model $property $isTypeModel)
+#if($isTypeModel)
+${spaces}    if (m_${property.nameFirstLower()} != null)
+${spaces}    {
+${spaces}      m_${property.nameFirstLower()}.AcceptPersistency(visitor);
+${spaces}    }
+#end
+#end
+#end
+#end
+#if(${baseClassIsDataObject})
+${spaces}    base.AcceptPersistentProperties(visitor);
+#end
+#end
+${spaces}  }
+${spaces}
+#if(!${baseClassIsDataObject})
+${spaces}    /// <summary>
+${spaces}    /// Returns the objects current persitence state. See <see cref="PersistenceState"/>.
+${spaces}    /// </summary>
+${spaces}    public PersistenceState PersistenceState
+${spaces}    {
+${spaces}      get
+${spaces}      {
+${spaces}        if (m_id == null)
+${spaces}        {
+${spaces}          m_persistenceState = PersistenceState.New;
+${spaces}        }
+${spaces}        else
+${spaces}        {
+${spaces}          switch (m_persistenceState)
+${spaces}          {
+${spaces}            case PersistenceState.New:
+${spaces}              m_persistenceState = PersistenceState.Unchanged;
+${spaces}              break;
+${spaces}            default:
+${spaces}              break;
+${spaces}          }
+${spaces}        }
+${spaces}        return m_persistenceState;
+${spaces}      }
+${spaces}    }
+${spaces}    
+${spaces}    /// <summary>
+${spaces}    /// Changes the objects pesistence state after synchronisation with the database.
+${spaces}    /// This method is called by the persistence handler.
+${spaces}    /// </summary>
+${spaces}    public void Commit()
+${spaces}    {
+${spaces}       switch (m_persistenceState)
+${spaces}       {
+${spaces}         case PersistenceState.New:
+${spaces}           if (m_id != null)
+${spaces}           {
+${spaces}             m_persistenceState = PersistenceState.Unchanged;
+${spaces}           }
+${spaces}           break;
+${spaces}         case PersistenceState.Unchanged:
+${spaces}         case PersistenceState.Modified:
+${spaces}           m_persistenceState = PersistenceState.Unchanged;
+${spaces}           break;
+${spaces}         case PersistenceState.Deleted:
+${spaces}           m_persistenceState = PersistenceState.Destroyed;
+${spaces}           foreach (IDataObject deletedChild in m_deletedChildren)
+${spaces}           {
+${spaces}             deletedChild.Commit();
+${spaces}           }
+${spaces}           m_deletedChildren.Clear();
+${spaces}           break;
+${spaces}         case PersistenceState.Destroyed:
+${spaces}           break;
+${spaces}       }
+${spaces}     }
+#end
+${spaces}  ${sign}endregion
+##
+## **** Clone methodes ************************************
+##
+${spaces}  
+${spaces}  ${sign}region ICloneable Members
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Creates and returns a shallow copy of the data object and its descendants.
+${spaces}  /// </summary>
+${spaces}  ${modifier} object Clone()
+${spaces}  {
+${spaces}    Hashtable clones = new Hashtable();
+${spaces}    return Clone(clones);
+${spaces}  }
+${spaces}
+${spaces}  /// <summary>
+${spaces}  /// Creates and returns a shallow copy of the data object and its descendants.
+${spaces}  /// </summary>
+${spaces}  /// <param name="clones">Clones holds all referenced objects being copied so far. An already cloned object shall not be cloned again. This prevents infinite loops on cyclic references.</param>
+${spaces}  public IDataObject Clone(Hashtable clones)
+${spaces}  {
+${spaces}    if(clones.ContainsKey(this)) 
+${spaces}    {
+${spaces}      return (IDataObject)clones[this];
+${spaces}    }
+${spaces}    return Clone(new ${class.getAttribute(".net-data-object-class")}(), clones);
+${spaces}  }
+${spaces}
+${spaces}  /// <summary>
+${spaces}  /// Creates and returns a shallow copy of the data object and its descendants.
+${spaces}  /// </summary>
+${spaces}  /// <param name="clone">Clone to be filled with content of this object.</param>
+${spaces}  /// <param name="clones">Clones holds all referenced objects being copied so far. An already cloned object shall not be cloned again. This prevents infinite loops on cyclic references.</param>
+${spaces}  protected IDataObject Clone(${class.getAttribute(".net-data-object-class")} clone, Hashtable clones)
+${spaces}  {
+#if (${baseClassIsDataObject})
+${spaces}    clone = (${class.getAttribute(".net-data-object-class")}) base.Clone(clone, clones);
+#end
+#foreach ($property in $properties)
+#if(!${property.booleanValueOfTag(".net-ignore")})
+#set($propertyFieldName="m_${property.nameFirstLower()}")
+${spaces}    clone.${property.nameFirstUpper()} = ${propertyFieldName};
+#end
+#end
+#foreach ($indexedProperty in $indexedProperties) 
+#if(!${indexedProperty.booleanValueOfTag(".net-ignore")})
+#set($propertyFieldName="m_${indexedProperty.nameFirstLower()}")
+#set($collectionType=${indexedProperty.valueOfTag(".net-collection-type")})
+#if($collectionType.equalsIgnoreCase("Bag") || $collectionType.equalsIgnoreCase("List"))
+#set($collectionClass="ArrayList")
+#end
+#if($collectionType.equalsIgnoreCase("Set"))
+#set($collectionClass="HybridSet")
+#end
+${spaces}    clone.${propertyFieldName} = new ${collectionClass}();
+${spaces}    foreach (IDataObject item in ${propertyFieldName})
+${spaces}    {
+${spaces}      clone.Add${indexedProperty.nameFirstUpper()}((${indexedProperty.retrieveTypeClassName()})item);
+${spaces}    }
+#end
+#end
+#if (${baseClassIsDataObject})
+${spaces}    clones.Add(this, clone);
+#end
+${spaces}    return clone;
+${spaces}  }
+${spaces}  
+${spaces}  ${sign}endregion
+${spaces}  
+${spaces}  ${sign}region ISerializable Members
+${spaces}  
+#if (${baseClassIsDataObject})
+#set($serializeMethodModifier="public override")
+#else
+#set($serializeMethodModifier="public virtual")
+#end
+${spaces}  /// <summary>
+${spaces}  /// Populates the <paramref name="info"/> with the data needed to serialize this data object.
+${spaces}  /// </summary>
+${spaces}  /// <param name="info">The <see cref="SerializationInfo"/> that is populated with data.</param>
+${spaces}  /// <param name="context">The destination for this serialization.</param>
+${spaces}  /// <exception cref="System.Security.SecurityException">The caller does not have the required permission.</exception>
+${spaces}  ${serializeMethodModifier} void GetObjectData(SerializationInfo info, StreamingContext context)
+${spaces}  {
+#if (${baseClassIsDataObject})
+${spaces}    base.GetObjectData(info, context);
+#else
+${spaces}    info.AddValue("m_id", m_id);
+${spaces}    info.AddValue("m_timestamp", m_timestamp);
+${spaces}    info.AddValue("m_persistenceState", m_persistenceState);
+#end
+#foreach($property in $properties)
+#if(!${property.booleanValueOfTag(".net-ignore")})
+#set($fieldName="m_${property.nameFirstLower()}")
+##${spaces}    info.AddValue(${quotes}${fieldName}${quotes}, ${fieldName});
+${spaces}    PmMda.Net.Dog.Serialization.SerializationHelper.addInfo(${quotes}${fieldName}${quotes}, ${fieldName}, info);
+#end
+#end
+${spaces}    
+#foreach($indexedProperty in $indexedProperties)
+#if(!${indexedProperty.booleanValueOfTag(".net-ignore")})
+#if(!${indexedProperty.booleanValueOfTag(".net-bo-paged")})
+#set($fieldName="m_${indexedProperty.nameFirstLower()}")
+##${spaces}    info.AddValue(${quotes}${fieldName}${quotes}, ${fieldName});
+${spaces}    PmMda.Net.Dog.Serialization.SerializationHelper.addInfo(${quotes}${fieldName}${quotes}, ${fieldName}, info);
+#end
+#end
+#end
+${spaces}  }
+${spaces}  
+${spaces}  #endregion
+${spaces}}
+#if (${package})
+}
+#end

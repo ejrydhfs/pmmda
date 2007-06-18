@@ -1,0 +1,225 @@
+####################################k###################
+## Velocity template
+## 
+## Generates a .NET Control used to display and edit the
+## primitive properties of a data object.
+##
+## Author: M. Pedersen
+## Copyright 2005 http://www.bbv.ch
+## Licensed under the Apache License, Version 2.0 (the "License");
+##     http://www.apache.org/licenses/LICENSE-2.0
+##
+#######################################################
+##
+## **** initialization ************************************
+##
+#set($sign="#")
+#set($quotes='"')
+#set($namespace=${package.getAttribute(".net-data-object-package")})
+#set($namespace="${namespace}.GUI")
+#set($doClassName=${class.getAttribute(".net-data-object-class")})
+#set($doPackageName=${class.retrievePackage().getAttribute(".net-data-object-package")})
+#if($doPackageName)
+#set($doQualifiedClassName="${doPackageName}.${doClassName}")
+#else
+#set($doQualifiedClassName=${doClassName})
+#end
+#set($doClassNameFirstLower=${netHelper.nameFirstLower(${doClassName})})
+#set($doFieldName="m_${netHelper.nameFirstLower(${doClassName})}")
+#set($abstractControl=${class.booleanValueOfAttribute(".net-gui-editable-controls")})
+#set($className="Indexed${doClassName}Properties")
+#if($abstractControl)
+#set($controlsAccessModifier="protected")
+#set($className="Abstract${className}")
+#else
+#set($controlsAccessModifier="private")
+#end
+#set($indexedProperties=${netHelper.getIndexedPropertiesForGUI(${class})})
+#set($indexedPropertyCount=${indexedProperties.size()})
+##
+## **** print file header *********************************
+##
+#printFileHeaderCSharp()
+
+##
+## **** usings ********************************************
+##
+using System;
+using System.Collections;
+using System.ComponentModel;
+using System.Drawing;
+using System.Windows.Forms;
+using PmMda.Net.Dog;
+using PmMda.Net.GUI;
+
+namespace ${namespace}
+{
+  public class ${className} : bbv.Common.Windows.Forms.UserControl
+  {
+    private ${doQualifiedClassName} ${doFieldName};
+    private bbv.Common.Windows.Forms.TabControl tabControl;
+#foreach($indexedProperty in $indexedProperties)
+#set($propertyName=${indexedProperty.nameFirstUpper()})
+#set($propertyNameLower=${indexedProperty.nameFirstLower()})
+#set($typeName=${indexedProperty.getTypeName()})
+#set($itemType=false)
+#set($itemType=${model.findClass(${typeName})})
+#set($itemClassName=${itemType.getAttribute(".net-data-object-class")})
+#set($itemPackageName=${itemType.retrievePackage().getAttribute(".net-data-object-package")})
+#set($itemPackageName="${itemPackageName}.GUI")
+    private bbv.Common.Windows.Forms.TabPage tabPage${propertyName};
+    private ${itemPackageName}.${itemClassName}List ${propertyNameLower}List;
+#end
+    private System.ComponentModel.Container components = null;
+
+    public ${className}()
+    {
+      InitializeComponent();
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
+
+    public ${doQualifiedClassName} ${doClassName} 
+    {
+      get 
+      {
+        return ${doFieldName};
+      }
+      set 
+      {
+        if (${doFieldName} != value) 
+        {
+          ${doFieldName} = value;
+          tabControl.Enabled = ${doFieldName} != null;
+          if (${doFieldName} != null) 
+          {
+#if($indexedPropertyCount>0)
+#set($propertyName=${indexedProperties.get(0).nameFirstUpper()})
+            tabControl.SelectedTab = tabPage${propertyName};
+            InitializeCurrentTab();
+#else
+            tabControl.SelectedTab = null;
+#end
+          }
+        }
+      }
+    }
+    
+    private void InitializeCurrentTab() 
+    {
+#foreach($indexedProperty in $indexedProperties)
+#set($propertyName=${indexedProperty.nameFirstUpper()})
+#set($propertyNameLower=${indexedProperty.nameFirstLower()})
+#set($typeName=${indexedProperty.getTypeName()})
+#set($itemType=false)
+#set($itemType=${model.findClass(${typeName})})
+#set($itemClassName=${itemType.getAttribute(".net-data-object-class")})
+#set($itemPackageName=${itemType.retrievePackage().getAttribute(".net-data-object-package")})
+#set($collectionType=${indexedProperty.valueOfTag(".net-collection-type")})
+#set($collectionType="CollectionType.${collectionType}")
+#set($readonly=!${indexedProperty.canBeWritten()})
+      if (tabPage${propertyName}.Equals(tabControl.SelectedTab) && ${propertyNameLower}List.CollectionIdentifier == null) 
+      {
+        ${propertyNameLower}List.CollectionIdentifier = new IndexedPropertyCollectionId(${doFieldName},
+          typeof(${itemPackageName}.${itemClassName}), ${quotes}${indexedProperty.nameFirstUpperPlural()}${quotes}, ${collectionType}, ${readonly});
+      }
+#end
+    }
+
+    ${sign}region Component Designer generated code
+    /// <summary> 
+    /// Required method for Designer support - do not modify 
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
+      this.tabControl = new bbv.Common.Windows.Forms.TabControl();
+#foreach($indexedProperty in $indexedProperties)
+#set($propertyName=${indexedProperty.nameFirstUpper()})
+#set($propertyNameLower=${indexedProperty.nameFirstLower()})
+#set($typeName=${indexedProperty.getTypeName()})
+#set($itemType=false)
+#set($itemType=${model.findClass(${typeName})})
+#set($itemClassName=${itemType.getAttribute(".net-data-object-class")})
+#set($itemPackageName=${itemType.retrievePackage().getAttribute(".net-data-object-package")})
+#set($itemPackageName="${itemPackageName}.GUI")
+      this.tabPage${propertyName} = new bbv.Common.Windows.Forms.TabPage();
+      this.${propertyNameLower}List = new ${itemPackageName}.${itemClassName}List();
+#end
+      this.tabControl.SuspendLayout();
+#foreach($indexedProperty in $indexedProperties)
+#set($propertyName=${indexedProperty.nameFirstUpper()})
+      this.tabPage${propertyName}.SuspendLayout();
+#end
+      this.SuspendLayout();
+      // 
+      // tabControl
+      // 
+#foreach($indexedProperty in $indexedProperties)
+#set($propertyName=${indexedProperty.nameFirstUpper()})
+      this.tabControl.Controls.Add(this.tabPage${propertyName});
+#end
+      this.tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.tabControl.Location = new System.Drawing.Point(0, 0);
+      this.tabControl.Multiline = true;
+      this.tabControl.Name = ${quotes}tabControl${quotes};
+      this.tabControl.SelectedIndex = 0;
+      this.tabControl.Size = new System.Drawing.Size(440, 232);
+      this.tabControl.TabIndex = 0;
+      this.tabControl.SelectedIndexChanged += new System.EventHandler(this.tabControl_SelectedIndexChanged);
+#foreach($indexedProperty in $indexedProperties)
+#set($propertyName=${indexedProperty.nameFirstUpper()})
+#set($propertyNameLower=${indexedProperty.nameFirstLower()})
+      // 
+      // tabPage${propertyName}
+      // 
+      this.tabPage${propertyName}.Controls.Add(this.${propertyNameLower}List);
+      this.tabPage${propertyName}.DockPadding.All = 4;
+      this.tabPage${propertyName}.Location = new System.Drawing.Point(4, 22);
+      this.tabPage${propertyName}.Name = ${quotes}tabPage${propertyName}${quotes};
+      this.tabPage${propertyName}.Size = new System.Drawing.Size(432, 206);
+      this.tabPage${propertyName}.TabIndex = 0;
+      this.tabPage${propertyName}.Text = ${quotes}${propertyName}${quotes};
+      // 
+      // ${propertyNameLower}List
+      // 
+      this.${propertyNameLower}List.AccessType = bbv.Common.Windows.Forms.AccessTypes.InOut;
+      this.${propertyNameLower}List.CollectionIdentifier = null;
+      this.${propertyNameLower}List.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.${propertyNameLower}List.Location = new System.Drawing.Point(4, 4);
+      this.${propertyNameLower}List.Name = ${quotes}${propertyNameLower}List${quotes};
+      this.${propertyNameLower}List.Size = new System.Drawing.Size(424, 198);
+      this.${propertyNameLower}List.TabIndex = 0;
+#end
+      // 
+      // IndexedProviderProperties
+      // 
+      this.Controls.Add(this.tabControl);
+      this.Name = ${quotes}${className}${quotes};
+      this.Size = new System.Drawing.Size(440, 232);
+      this.tabControl.ResumeLayout(false);
+#foreach($indexedProperty in $indexedProperties)
+#set($propertyName=${indexedProperty.nameFirstUpper()})
+      this.tabPage${propertyName}.ResumeLayout(false);
+#end
+      this.ResumeLayout(false);
+
+    }
+    ${sign}endregion
+
+    private void tabControl_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+      InitializeCurrentTab();
+    }
+  }
+}

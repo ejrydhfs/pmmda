@@ -1,0 +1,544 @@
+#######################################################
+## Velocity template
+## 
+## Generates CSharp classes for the lightweight data objects
+##
+## Author: M. Pedersen
+##
+## Copyright 2005 http://www.bbv.ch
+## Licensed under the Apache License, Version 2.0 (the "License");
+##     http://www.apache.org/licenses/LICENSE-2.0
+##
+#######################################################
+##
+## **** initialization ************************************
+##
+#set($sign="#")
+#set($qutoes='"')
+#set($dollar="$")
+#set($className=${class.getAttribute(".net-lightweight-object-class")})
+#set($spaces="")
+#set($properties=${class.getProperties()})
+#set($indexedProperties=${class.getIndexedProperties()})
+#set($ancestors=${class.retrieveAncestors()})
+#set($interfaces=${class.retrieveInterfaces()})
+#set($baseClassIsDataObject=${netHelper.isBaseClassDataObjectLw(${class})})
+#if (${baseClassIsDataObject})
+#set($modifier="public override")
+#else
+#set($modifier="public virtual")
+#end
+#set($extends = ${netHelper.getExtendStringLW(${class})})
+##
+## **** print file header *********************************
+##
+#printFileHeaderCSharp()
+
+##
+## **** usings ********************************************
+##
+using System;
+using System.Collections;
+using System.Reflection;
+using Iesi.Collections;
+using NHibernate.Collection;
+using PmMda.Net.Dog;
+#foreach($usingStatement in ${netHelper.getUsingStatementsLW(${class})})
+using $usingStatement;
+#end
+
+/* %% USER DEFINED USING STATEMENTS START %% */
+
+/* %% USER DEFINED USING STATEMENTS END   %% */
+#if (${package})
+
+namespace ${package.getAttribute(".net-lightweight-object-package")} {
+#set($spaces="  ")
+#end
+${spaces}
+##
+## **** class definition **********************************
+##
+#emitXMLDocu($class $netHelper $spaces)
+${spaces}[Serializable]
+${spaces}${class.retrieveVisibilityText()} class ${className}${extends} {
+${spaces}  /* %% USER DEFINED DECLARATION START %% */
+${spaces}  
+${spaces}  /* %% USER DEFINED DECLARATION END %% */
+##
+## **** predefined fields *********************************
+##
+#if (!${baseClassIsDataObject})
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Unique identifier of the lightweight object instance distinguishing it from all
+${spaces}  /// other instances of the same lightweight object type.
+${spaces}  /// </summary>
+${spaces}  /// <remarks>
+${spaces}  /// If this lightweight object is new the id is <c>null</c>.
+${spaces}  /// Otherwise the id is an <c>int</c>.
+${spaces}  /// </remarks>
+${spaces}  private object m_id;
+#end
+##
+## **** fields for properties *****************************
+##
+#foreach($property in $properties)
+#if(!${property.booleanValueOfTag(".net-ignore")})
+#if(${property.booleanValueOfTag("bo-lightweight")})
+#getType($model $property $type)
+#if($type)
+#set($itemType = ${type.getAttribute(".net-lightweight-object-class")})
+#else
+#set($itemType = ${property.getTypeName()})
+#end
+#emitXMLDocu($property $netHelper "${spaces}  ")
+${spaces}  private ${netHelper.convertJavaTypeToDotnet(${itemType})} m_${property.nameFirstLower()};
+#end
+#end
+#end
+${spaces}  
+##
+## **** fields for indexed properties (1..n mapping) ******
+#foreach($indexedProperty in $indexedProperties)
+#if(!${indexedProperty.booleanValueOfTag(".net-ignore")})
+#if(${indexedProperty.booleanValueOfTag("bo-lightweight")})
+#emitXMLDocu($indexedProperty $netHelper "${spaces}  ")
+#if($indexedProperty.isVolatile())
+#set($propertyPrefix="private volatile")
+#else
+#set($propertyPrefix="private")
+#end
+#if($indexedProperty.isTransient())
+${spaces}  [NonSerialized]
+#end
+#set($collectionType=${indexedProperty.valueOfTag(".net-collection-type")})
+#if($collectionType.equalsIgnoreCase("Bag") || $collectionType.equalsIgnoreCase("List"))
+#set($interfaceType="IList")
+#end
+#if($collectionType.equalsIgnoreCase("Set"))
+#set($interfaceType="ISet")
+#end
+${spaces}  ${propertyPrefix} ${interfaceType} m_${indexedProperty.nameFirstLower()};
+#end
+#end
+#end
+##
+## **** Constructor ***************************************
+##
+${spaces}  
+${spaces}  /// <overloads>
+${spaces}  /// Instances a new instance of the <see cref=${quotes}${className}${quotes}/> class.
+${spaces}  /// </overloads>
+${spaces}  /// <summary>
+${spaces}  /// Instances a new instance of the <see cref=${quotes}${className}${quotes}/> class
+${spaces}  /// for a new (not persistent) data object.
+${spaces}  /// </summary>
+${spaces}  public ${className}() 
+${spaces}    : this(null) {
+${spaces}    
+${spaces}  }
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Instances a new instance of the <see cref=${quotes}${className}${quotes}/> class
+${spaces}  /// for an existing (persistent) data object.
+${spaces}  /// </summary>
+${spaces}  /// <param name=${quotes}id${quotes}>
+${spaces}  /// Identifier of the lightweight object to which the proxy is associated.
+${spaces}  /// </param>
+#if (${baseClassIsDataObject})
+${spaces}  protected internal ${className}(object id) 
+${spaces}  : base(id) {
+#else
+${spaces}  protected internal ${className}(object id) {
+${spaces}    m_id = id;
+#end
+#foreach($indexedProperty in $indexedProperties)
+#if(!${indexedProperty.booleanValueOfTag(".net-ignore")})
+#if(${indexedProperty.booleanValueOfTag("bo-lightweight")})
+#set($collectionType=${indexedProperty.valueOfTag(".net-collection-type")})
+#if($collectionType.equalsIgnoreCase("Bag") || $collectionType.equalsIgnoreCase("List"))
+#set($collectionClass="ArrayList")
+#end
+#if($collectionType.equalsIgnoreCase("Set"))
+#set($collectionClass="HybridSet")
+#end
+${spaces}    m_${indexedProperty.nameFirstLower()} = new ${collectionClass}();
+#end
+#end
+#end
+${spaces}  }
+${spaces}  
+${spaces}  /* %% USER DEFINED CONSTRUCTORS START %% */
+${spaces}  
+${spaces}  /* %% USER DEFINED CONSTRUCTORS END %% */
+${spaces}  
+${spaces}  /* %% USER DEFINED CODE START %% */
+${spaces}  
+${spaces}  /* %% USER DEFINED CODE END %% */
+##
+## **** predefined properties *****************************
+##
+#if (!${baseClassIsDataObject})
+${spaces}  
+${spaces}  ${sign}region ILightweightObject Members
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Gets the identifier of this lightweight object.
+${spaces}  /// </summary>
+${spaces}  public object Id {
+${spaces}    get {
+${spaces}      return m_id;
+${spaces}    }
+${spaces}  }
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Creates and returns a deep copy of the lightweight object and its descendants.
+${spaces}  /// </summary>
+${spaces}  ${modifier} ILightweightObject DeepCopy() {
+${spaces}    Hashtable copies = new Hashtable();
+${spaces}    return (ILightweightObject) Copy(copies);
+${spaces}  }
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Creates and returns a deep copy of the data object and its descendants.
+${spaces}  /// </summary>
+${spaces}  /// <param name="copies">Copies holds all referenced objects being copied so far. An already copied object shall not be copied again. This prevents infinite loops on cyclic references.</param>
+${spaces}  public ILightweightObject Copy(Hashtable copies)
+${spaces}  {
+${spaces}    if(copies.ContainsKey(this)) 
+${spaces}    {
+${spaces}      return (ILightweightObject)copies[this];
+${spaces}    }
+${spaces}    return Copy(new ${class.getAttribute(".net-lightweight-object-class")}(), copies);
+${spaces}  }
+${spaces}
+${spaces}  /// <summary>
+${spaces}  /// Creates and returns a deep copy of the data object and its descendants.
+${spaces}  /// </summary>
+${spaces}  /// <param name="copy">Copy to be filled with content of this object.</param>
+${spaces}  /// <param name="copies">Copies holds all referenced objects being copied so far. An already copied object shall not be copied again. This prevents infinite loops on cyclic references.</param>
+${spaces}  protected ILightweightObject Copy(${class.getAttribute(".net-lightweight-object-class")} copy, Hashtable copies)
+${spaces}  {
+#if (${baseClassIsDataObject})
+${spaces}    copy = (${class.getAttribute(".net-lightweight-object-class")}) base.Copy(copy, copies);
+#end
+#foreach ($property in $properties)
+#if(!${property.booleanValueOfTag(".net-ignore")})
+#if(${property.booleanValueOfTag("bo-lightweight")})
+#isLightweightObject($property $isLightweightDataObject)	
+#set($propertyFieldName="m_${property.nameFirstLower()}")
+#if($isLightweightDataObject)
+${spaces}    if (${propertyFieldName} != null)
+${spaces}    {
+${spaces}      copy.${property.nameFirstUpper()} = (${property.retrieveTypeClassName()}) ${propertyFieldName}.Copy(copies);
+${spaces}    }
+#else
+${spaces}    copy.${property.nameFirstUpper()} = ${propertyFieldName};
+#end 
+#end 
+#end
+#end
+#foreach ($indexedProperty in $indexedProperties) 
+#if(!${indexedProperty.booleanValueOfTag(".net-ignore")})
+#if(${indexedProperty.booleanValueOfTag("bo-lightweight")})
+#getType($model $indexedProperty $type)
+#set($itemType = ${netHelper.convertJavaTypeToDotnet(${type.getAttribute(".net-lightweight-object-class")})})
+#set($propertyName = "m_${indexedProperty.nameFirstLower()}")
+#set($collectionType=${indexedProperty.valueOfTag(".net-collection-type")})
+#if($collectionType.equalsIgnoreCase("Bag") || $collectionType.equalsIgnoreCase("List"))
+#set($collectionClass="ArrayList")
+#end
+#if($collectionType.equalsIgnoreCase("Set"))
+#set($collectionClass="HybridSet")
+#end
+${spaces}    copy.Clear${indexedProperty.nameFirstUpper()}();
+${spaces}    foreach (ILightweightObject item in ${propertyName})
+${spaces}    {
+${spaces}      copy.Add${indexedProperty.nameFirstUpper()}(($itemType)item.Copy(copies));
+${spaces}    }
+#end
+#end
+#end
+#if (!${baseClassIsDataObject})
+${spaces}    copies.Add(this, copy);
+#end
+${spaces}    return copy;
+${spaces}  }
+${spaces}  
+${spaces}  ${sign}endregion
+#end
+##
+## **** Properties ****************************************
+##
+#foreach($property in $properties)
+#if(!${property.booleanValueOfTag(".net-ignore")})
+#if(${property.booleanValueOfTag("bo-lightweight")})
+#getType($model $property $type)
+#if($type)
+#set($itemType = ${type.getAttribute(".net-lightweight-object-class")})
+#else
+#set($itemType = ${property.getTypeName()})
+#end
+${spaces}  
+#emitXMLDocuForProperty($property $netHelper "${spaces}  ")
+${spaces}  ${property.retrieveVisibilityText()} virtual ${netHelper.convertJavaTypeToDotnet(${itemType})} ${property.nameFirstUpper()} {
+#if(${property.canBeRead()})
+${spaces}    get {
+${spaces}      return m_${property.nameFirstLower()};
+${spaces}    }
+#end
+#if(${property.canBeWritten()})
+${spaces}    set {
+${spaces}      m_${property.nameFirstLower()} = value;
+${spaces}    }
+#end
+${spaces}  }
+#end
+#end
+#end
+##
+## **** Indexed properties (1..n mapping) *****************
+##
+#foreach($indexedProperty in $indexedProperties)
+#if(!${indexedProperty.booleanValueOfTag(".net-ignore")})
+#if(${indexedProperty.booleanValueOfTag("bo-lightweight")})
+#getType($model $indexedProperty $type)
+#set($itemType = ${netHelper.convertJavaTypeToDotnet(${type.getAttribute(".net-lightweight-object-class")})})
+#set($upperSingularName = ${indexedProperty.nameFirstUpperSingular()})
+#set($upperPluralName = ${indexedProperty.nameFirstUpperPlural()})
+#set($fieldName = "m_${indexedProperty.nameFirstLower()}")
+#set($collectionType=${indexedProperty.valueOfTag(".net-collection-type")})
+#if($collectionType.equalsIgnoreCase("Bag") || $collectionType.equalsIgnoreCase("List"))
+#set($interfaceType="IList")
+#end
+#if($collectionType.equalsIgnoreCase("Set"))
+#set($interfaceType="ISet")
+#end
+${spaces}  
+${spaces}  ${sign}region ${indexedProperty.getName()}
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Gets all element of this indexed property.
+${spaces}  /// </summary>
+${spaces}  /// <value>
+${spaces}  /// All elements of this indexed property as array.
+${spaces}  /// </value>
+${spaces}  public virtual ${itemType}[] ${upperPluralName} {
+${spaces}    get {
+${spaces}      Type fieldType = ${fieldName}.GetType();
+${spaces}      PropertyInfo countProperty = fieldType.GetProperty("Count");
+${spaces}      ${itemType}[] ret = new ${itemType}[(int) countProperty.GetValue(${fieldName}, null)];
+${spaces}      MethodInfo copyToMethod = fieldType.GetMethod("CopyTo", new Type[] {typeof(Array), typeof(int)});
+${spaces}      copyToMethod.Invoke(${fieldName}, new object[] {ret, 0});
+${spaces}      return ret;
+${spaces}    }
+${spaces}  }
+#if($collectionType.equalsIgnoreCase("Bag") || $collectionType.equalsIgnoreCase("List"))
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Gets an element of the indexed property.
+${spaces}  /// </summary>
+${spaces}  /// <param name=${quotes}index${quotes}>Index of the element to get.</param>
+${spaces}  public virtual ${itemType} Get${upperSingularName}(int index) {
+${spaces}    return (${itemType}) ${fieldName}[index];
+${spaces}  }
+#end
+#if(${indexedProperty.canBeWritten()})
+#if($collectionType.equalsIgnoreCase("Bag") || $collectionType.equalsIgnoreCase("List"))
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Sets an element of the indexed property.
+${spaces}  /// </summary>
+${spaces}  /// <param name=${quotes}index${quotes}>Index of the element to set.</param>
+${spaces}  /// <param name=${quotes}element${quotes}>The new value to set at the specified index.</param>
+${spaces}  public virtual void Set${upperSingularName}(int index, ${itemType} element) {
+${spaces}    ${fieldName}[index] = element;
+${spaces}  }
+#end
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Appends elements to the indexed property.
+${spaces}  /// </summary>
+${spaces}  /// <param name=${quotes}elements${quotes}>The elements to append.</param>
+${spaces}  public virtual void Add${upperPluralName}(params ${itemType}[] elements) {
+${spaces}    foreach (${itemType} element in elements) {
+${spaces}      ${fieldName}.Add(element);
+${spaces}    }
+${spaces}  }
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Appends one element to the indexed property.
+${spaces}  /// </summary>
+${spaces}  /// <param name=${quotes}element${quotes}>The element to append.</param>
+${spaces}  public virtual void Add${upperSingularName}(${itemType} element) {
+${spaces}    ${fieldName}.Add(element);
+${spaces}  }
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Removes an element from the indexed property.
+${spaces}  /// </summary>
+${spaces}  /// <param name=${quotes}element${quotes}>The element to remove.</param>
+${spaces}  public virtual void Remove${upperSingularName}(${itemType} element) {
+${spaces}    ${fieldName}.Remove(element);
+${spaces}  }
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Removes all elements from the indexed property.
+${spaces}  /// </summary>
+${spaces}  public virtual void Clear${upperPluralName}() {
+${spaces}    ${fieldName}.Clear();
+${spaces}  }
+#end
+${spaces}  
+${spaces}  ${sign}endregion
+#end
+#end
+#end
+##
+## **** Visitor pattern methodes **************************
+##
+#if (${baseClassIsDataObject})
+#set($acceptMethodModifier="protected override")
+#else
+#set($acceptMethodModifier="protected virtual")
+#end
+${spaces}  
+${spaces}  ${sign}region Visitor methods
+#if (!${baseClassIsDataObject})
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Implements the visitor pattern in the lightweight object class. The accept
+${spaces}  /// method dispatches the visitor to all its relevant children. A relevant
+${spaces}  /// child is always another data object.
+${spaces}  /// </summary>
+${spaces}  /// <param name=${quotes}visitor${quotes}>Visitor to act on the lightweight object.</param>
+${spaces}  public void Accept(ILwVisitor visitor) {
+${spaces}    visitor.Depth++;
+${spaces}    AcceptIndexedProperties(visitor);
+${spaces}    visitor.Visit(this);
+${spaces}    AcceptProperties(visitor);
+${spaces}    visitor.Depth--;
+${spaces}  }
+#end
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Visits all indexed properties
+${spaces}  /// </summary>
+${spaces}  /// <param name=${quotes}visitor${quotes}>Visitor to act on the data object.</param>
+${spaces}  /// <seealso cref=${quotes}Accept${quotes}/>
+${spaces}  ${acceptMethodModifier} void AcceptIndexedProperties(ILwVisitor visitor) {
+#foreach ($indexedProperty in $indexedProperties)
+#if(!${indexedProperty.booleanValueOfTag(".net-ignore")})
+#if(${indexedProperty.booleanValueOfTag("bo-lightweight")})
+#getType($model $indexedProperty $type)
+#if($type && ${type.booleanValueOfAttribute("bo-lightweight")})
+#set($itemType = ${type.getAttribute(".net-lightweight-object-class")})
+${spaces}    foreach(${itemType} item in m_${indexedProperty.nameFirstLower()}) {
+${spaces}      item.Accept(visitor);
+${spaces}    }
+#end
+#end
+#end
+#end
+#if(${baseClassIsDataObject})
+${spaces}    base.AcceptIndexedProperties(visitor);
+#end
+${spaces}  }
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Visits all properties
+${spaces}  /// </summary>
+${spaces}  /// <param name=${quotes}visitor${quotes}>Visitor to act on the data object.</param>
+${spaces}  /// <seealso cref=${quotes}Accept${quotes}/>
+${spaces}  ${acceptMethodModifier} void AcceptProperties(ILwVisitor visitor) {
+#foreach ($property in $properties)
+#if(!${property.booleanValueOfTag(".net-ignore")})
+#if(${property.booleanValueOfTag("bo-lightweight")})
+#getType($model $property $type)
+#if($type && ${type.booleanValueOfAttribute(".net-lightweight")})
+${spaces}    if (m_${property.nameFirstLower()} != null) {
+${spaces}      m_${property.nameFirstLower()}.Accept(visitor);
+${spaces}    }
+#end
+#end
+#end
+#end
+#if(${baseClassIsDataObject})
+${spaces}    base.AcceptProperties(visitor);
+#end
+${spaces}  }
+${spaces}  ${sign}endregion
+##
+## **** Clone methodes ************************************
+##
+${spaces}  
+${spaces}  ${sign}region ICloneable Members
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Creates and returns a shallow copy of the data object and its descendants.
+${spaces}  /// </summary>
+${spaces}  ${modifier} object Clone() {
+${spaces}    Hashtable clones = new Hashtable();
+${spaces}    return Clone(clones);
+${spaces}  }
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Creates and returns a shallow copy of the data object and its descendants.
+${spaces}  /// </summary>
+${spaces}  /// <param name="clones">Clones holds all referenced objects being cloned so far. An already cloned object shall not be cloned again. This prevents infinite loops on cyclic references.</param>
+${spaces}  public object Clone(Hashtable clones) {
+${spaces}    if(clones.ContainsKey(this)) 
+${spaces}    {
+${spaces}      return clones[this];
+${spaces}    }
+${spaces}    return Clone(new ${class.getAttribute(".net-lightweight-object-class")}(), clones);
+${spaces}  }
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Creates and returns a shallow copy of the data object and its descendants.
+${spaces}  /// </summary>
+${spaces}  /// <param name="clone">Clone has to be filled with the content of this object.</param>
+${spaces}  /// <param name="clones">Clones holds all referenced objects being cloned so far. An already cloned object shall not be cloned again. This prevents infinite loops on cyclic references.</param>
+${spaces}  public object Clone(${class.getAttribute(".net-lightweight-object-class")} clone, Hashtable clones) {
+#if (${baseClassIsDataObject})
+${spaces}    clone = (${class.getAttribute(".net-lightweight-object-class")}) base.Clone(clone, clones);
+#end
+#foreach ($property in $properties)
+#if(!${property.booleanValueOfTag(".net-ignore")})
+#if(${property.booleanValueOfTag("bo-lightweight")})
+#set($propertyFieldName="m_${property.nameFirstLower()}")
+${spaces}    clone.${property.nameFirstUpper()} = ${propertyFieldName};
+#end
+#end
+#end
+#foreach ($indexedProperty in $indexedProperties) 
+#if(!${indexedProperty.booleanValueOfTag(".net-ignore")})
+#if(${indexedProperty.booleanValueOfTag("bo-lightweight")})
+#getType($model $indexedProperty $type)
+#set($propertyName = "m_${indexedProperty.nameFirstLower()}")
+#set($collectionType=${indexedProperty.valueOfTag(".net-collection-type")})
+#if($collectionType.equalsIgnoreCase("Bag") || $collectionType.equalsIgnoreCase("List"))
+#set($collectionClass="ArrayList")
+#end
+#if($collectionType.equalsIgnoreCase("Set"))
+#set($collectionClass="HybridSet")
+#end
+${spaces}    clone.${propertyName} = new ${collectionClass}();
+${spaces}    foreach (ILightweightObject item in ${propertyName}) {
+${spaces}      clone.${propertyName}.Add(item.Clone());
+${spaces}    }
+#end
+#end
+#end
+#if (${baseClassIsDataObject})
+${spaces}    clones.Add(this, clone);
+#end
+${spaces}    return clone;
+${spaces}  }
+${spaces}  
+${spaces}  ${sign}endregion
+${spaces}}
+#if (${package})
+}
+#end

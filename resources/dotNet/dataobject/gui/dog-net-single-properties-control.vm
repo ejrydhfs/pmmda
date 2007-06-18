@@ -1,0 +1,333 @@
+####################################k###################
+## Velocity template
+## 
+## Generates a .NET Control used to display and edit the
+## primitive properties of a data object.
+##
+## Author: M. Pedersen
+## Copyright 2005 http://www.bbv.ch
+## Licensed under the Apache License, Version 2.0 (the "License");
+##     http://www.apache.org/licenses/LICENSE-2.0
+##
+#######################################################
+##
+## **** initialization ************************************
+##
+#set($sign="#")
+#set($quotes='"')
+#set($namespace=${package.getAttribute(".net-data-object-package")})
+#set($namespace="${namespace}.GUI")
+#set($doClassName=${class.getAttribute(".net-data-object-class")})
+#set($doPackageName=${class.retrievePackage().getAttribute(".net-data-object-package")})
+#if($doPackageName)
+#set($doQualifiedClassName="${doPackageName}.${doClassName}")
+#else
+#set($doQualifiedClassName=${doClassName})
+#end
+#set($doFieldName="m_${netHelper.nameFirstLower(${doClassName})}")
+#set($abstractControl=${class.booleanValueOfAttribute(".net-gui-editable-controls")})
+#set($className="Single${doClassName}Properties")
+#if($abstractControl)
+#set($controlsAccessModifier="protected")
+#set($className="Abstract${className}")
+#else
+#set($controlsAccessModifier="private")
+#end
+#set($singleProperties=${netHelper.reverseList(${netHelper.getSingleProperties(${class})})})
+#set($propertyCount=${singleProperties.size()})
+#set($controlHeight = 24)
+#if(${propertyCount} > 0)
+#set($controlHeight = ${propertyCount} * 20 + (${propertyCount} - 1) * 3)
+#end
+##
+## **** print file header *********************************
+##
+#printFileHeaderCSharp()
+
+##
+## **** usings ********************************************
+##
+using System;
+using System.ComponentModel;
+using System.Windows.Forms;
+using bbv.Common.Windows.Forms;
+using PmMda.Net.Dog;
+
+##
+## **** Control code ********************************************
+##
+namespace ${namespace}
+{
+  public class ${className} : bbv.Common.Windows.Forms.UserControl
+  {
+    private ${doQualifiedClassName} ${doFieldName};
+    private SinglePropertyChangedEventHandler m_ehSinglePropertyChanged;
+    
+#set($propertyNr=1)
+#foreach($property in $singleProperties)
+#set($propertyNameUpper=${property.nameFirstUpper()})
+    ${controlsAccessModifier} bbv.Common.Windows.Forms.Panel panel${propertyNameUpper};
+    ${controlsAccessModifier} bbv.Common.Windows.Forms.Label label${propertyNameUpper};
+    ${controlsAccessModifier} bbv.Common.Windows.Forms.Button btnEdit${propertyNameUpper};
+    ${controlsAccessModifier} bbv.Common.Windows.Forms.Button btnDelete${propertyNameUpper};
+    ${controlsAccessModifier} System.Windows.Forms.Splitter splitter${propertyNameUpper}1;
+    ${controlsAccessModifier} System.Windows.Forms.Splitter splitter${propertyNameUpper}2;
+
+#if($propertyNr < $propertyCount)
+    ${controlsAccessModifier} System.Windows.Forms.Splitter splitter${propertyNameUpper};
+#end
+#set($propertyNr=$propertyNr+1)
+#end
+    /// <summary>
+    /// Required designer variable.
+    /// </summary>
+    private System.ComponentModel.IContainer components;
+    
+#if($abstractControl)
+    protected ${className}()
+#else
+    public ${className}()
+#end
+    {
+      InitializeComponent();
+      
+      ${doFieldName} = null;
+      m_ehSinglePropertyChanged = new SinglePropertyChangedEventHandler(SinglePropertyChanged);
+    }
+    
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
+    
+    public ${doQualifiedClassName} ${doClassName}
+    {
+      get
+      {
+        return ${doFieldName};
+      }
+      set
+      {
+        if (${doFieldName} != value) 
+        {
+          if (${doFieldName} != null) 
+          {
+            ${doFieldName}.SinglePropertyChanged -= m_ehSinglePropertyChanged;
+          }
+          ${doFieldName} = value;
+          if (${doFieldName} != null) 
+          {
+            ${doFieldName}.SinglePropertyChanged += m_ehSinglePropertyChanged;
+          }
+          UpdateGUI();
+        }
+      }
+    }
+    
+    private void UpdateGUI()
+    {
+      if (${doFieldName} != null)
+      {
+#foreach($property in $singleProperties)
+#set($propertyNameUpper=${property.nameFirstUpper()})
+        btnEdit${propertyNameUpper}.Enabled = true;
+        if (${doFieldName}.${propertyNameUpper} != null)
+        {
+          label${propertyNameUpper}.Text = ${quotes}${propertyNameUpper}: ${quotes} + ${doFieldName}.${propertyNameUpper}.ToString();
+          btnDelete${propertyNameUpper}.Enabled = true;
+        }
+        else
+        {
+          label${propertyNameUpper}.Text = ${quotes}${propertyNameUpper}: <<not available>>${quotes};
+          btnDelete${propertyNameUpper}.Enabled = false;
+        }
+#end
+      }
+      else
+      {
+#foreach($property in $singleProperties)
+#set($propertyNameUpper=${property.nameFirstUpper()})
+        btnEdit${propertyNameUpper}.Enabled = false;
+        btnDelete${propertyNameUpper}.Enabled = false;
+        label${propertyNameUpper}.Text = ${quotes}${propertyNameUpper}${quotes};
+#end      
+      }
+    }
+    
+    ${sign}region Component Designer generated code
+		/// <summary> 
+		/// Required method for Designer support - do not modify 
+		/// the contents of this method with the code editor.
+		/// </summary>
+		private void InitializeComponent()
+		{
+#set($propertyNr=1)
+#foreach($property in $singleProperties)
+#set($propertyNameUpper=${property.nameFirstUpper()})
+      this.panel${propertyNameUpper} = new bbv.Common.Windows.Forms.Panel();
+      this.label${propertyNameUpper} = new bbv.Common.Windows.Forms.Label();
+      this.btnEdit${propertyNameUpper} = new bbv.Common.Windows.Forms.Button();
+      this.btnDelete${propertyNameUpper} = new bbv.Common.Windows.Forms.Button();
+      this.splitter${propertyNameUpper}1 = new System.Windows.Forms.Splitter();
+      this.splitter${propertyNameUpper}2 = new System.Windows.Forms.Splitter();
+#if($propertyNr < $propertyCount)
+      this.splitter${propertyNameUpper} = new System.Windows.Forms.Splitter();
+#end
+#set($propertyNr=$propertyNr+1)
+#end
+#foreach($property in $singleProperties)
+#set($propertyNameUpper=${property.nameFirstUpper()})
+      this.panel${propertyNameUpper}.SuspendLayout();
+#end
+      this.SuspendLayout();
+#set($propertyNr=1)
+#foreach($property in $singleProperties)
+#set($propertyNameUpper=${property.nameFirstUpper()})
+#set($panelLocationY=($propertyNr - 1) * 23)
+      // 
+      // panel${propertyNameUpper}
+      // 
+      this.panel${propertyNameUpper}.Controls.Add(this.label${propertyNameUpper});
+      this.panel${propertyNameUpper}.Controls.Add(this.splitter${propertyNameUpper}1);
+      this.panel${propertyNameUpper}.Controls.Add(this.btnEdit${propertyNameUpper});
+      this.panel${propertyNameUpper}.Controls.Add(this.splitter${propertyNameUpper}2);
+      this.panel${propertyNameUpper}.Controls.Add(this.btnDelete${propertyNameUpper});
+      this.panel${propertyNameUpper}.Dock = System.Windows.Forms.DockStyle.Top;
+      this.panel${propertyNameUpper}.Location = new System.Drawing.Point(4, ${panelLocationY});
+      this.panel${propertyNameUpper}.Name = ${quotes}panel${propertyNameUpper}${quotes};
+      this.panel${propertyNameUpper}.Size = new System.Drawing.Size(340, 20);
+      // 
+      // label${propertyNameUpper}
+      // 
+      this.label${propertyNameUpper}.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.label${propertyNameUpper}.Location = new System.Drawing.Point(0, 0);
+      this.label${propertyNameUpper}.Name = ${quotes}label${propertyNameUpper}${quotes};
+      this.label${propertyNameUpper}.Size = new System.Drawing.Size(204, 20);
+      this.label${propertyNameUpper}.Text = ${quotes}${propertyNameUpper}${quotes};
+      this.label${propertyNameUpper}.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      // 
+      // splitter${propertyNameUpper}1
+      // 
+      this.splitter${propertyNameUpper}1.Dock = System.Windows.Forms.DockStyle.Right;
+      this.splitter${propertyNameUpper}1.Location = new System.Drawing.Point(204, 0);
+      this.splitter${propertyNameUpper}1.Name = ${quotes}splitter${propertyNameUpper}1${quotes};
+      this.splitter${propertyNameUpper}1.Size = new System.Drawing.Size(3, 20);
+      this.splitter${propertyNameUpper}1.TabIndex = 1;
+      this.splitter${propertyNameUpper}1.TabStop = false;
+      // 
+      // btnEdit${propertyNameUpper}
+      // 
+      this.btnEdit${propertyNameUpper}.BackColor = System.Drawing.SystemColors.Control;
+      this.btnEdit${propertyNameUpper}.Dock = System.Windows.Forms.DockStyle.Right;
+      this.btnEdit${propertyNameUpper}.Enabled = false;
+      this.btnEdit${propertyNameUpper}.Location = new System.Drawing.Point(207, 0);
+      this.btnEdit${propertyNameUpper}.Name = ${quotes}btnEdit${propertyNameUpper}${quotes};
+      this.btnEdit${propertyNameUpper}.Size = new System.Drawing.Size(61, 20);
+      this.btnEdit${propertyNameUpper}.TabIndex = 2;
+      this.btnEdit${propertyNameUpper}.Text = ${quotes}Edit...${quotes};
+      this.btnEdit${propertyNameUpper}.Click += new System.EventHandler(this.btnEdit${propertyNameUpper}_Click);
+      // 
+      // splitter${propertyNameUpper}2
+      // 
+      this.splitter${propertyNameUpper}2.Dock = System.Windows.Forms.DockStyle.Right;
+      this.splitter${propertyNameUpper}2.Location = new System.Drawing.Point(268, 0);
+      this.splitter${propertyNameUpper}2.Name = ${quotes}splitter${propertyNameUpper}2${quotes};
+      this.splitter${propertyNameUpper}2.Size = new System.Drawing.Size(3, 20);
+      this.splitter${propertyNameUpper}2.TabIndex = 5;
+      this.splitter${propertyNameUpper}2.TabStop = false;
+      // 
+      // btnDelete${propertyNameUpper}
+      // 
+      this.btnDelete${propertyNameUpper}.BackColor = System.Drawing.SystemColors.Control;
+      this.btnDelete${propertyNameUpper}.Dock = System.Windows.Forms.DockStyle.Right;
+      this.btnDelete${propertyNameUpper}.Enabled = false;
+      this.btnDelete${propertyNameUpper}.Location = new System.Drawing.Point(271, 0);
+      this.btnDelete${propertyNameUpper}.Name = ${quotes}btnDelete${propertyNameUpper}${quotes};
+      this.btnDelete${propertyNameUpper}.Size = new System.Drawing.Size(61, 20);
+      this.btnDelete${propertyNameUpper}.TabIndex = 3;
+      this.btnDelete${propertyNameUpper}.Text = ${quotes}Delete${quotes};
+      this.btnDelete${propertyNameUpper}.Click += new System.EventHandler(this.btnDelete${propertyNameUpper}_Click);
+#if($propertyNr < $propertyCount)
+      // 
+      // splitter${propertyNameUpper}
+      // 
+      this.splitter${propertyNameUpper}.Dock = System.Windows.Forms.DockStyle.Top;
+      this.splitter${propertyNameUpper}.Location = new System.Drawing.Point(0, 20);
+      this.splitter${propertyNameUpper}.Name = ${quotes}splitter${propertyNameUpper}${quotes};
+      this.splitter${propertyNameUpper}.Size = new System.Drawing.Size(340, 3);
+      this.splitter${propertyNameUpper}.TabStop = false;
+#end
+#set($propertyNr=$propertyNr+1)
+#end
+      // 
+      // ${className}
+      // 
+#set($propertyNr=1)
+#foreach($property in $singleProperties)
+#set($propertyNameUpper=${property.nameFirstUpper()})
+      this.Controls.Add(this.panel${propertyNameUpper});
+#if($propertyNr < $propertyCount)
+      this.Controls.Add(this.splitter${propertyNameUpper});
+#end
+#set($propertyNr=$propertyNr+1)
+#end
+      this.Name = ${quotes}SingleProperties${quotes};
+      this.Size = new System.Drawing.Size(344, ${controlHeight});
+#foreach($property in $singleProperties)
+#set($propertyNameUpper=${property.nameFirstUpper()})
+      this.panel${propertyNameUpper}.ResumeLayout(false);
+#end
+      this.ResumeLayout(false);
+    }
+		${sign}endregion
+		
+		private void SinglePropertyChanged(object sender, SinglePropertyChangedEventArgs e)
+    {
+      UpdateGUI();
+    }
+#foreach($property in $singleProperties)
+#set($propertyNameUpper=${property.nameFirstUpper()})
+#set($qualifiedPropertyType=${netHelper.convertJavaTypeToDotnet(${property.getTypeName()})})
+#set($propertyClass=${model.findClass(${property.getTypeName()})})
+#set($propertyClassPackageName=${propertyClass.retrievePackage().getAttribute(".net-data-object-package")})
+#set($dialogName="${propertyClassPackageName}.GUI.${propertyClass.getName()}Dialog")
+
+		private void btnEdit${propertyNameUpper}_Click(object sender, System.EventArgs e)
+    {
+      if (${doFieldName} != null)
+      {
+        try
+        {
+          if (${doFieldName}.${propertyNameUpper} == null)
+          {
+             ${doFieldName}.${propertyNameUpper} = new ${qualifiedPropertyType}();
+          }
+          ${dialogName} dlg = new ${dialogName}();
+          dlg.${propertyClass.getName()} = ${doFieldName}.${propertyNameUpper};
+          dlg.ShowDialog(this);
+          UpdateGUI();
+        }
+        catch (Exception ex)
+        {
+          MessageBox.Show(this, "Could not edit single Property: " + ex.Message, "Edit single property", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+      }
+    }
+
+    private void btnDelete${propertyNameUpper}_Click(object sender, System.EventArgs e)
+    {
+      if (${doFieldName} != null)
+      {
+        ${doFieldName}.${propertyNameUpper} = null;
+      }
+    }
+#end
+  }
+}

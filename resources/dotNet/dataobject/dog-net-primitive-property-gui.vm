@@ -1,0 +1,402 @@
+####################################k###################
+## Velocity template
+## 
+## Generates a .NET Control used to display and edit the
+## primitive properties of a data object.
+##
+## Author: M. Pedersen
+## Copyright 2005 http://www.bbv.ch
+## Licensed under the Apache License, Version 2.0 (the "License");
+##     http://www.apache.org/licenses/LICENSE-2.0
+##
+#######################################################
+##
+## **** initialization ************************************
+##
+#set($sign="#")
+#set($quotes='"')
+#set($doClassName=${class.getAttribute(".net-data-object-class")})
+#set($doFieldName="m_${netHelper.nameFirstLower(${doClassName})}")
+#set($className="Primitive${doClassName}Properties")
+#set($primitiveProperties=${netHelper.reverseList(${netHelper.GetPrimitiveProperties(${class})})})
+###set($primitiveProperties=${netHelper.GetPrimitiveProperties(${class})})
+#set($propertyCount=${primitiveProperties.size()})
+#set($propertiesHeight=50)
+#if($propertyCount > 0)
+#set($propertiesHeight=${propertyCount} * 20 + (${propertyCount} - 1) * 3 + 8)
+#end
+##
+## **** print file header *********************************
+##
+#printFileHeaderCSharp()
+
+##
+## **** usings ********************************************
+##
+using System;
+using System.ComponentModel;
+using System.Windows.Forms;
+using bbv.Common.Windows.Forms;
+using PmMda.Net.Dog;
+
+##
+## **** Control code ********************************************
+##
+namespace ${package.getAttribute(".net-data-object-package")}.GUI
+{
+  public class ${className} : bbv.Common.Windows.Forms.UserControl
+  {
+    private ${doClassName} ${doFieldName};
+    private PrimitivePropertyChangedEventHandler m_ehPrimitivePropertyChanged;
+    private bool m_propertyValueChanged;
+    
+    private System.Windows.Forms.Panel panelBorder;
+    private System.Windows.Forms.Panel panelProperties;
+    private System.Windows.Forms.Panel panelPropertyNames;
+    private System.Windows.Forms.Splitter splitterNamesValues;
+    private System.Windows.Forms.Panel panelPropertyValues;    
+#set($propertyNr=1)
+#foreach($property in $primitiveProperties)
+#set($propertyNameUpper=${property.nameFirstUpper()})
+    private System.Windows.Forms.Label label${propertyNameUpper};
+    private System.Windows.Forms.TextBox textBox${propertyNameUpper};
+#if($propertyNr < $propertyCount)
+    private System.Windows.Forms.Splitter splitter${propertyNameUpper}Name;
+    private System.Windows.Forms.Splitter splitter${propertyNameUpper}Value;
+#end
+#set($propertyNr=$propertyNr+1)
+#end
+    /// <summary>
+    /// Required designer variable.
+    /// </summary>
+    private System.ComponentModel.IContainer components;
+    
+    public ${className}()
+    {
+      InitializeComponent();
+      
+      ${doFieldName} = null;
+      m_ehPrimitivePropertyChanged = new PrimitivePropertyChangedEventHandler(PrimitivePropertyChanged);
+      m_propertyValueChanged = false;
+    }
+    
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
+    
+    public ${doClassName} ${doClassName} 
+    {
+      get 
+      {
+        return ${doFieldName};
+      }
+      set 
+      {
+        if (${doFieldName} != value) 
+        {
+          if (${doFieldName} != null) 
+          {
+            ${doFieldName}.PrimitivePropertyChanged -= m_ehPrimitivePropertyChanged;
+          }
+          ${doFieldName} = value;
+          if (${doFieldName} != null) 
+          {
+            ${doFieldName}.PrimitivePropertyChanged += m_ehPrimitivePropertyChanged;
+          }
+          UpdateGUI();
+        }
+      }
+    }
+    
+    private void UpdateGUI() 
+    {
+      if (${doFieldName} != null) 
+      {
+#foreach($property in $primitiveProperties)
+#set($textBoxName="textBox${property.nameFirstUpper()}")
+#set($upperPropertyName=${property.nameFirstUpper()})
+#set($propertyType=${netHelper.convertJavaTypeToDotnet(${property.getTypeName()})})
+        ${textBoxName}.Enabled = true;
+        if (!${textBoxName}.Focused)
+        {
+          Read${upperPropertyName}FromPd();
+        }
+#end
+      }
+      else
+      {
+#foreach($property in $primitiveProperties)
+#set($textBoxName="textBox${property.nameFirstUpper()}")
+        ${textBoxName}.Enabled = false;
+        ${textBoxName}.Text = string.Empty;
+#end      
+      }
+    }
+    
+    ${sign}region Component Designer generated code
+    
+    /// <summary> 
+    /// Required method for Designer support - do not modify 
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
+      this.components = new System.ComponentModel.Container();
+      this.panelBorder = new System.Windows.Forms.Panel();
+      this.panelProperties = new System.Windows.Forms.Panel();
+      this.panelPropertyValues = new System.Windows.Forms.Panel();
+      this.splitterNamesValues = new System.Windows.Forms.Splitter();
+      this.panelPropertyNames = new System.Windows.Forms.Panel();
+#set($propertyNr=1)
+#foreach($property in $primitiveProperties)
+      this.label${property.nameFirstUpper()} = new System.Windows.Forms.Label();
+      this.textBox${property.nameFirstUpper()} = new System.Windows.Forms.TextBox();
+#if($propertyNr < $propertyCount)
+      this.splitter${property.nameFirstUpper()}Name = new System.Windows.Forms.Splitter();
+      this.splitter${property.nameFirstUpper()}Value = new System.Windows.Forms.Splitter();
+#end
+#set($propertyNr=$propertyNr+1)
+#end
+      this.panelBorder.SuspendLayout();
+      this.panelProperties.SuspendLayout();
+      this.panelPropertyValues.SuspendLayout();
+      this.panelPropertyNames.SuspendLayout();
+      this.SuspendLayout();
+#set($propertyNr=1)
+#foreach($property in $primitiveProperties)
+#set($labelName="label${property.nameFirstUpper()}")
+#set($textBoxName="textBox${property.nameFirstUpper()}")
+#set($splitter1Name="splitter${property.nameFirstUpper()}Name")
+#set($splitter2Name="splitter${property.nameFirstUpper()}Value")
+###set($posY=(${propertyNr} - 1) * 23)
+#set($posY=(${propertyCount} - ${propertyNr}) * 23)
+      // 
+      // ${labelName}
+      // 
+      this.${labelName}.Dock = System.Windows.Forms.DockStyle.Top;
+      this.${labelName}.Location = new System.Drawing.Point(0, ${posY});
+      this.${labelName}.Name = ${quotes}${labelName}${quotes};
+      this.${labelName}.Size = new System.Drawing.Size(106, 20);
+      this.${labelName}.Text = ${quotes}${property.nameFirstUpper()}${quotes};
+      this.${labelName}.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      // 
+      // ${textBoxName}
+      // 
+      this.${textBoxName}.Dock = System.Windows.Forms.DockStyle.Top;
+      this.${textBoxName}.Enabled = false;
+      this.${textBoxName}.Location = new System.Drawing.Point(2, ${posY});
+      this.${textBoxName}.Name = ${quotes}${textBoxName}${quotes};
+      this.${textBoxName}.Size = new System.Drawing.Size(219, 20);
+      this.${textBoxName}.Text = "";
+      this.${textBoxName}.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.${textBoxName}_KeyPress);
+      this.${textBoxName}.TextChanged += new System.EventHandler(this.${textBoxName}_TextChanged);
+      this.${textBoxName}.Leave += new System.EventHandler(this.${textBoxName}_Leave);
+#if($propertyNr < $propertyCount)
+###set($posY=${propertyNr} * 20 + (${propertyNr} - 1) * 3)
+#set($posY=(${propertyCount} - ${propertyNr}) * 20 + (${propertyCount} - ${propertyNr} - 1) * 3)
+      // 
+      // ${splitter1Name}
+      // 
+      this.${splitter1Name}.Dock = System.Windows.Forms.DockStyle.Top;
+      this.${splitter1Name}.Location = new System.Drawing.Point(2, ${posY});
+      this.${splitter1Name}.Name = ${quotes}${splitter1Name}${quotes};
+      this.${splitter1Name}.Size = new System.Drawing.Size(219, 3);
+      this.${splitter1Name}.TabStop = false;
+      this.${splitter1Name}.Enabled = false;
+      // 
+      // ${splitter2Name}
+      // 
+      this.${splitter2Name}.Dock = System.Windows.Forms.DockStyle.Top;
+      this.${splitter2Name}.Location = new System.Drawing.Point(2, ${posY});
+      this.${splitter2Name}.Name = ${quotes}${splitter2Name}${quotes};
+      this.${splitter2Name}.Size = new System.Drawing.Size(219, 3);
+      this.${splitter2Name}.TabStop = false;
+      this.${splitter2Name}.Enabled = false;
+#end
+#set($propertyNr=$propertyNr+1)
+#end
+      // 
+      // panelBorder
+      // 
+      this.panelBorder.AutoScroll = true;
+      this.panelBorder.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+      this.panelBorder.Controls.Add(this.panelProperties);
+      this.panelBorder.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.panelBorder.Location = new System.Drawing.Point(0, 0);
+      this.panelBorder.Name = "panelBorder";
+      this.panelBorder.Size = new System.Drawing.Size(344, 168);
+      this.panelBorder.TabIndex = 0;
+      // 
+      // panelProperties
+      // 
+      this.panelProperties.Controls.Add(this.panelPropertyValues);
+      this.panelProperties.Controls.Add(this.splitterNamesValues);
+      this.panelProperties.Controls.Add(this.panelPropertyNames);
+      this.panelProperties.Dock = System.Windows.Forms.DockStyle.Top;
+      this.panelProperties.DockPadding.All = 4;
+      this.panelProperties.Location = new System.Drawing.Point(0, 0);
+      this.panelProperties.Name = "panelProperties";
+      this.panelProperties.Size = new System.Drawing.Size(340, ${propertiesHeight});
+      this.panelProperties.TabIndex = 0;
+      // 
+      // panelPropertyNames
+      // 
+#set($propertyNr=1)
+#foreach($property in $primitiveProperties)
+#set($labelName="label${property.nameFirstUpper()}")
+#set($splitter1Name="splitter${property.nameFirstUpper()}Name")
+      this.panelPropertyNames.Controls.Add(${labelName});
+#if($propertyNr < $propertyCount)
+      this.panelPropertyNames.Controls.Add(${splitter1Name});
+#end
+#set($propertyNr=$propertyNr+1)
+#end
+#set($propertiesNamesHeight=${propertiesHeight} - 8)
+      this.panelPropertyNames.Dock = System.Windows.Forms.DockStyle.Left;
+      this.panelPropertyNames.DockPadding.Right = 2;
+      this.panelPropertyNames.Location = new System.Drawing.Point(4, 4);
+      this.panelPropertyNames.Name = "panelPropertyNames";
+      this.panelPropertyNames.Size = new System.Drawing.Size(108, ${propertiesNamesHeight});
+      this.panelPropertyNames.TabIndex = 0;
+      // 
+      // panelPropertyValues
+      // 
+#set($propertyNr=1)
+#foreach($property in $primitiveProperties)
+#set($textBoxName="textBox${property.nameFirstUpper()}")
+#set($splitter2Name="splitter${property.nameFirstUpper()}Value")
+      this.panelPropertyValues.Controls.Add(${textBoxName});
+#if($propertyNr < $propertyCount)
+      this.panelPropertyValues.Controls.Add(${splitter2Name});
+#end
+#set($propertyNr=$propertyNr+1)
+#end
+#set($propertiesValuesHeight=${propertiesHeight} - 8)
+#set($controlHeight=${propertiesHeight} + 4)
+      this.panelPropertyValues.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.panelPropertyValues.DockPadding.Left = 2;
+      this.panelPropertyValues.Location = new System.Drawing.Point(115, 4);
+      this.panelPropertyValues.Name = "panelPropertyValues";
+      this.panelPropertyValues.Size = new System.Drawing.Size(221, ${propertiesValuesHeight});
+      this.panelPropertyValues.TabIndex = 2;
+      // 
+      // splitterNamesValues
+      // 
+      this.splitterNamesValues.Location = new System.Drawing.Point(112, 4);
+      this.splitterNamesValues.Name = "splitterNamesValues";
+      this.splitterNamesValues.Size = new System.Drawing.Size(3, 144);
+      this.splitterNamesValues.TabIndex = 1;
+      this.splitterNamesValues.TabStop = false;
+      // 
+      // ${className}
+      // 
+      this.BackColor = System.Drawing.SystemColors.Window;
+      this.Controls.Add(this.panelBorder);
+      this.Name = ${quotes}${className}${quotes};
+      this.Size = new System.Drawing.Size(344, ${controlHeight});
+      this.panelBorder.ResumeLayout(false);
+      this.panelProperties.ResumeLayout(false);
+      this.panelPropertyValues.ResumeLayout(false);
+      this.panelPropertyNames.ResumeLayout(false);
+      this.ResumeLayout(false);
+    }
+    
+    ${sign}endregion
+    
+    private void PrimitivePropertyChanged(object sender, PrimitivePropertyChangedEventArgs e)
+    {
+      UpdateGUI();
+    }
+#foreach($property in $primitiveProperties)
+#set($propertyName=${property.nameFirstUpper()})
+#set($textBoxName="textBox${property.nameFirstUpper()}")
+#set($propertyType=${netHelper.convertJavaTypeToDotnet(${property.getTypeName()})})
+
+    private void ${textBoxName}_TextChanged(object sender, System.EventArgs e)
+    {
+      if (${doFieldName} != null) 
+      {
+        m_propertyValueChanged = true;
+      }
+    }
+    
+    private void ${textBoxName}_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
+    {
+      if (${doFieldName} != null) 
+      {
+        if (e.KeyChar == (char) Keys.Enter) 
+        {
+          Update${propertyName}();
+        }
+        if (e.KeyChar == (char) Keys.Escape) 
+        {
+          m_propertyValueChanged = false;
+          Update${propertyName}();
+        }
+      }
+    }
+
+    private void ${textBoxName}_Leave(object sender, System.EventArgs e)
+    {
+      Update${propertyName}();
+    }
+    
+    private void Update${propertyName}()
+    {
+      if (m_propertyValueChanged)
+      {
+        try
+        {
+#if($propertyType=="string")
+          ${doFieldName}.${propertyName} = ${textBoxName}.Text;
+#else
+          ${doFieldName}.${propertyName} = ${propertyType}.Parse(${textBoxName}.Text);
+#end
+          m_propertyValueChanged = false;
+        }
+        catch (Exception ex)
+        {
+          if (DialogResult.Cancel == MessageBox.Show(this, ${quotes}Could not set the property ${propertyName} to \\${quotes}${quotes} + ${textBoxName}.Text + ${quotes}\\${quotes}. Error: ${quotes} + ex.Message, ${quotes}Setting property value failed${quotes}, MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1))
+          {
+            m_propertyValueChanged = false;
+            Read${propertyName}FromPd();
+          }
+          if (${textBoxName}.Focus())
+          {
+            ${textBoxName}.SelectionStart = 0;
+            ${textBoxName}.SelectionLength = ${textBoxName}.Text.Length;
+          }
+        }
+      }
+      else
+      {
+        Read${propertyName}FromPd();
+      }
+    }
+    
+    private void Read${propertyName}FromPd()
+    {
+#if(${propertyType.equals("string")})
+      if (${doFieldName}.${propertyName} != null)
+      {
+        ${textBoxName}.Text = ${doFieldName}.${propertyName};
+      }
+      else
+      {
+        ${textBoxName}.Text = string.Empty;
+      }
+#else
+      ${textBoxName}.Text = ${doFieldName}.${propertyName}.ToString();
+#end
+    }
+#end
+  }
+}

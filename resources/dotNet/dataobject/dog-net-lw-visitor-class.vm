@@ -1,0 +1,88 @@
+#######################################################
+## Velocity template
+## 
+## Generates the CSharp visitor class for the Data Objects
+##
+## Author: M. Pedersen
+##
+## Copyright 2005 http://www.bbv.ch
+## Licensed under the Apache License, Version 2.0 (the "License");
+##     http://www.apache.org/licenses/LICENSE-2.0
+##
+#######################################################
+##
+## **** initialization ************************************
+#set($quotes='"')
+##
+## **** print file header *********************************
+#printFileHeaderCSharp()
+
+using System;
+using PmMda.Net.Dog;
+#if (${package})
+
+namespace ${package.getAttribute(".net-lightweight-object-package")} {
+#set($spaces="  ")
+#else
+#set($spaces="")
+#end
+${spaces}/// <summary>
+${spaces}/// The visitor with functor class implements the visitor pattern for the graph 
+${spaces}/// of all lightweight object classes defined in the package.
+${spaces}/// </summary>
+${spaces}/// <remarks>
+${spaces}/// The list of all relevant classes is generated from the MDA model.
+${spaces}/// </remarks>
+${spaces}public class LwVisitorFunctor : ILwVisitor, IAbstractVisitorFunctor {
+${spaces}  private int m_depth;
+${spaces}  private ILwFunctor m_functor;
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Gets or sets the depth of the visitor when traversing a graph.
+${spaces}  /// </summary>
+${spaces}  public int Depth {
+${spaces}    get {
+${spaces}      return m_depth;
+${spaces}    }
+${spaces}    set {
+${spaces}      m_depth = value;
+${spaces}    }
+${spaces}  }
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Gets or sets the functor of the visitor.
+${spaces}  /// </summary>
+${spaces}  /// <remarks>
+${spaces}  /// The functor must be of type <see cref=${quotes}ILwFunctor${quotes}/>.
+${spaces}  /// </remarks>
+${spaces}  /// <exception cref=${quotes}InvalidCastException${quotes}>
+${spaces}  /// The functor is not of type <see cref=${quotes}ILwFunctor${quotes}/>.
+${spaces}  /// </exception>
+${spaces}  public object Functor {
+${spaces}    get {
+${spaces}      return m_functor;
+${spaces}    }
+${spaces}    set {
+${spaces}      m_functor = (ILwFunctor) value;
+${spaces}    }
+${spaces}  }
+#foreach($class in $classes)
+#if(!${class.booleanValueOfTag(".net-ignore")})
+#isLightweightObject($class $isLightweightDataObject)	
+#if($isLightweightDataObject)	
+#set($name=${class.getAttribute(".net-lightweight-object-class")})
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Visits the class ${name} as part of the visitor pattern using the <see cref="Functor"/>.
+${spaces}  /// </summary>
+${spaces}  /// <param name="item">item to visit.</param>
+${spaces}  public virtual void Visit(${name} item) {
+${spaces}    m_functor.Execute(item);
+${spaces}  }
+#end
+#end
+#end
+${spaces}}
+#if (${package})
+}
+#end

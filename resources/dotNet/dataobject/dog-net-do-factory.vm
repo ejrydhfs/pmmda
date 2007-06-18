@@ -1,0 +1,148 @@
+####################################k###################
+## Velocity template
+## 
+## Generates CSharp Meta data factory for data objects in a specified package
+##
+## Author: M. Pedersen
+## Copyright 2005 http://www.bbv.ch
+## Licensed under the Apache License, Version 2.0 (the "License");
+##     http://www.apache.org/licenses/LICENSE-2.0
+##
+#######################################################
+##
+##
+## **** initialization ************************************
+#set($sign="#")
+#set($quotes='"')
+##
+##
+## **** Main ************************************
+#printFileHeaderCSharp()
+
+using System;
+using System.Collections;
+using PmMda.Net.MetaData;
+using PmMda.Net.Dog;
+using PmMda.Net.Dog.MetaData;
+#foreach($package in ${model.getPackages()})
+#if(${netHelper.containsDataObjects(${package})} || ${netHelper.containsReferenceCodes(${package})})
+using ${package.getQualifiedName()};
+#if(${netHelper.containsDataObjects(${package})})
+using ${package.getQualifiedName()}.GUI;
+#end
+#end
+#end
+
+namespace PmMda.Net.Artefacts
+{
+  public class MetaDataObjectFactory : IMetaDataFactory
+  {
+    public MetaDataObjectFactory()
+    {
+      
+    }
+    
+    ${sign}region IMetaDataFactory Members
+    
+    public Hashtable CreateMetaData()
+    {
+      Hashtable metaData = new Hashtable();
+      
+      // Create meta data objects
+#foreach($package in ${model.getPackages()})
+#foreach($clazz in ${package.getClasses()})
+#isDataObject($clazz $clazzIsDataObject)
+#if(${clazzIsDataObject})
+#if(!${clazz.booleanValueOfTag(".net-ignore")})
+#set($className=${clazz.getAttribute(".net-data-object-class")})
+#set($doPackageName=${clazz.retrievePackage().getAttribute(".net-data-object-package")})
+#if($doPackageName)
+#set($doQualifiedClassName="${doPackageName}.${className}")
+#else
+#set($doQualifiedClassName=${doClassName})
+#end
+#set($clazzObjName=${clazz.getQualifiedName().replace(".", "_")})
+      MetaDataObject ${clazzObjName} = new MetaDataObject(typeof(${doQualifiedClassName}));
+      metaData.Add(typeof(${doQualifiedClassName}), ${clazzObjName});
+#end
+#end
+#end
+#end
+      // Fill meta data objects
+#foreach($package in ${model.getPackages()})
+#foreach($doClazz in ${package.getClasses()})
+#if(!${doClazz.booleanValueOfTag(".net-ignore")})
+#set($clazzName=${doClazz.getQualifiedName().replace(".", "_")})
+#foreach ($clazz in ${netHelper.getAllImplementedDoClasses(${doClazz})})
+#foreach($property in ${clazz.getProperties()})
+#if(!${property.booleanValueOfTag(".net-ignore")})
+#set($typeName=${property.getTypeName()})
+#set($type=false)
+#set($type=${model.findClass(${typeName})})
+#if(${type})
+#isDataObject($type $typeIsDataObject)
+#else
+#set($typeIsDataObject=false)
+#end##if
+#set($propertyName=${property.nameFirstUpper()})
+#set($displayedPropertyName=${property.getName()})
+#set($propertyObjName="${clazzName}_${property.getName()}")
+#if(${typeIsDataObject})
+#set($valueTypeName=${type.getQualifiedName().replace(".", "_")})
+      MetaDoSingleProperty ${propertyObjName} = new MetaDoSingleProperty(${quotes}${propertyName}${quotes}, ${quotes}${displayedPropertyName}${quotes}, ${valueTypeName});
+      ${clazzName}.AddSingleProperty(${propertyObjName});
+#else
+##TODO: type
+#set($netPropertyType=${netHelper.convertJavaTypeToDotnet(${property.getTypeName()})})
+      MetaDoPrimitiveProperty ${propertyObjName} = new MetaDoPrimitiveProperty(${quotes}${propertyName}${quotes}, ${quotes}${displayedPropertyName}${quotes}, typeof(${netPropertyType}));
+      ${clazzName}.AddPrimitiveProperty(${propertyObjName});
+#end
+#end##if
+#end##foreach(property)
+#foreach($indexedProperty in ${clazz.getIndexedProperties()})
+#if(!${property.booleanValueOfTag(".net-ignore")})
+#set($propertyName=${indexedProperty.nameFirstUpperPlural()})
+#set($displayedPropertyName=${indexedProperty.getName()})
+#set($propertyObjName="${clazzName}_${indexedProperty.getName()}")
+#set($type=false)
+#set($type=${model.findClass(${indexedProperty.getTypeName()})})
+#set($itemTypeName=${type.getQualifiedName().replace(".", "_")})
+      MetaDoIndexedProperty ${propertyObjName} = new MetaDoIndexedProperty(${quotes}${propertyName}${quotes}, ${quotes}${displayedPropertyName}${quotes}, ${itemTypeName});
+      ${clazzName}.AddIndexedProperty(${propertyObjName});
+#end##if
+#end##foreach
+#end##foreach
+#end##if
+#end##foreach
+#end##foreach
+      return metaData;
+    }
+    
+    public Hashtable CreateGuiMetaData()
+    {
+      Hashtable metaData = new Hashtable();
+      
+#foreach($package in ${model.getPackages()})
+#foreach($clazz in ${package.getClasses()})
+#isDataObject($clazz $clazzIsDataObject)
+#if(${clazzIsDataObject})
+#if(!${clazz.booleanValueOfTag(".net-ignore")})
+#set($className=${clazz.getAttribute(".net-data-object-class")})
+#set($doPackageName=${clazz.retrievePackage().getAttribute(".net-data-object-package")})
+#if($doPackageName)
+#set($doQualifiedClassName="${doPackageName}.${className}")
+#else
+#set($doQualifiedClassName=${doClassName})
+#end
+      metaData.Add(typeof(${doQualifiedClassName}), typeof(${className}Dialog));
+#end
+#end
+#end
+#end
+
+      return metaData;
+    }
+    
+    ${sign}endregion
+  }
+}

@@ -1,0 +1,1014 @@
+####################################k###################
+## Velocity template
+## 
+## Generates a .NET Control used to display and edit the
+## primitive properties of a data object.
+##
+## Author: M. Pedersen
+## Copyright 2005 http://www.bbv.ch
+## Licensed under the Apache License, Version 2.0 (the "License");
+##     http://www.apache.org/licenses/LICENSE-2.0
+##
+#######################################################
+##
+## **** initialization ************************************
+##
+#set($sign="#")
+#set($quotes='"')
+#set($namespace=${package.getAttribute(".net-data-object-package")})
+#set($namespace="${namespace}.GUI")
+#set($doClassName=${class.getAttribute(".net-data-object-class")})
+#set($doPackageName=${class.retrievePackage().getAttribute(".net-data-object-package")})
+#if($doPackageName)
+#set($doQualifiedClassName="${doPackageName}.${doClassName}")
+#else
+#set($doQualifiedClassName=${doClassName})
+#end
+#set($doClassNameFirstLower=${netHelper.nameFirstLower(${doClassName})})
+#set($abstractControl=${class.booleanValueOfAttribute(".net-gui-editable-controls")})
+#set($className="${doClassName}List")
+#if($abstractControl)
+#set($controlsAccessModifier="protected")
+#set($className="Abstract${className}")
+#else
+#set($controlsAccessModifier="private")
+#end
+#set($primitiveProperties=${netHelper.getPrimitiveProperties(${class})})
+#set($primitivePropertiesCount=${primitiveProperties.size()})
+##
+## **** print file header *********************************
+##
+#printFileHeaderCSharp()
+
+##
+## **** usings ********************************************
+##
+using System;
+using System.Collections;
+using System.Reflection;
+using System.ComponentModel;
+using System.Drawing;
+using System.Windows.Forms;
+using bbv.Common.Windows.Forms;
+using Iesi.Collections;
+using PmMda.Net.Application;
+using PmMda.Net.Dog;
+using PmMda.Net.Dog.Paging;
+using PmMda.Net.Dog.Sorting;
+using PmMda.Net.GUI;
+
+namespace ${namespace}
+{
+  public class ${className} : bbv.Common.Windows.Forms.UserControl
+  {
+    private int m_currentVScrollValue;
+    private EventHandler m_ehIndexedPropertyChanged;
+    private ICollectionIdentifier m_collectionIdentifier;
+    private int m_currentIndex;
+    private ${doQualifiedClassName} m_currentItem;
+    private int m_selectedGUIIndex;
+    private ${doQualifiedClassName} m_selectedItem;
+#foreach($primitiveProperty in $primitiveProperties)
+#set($propertyNameUpper=${primitiveProperty.nameFirstUpper()})
+    ${controlsAccessModifier} bbv.Common.Windows.Forms.Panel panel${propertyNameUpper};
+    ${controlsAccessModifier} bbv.Common.Windows.Forms.Label label${propertyNameUpper};
+    ${controlsAccessModifier} bbv.Common.Windows.Forms.TextBox txt${propertyNameUpper}Filter;
+    ${controlsAccessModifier} PmMda.Net.GUI.PmMdaSplitter splitter${propertyNameUpper}Filter;
+    ${controlsAccessModifier} PmMda.Net.GUI.PmMdaListBox list${propertyNameUpper};
+	  ${controlsAccessModifier} PmMda.Net.GUI.PmMdaSplitter splitter${propertyNameUpper};
+#end
+    protected bbv.Common.Windows.Forms.Panel panelHScroll;
+    protected bbv.Common.Windows.Forms.Panel panelButtons;
+    protected bbv.Common.Windows.Forms.Button btnMoveDown;
+    protected bbv.Common.Windows.Forms.Button btnMoveUp;
+    protected bbv.Common.Windows.Forms.Button btnEdit;
+    protected bbv.Common.Windows.Forms.Button btnRemove;
+    protected bbv.Common.Windows.Forms.Button btnAdd;
+    protected bbv.Common.Windows.Forms.Panel panelVScroll;
+    protected System.Windows.Forms.VScrollBar vScrollBar;
+    protected bbv.Common.Windows.Forms.Panel panelSpace;
+    protected PmMda.Net.GUI.PmMdaSplitter splitterLeft;
+    protected PmMda.Net.GUI.PmMdaSplitter splitterTop;
+    protected PmMda.Net.GUI.PmMdaSplitter splitterBottom;
+    protected PmMda.Net.GUI.PmMdaSplitter splitterRight;
+    protected PmMda.Net.GUI.PmMdaSplitter splitterBottom2;
+    protected PmMda.Net.GUI.PmMdaSplitter splitterTop2;
+    /// <summary>
+    /// Required designer variable.
+    /// </summary>
+    private System.ComponentModel.Container components = null;
+
+#if($abstractControl)
+    protected ${className}()
+#else
+    public ${className}()
+#end
+    {
+      m_selectedGUIIndex = -1;
+      m_selectedItem = null;
+      m_collectionIdentifier = null;
+      m_ehIndexedPropertyChanged = new EventHandler(IndexedPropertyChanged);
+
+      InitializeComponent();
+
+      m_currentVScrollValue = vScrollBar.Minimum;
+    }
+    
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
+    
+    public ICollectionIdentifier CollectionIdentifier 
+    {
+      get 
+      {
+        return m_collectionIdentifier;
+      }
+      set 
+      {
+        if (m_collectionIdentifier != value) 
+        {
+          if (m_collectionIdentifier != null)
+          {
+            m_collectionIdentifier.IndexedPropertyChanged -= m_ehIndexedPropertyChanged;
+          }
+          m_collectionIdentifier = value;
+          ClearControls();
+          ResetIdentifier();
+          if (m_collectionIdentifier != null)
+          {
+            m_collectionIdentifier.IndexedPropertyChanged += m_ehIndexedPropertyChanged;
+          }
+        }
+      }
+    }
+    
+    public ${doQualifiedClassName} SelectedItem 
+    {
+      get 
+      {
+        return m_selectedItem;
+      }
+    }
+    
+    protected override void OnResize(EventArgs e)
+    {
+      base.OnResize(e);
+      UpdateItems();
+    }
+
+    private void ResetIdentifier() 
+    {
+      if (m_collectionIdentifier != null) 
+      {
+        if (m_collectionIdentifier.CollectionType == CollectionType.Set) 
+        {
+          IEnumerator enumerator = m_collectionIdentifier.Set.GetEnumerator();
+          if (enumerator.MoveNext()) 
+          {
+            m_currentItem = (${doQualifiedClassName}) enumerator.Current;
+          }
+          else 
+          {
+            m_currentItem = null;
+          }
+        }
+        else 
+        {
+          m_currentIndex = 0;
+        }
+        
+        bool isBag = m_collectionIdentifier.CollectionType == CollectionType.Bag;
+        bool isList = m_collectionIdentifier.CollectionType == CollectionType.List;
+        btnMoveUp.Visible = isList;
+        btnMoveDown.Visible = isList;
+#foreach($primitiveProperty in $primitiveProperties)
+#set($propertyNameUpper=${primitiveProperty.nameFirstUpper()})
+        label${propertyNameUpper}.Enabled = isBag;
+#end
+        if (m_collectionIdentifier.Count > 0) 
+        {
+          vScrollBar.Maximum = m_collectionIdentifier.Count - 1;
+        }
+        else 
+        {
+          vScrollBar.Maximum = 0;
+        }
+        vScrollBar.LargeChange = VisibleItemCount;
+        btnAdd.Enabled = !m_collectionIdentifier.ReadOnly;
+        UpdateItems();
+      }
+    }
+
+    private void ClearControls() 
+    {
+      ResetTitleColors();
+#foreach($primitiveProperty in $primitiveProperties)
+#set($propertyNameUpper=${primitiveProperty.nameFirstUpper()})
+      txt${propertyNameUpper}Filter.Text = string.Empty;
+      list${propertyNameUpper}.Items.Clear();
+#end
+      vScrollBar.Maximum = 1;
+      vScrollBar.LargeChange = 1;
+      vScrollBar.Value = vScrollBar.Minimum;
+      m_currentVScrollValue = vScrollBar.Minimum;
+    }
+    
+    private void UpdateItems() 
+    {
+#foreach($primitiveProperty in $primitiveProperties)
+#set($propertyNameUpper=${primitiveProperty.nameFirstUpper()})
+      list${propertyNameUpper}.SelectedIndexChanged -= new EventHandler(this.list${propertyNameUpper}_SelectedIndexChanged);
+#end
+      int visibleItemCount = VisibleItemCount;
+      for (int i = visibleItemCount; i < ListItemCount; /* NO i++ !! */) 
+      {
+#foreach($primitiveProperty in $primitiveProperties)
+#set($propertyNameUpper=${primitiveProperty.nameFirstUpper()})
+        list${propertyNameUpper}.Items.RemoveAt(i);
+#end
+      }
+
+      if (m_collectionIdentifier != null) 
+      {
+        for (int i = m_collectionIdentifier.Count; i < ListItemCount;) 
+        {
+#foreach($primitiveProperty in ${primitiveProperties})
+#set($propertyNameUpper=${primitiveProperty.nameFirstUpper()})
+          list${propertyNameUpper}.Items.RemoveAt(i);
+#end
+        }
+        if (m_collectionIdentifier.CollectionType == CollectionType.Set) 
+        {
+          if (m_currentItem != null) 
+          {
+            ${doQualifiedClassName} current = m_currentItem;
+            for (int i = 0; i < visibleItemCount; i++) 
+            {
+              if (current == null) 
+              {
+                break;
+              }
+              SetAt(i, current);
+              current = (${doQualifiedClassName}) m_collectionIdentifier.GetNext(current);
+            }
+          }
+        }
+        else 
+        {
+          for (int i = 0; i < visibleItemCount; i++) 
+          {
+            int index = m_currentIndex + i;
+            if (index >= m_collectionIdentifier.Count) 
+            {
+              break;
+            }
+            ${doQualifiedClassName} item = (${doQualifiedClassName}) m_collectionIdentifier.List[index];
+            SetAt(i, item);
+          }
+        }
+        if (vScrollBar.Maximum != m_collectionIdentifier.Count - 1) 
+        {
+          if (m_collectionIdentifier.Count > 0) 
+          {
+            vScrollBar.Maximum = m_collectionIdentifier.Count - 1;
+          }
+          else 
+          {
+            vScrollBar.Maximum = 0;
+          }
+        }
+        if (vScrollBar.LargeChange != VisibleItemCount) 
+        {
+          vScrollBar.LargeChange = VisibleItemCount;
+        }
+      }
+#foreach($primitiveProperty in $primitiveProperties)
+#set($propertyNameUpper=${primitiveProperty.nameFirstUpper()})
+      list${propertyNameUpper}.SelectedIndexChanged += new EventHandler(this.list${propertyNameUpper}_SelectedIndexChanged);
+#end
+      if (m_selectedGUIIndex > -1 && m_selectedGUIIndex < ListItemCount) 
+      {
+        SetSelectedIndex(m_selectedGUIIndex, false);
+      }
+    }
+
+    private void SetAt(int guiIndex, ${doQualifiedClassName} item) 
+    {
+      if (guiIndex < ListItemCount) 
+      {
+#foreach($primitiveProperty in $primitiveProperties)
+#set($propertyNameUpper=${primitiveProperty.nameFirstUpper()})
+#set($propertyType=${netHelper.convertJavaTypeToDotnet(${primitiveProperty.getTypeName()})})
+#getType($model $primitiveProperty $primitivePropertyType)
+#isReferenceCode($primitivePropertyType $propertyIsReferenceCode)
+#if(${propertyType.equals("string")})
+
+		// ${propertyNameUpper}
+        if (item.${propertyNameUpper} != null) 
+        {
+          list${propertyNameUpper}.Items[guiIndex] = item.${propertyNameUpper};
+        }
+        else 
+        {
+          list${propertyNameUpper}.Items[guiIndex] = string.Empty;
+        }
+#elseif($propertyIsReferenceCode)
+
+		// ${propertyNameUpper}
+        if (item.${propertyNameUpper} != null) 
+        {
+		  list${propertyNameUpper}.Items[guiIndex] = item.${propertyNameUpper}.ToString();
+        }
+        else 
+        {
+          list${propertyNameUpper}.Items[guiIndex] = string.Empty;
+        }
+#else
+        list${propertyNameUpper}.Items[guiIndex] = item.${propertyNameUpper}.ToString();
+#end
+#end      
+      }
+      else if (guiIndex == ListItemCount) 
+      {
+#foreach($primitiveProperty in $primitiveProperties)
+#set($propertyNameUpper=${primitiveProperty.nameFirstUpper()})
+#set($propertyType=${netHelper.convertJavaTypeToDotnet(${primitiveProperty.getTypeName()})})
+#getType($model $primitiveProperty $primitivePropertyType)
+#isReferenceCode($primitivePropertyType $propertyIsReferenceCode)
+#if(${propertyType.equals("string")})
+
+		// ${propertyNameUpper}
+        if (item.${propertyNameUpper} != null) 
+        {
+          list${propertyNameUpper}.Items.Add(item.${propertyNameUpper});
+        }
+        else 
+        {
+          list${propertyNameUpper}.Items.Add(string.Empty);
+        }
+#elseif($propertyIsReferenceCode)
+
+		// ${propertyNameUpper}
+		if (item.${propertyNameUpper} != null) 
+        {
+		  list${propertyNameUpper}.Items.Add(item.${propertyNameUpper}.ToString());
+        }
+        else 
+        {
+          list${propertyNameUpper}.Items.Add(string.Empty);
+        }
+#else
+        list${propertyNameUpper}.Items.Add(item.${propertyNameUpper}.ToString());
+#end
+#end 
+      }
+      else 
+      {
+        throw new ArgumentOutOfRangeException("The index is to big.");
+      }
+    }
+
+    private int VisibleItemCount 
+    {
+      get 
+      {
+#if($primitivePropertiesCount>0)
+#set($propertyNameUpper=${primitiveProperties.get(0).nameFirstUpper()})
+        int listHeight = panelHScroll.ClientSize.Height - panelButtons.Height - splitterBottom.Height - splitter${propertyNameUpper}Filter.Height - txt${propertyNameUpper}Filter.Height - label${propertyNameUpper}.Height - splitterTop.Height;
+        int visibleItemCount = (listHeight - 1) / list${propertyNameUpper}.ItemHeight;
+        if (visibleItemCount < 0) 
+        {
+          visibleItemCount = 0;
+        }
+        return visibleItemCount;
+#else
+        return 0;
+#end
+      }
+    }
+    
+    private int ListItemCount
+    {
+      get
+      {
+#if($primitivePropertiesCount>0)
+#set($propertyNameUpper=${primitiveProperties.get(0).nameFirstUpper()})
+        return list${propertyNameUpper}.Items.Count;
+#else
+        return 0;
+#end        
+      }
+    }
+    
+    private void ResetOrder() 
+    {
+      if (m_collectionIdentifier != null)
+      {
+        m_collectionIdentifier.Order.Clear();
+#foreach($primitiveProperty in $primitiveProperties)
+#set($propertyNameUpper=${primitiveProperty.nameFirstUpper()})
+#set($propertyFieldName="m_${primitiveProperty.nameFirstLower()}")
+        if (label${propertyNameUpper}.BackColor == SystemColors.Highlight)
+        {
+          m_collectionIdentifier.Order.Add(new OrderParameter(${quotes}${propertyFieldName}${quotes}, OrderDirection.Ascending));
+        }
+#end
+      }
+      vScrollBar.Value = vScrollBar.Minimum;
+      UpdateItems();
+    }
+    
+    private void ScrollItems(int delta) 
+    {
+      if (m_collectionIdentifier.CollectionType == CollectionType.Set) 
+      {
+        bool ahead = delta >= 0;
+        if (delta < 0) 
+        {
+          delta = -1 * delta;
+        }
+        for (int i = 0; i < delta; i++) 
+        {
+          if (ahead) 
+          {
+            m_currentItem = (${doQualifiedClassName}) m_collectionIdentifier.GetNext(m_currentItem);
+          }
+          else 
+          {
+            m_currentItem = (${doQualifiedClassName}) m_collectionIdentifier.GetPrevious(m_currentItem);
+          }
+        }
+        UpdateItems();
+      }
+      else 
+      {
+        m_currentIndex += delta;
+        UpdateItems();
+      }
+
+      if (m_selectedItem != null) 
+      {
+        m_selectedGUIIndex -= delta;
+        if (m_selectedGUIIndex > -1 && m_selectedGUIIndex < ListItemCount) 
+        {
+          SetSelectedIndex(m_selectedGUIIndex, false);
+        }
+        else 
+        {
+          SetSelectedIndex(-1, false);
+        }
+      }
+    }
+    
+    private void ResetSelection() 
+    {
+#foreach($primitiveProperty in $primitiveProperties)
+#set($propertyNameUpper=${primitiveProperty.nameFirstUpper()})
+      list${propertyNameUpper}.SelectedIndexChanged -= new EventHandler(this.list${propertyNameUpper}_SelectedIndexChanged);
+#end
+      m_selectedGUIIndex = -1 - this.vScrollBar.Value;
+#foreach($primitiveProperty in $primitiveProperties)
+#set($propertyNameUpper=${primitiveProperty.nameFirstUpper()})
+      list${propertyNameUpper}.SelectedIndex = -1;
+#end
+      m_selectedItem = null;
+      btnEdit.Enabled = false;
+      btnRemove.Enabled = false;
+      btnMoveUp.Enabled  = false;
+      btnMoveDown.Enabled  = false;
+#foreach($primitiveProperty in $primitiveProperties)
+#set($propertyNameUpper=${primitiveProperty.nameFirstUpper()})
+      list${propertyNameUpper}.SelectedIndexChanged += new EventHandler(this.list${propertyNameUpper}_SelectedIndexChanged);
+#end
+    }
+
+    private void SetSelectedIndex(int guiIndex, bool adjustSelectedGUIIndex) 
+    {
+#foreach($primitiveProperty in $primitiveProperties)
+#set($propertyNameUpper=${primitiveProperty.nameFirstUpper()})
+      list${propertyNameUpper}.SelectedIndexChanged -= new EventHandler(this.list${propertyNameUpper}_SelectedIndexChanged);
+#end
+#foreach($primitiveProperty in $primitiveProperties)
+#set($propertyNameUpper=${primitiveProperty.nameFirstUpper()})
+      list${propertyNameUpper}.SelectedIndex = guiIndex;
+#end
+      if (m_collectionIdentifier != null && adjustSelectedGUIIndex) 
+      {
+        m_selectedGUIIndex = guiIndex;
+        if (guiIndex > -1) 
+        {
+          if (m_collectionIdentifier.CollectionType == CollectionType.Set) 
+          {
+            m_selectedItem = m_currentItem;
+            for (int i = 0; i < guiIndex; i++) 
+            {
+              m_selectedItem = (${doQualifiedClassName}) m_collectionIdentifier.GetNext(m_selectedItem);
+            }
+          }
+          else 
+          {
+            m_selectedItem = (${doQualifiedClassName}) m_collectionIdentifier.List[m_currentIndex + guiIndex];
+          }
+        }
+        else 
+        {
+          m_selectedItem = null;
+        }
+      }
+
+      bool itemSelected = m_selectedItem != null && !m_collectionIdentifier.ReadOnly;
+      btnEdit.Enabled = itemSelected;
+      btnRemove.Enabled = itemSelected;
+      btnMoveUp.Enabled  = itemSelected;
+      btnMoveDown.Enabled  = itemSelected;
+
+#foreach($primitiveProperty in $primitiveProperties)
+#set($propertyNameUpper=${primitiveProperty.nameFirstUpper()})
+      list${propertyNameUpper}.SelectedIndexChanged += new EventHandler(this.list${propertyNameUpper}_SelectedIndexChanged);
+#end
+    }
+
+    ${sign}region Component Designer generated code
+    /// <summary> 
+    /// Required method for Designer support - do not modify 
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
+#foreach($primitiveProperty in $primitiveProperties)
+#set($propertyNameUpper=${primitiveProperty.nameFirstUpper()})
+      this.panel${propertyNameUpper} = new bbv.Common.Windows.Forms.Panel();
+      this.list${propertyNameUpper} = new PmMda.Net.GUI.PmMdaListBox();
+      this.splitter${propertyNameUpper}Filter = new PmMda.Net.GUI.PmMdaSplitter();
+      this.txt${propertyNameUpper}Filter = new bbv.Common.Windows.Forms.TextBox();
+      this.label${propertyNameUpper} = new bbv.Common.Windows.Forms.Label();
+	    this.splitter${propertyNameUpper} = new PmMda.Net.GUI.PmMdaSplitter();
+#end
+      this.panelHScroll = new bbv.Common.Windows.Forms.Panel();
+      this.splitterLeft = new PmMda.Net.GUI.PmMdaSplitter();
+      this.splitterTop = new PmMda.Net.GUI.PmMdaSplitter();
+      this.splitterBottom = new PmMda.Net.GUI.PmMdaSplitter();
+      this.panelButtons = new bbv.Common.Windows.Forms.Panel();
+      this.btnMoveDown = new bbv.Common.Windows.Forms.Button();
+      this.btnMoveUp = new bbv.Common.Windows.Forms.Button();
+      this.btnEdit = new bbv.Common.Windows.Forms.Button();
+      this.btnRemove = new bbv.Common.Windows.Forms.Button();
+      this.btnAdd = new bbv.Common.Windows.Forms.Button();
+      this.panelVScroll = new bbv.Common.Windows.Forms.Panel();
+      this.vScrollBar = new System.Windows.Forms.VScrollBar();
+      this.splitterRight = new PmMda.Net.GUI.PmMdaSplitter();
+      this.splitterBottom2 = new PmMda.Net.GUI.PmMdaSplitter();
+      this.panelSpace = new bbv.Common.Windows.Forms.Panel();
+      this.splitterTop2 = new PmMda.Net.GUI.PmMdaSplitter();
+#foreach($primitiveProperty in $primitiveProperties)
+#set($propertyNameUpper=${primitiveProperty.nameFirstUpper()})
+      this.panel${propertyNameUpper}.SuspendLayout();
+#end
+      this.panelHScroll.SuspendLayout();
+      this.panelButtons.SuspendLayout();
+      this.panelVScroll.SuspendLayout();
+      this.SuspendLayout();
+#set($index=0)
+#foreach($primitiveProperty in $primitiveProperties)
+#set($propertyNameUpper = ${primitiveProperty.nameFirstUpper()})
+#set($panelLocationX = $index * 138 + 2)
+#set($splitterLocationX = ($index + 1) * 138)
+      // 
+      // panel${propertyNameUpper}
+      // 
+      this.panel${propertyNameUpper}.AccessType = bbv.Common.Windows.Forms.AccessTypes.InOut;
+      this.panel${propertyNameUpper}.Controls.Add(this.list${propertyNameUpper});
+      this.panel${propertyNameUpper}.Controls.Add(this.splitter${propertyNameUpper}Filter);
+      this.panel${propertyNameUpper}.Controls.Add(this.txt${propertyNameUpper}Filter);
+      this.panel${propertyNameUpper}.Controls.Add(this.label${propertyNameUpper});
+      this.panel${propertyNameUpper}.Dock = System.Windows.Forms.DockStyle.Left;
+      this.panel${propertyNameUpper}.Location = new System.Drawing.Point(${panelLocationX}, 2);
+      this.panel${propertyNameUpper}.Name = ${quotes}panel${propertyNameUpper}${quotes};
+      this.panel${propertyNameUpper}.Size = new System.Drawing.Size(136, 180);
+      this.panel${propertyNameUpper}.TabIndex = 0;
+      // 
+      // list${propertyNameUpper}
+      // 
+      this.list${propertyNameUpper}.AccessType = bbv.Common.Windows.Forms.AccessTypes.InOut;
+      this.list${propertyNameUpper}.BackColor = System.Drawing.SystemColors.Window;
+      this.list${propertyNameUpper}.BorderStyle = System.Windows.Forms.BorderStyle.None;
+      this.list${propertyNameUpper}.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.list${propertyNameUpper}.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
+      this.list${propertyNameUpper}.Location = new System.Drawing.Point(0, 35);
+      this.list${propertyNameUpper}.Name = ${quotes}list${propertyNameUpper}${quotes};
+      this.list${propertyNameUpper}.Size = new System.Drawing.Size(136, 145);
+      this.list${propertyNameUpper}.TabIndex = 3;
+      this.list${propertyNameUpper}.SelectedIndexChanged += new System.EventHandler(this.list${propertyNameUpper}_SelectedIndexChanged);
+      // 
+      // splitter${propertyNameUpper}Filter
+      // 
+      this.splitter${propertyNameUpper}Filter.BackColor = System.Drawing.SystemColors.ControlDark;
+      this.splitter${propertyNameUpper}Filter.Cursor = System.Windows.Forms.Cursors.SizeNS;
+      this.splitter${propertyNameUpper}Filter.Dock = System.Windows.Forms.DockStyle.Top;
+      this.splitter${propertyNameUpper}Filter.Enabled = false;
+      this.splitter${propertyNameUpper}Filter.ExpandParent = false;
+      this.splitter${propertyNameUpper}Filter.Location = new System.Drawing.Point(0, 33);
+      this.splitter${propertyNameUpper}Filter.Name = ${quotes}splitter${propertyNameUpper}Filter${quotes};
+      this.splitter${propertyNameUpper}Filter.Size = new System.Drawing.Size(136, 2);
+      this.splitter${propertyNameUpper}Filter.TabIndex = 4;
+      this.splitter${propertyNameUpper}Filter.TabStop = false;
+      // 
+      // txt${propertyNameUpper}Filter
+      // 
+      this.txt${propertyNameUpper}Filter.AccessType = bbv.Common.Windows.Forms.AccessTypes.InOut;
+      this.txt${propertyNameUpper}Filter.BorderStyle = System.Windows.Forms.BorderStyle.None;
+      this.txt${propertyNameUpper}Filter.Dock = System.Windows.Forms.DockStyle.Top;
+      this.txt${propertyNameUpper}Filter.Location = new System.Drawing.Point(0, 20);
+      this.txt${propertyNameUpper}Filter.Name = ${quotes}txt${propertyNameUpper}Filter${quotes};
+      this.txt${propertyNameUpper}Filter.Size = new System.Drawing.Size(136, 13);
+      this.txt${propertyNameUpper}Filter.TabIndex = 2;
+      this.txt${propertyNameUpper}Filter.Text = ${quotes}${quotes};
+      this.txt${propertyNameUpper}Filter.TextChanged += new System.EventHandler(this.txt${propertyNameUpper}Filter_TextChanged);
+      // 
+      // label${propertyNameUpper}
+      // 
+      this.label${propertyNameUpper}.AccessType = bbv.Common.Windows.Forms.AccessTypes.InOut;
+      this.label${propertyNameUpper}.BackColor = System.Drawing.SystemColors.Control;
+      this.label${propertyNameUpper}.Dock = System.Windows.Forms.DockStyle.Top;
+      this.label${propertyNameUpper}.Location = new System.Drawing.Point(0, 0);
+      this.label${propertyNameUpper}.Name = ${quotes}label${propertyNameUpper}${quotes};
+      this.label${propertyNameUpper}.Size = new System.Drawing.Size(136, 20);
+      this.label${propertyNameUpper}.TabIndex = 6;
+      this.label${propertyNameUpper}.Text = ${quotes}${propertyNameUpper}${quotes};
+      this.label${propertyNameUpper}.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      this.label${propertyNameUpper}.Click += new System.EventHandler(this.label${propertyNameUpper}_Click);
+      // 
+      // splitter${propertyNameUpper}
+      // 
+      this.splitter${propertyNameUpper}.BackColor = System.Drawing.SystemColors.ControlDark;
+      this.splitter${propertyNameUpper}.Cursor = System.Windows.Forms.Cursors.SizeWE;
+      this.splitter${propertyNameUpper}.Dock = System.Windows.Forms.DockStyle.Left;
+      this.splitter${propertyNameUpper}.ExpandParent = false;
+      this.splitter${propertyNameUpper}.Location = new System.Drawing.Point(${splitterLocationX}, 2);
+      this.splitter${propertyNameUpper}.Name = ${quotes}splitter${propertyNameUpper}${quotes};
+      this.splitter${propertyNameUpper}.Size = new System.Drawing.Size(2, 180);
+      this.splitter${propertyNameUpper}.TabIndex = 0;
+#set($index=$index+1)
+#end
+#set($panelHScrollWidth=$primitivePropertiesCount * 138 + 2)
+      // 
+      // panelHScroll
+      // 
+      this.panelHScroll.AccessType = bbv.Common.Windows.Forms.AccessTypes.InOut;
+      this.panelHScroll.AutoScroll = true;
+      this.panelHScroll.BackColor = System.Drawing.SystemColors.Window;
+#foreach($primitiveProperty in ${netHelper.reverseList(${primitiveProperties})})
+#set($propertyNameUpper=${primitiveProperty.nameFirstUpper()})
+      this.panelHScroll.Controls.Add(this.splitter${propertyNameUpper});
+      this.panelHScroll.Controls.Add(this.panel${propertyNameUpper});
+#end
+      this.panelHScroll.Controls.Add(this.splitterLeft);
+      this.panelHScroll.Controls.Add(this.splitterTop);
+      this.panelHScroll.Controls.Add(this.splitterBottom);
+      this.panelHScroll.Controls.Add(this.panelButtons);
+      this.panelHScroll.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.panelHScroll.Location = new System.Drawing.Point(0, 0);
+      this.panelHScroll.Name = ${quotes}panelHScroll${quotes};
+      this.panelHScroll.Size = new System.Drawing.Size(${panelHScrollWidth}, 216);
+      this.panelHScroll.TabIndex = 3;
+      this.panelHScroll.Layout += new System.Windows.Forms.LayoutEventHandler(this.panelHScroll_Layout);
+      // 
+      // splitterLeft
+      // 
+      this.splitterLeft.BackColor = System.Drawing.SystemColors.ControlDark;
+      this.splitterLeft.Cursor = System.Windows.Forms.Cursors.SizeWE;
+      this.splitterLeft.Dock = System.Windows.Forms.DockStyle.Left;
+      this.splitterLeft.Enabled = false;
+      this.splitterLeft.ExpandParent = false;
+      this.splitterLeft.Location = new System.Drawing.Point(0, 2);
+      this.splitterLeft.Name = ${quotes}splitterLeft${quotes};
+      this.splitterLeft.Size = new System.Drawing.Size(2, 180);
+      this.splitterLeft.TabIndex = 10;
+      this.splitterLeft.TabStop = false;
+      // 
+      // splitterTop
+      // 
+      this.splitterTop.BackColor = System.Drawing.SystemColors.ControlDark;
+      this.splitterTop.Cursor = System.Windows.Forms.Cursors.SizeNS;
+      this.splitterTop.Dock = System.Windows.Forms.DockStyle.Top;
+      this.splitterTop.Enabled = false;
+      this.splitterTop.ExpandParent = false;
+      this.splitterTop.Location = new System.Drawing.Point(0, 0);
+      this.splitterTop.Name = ${quotes}splitterTop${quotes};
+      this.splitterTop.Size = new System.Drawing.Size(${panelHScrollWidth}, 2);
+      this.splitterTop.TabIndex = 14;
+      this.splitterTop.TabStop = false;
+      // 
+      // splitterBottom
+      // 
+      this.splitterBottom.BackColor = System.Drawing.SystemColors.ControlDark;
+      this.splitterBottom.Cursor = System.Windows.Forms.Cursors.SizeNS;
+      this.splitterBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
+      this.splitterBottom.ExpandParent = false;
+      this.splitterBottom.Location = new System.Drawing.Point(0, 182);
+      this.splitterBottom.Name = ${quotes}splitterBottom${quotes};
+      this.splitterBottom.Size = new System.Drawing.Size(${panelHScrollWidth}, 2);
+      this.splitterBottom.TabIndex = 0;
+      // 
+      // panelButtons
+      // 
+      this.panelButtons.BackColor = System.Drawing.SystemColors.Control;
+      this.panelButtons.Controls.Add(this.btnMoveDown);
+      this.panelButtons.Controls.Add(this.btnMoveUp);
+      this.panelButtons.Controls.Add(this.btnEdit);
+      this.panelButtons.Controls.Add(this.btnRemove);
+      this.panelButtons.Controls.Add(this.btnAdd);
+      this.panelButtons.Dock = System.Windows.Forms.DockStyle.Bottom;
+      this.panelButtons.Location = new System.Drawing.Point(0, 184);
+      this.panelButtons.Name = ${quotes}panelButtons${quotes};
+      this.panelButtons.Size = new System.Drawing.Size(${panelHScrollWidth}, 32);
+      this.panelButtons.TabIndex = 3;
+      this.panelButtons.LocationChanged += new System.EventHandler(this.panelButtons_LocationChanged);
+      // 
+      // btnMoveDown
+      // 
+      this.btnMoveDown.Location = new System.Drawing.Point(256, 8);
+      this.btnMoveDown.Name = ${quotes}btnMoveDown${quotes};
+      this.btnMoveDown.Size = new System.Drawing.Size(48, 23);
+      this.btnMoveDown.TabIndex = 9;
+      this.btnMoveDown.Text = ${quotes}Down${quotes};
+      this.btnMoveDown.Visible = false;
+      this.btnMoveDown.Click += new System.EventHandler(this.btnMoveDown_Click);
+      // 
+      // btnMoveUp
+      // 
+      this.btnMoveUp.Location = new System.Drawing.Point(200, 8);
+      this.btnMoveUp.Name = ${quotes}btnMoveUp${quotes};
+      this.btnMoveUp.Size = new System.Drawing.Size(48, 23);
+      this.btnMoveUp.TabIndex = 8;
+      this.btnMoveUp.Text = ${quotes}Up${quotes};
+      this.btnMoveUp.Visible = false;
+      this.btnMoveUp.Click += new System.EventHandler(this.btnMoveUp_Click);
+      // 
+      // btnEdit
+      // 
+      this.btnEdit.Enabled = false;
+      this.btnEdit.Location = new System.Drawing.Point(128, 8);
+      this.btnEdit.Name = ${quotes}btnEdit${quotes};
+      this.btnEdit.Size = new System.Drawing.Size(56, 23);
+      this.btnEdit.TabIndex = 7;
+      this.btnEdit.Text = ${quotes}Edit...${quotes};
+      this.btnEdit.Click += new System.EventHandler(this.btnEdit_Click);
+      // 
+      // btnRemove
+      // 
+      this.btnRemove.Enabled = false;
+      this.btnRemove.Location = new System.Drawing.Point(64, 8);
+      this.btnRemove.Name = ${quotes}btnRemove${quotes};
+      this.btnRemove.Size = new System.Drawing.Size(56, 23);
+      this.btnRemove.TabIndex = 6;
+      this.btnRemove.Text = ${quotes}Remove${quotes};
+      this.btnRemove.Click += new System.EventHandler(this.btnRemove_Click);
+      // 
+      // btnAdd
+      // 
+      this.btnAdd.Location = new System.Drawing.Point(0, 8);
+      this.btnAdd.Name = ${quotes}btnAdd${quotes};
+      this.btnAdd.Size = new System.Drawing.Size(56, 23);
+      this.btnAdd.TabIndex = 5;
+      this.btnAdd.Text = ${quotes}Add...${quotes};
+      this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
+      // 
+      // panelVScroll
+      // 
+      this.panelVScroll.Controls.Add(this.vScrollBar);
+      this.panelVScroll.Controls.Add(this.splitterRight);
+      this.panelVScroll.Controls.Add(this.splitterBottom2);
+      this.panelVScroll.Controls.Add(this.panelSpace);
+      this.panelVScroll.Dock = System.Windows.Forms.DockStyle.Right;
+      this.panelVScroll.Location = new System.Drawing.Point(${panelHScrollWidth}, 0);
+      this.panelVScroll.Name = ${quotes}panelVScroll${quotes};
+      this.panelVScroll.Size = new System.Drawing.Size(18, 216);
+      this.panelVScroll.TabIndex = 4;
+      // 
+      // vScrollBar
+      // 
+      this.vScrollBar.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.vScrollBar.LargeChange = 1;
+      this.vScrollBar.Location = new System.Drawing.Point(0, 2);
+      this.vScrollBar.Maximum = 0;
+      this.vScrollBar.Name = ${quotes}vScrollBar${quotes};
+      this.vScrollBar.Size = new System.Drawing.Size(16, 180);
+      this.vScrollBar.TabIndex = 1;
+      this.vScrollBar.ValueChanged += new System.EventHandler(this.vScrollBar_ValueChanged);
+      this.vScrollBar.Scroll += new System.Windows.Forms.ScrollEventHandler(this.vScrollBar_Scroll);
+      // 
+      // splitterRight
+      // 
+      this.splitterRight.BackColor = System.Drawing.SystemColors.ControlDark;
+      this.splitterRight.Cursor = System.Windows.Forms.Cursors.SizeWE;
+      this.splitterRight.Dock = System.Windows.Forms.DockStyle.Right;
+      this.splitterRight.ExpandParent = false;
+      this.splitterRight.Location = new System.Drawing.Point(16, 2);
+      this.splitterRight.Name = ${quotes}splitterRight${quotes};
+      this.splitterRight.Size = new System.Drawing.Size(2, 180);
+      this.splitterRight.TabIndex = 18;
+      this.splitterRight.TabStop = false;
+      // 
+      // splitterBottom2
+      // 
+      this.splitterBottom2.BackColor = System.Drawing.SystemColors.ControlDark;
+      this.splitterBottom2.Cursor = System.Windows.Forms.Cursors.SizeNS;
+      this.splitterBottom2.Dock = System.Windows.Forms.DockStyle.Bottom;
+      this.splitterBottom2.Enabled = false;
+      this.splitterBottom2.ExpandParent = false;
+      this.splitterBottom2.Location = new System.Drawing.Point(0, 182);
+      this.splitterBottom2.Name = ${quotes}splitterBottom2${quotes};
+      this.splitterBottom2.Size = new System.Drawing.Size(18, 2);
+      this.splitterBottom2.TabIndex = 17;
+      this.splitterBottom2.TabStop = false;
+      // 
+      // splitterTop2
+      // 
+      this.splitterTop2.Cursor = System.Windows.Forms.Cursors.SizeWE;
+      this.splitterTop2.Dock = System.Windows.Forms.DockStyle.Left;
+      this.splitterTop2.ExpandParent = false;
+      this.splitterTop2.Location = new System.Drawing.Point(0, 0);
+      this.splitterTop2.Name = ${quotes}splitterTop2${quotes};
+      this.splitterTop2.Size = new System.Drawing.Size(3, 3);
+      this.splitterTop2.TabIndex = 0;
+      // 
+      // panelSpace
+      // 
+      this.panelSpace.Dock = System.Windows.Forms.DockStyle.Bottom;
+      this.panelSpace.Location = new System.Drawing.Point(0, 184);
+      this.panelSpace.Name = ${quotes}panelSpace${quotes};
+      this.panelSpace.Size = new System.Drawing.Size(18, 32);
+      this.panelSpace.TabIndex = 3;
+#set($controlWidth = $primitivePropertiesCount * 138 + 20)
+#if($controlWidth < 328)
+#set($controlWidth=328)
+#end
+      // 
+      // ${className}
+      // 
+      this.Controls.Add(this.panelHScroll);
+      this.Controls.Add(this.panelVScroll);
+      this.Name = ${quotes}${className}${quotes};
+      this.Size = new System.Drawing.Size(${controlWidth}, 216);
+#foreach($primitiveProperty in $primitiveProperties)
+#set($propertyNameUpper=${primitiveProperty.nameFirstUpper()})
+      this.panel${propertyNameUpper}.ResumeLayout(false);
+#end
+      this.panelHScroll.ResumeLayout(false);
+      this.panelButtons.ResumeLayout(false);
+      this.panelVScroll.ResumeLayout(false);
+      this.ResumeLayout(false);
+
+    }
+    ${sign}endregion
+
+    private void vScrollBar_Scroll(object sender, System.Windows.Forms.ScrollEventArgs e)
+    {
+      if (m_collectionIdentifier != null) 
+      {
+        int delta = e.NewValue - vScrollBar.Value;
+        m_currentVScrollValue = e.NewValue;
+        if (delta != 0) 
+        {
+          ScrollItems(delta);
+        }
+      }
+    }
+    
+    private void vScrollBar_ValueChanged(object sender, System.EventArgs e)
+    {
+      if (m_collectionIdentifier != null) 
+      {
+        int delta = vScrollBar.Value - m_currentVScrollValue;
+        m_currentVScrollValue = vScrollBar.Value;
+        if (delta != 0) 
+        {
+          ScrollItems(delta);
+        }
+      }
+    }
+#foreach($primitiveProperty in $primitiveProperties)
+#set($propertyNameUpper=${primitiveProperty.nameFirstUpper()})
+
+    private void txt${propertyNameUpper}Filter_TextChanged(object sender, System.EventArgs e)
+    {
+      // TODO:
+    }
+    
+    private void list${propertyNameUpper}_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+      SetSelectedIndex(list${propertyNameUpper}.SelectedIndex, true);
+    }
+    
+    private void label${propertyNameUpper}_Click(object sender, System.EventArgs e)
+    {
+      bool order = label${propertyNameUpper}.BackColor == SystemColors.Highlight;
+      ResetTitleColors();
+      if (!order) 
+      {
+        label${propertyNameUpper}.BackColor = SystemColors.Highlight;
+        label${propertyNameUpper}.ForeColor = SystemColors.HighlightText;
+      }
+      ResetOrder();
+    }
+#end
+    
+    private void btnAdd_Click(object sender, System.EventArgs e)
+    {
+      if (m_collectionIdentifier != null) 
+      {
+        ${doQualifiedClassName} item = new ${doQualifiedClassName}();
+        ${doClassName}Dialog dialog = new ${doClassName}Dialog();
+        dialog.${doClassName} = item;
+        dialog.ShowDialog(this);
+        m_collectionIdentifier.Add(item);
+        UpdateItems();
+      }
+    }
+
+    private void btnRemove_Click(object sender, System.EventArgs e)
+    {
+      if (m_collectionIdentifier != null) 
+      {
+        ${doQualifiedClassName} item = SelectedItem;
+        if (item != null) 
+        {
+          Point scrollPos = panelHScroll.AutoScrollPosition;
+          m_collectionIdentifier.Remove(item);
+          ResetSelection();
+          UpdateItems();
+          panelHScroll.AutoScrollPosition = new Point(-scrollPos.X, -scrollPos.Y);
+        }
+      }
+    }
+
+    private void btnEdit_Click(object sender, System.EventArgs e)
+    {
+      ${doQualifiedClassName} item = SelectedItem;
+      if (item != null) 
+      {
+        Type itemType = item.GetType();
+        System.Windows.Forms.Form dialog = Locator.Instance.MetaDataManager.CreateGui(itemType);
+        PropertyInfo property = dialog.GetType().GetProperty(itemType.Name);
+        if (property != null) 
+        {
+          property.SetValue(dialog, item, null);
+          dialog.ShowDialog(this);
+#if($primitivePropertiesCount>0)
+#set($propertyNameUpper=${primitiveProperties.get(0).nameFirstUpper()})
+          int selectedIndex = list${propertyNameUpper}.SelectedIndex;
+#end
+          UpdateItems();
+#if($primitivePropertiesCount>0)
+#set($propertyNameUpper=${primitiveProperties.get(0).nameFirstUpper()})
+          list${propertyNameUpper}.SelectedIndex = selectedIndex;
+#end
+        }
+      }
+    }
+
+    private void btnMoveUp_Click(object sender, System.EventArgs e)
+    {
+      // TODO:
+    }
+
+    private void btnMoveDown_Click(object sender, System.EventArgs e)
+    {
+      // TODO:
+    }
+    
+    private void IndexedPropertyChanged(object sender, EventArgs e)
+    {
+      UpdateItems();
+    }
+
+    private void ResetTitleColors() 
+    {
+#foreach($primitiveProperty in $primitiveProperties)
+#set($propertyNameUpper=${primitiveProperty.nameFirstUpper()})
+      label${propertyNameUpper}.BackColor = SystemColors.Control;
+      label${propertyNameUpper}.ForeColor = SystemColors.ControlText;
+#end
+    }
+
+    private void panelButtons_LocationChanged(object sender, System.EventArgs e)
+    {
+      panelSpace.Height = Height - panelButtons.Top;
+    }
+
+    private void panelHScroll_Layout(object sender, System.Windows.Forms.LayoutEventArgs e)
+    {
+      UpdateItems();
+    }
+  }  
+}

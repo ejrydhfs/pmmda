@@ -1,0 +1,57 @@
+#######################################################
+## Velocity template
+## 
+## Generates the CSharp visitor interface for the lightweight objects
+##
+## Author: M. Pedersen
+##
+## Copyright 2005 http://www.bbv.ch
+## Licensed under the Apache License, Version 2.0 (the "License");
+##     http://www.apache.org/licenses/LICENSE-2.0
+##
+#######################################################
+##
+## **** print file header *********************************
+##
+#printFileHeaderCSharp()
+
+using System;
+#if (${package})
+namespace ${package.getAttribute(".net-lightweight-object-package")} {
+#set($spaces="  ")
+#else
+#set($spaces="")
+#end
+${spaces}/// <summary>
+${spaces}/// The ILwVisitor interface defines the visitor pattern for the graph of all 
+${spaces}/// lightweight objects defined in the package.
+${spaces}/// </summary>
+${spaces}/// <remarks>
+${spaces}/// The list of all relevant classes is generated from the MDA model.
+${spaces}/// </remarks>
+${spaces}public interface ILwVisitor {
+${spaces}  /// <summary>
+${spaces}  /// Gets or sets the depth of the visitor when traversing a graph.
+${spaces}  /// </summary>
+${spaces}  int Depth {
+${spaces}    get;
+${spaces}    set;
+${spaces}  }
+#foreach($class in $classes)
+#if(!${class.booleanValueOfTag(".net-ignore")})
+#isLightweightObject($class $isLightweightDataObject)
+#if($isLightweightDataObject)
+#set($name=${class.getAttribute(".net-lightweight-object-class")})
+${spaces}  
+${spaces}  /// <summary>
+${spaces}  /// Visits the class ${name} as part of the visitor pattern.
+${spaces}  /// </summary>
+${spaces}  /// <param name="item">item to visit.</param>
+${spaces}  void Visit(${name} item);
+#end
+#end
+#end
+${spaces}}
+#if (${package})
+}
+#end

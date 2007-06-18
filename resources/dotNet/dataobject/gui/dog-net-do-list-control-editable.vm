@@ -1,0 +1,91 @@
+#####################################################################
+## Velocity template
+## 
+## Generates a .NET Control used to display and edit the
+## primitive properties of a data object.
+##
+## Author:            M. Pedersen
+## Copyright 2005 (c) http://www.bbv.ch
+## Licensed under the Apache License, Version 2.0 (the "License");
+##                    http://www.apache.org/licenses/LICENSE-2.0
+##
+#####################################################################
+##
+## **** initialization ************************************
+##
+#set($sign="#")
+#set($quotes='"')
+#set($namespace=${package.getAttribute(".net-data-object-package")})
+#set($namespace="${namespace}.GUI")
+#set($doClassName=${class.getAttribute(".net-data-object-class")})
+#set($className="${doClassName}List")
+#set($classNameAbstract="Abstract${className}")
+##
+## **** print file header *********************************
+##
+/* ********************************************************************** 
+ * Copyright 2005 BBV Software Services AG (http://www.bbv.ch)
+ *  
+ * Licensed under the Apache License, Version 2.0 (the "Licence"); 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * you may not use this file except in compliance with the License.
+ * **********************************************************************/
+ 
+/* 
+ * This source code was generated automatically with the pmMDA generator.
+ * !!! It is allowed to modify the content of this file manually !!!
+ * Delete this file to tell the pmMDA Explorer to regenerate this file.
+ */
+##
+## **** usings ********************************************
+##
+using System;
+using System.Collections;
+using System.ComponentModel;
+using System.Drawing;
+using System.Windows.Forms;
+
+namespace ${namespace}
+{
+	public class ${className} : ${namespace}.${classNameAbstract}
+	{
+		private System.ComponentModel.IContainer components = null;
+
+		public ${className}()
+		{
+			InitializeComponent();
+		}
+
+		/// <summary>
+		/// Clean up any resources being used.
+		/// </summary>
+		protected override void Dispose(bool disposing)
+		{
+			if(disposing)
+			{
+				if (components != null) 
+				{
+					components.Dispose();
+				}
+			}
+			base.Dispose(disposing);
+		}
+
+    ${sign}region Designer generated code
+		/// <summary>
+		/// Required method for Designer support - do not modify
+		/// the contents of this method with the code editor.
+		/// </summary>
+		private void InitializeComponent()
+		{
+      this.SuspendLayout();
+      // 
+      // DomainList
+      // 
+      this.Name = ${quotes}${doClassName}${quotes};
+      this.ResumeLayout(false);
+    }
+		${sign}endregion
+	}
+}
+
