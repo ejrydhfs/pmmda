@@ -76,7 +76,7 @@ public abstract class MetaMember extends MetaElement {
    */
   public void setClassifier(MetaClassifier classifier) {
     this.classifier = classifier;
-    typeName = classifier.getQualifiedName();
+    typeName = getTypeName();
   }
 
   /**
