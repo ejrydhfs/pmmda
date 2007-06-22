@@ -45,6 +45,9 @@ public class MetaPackage extends MetaElement {
 	 */
 	private List<MetaClass> classes;
 
+	/**
+	 * List of all views associated to this package.
+	 */
 	private List<MetaView> views;
 
 	/**
@@ -250,6 +253,18 @@ public class MetaPackage extends MetaElement {
 			views.remove(view);
 			view.setContext(null);
 		}
+	}
+	
+	/**
+	 * Returns the view with passed qualified name. Null if not contained within this package.
+	 * @param qualifiedName of the MetaView to be found.
+	 * @return MetaView if found, null if none available.
+	 */
+	public MetaView findView(String qualifiedName) {
+		for(MetaView view : views) {
+			if(view.getQualifiedName().equals(qualifiedName)) return view;
+		}
+		return null;
 	}
 
 	/**
