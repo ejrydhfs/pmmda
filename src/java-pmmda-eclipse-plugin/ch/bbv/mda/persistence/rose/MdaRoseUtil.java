@@ -16,8 +16,11 @@
  */
 package ch.bbv.mda.persistence.rose;
 
+import java.util.List;
 import java.util.Map;
 
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.resource.URIConverter;
 import org.eclipse.emf.importer.rose.builder.*;
 import org.eclipse.emf.importer.rose.parser.*;
@@ -42,9 +45,9 @@ public class MdaRoseUtil extends RoseUtil
   
   public Map getQuidTable() { return quidTable;}
   public Map getNameTable() { return nameTable;}
-  public Map getSuperTable() { return superTable;}
-  public Map getRefTable() { return refTable;}
-  public Map getTypeTable() { return typeTable;}
+  public Map<Object, List<String>> getSuperTable() { return superTable;}
+  public Map<EReference, String> getRefTable() { return refTable;}
+  public Map<EObject, String> getTypeTable() { return typeTable;}
 
   private RoseNode versionTree = null;
   private RoseNode modelTree = null;

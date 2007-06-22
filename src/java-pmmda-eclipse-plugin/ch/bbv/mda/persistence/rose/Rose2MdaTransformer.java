@@ -24,10 +24,7 @@ import java.util.regex.Pattern;
 
 import org.eclipse.emf.codegen.ecore.genmodel.GenModelPackage;
 import org.eclipse.emf.codegen.util.CodeGenUtil;
-import org.eclipse.emf.common.util.BasicDiagnostic;
-import org.eclipse.emf.common.util.BasicEList;
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.common.util.UniqueEList;
+import org.eclipse.emf.common.util.*;
 import org.eclipse.emf.ecore.*;
 import org.eclipse.emf.ecore.util.EcoreSwitch;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -44,6 +41,7 @@ import ch.bbv.mda.cartridges.BoConstants;
 import ch.bbv.mda.persistence.eclipse.RosePersistenceHandler;
 import ch.bbv.mda.ui.ViewConstants;
 import ch.bbv.mda.uml.MetaUseCase;
+import ch.bbv.utilities.TextUtilities;
 import ch.persi.xml.XmlNode;
 
 import com.jgoodies.validation.Severity;
@@ -53,7 +51,7 @@ import com.jgoodies.validation.message.SimpleValidationMessage;
 /**
  * Traverses the Rose file and create eCore and MDA model in memory.
  */
-public class Rose2MdaTransformer implements RoseVisitor
+public class Rose2MdaTransformer implements RoseVisitor, ViewConstants
 {
   public boolean noQualify = false;
   public boolean unsettablePrimitive = "true".equals(System.getProperty("EMF_UNSETTABLE_PRIMITIVE"));
@@ -76,6 +74,7 @@ public class Rose2MdaTransformer implements RoseVisitor
   /** Holds the association RoseNode for EReferences
    */
   private Map associationRoseNodes;
+
   /** Holds view element definitions. All tagged values with VIEW_TAG are stored in here for postprocessing. 
    *  They are stored together with the MetaElements belonging to the view.
    */
@@ -84,24 +83,37 @@ public class Rose2MdaTransformer implements RoseVisitor
   	public MetaPackage pack;
   	public TaggedValue taggedValue;
   }
-  private List<ViewElement> viewElements; 
+	/**
+	 * contains view definitions per view. Each package having a
+	 * ViewConstants.VIEW_TAG tagged value associated is stored in here.
+	 */
+	private List<ViewElement> collectedViews;
 
-  protected Map eStructuralFeatureToXMLNamespaceMap = new HashMap();
+	/**
+	 * contains view definitions per property. Each property having a
+	 * ViewConstants.VIEW_TAG tagged value associated is stored in here.
+	 */
+	private List<ViewElement> collectedProperties;
 
-  protected List eStructuralFeatures = new BasicEList()
-    {
-      protected boolean useEquals()
-      {
-        return false;
-      }
-    };
-  protected Map eEnums = new HashMap();
-  protected Map idToParentMap = new HashMap();
+  protected Map<EStructuralFeature, String> eStructuralFeatureToXMLNamespaceMap = new HashMap<EStructuralFeature, String>();
+
+  protected List<EStructuralFeature> eStructuralFeatures =  new BasicEList.FastCompare<EStructuralFeature>();
+  protected Map<EEnum, String> eEnums = new HashMap<EEnum, String>();
+  protected Map<String, Object> idToParentMap = new HashMap<String, Object>();
 
   protected EReference ref1 = null;
   protected EReference ref2 = null;
   protected RoseNode role1 = null;
   protected RoseNode role2 = null;
+  protected EGenericType eGenericType1;
+  protected EGenericType eGenericType2;
+  
+  protected Set<EAttribute> attributesToConvert = new HashSet<EAttribute>();
+
+  // This could potentially map every created model element to its corresponding Rose node.
+  // However, for now we're only using it as needed.
+  //
+  protected Map<EModelElement, RoseNode> eModelElementToRoseNodeMap = new HashMap<EModelElement, RoseNode>();
 
   public Rose2MdaTransformer(MdaRoseUtil roseUtil, MetaModel metaModel)
   {
@@ -113,7 +125,8 @@ public class Rose2MdaTransformer implements RoseVisitor
     this.metaPackage = metaModel;
     elements = new HashMap();
     associationRoseNodes = new HashMap();
-    viewElements = new ArrayList<ViewElement>();
+    collectedProperties = new ArrayList<ViewElement>();
+    collectedViews = new ArrayList<ViewElement>();
   }
 
   public void setValidationResults(ValidationResult vResults) {
@@ -181,6 +194,7 @@ public class Rose2MdaTransformer implements RoseVisitor
     {
       visitRole(roseNode, roseNodeValue, objectKey, objectName, parent);
     }
+    // Adrian - new for better handling of rose models
     else if (objectType.equals("UseCase")) {
     	visitUseCase(roseNode, roseNodeValue, objectKey, objectName, parent);
     }
@@ -197,14 +211,15 @@ public class Rose2MdaTransformer implements RoseVisitor
       {
         parent = idToParentMap.get(id);
       }
-		metaPackage = metaModel.findPackage(objectName);
-		if (metaPackage == null) {
-		  metaPackage = new MetaPackage();
-		  metaPackage.setContext(metaModel); // needed because context is accessed by stereotype before I add it.
-          setCommonElementAspects(metaPackage, roseNode);
-		}
-		metaModel.addPackage(metaPackage);
-      EPackage ePackage = ecoreFactory.createEPackage();
+      // Adrian - added for MDA mapping
+			metaPackage = metaModel.findPackage(objectName);
+			if (metaPackage == null) {
+			  metaPackage = new MetaPackage();
+			  metaPackage.setContext(metaModel); // needed because context is accessed by stereotype before I add it.
+	          setCommonElementAspects(metaPackage, roseNode);
+			}
+			metaModel.addPackage(metaPackage);
+      EPackage ePackage = EcoreFactory.eINSTANCE.createEPackage();
       if (parent instanceof EPackage)
       {
         // Add to package.
@@ -213,7 +228,9 @@ public class Rose2MdaTransformer implements RoseVisitor
       }
       else if (parent instanceof EList)
       {
-        ((EList)parent).add(ePackage);
+        @SuppressWarnings("unchecked")
+        EList<Object> list = (EList<Object>)parent;
+        list.add(ePackage);
       }
       // Adrian setEPackageProperties(roseNode, ePackage, objectName.toLowerCase());
       setEPackageProperties(roseNode, ePackage, objectName);
@@ -250,7 +267,7 @@ public class Rose2MdaTransformer implements RoseVisitor
       {
         // Map to an EClass.
         //
-        EClass eClass = ecoreFactory.createEClass();
+        EClass eClass = EcoreFactory.eINSTANCE.createEClass();
         // Adrian - added for pmMDA mapping
         metaClass = createMetaClass(roseNode, eClass, objectName, parent, stereoTypeValue);
         String classifierName = roseNode.getClassifierName();
@@ -272,7 +289,7 @@ public class Rose2MdaTransformer implements RoseVisitor
       else if (stereoTypeValue.equalsIgnoreCase(RoseStrings.ENUMERATION))
       {
         // Map to an EEnum.
-        EEnum eEnum = ecoreFactory.createEEnum();
+        EEnum eEnum = EcoreFactory.eINSTANCE.createEEnum();
         // Adrian - added for pmMDA mapping
         metaClass = createMetaClass(roseNode, eEnum, objectName, parent, stereoTypeValue);
         String classifierName = roseNode.getClassifierName();
@@ -289,7 +306,7 @@ public class Rose2MdaTransformer implements RoseVisitor
       {
         // Map to an EDataType.
         //
-        EDataType eDataType = ecoreFactory.createEDataType();
+        EDataType eDataType = EcoreFactory.eINSTANCE.createEDataType();
         // Adrian - added for pmMDA mapping
         metaDataType = createMetaDataType(roseNode, eDataType, objectName, stereoTypeValue);
         String classifierName = roseNode.getClassifierName();
@@ -358,7 +375,7 @@ public class Rose2MdaTransformer implements RoseVisitor
       {
         // Map to an EClass.
         //
-        EClass eClass = ecoreFactory.createEClass();
+        EClass eClass = EcoreFactory.eINSTANCE.createEClass();
         // Adrian - added for pmMDA mapping
         metaClass = createMetaClass(roseNode, eClass, objectName, parent, stereoTypeValue);
         String classifierName = roseNode.getClassifierName();
@@ -375,7 +392,7 @@ public class Rose2MdaTransformer implements RoseVisitor
       {
         // Map to an EClass.
         //
-        EClass eClass = ecoreFactory.createEClass();
+        EClass eClass = EcoreFactory.eINSTANCE.createEClass();
         // Adrian - added for pmMDA mapping
         metaClass = createMetaClass(roseNode, eClass, objectName, parent, stereoTypeValue);
         String classifierName = roseNode.getClassifierName();
@@ -415,7 +432,7 @@ public class Rose2MdaTransformer implements RoseVisitor
     {
       // Map to an eClass.
       //
-      EClass eClass = ecoreFactory.createEClass();
+      EClass eClass = EcoreFactory.eINSTANCE.createEClass();
       // Adrian - added for pmMDA mapping
       metaClass = createMetaClass(roseNode, eClass, objectName, parent, null);
       String classifierName = roseNode.getClassifierName();
@@ -433,12 +450,29 @@ public class Rose2MdaTransformer implements RoseVisitor
   protected void visitOperation(RoseNode roseNode, String roseNodeValue, String objectKey, String objectName, Object parent)
   {
     // Map to an EOperation.
-    EOperation eOperation = ecoreFactory.createEOperation();
+    EOperation eOperation = EcoreFactory.eINSTANCE.createEOperation();
     String operationName = roseNode.getOperationName();
+    String rawName = operationName;
     if (operationName == null || operationName.length() == 0)
     {
+      rawName = objectName;
       operationName = validName(objectName);
     }
+    int index = rawName.lastIndexOf(">");
+    if (index != -1)
+    {
+      if (rawName.startsWith("<"))
+      {
+        String templateParameters = rawName.substring(1, index);
+        eOperation.getETypeParameters().addAll(parseTemplateParameters(templateParameters));
+      }
+      operationName = rawName.substring(index + 1).trim();
+      if (roseNode.getOperationName() == null || roseNode.getOperationName().length() == 0)
+      {
+        operationName = validName(operationName);
+      }
+    }
+
     eOperation.setName(operationName);
     roseNode.setNode(eOperation);
     setResultType(roseNode, eOperation);
@@ -455,7 +489,7 @@ public class Rose2MdaTransformer implements RoseVisitor
   {
     // Map to an EParameter as input parameter for operation.
     //
-    EParameter eParameter = ecoreFactory.createEParameter();
+    EParameter eParameter = EcoreFactory.eINSTANCE.createEParameter();
     eParameter.setName(validName(objectName));
     roseNode.setNode(eParameter);
 
@@ -475,17 +509,14 @@ public class Rose2MdaTransformer implements RoseVisitor
     {
       quidu = quidu.substring(1, quidu.length() - 1);
     }
-    List superList = (List)roseUtil.getSuperTable().get(parent);
-    if(parent != null)
+    List<String> superList = roseUtil.getSuperTable().get(parent);
+    if (superList == null)
     {
-	    if (superList == null)
-	    {
-	      superList = new ArrayList();
-	      roseUtil.getSuperTable().put(parent, superList);
-	    }
-	    superList.add(quidu);
-	    superList.add(roseNode.getStereotype());
+      superList = new ArrayList<String>();
+	    roseUtil.getSuperTable().put(parent, superList);
     }
+    superList.add(quidu);
+    superList.add(roseNode.getStereotype());
   }
 
   protected void visitClassattribute(RoseNode roseNode, String roseNodeValue, String objectKey, String objectName, Object parent)
@@ -497,11 +528,15 @@ public class Rose2MdaTransformer implements RoseVisitor
       EEnumLiteral eEnumLiteral = ((EEnum)parent).getEEnumLiteral(objectName);
       if (eEnumLiteral == null)
       {
-        eEnumLiteral = ecoreFactory.createEEnumLiteral();
+        eEnumLiteral = EcoreFactory.eINSTANCE.createEEnumLiteral();
         String literalName = roseNode.getAttributeName();
         if (literalName == null || literalName.length() == 0)
         {
           literalName = validName(objectName);
+        }
+        else
+        {
+          eEnumLiteral.setLiteral(objectName);
         }
         eEnumLiteral.setName(literalName);
         roseNode.setNode(eEnumLiteral);
@@ -533,11 +568,22 @@ public class Rose2MdaTransformer implements RoseVisitor
         && "javaclass".equalsIgnoreCase(stereoTypeValue))
       {
         roseUtil.getTypeTable().remove(parent);
-        ((EClassifier)parent).setInstanceClassName(objectName);
+        ((EClassifier)parent).setInstanceTypeName(objectName);
+      }
+      else if ((parent instanceof EDataType || parent instanceof EClass) && "parameter".equalsIgnoreCase(stereoTypeValue))
+      {
+        String attributeName = roseNode.getAttributeName();
+        if (attributeName == null || attributeName.length() == 0)
+        {
+          attributeName = objectName;
+        }
+        ETypeParameter eTypeParameter = parseTemplateParameter(attributeName);
+        roseNode.setNode(eTypeParameter);
+        ((EClassifier)parent).getETypeParameters().add(eTypeParameter);
       }
       else if (parent instanceof EClass)
       {
-        EAttribute eAttribute = ecoreFactory.createEAttribute();
+        EAttribute eAttribute = EcoreFactory.eINSTANCE.createEAttribute();
         String attributeName = roseNode.getAttributeName();
         if (attributeName == null || attributeName.length() == 0)
         {
@@ -546,14 +592,27 @@ public class Rose2MdaTransformer implements RoseVisitor
 
         eAttribute.setName(attributeName);
         roseNode.setNode(eAttribute);
-        setEAttributeProperties(roseNode, eAttribute);
         ((EClass)parent).getEStructuralFeatures().add(eAttribute);
+        setEAttributeProperties(roseNode, eAttribute);
         if (eAttribute.getUpperBound() == 0)
         {
           eAttribute.setUpperBound(1);
         }
         
-        // MDA Mapping
+        // We will need to check the containment if we have to convert the EAttribute to an EReference later. 
+        //
+        if (roseNode.getContainment() != null)
+        {
+          eModelElementToRoseNodeMap.put(eAttribute, roseNode);
+        }
+
+        // Convert to an EReference.
+        //
+        if ("reference".equals(stereoTypeValue))
+        {
+          attributesToConvert.add(eAttribute);
+        }
+        // Adrian - added for MDA mapping
         MetaProperty property;
         if (eAttribute.getUpperBound() == 1) {
           property = new MetaProperty();
@@ -570,6 +629,9 @@ public class Rose2MdaTransformer implements RoseVisitor
         property.setStatic(eAttribute.isUnsettable());
         property.setVolatile(eAttribute.isVolatile());
         property.setInitialValue(eAttribute.getDefaultValueLiteral());
+        property.setIsRelation(false);
+        property.setIsNavigableToClassifier(true);
+        property.setIsNavigableToContext(true);
         // Note: Some types are qualified, some are not. setEAttributeProperties looks the type up depending on the quidu of the attribute type. Some attributes do not contain a quidu for the types in the petal file (reason unknown). 
         String type = trimType((String)roseUtil.getTypeTable().get(eAttribute));
         if(type != null) property.setTypeName(type);
@@ -595,13 +657,34 @@ public class Rose2MdaTransformer implements RoseVisitor
   {
     // map to EReference when is navigable
     //
-    EReference ref = ecoreFactory.createEReference();
+    EReference ref = EcoreFactory.eINSTANCE.createEReference();
     ref.setUpperBound(0);
     String referenceName = roseNode.getReferenceName();
+    String rawName = referenceName;
     if (referenceName == null || referenceName.length() == 0)
     {
+      rawName = objectName;
       referenceName = validName(objectName);
     }
+
+    EGenericType eGenericType = null;
+    int index = rawName.indexOf("<");
+    if (index != -1)
+    {
+      eGenericType = EcoreFactory.eINSTANCE.createEGenericType();
+      if (rawName.endsWith(">"))
+      {
+        String templateArguments = rawName.substring(index + 1, rawName.length() - 1);
+        eGenericType.getETypeArguments().addAll(parseTemplateArguments(templateArguments));
+      }
+      ref.setEGenericType(eGenericType);
+      referenceName = rawName.substring(0, index);
+      if (roseNode.getReferenceName() == null || roseNode.getReferenceName().length() == 0)
+      {
+        referenceName = validName(referenceName);
+      }
+    }
+
     // Adrian - added for pmMDA mapping
     if(referenceName == null || referenceName.equals("")){
     	referenceName = associationName;
@@ -612,10 +695,12 @@ public class Rose2MdaTransformer implements RoseVisitor
     if (ref1 == null)
     {
       ref1 = ref;
+      eGenericType1 = eGenericType;
     }
     else if (ref2 == null)
     {
       ref2 = ref;
+      eGenericType2 = eGenericType;
     }
     if (role1 == null)
     {
@@ -650,19 +735,20 @@ public class Rose2MdaTransformer implements RoseVisitor
         ref2.setEOpposite(ref1);
         setEReferenceIsContainment(ref1, role1, role2);
         roseUtil.getRefTable().put(ref1, ref2Quidu);
+        // Adrian - added for MDA mapping
         RoseNode[] roles = new RoseNode[] { role1, role2 };
         associationRoseNodes.put(ref1, roles);
         TableObject obj = (TableObject)roseUtil.getQuidTable().get(ref1Quidu);
         if (obj != null)
         {
-          roseUtil.getTypeTable().put(ref1, obj.getName());
+          roseUtil.getTypeTable().put(eGenericType1 == null ? ref1 : eGenericType1, obj.getName());
         }
         else
         {
           warning(RoseImporterPlugin.INSTANCE.getString("_UI_UnresolvedTypeNameFor_message", new Object []{
               role1.getRoseSupplier(),
               ref1.getName() }));
-          roseUtil.getTypeTable().put(ref1, "EObject");
+          roseUtil.getTypeTable().put(eGenericType1 == null ? ref1 : eGenericType1, "EObject");
         }
       }
       if (ref2Navigable)
@@ -682,7 +768,7 @@ public class Rose2MdaTransformer implements RoseVisitor
           warning(RoseImporterPlugin.INSTANCE.getString("_UI_UnresolvedTypeNameFor_message", new Object []{
               role2.getRoseSupplier(),
               ref2.getName() }));
-          roseUtil.getTypeTable().put(ref2, "EObject");
+          roseUtil.getTypeTable().put(eGenericType2 == null ? ref2 : eGenericType2, "EObject");
         }
       }
     }
@@ -720,7 +806,7 @@ public class Rose2MdaTransformer implements RoseVisitor
     MetaUseCase metaUseCase = createMetaUseCase(roseNode, eElement, objectName, parent, null);
   }
   
-  protected EList getExtentFromTableObject(RoseNode roseNode)
+  protected EList<EObject> getExtentFromTableObject(RoseNode roseNode)
   {
     String quid = roseNode.getRoseId();
     if (quid != null)
@@ -779,7 +865,7 @@ public class Rose2MdaTransformer implements RoseVisitor
       {
         if (!resultValue.equals(""))
         {
-          roseUtil.getTypeTable().put(eOperation, resultValue);
+          eOperation.setEGenericType(parseTemplateArgument(resultValue));
         }
         else
         {
@@ -822,7 +908,7 @@ public class Rose2MdaTransformer implements RoseVisitor
     String constraints = roseNode.getEcoreConstraints();
     if (constraints != null)
     {
-      List constraintList = new ArrayList();
+      List<String> constraintList = new ArrayList<String>();
       for (StringTokenizer stringTokenizer = new StringTokenizer(constraints); stringTokenizer.hasMoreTokens();)
       {
         String constraint = stringTokenizer.nextToken();
@@ -887,7 +973,7 @@ public class Rose2MdaTransformer implements RoseVisitor
 
     if (prefix != null || basePackage != null)
     {
-      List information = new ArrayList();
+      List<String> information = new ArrayList<String>();
       information.add(basePackage);
       information.add(prefix);
       roseUtil.getEPackageToInformationMap().put(ePackage, information);
@@ -913,12 +999,22 @@ public class Rose2MdaTransformer implements RoseVisitor
   protected void setEDataTypeProperties(RoseNode roseNode, EDataType eDataType)
   {
     setEModelElementProperties(roseNode, eDataType);
+    String xmlName = roseNode.getXMLName();
+    if (xmlName != null && xmlName.length() != 0)
+    {
+      ExtendedMetaData.INSTANCE.setName(eDataType, xmlName);
+    }
     eDataType.setSerializable(!roseNode.isAbstract());
   }
 
   protected void setEEnumProperties(RoseNode roseNode, EEnum eEnum)
   {
     setEModelElementProperties(roseNode, eEnum);
+    String xmlName = roseNode.getXMLName();
+    if (xmlName != null && xmlName.length() != 0)
+    {
+      ExtendedMetaData.INSTANCE.setName(eEnum, xmlName);
+    }
     String value = roseNode.getDocumentation();
     if (value != null && !value.equals(""))
     {
@@ -930,7 +1026,7 @@ public class Rose2MdaTransformer implements RoseVisitor
   {
     // process documentation info and create eEnumLiteral for each line
     //
-    List eLiterals = eEnum.getELiterals();
+    List<EEnumLiteral> eLiterals = eEnum.getELiterals();
     for (StringTokenizer stringTokenizer = new StringTokenizer(documentation, ", \n\r\t"); stringTokenizer.hasMoreTokens();)
     {
       String literalV = stringTokenizer.nextToken();
@@ -949,7 +1045,7 @@ public class Rose2MdaTransformer implements RoseVisitor
       }
       else if (!eLiterals.isEmpty())
       {
-        numberValue = ((EEnumLiteral)eLiterals.get(eLiterals.size() - 1)).getValue() + 1;
+        numberValue = eLiterals.get(eLiterals.size() - 1).getValue() + 1;
       }
 
       if (!name.equals(""))
@@ -957,7 +1053,7 @@ public class Rose2MdaTransformer implements RoseVisitor
         EEnumLiteral lit = eEnum.getEEnumLiteral(name);
         if (lit == null)
         {
-          lit = ecoreFactory.createEEnumLiteral();
+          lit = EcoreFactory.eINSTANCE.createEEnumLiteral();
           lit.setName(validName(name));
           lit.setValue(numberValue);
           eLiterals.add(lit);
@@ -1005,10 +1101,8 @@ public class Rose2MdaTransformer implements RoseVisitor
         String exceptionValue = getQualifiedTypeName(eOperation, exception);
         if (exceptionValue != null && !exceptionValue.equals(""))
         {
-          EAnnotation eAnnotation = EcoreFactory.eINSTANCE.createEAnnotation();
-          eAnnotation.getReferences().add(eOperation);
-          eAnnotation.getDetails().put("position", Integer.toString(count++));
-          roseUtil.getTypeTable().put(eAnnotation, exceptionValue);
+          EGenericType eGenericType = parseTemplateArgument(exception);
+          eOperation.getEGenericExceptions().add(eGenericType);
         }
         else
         {
@@ -1024,18 +1118,28 @@ public class Rose2MdaTransformer implements RoseVisitor
     {
       if ("inv".equals(stereotype))
       {
-        eOperation.setEType(EcorePackage.eINSTANCE.getEBoolean());
+        eOperation.setEType(EcorePackage.Literals.EBOOLEAN);
 
         eOperation.getEParameters().clear();
 
-        EParameter eParameter = ecoreFactory.createEParameter();
+        EParameter eParameter = EcoreFactory.eINSTANCE.createEParameter();
         eParameter.setName("diagnostics");
-        eParameter.setEType(EcorePackage.eINSTANCE.getEDiagnosticChain());
+        eParameter.setEType(EcorePackage.Literals.EDIAGNOSTIC_CHAIN);
         eOperation.getEParameters().add(eParameter);
 
-        eParameter = ecoreFactory.createEParameter();
+        eParameter = EcoreFactory.eINSTANCE.createEParameter();
         eParameter.setName("context");
-        eParameter.setEType(EcorePackage.eINSTANCE.getEMap());
+
+        EGenericType eGenericType = EcoreFactory.eINSTANCE.createEGenericType();
+        eGenericType.setEClassifier(EcorePackage.Literals.EMAP);
+        EGenericType eGenericKeyType = EcoreFactory.eINSTANCE.createEGenericType();
+        eGenericKeyType.setEClassifier(EcorePackage.Literals.EJAVA_OBJECT);
+        eGenericType.getETypeArguments().add(eGenericKeyType);
+        EGenericType eGenericValueType = EcoreFactory.eINSTANCE.createEGenericType();
+        eGenericValueType.setEClassifier(EcorePackage.Literals.EJAVA_OBJECT);
+        eGenericType.getETypeArguments().add(eGenericValueType);
+        eParameter.setEGenericType(eGenericType);
+
         eOperation.getEParameters().add(eParameter);
       }
     }
@@ -1074,15 +1178,15 @@ public class Rose2MdaTransformer implements RoseVisitor
     	message += eAttribute.getName()+" does not define its type entirely. Edit this file with your rose tool an set the type of this attribute again.";
       warning(message);
       
-      String type = getQualifiedTypeName(eAttribute, roseNode.getType());
-      if (type != null && !type.equals(""))
-      {
-        roseUtil.getTypeTable().put(eAttribute, type);
-      }
-      else
+      String roseType = roseNode.getType();
+      if (roseType == null || roseType.equals(""))
       {
         roseUtil.getTypeTable().put(eAttribute, "String");
         warning(RoseImporterPlugin.INSTANCE.getString("_UI_AttributeDoesNotDefineItsType_message", new Object []{ eAttribute.getName() }));
+      }
+      else
+      {
+        eAttribute.setEGenericType(parseTemplateArgument(roseType));
       }
     }
 
@@ -1416,7 +1520,7 @@ public class Rose2MdaTransformer implements RoseVisitor
       String type = getQualifiedTypeName(eParameter, roseNode.getType());
       if (type != null && !type.equals(""))
       {
-        roseUtil.getTypeTable().put(eParameter, type);
+        eParameter.setEGenericType(parseTemplateArgument(type));
       }
       else
       {
@@ -1439,25 +1543,24 @@ public class Rose2MdaTransformer implements RoseVisitor
 
   public void setEEnums()
   {
-    for (Iterator i = eEnums.entrySet().iterator(); i.hasNext();)
+    for (Map.Entry<EEnum, String> entry : eEnums.entrySet())
     {
-      Map.Entry entry = (Map.Entry)i.next();
-      EEnum eEnum = (EEnum)entry.getKey();
+      EEnum eEnum = entry.getKey();
       if (eEnum.getELiterals().isEmpty())
       {
-        populateEEnumFromDocumentation(eEnum, (String)entry.getValue());
+        populateEEnumFromDocumentation(eEnum, entry.getValue());
       }
     }
   }
 
-  protected static Comparator eClassComparator = new Comparator()
+  protected static Comparator<Object> eClassComparator = new Comparator<Object>()
     {
       public int compare(Object o1, Object o2)
       {
         // Order first by number of features (descending) and then alphabetically (ascending)
         //
-        EClass c1 = (EClass)o1;
-        EClass c2 = (EClass)o2;
+        EClass c1 = (EClass)(o1 instanceof EGenericType ? ((EGenericType)o1).getEClassifier() : o1);
+        EClass c2 = (EClass)(o2 instanceof EGenericType ? ((EGenericType)o2).getEClassifier() : o2);
         int count1 = c1.getEAllAttributes().size() + c1.getEAllReferences().size();
         int count2 = c2.getEAllAttributes().size() + c2.getEAllReferences().size();
         if (count1 < count2)
@@ -1470,9 +1573,9 @@ public class Rose2MdaTransformer implements RoseVisitor
 
   public void setSuper()
   {
-    Map superMap = new HashMap();
+    Map<EClass, List<EGenericType>[]> superMap = new HashMap<EClass, List<EGenericType>[]>();
 
-    for (Iterator i = roseUtil.getSuperTable().keySet().iterator(); i.hasNext();)
+    for (Iterator<Object> i = roseUtil.getSuperTable().keySet().iterator(); i.hasNext();)
     {
       Object subObject = i.next();
       if (subObject instanceof EClass)
@@ -1480,14 +1583,14 @@ public class Rose2MdaTransformer implements RoseVisitor
         EClass eClass = (EClass)subObject;
         // Adrian
         MetaClassifier mClassifier = (MetaClassifier)elements.get(eClass);
-        List extend = new ArrayList();
-        List unspecified = new ArrayList();
-        List mixin = new ArrayList();
-        List nonClass = new ArrayList();
-        for (Iterator j = ((List)roseUtil.getSuperTable().get(eClass)).iterator(); j.hasNext();)
+        List<EGenericType> extend = new ArrayList<EGenericType>();
+        List<EGenericType> unspecified = new ArrayList<EGenericType>();
+        List<EGenericType> mixin = new ArrayList<EGenericType>();
+        List<EGenericType> nonClass = new ArrayList<EGenericType>();
+        for (Iterator<String> j = roseUtil.getSuperTable().get(eClass).iterator(); j.hasNext();)
         {
-          String quid = (String)j.next();
-          String stereotype = (String)j.next();
+          String quid = j.next();
+          String stereotype = j.next();
           TableObject tableObject = (TableObject)roseUtil.getQuidTable().get(quid);
           if (tableObject != null)
           {
@@ -1502,24 +1605,39 @@ public class Rose2MdaTransformer implements RoseVisitor
               } else if (mClassifier instanceof MetaUseCase) {
               	((MetaUseCase)mClassifier).addAncestor((MetaUseCase)mSuperClass);
               }
+              EGenericType eGenericType = EcoreFactory.eINSTANCE.createEGenericType();
+              eGenericType.setEClassifier(superClass);
+              if (stereotype != null)
+              {
+                int start = stereotype.indexOf("<");
+                if (start != -1)
+                {
+                  if (stereotype.endsWith(">"))
+                  {
+                    String templateArguments = stereotype.substring(start + 1, stereotype.length() - 1);
+                    eGenericType.getETypeArguments().addAll(parseTemplateArguments(templateArguments));
+                  }
+                  stereotype = stereotype.substring(0, start);
+                }
+              }
               if (!superClass.isInterface())
               {
                 if ("extend".equals(stereotype))
                 {
-                  extend.add(superObject);
+                  extend.add(eGenericType);
                 }
                 else if ("mixin".equals(stereotype))
                 {
-                  mixin.add(superObject);
+                  mixin.add(eGenericType);
                 }
                 else
                 {
-                  unspecified.add(superObject);
+                  unspecified.add(eGenericType);
                 }
               }
               else
               {
-                nonClass.add(superObject);
+                nonClass.add(eGenericType);
               }
             }
             else if(subObject == null)
@@ -1541,12 +1659,14 @@ public class Rose2MdaTransformer implements RoseVisitor
           warning(RoseImporterPlugin.INSTANCE.getString("_UI_CannotSpecifyMoreThanOneExtendFor_message", new Object []{ eClass.getName() }));
         }
 
-        superMap.put(eClass, new List []{ extend, unspecified, mixin });
+        @SuppressWarnings("unchecked")
+        List<EGenericType>[] lists = new List[]{extend, unspecified, mixin};
+        superMap.put(eClass, lists);
 
-        eClass.getESuperTypes().addAll(extend);
-        eClass.getESuperTypes().addAll(unspecified);
-        eClass.getESuperTypes().addAll(mixin);
-        eClass.getESuperTypes().addAll(nonClass);
+        eClass.getEGenericSuperTypes().addAll(extend);
+        eClass.getEGenericSuperTypes().addAll(unspecified);
+        eClass.getEGenericSuperTypes().addAll(mixin);
+        eClass.getEGenericSuperTypes().addAll(nonClass);
       }
       else
       {
@@ -1559,67 +1679,223 @@ public class Rose2MdaTransformer implements RoseVisitor
     sortSuper(superMap);
   }
 
-  protected void sortSuper(Map superMap)
+  protected void sortSuper(Map<EClass, List<EGenericType>[]> superMap)
   {
-    for (Iterator entries = superMap.entrySet().iterator(); entries.hasNext();)
+    for (Map.Entry<EClass, List<EGenericType>[]> entry : superMap.entrySet())
     {
-      Map.Entry entry = (Map.Entry)entries.next();
-      EClass eClass = (EClass)entry.getKey();
-      List[] collections = (List[])entry.getValue();
+      EClass eClass = entry.getKey();
+      List<EGenericType>[] collections = entry.getValue();
       Collections.sort(collections[0], eClassComparator);
       Collections.sort(collections[1], eClassComparator);
       Collections.sort(collections[2], eClassComparator);
-      List combined = new UniqueEList(collections[0]);
+      List<EGenericType> combined = new UniqueEList<EGenericType>(collections[0]);
       combined.addAll(collections[1]);
       combined.addAll(collections[2]);
-      EList eSuper = eClass.getESuperTypes();
-      for (ListIterator ordered = combined.listIterator(); ordered.hasNext();)
+      EList<EGenericType> eSuper = eClass.getEGenericSuperTypes();
+      for (ListIterator<EGenericType> ordered = combined.listIterator(); ordered.hasNext();)
       {
-        Object eSuperItem = ordered.next();
+        EGenericType eSuperItem = ordered.next();
         eSuper.move(ordered.previousIndex(), eSuperItem);
       }
     }
+  }
+  
+  protected List<ETypeParameter> parseTemplateParameters(String templateParameters)
+  {
+    List<ETypeParameter> result = new ArrayList<ETypeParameter>();
+    int start = 0;
+    int depth = 0;
+    for (int i = 0, length = templateParameters.length(); i < length; ++i)
+    {
+      char character = templateParameters.charAt(i);
+      switch (character)
+      {
+        case ' ':
+        {
+          if (start == i)
+          {
+            ++start;
+          }
+          break;
+        }
+        case '<':
+        {
+          ++depth;
+          break;
+        }
+        case '>':
+        {
+          --depth;
+          break;
+        }
+        case ',':
+        {
+          if (depth == 0)
+          {
+            result.add(parseTemplateParameter(templateParameters.substring(start, i).trim()));
+            start = i + 1;
+          }
+          break;
+        }
+      }
+    }
+    result.add(parseTemplateParameter(templateParameters.substring(start).trim()));
+    return result;
+  }
+
+  ETypeParameter parseTemplateParameter(String templateParameter)
+  {
+    ETypeParameter eTypeParameter = EcoreFactory.eINSTANCE.createETypeParameter();
+    int index = templateParameter.indexOf(" extends ");
+    if (index == -1)
+    {
+      eTypeParameter.setName(templateParameter);
+    }
+    else
+    {
+      eTypeParameter.setName(templateParameter.substring(0, index).trim());
+      String bounds = templateParameter.substring(index + 9).trim();
+      for (StringTokenizer stringTokenizer = new StringTokenizer(bounds, "&"); stringTokenizer.hasMoreTokens(); )
+      {
+        String templateArgument = stringTokenizer.nextToken().trim();
+        eTypeParameter.getEBounds().add(parseTemplateArgument(templateArgument));
+      }
+    }
+    return eTypeParameter;
+  }
+
+  protected List<EGenericType> parseTemplateArguments(String templateArguments)
+  {
+    List<EGenericType> result = new ArrayList<EGenericType>();
+    int start = 0;
+    int depth = 0;
+    for (int i = 0, length = templateArguments.length(); i < length; ++i)
+    {
+      char character = templateArguments.charAt(i);
+      switch (character)
+      {
+        case ' ':
+        {
+          if (start == i)
+          {
+            ++ start;
+          }
+          break;
+        }
+        case '<':
+        {
+          ++depth;
+          break;
+        }
+        case '>':
+        {
+          --depth;
+          break;
+        }
+        case ',':
+        {
+          if (depth == 0)
+          {
+            result.add(parseTemplateArgument(templateArguments.substring(start, i).trim()));
+            start = i + 1;
+          }
+          break;
+        }
+      }
+    }
+    result.add(parseTemplateArgument(templateArguments.substring(start).trim()));
+    return result;
+  }
+  
+  EGenericType parseTemplateArgument(String templateArgument)
+  {
+    EGenericType eGenericType = EcoreFactory.eINSTANCE.createEGenericType();
+    int index = 0;
+    int length = templateArgument.length();
+    if (index < length)
+    {
+      if (templateArgument.charAt(index) == '?')
+      {
+        ++index;
+        while (index < length && Character.isWhitespace(templateArgument.charAt(index)))
+        {
+          ++index;
+        }
+        if (templateArgument.indexOf("extends ") == index)
+        {
+          eGenericType.setEUpperBound(parseTemplateArgument(templateArgument.substring(index + 8).trim()));
+          
+        }
+        else if (templateArgument.indexOf("super ") == index)
+        {
+          eGenericType.setELowerBound(parseTemplateArgument(templateArgument.substring(index + 6).trim()));
+        }
+      }
+      else
+      {
+        index = templateArgument.indexOf('<', index);
+        String name;
+        if (index == -1)
+        {
+          name = templateArgument;
+        }
+        else
+        {
+          name = templateArgument.substring(0, index);
+          eGenericType.getETypeArguments().addAll(parseTemplateArguments(templateArgument.substring(index + 1, length - 1)));
+        }
+        roseUtil.getTypeTable().put(eGenericType, name);
+      }
+    }
+    return eGenericType;
   }
 
   public void setIDs(final EObject parent, EObject child)
   {
     new EcoreSwitch()
       {
+        @Override
         public Object caseEPackage(EPackage ePackage)
         {
           return null;
         }
 
+        @Override
         public Object caseEClassifier(EClassifier eClassifier)
         {
           return null;
         }
 
+        @Override
         public Object caseEOperation(EOperation eOperation)
         {
           return null;
         }
 
+        @Override
         public Object caseEParameter(EParameter eParameter)
         {
           return null;
         }
 
+        @Override
         public Object caseEStructuralFeature(EStructuralFeature eStructuralFeature)
         {
           return null;
         }
 
+        @Override
         public Object caseEEnumLiteral(EEnumLiteral eEnumLiteral)
         {
           return null;
         }
 
+        @Override
         public Object defaultCase(EObject eObject)
         {
-          for (Iterator i = eObject.eContents().iterator(); i.hasNext();)
+          for (EObject child : eObject.eContents())
           {
-            setIDs(eObject, (EObject)i.next());
+            setIDs(eObject, child);
           }
           return this;
         }
@@ -1628,28 +1904,32 @@ public class Rose2MdaTransformer implements RoseVisitor
 
   public void validate(EObject object)
   {
-    new EcoreSwitch()
+    new EcoreSwitch<Object>()
       {
+        @Override
         public Object caseEDataType(EDataType eDataType)
         {
           return validateEDataType(eDataType);
         }
 
+        @Override
         public Object caseEEnum(EEnum eEnum)
         {
           return validateEEnum(eEnum);
         }
 
+        @Override
         public Object caseEClass(EClass eClass)
         {
           return validateEClass(eClass);
         }
 
+        @Override
         public Object defaultCase(EObject eObject)
         {
-          for (Iterator i = eObject.eContents().iterator(); i.hasNext();)
+          for (EObject child : eObject.eContents())
           {
-            validate((EObject)i.next());
+            validate(child);
           }
           return this;
         }
@@ -1668,12 +1948,11 @@ public class Rose2MdaTransformer implements RoseVisitor
 
   protected Object validateEEnum(EEnum eEnum)
   {
-    for (Iterator literals = eEnum.getELiterals().iterator(); literals.hasNext();)
+    for (Iterator<EEnumLiteral> literals = eEnum.getELiterals().iterator(); literals.hasNext();)
     {
-      EEnumLiteral eEnumLiteral = (EEnumLiteral)literals.next();
-      for (Iterator allLiterals = eEnum.getELiterals().iterator(); allLiterals.hasNext();)
+      EEnumLiteral eEnumLiteral = literals.next();
+      for (EEnumLiteral otherLiteral : eEnum.getELiterals())
       {
-        EEnumLiteral otherLiteral = (EEnumLiteral)allLiterals.next();
         if (eEnumLiteral == otherLiteral)
         {
           break;
@@ -1691,10 +1970,10 @@ public class Rose2MdaTransformer implements RoseVisitor
 
   protected Object validateEClass(EClass eClass)
   {
-    List oppositesToRemove = new ArrayList();
-    for (Iterator features = eClass.getEStructuralFeatures().iterator(); features.hasNext();)
+    List<EReference> oppositesToRemove = new ArrayList<EReference>();
+    for (Iterator<EStructuralFeature> features = eClass.getEStructuralFeatures().iterator(); features.hasNext();)
     {
-      EStructuralFeature eStructuralFeature = (EStructuralFeature)features.next();
+      EStructuralFeature eStructuralFeature = features.next();
       if (eStructuralFeature instanceof EAttribute)
       {
         EAttribute eAttribute = (EAttribute)eStructuralFeature;
@@ -1713,12 +1992,12 @@ public class Rose2MdaTransformer implements RoseVisitor
           }
           catch (Exception e)
           {
+            // Ignore
           }
         }
 
-        for (Iterator allFeatures = eClass.getEAllStructuralFeatures().iterator(); allFeatures.hasNext();)
+        for (EStructuralFeature otherFeature : eClass.getEAllStructuralFeatures())
         {
-          EStructuralFeature otherFeature = (EStructuralFeature)allFeatures.next();
           if (eAttribute == otherFeature)
           {
             break;
@@ -1782,9 +2061,8 @@ public class Rose2MdaTransformer implements RoseVisitor
             eReference.getName() }));
         }
 
-        for (Iterator allFeatures = eClass.getEAllStructuralFeatures().iterator(); allFeatures.hasNext();)
+        for (EStructuralFeature otherFeature : eClass.getEAllStructuralFeatures())
         {
-          EStructuralFeature otherFeature = (EStructuralFeature)allFeatures.next();
           if (eReference == otherFeature)
           {
             break;
@@ -1817,9 +2095,8 @@ public class Rose2MdaTransformer implements RoseVisitor
       }
     }
 
-    for (Iterator opposites = oppositesToRemove.iterator(); opposites.hasNext();)
+    for (EReference opposite : oppositesToRemove)
     {
-      EReference opposite = (EReference)opposites.next();
       EClass oppositeEClass = opposite.getEContainingClass();
       if (oppositeEClass != null)
       {
@@ -1827,11 +2104,9 @@ public class Rose2MdaTransformer implements RoseVisitor
       }
     }
 
-    for (Iterator operations = eClass.getEOperations().iterator(); operations.hasNext();)
+    for (EOperation eOperation : eClass.getEOperations())
     {
-      EOperation eOperation = (EOperation)operations.next();
       EClassifier opType = eOperation.getEType();
-
       if (opType instanceof EClass && "java.util.Map$Entry".equals(opType.getInstanceClassName()))
       {
         if (!eOperation.isMany())
@@ -1843,11 +2118,9 @@ public class Rose2MdaTransformer implements RoseVisitor
         }
       }
 
-      for (Iterator paramters = eOperation.getEParameters().iterator(); paramters.hasNext();)
+      for (EParameter eParameter : eOperation.getEParameters())
       {
-        EParameter eParameter = (EParameter)paramters.next();
         EClassifier paramType = eParameter.getEType();
-
         if (paramType instanceof EClass && "java.util.Map$Entry".equals(paramType.getInstanceClassName()))
         {
           if (!eParameter.isMany())
@@ -1863,17 +2136,16 @@ public class Rose2MdaTransformer implements RoseVisitor
 
     if (eClass.getESuperTypes().size() > 1)
     {
-      Iterator superTypes = eClass.getESuperTypes().iterator();
+      Iterator<EClass> superTypes = eClass.getESuperTypes().iterator();
       superTypes.next();
       while (superTypes.hasNext())
       {
-        EClass superType = (EClass)superTypes.next();
-        superFeatureLoop: for (Iterator superFeatures = superType.getEAllStructuralFeatures().iterator(); superFeatures.hasNext();)
+        EClass superType = superTypes.next();
+        superFeatureLoop: for (Iterator<EStructuralFeature> superFeatures = superType.getEAllStructuralFeatures().iterator(); superFeatures.hasNext();)
         {
-          EStructuralFeature superFeature = (EStructuralFeature)superFeatures.next();
-          for (Iterator allFeatures = eClass.getEAllStructuralFeatures().iterator(); allFeatures.hasNext();)
+          EStructuralFeature superFeature = superFeatures.next();
+          for (EStructuralFeature otherFeature : eClass.getEAllStructuralFeatures())
           {
-            EStructuralFeature otherFeature = (EStructuralFeature)allFeatures.next();
             if (superFeature == otherFeature)
             {
               break;
@@ -1911,9 +2183,9 @@ public class Rose2MdaTransformer implements RoseVisitor
     return this;
   }
 
-  protected Comparator eStructuralFeatureComparator = new Comparator()
+  protected Comparator<EStructuralFeature> eStructuralFeatureComparator = new Comparator<EStructuralFeature>()
     {
-      public int compare(Object o1, Object o2)
+      public int compare(EStructuralFeature o1, EStructuralFeature o2)
       {
         return eStructuralFeatures.indexOf(o1) - eStructuralFeatures.indexOf(o2);
       }
@@ -1923,10 +2195,9 @@ public class Rose2MdaTransformer implements RoseVisitor
   {
     // process eStructuralFeatures for association end(Role)
     //
-    for (Iterator i = roseUtil.getRefTable().keySet().iterator(); i.hasNext();)
+    for (EReference eReference : roseUtil.getRefTable().keySet())
     {
-      EReference eReference = (EReference)i.next();
-      String quid = (String)roseUtil.getRefTable().get(eReference);
+      String quid = roseUtil.getRefTable().get(eReference);
       TableObject tableObject = (TableObject)roseUtil.getQuidTable().get(quid);
       if (tableObject != null)
       {
@@ -1954,13 +2225,12 @@ public class Rose2MdaTransformer implements RoseVisitor
       }
     }
 
-    for (Iterator i = eStructuralFeatureToXMLNamespaceMap.entrySet().iterator(); i.hasNext();)
+    for (Map.Entry<EStructuralFeature, String> entry : eStructuralFeatureToXMLNamespaceMap.entrySet())
     {
-      Map.Entry entry = (Map.Entry)i.next();
-      EStructuralFeature eStructuralFeature = (EStructuralFeature)entry.getKey();
+      EStructuralFeature eStructuralFeature = entry.getKey();
       if (eStructuralFeature.eContainer() != null)
       {
-        ExtendedMetaData.INSTANCE.setNamespace((EStructuralFeature)entry.getKey(), (String)entry.getValue());
+        ExtendedMetaData.INSTANCE.setNamespace(entry.getKey(), entry.getValue());
       }
     }
   }
@@ -1969,31 +2239,47 @@ public class Rose2MdaTransformer implements RoseVisitor
   {
     // setup attribute and parameter type
     //
-    for (Iterator it = roseUtil.getTypeTable().keySet().iterator(); it.hasNext();)
+    for (EObject element : roseUtil.getTypeTable().keySet())
     {
-      EModelElement element = (EModelElement)it.next();
-      String type = (String)roseUtil.getTypeTable().get(element);
+      String type = roseUtil.getTypeTable().get(element);
       int position = -1;
       if (element instanceof EAnnotation)
       {
-        position = Integer.parseInt((String)((EAnnotation)element).getDetails().get("position"));
-        element = (EModelElement)((EAnnotation)element).getReferences().get(0);
+        position = Integer.parseInt(((EAnnotation)element).getDetails().get("position"));
+        element = ((EAnnotation)element).getReferences().get(0);
       }
       TableObject tableObj = null;
+      ETypeParameter resolvedETypeParameter = null;
       if (type.indexOf(".") == -1)
       {
         String qualifier = "";
+        LOOP:
         for (EObject parent = element.eContainer(); parent != null; parent = parent.eContainer())
         {
+          if (parent instanceof EClass || parent instanceof EOperation)
+          {
+            for (ETypeParameter eTypeParameter : 
+                   parent instanceof EClass ? ((EClass)parent).getETypeParameters() : ((EOperation)parent).getETypeParameters())
+            {
+              if (type.equals(eTypeParameter.getName()))
+              {
+                resolvedETypeParameter = eTypeParameter;
+                break LOOP;
+              }
+            }
+          }
           if (parent instanceof EPackage)
           {
             qualifier = ((EPackage)parent).getName() + "." + qualifier;
           }
         }
-        tableObj = (TableObject)roseUtil.getNameTable().get(qualifier + type);
+        if (resolvedETypeParameter == null)
+        {
+          tableObj = (TableObject)roseUtil.getNameTable().get(qualifier + type);
+        }
       }
 
-      if (tableObj == null)
+      if (resolvedETypeParameter == null && tableObj == null)
       {
         tableObj = (TableObject)roseUtil.getNameTable().get(type);
       }
@@ -2006,28 +2292,54 @@ public class Rose2MdaTransformer implements RoseVisitor
         //
         eType = (EClassifier)tableObj.getObject();
       }
-      else
+      else if (resolvedETypeParameter == null)
       {
         // It was not found in the model class so check if primitive type.
         //
         eType = getBasicType(type);
-        
+
         if (eType == null)
         {
+          EObject eNamedElement = element;
+          while (!(eNamedElement instanceof ENamedElement))
+          {
+            eNamedElement = eNamedElement.eContainer();
+          }
           warning(RoseImporterPlugin.INSTANCE.getString("_UI_UnresolvedTypeNameFor_message", new Object []{
             type,
-            ((ENamedElement)element).getName() }));
+            ((ENamedElement)eNamedElement).getName() }));
           eType = getBasicType("EString");
         }
-        
+      }
+      else
+      {
+        // TODO So what should be the eType be now?
+        //
+        eType = getBasicType("EString");
         // Adrian
         createMetaDataType(type);
       }
 
-      if (element instanceof EAttribute && eType instanceof EClass)
+      EGenericType eGenericType = null;
+      if (element instanceof EGenericType)
+      {
+        eGenericType = (EGenericType)element;
+        if (resolvedETypeParameter == null)
+        {
+          eGenericType.setEClassifier(eType);
+        }
+        else
+        {
+          eGenericType.setETypeParameter(resolvedETypeParameter);
+        }
+        element = element.eContainer();
+      }
+
+      if (element instanceof EAttribute && eType instanceof EClass || attributesToConvert.contains(element))
       {
         EAttribute eAttribute = (EAttribute)element;
-        EReference eReference = ecoreFactory.createEReference();
+        EReference eReference = EcoreFactory.eINSTANCE.createEReference();
+        RoseNode roseNode = eModelElementToRoseNodeMap.remove(eAttribute);
 
         eReference.setName(eAttribute.getName());
         eReference.setTransient(eAttribute.isTransient());
@@ -2036,7 +2348,8 @@ public class Rose2MdaTransformer implements RoseVisitor
         eReference.setChangeable(eAttribute.isChangeable());
         eReference.setLowerBound(eAttribute.getLowerBound());
         eReference.setUpperBound(eAttribute.getUpperBound());
-        eReference.setContainment(true);
+        eReference.setContainment(roseNode == null || !"by reference".equalsIgnoreCase(roseNode.getContainment()));
+        eReference.setResolveProxies(false);
         eReference.getEAnnotations().addAll(eAttribute.getEAnnotations());
         eReference.setUnsettable(eAttribute.isUnsettable());
 
@@ -2062,12 +2375,12 @@ public class Rose2MdaTransformer implements RoseVisitor
           || kind == ExtendedMetaData.GROUP_FEATURE)
         {
           convert = true;
-          eType = ecorePackage.getEFeatureMapEntry();
+          eType = EcorePackage.Literals.EFEATURE_MAP_ENTRY;
         }
 
         if (convert)
         {
-          EAttribute eAttribute = ecoreFactory.createEAttribute();
+          EAttribute eAttribute = EcoreFactory.eINSTANCE.createEAttribute();
 
           eAttribute.setName(eReference.getName());
           eAttribute.setTransient(eReference.isTransient());
@@ -2094,11 +2407,14 @@ public class Rose2MdaTransformer implements RoseVisitor
 
       if (element instanceof EDataType)
       {
-        ((EDataType)element).setInstanceClassName(eType.getInstanceClassName());
+        if (eGenericType == null)
+        {
+          ((EDataType)element).setInstanceClassName(eType.getInstanceClassName());
+        }
       }
       else if (position != -1)
       {
-        List exceptions = ((EOperation)element).getEExceptions();
+        List<EClassifier> exceptions = ((EOperation)element).getEExceptions();
         if (!exceptions.contains(eType))
         {
           if (position < exceptions.size())
@@ -2111,9 +2427,19 @@ public class Rose2MdaTransformer implements RoseVisitor
           }
         }
       }
+      else if (element instanceof ETypedElement)
+      {
+        if (eGenericType != null)
+        {
+          if (!(element instanceof EOperation) || !((EOperation)element).getEGenericExceptions().contains(eGenericType))
+          {
+            ((ETypedElement)element).setEGenericType(eGenericType);
+          }
+        }
       else
       {
-        ((ETypedElement)element).setEType(eType);
+          ((ETypedElement)element).setEType(eType);
+        }
 
         if (element instanceof EStructuralFeature)
         {
@@ -2128,129 +2454,189 @@ public class Rose2MdaTransformer implements RoseVisitor
   }
   
   public void setViews() {
-  	if(viewElements == null) return;
-  	for(ViewElement v : viewElements) {
-  	  XmlNode xml = new XmlNode();
-  	  xml.parse(v.taggedValue.getValue());
-  	  
-  	  for(Iterator<XmlNode> iter = xml.getAll(ViewConstants.VIEW_NODE); iter.hasNext();){
-    	  MetaView metaView = new MetaView();
-  		  XmlNode view = iter.next();
-  		  String name = view.getAttribute(ViewConstants.NAME);
-  		  metaView.setName(name.substring(name.lastIndexOf(".")+1));
-  		  metaView.setDescription(view.getAttribute(ViewConstants.DESCRIPTION));
-  		  metaView.setVisibility(VisibilityCode.getCode(Integer.parseInt(view.getAttribute(ViewConstants.VISIBILITY))));
-   		  MetaView.FieldDefinition fieldDefinition = new MetaView.FieldDefinition(v.metaProperty);
-  		  metaView.appendField(fieldDefinition);
+		// first create all views
+		if (collectedViews != null) {
+			for(ViewElement v : collectedViews) {
+				XmlNode xml = new XmlNode();
+				v.taggedValue.setValue(TextUtilities.decodeFromHex(v.taggedValue.getValue()));
+				xml.parse(v.taggedValue.getValue());
 
-  		  int idx = name.lastIndexOf(".");
-  		  MetaPackage metaPackage = null;
-  		  if(idx >=0) {
-    		  metaPackage = metaModel.findPackage(name.substring(0, idx));
-  		  }
-  		  if(metaPackage == null) {
-  		  	metaPackage = metaModel;
-  		  }
-  		  if(!metaPackage.getViews().contains(metaView)) {
-  		  	metaPackage.addView(metaView);
-  		  }
-  	  }
-  	}
+				for (Iterator<XmlNode> iter = xml.getAll(VIEW_NODE); iter.hasNext();) {
+					XmlNode view = iter.next();
+					String name = view.getAttribute(NAME);
+					MetaView metaView = metaModel.findView(name);
+					if (metaView == null) {
+						metaView = new MetaView();
+						metaView.setName(name.substring(name.lastIndexOf(".") + 1));
+						obtainPackage(metaModel, name).addView(metaView);
+					}
+					metaView.setDescription(view.getAttribute(DESCRIPTION));
+					metaView.setVisibility(VisibilityCode.getCode(Integer.parseInt(view
+							.getAttribute(VISIBILITY))));
+				}
+			}
+		}
+		
+		// second build view hierarchy
+		if (collectedViews != null) {
+			for(ViewElement v : collectedViews) {
+				XmlNode xml = new XmlNode();
+				xml.parse(v.taggedValue.getValue());
+
+				for (Iterator<XmlNode> iter = xml.getAll(VIEW_NODE); iter.hasNext();) {
+					XmlNode view = iter.next();
+					String name = view.getAttribute(NAME);
+					MetaView metaView = metaModel.findView(name);
+
+					for (Iterator<XmlNode> refIter = view.getAll(REFERENCE); refIter.hasNext();) {
+						XmlNode reference = refIter.next();
+						metaView.addView(metaModel.findView(reference.getValue()));
+					}
+				}
+			}
+		}
+		
+		// third assign properties to the views
+		if (collectedProperties != null) {
+			for (ViewElement v : collectedProperties) {
+				XmlNode xml = new XmlNode();
+				v.taggedValue.setValue(TextUtilities.decodeFromHex(v.taggedValue.getValue()));
+				xml.parse(v.taggedValue.getValue());
+	
+				for (Iterator<XmlNode> iter = xml.getAll(VIEW_NODE); iter.hasNext();) {
+					XmlNode view = iter.next();
+					String name = view.getAttribute(NAME);
+					MetaView metaView = metaModel.findView(name);
+					// backward compatibility
+					if(metaView == null) {
+						metaView = new MetaView();
+						metaView.setName(name.substring(name.lastIndexOf(".") + 1));
+						obtainPackage(metaModel, name).addView(metaView);
+						String value = view.getAttribute(DESCRIPTION);
+						if(value != null) {metaView.setDescription(value);}
+						value = view.getAttribute(VISIBILITY);
+						if(value != null) {metaView.setVisibility(VisibilityCode.getCode(Integer.parseInt(value)));}
+					}
+					MetaView.FieldDefinition fieldDefinition = new MetaView.FieldDefinition(
+							v.metaProperty);
+					metaView.appendField(fieldDefinition);
+				}
+			}
+		}
   }
 
-  protected EClassifier getBasicType(String value)
+	/**
+	 * Obtains the package from the MetaModel. The qualified name used to find the package is assumed to be one of a view.
+	 * Meaning that the qualified name of the package is the substring to the last '.'.
+	 * @param metaModel Model to look requested package up.
+	 * @param qualifiedViewName qualified name of a view.
+	 * @return MetaPackage if found, otherwise the metaModel.
+	 */
+	protected MetaPackage obtainPackage(MetaModel metaModel, String qualifiedViewName) {
+		int idx = qualifiedViewName.lastIndexOf(".");
+		MetaPackage metaPackage = null;
+		if (idx >= 0) {
+			metaPackage = metaModel.findPackage(qualifiedViewName.substring(0, idx));
+		}
+		if (metaPackage == null) {
+			metaPackage = metaModel;
+		}
+		return metaPackage;
+	}
+
+	protected EClassifier getBasicType(String value)
   {
     if (value.equals("boolean") || value.equalsIgnoreCase("eboolean"))
     {
-      return ecorePackage.getEBoolean();
+      return EcorePackage.Literals.EBOOLEAN;
     }
     else if (value.equalsIgnoreCase("boolean") || value.equalsIgnoreCase("ebooleanobject"))
     {
-      return ecorePackage.getEBooleanObject();
+      return EcorePackage.Literals.EBOOLEAN_OBJECT;
     }
     else if (value.equalsIgnoreCase("string") || value.equalsIgnoreCase("estring"))
     {
-      return ecorePackage.getEString();
+      return EcorePackage.Literals.ESTRING;
     }
     else if (value.equalsIgnoreCase("char") || value.equalsIgnoreCase("echar"))
     {
-      return ecorePackage.getEChar();
+      return EcorePackage.Literals.ECHAR;
     }
     else if (value.equalsIgnoreCase("character") || value.equalsIgnoreCase("echaracterobject"))
     {
-      return ecorePackage.getECharacterObject();
+      return EcorePackage.Literals.ECHARACTER_OBJECT;
     }
     else if (value.equals("double") || value.equalsIgnoreCase("edouble") || value.equalsIgnoreCase("currency"))
     {
-      return ecorePackage.getEDouble();
+      return EcorePackage.Literals.EDOUBLE;
     }
     else if (value.equalsIgnoreCase("double") || value.equalsIgnoreCase("edoubleobject"))
     {
-      return ecorePackage.getEDoubleObject();
+      return EcorePackage.Literals.EDOUBLE_OBJECT;
     }
     else if (value.equalsIgnoreCase("int") || value.equalsIgnoreCase("eint"))
     {
-      return ecorePackage.getEInt();
+      return EcorePackage.Literals.EINT;
     }
     else if (value.equalsIgnoreCase("integer") || value.equalsIgnoreCase("eintegerobject"))
     {
-      return ecorePackage.getEIntegerObject();
+      return EcorePackage.Literals.EINTEGER_OBJECT;
     }
     else if (value.equals("long long") || value.equals("long") || value.equalsIgnoreCase("elong"))
     {
-      return ecorePackage.getELong();
+      return EcorePackage.Literals.ELONG;
     }
     else if (value.equalsIgnoreCase("long") || value.equalsIgnoreCase("elongobject"))
     {
-      return ecorePackage.getELongObject();
+      return EcorePackage.Literals.ELONG_OBJECT;
     }
     else if (value.equals("float") || value.equalsIgnoreCase("efloat") || value.equalsIgnoreCase("single"))
     {
-      return ecorePackage.getEFloat();
+      return EcorePackage.Literals.EFLOAT;
     }
     else if (value.equalsIgnoreCase("float") || value.equalsIgnoreCase("efloatobject"))
     {
-      return ecorePackage.getEFloatObject();
+      return EcorePackage.Literals.EFLOAT_OBJECT;
     }
     else if (value.equals("short") || value.equalsIgnoreCase("eshort"))
     {
-      return ecorePackage.getEShort();
+      return EcorePackage.Literals.ESHORT;
     }
     else if (value.equalsIgnoreCase("short") || value.equalsIgnoreCase("eshortobject"))
     {
-      return ecorePackage.getEShortObject();
+      return EcorePackage.Literals.ESHORT_OBJECT;
     }
     else if (value.equals("byte") || value.equalsIgnoreCase("ebyte"))
     {
-      return ecorePackage.getEByte();
+      return EcorePackage.Literals.EBYTE;
     }
     else if (value.equals("byte[]") || value.equalsIgnoreCase("ebytearray") || value.equalsIgnoreCase("ebyte[]"))
     {
-      return ecorePackage.getEByteArray();
+      return EcorePackage.Literals.EBYTE_ARRAY;
     }
     else if (value.equalsIgnoreCase("byte") || value.equalsIgnoreCase("ebyteObject"))
     {
-      return ecorePackage.getEByteObject();
+      return EcorePackage.Literals.EBYTE_OBJECT;
     }
     else if (value.equalsIgnoreCase("ebigdecimal"))
     {
-      return ecorePackage.getEBigDecimal();
+      return EcorePackage.Literals.EBIG_DECIMAL;
     }
     else if (value.equalsIgnoreCase("ebiginteger"))
     {
-      return ecorePackage.getEBigInteger();
+      return EcorePackage.Literals.EBIG_INTEGER;
     }
     else if (value.equalsIgnoreCase("edate"))
     {
-      return ecorePackage.getEDate();
+      return EcorePackage.Literals.EDATE;
     }
     else if (value.equalsIgnoreCase("eobject"))
     {
-      return ecorePackage.getEObject();
+      return EcorePackage.Literals.EOBJECT;
     }
     else if (value.equalsIgnoreCase("efeaturemapentry"))
     {
-      return ecorePackage.getEFeatureMapEntry();
+      return EcorePackage.Literals.EFEATURE_MAP_ENTRY;
     }
     else
     {
@@ -2258,26 +2644,25 @@ public class Rose2MdaTransformer implements RoseVisitor
     }
   }
 
-  public void createEPackageForRootClasses(EList extent, RoseNode roseNode, String packageName)
+  public void createEPackageForRootClasses(EList<EObject> extent, RoseNode roseNode, String packageName)
   {
-    ArrayList list = new ArrayList();
-    for (Iterator i = extent.iterator(); i.hasNext();)
+    ArrayList<EObject> list = new ArrayList<EObject>();
+    for (EObject eObject : extent)
     {
-      Object object = i.next();
-      if (!(object instanceof EPackage))
+      if (!(eObject instanceof EPackage))
       {
-        list.add(object);
+        list.add(eObject);
       }
     }
 
     if (!list.isEmpty())
     {
-      EPackage ePackage = ecoreFactory.createEPackage();
+      EPackage ePackage = EcoreFactory.eINSTANCE.createEPackage();
       // Adrian setEPackageProperties(roseNode, ePackage, packageName.toLowerCase());
       setEPackageProperties(roseNode, ePackage, packageName);
 
       extent.add(ePackage);
-      for (Iterator i = list.iterator(); i.hasNext();)
+      for (Iterator<EObject> i = list.iterator(); i.hasNext();)
       {
         EClassifier eClassifier = (EClassifier)i.next();
         ePackage.getEClassifiers().add(eClassifier);
@@ -2301,11 +2686,13 @@ public class Rose2MdaTransformer implements RoseVisitor
 
     if (parent instanceof EPackage)
     {
-      ((EPackage)parent).getEClassifiers().add(eNamedElement);
+      ((EPackage)parent).getEClassifiers().add((EClassifier)eNamedElement);
     }
     else if (parent instanceof EList)
     {
-      ((EList)parent).add(eNamedElement);
+      @SuppressWarnings("unchecked")
+      EList<ENamedElement> namedElements = (EList<ENamedElement>)parent;
+      namedElements.add(eNamedElement);
     }
   }
 
@@ -2324,26 +2711,21 @@ public class Rose2MdaTransformer implements RoseVisitor
   {
     System.err.println("-->Warning: " + message);
     vResults.add(new SimpleValidationMessage(message, Severity.WARNING));
-    BasicDiagnostic basicDiagnostic = new BasicDiagnostic(
-    	    RoseImporterPlugin.getPlugin().getBundle().getSymbolicName(),
-    	    0,
-    	    message,
-    	    null);
-    // TODO - Adrian: wait until V2.2 of emf is released roseUtil.addDiagnostic(basicDiagnostic);
+    roseUtil.addDiagnostic(new BasicDiagnostic(Diagnostic.WARNING, RoseImporterPlugin.getPlugin().getBundle().getSymbolicName(), 0, message, null));
   }
 
   protected void error(String message)
   {
     System.err.println("-->Error: " + message);
-    BasicDiagnostic basicDiagnostic = new BasicDiagnostic(
-    	    RoseImporterPlugin.getPlugin().getBundle().getSymbolicName(),
-    	    0,
-    	    message,
-    	    null);
-    // TODO - Adrian: wait until V2.2 of emf is released roseUtil.addDiagnostic(basicDiagnostic);
+    roseUtil.addDiagnostic(new BasicDiagnostic(Diagnostic.ERROR, RoseImporterPlugin.getPlugin().getBundle().getSymbolicName(), 0, message, null));
   }
 
   protected String getQualifiedTypeName(ETypedElement typedElement, String type)
+  {
+    return getQualifiedTypeName((EModelElement)typedElement, type);
+  }
+
+  protected String getQualifiedTypeName(EModelElement eModelElement, String type)
   {
     // try to retrieve the fully qualified name of the specified type...
     if (null == type || type.length() == 0 || "void".equals(type))
@@ -2375,10 +2757,10 @@ public class Rose2MdaTransformer implements RoseVisitor
     }
 
     // qualify type name if not already qualified...
-    if (qualifiedType.indexOf('.') == -1)
+    if (qualifiedType.indexOf('.') == -1 && eModelElement != null)
     {
       String qualifier = "";
-      for (EObject parent = typedElement.eContainer(); null != parent; parent = parent.eContainer())
+      for (EObject parent = eModelElement.eContainer(); null != parent; parent = parent.eContainer())
       {
         if (parent instanceof EPackage)
         {
@@ -2417,9 +2799,8 @@ public class Rose2MdaTransformer implements RoseVisitor
         property = new MetaProperty();
         mClass.addProperty(property);
       } else {
-        MetaIndexedProperty metaIndexedProperty = new MetaIndexedProperty();
-        property = metaIndexedProperty;
-        mClass.addIndexedProperty((MetaIndexedProperty) metaIndexedProperty);
+        property = new MetaIndexedProperty();
+        mClass.addIndexedProperty((MetaIndexedProperty) property);
       }
       
       determineAggregationType(property, roles);
@@ -2432,6 +2813,7 @@ public class Rose2MdaTransformer implements RoseVisitor
       property.setTransient(eReference.isTransient());
       property.setVolatile(eReference.isVolatile());
       property.setStatic(eReference.isUnsettable());
+      property.setIsRelation(true);
       return property;
     }
     return null;
@@ -2457,6 +2839,14 @@ public class Rose2MdaTransformer implements RoseVisitor
       metaProperty.setAggregation(true);
       metaProperty.setComposition(false);
     }
+    RoseNode nav = navigableSide.findNodeWithKey(RoseStrings.IS_NAVIGABLE);
+    if(nav != null) {
+    	metaProperty.setIsNavigableToClassifier(nav.getValue().equals(RoseStrings.TRUE));
+    }
+    nav = aggregationSide.findNodeWithKey(RoseStrings.IS_NAVIGABLE);
+    if(nav != null) {
+    	metaProperty.setIsNavigableToContext(nav.getValue().equals(RoseStrings.TRUE));
+    }
     return metaProperty;
   }
   
@@ -2464,10 +2854,11 @@ public class Rose2MdaTransformer implements RoseVisitor
     MetaClass metaClass = metaPackage.getClass(objectName);
     if (metaClass == null) {
       metaClass = new MetaClass();
-      if(!(parent instanceof EClass)){
+      if(parent == null) {
+      	metaModel.addClass(metaClass);
+      } else if(!(parent instanceof EClass)){
         metaPackage.addClass(metaClass);
-      }
-      if(parent instanceof EClass){
+      } else {
         metaClass.setContext((MetaClass)elements.get(parent));
         ((MetaClass)elements.get(parent)).addNestedClass(metaClass);
       }
@@ -2556,16 +2947,21 @@ public class Rose2MdaTransformer implements RoseVisitor
             TaggedValue tv = new TaggedValue(Util.getName(name.getValue()), Util.getName(value.getValue()));
             metaElement.addTaggedValue(tv);
             // in case where this is a VIEW_TAG then remember it for postprocessing (we have to create all views at the end because first we have to create all packages)
-            if(tv.getTag().equals(ViewConstants.VIEW_TAG) && metaElement instanceof MetaProperty) {
+            if(tv.getTag().equals(ViewConstants.VIEW_TAG) && ((metaElement instanceof MetaProperty) || (metaElement instanceof MetaPackage))){
             	ViewElement viewElement = new ViewElement();
-            	viewElement.metaProperty = (MetaProperty)metaElement;
             	viewElement.taggedValue = tv;
-            	MetaElement pack = metaElement;
-            	while((pack != null) && !(pack instanceof MetaPackage)) {
-            		pack = pack.getContext();
+            	if(metaElement instanceof MetaProperty) {
+	            	viewElement.metaProperty = (MetaProperty)metaElement;
+	            	MetaElement pack = metaElement;
+	            	while((pack != null) && !(pack instanceof MetaPackage)) {
+	            		pack = pack.getContext();
+	            	}
+	            	viewElement.pack = (MetaPackage)pack;
+	            	collectedProperties.add(viewElement);
+            	} else { // MetaPackage
+            		viewElement.pack = (MetaPackage)metaElement;
+	            	collectedViews.add(viewElement);
             	}
-            	viewElement.pack = (MetaPackage)pack;
-            	viewElements.add(viewElement);
             }
           }
         }

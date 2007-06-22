@@ -14,10 +14,12 @@ import org.eclipse.emf.importer.rose.parser.RoseNode;
 import org.eclipse.emf.importer.rose.parser.Util;
 
 import ch.bbv.mda.*;
-import ch.bbv.mda.uml.*;
 import ch.bbv.mda.generators.CartridgeFactory;
 import ch.bbv.mda.generators.ItemFactory;
 import ch.bbv.mda.persistence.eclipse.RosePersistenceHandler;
+import ch.bbv.mda.ui.ViewConstants;
+import ch.bbv.mda.uml.MetaUseCase;
+import ch.bbv.utilities.TextUtilities;
 
 /**
  * Synchronizes a MDA model with a Rose Model. Elements within the Rose Model are updated, new elements are added, and missing elements in the MDA model are deleted from the Rose Model.
@@ -160,7 +162,7 @@ public class Mda2RoseTransformer implements RoseVisitor {
       // now add the tagged values
       for(TaggedValue tag : metaElement.getTags()) {
         if(!(tag.getTag().equals(UmlConstants.PERSISTENCE_TAG) && defaultType.equals(RoseStrings.DEFAULT_CLASS))) {
-          value.addNode(createTaggedValue(tag));
+          value.addNode(createTaggedValue(tag.getTag(), tag.getValue()));
         }
       }
     } else { // if there is already a default category attribute set then only add missing tagged values
@@ -169,7 +171,7 @@ public class Mda2RoseTransformer implements RoseVisitor {
         RoseNode tv = findTaggedValue(defaultCategory, RoseStrings.VALUE, tag.getTag());
         if(tv == null) {
           if(!(tag.getTag().equals(UmlConstants.PERSISTENCE_TAG) && defaultType.equals(RoseStrings.DEFAULT_CLASS))) {
-            value.addNode(createTaggedValue(tag));
+            value.addNode(createTaggedValue(tag.getTag(), tag.getValue()));
           }
         } else {
           RoseNode v = tv.findNodeWithKey(RoseStrings.VALUE);
@@ -975,6 +977,9 @@ public class Mda2RoseTransformer implements RoseVisitor {
       if(tag.getTag().equals(UmlConstants.PERSISTENCE_TAG) && element instanceof MetaClass) { // Rose has a dedicated persistence information on class level
         continue;
       }
+      if(tag.getTag().equals(ViewConstants.VIEW_TAG)) { // Rose does not accept any format within an attribute - thereof we have to make it purely alphanumeric
+      	tagValue = TextUtilities.encodeToHex(tagValue);
+      }
       String defaultValue = defaultTag.getValue();
       Boolean isDefault = false;
       if(tagValue == null && defaultValue == null) {
@@ -995,7 +1000,7 @@ public class Mda2RoseTransformer implements RoseVisitor {
           value.setValue(this.formatAttributeValue(tagValue));
         }
       } else if (!isDefault){
-        addTaggedValue(roseNode, createTaggedValue(tag));
+        addTaggedValue(roseNode, createTaggedValue(tag.getTag(), tagValue));
       }
     }
     
@@ -1155,12 +1160,12 @@ public class Mda2RoseTransformer implements RoseVisitor {
     return roseUseCase;
   }
   
-  public RoseNode createTaggedValue(TaggedValue tag) {
+  public RoseNode createTaggedValue(String tagName, String tagValue) {
     RoseNode newTv = new RoseNode("", RoseStrings.ATTRIBUTE, RoseNode.OBJECT);
     RoseNode tool = new RoseNode(RoseStrings.TOOL, formatAttributeValue(RosePersistenceHandler.TaggedValueToolIdentifier), RoseNode.STRING);
-    RoseNode name = new RoseNode(RoseStrings.NAME, formatAttributeValue(tag.getTag()), RoseNode.STRING);
+    RoseNode name = new RoseNode(RoseStrings.NAME, formatAttributeValue(tagName), RoseNode.STRING);
     RoseNode value = new RoseNode(RoseStrings.VALUE, RoseStrings.TEXT, RoseNode.VALUE);
-    value.addNode(new RoseNode(RoseStrings.VALUE, formatAttributeValue(tag.getValue()), RoseNode.STRING));
+    value.addNode(new RoseNode(RoseStrings.VALUE, formatAttributeValue(tagValue), RoseNode.STRING));
     newTv.addNode(tool);
     newTv.addNode(name);
     newTv.addNode(value);
