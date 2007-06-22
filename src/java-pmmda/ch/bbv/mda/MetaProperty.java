@@ -77,8 +77,11 @@ public class MetaProperty extends MetaMember {
   public MetaProperty copy(){
 	  MetaProperty clone = new MetaProperty();
 	  clone.aggregation = this.aggregation;
-	  clone.setClassifier(this.getClassifier());
 	  clone.composition = this.composition;
+	  clone.setIsRelation(this.isRelation);
+	  clone.setIsNavigableToClassifier(this.isNavigableToClassifier);
+	  clone.setIsNavigableToContext(this.isNavigableToContext);
+	  clone.setClassifier(this.getClassifier());
 	  clone.setContext(this.getContext());
 	  clone.setDescription(this.getDescription());
 	  clone.setFinal(this.isFinal());
@@ -92,9 +95,6 @@ public class MetaProperty extends MetaMember {
 	  clone.volatiles = this.volatiles;
 	  clone.setStatic(this.isStatic());
 	  clone.setSystem(this.isSystem());
-	  clone.setIsRelation(this.isRelation);
-	  clone.setIsNavigableToClassifier(this.isNavigableToClassifier);
-	  clone.setIsNavigableToContext(this.isNavigableToContext);
 	  return clone;
   }
 
