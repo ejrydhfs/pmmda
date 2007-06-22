@@ -51,6 +51,10 @@ public class MetaPropertyView extends MetaItemView {
 
   private JTextField initialValue;
 
+  private JCheckBox navigableToClassifier;
+  
+  private JCheckBox navigableToContext;
+
   private JCheckBox volatiles;
 
   private JCheckBox transients;
@@ -67,6 +71,8 @@ public class MetaPropertyView extends MetaItemView {
     multiplicityLowerBound = new JTextField();
     multiplicityUpperBound = new JTextField();
     initialValue = new JTextField(TEXT_FIELD_SIZE);
+    navigableToClassifier = new JCheckBox();
+    navigableToContext = new JCheckBox();
     volatiles = new JCheckBox();
     transients = new JCheckBox();
     finals = new JCheckBox();
@@ -89,6 +95,8 @@ public class MetaPropertyView extends MetaItemView {
     }
     type.setText(model.getTypeName());
     type.setBackground(Color.WHITE);
+    navigableToClassifier.setSelected(model.isNavigableToClassifier());
+    navigableToContext.setSelected(model.isNavigableToContext());
     volatiles.setSelected(model.isVolatile());
     transients.setSelected(model.isTransient());
     statics.setSelected(model.isStatic());
@@ -116,6 +124,8 @@ public class MetaPropertyView extends MetaItemView {
     if (text != null) {
       model.setTypeName(text.trim());
     }
+    model.setIsNavigableToClassifier(navigableToClassifier.isSelected());
+    model.setIsNavigableToContext(navigableToContext.isSelected());
     model.setVisibility((VisibilityCode) visibility.getSelectedCode());
     model.setVolatile(volatiles.isSelected());
     model.setTransient(transients.isSelected());
@@ -160,6 +170,8 @@ public class MetaPropertyView extends MetaItemView {
     multiplicityLowerBound.setEditable(editable);
     multiplicityUpperBound.setEditable(editable);
     initialValue.setEditable(editable);
+    navigableToClassifier.setEnabled(editable);
+    navigableToContext.setEnabled(editable);
     volatiles.setEnabled(editable);
     transients.setEnabled(editable);
     finals.setEnabled(editable);
@@ -173,6 +185,8 @@ public class MetaPropertyView extends MetaItemView {
     builder.append("&Initial Value", initialValue);
     builder.append("&Lower Bound", multiplicityLowerBound);
     builder.append("&Upper Bound", multiplicityUpperBound);
+    builder.append("Navigable to Classifier", navigableToClassifier);
+    builder.append("Navigable to Context", navigableToContext);
     return builder.getPanel();
   }
 
