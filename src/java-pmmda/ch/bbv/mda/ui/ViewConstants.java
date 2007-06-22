@@ -16,6 +16,7 @@ public interface ViewConstants {
 
 	  public final String VIEW_TAG = "views"; // name of the tag for all views. Outer tag for all views.
 	  public final String VIEW_NODE = "view"; // name of the tag for one view. Inner tag per view.
+	  public final String REFERENCE = "reference"; // Tag name for a reference to an inner view.
 	  public final String NAME = "name"; // name element per view - fully qualified name of the view.
 	  public final String DESCRIPTION = "description"; // description element per view.
 	  public final String VISIBILITY = "visibility"; // visibility element per view. 
