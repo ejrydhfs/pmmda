@@ -229,8 +229,9 @@ public class SimpleDialog extends JDialog implements ActionListener {
      * @inheritDoc
      */
     public void actionPerformed(ActionEvent actionEvent) {
-      processOk();
-      setVisible(false);
+      if(processOk()) {
+      	setVisible(false);
+      }
     }
   }
 }
