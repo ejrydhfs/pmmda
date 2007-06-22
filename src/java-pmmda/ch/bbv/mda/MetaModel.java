@@ -287,7 +287,7 @@ public class MetaModel extends MetaPackage {
   public MetaPackage findPackage(String qualifiedName) {
     return (MetaPackage) findElement(packages, qualifiedName);
   }
-
+  
   /**
    * Finds the datatype with the given name.
    * @param name the qualified name of the datatype to find
@@ -389,6 +389,27 @@ public class MetaModel extends MetaPackage {
     return null;
   }
 
+  /**
+   * Returns the view with given qualified name. It is searched within entire model.
+   * If found then it is returned, otherwise null is returned
+   * @param qualifiedName to identify the MetaView
+   * @return MetaView or null if not found within model
+   */
+  public MetaView findView(String qualifiedName) {
+  	int idx = qualifiedName.lastIndexOf(".");
+		MetaView metaView = null;
+		MetaPackage metaPackage = null;
+		if (idx >= 0) {
+			metaPackage = findPackage(qualifiedName.substring(0, idx));
+		}
+		if (metaPackage == null) {
+			metaView = super.findView(qualifiedName);
+		} else {
+			metaView = metaPackage.findView(qualifiedName);
+		}
+		return metaView;
+  }
+  
   /**
    * Returns the list of meta classes referencing the given class.
    * @param clazz class which references are looked for
