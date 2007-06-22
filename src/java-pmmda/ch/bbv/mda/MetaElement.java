@@ -411,6 +411,43 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
     return null;
   }
 
+	@Override
+	public MetaElement clone() {
+		MetaElement clone = null;
+		try {
+			clone = (MetaElement) super.clone();
+
+		  clone.name = this.name;
+		  clone.description = this.description;
+		  clone.context = this.context;
+		  clone.visibility = this.visibility;
+		  clone.system = this.system;
+		  
+			List<Stereotype> clonedStereotypes = new ArrayList<Stereotype>();
+			for (Stereotype stereotype : this.stereotypes) {
+				clonedStereotypes.add(stereotype);
+			}
+			clone.stereotypes = clonedStereotypes;
+			
+			Map<String, TaggedValue> clonedTaggedValues = new HashMap<String, TaggedValue>();
+			for (Map.Entry entry : this.taggedValues.entrySet()) {
+				clonedTaggedValues.put((String)entry.getKey(), new TaggedValue(((TaggedValue)entry.getValue())));
+			}
+			clone.taggedValues = clonedTaggedValues;
+			
+			Map<String, String> clonedAttributes = new HashMap<String, String>();
+			for (Map.Entry entry : this.attributes.entrySet()) {
+				clonedAttributes.put((String)entry.getKey(), ((String)entry.getValue()));
+			}
+			clone.attributes = clonedAttributes;
+			
+		} catch (CloneNotSupportedException e) {
+			// impossible exception because super class implements clonable
+			e.printStackTrace();
+		}
+		return clone;
+	}
+
   // %% BEGIN USER CODE
 
   /**
