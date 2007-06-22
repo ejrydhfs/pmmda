@@ -63,12 +63,7 @@ public class SaveAsAction extends ExplorerFileAction {
   }
 
   public boolean execute() {
-    if (!shouldOverwriteFile()) {
-      lastResult = false;
-      return lastResult;
-    }
     File file = getSelectedFile();
-    switchWaitCursor(true);
     try {
       String extension = FilenameUtils.getExtension(file.getCanonicalPath());
       if (extension == null || extension.equals("")) {
@@ -83,17 +78,25 @@ public class SaveAsAction extends ExplorerFileAction {
         lastResult = false;
         return lastResult;
       }
+    	setSelectedFile(file);
       extension = extension.toLowerCase();
-      if (Arrays.binarySearch(MdaFileTypes.ARGOUML_EXT, extension) >= 0) {
-        writeModel(file);
-      } else if (Arrays.binarySearch(MdaFileTypes.POSEIDON_EXT, extension) >= 0) {
+      if (Arrays.binarySearch(MdaFileTypes.POSEIDON_EXT, extension) >= 0) {
         JOptionPane.showMessageDialog(null,
             "Poseidon Save Option Not Supported", "Not Yet Implemented",
             JOptionPane.ERROR_MESSAGE);
-      } else if ((Arrays.binarySearch(MdaFileTypes.XML_EXT, extension) >= 0)
+      } else if ((Arrays.binarySearch(MdaFileTypes.ARGOUML_EXT, extension) >= 0)
+      	  || (Arrays.binarySearch(MdaFileTypes.XML_EXT, extension) >= 0)
           || (Arrays.binarySearch(MdaFileTypes.SERIALIZE_EXT, extension) >= 0)
           || (Arrays.binarySearch(MdaFileTypes.XMI_EXT, extension) >= 0)
           || (Arrays.binarySearch(MdaFileTypes.RATIONAL_ROSE_EXT, extension) >= 0)) {
+        if (!shouldOverwriteFile()) {
+          lastResult = false;
+          return lastResult;
+        }
+        switchWaitCursor(true);
+        String path = file.getAbsolutePath();
+        file.delete();
+        file = new File(path);
         writeModel(file);
       } else {
         JOptionPane.showMessageDialog(getExplorer().getFrame(),
