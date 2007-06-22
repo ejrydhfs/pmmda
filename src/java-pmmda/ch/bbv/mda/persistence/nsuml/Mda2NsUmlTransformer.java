@@ -300,7 +300,7 @@ public class Mda2NsUmlTransformer {
    */
   protected void extractProperty(MetaProperty source, MClassifier context) {
     assert (source != null) && (context != null);
-    if (source.isAggregation() || source.isComposition()) {
+    if (source.isAggregation() || source.isComposition() || source.isRelation()) {
       MetaElement mElement = source.getContext().getContext();
       while (!(mElement instanceof MetaPackage)) {
         mElement = mElement.getContext();
@@ -354,7 +354,7 @@ public class Mda2NsUmlTransformer {
   protected void extractIndexedProperty(MetaIndexedProperty source,
       MClassifier context) {
     assert (source != null) && (context != null);
-    if (source.isAggregation() || source.isComposition()) {
+    if (source.isAggregation() || source.isComposition() || source.isRelation()) {
       MetaElement mElement = source.getContext().getContext();
       while (!(mElement instanceof MetaPackage)) {
         mElement = mElement.getContext();
