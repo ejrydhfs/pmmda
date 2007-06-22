@@ -119,7 +119,7 @@ public abstract class ExplorerFileAction extends ExplorerGlobalActionImpl {
     if ((file != null) && file.exists()) {
       int selection = displayMessage(Messages.msgFileOverwrite,
           getSelectedFile().getName());
-      return (selection != -1) || (selection != 1) || (selection != 2);
+      return selection == 0;
     }
     return true;
   }
