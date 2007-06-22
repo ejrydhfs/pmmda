@@ -210,7 +210,7 @@ public class MetaViewView extends NodePropertiesView implements
 	 * @param node to be assigned to the view.
 	 */
 	protected void nodeToTree(JTree fromTree, JTree toTree, ExplorerNode node) {
-		if(node.getDataObject() instanceof MetaProperty) {
+		if(node.getDataObject() instanceof MetaProperty || node.getDataObject() instanceof MetaView) {
 			propertyToTree(fromTree, toTree, node);
 		} else if (node.getChildCount() == 0){
 			removeNodeFromTree((DefaultTreeModel) fromTree.getModel(), node);
@@ -231,13 +231,14 @@ public class MetaViewView extends NodePropertiesView implements
 	private void propertyToTree(JTree fromTree, JTree toTree, ExplorerNode node) {
 		assert node.getDataObject() instanceof MetaProperty;
 		
-		// remove node from modelTree
 		ExplorerNode clonedNode = node.clonebyCopy(null); // save original node, before removing it. Used for adding it to the view.
-		removeNodeFromTree((DefaultTreeModel) fromTree.getModel(), node);
 
 		// add selected property to viewTree
 		DefaultTreeModel model = (DefaultTreeModel) toTree.getModel();
 		addNodeToTree(model, clonedNode);
+
+		// remove node from modelTree
+		removeNodeFromTree((DefaultTreeModel) fromTree.getModel(), node);
 
 		// expand viewTree
 		toTree.expandRow(0);
@@ -316,6 +317,16 @@ public class MetaViewView extends NodePropertiesView implements
 	private ExplorerNode findElementInTree(JTree tree, MetaElement element) {
 		String qualifiedName = element.getQualifiedName();
 		ExplorerNode node = (ExplorerNode)tree.getModel().getRoot();
+		ExplorerNode packageNode = null;
+  	for(ExplorerNode e : node.getChildren()) {
+  		if(qualifiedName.startsWith(e.getName()) && (packageNode == null || e.getName().length() > packageNode.getName().length())) {
+  			packageNode = e;
+  		}
+  	}
+  	if(packageNode == null) return null;
+  	if(packageNode.getName().length() == qualifiedName.length()) return packageNode;
+  	qualifiedName = qualifiedName.substring(packageNode.getName().length()+1);
+  	node = packageNode;
 		while(node != null && !qualifiedName.equals("")) {
 			int idx = qualifiedName.indexOf(".");
 			String name;
@@ -324,33 +335,35 @@ public class MetaViewView extends NodePropertiesView implements
 			} else {
 				name = qualifiedName;
 			}
+			node = node.findChild(name);
 			if(qualifiedName.length() > name.length()) {
 				qualifiedName = qualifiedName.substring(name.length()+1);
 			} else {
 				qualifiedName = "";
 			}
-			node = node.findChild(name);
 		}
 		return node;
 	}
 
 	/**
-	 * Returns all leaves of the passed ExplorerNode. Only leaves being MetaProperties are passed back.
+	 * Returns all leaves of the passed ExplorerNode. Only leaves being MetaProperties or MetaViews are passed back.
 	 * @param root ExplorerNode to obtain leaves from. If it is a leaf itself then it is returned.
+	 * @param checkRoot if set to true then the root is added if it is a leave otherwise the leave is not considered
+	 * @param leaveType only leaves of this type are added. Set it to object if you want to obtain all leaves
 	 * @return List containing all leaves beeing an instance of MetaProperty.
 	 */
-	private List<ExplorerNode> getLeaves(ExplorerNode root) {
+	private List<ExplorerNode> getLeaves(ExplorerNode root, boolean checkRoot, Class leaveType) {
 		List<ExplorerNode> leaves = new ArrayList<ExplorerNode>();
-		if(root.isLeaf() && root.getDataObject() instanceof MetaProperty) {
+		if(checkRoot && root.isLeaf() && root.getDataObject().getClass().equals(leaveType)) {
 			leaves.add(root);
 		}
 		Enumeration enu = root.children();
 		while (enu.hasMoreElements()) {
 			ExplorerNode current = (ExplorerNode) enu.nextElement();
-			if(current.isLeaf() && current.getDataObject() instanceof MetaProperty) {
+			if(current.isLeaf() && current.getDataObject().getClass().equals(leaveType)) {
 				leaves.add(current);
 			} else if (!current.isLeaf()){
-				leaves.addAll(getLeaves(current));
+				leaves.addAll(getLeaves(current, checkRoot, leaveType));
 			}
 		}
 		return leaves;
@@ -433,7 +446,7 @@ public class MetaViewView extends NodePropertiesView implements
 			if ( nameError != null) {
 				result.addError(nameError);
 				JOptionPane.showMessageDialog(null,nameError, "validation error", JOptionPane.ERROR_MESSAGE);
-			} else if (getLeaves(getViewTree().getRoot()).size() <= 0) {
+			} else if (getLeaves(getViewTree().getRoot(), false, MetaProperty.class).size() <= 0 && getLeaves(getViewTree().getRoot(), false, MetaView.class).size() <= 0 ) {
 				result.addError("Invalid content for this view");
 				String error = "Invalid content for this view. Please add at least one field.";
 				JOptionPane.showMessageDialog(null, error, "validation error",JOptionPane.ERROR_MESSAGE);
@@ -471,10 +484,18 @@ public class MetaViewView extends NodePropertiesView implements
 		loadFieldValues(metaView);
 		node = new ExplorerNode(nodeType, metaView, metaView);
 		node.setNodeOwner(root.getNodeOwner());
+		
+		// create view Tree
 		viewTree = new ExplorerTree();
 		viewTree.setRoot(node, this);
 		for(MetaView.FieldDefinition field : metaView.getFields()) {
 			ExplorerNode eNode = findElementInTree(modelTree.getTree(), field.asMetaProperty());
+			if(eNode != null) {
+				nodeToTree(modelTree.getTree(), viewTree.getTree(), eNode);
+			}
+		}
+		for(MetaView view : metaView.getViews()) {
+			ExplorerNode eNode = findElementInTree(modelTree.getTree(), view);
 			if(eNode != null) {
 				nodeToTree(modelTree.getTree(), viewTree.getTree(), eNode);
 			}
@@ -531,24 +552,33 @@ public class MetaViewView extends NodePropertiesView implements
 	 */
 	private void removeDeletedPropertiesFromView(MetaView newView) {
 		// determine the difference between original MetaView and passed MetaView.
-		List<MetaView.FieldDefinition> toBeRemoved = new ArrayList<MetaView.FieldDefinition>();
+		List<MetaView.FieldDefinition> propertiesToBeRemoved = new ArrayList<MetaView.FieldDefinition>();
 		for(MetaView.FieldDefinition originalField : getOriginalMetaView().getFields()) {
 			MetaView.FieldDefinition field = newView.findField(originalField);
 			if(field == null) {
-				toBeRemoved.add(originalField);
+				propertiesToBeRemoved.add(originalField);
 			}
 		}
-		
-		// now remove our view content from properties within list (toBeRemoved)
-		newView.removeFromProperties(toBeRemoved, getQualifiedName(newView), (MetaModel)getModel().getRoot().getDataObject());
+		//now remove our view content from properties within list (toBeRemoved)
+		newView.removeFromProperties(propertiesToBeRemoved, getQualifiedName(newView), (MetaModel)getModel().getRoot().getDataObject());
 	}
 
 	/**
-	 * Adds newly assigned properties. TaggedValues of those properties newly assigned to this view are added.
+	 * The original view is removed entirely from the model
+	 * @param newView current MetaView.
+	 */
+	private void removeViewWithFormerName(MetaView newView) {
+		getOriginalMetaView().removeFromPackage(getQualifiedName(getOriginalMetaView()), (MetaModel)getModel().getRoot().getDataObject(), getContext(getOriginalMetaView()));
+		getOriginalMetaView().removeFromProperties(getOriginalMetaView().getFields(), getQualifiedName(getOriginalMetaView()), (MetaModel)getModel().getRoot().getDataObject());
+	}
+
+	/**
+	 * Adds newly assigned properties and views. TaggedValues of those properties newly assigned to this view are added.
 	 * Properties having been already part of the view before editing, are updated.
 	 * @param newView view having additional or changed properties assigned (compared to getOriginalMetaView())
 	 */
-	private void addNewOrChangedPropertiesToView(MetaView newView) {
+	private void addNewOrChangedPropertiesAndViewsToView(MetaView newView) {
+		newView.addToPackage(getQualifiedName(newView), (MetaModel)getModel().getRoot().getDataObject(), getContext(newView));
 		newView.addToProperties(newView.getFields(), getQualifiedName(newView), (MetaModel)getModel().getRoot().getDataObject());
 	}
 
@@ -564,10 +594,11 @@ public class MetaViewView extends NodePropertiesView implements
 		newView.setDescription(descriptionText.getText());
 		setFieldsToMetaView(newView, getViewTree().getRoot());
 
-		// remove tagged values. Build difference and remove them
-		removeDeletedPropertiesFromView(newView);
+		// In case of this view has been renamed, we have to remove the "old" view before adding the "new" one.
+		// Because the new view may have less properties than the existing one - the easiest way ist to remove the old view and add the new one from scratch (rather than building the difference)
+		removeViewWithFormerName(newView);
 		// add tagged values - values being part of this view before modification will be updated as well.
-		addNewOrChangedPropertiesToView(newView);
+		addNewOrChangedPropertiesAndViewsToView(newView);
 		
 		getModel().nodeChanged();
 		this.originalMetaView = null;
@@ -584,17 +615,33 @@ public class MetaViewView extends NodePropertiesView implements
 	/**
 	 * Helper member to obtain qualified name of a new view. This helper is necessary because in case of a newly created view the context is not yet set during commit.
 	 * We thereof obtain the parent ExplorerNode of this MetaView and construct the qualified name with help of that.
-	 * @param MetaView to obtain the qualified name from.
+	 * @param view MetaView to obtain the qualified name from.
 	 * @return qualified name. If for some reason there is no parent ExplorerNode or if it is of wrong type, then the name of the view is returned. 
 	 */
 	private String getQualifiedName(MetaView view) {
 		if(view.getContext() == null && getModel().getParent() != null) {
 			ExplorerNode parent = ((ExplorerNode)getModel().getParent());
-			if(parent.getDataObject() instanceof MetaPackage) {
+			if(parent.getDataObject() instanceof MetaPackage && !(parent.getDataObject() instanceof MetaModel)) {
 				return ((MetaPackage)parent.getDataObject()).getQualifiedName()+"."+view.getName();
 			}
 		}
 		return view.getQualifiedName();
+	}
+	
+	/**
+	 * Helper member to obtain the enclosing MetaPackage of a view. This helper is necessary because in case of a newly created view the context is not yet set during commit.
+	 * We thereof obtain the parent ExplorerNode of this MetaView and take the MetaPackage from there. If a context is set on the view then this one is returned.
+	 * @param view MetaView to obtain the context from.
+	 * @return MetaPackage the view belongs to is returned. If none available then null is returned. 
+	 */
+	private MetaPackage getContext(MetaView view) {
+		if(view.getContext() == null && getModel().getParent() != null) {
+			ExplorerNode parent = ((ExplorerNode)getModel().getParent());
+			if(parent.getDataObject() instanceof MetaPackage) {
+				return ((MetaPackage)parent.getDataObject());
+			}
+		}
+		return (MetaPackage)view.getContext();
 	}
 	
 	private MetaView getOriginalMetaView() {
@@ -613,16 +660,22 @@ public class MetaViewView extends NodePropertiesView implements
 	}
 
   /**
-   * Adds all properties within the tree of the root ExplorerNode to the passed metaView. Previously stored fields are cleared.
+   * Adds all properties and MetaViews within the tree of the root ExplorerNode to the passed metaView. Previously stored fields are cleared.
    * @param metaView to add properties. Properties are added as MetaField.FieldDefinition
    * @param root identifies the ExplorerNode tree, we want to add MetaProperties from.
    */
 	private void setFieldsToMetaView(MetaView metaView, ExplorerNode root) {
-		List<ExplorerNode> properties = getLeaves(root);
+		List<ExplorerNode> properties = getLeaves(root, false, MetaProperty.class);
 		metaView.getFields().clear();
 		for(ExplorerNode node : properties) {
 			MetaView.FieldDefinition field = new MetaView.FieldDefinition((MetaProperty)node.getDataObject());
 			metaView.appendField(field);
+		}
+
+		properties = getLeaves(root, false, MetaView.class);
+		metaView.removeAllViews();
+		for(ExplorerNode node : properties) {
+			metaView.addView((MetaView)node.getDataObject());
 		}
 	}
 	
@@ -647,10 +700,9 @@ public class MetaViewView extends NodePropertiesView implements
 			super(factory, explorerNodeOwner);
 		}
 
-		//don't display datatypes, uses cases, views, sterotypes and taggedvalues in the View-UI
+		//don't display datatypes, uses cases, sterotypes and taggedvalues in the View-UI
 		@Override public void visit(MetaDatatype datatype) {}
 		@Override public void visit(MetaUseCase metaUseCase) {}
-		@Override public void visit(MetaView metaView) {}
 		@Override public void visit(Stereotype stereotype) {}
 		@Override public void visit(TaggedValue taggedValue) {}
 		
