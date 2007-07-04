@@ -1035,7 +1035,7 @@ $line
 ## @uk
 ## Create instance of the list for storing property values
 #if (${class.booleanValueOfTag("bo-extendable")} || ${class.booleanValueOfTag("bo-is-root")})
-	#parse("bo/bo-java-dynamic-properties.vm")
+	#parse("java/bo/bo-java-dynamic-properties.vm")
 #end
 
 /* %% USER DEFINED PROTECTED/PRIVATE CODE START %% */
