@@ -5,7 +5,21 @@
  */
 package ch.bbv.mda.cartridges;
 
-import static ch.bbv.mda.cartridges.OrmConstants.*;
+import static ch.bbv.mda.cartridges.OrmConstants.COLUMN_NAME;
+import static ch.bbv.mda.cartridges.OrmConstants.COLUMN_POSTFIX_KEY;
+import static ch.bbv.mda.cartridges.OrmConstants.COLUMN_PREFIX_KEY;
+import static ch.bbv.mda.cartridges.OrmConstants.COLUMN_SIZE;
+import static ch.bbv.mda.cartridges.OrmConstants.DATABASE_KEY;
+import static ch.bbv.mda.cartridges.OrmConstants.GENERATOR_KEY;
+import static ch.bbv.mda.cartridges.OrmConstants.IS_PRIMARY;
+import static ch.bbv.mda.cartridges.OrmConstants.ORM_KEY;
+import static ch.bbv.mda.cartridges.OrmConstants.ORM_TYPE_JDBC;
+import static ch.bbv.mda.cartridges.OrmConstants.ORM_TYPE_SQL;
+import static ch.bbv.mda.cartridges.OrmConstants.SCHEMA;
+import static ch.bbv.mda.cartridges.OrmConstants.SOURCE_ROOT_FOLDER_KEY;
+import static ch.bbv.mda.cartridges.OrmConstants.TABLE_NAME;
+import static ch.bbv.mda.cartridges.OrmConstants.TABLE_POSTFIX_KEY;
+import static ch.bbv.mda.cartridges.OrmConstants.TABLE_PREFIX_KEY;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,10 +38,17 @@ import org.apache.velocity.VelocityContext;
 
 import ch.bbv.application.VersionId;
 import ch.bbv.dog.validation.Validator;
-import ch.bbv.mda.*;
+import ch.bbv.mda.MetaClass;
+import ch.bbv.mda.MetaDatatype;
+import ch.bbv.mda.MetaElement;
+import ch.bbv.mda.MetaModel;
+import ch.bbv.mda.MetaPackage;
+import ch.bbv.mda.MetaProperty;
+import ch.bbv.mda.TaggedValue;
+import ch.bbv.mda.UmlConstants;
 import ch.bbv.mda.generators.Cartridge;
 import ch.bbv.mda.generators.CartridgeFactory;
-import ch.bbv.mda.generators.CartridgeImpl;
+import ch.bbv.mda.generators.CartridgeImplJava;
 import ch.bbv.mda.generators.validation.OrmTagRule;
 import ch.bbv.mda.generators.validation.TagRule;
 import ch.bbv.mda.operators.FileOperators;
@@ -57,10 +78,11 @@ import com.jgoodies.validation.ValidationResult;
  * OJB's ones. If specified and different OJB mechanisms do not set anymore the
  * foreign key values.
  * <p>
+ * 
  * @author Marcel Baumann
  * @version $Revision$
  */
-public class OrmCartridge extends CartridgeImpl implements Cartridge {
+public class OrmCartridge extends CartridgeImplJava implements Cartridge {
   /**
    * The prefix of the cartridge.
    */
@@ -113,7 +135,8 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
   }
 
   @Override
-  public void preProcessDatatype(MetaDatatype datatype, ValidationResult messages) {
+  public void preProcessDatatype(MetaDatatype datatype,
+      ValidationResult messages) {
     String database = getContext().getProperty(DATABASE_KEY);
     datatype.addAttribute(ORM_TYPE_SQL, translateDatatype(datatype, "SQL",
         database, false));
@@ -145,8 +168,8 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
           ddlXmlFile = new File(root, schemaName + "-DdlUtils.xml");
           schema.ddlXmlWriter = FileOperators.createPrintWriter(ddlXmlFile);
         }
-        schema.ddlWriter = FileOperators.createPrintWriter(new File(root, schemaName
-            + "-createTables" + "-" + database + ".sql"));
+        schema.ddlWriter = FileOperators.createPrintWriter(new File(root,
+            schemaName + "-createTables" + "-" + database + ".sql"));
         schema.ddlIntegrityWriter = FileOperators.createPrintWriter(new File(
             root, schemaName + "-createIntegrity" + "-" + database + ".sql"));
       } catch (IOException e) {
@@ -281,8 +304,11 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
   /**
    * Returns the translated type name of the type of the property. The
    * translation of datatypes is handled.
-   * @param property property to infer
-   * @param language language of the requested mapping
+   * 
+   * @param property
+   *          property to infer
+   * @param language
+   *          language of the requested mapping
    * @return the component name of the property type
    * @pre (property != null) && (language != null)
    */
@@ -308,7 +334,9 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
   /**
    * Returns the SQL type representation of the type of the property. The
    * translation of datatypes is handled.
-   * @param property property to infer.
+   * 
+   * @param property
+   *          property to infer.
    * @return the component name of the property type.
    * @pre property != null
    */
@@ -324,8 +352,11 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
   /**
    * Returns the size parameter for the element. In case where no size is set
    * within the model then the default size of the type is used.
-   * @param element element which size parameter should be returned.
-   * @param index the index of the requested parameter.
+   * 
+   * @param element
+   *          element which size parameter should be returned.
+   * @param index
+   *          the index of the requested parameter.
    * @return the requested size parameter if defined otherwise "0".
    */
   public String getSizeParameter(MetaElement element, int index) {
@@ -361,7 +392,9 @@ public class OrmCartridge extends CartridgeImpl implements Cartridge {
 
   /**
    * Creates the context for a persistent class.
-   * @param clazz clazz which persistent context should be generated
+   * 
+   * @param clazz
+   *          clazz which persistent context should be generated
    * @return the computed context
    */
   protected VelocityContext createPersistencyContext(MetaClass clazz) {

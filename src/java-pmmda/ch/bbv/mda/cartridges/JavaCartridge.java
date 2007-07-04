@@ -12,17 +12,24 @@ import static ch.bbv.mda.cartridges.BoConstants.REFERENCE_CODE_STEREOTYPE;
 import java.util.Arrays;
 
 import ch.bbv.application.VersionId;
-import ch.bbv.mda.*;
+import ch.bbv.mda.ImportStatements;
+import ch.bbv.mda.MetaClass;
+import ch.bbv.mda.MetaClassifier;
+import ch.bbv.mda.MetaIndexedProperty;
+import ch.bbv.mda.MetaMember;
+import ch.bbv.mda.MetaProperty;
 import ch.bbv.mda.generators.Cartridge;
-import ch.bbv.mda.generators.CartridgeImpl;
+import ch.bbv.mda.generators.CartridgeImplJava;
+import ch.bbv.mda.generators.CartridgeInfo.Platform;
 
 /**
  * The Java cartridge provides mechanisms to generate source code artifacts for
  * the Java language.
+ * 
  * @author MarcelBaumann
  * @version $Revision$
  */
-public class JavaCartridge extends CartridgeImpl implements Cartridge {
+public class JavaCartridge extends CartridgeImplJava implements Cartridge {
   /**
    * The list of primitive types in Java, C and C++.
    */
@@ -31,9 +38,13 @@ public class JavaCartridge extends CartridgeImpl implements Cartridge {
 
   /**
    * Constructor fo the class.
-   * @param name name of the cartridge.
-   * @param abbreviation abbreviation of the cartridge.
-   * @param version version of the catridge.
+   * 
+   * @param name
+   *          name of the cartridge.
+   * @param abbreviation
+   *          abbreviation of the cartridge.
+   * @param version
+   *          version of the catridge.
    */
   public JavaCartridge(String name, String abbreviation, VersionId version) {
     super(name, abbreviation, version);
@@ -41,7 +52,9 @@ public class JavaCartridge extends CartridgeImpl implements Cartridge {
 
   /**
    * Returns true if the type of the property is a primitive build-in type.
-   * @param member member to check if it is primitive.
+   * 
+   * @param member
+   *          member to check if it is primitive.
    * @return true if the type is build-in otherwise false.
    * @pre (member != null) && (member.getClassifier() != null)
    */
@@ -57,7 +70,9 @@ public class JavaCartridge extends CartridgeImpl implements Cartridge {
 
   /**
    * Returns true if the property type is a data object.
-   * @param property property to evaluate.
+   * 
+   * @param property
+   *          property to evaluate.
    * @return true if the property type is a data object otherwise false.
    */
   public boolean isDataobject(MetaProperty property) {
@@ -67,7 +82,9 @@ public class JavaCartridge extends CartridgeImpl implements Cartridge {
 
   /**
    * Returns true if the property type is a reference code.
-   * @param property property to evaluate.
+   * 
+   * @param property
+   *          property to evaluate.
    * @return true if the property type is a reference code otherwise false.
    */
   public boolean isReferenceCode(MetaProperty property) {
@@ -78,7 +95,9 @@ public class JavaCartridge extends CartridgeImpl implements Cartridge {
   /**
    * Returns true if the property is ordered. An indexed property is ordered if
    * the "bo-key-class" is not null.
-   * @param property indexed property to evaluate.
+   * 
+   * @param property
+   *          indexed property to evaluate.
    * @return true if the property is ordered otherwise false.
    */
   public boolean isOrdered(MetaIndexedProperty property) {
@@ -88,11 +107,14 @@ public class JavaCartridge extends CartridgeImpl implements Cartridge {
 
   /**
    * Creates an import statement object.
-   * @param packageName name of the package for the class containing the import
+   * 
+   * @param packageName
+   *          name of the package for the class containing the import
    *          statements.
    * @return the import statement structure.
    */
   public ImportStatements createImports(String packageName) {
     return new ImportStatements(packageName);
   }
+
 }

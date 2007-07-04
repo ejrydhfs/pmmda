@@ -5,7 +5,20 @@
  */
 package ch.bbv.mda.cartridges;
 
-import static ch.bbv.mda.cartridges.CtoConstants.*;
+import static ch.bbv.mda.cartridges.CtoConstants.CTO_BO2DTO_CLASS;
+import static ch.bbv.mda.cartridges.CtoConstants.CTO_BO2DTO_PACKAGE;
+import static ch.bbv.mda.cartridges.CtoConstants.CTO_IDL_TYPE;
+import static ch.bbv.mda.cartridges.CtoConstants.CTO_LW2DTO_CLASS;
+import static ch.bbv.mda.cartridges.CtoConstants.CTO_LW2DTO_PACKAGE;
+import static ch.bbv.mda.cartridges.CtoConstants.CTO_LW_CLASS;
+import static ch.bbv.mda.cartridges.CtoConstants.CTO_MO_CLASS;
+import static ch.bbv.mda.cartridges.CtoConstants.CTO_PACKAGE_IDL;
+import static ch.bbv.mda.cartridges.CtoConstants.IDL_EXTENSION;
+import static ch.bbv.mda.cartridges.CtoConstants.IDL_POSTFIX_KEY;
+import static ch.bbv.mda.cartridges.CtoConstants.IDL_PREFIX_KEY;
+import static ch.bbv.mda.cartridges.CtoConstants.ROOT_IDL_KEY;
+import static ch.bbv.mda.cartridges.CtoConstants.ROOT_JAVA_KEY;
+import static ch.bbv.mda.cartridges.CtoConstants.TRANSFORM_PACKAGE_POSTFIX;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,10 +32,15 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.VelocityContext;
 
 import ch.bbv.application.VersionId;
-import ch.bbv.mda.*;
+import ch.bbv.mda.ImportStatements;
+import ch.bbv.mda.MetaClass;
+import ch.bbv.mda.MetaClassifier;
+import ch.bbv.mda.MetaDatatype;
+import ch.bbv.mda.MetaPackage;
+import ch.bbv.mda.MetaProperty;
 import ch.bbv.mda.generators.Cartridge;
 import ch.bbv.mda.generators.CartridgeFactory;
-import ch.bbv.mda.generators.CartridgeImpl;
+import ch.bbv.mda.generators.CartridgeImplJava;
 import ch.bbv.mda.operators.ModelOperators;
 
 import com.jgoodies.validation.ValidationResult;
@@ -37,10 +55,11 @@ import com.jgoodies.validation.ValidationResult;
  * </li>
  * <li>The IDL description for the preloaded codes sent through CORBA.</li>
  * </ul>
+ * 
  * @author Marcel Baumann
  * @version $Revision$
  */
-public class CtoCartridge extends CartridgeImpl implements Cartridge {
+public class CtoCartridge extends CartridgeImplJava implements Cartridge {
   /**
    * The prefix of the cartridge.
    */
@@ -119,7 +138,8 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
   }
 
   @Override
-  public void preProcessDatatype(MetaDatatype datatype, ValidationResult messages) {
+  public void preProcessDatatype(MetaDatatype datatype,
+      ValidationResult messages) {
     assert datatype != null;
     String idlType = java2idl.get(datatype
         .getAttribute(BoConstants.BO_TYPE_JAVA));
@@ -188,7 +208,8 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
         VelocityContext context = createContext(clazz);
         processTemplate(idlRoot, metaPackage.valueOfTag(CTO_PACKAGE_IDL), clazz
             .getAttribute(CTO_MO_CLASS)
-            + IDL_EXTENSION, retrieveTemplate("idl-dto-bo", null), context, messages);
+            + IDL_EXTENSION, retrieveTemplate("idl-dto-bo", null), context,
+            messages);
         processJavaTemplate(javaRoot, metaPackage
             .getAttribute(CTO_BO2DTO_PACKAGE), clazz
             .getAttribute(CTO_BO2DTO_CLASS), retrieveTemplate("java-bo2dto",
@@ -210,7 +231,9 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
 
   /**
    * Returns the IDL type of the type of the property.
-   * @param property property wich IDL representation is requested.
+   * 
+   * @param property
+   *          property wich IDL representation is requested.
    * @return the IDL type of the property.
    * @pre property != null
    */
@@ -227,8 +250,11 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
   /**
    * Creates the transform statement from a business object to a data transfer
    * object. The case of datatype is also handled.
-   * @param property property to transform
-   * @param param name of the object from which the value is retrieved
+   * 
+   * @param property
+   *          property to transform
+   * @param param
+   *          name of the object from which the value is retrieved
    * @return Java statement performing the transformation
    */
   public String getBo2DtoConversion(MetaProperty property, String param) {
@@ -268,8 +294,11 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
   /**
    * Creates the transform statement from a data transfer object to a business
    * object.
-   * @param property property to transform
-   * @param param name of the object from which the value is retrieved
+   * 
+   * @param property
+   *          property to transform
+   * @param param
+   *          name of the object from which the value is retrieved
    * @return Java statement performing the transformation
    */
   public String getDto2BoConversion(MetaProperty property, String param) {
@@ -306,9 +335,12 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
   /**
    * Generates the import statements necessary for the class definint the data
    * object type.
-   * @param clazz class which import statements should be infered.
-   * @param packageName name of the package containing the artifact associated
-   *          with the class.
+   * 
+   * @param clazz
+   *          class which import statements should be infered.
+   * @param packageName
+   *          name of the package containing the artifact associated with the
+   *          class.
    * @return list of all import statements for the class.
    * @pre (clazz != null) && (packageName != null)
    */
@@ -323,9 +355,12 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
   /**
    * Generates the import statements necessary for the class definint the data
    * object type.
-   * @param clazz class which import statements should be infered.
-   * @param packageName name of the package containing the artifact associated
-   *          with the class.
+   * 
+   * @param clazz
+   *          class which import statements should be infered.
+   * @param packageName
+   *          name of the package containing the artifact associated with the
+   *          class.
    * @return list of all import statements for the class.
    */
   public ImportStatements retrieveImportStatementsForIf(MetaClass clazz,
@@ -338,9 +373,12 @@ public class CtoCartridge extends CartridgeImpl implements Cartridge {
   /**
    * Generates the import statements necessary for the class definint the data
    * object type.
-   * @param clazz class which import statements should be infered.
-   * @param packageName name of the package containing the artifact associated
-   *          with the class.
+   * 
+   * @param clazz
+   *          class which import statements should be infered.
+   * @param packageName
+   *          name of the package containing the artifact associated with the
+   *          class.
    * @return list of all import statements for the class.
    */
   public ImportStatements retrieveImportStatementsForLw(MetaClass clazz,
