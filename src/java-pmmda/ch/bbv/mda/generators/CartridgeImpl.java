@@ -31,6 +31,7 @@ import org.apache.velocity.exception.ResourceNotFoundException;
 import ch.bbv.application.VersionId;
 import ch.bbv.dog.validation.Validator;
 import ch.bbv.mda.*;
+import ch.bbv.mda.generators.CartridgeInfo.Platform;
 import ch.bbv.mda.operators.FileOperators;
 import ch.bbv.mda.operators.ModelOperators;
 import ch.bbv.utilities.PropertyUtilities;
@@ -52,6 +53,7 @@ import com.jgoodies.validation.message.SimpleValidationMessage;
  * <li>The cartridge explores the model to find all ancestors of a class or an
  * interface.</li>
  * </ul>
+ * 
  * @author Marcel Baumann
  * @version $Revision$
  */
@@ -152,10 +154,14 @@ public abstract class CartridgeImpl implements Cartridge {
   private ModelOperators modelOperators;
 
   /**
-   * Constructor fo the class.
-   * @param name name of the cartridge.
-   * @param abbreviation abbreviation of the cartridge.
-   * @param version version of the catridge.
+   * Constructor for the class.
+   * 
+   * @param name
+   *          name of the cartridge.
+   * @param abbreviation
+   *          abbreviation of the cartridge.
+   * @param version
+   *          version of the catridge.
    */
   public CartridgeImpl(String name, String abbreviation, VersionId version) {
     this.name = name;
@@ -206,16 +212,19 @@ public abstract class CartridgeImpl implements Cartridge {
   public void postProcessModel(MetaModel model, ValidationResult messages) {
   }
 
-  public void preProcessDatatype(MetaDatatype datatype, ValidationResult messages) {
+  public void preProcessDatatype(MetaDatatype datatype,
+      ValidationResult messages) {
   }
 
-  public void preProcessPackage(MetaPackage metaPackage, ValidationResult messages) {
+  public void preProcessPackage(MetaPackage metaPackage,
+      ValidationResult messages) {
   }
 
   public void processPackage(MetaPackage metaPackage, ValidationResult messages) {
   }
 
-  public void postProcessPackage(MetaPackage metaPackage, ValidationResult messages) {
+  public void postProcessPackage(MetaPackage metaPackage,
+      ValidationResult messages) {
   }
 
   public void preProcessClass(MetaClass clazz, ValidationResult messages) {
@@ -228,7 +237,9 @@ public abstract class CartridgeImpl implements Cartridge {
    * Initializes the cartridges with the given properties. The XML cartridge
    * configuration file must be in the loader path of velocity in the directory
    * named with the prefix of the cartridge.
-   * @param properties properties used to initialize the cartridge.
+   * 
+   * @param properties
+   *          properties used to initialize the cartridge.
    */
   public void initialize(Properties properties) {
     this.properties = properties;
@@ -237,7 +248,8 @@ public abstract class CartridgeImpl implements Cartridge {
     try {
       StringBuilder buffer = new StringBuilder();
       buffer.append(configuration.getProperty("file.resource.loader.path"))
-          .append("/").append(getPrefix()).append("/").append("mappings.xml");
+          .append("/").append(Platform.getPath(getPlatform())).append("/")
+          .append(getPrefix()).append("/").append("mappings.xml");
       configuration.addConfiguration(new XMLConfiguration(buffer.toString()));
       addDependencies();
       addUndefinedProperties();
@@ -245,7 +257,7 @@ public abstract class CartridgeImpl implements Cartridge {
       log.error("Configuration file not found", e);
     }
   }
-  
+
   public List<Class> getClasses() {
     List<Class> classes = new ArrayList<Class>();
     StringBuilder buffer = new StringBuilder();
@@ -259,8 +271,8 @@ public abstract class CartridgeImpl implements Cartridge {
       String context = PropertyUtilities.getAttributeAt(configuration, buffer,
           i, "context");
       Class clazz = convertContext(context);
-      if(!classes.contains(clazz)) {
-      	classes.add(clazz);
+      if (!classes.contains(clazz)) {
+        classes.add(clazz);
       }
     }
     return classes;
@@ -288,7 +300,7 @@ public abstract class CartridgeImpl implements Cartridge {
     }
     return types;
   }
-  
+
   public List<TagDefinition> getAllTaggedValueTypes() {
     List<TagDefinition> types = new ArrayList<TagDefinition>();
     StringBuilder buffer = new StringBuilder();
@@ -335,6 +347,7 @@ public abstract class CartridgeImpl implements Cartridge {
 
   /**
    * Returns the configuration of cartridge.
+   * 
    * @return the properties of the configuration of the cartridge.
    */
   public CompositeConfiguration getConfiguration() {
@@ -343,7 +356,9 @@ public abstract class CartridgeImpl implements Cartridge {
 
   /**
    * Adds a cartridge being used in the cartridge to create the context.
-   * @param cartridge cartridge being used.
+   * 
+   * @param cartridge
+   *          cartridge being used.
    * @pre cartridge != null
    */
   protected void addCartridge(Cartridge cartridge) {
@@ -352,19 +367,28 @@ public abstract class CartridgeImpl implements Cartridge {
 
   /**
    * Process a velocity template for a Java artifact.
-   * @param root root directory where the artifact should be stored.
-   * @param packageName qualified package name of the artifact.
-   * @param classname name of the file containing the artifact.
-   * @param template velocity template to execute.
-   * @param context velocity context of the template.
-   * @param messages ValidationResults is the container where additional messages for the user are added.
-   * @throws IOException An exception occured when trying to create the file.
+   * 
+   * @param root
+   *          root directory where the artifact should be stored.
+   * @param packageName
+   *          qualified package name of the artifact.
+   * @param classname
+   *          name of the file containing the artifact.
+   * @param template
+   *          velocity template to execute.
+   * @param context
+   *          velocity context of the template.
+   * @param messages
+   *          ValidationResults is the container where additional messages for
+   *          the user are added.
+   * @throws IOException
+   *           An exception occured when trying to create the file.
    * @pre (root != null) && (packageName != null) && (classname != null) &&
    *      (template != null) && (context != null)
    */
   protected void processJavaTemplate(File root, String packageName,
-      String classname, Template template, VelocityContext context, ValidationResult messages)
-      throws IOException {
+      String classname, Template template, VelocityContext context,
+      ValidationResult messages) throws IOException {
     processTemplate(root, packageName, classname + JAVA_EXTENSION, template,
         context, messages);
   }
@@ -372,19 +396,28 @@ public abstract class CartridgeImpl implements Cartridge {
   /**
    * Processes a velocity template for an artifact. The new artifact is only
    * created if it is different from the old one to minimize spurious updates.
-   * @param root root directory where the artifact should be stored.
-   * @param packageName qualified package name of the artifact.
-   * @param filename name of the file containing the artifact.
-   * @param template velocity template to execute.
-   * @param context velocity context of the template.
-   * @param messages ValidationResults is the container where additional messages for the user are added.
-   * @throws IOException An exception occured when trying to create the file.
+   * 
+   * @param root
+   *          root directory where the artifact should be stored.
+   * @param packageName
+   *          qualified package name of the artifact.
+   * @param filename
+   *          name of the file containing the artifact.
+   * @param template
+   *          velocity template to execute.
+   * @param context
+   *          velocity context of the template.
+   * @param messages
+   *          ValidationResults is the container where additional messages for
+   *          the user are added.
+   * @throws IOException
+   *           An exception occured when trying to create the file.
    * @pre (root != null) && (packageName != null) && (filename != null) &&
    *      (template != null) && (context != null)
    */
   protected void processTemplate(File root, String packageName,
-      String filename, Template template, VelocityContext context, ValidationResult messages)
-      throws IOException {
+      String filename, Template template, VelocityContext context,
+      ValidationResult messages) throws IOException {
     assert (root != null) && (packageName != null) && (filename != null)
         && (template != null) && (context != null);
     File tempFile = File.createTempFile("pmMDA", null, null);
@@ -394,10 +427,12 @@ public abstract class CartridgeImpl implements Cartridge {
     writer.print(processTemplate(template, context, messages));
     writer.close();
     File file = FileOperators.createFile(root, packageName, filename);
-  	logTemplateProcessing(this, template, file, "{0} Catridge processing template {1} and generating file: {2}");
-  	String messageText = "{0} Catridge processing template {1} and generating file: {2}";
+    logTemplateProcessing(this, template, file,
+        "{0} Catridge processing template {1} and generating file: {2}");
+    String messageText = "{0} Catridge processing template {1} and generating file: {2}";
     if (!FileOperators.equals(tempFile, file)) {
-      System.gc(); // Attempt to solve the deletion failure: Currently there is no better method known to unlock files. 
+      System.gc(); // Attempt to solve the deletion failure: Currently
+      // there is no better method known to unlock files.
       file.delete();
       if (log.isInfoEnabled()) {
         log.info("writing file with new artifact content "
@@ -405,22 +440,30 @@ public abstract class CartridgeImpl implements Cartridge {
       }
       FileUtils.copyFile(tempFile, file);
     } else {
-    	messageText += " - output file has not been changed.";
+      messageText += " - output file has not been changed.";
     }
-    Object[] arguments = { this.getPrefix(), template.getName(), file.getAbsoluteFile() };
-  	SimpleValidationMessage message = new SimpleValidationMessage(MessageFormat.format(messageText, arguments));
-  	messages.add(message);
-    System.gc(); // Attempt to solve the deletion failure: Currently there is no better method known to unlock files. 
+    Object[] arguments = { this.getPrefix(), template.getName(),
+        file.getAbsoluteFile() };
+    SimpleValidationMessage message = new SimpleValidationMessage(MessageFormat
+        .format(messageText, arguments));
+    messages.add(message);
+    System.gc(); // Attempt to solve the deletion failure: Currently
+    // there is no better method known to unlock files.
     tempFile.delete();
   }
 
   /**
    * Creates a print writer for a Java class artifact.
-   * @param root root directory where the artifact should be stored.
-   * @param packageName qualified package name of the artifact.
-   * @param classname name of the Java class.
+   * 
+   * @param root
+   *          root directory where the artifact should be stored.
+   * @param packageName
+   *          qualified package name of the artifact.
+   * @param classname
+   *          name of the Java class.
    * @return the requested print writer.
-   * @throws IOException An exception occured when trying to create the file.
+   * @throws IOException
+   *           An exception occured when trying to create the file.
    * @pre (root != null) && (packageName != null) && (classname != null)
    */
   protected PrintWriter createJavaWriter(File root, String packageName,
@@ -431,14 +474,20 @@ public abstract class CartridgeImpl implements Cartridge {
 
   /**
    * Retrieves the template with the given name and language extension.
-   * @param name name of the template to retrieve.
-   * @param language language handled in the template.
+   * 
+   * @param name
+   *          name of the template to retrieve.
+   * @param language
+   *          language handled in the template.
    * @return the requested template if found otherwise null.
    * @pre (name != null) && (language != null)
    */
   protected Template retrieveTemplate(String name, String language) {
     Template template = null;
     StringBuilder buffer = new StringBuilder();
+    if (getPlatform() != null) {
+      buffer.append(Platform.getPath(getPlatform()) + "/");
+    }
     buffer.append(getPrefix()).append("/").append(name.toLowerCase());
     if (language != null) {
       buffer.append("-").append(language);
@@ -456,15 +505,31 @@ public abstract class CartridgeImpl implements Cartridge {
     return template;
   }
 
+  protected Template retrieveTemplate(String name, String language, String error) {
+    Template template = null;
+    try {
+      template = retrieveTemplate(name, null);
+    } catch (Exception e) {
+      log.fatal(error, e);
+    }
+    return template;
+  }
+
   /**
    * Processes the given velocity template with the given context.
-   * @param template template to process.
-   * @param context context of the template to process.
-   * @param messages ValidationResults is the container where additional messages for the user are added.
+   * 
+   * @param template
+   *          template to process.
+   * @param context
+   *          context of the template to process.
+   * @param messages
+   *          ValidationResults is the container where additional messages for
+   *          the user are added.
    * @return the result of the template processing as string.
    * @pre template != null && context != null
    */
-  protected String processTemplate(Template template, VelocityContext context, ValidationResult messages) {
+  protected String processTemplate(Template template, VelocityContext context,
+      ValidationResult messages) {
     assert (template != null) && (context != null);
     StringWriter writer = new StringWriter();
     try {
@@ -484,7 +549,9 @@ public abstract class CartridgeImpl implements Cartridge {
 
   /**
    * Creates the context for a model.
-   * @param model model which context should be created.
+   * 
+   * @param model
+   *          model which context should be created.
    * @return the requested velocity context.
    */
   protected VelocityContext createContext(MetaModel model) {
@@ -498,7 +565,9 @@ public abstract class CartridgeImpl implements Cartridge {
 
   /**
    * Creates the context for a package.
-   * @param metaPackage package to process.
+   * 
+   * @param metaPackage
+   *          package to process.
    * @return the requested velocity context.
    */
   protected VelocityContext createContext(MetaPackage metaPackage) {
@@ -515,7 +584,9 @@ public abstract class CartridgeImpl implements Cartridge {
   /**
    * Generates the context for a class, all its properties, imports, and own
    * context. All properties are eligible.
-   * @param clazz class to process.
+   * 
+   * @param clazz
+   *          class to process.
    * @return velocity velocity context for the meta class.
    */
   protected VelocityContext createContext(MetaClass clazz) {
@@ -535,9 +606,13 @@ public abstract class CartridgeImpl implements Cartridge {
 
   /**
    * Expands an identifier with its prefix and postfix.
-   * @param prefixKey key of the prefix defined in the context.
-   * @param identifier identifier to expand.
-   * @param postfixKey key of the prefix defined in the context.
+   * 
+   * @param prefixKey
+   *          key of the prefix defined in the context.
+   * @param identifier
+   *          identifier to expand.
+   * @param postfixKey
+   *          key of the prefix defined in the context.
    * @return expanded identifier.
    */
   protected String expandIdentifier(String prefixKey, String identifier,
@@ -557,12 +632,15 @@ public abstract class CartridgeImpl implements Cartridge {
   /**
    * Returns the mapping for the type to the target language. A mapping exists
    * only for datatypes.
-   * @param type type to map to a language construct.
-   * @param language language to map to. A cartridge can define multiple
-   *          mappings of datatypes and model types to target programming
-   *          language.
-   * @param concrete flag indicating if the implementation class should be
-   *          retrieve or not.
+   * 
+   * @param type
+   *          type to map to a language construct.
+   * @param language
+   *          language to map to. A cartridge can define multiple mappings of
+   *          datatypes and model types to target programming language.
+   * @param concrete
+   *          flag indicating if the implementation class should be retrieve or
+   *          not.
    * @return the requested mapping if found otherwise the qualified name of the
    *         type.
    * @pre (type != null) && (language != null)
@@ -578,13 +656,17 @@ public abstract class CartridgeImpl implements Cartridge {
   /**
    * Returns the mapping for the type to the target language. A mapping exists
    * only for datatypes.
-   * @param type type to map to a language construct.
-   * @param language language to map to. A cartridge can define multiple
-   *          mappings of datatypes and model types to target programming
-   *          language.
-   * @param dialect of language (e.g. "mssqlserver" for "sql" language).
-   * @param concrete flag indicating if the implementation class should be
-   *          retrieve or not.
+   * 
+   * @param type
+   *          type to map to a language construct.
+   * @param language
+   *          language to map to. A cartridge can define multiple mappings of
+   *          datatypes and model types to target programming language.
+   * @param dialect
+   *          of language (e.g. "mssqlserver" for "sql" language).
+   * @param concrete
+   *          flag indicating if the implementation class should be retrieve or
+   *          not.
    * @return the requested mapping if found otherwise the qualified name of the
    *         type.
    * @pre (type != null) && (language != null)
@@ -635,7 +717,9 @@ public abstract class CartridgeImpl implements Cartridge {
 
   /**
    * Converts the mapping type to the class representing it.
-   * @param type type to convert.
+   * 
+   * @param type
+   *          type to convert.
    * @return the class representing the type if found otherwise null.
    * @pre type != null
    */
@@ -656,7 +740,9 @@ public abstract class CartridgeImpl implements Cartridge {
 
   /**
    * Converts the mapping context to the class representing it
-   * @param context context to convert.
+   * 
+   * @param context
+   *          context to convert.
    * @return the class representing the context if defined otherwise null.
    * @pre context != null
    */
@@ -681,7 +767,9 @@ public abstract class CartridgeImpl implements Cartridge {
   /**
    * Returns true if the property should be generated, meaning that the
    * persistence tag is available and true.
-   * @param metaProperty property which persistency flag should be checked.
+   * 
+   * @param metaProperty
+   *          property which persistency flag should be checked.
    * @return true if the element should be generated otherwise false.
    */
   protected boolean isPersistent(MetaProperty metaProperty) {
@@ -698,9 +786,11 @@ public abstract class CartridgeImpl implements Cartridge {
 
   /**
    * Returns the root file defined in the property with the given key.
-   * @param key key of the property containing the root directory.
-   * @param defaultKey default key of the property containing the root
-   *          directory.
+   * 
+   * @param key
+   *          key of the property containing the root directory.
+   * @param defaultKey
+   *          default key of the property containing the root directory.
    * @return The root file if defined otherwise null.
    */
   protected final File getRoot(String key, String defaultKey) {
@@ -721,7 +811,9 @@ public abstract class CartridgeImpl implements Cartridge {
   /**
    * Opens the directory file with the given name. If necessary creates the
    * necessary directories if the directory does not exist in the file system
-   * @param directory name of the directory to create
+   * 
+   * @param directory
+   *          name of the directory to create
    * @return the requested directory as file.
    */
   protected File mkdirs(String directory) {
@@ -731,22 +823,28 @@ public abstract class CartridgeImpl implements Cartridge {
     }
     return dir;
   }
-  
+
   protected boolean getBooleanProperty(String property) {
-   return "true".equalsIgnoreCase(properties.getProperty(property)); 
+    return "true".equalsIgnoreCase(properties.getProperty(property));
   }
 
   /**
    * Logs information about processing a template.
-   * @param cartridge cartridge being applied
-   * @param template template being processed
-   * @param file file beeing generated
-   * @param message message to log
+   * 
+   * @param cartridge
+   *          cartridge being applied
+   * @param template
+   *          template being processed
+   * @param file
+   *          file beeing generated
+   * @param message
+   *          message to log
    */
-  private void logTemplateProcessing(Cartridge cartridge, Template template, File file,
-      String message) {
+  private void logTemplateProcessing(Cartridge cartridge, Template template,
+      File file, String message) {
     if (log.isInfoEnabled()) {
-      Object[] arguments = { cartridge.getPrefix(), template.getName(), file.getAbsoluteFile() };
+      Object[] arguments = { cartridge.getPrefix(), template.getName(),
+          file.getAbsoluteFile() };
       log.info(MessageFormat.format(message, arguments));
     }
   }

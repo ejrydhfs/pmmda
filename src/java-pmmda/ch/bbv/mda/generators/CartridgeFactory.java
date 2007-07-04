@@ -30,6 +30,7 @@ import com.jgoodies.validation.ValidationResult;
  * processing of models should be performed through the services of the factory.
  * Validation rules independant of a specific catridge are defined and
  * registered in the factory.
+ * 
  * @author MarcelBaumann
  * @version $Revision$
  */
@@ -91,6 +92,7 @@ public class CartridgeFactory extends ComponentImpl implements Component {
    * Returns the singleton instance of the class. The services of the
    * application framework are used to provide access to the single instance of
    * the class in the application.
+   * 
    * @return singleton instance of the class
    */
   public static CartridgeFactory getInstance() {
@@ -99,8 +101,11 @@ public class CartridgeFactory extends ComponentImpl implements Component {
 
   /**
    * Constructor of the class.
-   * @param name name of the instance as accessible through the locator
-   * @param properties properties used to configure the factory
+   * 
+   * @param name
+   *          name of the instance as accessible through the locator
+   * @param properties
+   *          properties used to configure the factory
    */
   public CartridgeFactory(String name, Properties properties) {
     super(name);
@@ -128,7 +133,9 @@ public class CartridgeFactory extends ComponentImpl implements Component {
   /**
    * All defined cartridges are read from the properties and created. The name
    * of the class is trimmed to avoid space problems with the property file.
-   * @throws ComponentException if an initialization problem occurs
+   * 
+   * @throws ComponentException
+   *           if an initialization problem occurs
    */
   public void initialize() throws ComponentException {
     super.initialize();
@@ -170,6 +177,7 @@ public class CartridgeFactory extends ComponentImpl implements Component {
 
   /**
    * Returns the item factory of the cartridge factory.
+   * 
    * @return the item factory of the cartridge factory
    */
   public ItemFactory getItemFactory() {
@@ -178,6 +186,7 @@ public class CartridgeFactory extends ComponentImpl implements Component {
 
   /**
    * Returns the properties of the factory and the registered cartridges.
+   * 
    * @return the requested properties
    */
   public Properties getProperties() {
@@ -187,6 +196,7 @@ public class CartridgeFactory extends ComponentImpl implements Component {
   /**
    * Returns the value of the validate flag indicating if the model should be
    * validated before artifacts are generated.
+   * 
    * @return the value of the flag
    */
   public boolean shouldValidate() {
@@ -196,6 +206,7 @@ public class CartridgeFactory extends ComponentImpl implements Component {
 
   /**
    * Returns the list of loaded and instantiated cartridges.
+   * 
    * @return list of instantiated cartridges
    */
   public Collection<Cartridge> getCartridges() {
@@ -204,6 +215,7 @@ public class CartridgeFactory extends ComponentImpl implements Component {
 
   /**
    * Returns the list of all defined cartridge descriptors.
+   * 
    * @return list of catridge descriptors
    */
   public Collection<CartridgeDescriptor> getCartridgeDescriptors() {
@@ -212,7 +224,9 @@ public class CartridgeFactory extends ComponentImpl implements Component {
 
   /**
    * Returns the cartridge with the given abbreviation.
-   * @param abbreviation abbreviation of the requested cartridge
+   * 
+   * @param abbreviation
+   *          abbreviation of the requested cartridge
    * @return the requested cartridge if found otherwise null
    * @pre abbreviation != null
    */
@@ -226,12 +240,15 @@ public class CartridgeFactory extends ComponentImpl implements Component {
    * are communicated to the meta factory for MDA elements. All newly created or
    * read elements will contains all mandatory tagged values either with the
    * default value or the one defined by the user. Obsolete tags are removed.
-   * @param cartridge cartridge to register
+   * 
+   * @param cartridge
+   *          cartridge to register
    * @pre cartridge != null
    */
   public void register(Cartridge cartridge) {
     assert cartridge != null;
     cartridge.initialize(properties);
+
     cartridges.put(cartridge.getPrefix(), cartridge);
     registerTaggedValueTypes(cartridge, MetaModel.class);
     registerTaggedValueTypes(cartridge, MetaPackage.class);
@@ -250,7 +267,9 @@ public class CartridgeFactory extends ComponentImpl implements Component {
 
   /**
    * Registers a listener in the factory.
-   * @param listener listener to register
+   * 
+   * @param listener
+   *          listener to register
    * @pre listener != null
    * @see #unregister(CartridgeListener)
    */
@@ -263,7 +282,9 @@ public class CartridgeFactory extends ComponentImpl implements Component {
 
   /**
    * Unregisters a listener from the factory.
-   * @param listener listener to unregister
+   * 
+   * @param listener
+   *          listener to unregister
    * @pre listener != null
    * @see #register(CartridgeListener)
    */
@@ -275,7 +296,9 @@ public class CartridgeFactory extends ComponentImpl implements Component {
   /**
    * Returns the list of cartridges and their dependancies sorted using the
    * dependency depth. A cartridge is dependant of itself.
-   * @param cartridges cartridges to process
+   * 
+   * @param cartridges
+   *          cartridges to process
    * @return the list of dependant cartridges
    * @pre cartridges != null
    */
@@ -290,12 +313,18 @@ public class CartridgeFactory extends ComponentImpl implements Component {
 
   /**
    * Executes the cartridge on the given model.
-   * @param cartridge cartridge to execute on the model
-   * @param model model to process
-   * @param messages ValidationResults is the container where additional messages for the user are added.
+   * 
+   * @param cartridge
+   *          cartridge to execute on the model
+   * @param model
+   *          model to process
+   * @param messages
+   *          ValidationResults is the container where additional messages for
+   *          the user are added.
    * @pre (cartridge != null) && (model != null)
    */
-  public void execute(Cartridge cartridge, MetaModel model, ValidationResult messages) {
+  public void execute(Cartridge cartridge, MetaModel model,
+      ValidationResult messages) {
     assert (cartridge != null) && (model != null);
     preprocess(cartridge, model, messages);
     process(cartridge, model, messages);
@@ -303,12 +332,18 @@ public class CartridgeFactory extends ComponentImpl implements Component {
 
   /**
    * Executes the cartridge on the given model.
-   * @param cartridge cartridge to execute on the model
-   * @param metaPackage package to process
-   * @param messages ValidationResults is the container where additional messages for the user are added.
+   * 
+   * @param cartridge
+   *          cartridge to execute on the model
+   * @param metaPackage
+   *          package to process
+   * @param messages
+   *          ValidationResults is the container where additional messages for
+   *          the user are added.
    * @pre (cartridge != null) && (metaPackage != null)
    */
-  public void execute(Cartridge cartridge, MetaPackage metaPackage, ValidationResult messages) {
+  public void execute(Cartridge cartridge, MetaPackage metaPackage,
+      ValidationResult messages) {
     assert (cartridge != null) && (metaPackage != null);
     if (metaPackage.isSystem()) {
       return;
@@ -319,43 +354,56 @@ public class CartridgeFactory extends ComponentImpl implements Component {
 
   /**
    * Executes the cartridge on the given class.
-   * @param cartridge cartridge to execute
-   * @param clazz class to process
-   * @param messages ValidationResults is the container where additional messages for the user are added.
+   * 
+   * @param cartridge
+   *          cartridge to execute
+   * @param clazz
+   *          class to process
+   * @param messages
+   *          ValidationResults is the container where additional messages for
+   *          the user are added.
    * @pre (cartridge != null) && (clazz != null)
    */
-  public void execute(Cartridge cartridge, MetaClass clazz, ValidationResult messages) {
+  public void execute(Cartridge cartridge, MetaClass clazz,
+      ValidationResult messages) {
     assert (cartridge != null) && (clazz != null);
     if (!clazz.isSystem()) {
       preprocess(cartridge, clazz, messages);
       process(cartridge, clazz, messages);
     }
   }
-  
+
   /**
    * Returns all classes treated in any cartridge registered with this factory.
+   * 
    * @return List<Class> being treated by any cartridge.
    */
   public List<Class> getClasses() {
     List<Class> classes = new ArrayList<Class>();
-  	for(Cartridge cartridge : getCartridges()) {
-  		List<Class> cartridgeClasses = cartridge.getClasses();
-  		for(Class clazz : cartridgeClasses) {
-  			if(!classes.contains(clazz)) {
-  				classes.add(clazz);
-  			}
-  		}
-  	}
-  	return classes;
+    for (Cartridge cartridge : getCartridges()) {
+      List<Class> cartridgeClasses = cartridge.getClasses();
+      for (Class clazz : cartridgeClasses) {
+        if (!classes.contains(clazz)) {
+          classes.add(clazz);
+        }
+      }
+    }
+    return classes;
   }
 
   /**
    * Processes the cartridge on the given model.
-   * @param cartridge cartridge to execute on the model
-   * @param model model to process
-   * @param messages ValidationResults is the container where additional messages for the user are added.
+   * 
+   * @param cartridge
+   *          cartridge to execute on the model
+   * @param model
+   *          model to process
+   * @param messages
+   *          ValidationResults is the container where additional messages for
+   *          the user are added.
    */
-  protected void process(Cartridge cartridge, MetaModel model, ValidationResult messages) {
+  protected void process(Cartridge cartridge, MetaModel model,
+      ValidationResult messages) {
     logProgressInfo(cartridge, model, "{0} Catridge processing model {1}");
     cartridge.processModel(model, messages);
 
@@ -371,11 +419,17 @@ public class CartridgeFactory extends ComponentImpl implements Component {
 
   /**
    * Processes the cartridge on the given model.
-   * @param cartridge cartridge to execute on the model.
-   * @param metaPackage package to process.
-   * @param messages ValidationResults is the container where additional messages for the user are added.
+   * 
+   * @param cartridge
+   *          cartridge to execute on the model.
+   * @param metaPackage
+   *          package to process.
+   * @param messages
+   *          ValidationResults is the container where additional messages for
+   *          the user are added.
    */
-  protected void process(Cartridge cartridge, MetaPackage metaPackage, ValidationResult messages) {
+  protected void process(Cartridge cartridge, MetaPackage metaPackage,
+      ValidationResult messages) {
     assert ((cartridge != null) && (metaPackage != null));
     if (metaPackage.isSystem()) {
       return;
@@ -394,12 +448,18 @@ public class CartridgeFactory extends ComponentImpl implements Component {
 
   /**
    * Processes the cartridge on the given model.
-   * @param cartridge cartridge to execute on the model.
-   * @param clazz item to process.
-   * @param messages ValidationResults is the container where additional messages for the user are added.
+   * 
+   * @param cartridge
+   *          cartridge to execute on the model.
+   * @param clazz
+   *          item to process.
+   * @param messages
+   *          ValidationResults is the container where additional messages for
+   *          the user are added.
    * @pre (cartridge != null) && (clazz != null)
    */
-  protected void process(Cartridge cartridge, MetaClass clazz, ValidationResult messages) {
+  protected void process(Cartridge cartridge, MetaClass clazz,
+      ValidationResult messages) {
     assert (cartridge != null) && (clazz != null);
     if (!clazz.isSystem()) {
       logProgressInfo(cartridge, clazz, "{0} Catridge processing class {1}");
@@ -409,11 +469,17 @@ public class CartridgeFactory extends ComponentImpl implements Component {
 
   /**
    * Preprocesses the cartridge on the given element.
-   * @param cartridge cartridge being preprocessed
-   * @param model element being preprocessed
-   * @param messages ValidationResults is the container where additional messages for the user are added.
+   * 
+   * @param cartridge
+   *          cartridge being preprocessed
+   * @param model
+   *          element being preprocessed
+   * @param messages
+   *          ValidationResults is the container where additional messages for
+   *          the user are added.
    */
-  protected void preprocess(Cartridge cartridge, MetaModel model, ValidationResult messages) {
+  protected void preprocess(Cartridge cartridge, MetaModel model,
+      ValidationResult messages) {
     for (Cartridge supplier : cartridge.getUsedCartridges()) {
       supplier.preProcessModel(model, messages);
     }
@@ -435,11 +501,17 @@ public class CartridgeFactory extends ComponentImpl implements Component {
 
   /**
    * Preprocesses the cartridge on the given element.
-   * @param cartridge catridge being processed
-   * @param datatype element being processed
-   * @param messages ValidationResults is the container where additional messages for the user are added.
+   * 
+   * @param cartridge
+   *          catridge being processed
+   * @param datatype
+   *          element being processed
+   * @param messages
+   *          ValidationResults is the container where additional messages for
+   *          the user are added.
    */
-  protected void preprocess(Cartridge cartridge, MetaDatatype datatype, ValidationResult messages) {
+  protected void preprocess(Cartridge cartridge, MetaDatatype datatype,
+      ValidationResult messages) {
     for (Cartridge supplier : cartridge.getUsedCartridges()) {
       supplier.preProcessDatatype(datatype, messages);
     }
@@ -451,11 +523,17 @@ public class CartridgeFactory extends ComponentImpl implements Component {
 
   /**
    * Preprocesses the cartridge on the given element.
-   * @param cartridge cartridge being preprocessed
-   * @param metaPackage element being preprocessed
-   * @param messages ValidationResults is the container where additional messages for the user are added.
+   * 
+   * @param cartridge
+   *          cartridge being preprocessed
+   * @param metaPackage
+   *          element being preprocessed
+   * @param messages
+   *          ValidationResults is the container where additional messages for
+   *          the user are added.
    */
-  protected void preprocess(Cartridge cartridge, MetaPackage metaPackage, ValidationResult messages) {
+  protected void preprocess(Cartridge cartridge, MetaPackage metaPackage,
+      ValidationResult messages) {
     if (metaPackage.isSystem()) {
       return;
     }
@@ -475,11 +553,17 @@ public class CartridgeFactory extends ComponentImpl implements Component {
 
   /**
    * Preprocesses the cartridge on the given element.
-   * @param cartridge cartridge being preprocessed
-   * @param clazz element being preprocessed
-   * @param messages ValidationResults is the container where additional messages for the user are added.
+   * 
+   * @param cartridge
+   *          cartridge being preprocessed
+   * @param clazz
+   *          element being preprocessed
+   * @param messages
+   *          ValidationResults is the container where additional messages for
+   *          the user are added.
    */
-  protected void preprocess(Cartridge cartridge, MetaClass clazz, ValidationResult messages) {
+  protected void preprocess(Cartridge cartridge, MetaClass clazz,
+      ValidationResult messages) {
     if (clazz.isSystem()) {
       return;
     }
@@ -494,8 +578,11 @@ public class CartridgeFactory extends ComponentImpl implements Component {
   /**
    * Registers the mandatory tags for the given meta element class needed in the
    * cartrige.
-   * @param cartridge cartridge to register
-   * @param clazz meta element class to complete with tags
+   * 
+   * @param cartridge
+   *          cartridge to register
+   * @param clazz
+   *          meta element class to complete with tags
    */
   protected void registerTaggedValueTypes(Cartridge cartridge, Class clazz) {
     getItemFactory().registerTypes(clazz, cartridge.getTaggedValueTypes(clazz));
@@ -504,8 +591,11 @@ public class CartridgeFactory extends ComponentImpl implements Component {
   /**
    * Registers the obsolete tags for the given meta element class needed in the
    * cartrige.
-   * @param cartridge cartridge to register
-   * @param clazz meta element class to complete with tags
+   * 
+   * @param cartridge
+   *          cartridge to register
+   * @param clazz
+   *          meta element class to complete with tags
    */
   protected void registerObsoleteTaggedValueTypes(Cartridge cartridge,
       Class clazz) {
@@ -515,9 +605,13 @@ public class CartridgeFactory extends ComponentImpl implements Component {
 
   /**
    * Logs the progess information during processing.
-   * @param cartridge cartridge being applied
-   * @param element element being processed
-   * @param message message to log
+   * 
+   * @param cartridge
+   *          cartridge being applied
+   * @param element
+   *          element being processed
+   * @param message
+   *          message to log
    */
   private void logProgressInfo(Cartridge cartridge, MetaElement element,
       String message) {
@@ -529,8 +623,11 @@ public class CartridgeFactory extends ComponentImpl implements Component {
 
   /**
    * Returns the list of dependant cartridges of the given cartridge.
-   * @param cartridge catridge to process
-   * @param dependants list of dependant cartridges
+   * 
+   * @param cartridge
+   *          catridge to process
+   * @param dependants
+   *          list of dependant cartridges
    */
   private void generateOrder(Cartridge cartridge,
       Collection<Cartridge> dependants) {
@@ -546,8 +643,11 @@ public class CartridgeFactory extends ComponentImpl implements Component {
 
   /**
    * Adds a property with a default value to the properties if it is missing.
-   * @param property property name to add if not defined
-   * @param value value of the property to add if not defined
+   * 
+   * @param property
+   *          property name to add if not defined
+   * @param value
+   *          value of the property to add if not defined
    * @pre (properties != null) && (property != null)
    * @post properties.getProperty(property) != null
    */
