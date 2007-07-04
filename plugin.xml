@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.1.2"?>
+<plugin
+   id="ch.bbv.mda"
+   name="%pluginName"
+   version="3.1.3"
+   provider-name="%providerName">
+
+    <runtime>
+	<library name="lib/antlr-2.7.5.jar"><export name="*"/></library>
+	<library name="lib/antlr_compiletime-2.7.3.jar"><export name="*"/></library>
+	<library name="lib/bsh-2.0b4.jar"><export name="*"/></library>
+	<library name="lib/commons-beanutils-1.7.0.jar"><export name="*"/></library>
+	<library name="lib/commons-betwixt-0.8-dev.jar"><export name="*"/></library>
+	<library name="lib/commons-cli-1.0.jar"><export name="*"/></library>
+	<library name="lib/commons-codec-1.3.jar"><export name="*"/></library>
+	<library name="lib/commons-collections-3.1.jar"><export name="*"/></library>
+	<library name="lib/commons-configuration-1.2.jar"><export name="*"/></library>
+	<library name="lib/commons-dbcp-1.2.1.jar"><export name="*"/></library>
+	<library name="lib/commons-digester-1.7.jar"><export name="*"/></library>
+	<library name="lib/commons-functor.jar"><export name="*"/></library>
+	<library name="lib/commons-io-1.2.jar"><export name="*"/></library>
+	<library name="lib/commons-lang-2.1.jar"><export name="*"/></library>
+	<library name="lib/commons-logging-1.0.4.jar"><export name="*"/></library>
+	<library name="lib/commons-logging-api-1.0.4.jar"><export name="*"/></library>
+	<library name="lib/commons-pool-1.2.jar"><export name="*"/></library>
+	<library name="lib/commons-transaction-1.1.jar"><export name="*"/></library>
+	<library name="lib/db-ojb-1.0.4.jar"><export name="*"/></library>
+	<library name="lib/dbunit-2.1.jar"><export name="*"/></library>
+	<library name="lib/ddlUtils-1.0-dev.jar"><export name="*"/></library>
+	<library name="lib/derby-10.1.2.1.jar"><export name="*"/></library>
+	<library name="lib/derbytools-10.1.2.1.jar"><export name="*"/></library>
+	<library name="lib/dnsns.jar"><export name="*"/></library>
+	<library name="lib/dom4j-1.4.jar"><export name="*"/></library>
+	<library name="lib/dtdparser-1.5.1.jar"><export name="*"/></library>
+	<library name="lib/flexdock-0.4.0.jar"><export name="*"/></library>
+	<library name="lib/forms-1.0.6.jar"><export name="*"/></library>
+	<library name="lib/glazedlists-1.5.0.jar"><export name="*"/></library>
+	<library name="lib/hibernate-3.1.jar"><export name="*"/></library>
+	<library name="lib/hsqldb-1.7.1.jar"><export name="*"/></library>
+	<library name="lib/jakarta-oro-2.0.8.jar"><export name="*"/></library>
+	<library name="lib/jakarta-regexp-1.3.jar"><export name="*"/></library>
+	<library name="lib/jbossall-client.jar"><export name="*"/></library>
+	<library name="lib/jboss-jmx.jar"><export name="*"/></library>
+	<library name="lib/jbossmq.jar"><export name="*"/></library>
+	<library name="lib/jcalendar-1.2.2.jar"><export name="*"/></library>
+	<library name="lib/jcs.jar"><export name="*"/></library>
+	<library name="lib/jdom-1.0.jar"><export name="*"/></library>
+	<library name="lib/jgraph-5.7.4.4.jar"><export name="*"/></library>
+	<library name="lib/jgraphaddons-1.0.8.jar"><export name="*"/></library>
+	<library name="lib/jmi.jar"><export name="*"/></library>
+	<library name="lib/jmiutils.jar"><export name="*"/></library>
+	<library name="lib/junit-3.8.2.jar"><export name="*"/></library>
+	<library name="lib/mdrapi.jar"><export name="*"/></library>
+	<library name="lib/mof.jar"><export name="*"/></library>
+	<library name="lib/mysql-connector-3.1.12.jar"><export name="*"/></library>
+	<library name="lib/nbmdr.jar"><export name="*"/></library>
+	<library name="lib/ngen.jar"><export name="*"/></library>
+	<library name="lib/nsuml.jar"><export name="*"/></library>
+	<library name="lib/openide-util.jar"><export name="*"/></library>
+	<library name="lib/p6spy.jar"><export name="*"/></library>
+	<library name="lib/stax-1.1.2-dev.jar"><export name="*"/></library>
+	<library name="lib/stax-api-1.0.jar"><export name="*"/></library>
+	<library name="lib/uml-1.4.jar"><export name="*"/></library>
+	<library name="lib/validation-1.1.jar"><export name="*"/></library>
+	<library name="lib/velocity-1.4.jar"><export name="*"/></library>
+	<library name="lib/velocity-dep-1.4.jar"><export name="*"/></library>
+	<library name="lib/XmlNode.jar"><export name="*"/></library>
+	<library name="lib/xpp3-1.1.3.4.jar"><export name="*"/></library>
+	<library name="lib/xstream-1.1.2.jar"><export name="*"/></library>
+ <library name="classes/">
+    <export
+          name="*">
+    </export>
+ </library>
+    </runtime>
+    <requires>
+        <import plugin="org.eclipse.core.runtime"/>
+        <import plugin="org.eclipse.emf.ecore"/>
+        <import plugin="org.eclipse.emf.codegen"/>
+        <import plugin="org.eclipse.emf.codegen.ecore"/>
+        <import plugin="org.eclipse.emf.importer.rose"/>
+    </requires>
+    <extension
+        id="MdaEclipseApplication"
+        point="org.eclipse.core.runtime.applications">
+        <application>
+            <run
+                class="ch.bbv.mda.ui.eclipse.MdaEclipseApplication">
+            </run>
+        </application>
+    </extension>
+</plugin>
