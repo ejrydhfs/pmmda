@@ -71,6 +71,11 @@
 	<library name="lib/XmlNode.jar"><export name="*"/></library>
 	<library name="lib/xpp3-1.1.3.4.jar"><export name="*"/></library>
 	<library name="lib/xstream-1.1.2.jar"><export name="*"/></library>
+ <library name="classes/">
+    <export
+          name="*">
+    </export>
+ </library>
     </runtime>
     <requires>
         <import plugin="org.eclipse.core.runtime"/>
