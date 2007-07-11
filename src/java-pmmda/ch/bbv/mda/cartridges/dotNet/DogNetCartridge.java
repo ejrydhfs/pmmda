@@ -8,6 +8,24 @@
 
 package ch.bbv.mda.cartridges.dotNet;
 
+import static ch.bbv.mda.cartridges.dotNet.NetCartridgeConstants.DATA_OBJECTS_CLASS_POSTFIX_KEY;
+import static ch.bbv.mda.cartridges.dotNet.NetCartridgeConstants.DATA_OBJECTS_CLASS_PREFIX_KEY;
+import static ch.bbv.mda.cartridges.dotNet.NetCartridgeConstants.DATA_OBJECTS_PACKAGE_POSTFIX_KEY;
+import static ch.bbv.mda.cartridges.dotNet.NetCartridgeConstants.DOG_NET_CODES_VM;
+import static ch.bbv.mda.cartridges.dotNet.NetCartridgeConstants.DOG_NET_DO_FACTORY_VM;
+import static ch.bbv.mda.cartridges.dotNet.NetCartridgeConstants.DOG_NET_DO_VM;
+import static ch.bbv.mda.cartridges.dotNet.NetCartridgeConstants.DOG_NET_LW_VISITOR_CLASS_VM;
+import static ch.bbv.mda.cartridges.dotNet.NetCartridgeConstants.DOG_NET_LW_VISITOR_INTERFACE_VM;
+import static ch.bbv.mda.cartridges.dotNet.NetCartridgeConstants.DOG_NET_LW_VM;
+import static ch.bbv.mda.cartridges.dotNet.NetCartridgeConstants.INTERFACE_CLASS_POSTFIX_KEY;
+import static ch.bbv.mda.cartridges.dotNet.NetCartridgeConstants.INTERFACE_CLASS_PREFIX_KEY;
+import static ch.bbv.mda.cartridges.dotNet.NetCartridgeConstants.INTERFACE_PACKAGE_POSTFIX_KEY;
+import static ch.bbv.mda.cartridges.dotNet.NetCartridgeConstants.LIGHTWEIGHT_OBJECTS_CLASS_POSTFIX_KEY;
+import static ch.bbv.mda.cartridges.dotNet.NetCartridgeConstants.LIGHTWEIGHT_OBJECTS_CLASS_PREFIX_KEY;
+import static ch.bbv.mda.cartridges.dotNet.NetCartridgeConstants.LIGHTWEIGHT_OBJECTS_PACKAGE_POSTFIX_KEY;
+import static ch.bbv.mda.cartridges.dotNet.NetCartridgeConstants.META_DATA_ROOT_FOLDER_KEY;
+import static ch.bbv.mda.cartridges.dotNet.NetCartridgeConstants.ROOT_FOLDER_KEY;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
@@ -21,7 +39,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.Velocity;
 
 import ch.bbv.application.VersionId;
 import ch.bbv.mda.MetaClass;
@@ -34,7 +51,6 @@ import ch.bbv.mda.cartridges.BoConstants;
 import ch.bbv.mda.cartridges.dotNet.validation.RulesFactory;
 import ch.bbv.mda.generators.Cartridge;
 import ch.bbv.mda.generators.CartridgeImplNet;
-import ch.bbv.mda.generators.CartridgeInfo.Platform;
 import ch.bbv.mda.operators.FileOperators;
 import ch.bbv.mda.ui.TaggedValuesView;
 
@@ -64,25 +80,8 @@ import com.jgoodies.validation.ValidationResult;
  * @author Mikkala Pedersen
  */
 public class DogNetCartridge extends CartridgeImplNet implements Cartridge {
-  private static final String DOG_NET_DO_FACTORY_VM = "dog-net-do-factory";
-  private static final String DOG_NET_CODES_VM = "dog-net-codes";
-  private static final String DOG_NET_LW_VISITOR_CLASS_VM = "dog-net-lw-visitor-class";
-  private static final String DOG_NET_LW_VISITOR_INTERFACE_VM = "dog-net-lw-visitor-interface";
-  private static final String DOG_NET_LW_VM = "dog-net-lw-class";
-  private static final String DOG_NET_DO_VM = "dog-net-do-class";
-  private static final String INTERFACE_PACKAGE_POSTFIX_KEY = "net.dog.interface-package-postfix";
-  public static final String DATA_OBJECTS_PACKAGE_POSTFIX_KEY = "net.dog.data-objects-package-postfix";
-  private static final String LIGHTWEIGHT_OBJECTS_PACKAGE_POSTFIX_KEY = "net.dog.lightweight-objects-package-postfix";
-  private static final String INTERFACE_CLASS_PREFIX_KEY = "net.dog.interface-class-prefix";
-  public static final String DATA_OBJECTS_CLASS_PREFIX_KEY = "net.dog.data-objects-class-prefix";
-  private static final String LIGHTWEIGHT_OBJECTS_CLASS_PREFIX_KEY = "net.dog.lightweight-objects-class-prefix";
-  private static final String INTERFACE_CLASS_POSTFIX_KEY = "net.dog.interface-class-postfix";
-  public static final String DATA_OBJECTS_CLASS_POSTFIX_KEY = "net.dog.data-objects-class-postfix";
-  private static final String LIGHTWEIGHT_OBJECTS_CLASS_POSTFIX_KEY = "net.dog.lightweight-objects-class-postfix";
-  private static final String ROOT_FOLDER_KEY = "dog.net.cartridge.root-folder";
-  private static final String META_DATA_ROOT_FOLDER_KEY = "net.metadata.root-folder";
 
-  private static final String COLLECTION_TYPE_TAG = ".net-collection-type";
+  public static final String COLLECTION_TYPE_TAG = ".net-collection-type";
   public static final String IGNORE_ELEMENT_TAG = ".net-ignore";
 
   /**

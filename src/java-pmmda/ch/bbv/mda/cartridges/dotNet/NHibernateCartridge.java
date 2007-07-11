@@ -55,19 +55,9 @@ import com.jgoodies.validation.ValidationResult;
 public class NHibernateCartridge extends CartridgeImplNet implements Cartridge {
   private static final String HIBERNATE_SERIALIZABLE = "Serializable";
 
-  private static final String DATA_OBJECTS_PACKAGE_POSTFIX_KEY = "net.dog.data-objects-package-postfix";
-  private static final String DATA_OBJECTS_CLASS_PREFIX_KEY = "net.dog.data-objects-class-prefix";
-  private static final String DATA_OBJECTS_CLASS_POSTFIX_KEY = "net.dog.data-objects-class-postfix";
-
-  private static final String INHERITANCE_STRATEGY_TAG = ".net-nhibernate-inheritance-strategy";
-  private static final String NET_ASSEMBLY_TAG = ".net-nhibernate-assembly";
-  private static final String COLUMN_HIBERNATE_TYPE_TAG = ".net-nhibernate-column-hibernate-type";
-
-  private static final String TABLE_PREFIX_KEY = "net.nhibernate.table-prefix";
-  private static final String TABLE_POSTFIX_KEY = "net.nhibernate.table-postfix";
-  private static final String COLUMN_PREFIX_KEY = "net.nhibernate.column-prefix";
-  private static final String COLUMN_POSTFIX_KEY = "net.nhibernat.column-postfix";
-  private static final String SOURCE_ROOT_FOLDER_KEY = "net.nhibernate.root-folder";
+  public static final String INHERITANCE_STRATEGY_TAG = ".net-nhibernate-inheritance-strategy";
+  public static final String NET_ASSEMBLY_TAG = ".net-nhibernate-assembly";
+  public static final String COLUMN_HIBERNATE_TYPE_TAG = ".net-nhibernate-column-hibernate-type";
 
   private static final String TABLE_NAME_ATTRIBUTE = ".net-nhibernate-table-name";
   private static final String COLUMN_NAME_ATTRIBUTE = ".net-nhibernate-column-name";
@@ -167,8 +157,11 @@ public class NHibernateCartridge extends CartridgeImplNet implements Cartridge {
     Properties context = getContext();
     StringBuffer buffer = new StringBuffer();
     String qualifiedName = metaPackage.getQualifiedName();
-    buffer.append(qualifiedName).append(
-        context.getProperty(DATA_OBJECTS_PACKAGE_POSTFIX_KEY));
+    buffer
+        .append(qualifiedName)
+        .append(
+            context
+                .getProperty(NetCartridgeConstants.DATA_OBJECTS_PACKAGE_POSTFIX_KEY));
     metaPackage.addAttribute(DATA_OBJECTS_PACKAGE_ATTRIBUTE, buffer.toString());
 
     super.preProcessPackage(metaPackage, messages);
@@ -182,8 +175,14 @@ public class NHibernateCartridge extends CartridgeImplNet implements Cartridge {
     Properties context = getContext();
     String name = clazz.getName();
     StringBuffer buffer = new StringBuffer();
-    buffer.append(context.getProperty(DATA_OBJECTS_CLASS_PREFIX_KEY)).append(
-        name).append(context.getProperty(DATA_OBJECTS_CLASS_POSTFIX_KEY));
+    buffer
+        .append(
+            context
+                .getProperty(NetCartridgeConstants.DATA_OBJECTS_CLASS_PREFIX_KEY))
+        .append(name)
+        .append(
+            context
+                .getProperty(NetCartridgeConstants.DATA_OBJECTS_CLASS_POSTFIX_KEY));
     clazz.addAttribute(DATA_OBJECT_CLASS_NAME_ATTRIBUTE, buffer.toString());
     setAttributeValue(clazz, OrmConstants.TABLE_NAME, TABLE_NAME_ATTRIBUTE,
         clazz.getName() + "Table");
@@ -336,7 +335,7 @@ public class NHibernateCartridge extends CartridgeImplNet implements Cartridge {
     super.processModel(metaModel, messages);
     // get the root folder from the properies
     File rootDirectory = new File(getContext().getProperty(
-        SOURCE_ROOT_FOLDER_KEY));
+        NetCartridgeConstants.SOURCE_ROOT_FOLDER_KEY));
     if (!rootDirectory.exists()) {
       rootDirectory.mkdirs();
     }

@@ -107,7 +107,7 @@ public class DogNetGUICartridge extends CartridgeImplNet implements Cartridge {
     Properties context = getContext();
     StringBuffer buffer = new StringBuffer();
     buffer.append(metaPackage.getQualifiedName()).append(
-        context.getProperty(DogNetCartridge.DATA_OBJECTS_PACKAGE_POSTFIX_KEY));
+        context.getProperty(NetCartridgeConstants.DATA_OBJECTS_PACKAGE_POSTFIX_KEY));
     metaPackage.addAttribute(DogNetCartridge.DATA_OBJECTS_PACKAGE_ATTRIBUTE,
         buffer.toString());
 
@@ -126,10 +126,10 @@ public class DogNetGUICartridge extends CartridgeImplNet implements Cartridge {
     StringBuffer buffer = new StringBuffer();
     buffer
         .append(
-            context.getProperty(DogNetCartridge.DATA_OBJECTS_CLASS_PREFIX_KEY))
+            context.getProperty(NetCartridgeConstants.DATA_OBJECTS_CLASS_PREFIX_KEY))
         .append(name)
         .append(
-            context.getProperty(DogNetCartridge.DATA_OBJECTS_CLASS_POSTFIX_KEY));
+            context.getProperty(NetCartridgeConstants.DATA_OBJECTS_CLASS_POSTFIX_KEY));
     clazz.addAttribute(DogNetCartridge.DATA_OBJECT_CLASS_NAME_ATTRIBUTE, buffer
         .toString());
 
