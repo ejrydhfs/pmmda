@@ -1,0 +1,48 @@
+## copyright 2000-2007 Adrian Bachofen
+## Licensed under the Apache License, Version 2.0 (the "Licence");
+## you may not use this file except in compliance with the License.
+## $Id: 
+#emitFileHeader()
+
+#emitClassDescription($view.getName() "")
+
+using System;
+using PmMda.Net.Views;
+using PmMda.Net.Views.Definition;
+
+namespace ${view.getContext().getQualifiedName()}
+{
+  public class ${view.getName()} : IFacade
+  {
+  
+    private View m_view;
+
+    public ${view.getName()}(View view)
+    {
+      m_view = view;
+    }
+
+    public ${view.getName()}(ViewHandler viewHandler, ViewDefinition viewDefinition, object dataObjectId):this(viewHandler.Retrieve(viewDefinition, dataObjectId))
+    { 
+    }
+    
+    public View View 
+    {
+      get 
+      {
+        return m_view;
+      }
+    }
+    
+#foreach($property in ${view.getFields()})
+	public ${property.getName()} 
+	{
+	  ##get{ return (${property.getType()})m_view.GetPrimitiveProperty("${property.getName()}").Value;}
+	  set{ueli kurmann}
+	  
+	}
+#end
+
+	
+	
+}
