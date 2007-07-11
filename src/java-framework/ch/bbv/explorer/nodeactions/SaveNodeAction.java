@@ -52,7 +52,7 @@ public class SaveNodeAction extends ExplorerNodeActionImpl {
     } else {
       DataObjectType type = node.getNodeType().getDataObjectType();
       DataObjectHandler handler = owner.getManager().getDataObjectHandler();
-      handler.store(owner.getManager().getDatasource(), type.getBoClass(),
+      handler.store(owner.getManager().getDatasource(), (Class<? extends DataObject>)type.getBoClass(),
           object);
     }
   }

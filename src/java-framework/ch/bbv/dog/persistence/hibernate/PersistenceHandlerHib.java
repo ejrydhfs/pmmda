@@ -74,7 +74,7 @@ public class PersistenceHandlerHib implements PersistenceHandler {
 		databaseMgr.closeDatabase(databaseMgr.getDatabase(datasource));
 	}
 
-	public DataObject retrieve(String datasource, Class clazz, Integer id) {
+	public DataObject retrieve(String datasource, Class<? extends DataObject> clazz, Integer id) {
 		assert (datasource != null) && (clazz != null) && (id != null);
 		Session session = databaseMgr.getDatabase(datasource)
 				.getCurrentSession();
@@ -90,7 +90,8 @@ public class PersistenceHandlerHib implements PersistenceHandler {
 		return dataObject;
 	}
 
-	public List<DataObject> retrieve(String datasource, Class clazz,
+	@SuppressWarnings("unchecked")
+  public List<DataObject> retrieve(String datasource, Class clazz,
 			String constraints) {
 		assert (datasource != null) && (clazz != null);
 	
@@ -106,8 +107,7 @@ public class PersistenceHandlerHib implements PersistenceHandler {
 		return result;
 	}
 
-	public LightweightObject retrieveLw(String datasource, Class clazz,
-			Integer id) {
+	public LightweightObject retrieveLw(String datasource, Class<? extends LightweightObject> clazz, Integer id) {
 		Session session = databaseMgr.getDatabase(datasource)
 				.getCurrentSession();
 		session.beginTransaction();
@@ -118,7 +118,8 @@ public class PersistenceHandlerHib implements PersistenceHandler {
 		return LightweightObject;
 	}
 
-	public List<LightweightObject> retrieveLw(String datasource, Class clazz,
+	@SuppressWarnings("unchecked")
+  public List<LightweightObject> retrieveLw(String datasource, Class<? extends LightweightObject> clazz,
 			String constraints) {
 		assert (datasource != null) && (clazz != null);
 		
@@ -131,7 +132,7 @@ public class PersistenceHandlerHib implements PersistenceHandler {
 		return result;
 	}
 
-	public List<DataObjectUpdate> store(String datasource, Class clazz,
+	public List<DataObjectUpdate> store(String datasource, Class<? extends DataObject> clazz,
 			DataObject root) {
 		CollectFunctor collect = new CollectFunctor();
 		AbstractVisitorFunctor visitor = DataObjectMgr.getVisitorFor(clazz);
@@ -164,12 +165,12 @@ public class PersistenceHandlerHib implements PersistenceHandler {
 		return collect.getUpdates();
 	}
 
-	public void remove(String datasource, Class clazz, DataObject root) {
+	public void remove(String datasource, Class<? extends DataObject> clazz, DataObject root) {
 		DataObject originalRoot = retrieve(datasource, clazz, root.getId());
 		remove(datasource, clazz, root, originalRoot);
 	}
 
-	public void remove(String datasource, Class clazz, Integer id) {
+	public void remove(String datasource, Class<? extends DataObject> clazz, Integer id) {
 		assert (datasource != null) && (clazz != null) && (id != null);
 		DataObject object = retrieve(datasource, clazz, id);
 		if (object != null) {
@@ -189,7 +190,7 @@ public class PersistenceHandlerHib implements PersistenceHandler {
 	 * @param originalRoot
 	 *            root of the orginal data object graph to remove.
 	 */
-	private void remove(String datasource, Class clazz, DataObject root,
+	private void remove(String datasource, Class<? extends DataObject> clazz, DataObject root,
 			DataObject originalRoot) {
 
 		if (log.isTraceEnabled()) {
@@ -243,7 +244,7 @@ public class PersistenceHandlerHib implements PersistenceHandler {
 	 *      (insertedObjects != null) && (updatedObjects != null)
 	 */
 	void update(SessionFactory sessionFactory, List<DataObject> originals,
-			List<DataObject> copies, List deletedObjects,
+			List<DataObject> copies, List<DataObject> deletedObjects,
 			List<DataObject> insertedObjects, List<DataObject> updatedObjects) {
 		assert (originals != null) && (copies != null)
 				&& (deletedObjects != null) && (insertedObjects != null)

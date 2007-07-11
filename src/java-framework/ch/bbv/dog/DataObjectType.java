@@ -62,34 +62,34 @@ public class DataObjectType {
   /**
    * The class of the data object instances.
    */
-  private Class boClass;
+  private Class<?> boClass;
 
   /**
    * The class of the lightweight data object instances.
    */
-  private Class lwClass;
+  private Class<?> lwClass;
 
   /**
    * The class of the interface of data object instances if defined.
    */
-  private Class ifClass;
+  private Class<?> ifClass;
 
   /**
    * The class of the visitor defined in the visit method in the data object
    * class.
    */
-  private Class boVisitorClass;
+  private Class<?> boVisitorClass;
 
   /**
    * The class of the visitor defined in the visit method in the lightweight
    * data object class.
    */
-  private Class lwVisitorClass;
+  private Class<?> lwVisitorClass;
 
   /**
    * The class of the transformer class.
    */
-  private Class lwTransformerClass;
+  private Class<?> lwTransformerClass;
 
   /**
    * Flag indicating if instances of the data object type are root objects in
@@ -106,8 +106,8 @@ public class DataObjectType {
    * @param lwVisitorClass visitor class of the lightweight data object.
    * @param lwTransformerClass transformer class.
    */
-  public DataObjectType(Class lwClass, Class boClass, Class ifClass,
-      Class visitorClass, Class lwVisitorClass, Class lwTransformerClass) {
+  public DataObjectType(Class<?> lwClass, Class<?> boClass, Class<?> ifClass,
+      Class<?> visitorClass, Class<?> lwVisitorClass, Class<?> lwTransformerClass) {
     assert ((boClass != null) && (lwClass != null) && (visitorClass != null));
     this.lwClass = lwClass;
     this.boClass = boClass;
@@ -121,7 +121,7 @@ public class DataObjectType {
    * Returns the data object class of the type.
    * @return the requested class.
    */
-  public Class getBoClass() {
+  public Class<?> getBoClass() {
     return boClass;
   }
 
@@ -129,7 +129,7 @@ public class DataObjectType {
    * Returns the lightweight data object class of the type.
    * @return the requested class.
    */
-  public Class getLwClass() {
+  public Class<?> getLwClass() {
     return lwClass;
   }
 
@@ -137,7 +137,7 @@ public class DataObjectType {
    * Returns the interface data object class of the type.
    * @return the requested class.
    */
-  public Class getIfClass() {
+  public Class<?> getIfClass() {
     return ifClass;
   }
 
@@ -145,7 +145,7 @@ public class DataObjectType {
    * Returns the lightweight transformer class of the type.
    * @return the requested transformer class.
    */
-  public Class getLwTransformer() {
+  public Class<?> getLwTransformer() {
     return lwTransformerClass;
   }
 
@@ -211,7 +211,7 @@ public class DataObjectType {
   public LightweightObject invokeTransformer(DataObject boGraph) {
     LightweightObject lwGraph = null;
     try {
-      Class[] types = { boGraph.getClass() };
+      Class<?>[] types = { boGraph.getClass() };
       Method method = lwTransformerClass.getDeclaredMethod(
           TRANSFORM_METHOD_NAME, types);
       Object[] params = { boGraph };
@@ -247,7 +247,7 @@ public class DataObjectType {
    * @param object lightweight object to which the visitor should be applied.
    * @param visitor visitor to execute.
    */
-  public static void invokeVisitor(Class clazz, LightweightObject object,
+  public static void invokeVisitor(Class<?> clazz, LightweightObject object,
       AbstractVisitorFunctor visitor) {
     assert ((clazz != null) && (object != null) && (visitor != null));
     invokeVisitorOn(clazz, object, visitor, LW_VISITOR_IF_NAME);
@@ -270,7 +270,7 @@ public class DataObjectType {
    * @param object data object to which the visitor should be applied.
    * @param visitor visitor to execute.
    */
-  public static void invokeVisitor(Class clazz, DataObject object,
+  public static void invokeVisitor(Class<?> clazz, DataObject object,
       AbstractVisitorFunctor visitor) {
     assert ((clazz != null) && (object != null) && (visitor != null));
     invokeVisitorOn(clazz, object, visitor, BO_VISITOR_IF_NAME);
@@ -283,12 +283,12 @@ public class DataObjectType {
    * @param visitor visitor object to invoke on the bean.
    * @param visitorIfName name of the visitor interface.
    */
-  protected static void invokeVisitorOn(Class clazz, Object object,
+  protected static void invokeVisitorOn(Class<?> clazz, Object object,
       AbstractVisitorFunctor visitor, String visitorIfName) {
     try {
-      Class[] types = new Class[1];
-      Class visitorClass = visitor.getClass();
-      Class[] interfaces = visitorClass.getInterfaces();
+      Class<?>[] types = new Class[1];
+      Class<?> visitorClass = visitor.getClass();
+      Class<?>[] interfaces = visitorClass.getInterfaces();
       for (int i = 0; i < interfaces.length; i++) {
         if (interfaces[i].getName().endsWith(visitorIfName)) {
           types[0] = interfaces[i];

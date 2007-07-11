@@ -40,7 +40,7 @@ public interface DataObjectHandler {
    * @return the requested object if found otherwise null.
    * @pre (datasource != null) && (clazz != null) && (id != null)
    */
-  DataObject retrieve(String datasource, Class clazz, Integer id);
+  DataObject retrieve(String datasource, Class<? extends DataObject> clazz, Integer id);
 
   /**
    * Retrieves the list of data objects of the given type and fulfilling the
@@ -52,7 +52,7 @@ public interface DataObjectHandler {
    * @return the list of found data objects.
    * @pre (datasource != null) && (clazz != null)
    */
-  List<DataObject> retrieve(String datasource, Class clazz, String constraints);
+  List<DataObject> retrieve(String datasource, Class<? extends DataObject> clazz, String constraints);
 
   /**
    * Retrieves the data lightweight object tree where the root object has the
@@ -63,7 +63,7 @@ public interface DataObjectHandler {
    * @return the requested object if found otherwise null.
    * @pre (datasource != null) && (clazz != null) && (id != null)
    */
-  LightweightObject retrieveLw(String datasource, Class clazz, Integer id);
+  LightweightObject retrieveLw(String datasource, Class<? extends LightweightObject> clazz, Integer id);
 
   /**
    * Retrieves the list of lightweight data objects of the given type and
@@ -74,7 +74,7 @@ public interface DataObjectHandler {
    * @return the list of found lightweight data objects.
    * @pre (datasource != null) && (clazz != null)
    */
-  List<LightweightObject> retrieveLw(String datasource, Class clazz,
+  List<LightweightObject> retrieveLw(String datasource, Class<? extends LightweightObject> clazz,
       String constraints);
 
   /**
@@ -87,7 +87,7 @@ public interface DataObjectHandler {
    *         propagated to the upper layer.
    * @pre (datasource != null) && (clazz != null) && (root != null)
    */
-  List<DataObjectUpdate> store(String datasource, Class clazz, DataObject root);
+  List<DataObjectUpdate> store(String datasource, Class<? extends DataObject> clazz, DataObject root);
 
   /**
    * Removes the given data object from the persistent store.
@@ -97,7 +97,7 @@ public interface DataObjectHandler {
    * @param root root object to remove.
    * @pre (datasource != null) && (clazz != null) && (root != null)
    */
-  void remove(String datasource, Class clazz, DataObject root);
+  void remove(String datasource, Class<? extends DataObject> clazz, DataObject root);
 
   /**
    * Removes the data object with the given identifier from the persistent
@@ -108,5 +108,5 @@ public interface DataObjectHandler {
    * @param id identifier of the object to remove.
    * @pre (datasource != null) && (clazz != null) && (id != null)
    */
-  void remove(String datasource, Class clazz, Integer id);
+  void remove(String datasource, Class<? extends DataObject> clazz, Integer id);
 }

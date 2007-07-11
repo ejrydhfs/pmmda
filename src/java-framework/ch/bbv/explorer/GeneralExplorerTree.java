@@ -40,9 +40,10 @@ public abstract class GeneralExplorerTree extends ExplorerTree {
   public UiNodeType createOrGetNodeTypeForAnObject(Object clazz) {
     UiNodeType nodeType = uiNodeTypeFactory.getNodeTypeForBo(clazz.getClass());
     if(nodeType == null) { 
-	    DataObjectType type = new DataObjectType(clazz.getClass(),
-	    		clazz.getClass(), clazz.getClass(), null, null, null);
-      type.setRoot(false);
+	    DataObjectType type = new DataObjectType(clazz.getClass(), clazz.getClass(), clazz.getClass(), 
+	        null, null, null);
+      
+	    type.setRoot(false);
       nodeType = new UiNodeTypeImpl(type, "name", 
         GenericNodePropertiesView.class);
       uiNodeTypeFactory.register(nodeType);

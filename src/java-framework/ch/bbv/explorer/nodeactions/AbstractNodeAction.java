@@ -58,7 +58,7 @@ public abstract class AbstractNodeAction extends ExplorerNodeActionImpl {
     assert root.getDataObject() == null;
     DataObjectType type = root.getNodeType().getDataObjectType();
     DataObject boGraph = manager.getDataObjectHandler().retrieve(
-        owner.getManager().getDatasource(), type.getBoClass(),
+        owner.getManager().getDatasource(), (Class<? extends DataObject>)type.getBoClass(),
         ((LightweightObject) root.getLightweightObject()).getId());
     ExplorerNode newNode = node;
     if (boGraph != null) {
@@ -152,8 +152,8 @@ public abstract class AbstractNodeAction extends ExplorerNodeActionImpl {
       boObject = newNode.getDataObject();
     }
     DataObjectType type = nodeType.getDataObjectType();
-    Class boClass = type.getBoClass();
-    Class lwClass = type.getLwClass();
+    Class<?> boClass = type.getBoClass();
+    Class<?> lwClass = type.getLwClass();
     boObject = null;
     LightweightObject lwObject = null;
     if (boClass != null) {
