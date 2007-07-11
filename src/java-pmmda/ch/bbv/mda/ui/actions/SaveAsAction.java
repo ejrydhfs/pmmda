@@ -88,7 +88,8 @@ public class SaveAsAction extends ExplorerFileAction {
       	  || (Arrays.binarySearch(MdaFileTypes.XML_EXT, extension) >= 0)
           || (Arrays.binarySearch(MdaFileTypes.SERIALIZE_EXT, extension) >= 0)
           || (Arrays.binarySearch(MdaFileTypes.XMI_EXT, extension) >= 0)
-          || (Arrays.binarySearch(MdaFileTypes.RATIONAL_ROSE_EXT, extension) >= 0)) {
+          || (Arrays.binarySearch(MdaFileTypes.RATIONAL_ROSE_EXT, extension) >= 0)
+          || (Arrays.binarySearch(MdaFileTypes.ARGOUML2_EXT, extension) >= 0)) {
         if (!shouldOverwriteFile()) {
           lastResult = false;
           return lastResult;
@@ -132,7 +133,7 @@ public class SaveAsAction extends ExplorerFileAction {
     } catch (PersistenceException e) {
       log.error(e);
       if (e.getCause() instanceof FileNotFoundException) {
-        // This cause indicates that writter attempt to write a locked file.
+        // This cause indicates that writer attempt to write a locked file.
         JOptionPane.showMessageDialog(null, e.getLocalizedMessage(),
             Messages.titleWarning, JOptionPane.ERROR_MESSAGE);
       } else {

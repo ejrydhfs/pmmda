@@ -8,6 +8,7 @@ package ch.bbv.mda.persistence.mdr;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import org.omg.uml.foundation.core.ModelElement;
 import org.omg.uml.foundation.core.Stereotype;
@@ -71,16 +72,30 @@ public abstract class MdrUmlElement {
   }
 
   /**
-   * Retruns the Tagged Values
+   * Returns the Tagged Values
    * @return collection of MdrTaggedValue
    */
-  public Collection<MdrTaggedValue> getTaggedValues() {
-    Collection<MdrTaggedValue> collection = new ArrayList();
-    for (TaggedValue taggedValue : (Collection<TaggedValue>) getModelElement()
-        .getTaggedValue()) {
-      collection.add(new MdrTaggedValue(taggedValue));
+  public List<MdrTaggedValue> getTaggedValues() {
+    List<MdrTaggedValue> taggedValues = new ArrayList<MdrTaggedValue>();
+    for (Object taggedValue : (Collection<?>) getModelElement().getTaggedValue()) {
+      taggedValues.add(new MdrTaggedValue((TaggedValue)taggedValue));
     }
-    return collection;
+    return taggedValues;
+  }
+  
+  /**
+   * Returns the Tagged Values with the given name
+   * @param name the name of the tagged values
+   * @return the list of tagged values
+   */
+  public List<MdrTaggedValue> getTaggedValue(String name){
+    List<MdrTaggedValue> result = new ArrayList<MdrTaggedValue>();
+    for(MdrTaggedValue taggedValue:getTaggedValues()){
+      if(taggedValue.getName().equals(name)){
+        result.add(taggedValue);
+      }
+    }
+    return result;
   }
 
   /**

@@ -10,13 +10,13 @@ import org.omg.uml.foundation.core.TaggedValue;
 public class MdrTaggedValue {
 
   /**
-   * the mdr element
+   * the MDR element
    */
   private TaggedValue taggedValue;
 
   /**
    * constructor
-   * @param taggedValue a mdr tagged value
+   * @param taggedValue a MDR tagged value
    */
   public MdrTaggedValue(TaggedValue taggedValue) {
     this.taggedValue = taggedValue;
@@ -28,6 +28,14 @@ public class MdrTaggedValue {
    */
   public TaggedValue getTaggedValue() {
     return taggedValue;
+  }
+  
+  /**
+   * Returns the MDA TaggedValue
+   * @return
+   */
+  public ch.bbv.mda.TaggedValue getMdaTaggedValue(){
+    return new ch.bbv.mda.TaggedValue(getName(), getValue());
   }
 
   /**

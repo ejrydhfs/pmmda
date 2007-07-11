@@ -5,21 +5,13 @@
  */
 package ch.bbv.mda.persistence.mdr;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.zip.ZipInputStream;
 
 import javax.jmi.model.AggregationKindEnum;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.omg.uml.UmlPackage;
 import org.omg.uml.foundation.core.AssociationEnd;
 import org.omg.uml.foundation.core.ModelElement;
 
@@ -35,10 +27,14 @@ import ch.bbv.mda.Stereotype;
 import ch.bbv.mda.TaggedValue;
 import ch.bbv.mda.UmlConstants;
 import ch.bbv.mda.operators.MdaUtilities;
-import ch.bbv.mda.persistence.ExternalTransformer;
-import ch.bbv.mda.persistence.PersistenceException;
+import ch.bbv.mda.persistence.ViewTransformer;
 
-public class Mdr2MdaTransformer extends ExternalTransformer {
+public class Mdr2MdaTransformer extends ViewTransformer {
+
+  private static final String DOT = ".";
+  private static final String VOLATILE = "volatile";
+  private static final String TRANSIENT = "transient";
+
   /**
    * Logger of the class.
    */
@@ -57,78 +53,46 @@ public class Mdr2MdaTransformer extends ExternalTransformer {
    * Default constructor of the class.
    */
   public Mdr2MdaTransformer() {
-    elements = new HashMap<Object, MetaElement>();
-  }
-
-  /**
-   * Loads the provided file, opens the file containing the XMI model and
-   * creates a MDR model.
-   * 
-   * @param file
-   *          file containing the MDR model.
-   * @return the MDR model defined in the file.
-   * @throws FileNotFoundException
-   *           the given file could not be found.
-   * @throws IOException
-   *           an error occured when reading data.
-   */
-  public UmlPackage loadArgoModel(File file) throws FileNotFoundException,
-      IOException {
-    InputStream source = null;
-    ZipInputStream input = null;
-    FileInputStream inputStream = new FileInputStream(file);
-    if (!file.getName().endsWith(".xmi")) {
-      input = new ZipInputStream(inputStream);
-      String name = input.getNextEntry().getName();
-      while (!name.endsWith(".xmi")) {
-        name = input.getNextEntry().getName();
-      }
-      source = new BufferedInputStream(input);
-
-    } else {
-      source = new BufferedInputStream(new FileInputStream(file));
-    }
-
-    MdrLoader mdrLoader = new MdrLoader();
-    UmlPackage uml = null;
-    try {
-      mdrLoader.init();
-      uml = mdrLoader.read(source);
-
-    } catch (PersistenceException e) {
-      e.printStackTrace();
-    }
-
-    return uml;
+    super();
   }
 
   /**
    * Synchronize the MDA model with the MDR model.
    * 
-   * @param source
+   * @param mdrModel
    *          MDR model used as source of the synchronization.
-   * @param target
+   * @param mdaModel
    *          MDA model to synchronize.
    */
-  public void synchronize(MdrUmlModel source, MetaModel target) {
-    this.sourceModel = source;
-    target.setName(source.getName());
-    extractDatatypes(source, target);
-    extractStereotypes(source, target);
+  public synchronized void synchronize(MdrUmlModel mdrModel, MetaModel mdaModel) {
+    log.info("start MDR XMI 1.2 import...");
+    elements = new HashMap<Object, MetaElement>();
+    sourceModel = mdrModel;
+    setMetaModel(mdaModel);
+
+    mdaModel.setName(mdrModel.getName());
+    extractDatatypes(mdrModel, mdaModel);
+    extractStereotypes(mdrModel, mdaModel);
 
     // extract packages
-    for (MdrUmlPackage mdrUmlPackage : source.getPackages()) {
+    for (MdrUmlPackage mdrUmlPackage : mdrModel.getPackages()) {
       // process root package specially
-      if (source.getName().equals(mdrUmlPackage.getName())) {
+      if (mdrModel.getName().equals(mdrUmlPackage.getName())) {
         for (MdrUmlClass mdrUmlClass : mdrUmlPackage.getClasses()) {
-          extractClass(mdrUmlClass, target);
+          extractClass(mdrUmlClass, mdaModel);
         }
+        for(MdrTaggedValue taggedValue:mdrUmlPackage.getTaggedValue(VIEW_TAG)){
+          addCollectedView(null, mdaModel, taggedValue.getMdaTaggedValue());
+        }
+        
       } else {
-        extractPackage(mdrUmlPackage, target);
+        extractPackage(mdrUmlPackage, mdaModel);
       }
     }
-    extractRelations(target, source);
-    postProcessModel(target);
+    
+    extractRelations(mdaModel, mdrModel);
+    postProcessModel(mdaModel);
+    extractViews(mdaModel);
   }
 
   /**
@@ -140,36 +104,29 @@ public class Mdr2MdaTransformer extends ExternalTransformer {
    * @param context
    *          MDA context containing the package to synchronize.
    */
-  protected void extractPackage(MdrUmlPackage source, MetaModel context) {
+  private void extractPackage(MdrUmlPackage source, MetaModel context) {
     String qualifiedName = source.getQualifiedName();
 
-    if (source.getQualifiedName().indexOf(".") == 0) {
+    if (qualifiedName.indexOf(DOT) == 0) {
       return;
     }
 
     MetaPackage metaPackage = context.findPackage(qualifiedName);
+
     if (metaPackage == null) {
       metaPackage = new MetaPackage();
 
-      // TODO: hack beseitigen... (prefix [modelname] vom qualified name)
-
-      if (qualifiedName.length() == 0) {
-        return;
+      // truncate the model name from the qualified name
+      if (qualifiedName.length() > sourceModel.getName().length()) {
+        qualifiedName = qualifiedName
+            .substring(sourceModel.getName().length() + 1);
       }
-
-      int i = sourceModel.getName().length() + 1;
-
-      if (qualifiedName.length() >= i) {
-        qualifiedName = qualifiedName.substring(i);
-      }
-
-      // TODO: end hack...
 
       metaPackage.setName(qualifiedName);
       context.addPackage(metaPackage);
     }
 
-    // extract sterotypes and tagged values
+    // extract stereotypes and tagged values
     extractStereotypeAndTags(source, metaPackage);
 
     // process owned packages
@@ -181,6 +138,13 @@ public class Mdr2MdaTransformer extends ExternalTransformer {
     for (MdrUmlClass mClass : source.getClasses()) {
       extractClass(mClass, metaPackage);
     }
+
+    for (MdrTaggedValue value : source.getTaggedValue(VIEW_TAG)) {
+      this.addCollectedView(null, metaPackage, new TaggedValue(value.getName(),
+          value.getValue()));
+
+    }
+
   }
 
   /**
@@ -192,7 +156,7 @@ public class Mdr2MdaTransformer extends ExternalTransformer {
    * @param context
    *          MDA context containing the class to synchronize.
    */
-  protected void extractClass(MdrUmlClass source, MetaPackage context) {
+  private void extractClass(MdrUmlClass source, MetaPackage context) {
     assert (source != null) && (context != null);
     String name = source.getName();
     if (name == null) {
@@ -238,7 +202,7 @@ public class Mdr2MdaTransformer extends ExternalTransformer {
    * @param context
    *          MDA context containing the class to synchronize.
    */
-  protected void extractNestedClass(MdrUmlClass source, MetaClass context) {
+  private void extractNestedClass(MdrUmlClass source, MetaClass context) {
     assert (source != null) && (context != null);
 
     String name = source.getName();
@@ -317,6 +281,7 @@ public class Mdr2MdaTransformer extends ExternalTransformer {
       property.setMultiplicity(multiplicity);
     }
     extractStereotypeAndTags(attribute, property);
+    collectViewProperties(property, context, attribute);
   }
 
   /**
@@ -339,9 +304,9 @@ public class Mdr2MdaTransformer extends ExternalTransformer {
       String tagName = tag.getName();
       if (item instanceof MetaProperty) {
         MetaProperty property = (MetaProperty) item;
-        if ("transient".equals(tagName)) {
+        if (TRANSIENT.equals(tagName)) {
           property.setTransient(booleanValue(tag.getValue()));
-        } else if ("volatile".equals(tagName)) {
+        } else if (VOLATILE.equals(tagName)) {
           property.setVolatile(booleanValue(tag.getValue()));
         }
       }
@@ -453,11 +418,11 @@ public class Mdr2MdaTransformer extends ExternalTransformer {
         property.setTypeName(owned.getQualifiedName());
       }
 
-      // TODO: really shared?
       if (e1.getAggregation().toString().equals(
           AggregationKindEnum.SHARED.toString())) {
         property.setAggregation(true);
       }
+
       if (e1.getAggregation().toString().equals(
           AggregationKindEnum.COMPOSITE.toString())) {
         property.setComposition(true);
@@ -470,12 +435,12 @@ public class Mdr2MdaTransformer extends ExternalTransformer {
       }
 
       org.omg.uml.foundation.core.TaggedValue tag = MdrUtilities.getTag(
-          association.getModelElement(), "transient");
+          association.getModelElement(), TRANSIENT);
       if (tag != null) {
         property.setTransient(booleanValue(tag.getDataValue().iterator().next()
             .toString()));
       }
-      tag = MdrUtilities.getTag(association.getModelElement(), "volatile");
+      tag = MdrUtilities.getTag(association.getModelElement(), VOLATILE);
       if (tag != null) {
         property.setVolatile(booleanValue(tag.getDataValue().iterator().next()
             .toString()));
@@ -485,7 +450,7 @@ public class Mdr2MdaTransformer extends ExternalTransformer {
   }
 
   /**
-   * Helper method to extract the datatypes out of the model.
+   * Helper method to extract the DataTypes out of the model.
    * 
    * @param source
    *          the MDR source model
@@ -510,7 +475,7 @@ public class Mdr2MdaTransformer extends ExternalTransformer {
    * @param source
    *          the MDR source model
    * @param target
-   *          the PMMDA target model
+   *          the pmMDA target model
    */
   private void extractStereotypes(MdrUmlModel source, MetaModel target) {
     for (MdrUmlStereotype mStereotype : source.getStereotypes()) {
@@ -523,6 +488,14 @@ public class Mdr2MdaTransformer extends ExternalTransformer {
           target.addStereotype(stereotype);
         }
       }
+    }
+  }
+
+  private void collectViewProperties(MetaProperty property, MetaClass clazz,
+      MdrUmlAttribute attribute) {
+    assert (property != null) && (clazz != null) && (attribute != null);
+    for (MdrTaggedValue taggedValue : attribute.getTaggedValue(VIEW_TAG)) {
+      addCollectedProperty(property, clazz.retrievePackage(), taggedValue.getMdaTaggedValue());
     }
   }
 }

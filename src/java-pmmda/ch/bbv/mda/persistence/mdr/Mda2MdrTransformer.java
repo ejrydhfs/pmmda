@@ -43,8 +43,8 @@ import ch.bbv.mda.VisibilityCode;
  * The MDA transformer defines rules how to transform a MDA element into the
  * corresponding MDR representation. The MDR representation is XMI 1.2 / UML 1.4
  * compatible.
- * 
  * @author Marcel Baumann
+ * @author Ueli Kurmann
  * @version $Revision$
  */
 public class Mda2MdrTransformer {
@@ -115,7 +115,6 @@ public class Mda2MdrTransformer {
     this.mdrLoader = mdrLoader;
     mModel = target;
 
-    // neues Modell erstellen
     mdrModel = mModel.getUmlPackage().getModelManagement().getModel()
         .createModel();
 
@@ -175,7 +174,7 @@ public class Mda2MdrTransformer {
   }
 
   /**
-   * Processes childeren (classes) of a package
+   * Process package elements
    * 
    * @param source
    *          MDA package to be processed
@@ -1280,5 +1279,4 @@ public class Mda2MdrTransformer {
     }
     return stereotypeCache.get(name);
   }
-
 }

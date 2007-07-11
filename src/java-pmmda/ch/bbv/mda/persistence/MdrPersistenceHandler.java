@@ -22,128 +22,145 @@ import ch.bbv.mda.persistence.mdr.Mda2MdrTransformer;
 import ch.bbv.mda.persistence.mdr.Mdr2MdaTransformer;
 import ch.bbv.mda.persistence.mdr.MdrLoader;
 import ch.bbv.mda.persistence.mdr.MdrUmlModel;
+import ch.bbv.mda.persistence.mdr.MdrUtilities;
 import ch.bbv.mda.persistence.nsuml.ArgoWriter;
 
 import com.jgoodies.validation.ValidationResult;
 
 public class MdrPersistenceHandler implements PersistenceHandler {
-    /**
-     * Logger for all instances of the class.
-     */
-    private static Log log = LogFactory.getLog(MdrPersistenceHandler.class);
+  
+  /**
+   * Logger for all instances of the class.
+   */
+  private static Log log = LogFactory.getLog(MdrPersistenceHandler.class);
 
-    /**
-     * Transformer from MDR to MDA.
-     */
-    private Mdr2MdaTransformer mdrTransformer;
+  /**
+   * Transformer from MDR to MDA.
+   */
+  private Mdr2MdaTransformer mdrTransformer;
 
-    /**
-     * Transformer from MDA to MDR.
-     */
-    private Mda2MdrTransformer mdaTransformer;
+  /**
+   * Transformer from MDA to MDR.
+   */
+  private Mda2MdrTransformer mdaTransformer;
 
-    /**
-     * Default constructor of the class.
-     */
-    public MdrPersistenceHandler() {
-        mdrTransformer = new Mdr2MdaTransformer();
-        mdaTransformer = new Mda2MdrTransformer();
+  /**
+   * Default constructor of the class.
+   */
+  public MdrPersistenceHandler() {
+    mdrTransformer = new Mdr2MdaTransformer();
+    mdaTransformer = new Mda2MdrTransformer();
+  }
+
+  public MetaModel readModel(File file, ValidationResult vResults)
+      throws PersistenceException {
+    MetaModel metaModel = new MetaModel();
+    try {
+      UmlPackage uml = MdrUtilities.loadXMIFile(file);
+      MdrUmlModel mdrModel = new MdrUmlModel(uml);
+      mdrTransformer.synchronize(mdrModel, metaModel);
+
+    } catch (NullPointerException n) {
+      n.printStackTrace();
+    } catch (FileNotFoundException e) {
+      log.error(e);
+    } catch (IOException e) {
+      log.error(e);
     }
+    return metaModel;
+  }
 
-    public MetaModel readModel(File file, ValidationResult vResults) throws PersistenceException {
-        MetaModel metaModel = new MetaModel();
+  public void writeModel(MetaModel model, File file, ValidationResult vResults)
+      throws PersistenceException {
+
+    // file doesn't exists
+    if (file.getName().endsWith(MdrUtilities.XMI_EXTENSION)
+        || file.getName().endsWith(MdrUtilities.ZARGO_EXTENSION)
+        || file.getName().endsWith(MdrUtilities.ZARGO2_EXTENSION)) {
+      try {
+        MdrLoader mdrLoader = new MdrLoader();
+        UmlPackage umlPackage = null;
         try {
-            UmlPackage uml = mdrTransformer.loadArgoModel(file);
-            MdrUmlModel mdrModel = new MdrUmlModel(uml);
-            mdrTransformer.synchronize(mdrModel, metaModel);
-
-        } catch (NullPointerException n) {
-            n.printStackTrace();
-        } catch (FileNotFoundException e) {
-            log.error(e);
-        } catch (IOException e) {
-            log.error(e);
+          umlPackage = mdrLoader.init();
+        } catch (PersistenceException e) {
+          e.printStackTrace();
         }
-        return metaModel;
-    }
 
-    public void writeModel(MetaModel model, File file, ValidationResult vResults)
-            throws PersistenceException {
+        MdrUmlModel mdrModel = new MdrUmlModel(umlPackage);
+        mdrModel.setName(model.getName());
 
-            // file doesn't exists
-            if (file.getName().endsWith(".xmi") || file.getName().endsWith(".zargo")) {
-                try {
-                    // MdrLoader mdrLoader.
-                    MdrLoader mdrLoader = new MdrLoader();
-                    UmlPackage umlPackage = null;
-                    try {
-                        umlPackage = mdrLoader.init();
-                    } catch (PersistenceException e) {
-                        e.printStackTrace();
-                    }
+        mdaTransformer.synchronize(model, mdrModel, mdrLoader);
 
-                    MdrUmlModel mdrModel = new MdrUmlModel(umlPackage);
-                    mdrModel.setName(model.getName());
+        File temporaryFile = File.createTempFile("pmMDA", "xmi");
 
-                    mdaTransformer.synchronize(model, mdrModel, mdrLoader);
+        mdrLoader.write(temporaryFile);
 
-                    File temporaryFile = File.createTempFile("pmMDA", "xmi");
-
-                    mdrLoader.write(temporaryFile);
-
-                    if (file.getName().endsWith(".xmi")) {
-                        if (file.exists()) {
-                        		System.gc(); // Attempt to solve the deletion failure: Currently there is no better method known to unlock files. 
-                            file.delete();
-                        }
-                        temporaryFile.renameTo(file);
-                    } else {
-                        temporaryFile.deleteOnExit();
-                        System.out.println(file.getAbsolutePath()+file.getName());
-                        if(file.exists()){  
-                            ZipFileUtilities.replaceEntry(file, getArgoModelFileName(file), new FileInputStream(temporaryFile));
-                        }else{
-                            ArgoWriter.writeEntry(file, temporaryFile);
-                        }
-                        System.gc(); // Attempt to solve the deletion failure: Currently there is no better method known to unlock files. 
-                        temporaryFile.delete();
-                    }
-
-                } catch (Exception e) {
-                    throw new PersistenceException(e);
-                }
-            }
+        if (file.getName().endsWith(MdrUtilities.XMI_EXTENSION)) {
+          if (file.exists()) {
+            /**
+             * Attempt to solve the deletion failure: Currently there is no
+             * better method known to unlock files.
+             */
+            System.gc();
+            file.delete();
+          }
+          temporaryFile.renameTo(file);
+        } else {
+          temporaryFile.deleteOnExit();
+          log.info(file.getAbsolutePath() + file.getName());
+          if (file.exists()) {
+            ZipFileUtilities.replaceEntry(file, getArgoModelFileName(file),
+                new FileInputStream(temporaryFile));
+          } else {
+            ArgoWriter.writeEntry(file, temporaryFile);
+          }
+          /**
+           * Attempt to solve the deletion failure: Currently there is no better
+           * method known to unlock files.
+           */
+          System.gc();
+          temporaryFile.delete();
         }
-    
 
-    public void updateModel(MetaModel model, File file, ValidationResult vResults) throws PersistenceException {
-        writeModel(model, file, vResults);   
-    }
-    
-    /**
-     * Returns the ArgoUML file name of the file containing the XMI UML model. The
-     * file is part of the set of files stored in a zip file and is recognized
-     * through its extension.
-     * @param file Zip file containing all artifacts of a ArgoUML project.
-     * @return The name of the file containing the XMI UML model.
-     * @throws FileNotFoundException if the requested file was not found.
-     * @throws IOException if an IO error occured when reading the zip file.
-     */
-    private String getArgoModelFileName(File file) throws FileNotFoundException,
-        IOException {
-      ZipFile zipFile = new ZipFile(file);
-      Enumeration< ? extends ZipEntry> entries = zipFile.entries();
-      String modelFileName = null;
-      while (entries.hasMoreElements()) {
-        ZipEntry entry = entries.nextElement();
-        modelFileName = entry.getName();
-        if (modelFileName.endsWith(".xmi")) {
-          break;
-        }
-        modelFileName = null;
+      } catch (Exception e) {
+        throw new PersistenceException(e);
       }
-      zipFile.close();
-      return modelFileName;
     }
+  }
+
+  public void updateModel(MetaModel model, File file, ValidationResult vResults)
+      throws PersistenceException {
+    writeModel(model, file, vResults);
+  }
+
+  /**
+   * Returns the ArgoUML file name of the file containing the XMI UML model. The
+   * file is part of the set of files stored in a ZIP file and is recognized
+   * through its extension.
+   * 
+   * @param file
+   *          ZIP file containing all artifacts of a ArgoUML project.
+   * @return The name of the file containing the XMI UML model.
+   * @throws FileNotFoundException
+   *           if the requested file was not found.
+   * @throws IOException
+   *           if an IO error occurred when reading the ZIP file.
+   */
+  private String getArgoModelFileName(File file) throws FileNotFoundException,
+      IOException {
+    ZipFile zipFile = new ZipFile(file);
+    Enumeration<? extends ZipEntry> entries = zipFile.entries();
+    String modelFileName = null;
+    while (entries.hasMoreElements()) {
+      ZipEntry entry = entries.nextElement();
+      modelFileName = entry.getName();
+      if (modelFileName.endsWith(MdrUtilities.XMI_EXTENSION)) {
+        break;
+      }
+      modelFileName = null;
+    }
+    zipFile.close();
+    return modelFileName;
+  }
 
 }

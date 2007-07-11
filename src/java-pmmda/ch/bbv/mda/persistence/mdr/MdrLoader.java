@@ -166,21 +166,7 @@ public class MdrLoader {
     return packages;
   }
 
-  // public org.omg.uml.UmlPackage read(File file) throws PersistenceException {
-  // assert (packages != null) || (repository != null);
-  // try {
-  // final XMIReaderFactory factory = new ReaderFactory();
-  // final String uri = file.toURL().toString();
-  //        
-  // factory.createXMIReader().read(uri, packages);
-  // } catch (IOException e) {
-  // throw new PersistenceException("The specified file could not be read", e);
-  // } catch (MalformedXMIException e) {
-  // throw new PersistenceException("The XMI file structure is malformed", e);
-  // }
-  // return packages;
-  // }
-
+  
   /**
    * Writes the repository into a XMI file.
    * @param file The file to write the repository into.
@@ -467,7 +453,7 @@ public class MdrLoader {
 
   /**
    * Finds the top most "UML" package in a given extend.
-   * @param extent MOF extent taht should be searched for "UML" package.
+   * @param extent MOF extent that should be searched for "UML" package.
    * @return the requested package if found otherwise null.
    * @pre extent != null
    */

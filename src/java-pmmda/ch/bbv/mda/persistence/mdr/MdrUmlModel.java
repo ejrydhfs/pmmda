@@ -304,10 +304,9 @@ public class MdrUmlModel {
 
   /**
    * Returns the UmlPackage
-   * @return umlpacke the uml package of the model
+   * @return UmlPackage the UML package of the model
    */
   public UmlPackage getUmlPackage() {
     return this.umlPackage;
   }
-
 }

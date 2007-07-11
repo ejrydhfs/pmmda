@@ -488,8 +488,8 @@ public class MetaViewView extends NodePropertiesView implements
 		// create view Tree
 		viewTree = new ExplorerTree();
 		viewTree.setRoot(node, this);
-		for(MetaView.FieldDefinition field : metaView.getFields()) {
-			ExplorerNode eNode = findElementInTree(modelTree.getTree(), field.asMetaProperty());
+		for(MetaProperty field : metaView.getFields()) {
+			ExplorerNode eNode = findElementInTree(modelTree.getTree(), field);
 			if(eNode != null) {
 				nodeToTree(modelTree.getTree(), viewTree.getTree(), eNode);
 			}
@@ -552,9 +552,9 @@ public class MetaViewView extends NodePropertiesView implements
 	 */
 	private void removeDeletedPropertiesFromView(MetaView newView) {
 		// determine the difference between original MetaView and passed MetaView.
-		List<MetaView.FieldDefinition> propertiesToBeRemoved = new ArrayList<MetaView.FieldDefinition>();
-		for(MetaView.FieldDefinition originalField : getOriginalMetaView().getFields()) {
-			MetaView.FieldDefinition field = newView.findField(originalField);
+		List<MetaProperty> propertiesToBeRemoved = new ArrayList<MetaProperty>();
+		for(MetaProperty originalField : getOriginalMetaView().getFields()) {
+			MetaProperty field = newView.findField(originalField);
 			if(field == null) {
 				propertiesToBeRemoved.add(originalField);
 			}
@@ -668,7 +668,7 @@ public class MetaViewView extends NodePropertiesView implements
 		List<ExplorerNode> properties = getLeaves(root, false, MetaProperty.class);
 		metaView.getFields().clear();
 		for(ExplorerNode node : properties) {
-			MetaView.FieldDefinition field = new MetaView.FieldDefinition((MetaProperty)node.getDataObject());
+			MetaProperty field = (MetaProperty)node.getDataObject();
 			metaView.appendField(field);
 		}
 

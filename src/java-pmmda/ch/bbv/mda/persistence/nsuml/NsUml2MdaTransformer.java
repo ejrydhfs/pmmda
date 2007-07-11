@@ -344,9 +344,13 @@ public class NsUml2MdaTransformer extends ExternalTransformer implements
 						value = view.getAttribute(VISIBILITY);
 						if(value != null) {metaView.setVisibility(VisibilityCode.getCode(Integer.parseInt(value)));}
 					}
-					MetaView.FieldDefinition fieldDefinition = new MetaView.FieldDefinition(
-							v.metaProperty);
-					metaView.appendField(fieldDefinition);
+					/**
+					 * FIXME replace fielddefinition wrapper
+					 * MetaView.FieldDefinition fieldDefinition = new MetaView.FieldDefinition(
+              v.metaProperty);
+					 */
+					
+					metaView.appendField(v.metaProperty);
 				}
 			}
 		}
