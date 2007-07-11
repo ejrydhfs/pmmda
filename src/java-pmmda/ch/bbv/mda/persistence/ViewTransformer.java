@@ -109,7 +109,9 @@ public class ViewTransformer extends ExternalTransformer implements
    */
 
   public void createViewFromXML(String xmlString) {
-
+    if(xmlString == null || xmlString.trim().length() == 0){
+      return;
+    }
     XmlNode xml = new XmlNode();
     xml.parse(xmlString);
     for (Iterator<XmlNode> iter = xml.getAll(VIEW_NODE); iter.hasNext();) {
