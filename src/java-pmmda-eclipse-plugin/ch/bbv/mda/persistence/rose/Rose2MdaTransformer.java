@@ -2517,9 +2517,14 @@ public class Rose2MdaTransformer implements RoseVisitor, ViewConstants
 						value = view.getAttribute(VISIBILITY);
 						if(value != null) {metaView.setVisibility(VisibilityCode.getCode(Integer.parseInt(value)));}
 					}
-					MetaView.FieldDefinition fieldDefinition = new MetaView.FieldDefinition(
-							v.metaProperty);
-					metaView.appendField(fieldDefinition);
+					/**
+					 * @author UeliKurmann
+					 * FIXME replace fieldDefinition wrapper
+					 * MetaView.FieldDefinition fieldDefinition = new MetaView.FieldDefinition(
+              v.metaProperty); 
+					 */
+					
+					metaView.appendField(v.metaProperty);
 				}
 			}
 		}
