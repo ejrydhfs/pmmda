@@ -13,14 +13,12 @@
 
 package ch.bbv.dynamicproperties.core;
 
-import java.io.Serializable;
-
 import ch.bbv.dynamicproperties.visualization.IEditor;
 import ch.bbv.dynamicproperties.visualization.IViewer;
 
 public class SimpleType extends PropertyType {
 
-    private Class type;
+    private Class<?> type;
 
     /**
      * Constructor
@@ -54,7 +52,7 @@ public class SimpleType extends PropertyType {
      * @param type
      *            the system type
      */
-    public void setType(Class type) {
+    public void setType(Class<?> type) {
         this.type = type;
     }
 
@@ -63,7 +61,7 @@ public class SimpleType extends PropertyType {
      * 
      * @return the system type
      */
-    public Class getType() {
+    public Class<?> getType() {
         return this.type;
     }
 

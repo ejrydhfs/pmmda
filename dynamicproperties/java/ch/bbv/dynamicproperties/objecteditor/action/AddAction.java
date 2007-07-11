@@ -41,9 +41,9 @@ public class AddAction extends DefaultAction {
 
     ExplorerNode node;
 
-    Class clazz;
+    Class<?> clazz;
 
-    public AddAction(ExplorerNode node, Class clazz) {
+    public AddAction(ExplorerNode node, Class<?> clazz) {
         super("Add " + clazz.getSimpleName());
         this.node = node;
         this.clazz = clazz;

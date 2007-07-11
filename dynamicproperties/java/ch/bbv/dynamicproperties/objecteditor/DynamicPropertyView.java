@@ -193,11 +193,11 @@ public class DynamicPropertyView extends SimpleDialog implements ExplorerNodeOwn
         return dynamicTypeTree.getTreeModel();
     }
 
-    public ExplorerNode createTypeExplorerNode(Class clazz, Object content, String displayName) {
+    public ExplorerNode createTypeExplorerNode(Class<?> clazz, Object content, String displayName) {
         return createExplorerNode(dynamicTypeTree.createOrGetNodeTypeForAnObject(clazz), displayName, content);
     }
 
-    public ExplorerNode createPropertyExplorerNode(Class clazz, Object content, String displayName) {
+    public ExplorerNode createPropertyExplorerNode(Class<?> clazz, Object content, String displayName) {
         return createExplorerNode(dynamicPropertyTree.createOrGetNodeTypeForAnObject(clazz), displayName, content);
     }
 

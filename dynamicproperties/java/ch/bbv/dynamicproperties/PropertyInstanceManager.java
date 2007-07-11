@@ -46,13 +46,13 @@ public class PropertyInstanceManager extends DataObjectImpl {
 
     private List<Property> properties;
 
-    private static Hashtable<Class, PropertyType> systemTypes;
+    private static Hashtable<Class<?>, PropertyType> systemTypes;
 
     /**
      * Initialises a static hashtable containing a set of system types
      */
     static {
-        systemTypes = new Hashtable<Class, PropertyType>();
+        systemTypes = new Hashtable<Class<?>, PropertyType>();
         systemTypes.put(Integer.class, new SimpleType("int", Integer.class, StringViewer.class, IntegerEditor.class));
         systemTypes.put(Double.class, new SimpleType("double", Double.class, StringViewer.class, DoubleEditor.class));
         systemTypes.put(Boolean.class, new SimpleType("boolean", Boolean.class, BooleanViewer.class,
@@ -142,7 +142,7 @@ public class PropertyInstanceManager extends DataObjectImpl {
     }
 
     public List<Class<? extends DynamicProperty>> getDataObjects() {
-        return new ArrayList(lookupTable.keySet());
+        return new ArrayList<Class<? extends DynamicProperty>>(lookupTable.keySet());
     }
 
     public void addDataObject(Class<? extends DynamicProperty> dynamicProperty) {
@@ -158,7 +158,7 @@ public class PropertyInstanceManager extends DataObjectImpl {
      * @param property
      * @return
      */
-    public boolean removeProperty(Class clazz, Property property) {
+    public boolean removeProperty(Class<?> clazz, Property property) {
         return lookupTable.get(clazz).getProperties().remove(property);
     }
 
@@ -241,7 +241,7 @@ public class PropertyInstanceManager extends DataObjectImpl {
      *            the system type
      * @return the attribute type
      */
-    public static PropertyType getType(Class systemType) {
+    public static PropertyType getType(Class<?> systemType) {
         return systemTypes.get(systemType);
     }
 

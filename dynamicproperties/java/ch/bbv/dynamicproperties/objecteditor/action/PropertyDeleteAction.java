@@ -36,7 +36,7 @@ public class PropertyDeleteAction extends DefaultAction {
     public void actionPerformed(ActionEvent event) {
         ExplorerNode parent = (ExplorerNode) node.getParent();
         if (parent != null) {
-            Class clazz = (Class) ((TreeElement) parent.getDataObject()).getContent();
+            Class<?> clazz = (Class<?>) ((TreeElement) parent.getDataObject()).getContent();
             PropertyInstanceManager.instance().removeProperty(clazz, property);
             ((DynamicPropertyView) node.getNodeOwner()).getPropertyTreeModel().removeNodeFromParent(node);
         }
