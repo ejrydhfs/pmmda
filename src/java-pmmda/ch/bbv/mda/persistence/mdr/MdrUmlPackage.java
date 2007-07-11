@@ -8,7 +8,6 @@ package ch.bbv.mda.persistence.mdr;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Hashtable;
-import java.util.Iterator;
 
 import org.omg.uml.foundation.core.Abstraction;
 import org.omg.uml.foundation.core.ModelElement;
@@ -25,12 +24,12 @@ import org.omg.uml.modelmanagement.UmlPackage;
 public class MdrUmlPackage extends MdrUmlElement {
 
   /**
-   * the mdr package
+   * the MDR package
    */
   private UmlPackage umlPackage;
 
   /**
-   * the wrapped mdr model
+   * the wrapped MDR model
    */
   private MdrUmlModel model;
 
@@ -63,7 +62,6 @@ public class MdrUmlPackage extends MdrUmlElement {
    * @param packageName
    */
   public void setName(String packageName) {
-    String oldName = getName();
     umlPackage.setName(packageName);
   }
 
@@ -144,9 +142,8 @@ public class MdrUmlPackage extends MdrUmlElement {
    */
   public Collection<MdrUmlAbstraction> getAbstractions() {
     Collection<MdrUmlAbstraction> result = new ArrayList<MdrUmlAbstraction>();
-    Iterator classIter = umlPackage.getOwnedElement().iterator();
-    while (classIter.hasNext()) {
-      ModelElement me = (ModelElement) classIter.next();
+    for(Object modelElement:umlPackage.getOwnedElement()){
+      ModelElement me = (ModelElement)modelElement;
       if (me instanceof Abstraction) {
         result.add(new MdrUmlAbstraction((Abstraction) me));
       }

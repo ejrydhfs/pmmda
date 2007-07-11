@@ -10,7 +10,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Modifier;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.jmi.model.ModelPackage;
@@ -280,9 +279,8 @@ public class MdrLoader {
   public Parameter createUmlReturnType(Classifier type, Operation op)
       throws PersistenceException {
     assert (packages != null || repository != null);
-    final Iterator iter = op.getParameter().iterator();
-    while (iter.hasNext()) {
-      Parameter param = (Parameter) iter.next();
+    for(Object parameterObj:op.getParameter()){
+      Parameter param = (Parameter)parameterObj;
       if (param.getKind() != null
           && param.getKind().equals(ParameterDirectionKindEnum.PDK_RETURN)) {
         throw new PersistenceException("Operation '" + op.getName()
@@ -301,10 +299,11 @@ public class MdrLoader {
    * @param op The Operation instance.
    * @return The Parameter instance.
    */
+  @SuppressWarnings("unchecked")
   public Parameter createUmlParameter(String paraName, Classifier type,
       Operation op) {
     assert (packages != null || repository != null);
-    final List parameters = op.getParameter();
+    final List<Parameter> parameters = op.getParameter();
     final Parameter parameter = packages.getModelManagement().getCore()
         .getParameter().createParameter(paraName, VisibilityKindEnum.VK_PUBLIC,
             false, null, null);
@@ -458,9 +457,8 @@ public class MdrLoader {
    * @pre extent != null
    */
   private MofPackage getUmlPackage(ModelPackage extent) {
-    for (Iterator it = extent.getMofPackage().refAllOfClass().iterator(); it
-        .hasNext();) {
-      MofPackage pkg = (MofPackage) it.next();
+    for (Object mofPkg:extent.getMofPackage().refAllOfClass()){
+      MofPackage pkg = (MofPackage) mofPkg;
       if (pkg.getContainer() == null && "UML".equals(pkg.getName())) {
         return pkg;
       }

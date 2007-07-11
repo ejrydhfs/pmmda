@@ -6,9 +6,6 @@
 
 package ch.bbv.mda.persistence.mdr;
 
-import java.util.Collection;
-import java.util.Iterator;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.omg.uml.UmlPackage;
@@ -33,12 +30,12 @@ public class MdrFacade {
   }
 
   public MetaPackage getPackage(String qualifiedName) {
-    Collection collection = umlPackage.getCore().refAllPackages();
-    // Collection collection =
-    // umlPackage.getCore().getNamespace().refAllOfType();
-    Iterator iter = collection.iterator();
-
+       
     return null;
+  }
+  
+  public UmlPackage getUmlPackage(){
+    return umlPackage;
   }
 
   /**

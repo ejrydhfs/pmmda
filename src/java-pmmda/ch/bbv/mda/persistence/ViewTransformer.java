@@ -35,7 +35,7 @@ public class ViewTransformer extends ExternalTransformer implements
   
   
   /**
-   * 
+   * Add a View Element 
    * @param property
    * @param metaPackage
    * @param taggedValue
@@ -48,6 +48,12 @@ public class ViewTransformer extends ExternalTransformer implements
     collectedViews.add(element);
   }  
   
+  /**
+   * Add a property View Element
+   * @param property
+   * @param metaPackage
+   * @param taggedValue
+   */
   public void addCollectedProperty(MetaProperty property, MetaPackage metaPackage, TaggedValue taggedValue){
     ViewElement element = new ViewElement();
     element.metaProperty = property;
@@ -58,10 +64,6 @@ public class ViewTransformer extends ExternalTransformer implements
 
   public List<ViewElement> getCollectedViews() {
     return collectedViews;
-  }
-
-  public void addCollectedViewProperty(ViewElement element) {
-    collectedProperties.add(element);
   }
 
   public List<ViewElement> getCollectedProperties() {
@@ -107,7 +109,6 @@ public class ViewTransformer extends ExternalTransformer implements
    * @param metaModel
    *          to assign the MetaViews to.
    */
-
   public void createViewFromXML(String xmlString) {
     if(xmlString == null || xmlString.trim().length() == 0){
       return;

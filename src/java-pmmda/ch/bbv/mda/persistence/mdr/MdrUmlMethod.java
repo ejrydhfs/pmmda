@@ -7,7 +7,6 @@ package ch.bbv.mda.persistence.mdr;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
 import org.omg.uml.foundation.core.Classifier;
 import org.omg.uml.foundation.core.Operation;
@@ -34,8 +33,8 @@ public class MdrUmlMethod {
     this.clazz = clazz;
     this.parameters = new ArrayList<MdrUmlParameter>();
 
-    for (Iterator iter = method.getParameter().iterator(); iter.hasNext();) {
-      Parameter parameter = (Parameter) iter.next();
+    for (Object parameterObj:method.getParameter()) {
+      Parameter parameter = (Parameter) parameterObj;
       if (ParameterDirectionKindEnum.PDK_RETURN != parameter.getKind()) {
         parameters.add(new MdrUmlParameter(parameter));
       }
@@ -55,8 +54,8 @@ public class MdrUmlMethod {
    * @return the retunType or null
    */
   public MdrUmlClass getReturnType() {
-    for (Iterator iter = method.getParameter().iterator(); iter.hasNext();) {
-      Parameter parameter = (Parameter) iter.next();
+    for (Object parameterObj:method.getParameter()) {
+      Parameter parameter = (Parameter) parameterObj;
       if (ParameterDirectionKindEnum.PDK_RETURN == parameter.getKind()) {
         return new MdrUmlClass(parameter.getType());
       }
@@ -70,8 +69,8 @@ public class MdrUmlMethod {
    * @author UeliKurmann TODO: unsafe and dirty...
    */
   public void setReturnType(MdrUmlClass clazz) {
-    for (Iterator iter = method.getParameter().iterator(); iter.hasNext();) {
-      Parameter parameter = (Parameter) iter.next();
+    for (Object parameterObj:method.getParameter()) {
+      Parameter parameter = (Parameter) parameterObj;
       if (ParameterDirectionKindEnum.PDK_RETURN == parameter.getKind()) {
         parameter.setType((Classifier) clazz.getModelElement());
         break;
@@ -95,6 +94,7 @@ public class MdrUmlMethod {
     method.setLeaf(isFinal);
   }
 
+  @SuppressWarnings("unchecked")
   public void addParameter(MdrUmlParameter parameter) {
     method.getParameter().add(parameter.getModelElement());
   }

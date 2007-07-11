@@ -1076,9 +1076,6 @@ public class Mda2MdrTransformer {
     myClass.setChangeability(ChangeableKindEnum.CK_CHANGEABLE);
     myClass.setTargetScope(ScopeKindEnum.SK_INSTANCE);
 
-    org.omg.uml.foundation.datatypes.Multiplicity multiplicity = myClass
-        .getMultiplicity();
-
     MultiplicityRange rangeMy = (MultiplicityRange) myClass.getMultiplicity()
         .getRange().iterator().next();
     rangeMy.setLower(source.getMultiplicity().getLowerBound());

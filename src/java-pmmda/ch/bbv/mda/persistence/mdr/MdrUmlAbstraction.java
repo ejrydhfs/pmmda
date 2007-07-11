@@ -60,15 +60,17 @@ public class MdrUmlAbstraction extends MdrUmlElement {
    * returns a collection of suppliers
    * @return collection of suppliers
    */
-  public Collection getSuppliers() {
-    return abstraction.getSupplier();
+  @SuppressWarnings("unchecked")
+  public Collection<ModelElement> getSuppliers() {
+    return (Collection<ModelElement>)abstraction.getSupplier();
   }
 
   /**
    * returns a collection of clients
    * @return collection of clients
    */
-  public Collection getClients() {
-    return abstraction.getClient();
+  @SuppressWarnings("unchecked")
+  public Collection<ModelElement> getClients() {
+    return (Collection<ModelElement>)abstraction.getClient();
   }
 }

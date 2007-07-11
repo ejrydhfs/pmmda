@@ -68,6 +68,7 @@ public class MdrTaggedValue {
    * sets the value of the tagged value
    * @param value
    */
+  @SuppressWarnings("unchecked")
   public void setValue(String value) {
     taggedValue.getDataValue().add(value);
   }

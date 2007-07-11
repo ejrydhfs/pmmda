@@ -8,10 +8,7 @@ package ch.bbv.mda.persistence.mdr;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Hashtable;
-import java.util.Iterator;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.omg.uml.UmlPackage;
 import org.omg.uml.foundation.core.Abstraction;
 import org.omg.uml.foundation.core.Classifier;
@@ -28,6 +25,7 @@ import org.omg.uml.modelmanagement.Model;
 /**
  * Wrapper Class for a MDR Model instance This class provides methods to
  * simplify the access to the mdr model
+ * 
  * @author UeliKurmann
  * @version $Revision$
  */
@@ -36,7 +34,7 @@ public class MdrUmlModel {
   /**
    * Logger
    */
-  private Log log = LogFactory.getLog(MdrUmlModel.class);
+  //private Log log = LogFactory.getLog(MdrUmlModel.class);
 
   private Hashtable<String, MdrUmlPackage> packages;
 
@@ -46,6 +44,7 @@ public class MdrUmlModel {
 
   /**
    * Constructor
+   * 
    * @param umlPackage
    */
   public MdrUmlModel(UmlPackage umlPackage) {
@@ -54,11 +53,9 @@ public class MdrUmlModel {
     this.classes = new Hashtable<String, MdrUmlClass>();
 
     // process packages
-    Iterator packageIter = umlPackage.getModelManagement().getCore()
-        .getModelElement().refAllOfType().iterator();
-    while (packageIter.hasNext()) {
-      ModelElement me = (ModelElement) packageIter.next();
-
+    for (Object modelElement : umlPackage.getModelManagement().getCore()
+        .getModelElement().refAllOfType()) {
+      ModelElement me = (ModelElement) modelElement;
       if (me instanceof org.omg.uml.modelmanagement.UmlPackage) {
         MdrUmlPackage pkg = new MdrUmlPackage(
             (org.omg.uml.modelmanagement.UmlPackage) me, this);
@@ -67,10 +64,9 @@ public class MdrUmlModel {
     }
 
     // process classes and interfaces
-    Iterator classIter = umlPackage.getModelManagement().getCore()
-        .getModelElement().refAllOfType().iterator();
-    while (classIter.hasNext()) {
-      ModelElement me = (ModelElement) classIter.next();
+    for (Object modelElement : umlPackage.getModelManagement().getCore()
+        .getModelElement().refAllOfType()) {
+      ModelElement me = (ModelElement) modelElement;
       if (me instanceof UmlClass || me instanceof Interface) {
 
         String qualifiedName = getQualifiedName(me.getNamespace());
@@ -88,6 +84,7 @@ public class MdrUmlModel {
 
   /**
    * getPackageName
+   * 
    * @param namespace
    * @return a return value
    */
@@ -105,8 +102,11 @@ public class MdrUmlModel {
 
   /**
    * Creates a new MdrUmlPackage
-   * @param qualifiedName the qualified name of the package
-   * @param pkg the mdr instance of the package
+   * 
+   * @param qualifiedName
+   *          the qualified name of the package
+   * @param pkg
+   *          the mdr instance of the package
    * @return a mdr package wrapper
    */
   public MdrUmlPackage createPackage(String qualifiedName,
@@ -119,6 +119,7 @@ public class MdrUmlModel {
 
   /**
    * adds a package to the hash table
+   * 
    * @param qualifiedName
    * @param pkg
    */
@@ -130,6 +131,7 @@ public class MdrUmlModel {
 
   /**
    * gets a package from the hash table
+   * 
    * @param qualifiedName
    * @return the wrapped mdr package
    */
@@ -139,7 +141,9 @@ public class MdrUmlModel {
 
   /**
    * gets the class specified with the qualified name
-   * @param qualifiedName the qualified name of the class
+   * 
+   * @param qualifiedName
+   *          the qualified name of the class
    * @return MdrUmlClass the wrapped mdr class
    */
   public MdrUmlClass getClass(String qualifiedName) {
@@ -148,7 +152,9 @@ public class MdrUmlModel {
 
   /**
    * adds a class to the class hash table
-   * @param clazz the class to add
+   * 
+   * @param clazz
+   *          the class to add
    */
   public void addClass(MdrUmlClass clazz) {
     classes.put(clazz.getQualifiedName().trim(), clazz);
@@ -156,6 +162,7 @@ public class MdrUmlModel {
 
   /**
    * Returns all classes
+   * 
    * @return a collection of wrapped mdr classes
    */
   public Collection<MdrUmlClass> getClasses() {
@@ -164,6 +171,7 @@ public class MdrUmlModel {
 
   /**
    * Returns all qualified class names
+   * 
    * @return a collection of the qualified class names
    */
   public Collection<String> getClassNames() {
@@ -172,31 +180,34 @@ public class MdrUmlModel {
 
   /**
    * returns the name of the model
+   * 
    * @return the model name
    */
   public String getName() {
-    Iterator iter = umlPackage.getModelManagement().getModel().refAllOfClass()
-        .iterator();
-    while (iter.hasNext()) {
-      return ((Model) iter.next()).getName();
+    for (Object model : umlPackage.getModelManagement().getModel()
+        .refAllOfClass()) {
+      return ((Model) model).getName();
     }
     return null;
   }
 
   /**
    * sets the name of the model
-   * @param name the name of the model
+   * 
+   * @param name
+   *          the name of the model
    */
   public void setName(String name) {
-    Iterator iter = umlPackage.getModelManagement().getModel().refAllOfClass()
-        .iterator();
-    if (iter.hasNext()) {
-      ((Model) iter.next()).setName(name);
+    for (Object model : umlPackage.getModelManagement().getModel()
+        .refAllOfClass()) {
+      ((Model) model).setName(name);
+      return;
     }
   }
 
   /**
    * returns all packages referenced in the hash table
+   * 
    * @return collection of wrapped mdr packages
    */
   public Collection<MdrUmlPackage> getPackages() {
@@ -205,14 +216,14 @@ public class MdrUmlModel {
 
   /**
    * Returns all stereotypes of the model
+   * 
    * @return collection of wrapped mdr stereotypes
    */
   public Collection<MdrUmlStereotype> getStereotypes() {
     Collection<MdrUmlStereotype> result = new ArrayList<MdrUmlStereotype>();
-    Iterator classIter = umlPackage.getModelManagement().getCore()
-        .getModelElement().refAllOfType().iterator();
-    while (classIter.hasNext()) {
-      ModelElement me = (ModelElement) classIter.next();
+    for (Object modelElement : umlPackage.getModelManagement().getCore()
+        .getModelElement().refAllOfType()) {
+      ModelElement me = (ModelElement) modelElement;
       if (me instanceof Stereotype) {
         result.add(new MdrUmlStereotype((Stereotype) me));
       }
@@ -222,14 +233,14 @@ public class MdrUmlModel {
 
   /**
    * Returns all datatypes of the model
+   * 
    * @return collection of wrapped mdr datatypes
    */
   public Collection<MdrUmlDataType> getDataTypes() {
     Collection<MdrUmlDataType> result = new ArrayList<MdrUmlDataType>();
-    Iterator classIter = umlPackage.getModelManagement().getCore()
-        .getModelElement().refAllOfType().iterator();
-    while (classIter.hasNext()) {
-      ModelElement me = (ModelElement) classIter.next();
+    for(Object modelElement:umlPackage.getModelManagement().getCore()
+        .getModelElement().refAllOfType()){
+      ModelElement me = (ModelElement) modelElement;
       if (me instanceof DataType) {
         result.add(new MdrUmlDataType((DataType) me));
       }
@@ -239,7 +250,9 @@ public class MdrUmlModel {
 
   /**
    * Returns a datatype specified by it's name
-   * @param name the name of the datatype
+   * 
+   * @param name
+   *          the name of the datatype
    * @return the wrapped mdr datatype
    */
   public MdrUmlDataType getDataType(String name) {
@@ -253,14 +266,14 @@ public class MdrUmlModel {
 
   /**
    * Returns a collection of gerneralizations
+   * 
    * @return collection of wrapped mdr generalizations
    */
   public Collection<MdrUmlGeneralization> getGeneralizations() {
     Collection<MdrUmlGeneralization> result = new ArrayList<MdrUmlGeneralization>();
-    Iterator classIter = umlPackage.getModelManagement().getCore()
-        .getModelElement().refAllOfType().iterator();
-    while (classIter.hasNext()) {
-      ModelElement me = (ModelElement) classIter.next();
+    for(Object modelElement:umlPackage.getModelManagement().getCore()
+        .getModelElement().refAllOfType()){
+      ModelElement me = (ModelElement) modelElement;
       if (me instanceof Generalization) {
         result.add(new MdrUmlGeneralization((Generalization) me));
       }
@@ -270,14 +283,14 @@ public class MdrUmlModel {
 
   /**
    * Returns a collection of mdr abstractions
+   * 
    * @return collection of wrapped mdr abstractions
    */
   public Collection<MdrUmlAbstraction> getAbstractions() {
     Collection<MdrUmlAbstraction> result = new ArrayList<MdrUmlAbstraction>();
-    Iterator classIter = umlPackage.getModelManagement().getCore()
-        .getModelElement().refAllOfType().iterator();
-    while (classIter.hasNext()) {
-      ModelElement me = (ModelElement) classIter.next();
+    for(Object modelElement:umlPackage.getModelManagement().getCore()
+        .getModelElement().refAllOfType()){
+      ModelElement me = (ModelElement) modelElement;
       if (me instanceof Abstraction) {
         result.add(new MdrUmlAbstraction((Abstraction) me));
       }
@@ -287,14 +300,14 @@ public class MdrUmlModel {
 
   /**
    * Returns a collection mdr associations
+   * 
    * @return collection of wrapped mdr associations
    */
   public Collection<MdrUmlAssociation> getAssociations() {
     Collection<MdrUmlAssociation> result = new ArrayList<MdrUmlAssociation>();
-    Iterator classIter = umlPackage.getModelManagement().getCore()
-        .getModelElement().refAllOfType().iterator();
-    while (classIter.hasNext()) {
-      ModelElement me = (ModelElement) classIter.next();
+    for(Object modelElement:umlPackage.getModelManagement().getCore()
+        .getModelElement().refAllOfType()){
+      ModelElement me = (ModelElement) modelElement;
       if (me instanceof UmlAssociation) {
         result.add(new MdrUmlAssociation((UmlAssociation) me));
       }
@@ -304,6 +317,7 @@ public class MdrUmlModel {
 
   /**
    * Returns the UmlPackage
+   * 
    * @return UmlPackage the UML package of the model
    */
   public UmlPackage getUmlPackage() {

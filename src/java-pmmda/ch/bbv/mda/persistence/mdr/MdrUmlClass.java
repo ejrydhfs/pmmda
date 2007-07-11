@@ -8,7 +8,6 @@ package ch.bbv.mda.persistence.mdr;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Hashtable;
-import java.util.Iterator;
 
 import org.omg.uml.foundation.core.Attribute;
 import org.omg.uml.foundation.core.Classifier;
@@ -22,6 +21,7 @@ import org.omg.uml.foundation.core.UmlClass;
 /**
  * Wrapper Class for a MDR Class instance This class provides methods to
  * simplify the access to the mdr model
+ * 
  * @author UeliKurmann
  * @version $Revision$
  */
@@ -45,7 +45,9 @@ public class MdrUmlClass extends MdrUmlElement {
 
   /**
    * Constructor
-   * @param umlClass a mdr classifier
+   * 
+   * @param umlClass
+   *          a mdr classifier
    */
   public MdrUmlClass(Classifier umlClass) {
     this(umlClass, null);
@@ -53,8 +55,11 @@ public class MdrUmlClass extends MdrUmlElement {
 
   /**
    * Constructor
-   * @param umlClass the mdr classifier
-   * @param ownerPackage the owner package
+   * 
+   * @param umlClass
+   *          the mdr classifier
+   * @param ownerPackage
+   *          the owner package
    */
   public MdrUmlClass(Classifier umlClass, MdrUmlPackage ownerPackage) {
     this.element = umlClass;
@@ -62,9 +67,8 @@ public class MdrUmlClass extends MdrUmlElement {
     this.ownerPackage = ownerPackage;
     methods = new Hashtable<String, MdrUmlMethod>();
     // iterate over features (methods)
-    Iterator featureIterator = umlClass.getFeature().iterator();
-    while (featureIterator.hasNext()) {
-      Feature feature = (Feature) featureIterator.next();
+    for (Object featureObj : umlClass.getFeature()) {
+      Feature feature = (Feature) featureObj;
       if (feature instanceof Operation) {
         methods.put(feature.getName(), new MdrUmlMethod((Operation) feature,
             this));
@@ -74,13 +78,13 @@ public class MdrUmlClass extends MdrUmlElement {
 
   /**
    * Returns a collection of attributes
+   * 
    * @return Collection<MdrUmlAttribute> a collection of wrapped mdr attributes
    */
   public Collection<MdrUmlAttribute> getAttributes() {
     ArrayList<MdrUmlAttribute> result = new ArrayList<MdrUmlAttribute>();
-    Iterator featureIterator = element.getFeature().iterator();
-    while (featureIterator.hasNext()) {
-      Feature feature = (Feature) featureIterator.next();
+    for(Object featureObj:element.getFeature()){
+      Feature feature = (Feature) featureObj;
       if (feature instanceof Attribute) {
         result.add(new MdrUmlAttribute((Attribute) feature, this));
       }
@@ -90,8 +94,11 @@ public class MdrUmlClass extends MdrUmlElement {
 
   /**
    * Adds an attribute tot the class
-   * @param attribute the wrapped mdr attribute
+   * 
+   * @param attribute
+   *          the wrapped mdr attribute
    */
+  @SuppressWarnings("unchecked")
   public void addAttribute(MdrUmlAttribute attribute) {
     element.getFeature().add(attribute.getModelElement());
   }
@@ -99,6 +106,7 @@ public class MdrUmlClass extends MdrUmlElement {
   /**
    * returns the model note: sometimes it isn't possible to return the model. in
    * this case null is returned
+   * 
    * @return MdrUmlModel the model or null
    */
   public MdrUmlModel getModel() {
@@ -107,6 +115,7 @@ public class MdrUmlClass extends MdrUmlElement {
 
   /**
    * the name of the class
+   * 
    * @return name the unqualified name of the class
    */
   public String getName() {
@@ -115,6 +124,7 @@ public class MdrUmlClass extends MdrUmlElement {
 
   /**
    * returns the owner package of the class
+   * 
    * @return the package
    */
   public MdrUmlPackage getPackage() {
@@ -123,6 +133,7 @@ public class MdrUmlClass extends MdrUmlElement {
 
   /**
    * returns the full qualified name of the class
+   * 
    * @return qualified name of the class
    */
   public String getQualifiedName() {
@@ -131,6 +142,7 @@ public class MdrUmlClass extends MdrUmlElement {
 
   /**
    * returns the stereotype of the class
+   * 
    * @return name of the stereotype
    */
   public String getStereotype() {
@@ -143,6 +155,7 @@ public class MdrUmlClass extends MdrUmlElement {
 
   /**
    * States whether the class is abstract
+   * 
    * @return boolean true iff the class is abstract, else false
    */
   public boolean isAbstract() {
@@ -151,6 +164,7 @@ public class MdrUmlClass extends MdrUmlElement {
 
   /**
    * States whether the class is final
+   * 
    * @return boolean true iff the class is final, else false
    */
   public boolean isFinal() {
@@ -159,6 +173,7 @@ public class MdrUmlClass extends MdrUmlElement {
 
   /**
    * States whether this classifier is an interface
+   * 
    * @return boolean true iff it is an interfacne, else false
    */
   public boolean isInterface() {
@@ -168,6 +183,7 @@ public class MdrUmlClass extends MdrUmlElement {
   /**
    * States whether the class is static Attention: This method isn't implemented
    * and returns always false
+   * 
    * @return boolean true iff the class is static, else false
    */
   public boolean isStatic() {
@@ -176,6 +192,7 @@ public class MdrUmlClass extends MdrUmlElement {
 
   /**
    * Sets the class as static Attention: no value is set actually
+   * 
    * @param isStatic
    */
   public void setStatic(boolean isStatic) {
@@ -184,7 +201,9 @@ public class MdrUmlClass extends MdrUmlElement {
 
   /**
    * Sets the abstract modifier
-   * @param isAbstract true if abstract
+   * 
+   * @param isAbstract
+   *          true if abstract
    */
   public void setAbstract(boolean isAbstract) {
     element.setAbstract(isAbstract);
@@ -192,7 +211,9 @@ public class MdrUmlClass extends MdrUmlElement {
 
   /**
    * Sets final modifier
-   * @param isFinal true if class is final
+   * 
+   * @param isFinal
+   *          true if class is final
    */
   public void setFinal(boolean isFinal) {
     element.setLeaf(isFinal);
@@ -200,7 +221,9 @@ public class MdrUmlClass extends MdrUmlElement {
 
   /**
    * Sets the name of the class
-   * @param name the name of the class
+   * 
+   * @param name
+   *          the name of the class
    */
   public void setName(String name) {
     element.setName(name);
@@ -208,6 +231,7 @@ public class MdrUmlClass extends MdrUmlElement {
 
   /**
    * Returns the uml instance of the class
+   * 
    * @return classifer the mdr classifier
    */
   public ModelElement getModelElement() {
@@ -216,12 +240,12 @@ public class MdrUmlClass extends MdrUmlElement {
 
   /**
    * Returns a collection of wrapped innerclass instances
+   * 
    * @return collection of wrapped mdr classes
    */
   public Collection<MdrUmlClass> getInnerClasses() {
     Collection<MdrUmlClass> result = new ArrayList<MdrUmlClass>();
-    for (ModelElement modelElement : (Collection<ModelElement>) element
-        .getOwnedElement()) {
+    for (Object modelElement : element.getOwnedElement()) {
       if (modelElement instanceof UmlClass) {
         result.add(new MdrUmlClass((Classifier) modelElement));
       }

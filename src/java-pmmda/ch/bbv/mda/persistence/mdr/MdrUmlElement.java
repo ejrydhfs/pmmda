@@ -7,7 +7,6 @@ package ch.bbv.mda.persistence.mdr;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import org.omg.uml.foundation.core.ModelElement;
@@ -18,7 +17,7 @@ import ch.bbv.mda.VisibilityCode;
 
 /**
  * Abstract Wrapper Class for a MDR ModelElement instance This class provides
- * methods to simplify the access to the mdr model
+ * methods to simplify the access to the MDR model
  * @author UeliKurmann
  * @version $Revision$
  */
@@ -42,15 +41,14 @@ public abstract class MdrUmlElement {
    * @return Collection of MdrUmlStereotypes
    */
   public Collection<MdrUmlStereotype> getStereotypes() {
-    Iterator stereotypeIterator = getModelElement().getStereotype().iterator();
     Collection<MdrUmlStereotype> stereotypes = new ArrayList<MdrUmlStereotype>();
-    while (stereotypeIterator.hasNext()) {
-      stereotypes.add(new MdrUmlStereotype((Stereotype) stereotypeIterator
-          .next()));
+    for(Object stereoType:getModelElement().getStereotype()){
+      stereotypes.add(new MdrUmlStereotype((Stereotype) stereoType));
     }
     return stereotypes;
   }
 
+  @SuppressWarnings("unchecked")
   public void addStereotype(MdrUmlStereotype stereotype) {
     getModelElement().getStereotype().add(stereotype.getStereotype());
   }
@@ -102,6 +100,7 @@ public abstract class MdrUmlElement {
    * Adds a TaggedValue to the collection of tagged values
    * @param taggedValue
    */
+  @SuppressWarnings("unchecked")
   public void addTaggedValue(MdrTaggedValue taggedValue) {
     getModelElement().getTaggedValue().add(taggedValue.getTaggedValue());
   }
