@@ -31,6 +31,7 @@ package ${package.getAttribute("bo-mo-package")};
 ## generate the import list of the class
 #set($imports=${cartridge.retrieveImportStatementsForBo(${class}, ${package.getAttribute("bo-mo-package")})})
 #set($foo=${imports.addClassName("ch.bbv.dog.DataObject")})
+#set($foo=${imports.addClassName("ch.bbv.dog.updates.*")})
 #set($foo=${imports.addClassName("java.util.Map")})
 #set($foo=${imports.addClassName("java.util.HashMap")})
 
@@ -199,7 +200,12 @@ $line
   /** 
    * Timestamp used to implement optimistic locking. 
    */
-  private Timestamp timestamp;   
+  private Timestamp timestamp;
+
+  /**
+   * Used to keep track of all changes made to the data object.
+   */
+  protected transient DataObjectUpdate update;   
 #if (${class.getAttribute("bo-changeable")} == "true")
 
   /** 
@@ -221,6 +227,7 @@ $line
    * object identifier is set to null to indicate it is a new object.
    */
   public ${className}() {
+    update = new DataObjectUpdate(this);
 #foreach ($aggregation in $aggregations) 
 #set($itemType=${aggregation.retrieveTypeClassName()})
     ${aggregation.nameFirstLower()} = #containerCreation($aggregation);
@@ -266,6 +273,9 @@ $line
 		  return false;
 	  }
 	  ${className} c = (${className})o;
+	  if ((id == null) || (c.id == null)) {
+		  return false;
+	  }
 	  return c.id.intValue() == this.id.intValue();
   }
   
@@ -340,6 +350,27 @@ $line
    public final void setTimestamp(Timestamp timestamp) {
      this.timestamp = timestamp;
    }
+   
+  /**
+   * Returns the update object that stores the modifications made on
+   * this data object since it was created or last loaded. This property is
+   * used within the pmMDA framework to reduce network traffic. Developers
+   * not modifying or inheriting from this class can ignore this property.
+   * <p>
+   * <b>Note to implementors:</b>
+   * <p>
+   * Changes to user-defined persistent properties must be registered via the 
+   * {@link DataObjectUpdate.addUpdate} method. Single properties are modified
+   * if their value has changed. Indexed property are modified if items were
+   * added, inserted or removed.
+   */
+   public final DataObjectUpdate getUpdate() {
+     return update;
+   }
+   
+   public final void resetUpdate() {
+     update = new DataObjectUpdate(this);
+   }
 #end
 ## generates the source code for all simple properties. Two variants are 
 ## defined to guarantee correct indenting of the generated source code.
@@ -403,6 +434,7 @@ $line
 #elseif (${changeable})
       changeSupport.firePropertyChange("${lName}", old${uName}, ${lName});
 #end
+      update.addUpdate(new PrimitiveFieldUpdate("${lName}", ${lName}));
       setModified(true);
     }
   }
@@ -434,8 +466,8 @@ $line
         this.${lName} = old${uName};
 #if($owner)
         if (element != null) {
-	      element.set${owner}(null);
-	    }
+          element.set${owner}(null);
+        }
         if (this.${lName} != null) {
           this.${lName}.set${owner}(this);
         }
@@ -444,6 +476,16 @@ $line
       }
 #elseif(${changeable})
       changeSupport.firePropertyChange("${lName}", old${uName}, ${lName});
+#end
+#isTypeModel($model $property $isDO)
+#if($isDO)
+      if (${lName} == null) {
+        update.addUpdate(new PrimitiveFieldUpdate("${lName}", null));
+      } else {
+        update.addUpdate(new SingleFieldUpdate(${lName}.getUpdate(), "${lName}"));
+      }
+#else
+      update.addUpdate(new PrimitiveFieldUpdate("${lName}", ${lName}));
 #end
       setModified(true);
     }
@@ -461,7 +503,7 @@ $line
    * Gets the current value of the attribute ${lName}.
    * @return the value of the attribute ${lName}.
 #if(${reference.canBeWritten()})
-   * #see ${sign}set${uName}(${reference.getReferenceClass().getName()})
+   * @see ${sign}set${uName}(${reference.getReferenceClass().getName()})
 #end    
    */
   ${visibility} ${reference.getReferenceClass().getName()} get${uName}() {
@@ -481,6 +523,11 @@ $line
     if (!this.${lName}.equals(${lName})) {    
       this.${lName} = ${lName};
       this.${reference.nameFirstLower()} = ${lName}.getId();
+      if (${lName} == null) {
+        update.addUpdate(new PrimitiveFieldUpdate("${lName}", null));
+      } else {
+        update.addUpdate(new SingleFieldUpdate(${lName}.getUpdate(), "${lName}"));
+      }
       setModified(true);
     }
   }
@@ -656,6 +703,7 @@ $line
 #if($isPersistentAggregation)
     for($itemType item : c) {
       setForeignKey(item, "${keyName}", getId());
+      update.addUpdate(new ItemAdditionUpdate(item.getUpdate(), "${lName}"));
 #if($owner)
       item.set${owner}(this);
 #end
@@ -705,6 +753,7 @@ $line
 #elseif (${changeable})
     changeSupport.fireIndexedPropertyChange("${lName}", index, null, element);
 #end
+    update.addUpdate(new ItemInsertionUpdate(element.getUpdate(), "${lName}", index));
     setModified(true);
 #if(${isPersistentAggregation})
     setForeignKey(element, "${keyName}", getId());
@@ -757,12 +806,14 @@ $line
       setForeignKey(element, "${keyName}", getId());
 #end
     }
+    update.addUpdate(new ItemAdditionUpdate(element.getUpdate(), "${lName}"));
     setModified(true);
     return result;
 #else
 #if(${isPersistentAggregation})
     setForeignKey(element, "${keyName}", getId());
 #end
+    update.addUpdate(new ItemAdditionUpdate(element.getUpdate(), "${lName}"));
     setModified(true);
     return ${lName}.add(element);
 #end
@@ -810,6 +861,7 @@ $line
 #elseif (${changeable})
       changeSupport.fireIndexedPropertyChange("${lName}", -1, element, null);
 #end
+      update.addUpdate(new ItemRemovalUpdate(element.getUpdate(), "${lName}"));
       setModified(true);
 #if($isPersistentAggregation)
       setForeignKey(element, "${keyName}", null);
@@ -1035,7 +1087,7 @@ $line
 ## @uk
 ## Create instance of the list for storing property values
 #if (${class.booleanValueOfTag("bo-extendable")} || ${class.booleanValueOfTag("bo-is-root")})
-	#parse("java/bo/bo-java-dynamic-properties.vm")
+	#parse("bo/bo-java-dynamic-properties.vm")
 #end
 
 /* %% USER DEFINED PROTECTED/PRIVATE CODE START %% */

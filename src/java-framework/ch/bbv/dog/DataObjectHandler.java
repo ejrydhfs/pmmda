@@ -7,6 +7,8 @@ package ch.bbv.dog;
 
 import java.util.List;
 
+import ch.bbv.dog.updates.DataObjectUpdate;
+
 /**
  * The data object handler provides an interface to retrieve and store data
  * objects. The necessary CRUD operations are provided for all defined data

@@ -15,10 +15,10 @@ import ch.bbv.dog.AbstractVisitorFunctor;
 import ch.bbv.dog.DataObject;
 import ch.bbv.dog.DataObjectMgr;
 import ch.bbv.dog.DataObjectType;
-import ch.bbv.dog.DataObjectUpdate;
 import ch.bbv.dog.LightweightObject;
 import ch.bbv.dog.persistence.CollectFunctor;
 import ch.bbv.dog.persistence.PersistenceHandler;
+import ch.bbv.dog.updates.DataObjectUpdate;
 
 /**
  * The data object persistence handler retrieves and stores data object graphs
@@ -260,14 +260,14 @@ public class PersistenceHandlerHib implements PersistenceHandler {
 				session.saveOrUpdate(item);
 			}
 			
-			session.flush();
+			//session.flush();
 			//session.clear();
 			
-			for (Object item : deletedObjects) {	
+			for (Object item : deletedObjects) {
 				session.delete(item);
 			}
 			
-			session.flush();
+			//session.flush();
 			//session.clear();
 			
 			for (DataObject item : insertedObjects) {

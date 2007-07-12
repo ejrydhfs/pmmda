@@ -11,6 +11,10 @@ import java.beans.PropertyChangeSupport;
 import java.beans.VetoableChangeListener;
 import java.beans.VetoableChangeSupport;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+
+import ch.bbv.dog.updates.DataObjectUpdate;
 
 /**
  * The default implementation of the data object interface is available as a
@@ -33,7 +37,7 @@ public class DataObjectImpl implements DataObject {
    * The modified flag of the data object.
    */
   private boolean modified;
-
+  
   /**
    * The timestamp for optimistic locking of the data object.
    */
@@ -48,6 +52,13 @@ public class DataObjectImpl implements DataObject {
    * The utility class used to implement vetoable change events for Java beans.
    */
   protected VetoableChangeSupport vetoableChangeSupport;
+  
+  /**
+   * The update object collecting all modifications made to this instance.
+   * After saving the changes made to the data object, the individual modifications
+   * get flushed from the update object. 
+   */
+  protected DataObjectUpdate update;
 
   /**
    * Default constructor of the class.
@@ -55,6 +66,7 @@ public class DataObjectImpl implements DataObject {
   public DataObjectImpl() {
     propertyChangeSupport = new PropertyChangeSupport(this);
     vetoableChangeSupport = new VetoableChangeSupport(this);
+    update = new DataObjectUpdate();
   }
 
   public Integer getId() {
@@ -69,12 +81,12 @@ public class DataObjectImpl implements DataObject {
     return modified;
   }
 
-  public void setModified(boolean modified) {
-    this.modified = modified;
+  public void setModified(boolean modified) {   
+	this.modified = modified;
   }
-
+  
   public boolean isNew() {
-    return id == null;
+	return id == null;
   }
 
   public DataObject copy() {
@@ -124,4 +136,13 @@ public class DataObjectImpl implements DataObject {
       VetoableChangeListener listener) {
     vetoableChangeSupport.removeVetoableChangeListener(propertyName, listener);
   }
+
+  public DataObjectUpdate getUpdate() {  
+	return update;
+  }
+  
+  public void resetUpdate() {  
+    update = new DataObjectUpdate(this);
+  }
 }
+  

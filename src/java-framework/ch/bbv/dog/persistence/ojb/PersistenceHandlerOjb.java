@@ -17,6 +17,7 @@ import org.odmg.Database;
 import ch.bbv.dog.*;
 import ch.bbv.dog.persistence.CollectFunctor;
 import ch.bbv.dog.persistence.PersistenceHandler;
+import ch.bbv.dog.updates.DataObjectUpdate;
 
 /**
  * The data object persistence handler retrieves and stores data object graphs

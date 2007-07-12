@@ -8,10 +8,14 @@ package ch.bbv.dog.persistence;
 import java.util.*;
 
 import ch.bbv.dog.*;
+import ch.bbv.dog.updates.DataObjectUpdate;
+import ch.bbv.dog.updates.ItemUpdate;
+import ch.bbv.dog.updates.Update;
 
 /**
  * The collect functor collects all data objects in the graph.
  * @author MarcelBaumann
+ * @author ZlatkoFranjcic
  * @version $Revision$
  */
 public class CollectFunctor implements DoFunctor {
@@ -29,13 +33,27 @@ public class CollectFunctor implements DoFunctor {
    * list of updated objects. The type of the items is data object.
    */
   private List<DataObject> updatedObjects;
-
+  
   /**
-   * List of updates upon sucessful store of a graph of data objects. The type
-   * of the items is data object update.
+   * Map of updates for a graph of data objects. The type
+   * of the items is {@link DataObjectUpdate}.
    */
-  private List<DataObjectUpdate> updates;
-
+  private Map<DataObjectUpdate,DataObjectUpdate> updates;
+  
+  /**
+   * Creates a {@code CollectFunctor} and executes it on a given data object.
+   * @param dataObject data object instance to process
+   * @return the functor after having visited the data object (graph)
+   */
+  public static CollectFunctor collect(DataObject dataObject) {
+	CollectFunctor functor = new CollectFunctor();
+	Class clazz = dataObject.getClass();
+	AbstractVisitorFunctor visitor = DataObjectMgr.getVisitorFor(clazz);
+	visitor.setFunctor(functor);
+	DataObjectType.invokeVisitor(clazz, dataObject, visitor);
+	return functor;
+  }
+  
   /**
    * Default constructor of the class.
    */
@@ -43,7 +61,7 @@ public class CollectFunctor implements DoFunctor {
     objects = new ArrayList<DataObject>();
     newObjects = new ArrayList<DataObject>();
     updatedObjects = new ArrayList<DataObject>();
-    updates = new ArrayList<DataObjectUpdate>();
+    updates = new HashMap<DataObjectUpdate,DataObjectUpdate>();
   }
 
   /**
@@ -87,14 +105,15 @@ public class CollectFunctor implements DoFunctor {
    * @return list of collected updates.
    */
   public List<DataObjectUpdate> getUpdates() {
-    for (DataObjectUpdate update : updates) {
-      DataObject object = update.getObject();
-      update.setId(object.getId());
-      update.setTimestamp(object.getTimestamp());
-      assert (update.getId() != null) && (update.getTimestamp() != null);
-    }
-    return Collections.unmodifiableList(updates);
+  	for (DataObjectUpdate update : updates.values()) {
+	    DataObject object = update.getObject();
+	    update.setId(object.getId());
+	    update.setTimestamp(object.getTimestamp());
+	    assert (update.getId() != null) && (update.getTimestamp() != null);
+	}
+	return new ArrayList<DataObjectUpdate>(updates.values());	
   }
+
 
   /**
    * Returns the list of data objects from the given list which were not found
@@ -114,13 +133,27 @@ public class CollectFunctor implements DoFunctor {
   }
 
   public void execute(DataObject object) {
-    objects.add(object);
+	DataObjectUpdate doUpdate = object.getUpdate();
+	objects.add(object);
+    
     if (object.isNew()) {
       newObjects.add(object);
-      createUpdate(object);
+      //createUpdate(object);
+      updates.put(doUpdate,doUpdate);
     } else if (object.isModified()) {
       updatedObjects.add(object);
-      createUpdate(object);
+      //createUpdate(object);
+      updates.put(doUpdate,doUpdate);
+    }
+    
+    // Get the missing updates, e.g. for the deleted objects
+    for (Update update : doUpdate.getUpdates()) {
+      if (update instanceof ItemUpdate) {
+    	ItemUpdate itemUpdate = (ItemUpdate)update;
+    	if (!updates.containsKey(itemUpdate)) {
+    	  updates.put(itemUpdate.getItem(), itemUpdate.getItem());
+	    }
+      }
     }
   }
 
@@ -133,7 +166,7 @@ public class CollectFunctor implements DoFunctor {
     DataObjectUpdate update = new DataObjectUpdate();
     update.setObject(object);
     update.setClassname(object.getClass().getName());
-    updates.add(update);
+    updates.put(update,update);
   }
 
   /**

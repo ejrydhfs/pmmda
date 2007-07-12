@@ -8,6 +8,8 @@ package ch.bbv.dog;
 import java.util.Collections;
 import java.util.List;
 
+import ch.bbv.dog.updates.DataObjectUpdate;
+
 /**
  * The empty handler implements the data object handler with a set of methods
  * performing no operations.

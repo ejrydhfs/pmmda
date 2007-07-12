@@ -12,6 +12,7 @@ import java.util.Map;
 
 import ch.bbv.application.Application;
 import ch.bbv.dog.functors.UpdateFunctor;
+import ch.bbv.dog.updates.DataObjectUpdate;
 
 /**
  * The cache handler defines a proxy object between the clients and the handler

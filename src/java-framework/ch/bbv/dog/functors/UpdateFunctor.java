@@ -9,8 +9,8 @@ package ch.bbv.dog.functors;
 import java.util.List;
 
 import ch.bbv.dog.DataObject;
-import ch.bbv.dog.DataObjectUpdate;
 import ch.bbv.dog.DoFunctor;
+import ch.bbv.dog.updates.DataObjectUpdate;
 
 /**
  * The update functor is responsible to collects the update informations after

@@ -9,6 +9,8 @@ import java.beans.PropertyChangeListener;
 import java.beans.VetoableChangeListener;
 import java.sql.Timestamp;
 
+import ch.bbv.dog.updates.DataObjectUpdate;
+
 /**
  * The data object interface defines the common interface for all data objects
  * manipulated through the data object tree framework. The interface requires a
@@ -154,4 +156,13 @@ public interface DataObject extends HasId {
    */
   void removeVetoableChangeListener(String propertyName,
       VetoableChangeListener listener);
+
+  /** 
+   * Gets the data object update which stores the modifications made on this 
+   * data object since this object was created or loaded.
+   * @return the {@link DataObjectUpdate update} object associated with this data object.
+   */
+  DataObjectUpdate getUpdate();
+  
+  void resetUpdate();
 }

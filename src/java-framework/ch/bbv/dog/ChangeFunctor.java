@@ -13,6 +13,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ch.bbv.dog.persistence.CollectFunctor;
+import ch.bbv.dog.updates.DataObjectUpdate;
 import ch.bbv.utilities.ReflectUtilities;
 
 /**

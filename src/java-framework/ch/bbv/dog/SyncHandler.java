@@ -8,6 +8,8 @@ package ch.bbv.dog;
 
 import java.util.List;
 
+import ch.bbv.dog.updates.DataObjectUpdate;
+
 /**
  * The synchronization handler provides a data object handler implementation
  * synchronizing concurrent access to data object graphs. A global lock manager

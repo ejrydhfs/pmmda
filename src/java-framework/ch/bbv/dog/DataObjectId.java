@@ -80,6 +80,9 @@ public final class DataObjectId implements Serializable {
       equals = true;
     } else if (object instanceof DataObjectId) {
       DataObjectId objectId = (DataObjectId) object;
+      if ((id == null) || (clazz == null)) {
+    	  return false;
+      }
       equals = id.equals(objectId.getId())
           && clazz.equals(objectId.getBoClass());
     }
