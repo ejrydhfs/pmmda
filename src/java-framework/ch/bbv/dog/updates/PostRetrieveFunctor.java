@@ -26,7 +26,7 @@ public class PostRetrieveFunctor implements DoFunctor {
 	 */
 	public static void createUpdates(DataObject dataObject) {
 		PostRetrieveFunctor functor = new PostRetrieveFunctor();
-		Class clazz = dataObject.getClass();
+		Class<? extends DataObject> clazz = dataObject.getClass();
 		AbstractVisitorFunctor visitor = DataObjectMgr.getVisitorFor(clazz);
 		visitor.setFunctor(functor);
 		DataObjectType.invokeVisitor(clazz, dataObject, visitor);

@@ -10,7 +10,7 @@ import ch.bbv.dog.DataObject;
 /**  
  * Interface for all updates made on {@link DataObject data objects}.
  * <p>
- * There are several types of updates, which implement this iterface.<p>
+ * There are several types of updates, which implement this interface.<p>
  * <table>
  *   <tr>
  *     <th>Class</th>

@@ -14,7 +14,9 @@ import ch.bbv.utilities.ReflectUtilities;
  */
 public class ItemInsertionUpdate extends ItemUpdate {
 	
-	private static final long serialVersionUID = UpdatesSerialVersion.UID;
+	private static final String ADD = "add";
+
+  private static final long serialVersionUID = UpdatesSerialVersion.UID;
 	
 	/**
 	 * The index at which the item was inserted.
@@ -39,6 +41,6 @@ public class ItemInsertionUpdate extends ItemUpdate {
 	 */
 	public void execute(DataObject dataObject) {
 		Object collection = ReflectUtilities.getProperty(dataObject, getFieldName());		
-		ReflectUtilities.execute(collection, "add", new Class[]{int.class, Object.class}, new Object[] {index, getItem().getObject()});	
+		ReflectUtilities.execute(collection, ADD, new Class[]{int.class, Object.class}, new Object[] {index, getItem().getObject()});	
 	}
 }

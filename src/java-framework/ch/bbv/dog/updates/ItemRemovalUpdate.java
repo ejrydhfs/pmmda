@@ -15,7 +15,8 @@ import ch.bbv.utilities.ReflectUtilities;
  */
 public class ItemRemovalUpdate extends ItemUpdate {
 
-	private static final long serialVersionUID = UpdatesSerialVersion.UID;
+	private static final String REMOVE = "remove";
+  private static final long serialVersionUID = UpdatesSerialVersion.UID;
 
     /** 
      * Initializes a new instance of the {@code ItemRemovalUpdate} class.
@@ -33,6 +34,6 @@ public class ItemRemovalUpdate extends ItemUpdate {
 	 */
 	public void execute(DataObject dataObject) {		
 		Object collection = ReflectUtilities.getProperty(dataObject, getFieldName());		
-		ReflectUtilities.execute(collection, "remove", new Class[]{Object.class}, new Object[] {getItem().getObject()});
+		ReflectUtilities.execute(collection, REMOVE, new Class[]{Object.class}, new Object[] {getItem().getObject()});
 	}
 }
