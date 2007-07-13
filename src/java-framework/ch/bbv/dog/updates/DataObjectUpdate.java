@@ -109,8 +109,7 @@ public class DataObjectUpdate implements Serializable {
    * @see #setBoClass
    */
   public Class getDoClass() {
-    //return clazz;
-	  return null;
+    return clazz;
   }
 
   /**
