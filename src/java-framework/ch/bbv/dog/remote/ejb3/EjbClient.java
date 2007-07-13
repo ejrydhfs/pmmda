@@ -19,113 +19,134 @@ import ch.bbv.application.ComponentException;
 import ch.bbv.application.ComponentImpl;
 import ch.bbv.dog.DataObject;
 import ch.bbv.dog.DataObjectHandler;
+import ch.bbv.dog.LightweightObject;
 import ch.bbv.dog.remote.DataObjectRemoteHandler;
 import ch.bbv.dog.updates.DataObjectUpdate;
 import ch.bbv.dog.updates.DogUpdate;
 import ch.bbv.dog.updates.PostRetrieveFunctor;
-import ch.bbv.dog.LightweightObject;
 import ch.bbv.utilities.ReflectUtilities;
 
 /**
- * The EJB client is used to retrieve and store data objects via an EJB on a Java EE 
- * application server.
+ * The EJB client is used to retrieve and store data objects via an EJB on a
+ * Java EE application server.
+ * 
  * @author UeliKurmann
  * @author ZlatkoFranjcic
  * @version $Revision$
  */
 public class EjbClient extends ComponentImpl implements DataObjectHandler {
 
-	private DataObjectRemoteHandler handler;
+  private static final String PROPERTY_TIMESTAMP = "timestamp";
 
-	/**
-	 * Logger of the instances of the class.
-	 */
-	private static Log log = LogFactory.getLog(EjbClient.class);
+  private static final String PROPERTY_ID = "id";
 
-	/**
-	 * Initializes the EJB client.
-	 * @param name the component name for this EJB client
-	 */
-	public EjbClient(String name){		
-		super(name);
-	    try {
-	    	initialize();
-	        //Properties property = new Properties();
-	  	  	//property.put(Context.INITIAL_CONTEXT_FACTORY, "org.jnp.interfaces.NamingContextFactory");
-	  	  	//property.put(Context.PROVIDER_URL, "127.0.0.1:1099");
-	  	  	Context jndiContext = new InitialContext();
-			Object ref = jndiContext.lookup("EjbServer/remote");
-			handler = (DataObjectRemoteHandler) PortableRemoteObject.narrow(ref, DataObjectRemoteHandler.class);
-	    } catch (javax.naming.NamingException e) {
-	      log.fatal(e);
-	    } catch (ComponentException e) {
-	  	  e.printStackTrace();
-		}
-	}
-	
-	@Override
-	public void initialize() throws ComponentException {
-		super.initialize();
-	}
+  private static final String EJB_NAME = "EjbServer/remote";
 
-	public void closeDatasource(String datasource) {
-		// operation ignored because it is under control of the server.
-	}
+  private DataObjectRemoteHandler handler;
 
-	public void openDatasource(String source, boolean readonly) {
-		// operation ignored because it is under control of the server.
-	}
+  /**
+   * Logger of the instances of the class.
+   */
+  private static Log log = LogFactory.getLog(EjbClient.class);
 
-	public void remove(String datasource, Class clazz, DataObject root) {
-		handler.remove(datasource, clazz, root);
-		
-	}
+  /**
+   * Initializes the EJB client.
+   * 
+   * @param name
+   *          the component name for this EJB client
+   */
+  public EjbClient(String name) {
+    super(name);
+    try {
+      initialize();
+      Context jndiContext = new InitialContext();
+      Object ref = jndiContext.lookup(EJB_NAME);
+      handler = (DataObjectRemoteHandler) PortableRemoteObject.narrow(ref,
+          DataObjectRemoteHandler.class);
+    } catch (javax.naming.NamingException e) {
+      log.fatal(e);
+    } catch (ComponentException e) {
+      e.printStackTrace();
+    }
+  }
 
-	public void remove(String datasource, Class clazz, Integer id) {
-		handler.remove(datasource, clazz, id);
-	}
+  @Override
+  public void initialize() throws ComponentException {
+    super.initialize();
+  }
 
-	public DataObject retrieve(String datasource, Class clazz, Integer id) {
-		DataObject dataObject = handler.retrieve(datasource, clazz, id);
-		PostRetrieveFunctor.createUpdates(dataObject);
-		return dataObject;
-	}
+  public void closeDatasource(String datasource) {
+    // operation ignored because it is under control of the server.
+  }
 
-	public List<DataObject> retrieve(String datasource, Class clazz, String constraints) {
-		List<DataObject> dataObjectList = handler.retrieve(datasource, clazz, constraints); 
-		PostRetrieveFunctor.createUpdatesForList(dataObjectList);
-		return dataObjectList;
-	}
+  public void openDatasource(String source, boolean readonly) {
+    // operation ignored because it is under control of the server.
+  }
 
-	public LightweightObject retrieveLw(String datasource, Class clazz, Integer id) {
-		return handler.retrieveLw(datasource, clazz, id);
-	}
+  public void remove(String datasource, Class<? extends DataObject> clazz,
+      DataObject root) {
+    handler.remove(datasource, clazz, root);
 
-	public List<LightweightObject> retrieveLw(String datasource, Class clazz, String constraints) {
-		return handler.retrieveLw(datasource, clazz, constraints);
-	}
+  }
 
-	public List<DataObjectUpdate> store(String datasource, Class clazz, DataObject root) {
-		DogUpdate dogUpdate = new DogUpdate(root);
-    	Map<DataObjectUpdate,DataObject> updatesToDataObjects = dogUpdate.mapUpdatesToDataobjects();
-    	List<DataObjectUpdate> updates = handler.store(datasource, dogUpdate);
-        postStore(updates, updatesToDataObjects);
-		return updates;
-	}
-	
-	/**
-	 * Copies the id and timestamp from the updates of stored objects back to the
-     * corresponding local data object.
-     * @param updates the update objects representing the stored objects
-     * @param updatesToDataObjects a map containing the update-to-data-object mapping
-	 */
-	private void postStore(List<DataObjectUpdate> updates, Map<DataObjectUpdate,DataObject> updatesToDataObjects) {
-	    for (DataObjectUpdate update : updates) {
-	    	DataObject dataObject = updatesToDataObjects.get(update);
-	    	ReflectUtilities.setProperty(dataObject, "id", update.getId());
-	    	ReflectUtilities.setProperty(dataObject, "timestamp", update.getTimestamp());
-	    	dataObject.setModified(false);
-	    	dataObject.getUpdate().clearUpdates();
-	    }
+  public void remove(String datasource, Class<? extends DataObject> clazz,
+      Integer id) {
+    handler.remove(datasource, clazz, id);
+  }
+
+  public DataObject retrieve(String datasource,
+      Class<? extends DataObject> clazz, Integer id) {
+    DataObject dataObject = handler.retrieve(datasource, clazz, id);
+    PostRetrieveFunctor.createUpdates(dataObject);
+    return dataObject;
+  }
+
+  public List<DataObject> retrieve(String datasource,
+      Class<? extends DataObject> clazz, String constraints) {
+    List<DataObject> dataObjectList = handler.retrieve(datasource, clazz,
+        constraints);
+    PostRetrieveFunctor.createUpdatesForList(dataObjectList);
+    return dataObjectList;
+  }
+
+  public LightweightObject retrieveLw(String datasource,
+      Class<? extends LightweightObject> clazz, Integer id) {
+    return handler.retrieveLw(datasource, clazz, id);
+  }
+
+  public List<LightweightObject> retrieveLw(String datasource,
+      Class<? extends LightweightObject> clazz, String constraints) {
+    return handler.retrieveLw(datasource, clazz, constraints);
+  }
+
+  public List<DataObjectUpdate> store(String datasource,
+      Class<? extends DataObject> clazz, DataObject root) {
+    DogUpdate dogUpdate = new DogUpdate(root);
+    Map<DataObjectUpdate, DataObject> updatesToDataObjects = dogUpdate
+        .mapUpdatesToDataobjects();
+    List<DataObjectUpdate> updates = handler.store(datasource, dogUpdate);
+    postStore(updates, updatesToDataObjects);
+    return updates;
+  }
+
+  /**
+   * Copies the id and timestamp from the updates of stored objects back to the
+   * corresponding local data object.
+   * 
+   * @param updates
+   *          the update objects representing the stored objects
+   * @param updatesToDataObjects
+   *          a map containing the update-to-data-object mapping
+   */
+  private void postStore(List<DataObjectUpdate> updates,
+      Map<DataObjectUpdate, DataObject> updatesToDataObjects) {
+    for (DataObjectUpdate update : updates) {
+      DataObject dataObject = updatesToDataObjects.get(update);
+      ReflectUtilities.setProperty(dataObject, PROPERTY_ID, update.getId());
+      ReflectUtilities.setProperty(dataObject, PROPERTY_TIMESTAMP, update
+          .getTimestamp());
+      dataObject.setModified(false);
+      dataObject.getUpdate().clearUpdates();
+    }
   }
 }

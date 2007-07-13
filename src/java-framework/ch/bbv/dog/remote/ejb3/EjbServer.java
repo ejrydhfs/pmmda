@@ -23,10 +23,12 @@ import ch.bbv.dog.remote.DataObjectRemoteHandler;
 import ch.bbv.dog.updates.DataObjectUpdate;
 import ch.bbv.dog.updates.DogUpdate;
 import ch.bbv.dog.LightweightObject;
+
 /**
- * The EJB server offers access to the server-side application to a client, in order to
- * retrieve and store data objects. The server bean needs to be deployed on a
- * Java EE application server, along with the server application. 
+ * The EJB server offers access to the server-side application to a client, in
+ * order to retrieve and store data objects. The server bean needs to be
+ * deployed on a Java EE application server, along with the server application.
+ * 
  * @author UeliKurmann
  * @author ZlatkoFranjcic
  * @version $Revision$
@@ -34,71 +36,80 @@ import ch.bbv.dog.LightweightObject;
 @Stateless
 @Remote(ch.bbv.dog.remote.DataObjectRemoteHandler.class)
 public class EjbServer implements DataObjectRemoteHandler, Serializable {
-	/**
-	 * Serial version identifier coded as back compatibility date.
-	 */
-	private static final long serialVersionUID = 20070712;
-	
-	/**
-	 * The server-side data object handler as provided by the application. 
-	 */
-	private DataObjectHandler handler;
+  private static final String PROPERTY_PARAMETER = "Application";
 
-	public EjbServer() {
-		Locator.create(getPmMdaApplicationClass(), null);
-		DataObjectMgr manager = Application.getApplication().getDataObjectMgr();
-		handler = manager.getDataObjectHandler();
-	}
+  private static final String EJB3SERVER_PROPERTY_FILE = "ejb3server.properties";
 
-	public void remove(String datasource, Class clazz, DataObject root) {
-		handler.remove(datasource, clazz, root);
-	}
+  /**
+   * Serial version identifier coded as back compatibility date.
+   */
+  private static final long serialVersionUID = 20070712;
 
-	public void remove(String datasource, Class clazz, Integer id) {
-		handler.remove(datasource, clazz, id);
-	}
+  /**
+   * The server-side data object handler as provided by the application.
+   */
+  private DataObjectHandler handler;
 
-	public DataObject retrieve(String datasource, Class clazz, Integer id) {
-		return handler.retrieve(datasource, clazz, id);
-	}
+  public EjbServer() {
+    Locator.create(getPmMdaApplicationClass(), null);
+    DataObjectMgr manager = Application.getApplication().getDataObjectMgr();
+    handler = manager.getDataObjectHandler();
+  }
 
-	public List<DataObject> retrieve(String datasource, Class clazz,
-			String constraints) {
-		return handler.retrieve(datasource, clazz, constraints);
-	}
+  public void remove(String datasource, Class<? extends DataObject> clazz,
+      DataObject root) {
+    handler.remove(datasource, clazz, root);
+  }
 
-	public LightweightObject retrieveLw(String datasource, Class clazz,
-			Integer id) {
-		return handler.retrieveLw(datasource, clazz, id);
-	}
+  public void remove(String datasource, Class<? extends DataObject> clazz,
+      Integer id) {
+    handler.remove(datasource, clazz, id);
+  }
 
-	public List<LightweightObject> retrieveLw(String datasource, Class clazz,
-			String constraints) {
-		return handler.retrieveLw(datasource, clazz, constraints);
-	}
+  public DataObject retrieve(String datasource,
+      Class<? extends DataObject> clazz, Integer id) {
+    return handler.retrieve(datasource, clazz, id);
+  }
 
-	public List<DataObjectUpdate> store(String datasource, DogUpdate dogUpdate) {
-		try {
-			DataObject root = dogUpdate.execute();
-			handler.store(datasource, root.getClass(), root);
-		    dogUpdate.clearUpdates();	
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return Arrays.asList(dogUpdate.getUpdates());
-	}
+  public List<DataObject> retrieve(String datasource,
+      Class<? extends DataObject> clazz, String constraints) {
+    return handler.retrieve(datasource, clazz, constraints);
+  }
 
-	/**
-	 * Get the class name of the server application's main class.
-	 * @return the name of the application's main class
-	 */
-	private static String getPmMdaApplicationClass() {		
-		Properties properties = new Properties();
-		try {
-			properties.load(EjbServer.class.getClassLoader().getResourceAsStream("ejb3server.properties"));			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}				
-		return properties.getProperty("Application");
-	}
+  public LightweightObject retrieveLw(String datasource,
+      Class<? extends LightweightObject> clazz, Integer id) {
+    return handler.retrieveLw(datasource, clazz, id);
+  }
+
+  public List<LightweightObject> retrieveLw(String datasource,
+      Class<? extends LightweightObject> clazz, String constraints) {
+    return handler.retrieveLw(datasource, clazz, constraints);
+  }
+
+  public List<DataObjectUpdate> store(String datasource, DogUpdate dogUpdate) {
+    try {
+      DataObject root = dogUpdate.execute();
+      handler.store(datasource, root.getClass(), root);
+      dogUpdate.clearUpdates();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return Arrays.asList(dogUpdate.getUpdates());
+  }
+
+  /**
+   * Get the class name of the server application's main class.
+   * 
+   * @return the name of the application's main class
+   */
+  private static String getPmMdaApplicationClass() {
+    Properties properties = new Properties();
+    try {
+      properties.load(EjbServer.class.getClassLoader().getResourceAsStream(
+          EJB3SERVER_PROPERTY_FILE));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return properties.getProperty(PROPERTY_PARAMETER);
+  }
 }
