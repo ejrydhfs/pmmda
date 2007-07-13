@@ -157,17 +157,17 @@ public class CollectFunctor implements DoFunctor {
     }
   }
 
-  /**
-   * Creates a partial update object of a modified data object. The update is
-   * completed after the commit of the transaction.
-   * @param object object being updated.
-   */
-  private void createUpdate(DataObject object) {
-    DataObjectUpdate update = new DataObjectUpdate();
-    update.setObject(object);
-    update.setClassname(object.getClass().getName());
-    updates.put(update,update);
-  }
+//  /**
+//   * Creates a partial update object of a modified data object. The update is
+//   * completed after the commit of the transaction.
+//   * @param object object being updated.
+//   */
+//  private void createUpdate(DataObject object) {
+//    DataObjectUpdate update = new DataObjectUpdate();
+//    update.setObject(object);
+//    update.setDoClass(object.getClass());
+//    updates.put(update,update);
+//  }
 
   /**
    * Creates a map of the identifiers of the list of data objects.

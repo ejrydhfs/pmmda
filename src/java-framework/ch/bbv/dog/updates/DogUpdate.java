@@ -88,7 +88,7 @@ public class DogUpdate implements Iterable<DataObjectUpdate>, Serializable {
 		//       But load each data object just once!
 		Map<DataObjectId, DataObject> idToDataObject = new HashMap<DataObjectId, DataObject>();
 		if (rootUpdate.getId() != null) {
-			DataObject loadedObject = doHandler.retrieve(datasource, (Class<? extends DataObject>)Class.forName(rootUpdate.getClassname()), rootUpdate.getId());					
+			DataObject loadedObject = doHandler.retrieve(datasource, (Class<? extends DataObject>)rootUpdate.getDoClass(), rootUpdate.getId());					
 			CollectFunctor functor = CollectFunctor.collect(loadedObject);
 			for (DataObject dataObject : functor.getObjects()) {
 				DataObjectId loadedId = new DataObjectId(dataObject);
@@ -97,7 +97,7 @@ public class DogUpdate implements Iterable<DataObjectUpdate>, Serializable {
 		}
 
 		for (DataObjectUpdate update : updates) {
-			DataObjectId doID = new DataObjectId(Class.forName(update.getClassname()), update.getId());			
+			DataObjectId doID = new DataObjectId(update.getDoClass(), update.getId());
 			
 			if(!idToDataObject.containsKey(doID)) {
 				if (doID.getId() == null) {
@@ -141,8 +141,8 @@ public class DogUpdate implements Iterable<DataObjectUpdate>, Serializable {
 	 * Gets the updates for each new, modified and deleted data objects in the underlying DOG.
 	 * @return an array containing the update objects 
 	 */
-	public DataObjectUpdate[] getUpdates() {
-		return updates.toArray(new DataObjectUpdate[updates.size()]);
+	public List<DataObjectUpdate> getUpdates() {
+		return updates;
 	}
 
 	@Override

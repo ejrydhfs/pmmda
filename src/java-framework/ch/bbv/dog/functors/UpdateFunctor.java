@@ -48,8 +48,8 @@ public class UpdateFunctor implements DoFunctor {
       update = infos.get(index);
       index++;
       assert ((object.getId() == null) || ((object.getId().equals(update
-          .getId())) && (object.getClass().getName().equals(update
-          .getClassname()))));
+          .getId())) && (object.getClass().equals(update
+          .getDoClass()))));
       if (object.getId() == null) {
         object.setId(update.getId());
       }

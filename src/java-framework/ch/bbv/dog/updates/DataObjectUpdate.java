@@ -31,16 +31,16 @@ public class DataObjectUpdate implements Serializable {
    * The id of the last created instance.
    */
   private static int staticInstanceId = 0;
-  
+
   /**
    * Identifier of the object been updated.
    */
   private Integer id;
 
   /**
-   * Name of the class of the data object.
+   * The class of the data object.
    */
-  private String classname;
+  private Class clazz;
 
   /**
    * Timestamp of the update.
@@ -82,7 +82,7 @@ public class DataObjectUpdate implements Serializable {
     this.object = object;
     id = object.getId();
     timestamp = object.getTimestamp();
-    classname = object.getClass().getName();    
+    clazz = object.getClass();    
   }
   
   /**
@@ -104,21 +104,22 @@ public class DataObjectUpdate implements Serializable {
   }
 
   /**
-   * Returns the classname of the update.
-   * @return the data object classname.
-   * @see #setClassname
+   * Returns the class of the associated data object.
+   * @return the data object class.
+   * @see #setBoClass
    */
-  public String getClassname() {
-    return classname;
+  public Class getDoClass() {
+    //return clazz;
+	  return null;
   }
 
   /**
-   * Sets the classname of the update.
-   * @param classname the new data object classname.
-   * @see #getClassname
+   * Sets the class of the associated data object.
+   * @param clazz the new data object class.
+   * @see #getDoClass
    */
-  public void setClassname(String classname) {
-    this.classname = classname;
+  public void setDoClass(Class clazz) {
+    this.clazz = clazz;
   }
 
   /**

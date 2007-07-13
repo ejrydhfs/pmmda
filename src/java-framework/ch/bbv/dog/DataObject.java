@@ -163,6 +163,10 @@ public interface DataObject extends HasId {
    * @return the {@link DataObjectUpdate update} object associated with this data object.
    */
   DataObjectUpdate getUpdate();
-  
+
+  /** 
+   * Resets the update object. That is, a new update object is created for 
+   * this data object.
+   */
   void resetUpdate();
 }

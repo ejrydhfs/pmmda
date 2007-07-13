@@ -232,7 +232,7 @@ public class ChangeFunctor implements DoFunctor {
   private void createUpdate(DataObject object) {
     DataObjectUpdate update = new DataObjectUpdate();
     update.setObject(object);
-    update.setClassname(object.getClass().getName());
+    update.setDoClass(object.getClass());
     updates.add(update);
   }
 

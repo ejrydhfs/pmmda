@@ -94,7 +94,7 @@ public class EjbServer implements DataObjectRemoteHandler, Serializable {
     } catch (Exception e) {
       e.printStackTrace();
     }
-    return Arrays.asList(dogUpdate.getUpdates());
+    return dogUpdate.getUpdates();
   }
 
   /**

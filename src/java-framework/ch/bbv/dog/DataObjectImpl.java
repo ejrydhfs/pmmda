@@ -58,7 +58,7 @@ public class DataObjectImpl implements DataObject {
    * After saving the changes made to the data object, the individual modifications
    * get flushed from the update object. 
    */
-  protected DataObjectUpdate update;
+  protected transient DataObjectUpdate update;
 
   /**
    * Default constructor of the class.
