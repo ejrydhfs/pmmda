@@ -367,7 +367,11 @@ $line
    public final DataObjectUpdate getUpdate() {
      return update;
    }
-   
+
+   /** 
+    * Resets the update object. That is, a new update object is created for 
+    * this data object.
+    */
    public final void resetUpdate() {
      update = new DataObjectUpdate(this);
    }
@@ -1087,7 +1091,7 @@ $line
 ## @uk
 ## Create instance of the list for storing property values
 #if (${class.booleanValueOfTag("bo-extendable")} || ${class.booleanValueOfTag("bo-is-root")})
-	#parse("bo/bo-java-dynamic-properties.vm")
+	#parse("java/bo/bo-java-dynamic-properties.vm")
 #end
 
 /* %% USER DEFINED PROTECTED/PRIVATE CODE START %% */
