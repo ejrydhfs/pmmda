@@ -13,6 +13,8 @@ import java.sql.Timestamp;
 import java.util.Date;
 
 import ch.bbv.dog.DataObject;
+import ch.bbv.dog.updates.DataObjectUpdate;
+import ch.bbv.dog.updates.*;
 
 /* %% USER DEFINED IMPORT START %% */
 /* %% USER DEFINED IMPORT END %% */
@@ -88,7 +90,14 @@ public class CodeValue implements DataObject {
    * Timestamp used to implement optimistic locking. 
    */
   private Timestamp timestamp;   
-
+  
+  /**
+   * The update object collecting all modifications made to this instance.
+   * After saving the changes made to the data object, the individual modifications
+   * get flushed from the update object. 
+   */
+  protected transient DataObjectUpdate update;
+  
   /** 
    * Default constructor of the class necessary for Java bean convention. The 
    * object identifier is set to null to indicate it is a new object.
@@ -182,6 +191,7 @@ public class CodeValue implements DataObject {
     if (((this.name != null) && !this.name.equals(name)) || 
         ((this.name == null) && (name != null)))  {    
       this.name = name;
+      update.addUpdate(new PrimitiveFieldUpdate("name", name));
       setModified(true);
     }
   }    
@@ -203,6 +213,7 @@ public class CodeValue implements DataObject {
   public void setSortOrder(int sortOrder) {
     if (this.sortOrder != sortOrder) {  
       this.sortOrder = sortOrder;
+      update.addUpdate(new PrimitiveFieldUpdate("sortOrder", sortOrder));
       setModified(true);
     }
   }
@@ -225,6 +236,7 @@ public class CodeValue implements DataObject {
     if (((this.shortDescription != null) && !this.shortDescription.equals(shortDescription)) || 
         ((this.shortDescription == null) && (shortDescription != null)))  {    
       this.shortDescription = shortDescription;
+      update.addUpdate(new PrimitiveFieldUpdate("shortDescription", shortDescription));
       setModified(true);
     }
   }    
@@ -247,6 +259,7 @@ public class CodeValue implements DataObject {
     if (((this.description != null) && !this.description.equals(description)) || 
         ((this.description == null) && (description != null)))  {    
       this.description = description;
+      update.addUpdate(new PrimitiveFieldUpdate("description", description));
       setModified(true);
     }
   }    
@@ -268,6 +281,7 @@ public class CodeValue implements DataObject {
   public void setCodeId(int codeId) {
     if (this.codeId != codeId) {  
       this.codeId = codeId;
+      update.addUpdate(new PrimitiveFieldUpdate("codeId", codeId));
       setModified(true);
     }
   }
@@ -290,6 +304,7 @@ public class CodeValue implements DataObject {
     if (((this.start != null) && !this.start.equals(start)) || 
         ((this.start == null) && (start != null)))  {    
       this.start = start;
+      update.addUpdate(new PrimitiveFieldUpdate("start", start));
       setModified(true);
     }
   }    
@@ -312,6 +327,7 @@ public class CodeValue implements DataObject {
     if (((this.end != null) && !this.end.equals(end)) || 
         ((this.end == null) && (end != null)))  {    
       this.end = end;
+      update.addUpdate(new PrimitiveFieldUpdate("end", end));
       setModified(true);
     }
   }    
@@ -424,7 +440,15 @@ public class CodeValue implements DataObject {
    * @param visitor visitor to act on the data object.
    */  
   protected void traverse(Visitor visitor) {
-  }  
+  }
+
+  public DataObjectUpdate getUpdate() {
+	return update;
+  }
+
+  public void resetUpdate() {
+	update = new DataObjectUpdate(this);
+  }
 
 /* %% USER DEFINED PROTECTED/PRIVATE CODE START %% */
 /* %% USER DEFINED PROTECTED/PRIVATE CODE END %% */

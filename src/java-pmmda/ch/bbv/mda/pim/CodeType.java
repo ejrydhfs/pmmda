@@ -15,6 +15,8 @@ import java.util.Collection;
 import java.util.List;
 
 import ch.bbv.dog.DataObject;
+import ch.bbv.dog.updates.DataObjectUpdate;
+import ch.bbv.dog.updates.*;
 
 /* %% USER DEFINED IMPORT START %% */
 /* %% USER DEFINED IMPORT END %% */
@@ -72,6 +74,13 @@ public class CodeType implements DataObject {
    */
   private Timestamp timestamp;   
 
+  /**
+   * The update object collecting all modifications made to this instance.
+   * After saving the changes made to the data object, the individual modifications
+   * get flushed from the update object. 
+   */
+  protected transient DataObjectUpdate update;
+  
   /** 
    * Default constructor of the class necessary for Java bean convention. The 
    * object identifier is set to null to indicate it is a new object.
@@ -166,6 +175,7 @@ public class CodeType implements DataObject {
     if (((this.qualifiedName != null) && !this.qualifiedName.equals(qualifiedName)) || 
         ((this.qualifiedName == null) && (qualifiedName != null)))  {    
       this.qualifiedName = qualifiedName;
+      update.addUpdate(new PrimitiveFieldUpdate("qualifiedName", qualifiedName));
       setModified(true);
     }
   }    
@@ -187,6 +197,7 @@ public class CodeType implements DataObject {
   public void setHierarchical(boolean hierarchical) {
     if (this.hierarchical != hierarchical) {  
       this.hierarchical = hierarchical;
+      update.addUpdate(new PrimitiveFieldUpdate("hierarchical", hierarchical));
       setModified(true);
     }
   }
@@ -210,10 +221,10 @@ public class CodeType implements DataObject {
         ((this.storageKind == null) && (storageKind != null)))  {    
       this.storageKind = storageKind;
       this.storageKindName = storageKind.getShortDescription();
-
+      update.addUpdate(new PrimitiveFieldUpdate("storageKind", storageKind));
       setModified(true);
     }
-  }    
+  }
 
   /** 
    * Gets all elements of the relation values.
@@ -257,7 +268,8 @@ public class CodeType implements DataObject {
    * @see java.util.List#add(int, Object)
    */
   public void setValue(int index, CodeValue element) {
-    setModified(true);
+	update.addUpdate(new ItemInsertionUpdate(element.getUpdate(), "values", index));
+	setModified(true);
     values.add(index, element);
   }
 
@@ -270,7 +282,8 @@ public class CodeType implements DataObject {
    * @pre element != null
    */
   public boolean addValue(CodeValue element) {
-    setModified(true);
+	update.addUpdate(new ItemAdditionUpdate(element.getUpdate(), "values"));
+	setModified(true);
     return values.add(element);
   }
   
@@ -286,6 +299,7 @@ public class CodeType implements DataObject {
   public boolean removeValue(CodeValue element) {
     boolean removed = values.remove(element);
     if (removed) {
+      update.addUpdate(new ItemRemovalUpdate(element.getUpdate(), "values"));
       setModified(true);
     }
     return removed;
@@ -406,6 +420,14 @@ public class CodeType implements DataObject {
     for (CodeValue item : getValues()) {
       item.accept(visitor);
     }
+  }
+
+  public DataObjectUpdate getUpdate() {
+    return update;
+  }
+
+  public void resetUpdate() {
+	update = new DataObjectUpdate(this);
   }  
 
 /* %% USER DEFINED PROTECTED/PRIVATE CODE START %% */
