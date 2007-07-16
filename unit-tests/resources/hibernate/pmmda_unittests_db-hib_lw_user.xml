@@ -1,0 +1,139 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping 
+	auto-import="false"
+	schema="PMMDA_UNITTESTS_DB"
+	default-access="field">	
+  <class name="ch.bbv.unittests.indexedprops.lw.IPRootLw"
+    table="IPROOT"
+	lazy="false"
+    mutable="true">
+	    <id name="id" column="ID" type="integer">
+      <generator class="increment"/>
+    </id>
+   	<list name="items" lazy="false">
+      <key column="IPROOT_ITEMS_FK"/>
+	  <index column="ordering_IPROOT_ITEMS_FK"/>
+      <one-to-many class="ch.bbv.unittests.indexedprops.lw.IPTopItemLw"/>
+    </list>
+  </class>
+  <class name="ch.bbv.unittests.indexedprops.lw.IPListItemLw"
+    table="IPLISTITEM"
+	lazy="false"
+    mutable="true">
+	    <id name="id" column="ID" type="integer">
+      <generator class="increment"/>
+    </id>
+       <property name="ipListItemAttribute"
+      column="IPLISTITEMATTRIBUTE"
+      type="int"
+      not-null="true"/>
+
+  </class>
+  <class name="ch.bbv.unittests.indexedprops.lw.IPSingleItemLw"
+    table="IPSINGLEITEM"
+	lazy="false"
+    mutable="true">
+	    <id name="id" column="ID" type="integer">
+      <generator class="increment"/>
+    </id>
+       <property name="ipSingleItemAttribute"
+      column="IPSINGLEITEMATTRIBUTE"
+      type="int"
+      not-null="true"/>
+	<list name="items" lazy="false">
+      <key column="IPSINGLEITEM_ITEMS_FK"/>
+	  <index column="ordering_IPSINGLEITEM_ITEMS_FK"/>
+      <one-to-many class="ch.bbv.unittests.indexedprops.lw.IPListItemLw"/>
+    </list>
+  </class>
+  <class name="ch.bbv.unittests.indexedprops.lw.IPTopItemLw"
+    table="IPTOPITEM"
+	lazy="false"
+    mutable="true">
+	    <id name="id" column="ID" type="integer">
+      <generator class="increment"/>
+    </id>
+       <many-to-one name="item"
+	  column="ITEM_FK"
+	  class="${type.qualifiedName()}"
+      not-null="false"
+	  index="IPTOPITEM_ITEM_IDX"
+    />	
+<!--  <reference-descriptor name="item"-->
+<!--    class-ref="ch.bbv.unittests.indexedprops.IPSingleItem"-->
+<!--    <foreignkey field-ref="ITEM_FK"/>-->
+<!--  />-->
+
+  </class>
+  <class name="ch.bbv.unittests.props.lw.SimpleAttributesLw"
+    table="SIMPLEATTRIBUTES"
+	lazy="false"
+    mutable="true">
+	    <id name="id" column="ID" type="integer">
+      <generator class="increment"/>
+    </id>
+       <property name="booleanAttribute"
+      column="BOOLEANATTRIBUTE"
+      type="boolean"
+      not-null="true"/>
+    <property name="intAttribute"
+      column="INTATTRIBUTE"
+      type="int"
+      not-null="true"/>
+    <property name="floatAttribute"
+      column="FLOATATTRIBUTE"
+      type="float"
+      not-null="true"/>
+    <property name="doubleAttribute"
+      column="DOUBLEATTRIBUTE"
+      type="double"
+      not-null="true"/>
+    <property name="stringAttribute"
+      column="STRINGATTRIBUTE"
+      type="string"
+      not-null="true"/>
+    <property name="longAttribute"
+      column="LONGATTRIBUTE"
+      type="long"
+      not-null="true"/>
+  </class>
+  <class name="ch.bbv.unittests.props.lw.ItemLw"
+    table="ITEM"
+	lazy="false"
+    mutable="true">
+	    <id name="id" column="ID" type="integer">
+      <generator class="increment"/>
+    </id>
+       <property name="itemAttribute"
+      column="ITEMATTRIBUTE"
+      type="int"
+      not-null="true"/>
+  </class>
+  <class name="ch.bbv.unittests.props.lw.ParentLw"
+    table="PARENT"
+	lazy="false"
+    mutable="true">
+	    <id name="id" column="ID" type="integer">
+      <generator class="increment"/>
+    </id>
+       <property name="parentAttribute"
+      column="PARENTATTRIBUTE"
+      type="int"
+      not-null="true"/>
+  </class>
+  <class name="ch.bbv.unittests.props.lw.SubItemLw"
+    table="SUBITEM"
+	lazy="false"
+    mutable="true">
+	    <id name="id" column="ID" type="integer">
+      <generator class="increment"/>
+    </id>
+       <property name="subItemAttribute"
+      column="SUBITEMATTRIBUTE"
+      type="int"
+      not-null="false"/>
+  </class>
+</hibernate-mapping>

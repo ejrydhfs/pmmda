@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping 
+	auto-import="false"
+	schema="PMMDA_PERFORMANCETESTS_DB"
+	default-access="field">	
+  <class name="ch.bbv.performancetests.list.lw.MasterLw"
+    table="MASTER"
+	lazy="false"
+    mutable="true">
+	    <id name="id" column="ID" type="integer">
+      <generator class="increment"/>
+    </id>
+   	<list name="has" lazy="false">
+      <key column="MASTER_HAS_FK"/>
+	  <index column="ordering_MASTER_HAS_FK"/>
+      <one-to-many class="ch.bbv.performancetests.list.lw.SlaveLw"/>
+    </list>
+  </class>
+  <class name="ch.bbv.performancetests.list.lw.SlaveLw"
+    table="SLAVE"
+	lazy="false"
+    mutable="true">
+	    <id name="id" column="ID" type="integer">
+      <generator class="increment"/>
+    </id>
+       <property name="val"
+      column="VAL"
+      type="int"
+      not-null="true"/>
+
+  </class>
+  <class name="ch.bbv.performancetests.binarytree.lw.NodeLw"
+    table="NODE"
+	lazy="false"
+    mutable="true">
+	    <id name="id" column="ID" type="integer">
+      <generator class="increment"/>
+    </id>
+       <property name="value"
+      column="VALUE"
+      type="int"
+      not-null="true"/>
+
+  </class>
+  <class name="ch.bbv.performancetests.binarytree.lw.ForestLw"
+    table="FOREST"
+	lazy="false"
+    mutable="true">
+	    <id name="id" column="ID" type="integer">
+      <generator class="increment"/>
+    </id>
+   	<list name="trees" lazy="false">
+      <key column="FOREST_TREES_FK"/>
+	  <index column="ordering_FOREST_TREES_FK"/>
+      <one-to-many class="ch.bbv.performancetests.binarytree.lw.NodeLw"/>
+    </list>
+  </class>
+</hibernate-mapping>

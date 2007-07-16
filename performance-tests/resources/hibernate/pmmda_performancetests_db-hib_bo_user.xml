@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping 
+	auto-import="false"
+	schema="PMMDA_PERFORMANCETESTS_DB"
+	default-access="field">
+  <class name="ch.bbv.performancetests.list.Master"
+    table="MASTER"
+    lazy="false" 
+    mutable="true">
+    <id name="id" column="ID" type="integer">
+      <generator class="increment"/>
+    </id>
+    <timestamp name="timestamp" column="TS"/>
+	<list name="has" lazy="false">
+      <key column="MASTER_HAS_FK"/>
+      <index column="ordering_MASTER_HAS_FK"/>
+      <one-to-many class="ch.bbv.performancetests.list.Slave"/>
+    </list>
+
+<!-- data objects -->
+
+  </class>
+  <class name="ch.bbv.performancetests.list.Slave"
+    table="SLAVE"
+    lazy="false" 
+    mutable="true">
+    <id name="id" column="ID" type="integer">
+      <generator class="increment"/>
+    </id>
+    <timestamp name="timestamp" column="TS"/>
+    <property name="val"
+      column="VAL"
+      type="int"
+      not-null="true"/>
+
+<!-- data objects -->
+
+  </class>
+  <class name="ch.bbv.performancetests.binarytree.Node"
+    table="NODE"
+    lazy="false" 
+    mutable="true">
+    <id name="id" column="ID" type="integer">
+      <generator class="increment"/>
+    </id>
+    <timestamp name="timestamp" column="TS"/>
+    <property name="value"
+      column="VALUE"
+      type="int"
+      not-null="true"/>
+    <many-to-one name="right"
+      column="RIGHT_FK"
+      class="ch.bbv.performancetests.binarytree.Node"
+      not-null="false"
+      index="NODE_RIGHT_IDX"
+    />	
+    <many-to-one name="left"
+      column="LEFT_FK"
+      class="ch.bbv.performancetests.binarytree.Node"
+      not-null="false"
+      index="NODE_LEFT_IDX"
+    />	
+
+<!-- data objects -->
+
+  </class>
+  <class name="ch.bbv.performancetests.binarytree.Forest"
+    table="FOREST"
+    lazy="false" 
+    mutable="true">
+    <id name="id" column="ID" type="integer">
+      <generator class="increment"/>
+    </id>
+    <timestamp name="timestamp" column="TS"/>
+	<list name="trees" lazy="false">
+      <key column="FOREST_TREES_FK"/>
+      <index column="ordering_FOREST_TREES_FK"/>
+      <one-to-many class="ch.bbv.performancetests.binarytree.Node"/>
+    </list>
+
+<!-- data objects -->
+
+  </class>
+</hibernate-mapping>
+

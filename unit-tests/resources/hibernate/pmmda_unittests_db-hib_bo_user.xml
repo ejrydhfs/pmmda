@@ -1,0 +1,178 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping 
+	auto-import="false"
+	schema="PMMDA_UNITTESTS_DB"
+	default-access="field">
+  <class name="ch.bbv.unittests.indexedprops.IPRoot"
+    table="IPROOT"
+    lazy="false" 
+    mutable="true">
+    <id name="id" column="ID" type="integer">
+      <generator class="increment"/>
+    </id>
+    <timestamp name="timestamp" column="TS"/>
+	<list name="items" lazy="false">
+      <key column="IPROOT_ITEMS_FK"/>
+      <index column="ordering_IPROOT_ITEMS_FK"/>
+      <one-to-many class="ch.bbv.unittests.indexedprops.IPTopItem"/>
+    </list>
+
+<!-- data objects -->
+
+  </class>
+  <class name="ch.bbv.unittests.indexedprops.IPListItem"
+    table="IPLISTITEM"
+    lazy="false" 
+    mutable="true">
+    <id name="id" column="ID" type="integer">
+      <generator class="increment"/>
+    </id>
+    <timestamp name="timestamp" column="TS"/>
+    <property name="ipListItemAttribute"
+      column="IPLISTITEMATTRIBUTE"
+      type="int"
+      not-null="true"/>
+
+<!-- data objects -->
+
+  </class>
+  <class name="ch.bbv.unittests.indexedprops.IPSingleItem"
+    table="IPSINGLEITEM"
+    lazy="false" 
+    mutable="true">
+    <id name="id" column="ID" type="integer">
+      <generator class="increment"/>
+    </id>
+    <timestamp name="timestamp" column="TS"/>
+    <property name="ipSingleItemAttribute"
+      column="IPSINGLEITEMATTRIBUTE"
+      type="int"
+      not-null="true"/>
+	<list name="items" lazy="false">
+      <key column="IPSINGLEITEM_ITEMS_FK"/>
+      <index column="ordering_IPSINGLEITEM_ITEMS_FK"/>
+      <one-to-many class="ch.bbv.unittests.indexedprops.IPListItem"/>
+    </list>
+
+<!-- data objects -->
+
+  </class>
+  <class name="ch.bbv.unittests.indexedprops.IPTopItem"
+    table="IPTOPITEM"
+    lazy="false" 
+    mutable="true">
+    <id name="id" column="ID" type="integer">
+      <generator class="increment"/>
+    </id>
+    <timestamp name="timestamp" column="TS"/>
+    <many-to-one name="item"
+      column="ITEM_FK"
+      class="ch.bbv.unittests.indexedprops.IPSingleItem"
+      not-null="false"
+      index="IPTOPITEM_ITEM_IDX"
+    />	
+
+<!-- data objects -->
+
+  </class>
+  <class name="ch.bbv.unittests.props.SimpleAttributes"
+    table="SIMPLEATTRIBUTES"
+    lazy="false" 
+    mutable="true">
+    <id name="id" column="ID" type="integer">
+      <generator class="increment"/>
+    </id>
+    <timestamp name="timestamp" column="TS"/>
+    <property name="booleanAttribute"
+      column="BOOLEANATTRIBUTE"
+      type="boolean"
+      not-null="true"/>
+    <property name="intAttribute"
+      column="INTATTRIBUTE"
+      type="int"
+      not-null="true"/>
+    <property name="floatAttribute"
+      column="FLOATATTRIBUTE"
+      type="float"
+      not-null="true"/>
+    <property name="doubleAttribute"
+      column="DOUBLEATTRIBUTE"
+      type="double"
+      not-null="true"/>
+    <property name="stringAttribute"
+      column="STRINGATTRIBUTE"
+      type="string"
+      not-null="true"/>
+    <property name="longAttribute"
+      column="LONGATTRIBUTE"
+      type="long"
+      not-null="true"/>
+
+<!-- data objects -->
+
+  </class>
+  <class name="ch.bbv.unittests.props.Item"
+    table="ITEM"
+    lazy="false" 
+    mutable="true">
+    <id name="id" column="ID" type="integer">
+      <generator class="increment"/>
+    </id>
+    <timestamp name="timestamp" column="TS"/>
+    <many-to-one name="subItem"
+      column="SUB_ITEM_FK"
+      class="ch.bbv.unittests.props.SubItem"
+      not-null="false"
+      index="ITEM_SUBITEM_IDX"
+    />	
+    <property name="itemAttribute"
+      column="ITEMATTRIBUTE"
+      type="int"
+      not-null="true"/>
+
+<!-- data objects -->
+
+  </class>
+  <class name="ch.bbv.unittests.props.Parent"
+    table="PARENT"
+    lazy="false" 
+    mutable="true">
+    <id name="id" column="ID" type="integer">
+      <generator class="increment"/>
+    </id>
+    <timestamp name="timestamp" column="TS"/>
+    <many-to-one name="item"
+      column="ITEM_FK"
+      class="ch.bbv.unittests.props.Item"
+      not-null="false"
+      index="PARENT_ITEM_IDX"
+    />	
+    <property name="parentAttribute"
+      column="PARENTATTRIBUTE"
+      type="int"
+      not-null="true"/>
+
+<!-- data objects -->
+
+  </class>
+  <class name="ch.bbv.unittests.props.SubItem"
+    table="SUBITEM"
+    lazy="false" 
+    mutable="true">
+    <id name="id" column="ID" type="integer">
+      <generator class="increment"/>
+    </id>
+    <timestamp name="timestamp" column="TS"/>
+    <property name="subItemAttribute"
+      column="SUBITEMATTRIBUTE"
+      type="int"
+      not-null="true"/>
+
+<!-- data objects -->
+
+  </class>
+</hibernate-mapping>
+
