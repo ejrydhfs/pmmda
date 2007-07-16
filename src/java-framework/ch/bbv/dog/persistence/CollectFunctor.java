@@ -111,7 +111,7 @@ public class CollectFunctor implements DoFunctor {
 	    update.setTimestamp(object.getTimestamp());
 	    assert (update.getId() != null) && (update.getTimestamp() != null);
 	}
-	return new ArrayList<DataObjectUpdate>(updates.values());	
+	return Collections.unmodifiableList(new ArrayList<DataObjectUpdate>(updates.values()));	
   }
 
 

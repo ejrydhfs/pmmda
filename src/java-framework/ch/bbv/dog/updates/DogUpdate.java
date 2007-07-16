@@ -7,6 +7,8 @@ package ch.bbv.dog.updates;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -54,7 +56,7 @@ public class DogUpdate implements Iterable<DataObjectUpdate>, Serializable {
 	 */
 	public DogUpdate(DataObject rootObject) {
 		CollectFunctor functor = CollectFunctor.collect(rootObject);
-		updates = functor.getUpdates();
+		updates = new ArrayList<DataObjectUpdate>(functor.getUpdates());
 		rootUpdate = rootObject.getUpdate();
 		if (!updates.contains(rootUpdate)) {
 			updates.add(rootUpdate);
@@ -106,7 +108,7 @@ public class DogUpdate implements Iterable<DataObjectUpdate>, Serializable {
 					idToDataObject.put(doID, dataObject);
 				}
 				 else {					 
-					DataObject loadedObject = doHandler.retrieve(datasource, doID.getBoClass(), doID.getId()); 
+					DataObject loadedObject = doHandler.retrieve(datasource, (Class<? extends DataObject>)doID.getBoClass(), doID.getId()); 
 					CollectFunctor functor = CollectFunctor.collect(loadedObject);
 					for (DataObject dataObject : functor.getObjects()) {
 						DataObjectId loadedDoId = new DataObjectId(dataObject);
@@ -118,6 +120,9 @@ public class DogUpdate implements Iterable<DataObjectUpdate>, Serializable {
 			update.setObject(idToDataObject.get(doID));
 			if (!timestampsAreEqual(update.getTimestamp(), update.getObject().getTimestamp())) {
 				// TODO: Optimistic locking failed -> take appropriate action
+				throw new ConcurrentModificationException("Optimistic concurrency violation. The data object of type " +
+						update.getObject().getClass() + " with id=" +  update.getObject().getId() +
+						" was modified by another transaction!");
 			}
 		}
 		for (DataObjectUpdate update : updates) {			
