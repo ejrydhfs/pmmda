@@ -26,6 +26,7 @@ import ch.persi.xml.XmlNode;
  * this meta element represents an view definition
  * 
  * @author Bruno Persi
+ * @author Ueli Kurmann
  * 
  */
 public class MetaView extends MetaElement {
@@ -54,7 +55,7 @@ public class MetaView extends MetaElement {
 	/**
 	 * Maps meta property to paths. a path is a "Point" separated string of properties
 	 */
-	private Map<MetaProperty, ViewPropertyPath> paths;
+	private Map<MetaProperty, RootDataObject> paths;
 	
 	/**
 	 * creates a new view with default name <code>View</code><br>
@@ -72,18 +73,16 @@ public class MetaView extends MetaElement {
 	 *          for the new MetaView.
 	 */
 	public MetaView(String name) {
-
 	  setName(name);
 		TaggedValue author = new TaggedValue("author", "pmMDA");
 		this.addTaggedValue(author);
 		
 		fields = new ArrayList<MetaProperty>();
 		views = new ArrayList<MetaView>();
-		paths = new HashMap<MetaProperty, ViewPropertyPath>();
+		paths = new HashMap<MetaProperty, RootDataObject>();
 		
 		/**
-		 * @author Ueli Kurmann
-		 * FIXME: correct? What about multiple views? Move to static constructor?
+		 * FIXME: uk: correct? What about multiple views? Move to static constructor?
 		 */
 		List<TagDefinition> taggedValueTypes = new ArrayList<TagDefinition>();
 		taggedValueTypes.add(new TagDefinition(ViewConstants.VIEW_TAG, "", String.class));
@@ -179,12 +178,10 @@ public class MetaView extends MetaElement {
 	public void addToProperties(List<MetaProperty> propertiesToBeAdded,
 			String qualifiedName, MetaModel rootModel) {
 		for (MetaProperty property : propertiesToBeAdded) {
-			property = (MetaProperty) rootModel.findElement(property
-					.getQualifiedName());
+			property = (MetaProperty) rootModel.findElement(property.getQualifiedName());
 			TaggedValue taggedValue = property.getTaggedValue(ViewConstants.VIEW_TAG);
 			if (taggedValue == null) {
-				taggedValue = new TaggedValue(ViewConstants.VIEW_TAG, new XmlNode(
-						ViewConstants.VIEW_TAG).asXml());
+				taggedValue = new TaggedValue(ViewConstants.VIEW_TAG, new XmlNode(ViewConstants.VIEW_TAG).asXml());
 				property.addTaggedValue(taggedValue);
 			}
 			XmlNode xmlDef = new XmlNode();
@@ -511,11 +508,26 @@ public class MetaView extends MetaElement {
 		this.views.addAll(views);
 	}
 	
-	public void addPath(MetaProperty property, ViewPropertyPath propertyPath){
-	  paths.put(property, propertyPath);
-	}
 	
-	public ViewPropertyPath getPropertyPath(MetaProperty property){
-	  return paths.get(property);
+	public class RootDataObject{
+	  private Class<? extends DataObject> rootObjectType;
+	  private String alias;
+	  
+	  public Class<? extends DataObject> getRootObjectType(){
+	    return rootObjectType;
+	  }
+	  
+	  public void setRootObjectType(Class<? extends DataObject> rootObjectType){
+	    this.rootObjectType = rootObjectType;
+	  }
+	  
+	  public String getAlias(){
+	    return alias;
+	  }
+	  
+	  public void setAlias(String alias){
+	    this.alias = alias;
+	  } 
 	}
 }
+	

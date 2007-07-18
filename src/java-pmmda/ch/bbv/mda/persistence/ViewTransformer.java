@@ -1,3 +1,10 @@
+/* 
+ * copyright 2000-2005 Marcel Baumann 
+ * Licensed under the Apache License, Version 2.0 (the "Licence"); 
+ * you may not use this file except in compliance with the License. 
+ * $Id$
+ */
+
 package ch.bbv.mda.persistence;
 
 import java.util.ArrayList;
@@ -13,6 +20,11 @@ import ch.bbv.mda.VisibilityCode;
 import ch.bbv.mda.ui.ViewConstants;
 import ch.persi.xml.XmlNode;
 
+/**
+ * Base Class for transformers with view support.
+ * @author UeliKurmann
+ *
+ */
 public class ViewTransformer extends ExternalTransformer implements
     ViewConstants {
 
@@ -32,7 +44,6 @@ public class ViewTransformer extends ExternalTransformer implements
     collectedViews = new ArrayList<ViewElement>();
     collectedProperties = new ArrayList<ViewElement>();
   }
-  
   
   /**
    * Add a View Element 
@@ -131,7 +142,7 @@ public class ViewTransformer extends ExternalTransformer implements
 
   }
 
-  MetaPackage obtainPackage(MetaModel metaModel, String qualifiedViewName) {
+  private MetaPackage obtainPackage(MetaModel metaModel, String qualifiedViewName) {
 
     MetaPackage metaPackage = null;
     if (getNamespace(qualifiedViewName).length() > 0) {
