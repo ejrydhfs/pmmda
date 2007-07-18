@@ -81,10 +81,10 @@ public class Mdr2MdaTransformer extends ViewTransformer {
         for (MdrUmlClass mdrUmlClass : mdrUmlPackage.getClasses()) {
           extractClass(mdrUmlClass, mdaModel);
         }
-        for(MdrTaggedValue taggedValue:mdrUmlPackage.getTaggedValue(VIEW_TAG)){
+        MdrTaggedValue taggedValue = mdrUmlPackage.getTaggedValue(VIEW_TAG);
+        if(taggedValue != null){
           addCollectedView(null, mdaModel, taggedValue.getMdaTaggedValue());
         }
-        
       } else {
         extractPackage(mdrUmlPackage, mdaModel);
       }
@@ -139,10 +139,11 @@ public class Mdr2MdaTransformer extends ViewTransformer {
       extractClass(mClass, metaPackage);
     }
 
-    for (MdrTaggedValue value : source.getTaggedValue(VIEW_TAG)) {
+    
+    MdrTaggedValue value = source.getTaggedValue(VIEW_TAG);
+    if(value != null){
       this.addCollectedView(null, metaPackage, new TaggedValue(value.getName(),
           value.getValue()));
-
     }
 
   }
@@ -169,6 +170,7 @@ public class Mdr2MdaTransformer extends ViewTransformer {
     if (metaClass == null) {
       metaClass = new MetaClass();
       metaClass.setName(name);
+      //metaClass.setDescription(source.getDescription());
       context.addClass(metaClass);
     }
 
@@ -250,23 +252,29 @@ public class Mdr2MdaTransformer extends ViewTransformer {
    *          context in which the property will be updated.
    */
   private void extractProperty(MdrUmlAttribute attribute, MetaClass context) {
-    String name = attribute.getName();
     Multiplicity mMultiplicity = attribute.getMultiplicity();
     MetaProperty property;
+     
+    
+    // Decide: Property OR Indexed Property?
     if (mMultiplicity.getUpperBound() == 1) {
       property = new MetaProperty();
       context.addProperty(property);
     } else {
-      MetaIndexedProperty metaIndexedProperty = new MetaIndexedProperty();
-      property = metaIndexedProperty;
-      context.addIndexedProperty(metaIndexedProperty);
+      property = new MetaIndexedProperty();
+      context.addIndexedProperty((MetaIndexedProperty)property);
     }
-    property.setName(name);
+    property.setAggregation(attribute.isAggregation());
+    
+    // set the name
+    property.setName(attribute.getName());
 
+    // set the initial value
     if (attribute.getInitialValue() == null) {
       property.setInitialValue(attribute.getInitialValue());
     }
-
+    
+    // set data type
     if (attribute.getType().getQualifiedName() != null) {
       property.setTypeName(attribute.getType().getQualifiedName());
     } else {
@@ -276,12 +284,17 @@ public class Mdr2MdaTransformer extends ViewTransformer {
       property.setTypeName("int");
     }
 
+    // set multiplicity
     Multiplicity multiplicity = attribute.getMultiplicity();
     if (multiplicity != null) {
       property.setMultiplicity(multiplicity);
     }
+    
+    // extract stereotypes
     extractStereotypeAndTags(attribute, property);
     collectViewProperties(property, context, attribute);
+    property.setAggregation(true);
+    
   }
 
   /**
@@ -346,6 +359,20 @@ public class Mdr2MdaTransformer extends ViewTransformer {
   private void extractRelations(MetaModel target, MdrUmlModel source) {
     assert (target != null) && (source != null);
 
+   processGeneralization(source);
+   processAbstractions(source);
+   processAssociations(target, source);
+
+    // process abstractions
+  }
+  
+  /**
+   * Process Generalizations. (see {@link #extractRelations(MetaModel, MdrUmlModel)}
+   * @param metaModel
+   * @param source
+   */
+  private void processGeneralization(MdrUmlModel source){
+    // process generalizations
     for (MdrUmlGeneralization generalization : source.getGeneralizations()) {
       MetaClass superClass = (MetaClass) elements.get(generalization
           .getParent());
@@ -355,7 +382,14 @@ public class Mdr2MdaTransformer extends ViewTransformer {
         metaClass.addAncestor(superClass);
       }
     }
-
+  }
+  
+  /**
+   * Process abstractions (see {@link #extractRelations(MetaModel, MdrUmlModel)}
+   * @param metaModel
+   * @param source
+   */
+  private void processAbstractions(MdrUmlModel source){
     for (MdrUmlAbstraction abstraction : source.getAbstractions()) {
       if ((abstraction.getSuppliers().size() == 0)
           || (abstraction.getClients().size() == 0)) {
@@ -375,7 +409,14 @@ public class Mdr2MdaTransformer extends ViewTransformer {
         metaClass.addAncestor(superClass);
       }
     }
-
+  }
+  
+  /**
+   * Process Associations. (see {@link #extractRelations(MetaModel, MdrUmlModel)}
+   * @param metaModel
+   * @param source
+   */
+  private void processAssociations(MetaModel target, MdrUmlModel source){
     for (MdrUmlAssociation association : source.getAssociations()) {
       AssociationEnd e1 = association.getConnection(0);
       AssociationEnd e2 = association.getConnection(1);
@@ -402,24 +443,33 @@ public class Mdr2MdaTransformer extends ViewTransformer {
         continue;
       }
 
-      Multiplicity multiplicity = MdrUtilities.convertMultiplicity(e2
-          .getMultiplicity());
+      Multiplicity multiplicity = MdrUtilities.convertMultiplicity(e2.getMultiplicity());
+      
       MetaProperty property = null;
+      
       if (((multiplicity != null) && (multiplicity.getUpperBound() == Multiplicity.N_MULTIPLICITY))
           || (multiplicity == null)) {
-        property = new MetaIndexedProperty();
-        owner.addIndexedProperty((MetaIndexedProperty) property);
+        property = owner.findIndexedProperty(name);
+        if(property == null){
+          property = new MetaIndexedProperty();
+          owner.addIndexedProperty((MetaIndexedProperty) property);
+        }
       } else {
-        property = new MetaProperty();
-        owner.addProperty(property);
+        property = owner.findProperty(name);
+        if(property == null){
+          property = new MetaProperty();
+          owner.addProperty(property);
+        }
       }
+      
       property.setName(name);
+      
       if (owned != null) {
         property.setTypeName(owned.getQualifiedName());
       }
 
-      if (e1.getAggregation().toString().equals(
-          AggregationKindEnum.SHARED.toString())) {
+      if (e1.getAggregation().equals(
+          org.omg.uml.foundation.datatypes.AggregationKindEnum.AK_AGGREGATE)) {
         property.setAggregation(true);
       }
 
@@ -446,7 +496,6 @@ public class Mdr2MdaTransformer extends ViewTransformer {
             .toString()));
       }
     }
-
   }
 
   /**
@@ -494,7 +543,8 @@ public class Mdr2MdaTransformer extends ViewTransformer {
   private void collectViewProperties(MetaProperty property, MetaClass clazz,
       MdrUmlAttribute attribute) {
     assert (property != null) && (clazz != null) && (attribute != null);
-    for (MdrTaggedValue taggedValue : attribute.getTaggedValue(VIEW_TAG)) {
+    MdrTaggedValue taggedValue = attribute.getTaggedValue(VIEW_TAG);
+    if(taggedValue != null) {
       addCollectedProperty(property, clazz.retrievePackage(), taggedValue.getMdaTaggedValue());
     }
   }

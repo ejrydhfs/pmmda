@@ -47,7 +47,7 @@ public class MdrUmlClass extends MdrUmlElement {
    * Constructor
    * 
    * @param umlClass
-   *          a mdr classifier
+   *          a MDR classifier
    */
   public MdrUmlClass(Classifier umlClass) {
     this(umlClass, null);

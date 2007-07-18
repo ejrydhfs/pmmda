@@ -18,6 +18,7 @@ import ch.bbv.mda.VisibilityCode;
 /**
  * Abstract Wrapper Class for a MDR ModelElement instance This class provides
  * methods to simplify the access to the MDR model
+ * 
  * @author UeliKurmann
  * @version $Revision$
  */
@@ -32,17 +33,19 @@ public abstract class MdrUmlElement {
 
   /**
    * Returns the full qualified name of the model element
+   * 
    * @return name the qualified name of the model element
    */
   public abstract String getQualifiedName();
 
   /**
    * Returns the Stereotypes of a ModelElement
+   * 
    * @return Collection of MdrUmlStereotypes
    */
   public Collection<MdrUmlStereotype> getStereotypes() {
     Collection<MdrUmlStereotype> stereotypes = new ArrayList<MdrUmlStereotype>();
-    for(Object stereoType:getModelElement().getStereotype()){
+    for (Object stereoType : getModelElement().getStereotype()) {
       stereotypes.add(new MdrUmlStereotype((Stereotype) stereoType));
     }
     return stereotypes;
@@ -55,6 +58,7 @@ public abstract class MdrUmlElement {
 
   /**
    * Returns the Visibility Code
+   * 
    * @return VisibilityCode
    */
   public VisibilityCode getVisibility() {
@@ -63,7 +67,9 @@ public abstract class MdrUmlElement {
 
   /**
    * Sets the visibility code
-   * @param visibility code
+   * 
+   * @param visibility
+   *          code
    */
   public void setVisibility(VisibilityCode visibility) {
     getModelElement().setVisibility(MdrUtilities.convertVisibility(visibility));
@@ -71,33 +77,37 @@ public abstract class MdrUmlElement {
 
   /**
    * Returns the Tagged Values
+   * 
    * @return collection of MdrTaggedValue
    */
   public List<MdrTaggedValue> getTaggedValues() {
     List<MdrTaggedValue> taggedValues = new ArrayList<MdrTaggedValue>();
-    for (Object taggedValue : (Collection<?>) getModelElement().getTaggedValue()) {
-      taggedValues.add(new MdrTaggedValue((TaggedValue)taggedValue));
+    for (Object taggedValue : (Collection<?>) getModelElement()
+        .getTaggedValue()) {
+      taggedValues.add(new MdrTaggedValue((TaggedValue) taggedValue));
     }
     return taggedValues;
   }
-  
+
   /**
    * Returns the Tagged Values with the given name
-   * @param name the name of the tagged values
+   * 
+   * @param name
+   *          the name of the tagged values
    * @return the list of tagged values
    */
-  public List<MdrTaggedValue> getTaggedValue(String name){
-    List<MdrTaggedValue> result = new ArrayList<MdrTaggedValue>();
-    for(MdrTaggedValue taggedValue:getTaggedValues()){
-      if(taggedValue.getName().equals(name)){
-        result.add(taggedValue);
+  public MdrTaggedValue getTaggedValue(String name) {
+    for (MdrTaggedValue taggedValue : getTaggedValues()) {
+      if (taggedValue.getName().equals(name)) {
+        return taggedValue;
       }
     }
-    return result;
+    return null;
   }
 
   /**
    * Adds a TaggedValue to the collection of tagged values
+   * 
    * @param taggedValue
    */
   @SuppressWarnings("unchecked")

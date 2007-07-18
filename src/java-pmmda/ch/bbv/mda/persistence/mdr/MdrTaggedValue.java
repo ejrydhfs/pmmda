@@ -58,7 +58,7 @@ public class MdrTaggedValue {
 
   /**
    * returns the value of the tagged value
-   * @return the value of thte tagged value
+   * @return the value of the tagged value
    */
   public String getValue() {
     return taggedValue.getDataValue().iterator().next().toString();

@@ -5,6 +5,7 @@
  */
 package ch.bbv.mda.persistence.mdr;
 
+import org.omg.uml.foundation.core.ModelElement;
 import org.omg.uml.foundation.core.Stereotype;
 
 /**
@@ -14,7 +15,7 @@ import org.omg.uml.foundation.core.Stereotype;
  * @version $Revision$
  */
 
-public class MdrUmlStereotype {
+public class MdrUmlStereotype extends MdrUmlElement{
 
   private Stereotype stereotype;
 
@@ -40,5 +41,15 @@ public class MdrUmlStereotype {
    */
   public String getName() {
     return stereotype.getName();
+  }
+
+  @Override
+  public ModelElement getModelElement() {
+    return stereotype;
+  }
+
+  @Override
+  public String getQualifiedName() {
+    return getName();
   }
 }

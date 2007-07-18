@@ -9,8 +9,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.omg.uml.foundation.core.Abstraction;
-import org.omg.uml.foundation.core.AssociationClass;
 import org.omg.uml.foundation.core.AssociationEnd;
 import org.omg.uml.foundation.core.Attribute;
 import org.omg.uml.foundation.core.Classifier;
@@ -18,7 +19,9 @@ import org.omg.uml.foundation.core.DataType;
 import org.omg.uml.foundation.core.Generalization;
 import org.omg.uml.foundation.core.Interface;
 import org.omg.uml.foundation.core.Namespace;
+import org.omg.uml.foundation.core.UmlAssociation;
 import org.omg.uml.foundation.core.UmlClass;
+import org.omg.uml.foundation.datatypes.AggregationKindEnum;
 import org.omg.uml.foundation.datatypes.ChangeableKindEnum;
 import org.omg.uml.foundation.datatypes.MultiplicityRange;
 import org.omg.uml.foundation.datatypes.OrderingKindEnum;
@@ -43,11 +46,18 @@ import ch.bbv.mda.VisibilityCode;
  * The MDA transformer defines rules how to transform a MDA element into the
  * corresponding MDR representation. The MDR representation is XMI 1.2 / UML 1.4
  * compatible.
+ * 
  * @author Marcel Baumann
  * @author Ueli Kurmann
  * @version $Revision$
  */
 public class Mda2MdrTransformer {
+
+  /**
+   * Logger of the class.
+   */
+  private static Log log = LogFactory.getLog(Mdr2MdaTransformer.class);
+
   private static final String REALIZE = "realize";
 
   private static final String JAVA = "Java";
@@ -78,14 +88,14 @@ public class Mda2MdrTransformer {
   /**
    * MDR model read from a XMI file.
    */
-  private MdrUmlModel mModel;
+  private MdrUmlModel targetModel;
 
   /**
    * Meta model representation of the MDR model.
    */
   private MetaModel metaModel;
 
-  private MdrLoader mdrLoader;
+
 
   private Model mdrModel;
 
@@ -109,13 +119,12 @@ public class Mda2MdrTransformer {
    * @param mdrLoader
    * @pre (source != null) && (target != null)
    */
-  public void synchronize(MetaModel source, MdrUmlModel target,
+  public synchronized void synchronize(MetaModel source, MdrUmlModel target,
       MdrLoader mdrLoader) {
     assert (source != null) && (target != null);
-    this.mdrLoader = mdrLoader;
-    mModel = target;
+    targetModel = target;
 
-    mdrModel = mModel.getUmlPackage().getModelManagement().getModel()
+    mdrModel = targetModel.getUmlPackage().getModelManagement().getModel()
         .createModel();
 
     mdrModel.setName(source.getName());
@@ -133,10 +142,9 @@ public class Mda2MdrTransformer {
     }
 
     // classes in the default namespace
-    // default package erstellen
-    MdrUmlPackage defaultPackage = new MdrUmlPackage(mdrLoader
-        .createUmlPackage(target.getName()), target);
-    mModel.addPackage(target.getName(), defaultPackage);
+    MdrUmlPackage defaultPackage = new MdrUmlPackage(MdrFactory.createPackage(
+        target.getUmlPackage(), target.getName()), target);
+    targetModel.addPackage(target.getName(), defaultPackage);
     defaultPackage.getModelElement().setNamespace(mdrModel);
     for (MetaClass item : source.getClasses()) {
       extractClass(item, defaultPackage);
@@ -164,7 +172,7 @@ public class Mda2MdrTransformer {
    *          MDR context containing the package to synchronize.
    * @pre (source != null) && (context != null)
    */
-  protected void extractPackage(MetaPackage source, MdrUmlModel context) {
+  private void extractPackage(MetaPackage source, MdrUmlModel context) {
     assert (source != null) && (context != null);
     String qualifiedName = source.getName();
     MdrUmlPackage mPackage = createPackage(context, qualifiedName);
@@ -182,7 +190,7 @@ public class Mda2MdrTransformer {
    *          MDR context containing the package to be processed.
    * @pre (source != null) && (context != null)
    */
-  protected void processPackage(MetaPackage source, MdrUmlModel context) {
+  private void processPackage(MetaPackage source, MdrUmlModel context) {
     assert (source != null) && (context != null);
     MdrUmlPackage mPackage = findPackageQualified(context, source.getName());
 
@@ -200,7 +208,7 @@ public class Mda2MdrTransformer {
    *          MDR context containing the package to be processed.
    * @pre (source != null) && (context != null)
    */
-  protected void processAllRelations(MetaPackage source, MdrUmlModel context) {
+  private void processAllRelations(MetaPackage source, MdrUmlModel context) {
     assert (source != null) && (context != null);
     MdrUmlPackage mPackage = findPackageQualified(context, source.getName());
     if (mPackage == null)
@@ -220,7 +228,7 @@ public class Mda2MdrTransformer {
    *          MDR context containing the class to synchronize.
    * @pre (source != null) && (context != null)
    */
-  protected void extractClass(MetaClass source, MdrUmlPackage context) {
+  private void extractClass(MetaClass source, MdrUmlPackage context) {
     assert (source != null) && (context != null);
     MdrUmlClass mClass;
     if (source.isInterface()) {
@@ -230,7 +238,6 @@ public class Mda2MdrTransformer {
     }
     mClass.getModelElement().setNamespace(
         (org.omg.uml.modelmanagement.UmlPackage) context.getModelElement());
-
     elements.put(source, mClass);
     mClass.setAbstract(source.isAbstract());
     mClass.setFinal(source.isFinal());
@@ -253,10 +260,10 @@ public class Mda2MdrTransformer {
    *          MDR context containing the class to synchronize.
    * @pre (source != null) && (context != null)
    */
-  protected void extractRelation(MetaClass source, MdrUmlPackage context) {
+  private void extractRelation(MetaClass source, MdrUmlPackage context) {
     assert (source != null) && (context != null);
     // find class the relations relate to
-    MdrUmlClass mClass = mModel.getClass(source.getQualifiedName());
+    MdrUmlClass mClass = targetModel.getClass(source.getQualifiedName());
 
     for (MetaProperty item : source.getProperties()) {
       extractProperty(item, mClass);
@@ -286,9 +293,9 @@ public class Mda2MdrTransformer {
    * @param child
    *          of the generalization relation
    */
-  protected void extractAncestor(MetaClass ancestor, MdrUmlClass child) {
-    MdrUmlClass mAncestor = mModel.getClass(ancestor.getQualifiedName());
-    MdrUmlPackage ancestorContext = mModel.getPackage(ancestor
+  private void extractAncestor(MetaClass ancestor, MdrUmlClass child) {
+    MdrUmlClass mAncestor = targetModel.getClass(ancestor.getQualifiedName());
+    MdrUmlPackage ancestorContext = targetModel.getPackage(ancestor
         .retrievePackage().getName());
     if (mAncestor == null) {
       mAncestor = createClass(ancestorContext, ancestor.getName());
@@ -296,7 +303,7 @@ public class Mda2MdrTransformer {
     MdrUmlGeneralization generalization = findGeneralization(ancestorContext,
         mAncestor, child);
     if (generalization == null) {
-      Generalization tmpGeneralization = mModel.getUmlPackage().getCore()
+      Generalization tmpGeneralization = targetModel.getUmlPackage().getCore()
           .getGeneralization().createGeneralization();
       tmpGeneralization.setNamespace(ancestorContext.getNamespace());
       generalization = new MdrUmlGeneralization(tmpGeneralization);
@@ -319,19 +326,19 @@ public class Mda2MdrTransformer {
    *          implements the interface
    */
 
-  protected void extractInterface(MetaClass ancestorIf, MdrUmlClass child) {
-    MdrUmlClass parent = mModel.getClass(ancestorIf.getQualifiedName());
-    MdrUmlPackage ancestorContext = mModel.getPackage(ancestorIf
+  private void extractInterface(MetaClass ancestorIf, MdrUmlClass child) {
+    MdrUmlClass parent = targetModel.getClass(ancestorIf.getQualifiedName());
+    MdrUmlPackage ancestorContext = targetModel.getPackage(ancestorIf
         .retrievePackage().getName());
 
     if (parent == null) {
       parent = createInterface(ancestorContext, ancestorIf.getName());
     }
 
-    MdrUmlAbstraction abstraction = findAbstraction(mModel, parent, child);
+    MdrUmlAbstraction abstraction = findAbstraction(targetModel, parent, child);
 
     if (abstraction == null) {
-      Abstraction umlAbstraction = mModel.getUmlPackage().getCore()
+      Abstraction umlAbstraction = targetModel.getUmlPackage().getCore()
           .getAbstraction().createAbstraction();
       // TODO correct?
       umlAbstraction.setNamespace(ancestorContext.getNamespace());
@@ -344,7 +351,8 @@ public class Mda2MdrTransformer {
 
       MdrUmlStereotype mStereotype = findStereotype(REALIZE);
       if (mStereotype == null) {
-        mStereotype = new MdrUmlStereotype(mdrLoader.createStereotype(REALIZE));
+        mStereotype = new MdrUmlStereotype(MdrFactory.createStereotype(
+            targetModel.getUmlPackage(), REALIZE));
 
       }
       abstraction.addStereotype(mStereotype);
@@ -360,7 +368,7 @@ public class Mda2MdrTransformer {
    * @param context
    *          MDR context containing the class to synchronize.
    */
-  protected void extractNestedClass(MetaClass source, MdrUmlClass context) {
+  private void extractNestedClass(MetaClass source, MdrUmlClass context) {
     assert (source != null) && (context != null);
     MdrUmlClass mClass;
     if (source.isInterface()) {
@@ -388,7 +396,7 @@ public class Mda2MdrTransformer {
    * @param context
    *          MDR context containing the property to synchronize.
    */
-  protected void extractProperty(MetaProperty source, MdrUmlClass context) {
+  private void extractProperty(MetaProperty source, MdrUmlClass context) {
     assert (source != null) && (context != null);
     if (source.isAggregation() || source.isComposition()) {
       MetaElement mElement = source.getContext().getContext();
@@ -439,9 +447,9 @@ public class Mda2MdrTransformer {
       if ((newMultiplicity != null) && (mMultiplicity != newMultiplicity)) {
         if (mMultiplicity == null) {
           org.omg.uml.foundation.datatypes.Multiplicity mdrMultiplicity;
-          mdrMultiplicity = mModel.getUmlPackage().getDataTypes()
+          mdrMultiplicity = targetModel.getUmlPackage().getDataTypes()
               .getMultiplicity().createMultiplicity();
-          MultiplicityRange mdrMultiplicityrange = mModel.getUmlPackage()
+          MultiplicityRange mdrMultiplicityrange = targetModel.getUmlPackage()
               .getDataTypes().getMultiplicityRange().createMultiplicityRange();
           mdrMultiplicityrange.setLower(newMultiplicity.getLowerBound());
           mdrMultiplicityrange.setUpper(newMultiplicity.getUpperBound());
@@ -470,10 +478,10 @@ public class Mda2MdrTransformer {
    * @param context
    *          MDR context containing the property to synchronize.
    */
-  protected void extractIndexedProperty(MetaIndexedProperty source,
+  private void extractIndexedProperty(MetaIndexedProperty source,
       MdrUmlClass context) {
     assert (source != null) && (context != null);
-    if (source.isAggregation() || source.isComposition()) {
+    if (source.isAggregation() || source.isComposition() || source.isRelation()) {
       MetaElement mElement = source.getContext().getContext();
       while (!(mElement instanceof MetaPackage)) {
         mElement = mElement.getContext();
@@ -506,9 +514,9 @@ public class Mda2MdrTransformer {
       if ((newMultiplicity != null) && (multiplicity != newMultiplicity)) {
         if (multiplicity == null) {
           org.omg.uml.foundation.datatypes.Multiplicity mdrMultiplicity;
-          mdrMultiplicity = mModel.getUmlPackage().getDataTypes()
+          mdrMultiplicity = targetModel.getUmlPackage().getDataTypes()
               .getMultiplicity().createMultiplicity();
-          MultiplicityRange mdrMultiplicityrange = mModel.getUmlPackage()
+          MultiplicityRange mdrMultiplicityrange = targetModel.getUmlPackage()
               .getDataTypes().getMultiplicityRange().createMultiplicityRange();
           mdrMultiplicityrange.setLower(newMultiplicity.getLowerBound());
           mdrMultiplicityrange.setUpper(newMultiplicity.getUpperBound());
@@ -536,17 +544,18 @@ public class Mda2MdrTransformer {
    *          target item to synchronize.
    */
   private void extractTags(MetaElement source, MdrUmlElement item) {
+    
     String description = source.getDescription();
     if ((description != null) && (description.length() > 0)) {
-      MdrTaggedValue taggedValue = createTag(item,
-          UmlConstants.DOCUMENTATION_TAG);
-      taggedValue.setValue(description);
+      MdrTaggedValue taggedValue = createTag(item, UmlConstants.DOCUMENTATION_TAG);
+      taggedValue.setValue(description);   
     } else {
       MdrTaggedValue taggedValue = findTag(item, UmlConstants.DOCUMENTATION_TAG);
       if (taggedValue != null) {
         taggedValue.setValue("");
       }
     }
+    
     // synchronizes all the source tags with the target ones
     for (TaggedValue tag : source.getTags()) {
       String tagName = tag.getTag();
@@ -554,14 +563,14 @@ public class Mda2MdrTransformer {
       MdrTaggedValue taggedValue = createTag(item, tagName);
       taggedValue.setValue(tagValue != null ? tagValue : "");
     }
+     
     // removes the tags no more available in the source. These tags are
     // the ones declared obsolete in the loaded cartridges.
     for (MdrTaggedValue taggedValue : item.getTaggedValues()) {
-      if (source.getTaggedValue(taggedValue.getName()) == null) {
+      if (!UmlConstants.DOCUMENTATION_TAG.equals(taggedValue.getName()) && source.getTaggedValue(taggedValue.getName()) == null) {
         taggedValue.getTaggedValue().refDelete();
       }
     }
-
   }
 
   /**
@@ -585,7 +594,8 @@ public class Mda2MdrTransformer {
         }
       }
       if (!found) {
-        mDataType = mdrLoader.createDataType(metaDataType.getName());
+        mDataType = MdrFactory.createMdrUmlDataType(
+            targetModel.getUmlPackage(), metaDataType.getName());
         mDataType.getModelElement().setNamespace(mdrModel);
       }
     }
@@ -602,20 +612,16 @@ public class Mda2MdrTransformer {
    * @pre (item != null) && (tagName != null)
    */
   private MdrTaggedValue createTag(MdrUmlElement item, String tagName) {
-    assert (item != null) && (tagName != null);
     MdrTaggedValue taggedValue = findTag(item, tagName);
     if (taggedValue == null) {
-      org.omg.uml.foundation.core.TaggedValue tag = mdrLoader
-          .createTaggedValue(item, tagName);
-
-      taggedValue = new MdrTaggedValue(tag);
+      taggedValue = new MdrTaggedValue(MdrFactory.createTaggedValue(targetModel.getUmlPackage(), tagName));
       item.addTaggedValue(taggedValue);
     }
     return taggedValue;
   }
 
   /**
-   * Creates the package with the given qualified name. All necessary surounding
+   * Creates the package with the given qualified name. All necessary surrounding
    * packages are created. If the package already exists no creation action is
    * performed.
    * 
@@ -642,8 +648,8 @@ public class Mda2MdrTransformer {
       }
       mPackage = model.getPackage(tmpQualifiedName);
       if (mPackage == null) {
-        org.omg.uml.modelmanagement.UmlPackage umlPackage = mdrLoader
-            .createUmlPackage(name);
+        org.omg.uml.modelmanagement.UmlPackage umlPackage = MdrFactory
+            .createPackage(model.getUmlPackage(), name);
         umlPackage.setNamespace(context);
         mPackage = model.createPackage(tmpQualifiedName, umlPackage);
       }
@@ -666,11 +672,12 @@ public class Mda2MdrTransformer {
     assert (context != null) && (name != null);
     MdrUmlClass item = findClass(context, name);
     if (item == null) {
-      UmlClass umlClass = mdrLoader.createUmlClass(name, 0);
+      UmlClass umlClass = MdrFactory.createClass(targetModel.getUmlPackage(),
+          name, 0);
       umlClass.setNamespace((Namespace) context.getModelElement());
       item = new MdrUmlClass(umlClass);
       context.addClass(item);
-      mModel.addClass(item);
+      targetModel.addClass(item);
     }
     return item;
   }
@@ -688,10 +695,11 @@ public class Mda2MdrTransformer {
     assert (context != null) && (name != null);
     MdrUmlClass item = findClass(context, name);
     if (item == null) {
-      UmlClass umlClass = mdrLoader.createUmlClass(name, 0);
+      UmlClass umlClass = MdrFactory.createClass(targetModel.getUmlPackage(),
+          name, 0);
       umlClass.setNamespace((Namespace) context.getModelElement());
       item = new MdrUmlClass(umlClass);
-      mModel.addClass(item);
+      targetModel.addClass(item);
     }
     return item;
   }
@@ -709,10 +717,11 @@ public class Mda2MdrTransformer {
     assert (context != null) && (name != null);
     MdrUmlClass item = findInterface(context, name);
     if (item == null) {
-      Interface umlInterface = mdrLoader.createUmlInterface(name, 0);
+      Interface umlInterface = MdrFactory.createInterface(targetModel
+          .getUmlPackage(), name, 0);
       item = new MdrUmlClass(umlInterface);
       context.addClass(item);
-      mModel.addClass(item);
+      targetModel.addClass(item);
     }
     return item;
   }
@@ -728,9 +737,10 @@ public class Mda2MdrTransformer {
    */
   private MdrUmlClass createInterface(MdrUmlClass context, String name) {
     assert (context != null) && (name != null);
-    MdrUmlClass item = mModel.getClass(name);
+    MdrUmlClass item = targetModel.getClass(name);
     if (item == null) {
-      Interface umlInterface = mdrLoader.createUmlInterface(name, 0);
+      Interface umlInterface = MdrFactory.createInterface(targetModel
+          .getUmlPackage(), name, 0);
       item = new MdrUmlClass(umlInterface);
     }
     return item;
@@ -758,21 +768,21 @@ public class Mda2MdrTransformer {
       Classifier attributeType = null;
 
       try {
-        attributeType = (Classifier) mModel.getClass(typeName)
+        attributeType = (Classifier) targetModel.getClass(typeName)
             .getModelElement();
       } catch (NullPointerException e) {
 
       }
 
       if ((attributeType == null) && (typeName != null)
-          && (mModel.getDataType(typeName) != null)) {
-        attributeType = (Classifier) mModel.getDataType(typeName)
+          && (targetModel.getDataType(typeName) != null)) {
+        attributeType = (Classifier) targetModel.getDataType(typeName)
             .getModelElement();
       }
 
-      Attribute tmpAttribute = mdrLoader.createUmlAttribute(name,
-          VisibilityCode.PUBLIC_ID, attributeType, (Classifier) context
-              .getModelElement());
+      Attribute tmpAttribute = MdrFactory.createAttribute(targetModel
+          .getUmlPackage(), name, VisibilityCode.PUBLIC_ID, attributeType,
+          (Classifier) context.getModelElement());
 
       item = new MdrUmlAttribute(tmpAttribute);
     }
@@ -792,10 +802,9 @@ public class Mda2MdrTransformer {
    * @return null if no package found or otherwise the specified package.
    * @pre (context != null) && (qualifiedName != null)
    */
-  public MdrUmlPackage findPackageQualified(MdrUmlModel context,
+  private MdrUmlPackage findPackageQualified(MdrUmlModel context,
       String qualifiedName) {
     assert (context != null) && (qualifiedName != null);
-
     return context.getPackage(qualifiedName);
   }
 
@@ -814,29 +823,6 @@ public class Mda2MdrTransformer {
     for (MdrTaggedValue taggedValue : item.getTaggedValues()) {
       if (tagName.equals(taggedValue.getName())) {
         return taggedValue;
-      }
-    }
-    return null;
-  }
-
-  /**
-   * Returns the package with the given name member of the context.
-   * 
-   * @param context
-   *          context in which to search the package.
-   * @param unqualifiedName
-   *          name of the requested package.
-   * @return the requested package if found otherwise null.
-   * @pre (context != null) && (unqualifiedName != null)
-   */
-  public MdrUmlPackage findPackage(MdrUmlPackage context, String unqualifiedName) {
-    assert (context != null) && (unqualifiedName != null);
-    if (unqualifiedName.equals(context.getName())) {
-      return context;
-    }
-    for (MdrUmlPackage mPackage : context.getPackages()) {
-      if (unqualifiedName.equals(mPackage.getName())) {
-        return mPackage;
       }
     }
     return null;
@@ -942,7 +928,7 @@ public class Mda2MdrTransformer {
    */
   private MdrUmlClass findDataType(String name) {
     try {
-      return new MdrUmlClass((Classifier) mModel.getDataType(name)
+      return new MdrUmlClass((Classifier) targetModel.getDataType(name)
           .getModelElement());
     } catch (Exception e) {
       return null;
@@ -977,11 +963,11 @@ public class Mda2MdrTransformer {
     } else {
       item = findDataType(name);
       if (item == null) {
-        DataType dataType = mModel.getUmlPackage().getCore().getDataType()
+        DataType dataType = targetModel.getUmlPackage().getCore().getDataType()
             .createDataType();
         item = new MdrUmlClass(dataType);
         item.setName(name);
-        mModel.getDataTypes().add(new MdrUmlDataType(dataType));
+        targetModel.getDataTypes().add(new MdrUmlDataType(dataType));
       }
     }
     return item;
@@ -1015,7 +1001,7 @@ public class Mda2MdrTransformer {
       MdrUmlClass clazz, String name) {
     assert (context != null) && (clazz != null) && (name != null);
     MdrUmlAssociation association = null;
-    for (MdrUmlAssociation candidate : mModel.getAssociations()) {
+    for (MdrUmlAssociation candidate : targetModel.getAssociations()) {
       association = candidate;
       AssociationEnd e1 = candidate.getConnection(0);
       AssociationEnd e2 = candidate.getConnection(1);
@@ -1037,77 +1023,74 @@ public class Mda2MdrTransformer {
   /**
    * Creates a mdr association
    * 
-   * @param source
+   * @param property
    *          the mda source
    * @param context
    *          the context of the association
    * @return a wrapped mdr association
    */
-  private MdrUmlAssociation createAssociation(MetaProperty source,
+  private MdrUmlAssociation createAssociation(MetaProperty property,
       MdrUmlPackage context) {
-    assert (source != null) && (context != null);
+    assert (property != null) && (context != null);
 
-    AssociationClass tmpAssociation = context.getModel().getUmlPackage()
-        .getCore().getAssociationClass().createAssociationClass();
-    tmpAssociation.setNamespace(context.getNamespace());
+    // sync association source end
+    AssociationEnd associationStart = MdrFactory
+        .createAssociationEnd(targetModel.getUmlPackage());
+    associationStart.setNavigable(false);
+    associationStart.setVisibility(VisibilityKindEnum.VK_PUBLIC);
+    associationStart.setOrdering(OrderingKindEnum.OK_UNORDERED);
+    associationStart.setChangeability(ChangeableKindEnum.CK_CHANGEABLE);
+    associationStart.setTargetScope(ScopeKindEnum.SK_INSTANCE);
 
-    AssociationEnd myClass = context.getModel().getUmlPackage().getCore()
-        .getAssociationEnd().createAssociationEnd();
-    AssociationEnd otherEnd = context.getModel().getUmlPackage().getCore()
-        .getAssociationEnd().createAssociationEnd();
-
-    tmpAssociation.getConnection().add(0, myClass);
-    tmpAssociation.getConnection().add(1, otherEnd);
-
-    tmpAssociation.setName(source.getName());
-
-    myClass.setNavigable(false);
-    myClass.setVisibility(VisibilityKindEnum.VK_PUBLIC);
-    myClass.setOrdering(OrderingKindEnum.OK_UNORDERED);
-    if (source.isAggregation()) {
-      myClass
-          .setAggregation(org.omg.uml.foundation.datatypes.AggregationKindEnum.AK_AGGREGATE);
+    if (property.isAggregation()) {
+      associationStart.setAggregation(AggregationKindEnum.AK_AGGREGATE);
     }
-    if (source.isComposition()) {
-      myClass
-          .setAggregation(org.omg.uml.foundation.datatypes.AggregationKindEnum.AK_COMPOSITE);
+    if (property.isComposition()) {
+      associationStart.setAggregation(AggregationKindEnum.AK_COMPOSITE);
     }
 
-    myClass.setChangeability(ChangeableKindEnum.CK_CHANGEABLE);
-    myClass.setTargetScope(ScopeKindEnum.SK_INSTANCE);
+    associationStart.setMultiplicity(MdrFactory.createMultiplicity(targetModel
+        .getUmlPackage(), property.getMultiplicity().getLowerBound(), property
+        .getMultiplicity().getUpperBound()));
 
-    MultiplicityRange rangeMy = (MultiplicityRange) myClass.getMultiplicity()
-        .getRange().iterator().next();
-    rangeMy.setLower(source.getMultiplicity().getLowerBound());
-    rangeMy.setUpper(source.getMultiplicity().getUpperBound());
-    otherEnd.setMultiplicity(rangeMy.getMultiplicity());
+    MdrUmlClass sourceClass = (MdrUmlClass) elements.get(property.getContext());
+    associationStart.setParticipant((Classifier) sourceClass.getModelElement());
 
-    myClass.setParticipant((Classifier) elements.get(source.getContext()));
-    Object dataType = elements.get(source.getModel().findClass(
-        source.getTypeName()));
+    // sync association target end
+    AssociationEnd associationEnd = MdrFactory.createAssociationEnd(targetModel
+        .getUmlPackage());
+    associationEnd.setNavigable(true);
+    associationEnd.setVisibility(VisibilityKindEnum.VK_PUBLIC);
+    associationEnd.setOrdering(OrderingKindEnum.OK_UNORDERED);
+    associationEnd.setAggregation(AggregationKindEnum.AK_NONE);
+    associationEnd.setChangeability(ChangeableKindEnum.CK_CHANGEABLE);
+    associationEnd.setTargetScope(ScopeKindEnum.SK_INSTANCE);
+
+    associationEnd.setMultiplicity(MdrFactory.createMultiplicity(targetModel
+        .getUmlPackage(), property.getMultiplicity().getLowerBound(), property
+        .getMultiplicity().getUpperBound()));
+
+    Object dataType = elements.get(property.getModel().findClass(
+        property.getTypeName()));
     if (dataType == null) {
-      dataType = findDataType(source.getTypeName());
+      dataType = findDataType(property.getTypeName());
     }
-    otherEnd.setParticipant((Classifier) dataType);
-    otherEnd.setNavigable(true);
-    otherEnd.setVisibility(VisibilityKindEnum.VK_PUBLIC);
-    otherEnd.setOrdering(OrderingKindEnum.OK_UNORDERED);
-    otherEnd
-        .setAggregation(org.omg.uml.foundation.datatypes.AggregationKindEnum.AK_NONE);
-    otherEnd.setChangeability(ChangeableKindEnum.CK_CHANGEABLE);
-    otherEnd.setTargetScope(ScopeKindEnum.SK_INSTANCE);
+    associationEnd.setParticipant((Classifier) ((MdrUmlClass) dataType)
+        .getModelElement());
 
-    MdrUmlAssociation association = new MdrUmlAssociation(tmpAssociation);
+    // create uml association
+    UmlAssociation umlAssociation = MdrFactory.createAssociation(targetModel
+        .getUmlPackage());
+    umlAssociation.setNamespace(context.getNamespace());
+    umlAssociation.getConnection().add(0, associationStart);
+    umlAssociation.getConnection().add(1, associationEnd);
+    umlAssociation.setName(property.getName());
 
-    updatePropertyFlags(source, association);
-    extractTags(source, association);
-    extractStereotypeAndVisibility(source, association);
-
-    MultiplicityRange range = (MultiplicityRange) otherEnd.getMultiplicity()
-        .getRange().iterator().next();
-    range.setLower(source.getMultiplicity().getLowerBound());
-    range.setUpper(source.getMultiplicity().getUpperBound());
-    otherEnd.setMultiplicity(range.getMultiplicity());
+    // wrap UML association
+    MdrUmlAssociation association = new MdrUmlAssociation(umlAssociation);
+    updatePropertyFlags(property, association);
+    extractTags(property, association);
+    extractStereotypeAndVisibility(property, association);
 
     return association;
   }
@@ -1157,7 +1140,7 @@ public class Mda2MdrTransformer {
   private MdrUmlAbstraction findAbstraction(MdrUmlModel context,
       MdrUmlClass ancestor, MdrUmlClass child) {
     assert (context != null) && (ancestor != null) && (child != null);
-    for (MdrUmlPackage mPackage : mModel.getPackages()) {
+    for (MdrUmlPackage mPackage : targetModel.getPackages()) {
       for (MdrUmlAbstraction abstraction : mPackage.getAbstractions()) {
         Boolean foundSupplier = false;
         for (Object obj : abstraction.getSuppliers()) {
@@ -1251,8 +1234,8 @@ public class Mda2MdrTransformer {
       String stereotypeName = stereotype.getName();
       MdrUmlStereotype mStereotype = findStereotype(stereotypeName);
       if (mStereotype == null) {
-        mStereotype = new MdrUmlStereotype(mdrLoader
-            .createStereotype(stereotypeName));
+        mStereotype = new MdrUmlStereotype(MdrFactory.createStereotype(
+            targetModel.getUmlPackage(), stereotypeName));
       }
       context.addStereotype(mStereotype);
       stereotypeCache = null;
@@ -1270,10 +1253,11 @@ public class Mda2MdrTransformer {
   private MdrUmlStereotype findStereotype(String name) {
     if (stereotypeCache == null) {
       stereotypeCache = new HashMap<String, MdrUmlStereotype>();
-      for (MdrUmlStereotype stereotype : mModel.getStereotypes()) {
+      for (MdrUmlStereotype stereotype : targetModel.getStereotypes()) {
         stereotypeCache.put(stereotype.getName(), stereotype);
       }
     }
     return stereotypeCache.get(name);
   }
+
 }

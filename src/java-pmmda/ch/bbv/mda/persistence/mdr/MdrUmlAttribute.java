@@ -21,9 +21,9 @@ import ch.bbv.mda.Multiplicity;
 public class MdrUmlAttribute extends MdrUmlElement {
 
   /**
-   * the mdr attribute
+   * the MDR attribute
    */
-  Attribute attribute;
+  private Attribute attribute;
 
   /**
    * the owner class of the attribute
@@ -32,7 +32,7 @@ public class MdrUmlAttribute extends MdrUmlElement {
 
   /**
    * Constructor
-   * @param attribute the mdr attribute
+   * @param attribute the MDR attribute
    * @param clazz the owner of the attribute
    */
   public MdrUmlAttribute(Attribute attribute, MdrUmlClass clazz) {
@@ -42,7 +42,7 @@ public class MdrUmlAttribute extends MdrUmlElement {
 
   /**
    * Constructor
-   * @param attribute the mdr attribute
+   * @param attribute the MDR attribute
    */
   public MdrUmlAttribute(Attribute attribute) {
     this.attribute = attribute;
@@ -51,7 +51,7 @@ public class MdrUmlAttribute extends MdrUmlElement {
 
   /**
    * returns the owner of the attribute
-   * @return MdrUmlClass the wrapped mdr class
+   * @return MdrUmlClass the wrapped MDR class
    */
   public MdrUmlClass getOwner() {
     return clazz;
@@ -67,7 +67,7 @@ public class MdrUmlAttribute extends MdrUmlElement {
 
   /**
    * returns the type of the attribute
-   * @return MdrUmlClass the wrapped mdr class
+   * @return MdrUmlClass the wrapped MDR class
    */
   public MdrUmlClass getType() {
     try {
@@ -79,7 +79,7 @@ public class MdrUmlAttribute extends MdrUmlElement {
 
   /**
    * sets the type of the attribute
-   * @param type a wrapped mdr class
+   * @param type a wrapped MDR class
    */
   public void setType(MdrUmlClass type) {
     attribute.setType((Classifier) type.getModelElement());
@@ -95,7 +95,7 @@ public class MdrUmlAttribute extends MdrUmlElement {
 
   /**
    * sets the multiplicity of the attribute
-   * @param multiplicity a mdr multiplicity instance
+   * @param multiplicity a MDR multiplicity instance
    */
   public void setMultiplicity(
       org.omg.uml.foundation.datatypes.Multiplicity multiplicity) {
@@ -162,10 +162,15 @@ public class MdrUmlAttribute extends MdrUmlElement {
   }
 
   /**
-   * returns the mdr attribute
-   * @return mdrAttribute the mdr attribute
+   * returns the MDR attribute
+   * @return mdrAttribute the MDR attribute
    */
   public ModelElement getModelElement() {
     return attribute;
   }
+  
+  public boolean isAggregation(){
+    return true;
+  }
+  
 }
