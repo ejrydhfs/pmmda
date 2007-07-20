@@ -28,14 +28,14 @@ public class PrimitiveFieldUpdate implements Update, Serializable {
 	/**
 	 * The new value of the single property.
 	 */
-	private Object value;
+	private Serializable value;
 	
 	/**
      * Initializes a new instance of the {@code PrimitiveFieldUpdate} class.
      * @param fieldName the field name of the single property to which this update belongs
      * @param value the new value of the single property
 	 */
-	public PrimitiveFieldUpdate(String fieldName, Object value) {
+	public PrimitiveFieldUpdate(String fieldName, Serializable value) {
 		this.fieldName = fieldName;
 		this.value = value;
 	}

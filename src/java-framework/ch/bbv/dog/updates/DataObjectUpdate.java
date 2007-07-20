@@ -11,8 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ch.bbv.dog.DataObject;
-import ch.bbv.dog.DataObjectId;
-import ch.bbv.utilities.ReflectUtilities;
 
 /**
  * The data object update defines the data transferred to a client upon a
@@ -40,7 +38,7 @@ public class DataObjectUpdate implements Serializable {
   /**
    * The class of the data object.
    */
-  private Class clazz;
+  private Class<?> clazz;
 
   /**
    * Timestamp of the update.
@@ -108,7 +106,7 @@ public class DataObjectUpdate implements Serializable {
    * @return the data object class.
    * @see #setBoClass
    */
-  public Class getDoClass() {
+  public Class<?> getDoClass() {
     return clazz;
   }
 
@@ -117,7 +115,7 @@ public class DataObjectUpdate implements Serializable {
    * @param clazz the new data object class.
    * @see #getDoClass
    */
-  public void setDoClass(Class clazz) {
+  public void setDoClass(Class<?> clazz) {
     this.clazz = clazz;
   }
 
