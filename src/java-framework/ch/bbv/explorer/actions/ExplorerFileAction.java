@@ -19,7 +19,7 @@ import ch.bbv.explorer.ExplorerDocument;
 import ch.bbv.explorer.resources.Messages;
 
 /**
- * The save as action starts the file selection dialog. Upon sucessful selection
+ * The save as action starts the file selection dialog. Upon successful selection
  * of a file the model is saved in the selected file and the associated format.
  * @author MarcelBaumann
  * @version $Revision$
@@ -39,6 +39,11 @@ public abstract class ExplorerFileAction extends ExplorerGlobalActionImpl {
    * Selected file to process.
    */
   private File selectedFile;
+  
+  /**
+   * remembers the last path
+   */
+  private static File lastSelectedPath = null;
 
   /**
    * FIXME: hack until design not corrected.
@@ -53,6 +58,7 @@ public abstract class ExplorerFileAction extends ExplorerGlobalActionImpl {
   public ExplorerFileAction(String name, Explorer explorer) {
     super(name, explorer);
     fileChooser = new JFileChooser(getName());
+    fileChooser.setCurrentDirectory(lastSelectedPath);
   }
 
   /**
@@ -92,6 +98,7 @@ public abstract class ExplorerFileAction extends ExplorerGlobalActionImpl {
     switch (option) {
     case JFileChooser.APPROVE_OPTION:
       selectedFile = fileChooser.getSelectedFile();
+      lastSelectedPath = fileChooser.getCurrentDirectory();
       if (selectedFile != null) {
         log.trace("File Selected " + selectedFile);
         if (execute()) {
