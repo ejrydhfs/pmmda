@@ -101,16 +101,6 @@ public class MdaFileTypes extends FileTypes {
    * Text for the associated extensions.
    */
   public static final String XMI_TEXT = "XMI models (*.xmi)";
-  
-  /**
-   * File extensions for models according to xmi standard.
-   */
-  public static final String[] XMI2_EXT = { "xmi2" };
-
-  /**
-   * Text for the associated extensions.
-   */
-  public static final String XMI2_TEXT = "XMI 1.2 models (*.xmi)";
 
   /**
    * The singleton instance.
@@ -138,10 +128,8 @@ public class MdaFileTypes extends FileTypes {
     add(new SimpleFileFilter(POSEIDON_EXT, POSEIDON_TEXT));
     add(new SimpleFileFilter(SERIALIZE_EXT, SERIALIZE_TEXT));
     add(new SimpleFileFilter(XMI_EXT, XMI_TEXT));
-    add(new SimpleFileFilter(XMI2_EXT, XMI2_TEXT));
     add(new SimpleFileFilter(XML_EXT, XML_TEXT));
     add(new SimpleFileFilter(ARGOUML_EXT, ARGOUML_TEXT));
-    add(new SimpleFileFilter(ARGOUML2_EXT, ARGOUML2_TEXT));
   }
 
   /**
