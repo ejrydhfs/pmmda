@@ -135,7 +135,7 @@ public class SimpleDialog extends JDialog implements ActionListener {
    * @param view the new view of the dialog
    */
   public void setView(JPanel view) {
-    getContentPane().add(view, BorderLayout.NORTH);
+    getContentPane().add(view, BorderLayout.CENTER);
     pack();
     ExplorerUtilities.centerOnParent(this);
   }
