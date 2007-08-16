@@ -7,6 +7,7 @@ package ch.bbv.mda.persistence.mdr;
 
 import org.omg.uml.foundation.core.AssociationEnd;
 import org.omg.uml.foundation.core.ModelElement;
+import org.omg.uml.foundation.core.Namespace;
 import org.omg.uml.foundation.core.UmlAssociation;
 
 /**
@@ -53,6 +54,10 @@ public class MdrUmlAssociation extends MdrUmlElement {
    */
   public String getQualifiedName() {
     return getName();
+  }
+  
+  public void setContext(Namespace namespace){
+    association.setNamespace(namespace);
   }
 
   /**

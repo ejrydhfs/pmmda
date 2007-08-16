@@ -293,7 +293,7 @@ public class Mdr2MdaTransformer extends ViewTransformer {
     // extract stereotypes
     extractStereotypeAndTags(attribute, property);
     collectViewProperties(property, context, attribute);
-    property.setAggregation(true);
+    //property.setAggregation(true);
     
   }
 
@@ -420,6 +420,7 @@ public class Mdr2MdaTransformer extends ViewTransformer {
     for (MdrUmlAssociation association : source.getAssociations()) {
       AssociationEnd e1 = association.getConnection(0);
       AssociationEnd e2 = association.getConnection(1);
+      association.getName();
       if ((e1 == null) || (e2 == null)) {
         if (log.isErrorEnabled()) {
           log.error("Association (UmlAssociation) without end(s) "
@@ -435,6 +436,7 @@ public class Mdr2MdaTransformer extends ViewTransformer {
       if ((name == null) || (name.length() == 0)) {
         name = association.getName();
       }
+      
       if (owner == null) {
         if (log.isErrorEnabled()) {
           log.error("No owner for association " + association.getName()
@@ -473,8 +475,8 @@ public class Mdr2MdaTransformer extends ViewTransformer {
         property.setAggregation(true);
       }
 
-      if (e1.getAggregation().toString().equals(
-          AggregationKindEnum.COMPOSITE.toString())) {
+      if (e1.getAggregation().equals(
+          org.omg.uml.foundation.datatypes.AggregationKindEnum.AK_COMPOSITE)) {
         property.setComposition(true);
       }
 

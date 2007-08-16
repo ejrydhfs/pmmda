@@ -28,6 +28,7 @@ import org.omg.uml.foundation.datatypes.OrderingKindEnum;
 import org.omg.uml.foundation.datatypes.ScopeKindEnum;
 import org.omg.uml.foundation.datatypes.VisibilityKindEnum;
 import org.omg.uml.modelmanagement.Model;
+import org.omg.uml.modelmanagement.UmlPackage;
 
 import ch.bbv.mda.MetaClass;
 import ch.bbv.mda.MetaDatatype;
@@ -94,8 +95,6 @@ public class Mda2MdrTransformer {
    * Meta model representation of the MDR model.
    */
   private MetaModel metaModel;
-
-
 
   private Model mdrModel;
 
@@ -407,6 +406,7 @@ public class Mda2MdrTransformer {
       MdrUmlPackage mPackage = (MdrUmlPackage) elements.get(metaPackage);
       MdrUmlAssociation association = findAssociation(mPackage, context, source
           .getName());
+
       if (association != null) {
         updatePropertyFlags(source, association);
         extractTags(source, association);
@@ -426,7 +426,7 @@ public class Mda2MdrTransformer {
       } else {
         association = createAssociation(source, mPackage);
       }
-
+      association.setContext(mPackage.getNamespace());
     } else {
 
       MdrUmlAttribute mAttribute = createAttribute(context, source);
@@ -487,8 +487,7 @@ public class Mda2MdrTransformer {
         mElement = mElement.getContext();
       }
       MdrUmlPackage mPackage = (MdrUmlPackage) elements.get(mElement);
-      MdrUmlAssociation association = findAssociation(mPackage, context, source
-          .getName());
+      MdrUmlAssociation association = findAssociation(mPackage, context, source.getName());
       if (association != null) {
         updatePropertyFlags(source, association);
         extractTags(source, association);
@@ -496,6 +495,7 @@ public class Mda2MdrTransformer {
       } else {
         association = createAssociation(source, mPackage);
       }
+      association.setContext((UmlPackage) mPackage.getModelElement());
     } else {
 
       MdrUmlAttribute mAttribute = createAttribute(context, source);
@@ -544,18 +544,19 @@ public class Mda2MdrTransformer {
    *          target item to synchronize.
    */
   private void extractTags(MetaElement source, MdrUmlElement item) {
-    
+
     String description = source.getDescription();
     if ((description != null) && (description.length() > 0)) {
-      MdrTaggedValue taggedValue = createTag(item, UmlConstants.DOCUMENTATION_TAG);
-      taggedValue.setValue(description);   
+      MdrTaggedValue taggedValue = createTag(item,
+          UmlConstants.DOCUMENTATION_TAG);
+      taggedValue.setValue(description);
     } else {
       MdrTaggedValue taggedValue = findTag(item, UmlConstants.DOCUMENTATION_TAG);
       if (taggedValue != null) {
         taggedValue.setValue("");
       }
     }
-    
+
     // synchronizes all the source tags with the target ones
     for (TaggedValue tag : source.getTags()) {
       String tagName = tag.getTag();
@@ -563,11 +564,12 @@ public class Mda2MdrTransformer {
       MdrTaggedValue taggedValue = createTag(item, tagName);
       taggedValue.setValue(tagValue != null ? tagValue : "");
     }
-     
+
     // removes the tags no more available in the source. These tags are
     // the ones declared obsolete in the loaded cartridges.
     for (MdrTaggedValue taggedValue : item.getTaggedValues()) {
-      if (!UmlConstants.DOCUMENTATION_TAG.equals(taggedValue.getName()) && source.getTaggedValue(taggedValue.getName()) == null) {
+      if (!UmlConstants.DOCUMENTATION_TAG.equals(taggedValue.getName())
+          && source.getTaggedValue(taggedValue.getName()) == null) {
         taggedValue.getTaggedValue().refDelete();
       }
     }
@@ -614,16 +616,17 @@ public class Mda2MdrTransformer {
   private MdrTaggedValue createTag(MdrUmlElement item, String tagName) {
     MdrTaggedValue taggedValue = findTag(item, tagName);
     if (taggedValue == null) {
-      taggedValue = new MdrTaggedValue(MdrFactory.createTaggedValue(targetModel.getUmlPackage(), tagName));
+      taggedValue = new MdrTaggedValue(MdrFactory.createTaggedValue(targetModel
+          .getUmlPackage(), tagName));
       item.addTaggedValue(taggedValue);
     }
     return taggedValue;
   }
 
   /**
-   * Creates the package with the given qualified name. All necessary surrounding
-   * packages are created. If the package already exists no creation action is
-   * performed.
+   * Creates the package with the given qualified name. All necessary
+   * surrounding packages are created. If the package already exists no creation
+   * action is performed.
    * 
    * @param model
    *          model containing the package.

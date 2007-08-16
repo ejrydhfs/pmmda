@@ -170,7 +170,7 @@ public class MdrUmlAttribute extends MdrUmlElement {
   }
   
   public boolean isAggregation(){
-    return true;
+    return false;
   }
   
 }
