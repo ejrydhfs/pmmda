@@ -24,6 +24,8 @@ public class CartridgeInfo {
         return "java";
       case dotNet:
         return "net";
+      case cpp:
+        return "cpp";
       default:
         return "others";
       }

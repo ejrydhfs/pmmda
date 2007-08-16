@@ -50,7 +50,7 @@ public class MetaView extends MetaElement {
 	/**
 	 * List of root objects. Root objects are used to navigate to a property
 	 */
-	private List<Class<? extends DataObject>> rootObjects;
+	private List<Class<? extends MetaClassifier>> rootObjects;
 
 	/**
 	 * Maps meta property to paths. a path is a "Point" separated string of properties
@@ -180,7 +180,7 @@ public class MetaView extends MetaElement {
 		for (MetaProperty property : propertiesToBeAdded) {
 			property = (MetaProperty) rootModel.findElement(property.getQualifiedName());
 			TaggedValue taggedValue = property.getTaggedValue(ViewConstants.VIEW_TAG);
-			if (taggedValue == null) {
+			if (taggedValue == null || taggedValue.getValue().equals("")) {
 				taggedValue = new TaggedValue(ViewConstants.VIEW_TAG, new XmlNode(ViewConstants.VIEW_TAG).asXml());
 				property.addTaggedValue(taggedValue);
 			}
