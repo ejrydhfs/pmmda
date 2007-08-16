@@ -19,6 +19,7 @@ import ch.bbv.mda.uml.MetaUseCase;
 import ch.bbv.mda.validation.IdentifierValidator;
 
 import com.jgoodies.forms.builder.DefaultFormBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.validation.ValidationResult;
 import com.jgoodies.validation.util.ValidationUtils;
@@ -40,19 +41,18 @@ public class MetaViewView extends NodePropertiesView implements
 	 * The size of a text area in the view.
 	 */
 	private final static int TEXT_AREA_SIZE = 20;
+	
+	/**
+	 * Distance of display elements to the border or between each other.
+	 */
+	private final static int BORDER_MARGIN = 7;
 
 	/**
 	 * UI related members
 	 */
-	private JPanel eastPanel;
-
-	private JScrollPane westPanel;
-
-	private JPanel centerPanel;
-
-	private JPanel westTree;
-
-	private JScrollPane eastViewTree;
+	private JPanel westTreePanel;
+	
+	private JPanel viewTreePanel;
 
 	private JTextField nameText;
 
@@ -62,9 +62,13 @@ public class MetaViewView extends NodePropertiesView implements
 
 	private ReferenceCodeComboBox visibility;
 
-	private JButton buttonToRight;
+  private JButton buttonSelectedPropertiesToRight;
 
-	private JButton buttonToLeft;
+  private JButton buttonSelectedPropertiesToLeft;
+
+  private JButton buttonRootObjectsToRight;
+
+  private JButton buttonRootObjectsToLeft;
 
 	private ExplorerTree viewTree;
 
@@ -86,20 +90,11 @@ public class MetaViewView extends NodePropertiesView implements
 	 * the UI Sector
 	 */
 
-	private JScrollPane getWestPanel() {
-		return westPanel;
-	}
-
-	private JPanel getEastPanel() {
-		return eastPanel;
-	}
-
-	private JPanel getCenterPanel() {
-		return centerPanel;
-	}
-	
-	private void initWestPanel() {
-		westPanel = createModelTree();
+	private JPanel createWestPanel() {
+	  westTreePanel = new JPanel();
+    westTreePanel.setLayout(new BorderLayout());
+		westTreePanel.add(createModelTree());
+		return westTreePanel;
 	}
 
 	protected JTree getModelTree() {
@@ -108,9 +103,9 @@ public class MetaViewView extends NodePropertiesView implements
 
 	private JScrollPane createModelTree() {
 		modelTree = new ExplorerTree();
-		JScrollPane panel = new JScrollPane(modelTree.getTree());
-		panel.setPreferredSize(new Dimension(400, 400));
-		return panel;
+		JScrollPane pane = new JScrollPane(modelTree.getTree());
+		pane.setPreferredSize(new Dimension(400, 400));
+		return pane;
 	}
 
 	protected ExplorerTree getViewTree() {
@@ -122,53 +117,60 @@ public class MetaViewView extends NodePropertiesView implements
 		return viewTree.getTree();
 	}
 
-	private void initEastPanel() {
-		eastPanel = new JPanel(new BorderLayout());
-		eastPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
-
-		// view tree
-		eastViewTree = new JScrollPane(createViewTree());
-		GridBagConstraints eastTreeConstraints = new GridBagConstraints();
-		eastTreeConstraints.gridx = 0;
-		eastTreeConstraints.gridy = 0;
-		eastTreeConstraints.gridwidth = GridBagConstraints.HORIZONTAL;
-		eastTreeConstraints.fill = GridBagConstraints.BOTH;
-		eastTreeConstraints.weighty = 1.0;
-		eastTreeConstraints.weightx = 1.0;
-
-		// add tree
-		getEastPanel().add(eastViewTree, BorderLayout.CENTER);
-
-		// add properties form
-		getEastPanel().add(createViewPropertiesForm(), BorderLayout.SOUTH);
-	}
+  private JPanel createEastPanel() {
+    FormLayout layout = new FormLayout("fill:min(200dlu;pref):grow", "fill:default:grow, min");
+    DefaultFormBuilder builder = new DefaultFormBuilder(layout);
+    builder.append(createSelectedPropertiesPanel());
+    builder.append(createViewPropertiesForm());
+    return builder.getPanel();
+  }
 
 	private JPanel createViewPropertiesForm() {
 		initalizeViewProperties();
-		FormLayout layout = new FormLayout(
-				"center:pref, 4dlu, left:pref, 3dlu", "");
-		DefaultFormBuilder builder = new DefaultFormBuilder(layout);
-		builder.appendSeparator("General");
-		builder.append("&Name", nameText);
-		builder.append("&Description", descriptionPane, 2);
-		builder.appendSeparator("Modifiers");
-		builder.append("&Modifier", visibility);
+    FormLayout layout = new FormLayout(
+        BORDER_MARGIN+"dlu, right:max(40dlu;pref), "+BORDER_MARGIN+"dlu, left:pref:grow, "+BORDER_MARGIN+"dlu, "+BORDER_MARGIN+"dlu", "p, p, p, p, p, "+BORDER_MARGIN+"dlu");
+    CellConstraints cc = new CellConstraints();
+    DefaultFormBuilder builder = new DefaultFormBuilder(layout);
+    builder.addSeparator("General", cc.xyw(2, 1, 4));
+    builder.addLabel("&Name", cc.xy(2, 2));
+    builder.add(nameText, cc.xyw(4, 2, 2));
+    builder.addLabel("&Description", cc.xy(2, 3));
+    builder.add(descriptionPane, cc.xyw(4, 3, 2));
+    builder.addSeparator("Modifiers", cc.xyw(2, 4, 4));
+    builder.addLabel("&Modifier", cc.xy(2, 5));
+    builder.add(visibility, cc.xy(4, 5));
 
-		return builder.getPanel();
+    return builder.getPanel();
 	}
+	
+  private JPanel createSelectedPropertiesPanel() {
+    FormLayout layout = new FormLayout(2*BORDER_MARGIN+40+"dlu:none, fill:default:grow", "fill:default:grow");
+    DefaultFormBuilder builder = new DefaultFormBuilder(layout);
 
-	private void initCenterPanel() {
-		FormLayout layout = new FormLayout("center:pref, 10dlu", "pref, 100dlu");
-		DefaultFormBuilder builder = new DefaultFormBuilder(layout);
-		builder.setDefaultDialogBorder();
-		builder.nextRow(2);
-		buttonToRight = getButtonToRight();
-		buttonToLeft = getButtonToLeft();
-		builder.append(buttonToRight);
-		builder.append(buttonToLeft);
-		centerPanel = builder.getPanel();
-	}
+    buttonSelectedPropertiesToRight = getButtonToRight();
+    buttonSelectedPropertiesToLeft = getButtonToLeft();
+    CellConstraints cc = new CellConstraints();
+    cc.xy(1, 1, "c, c");
+    builder.add(createButtonPanel(buttonSelectedPropertiesToRight, buttonSelectedPropertiesToLeft), cc);
+    builder.setColumn(2);
+    viewTreePanel = new JPanel();
+    viewTreePanel.setLayout(new BorderLayout());
+    viewTreePanel.add(new JScrollPane(createViewTree()));
+    builder.append(viewTreePanel);
+    return builder.getPanel();
+  }
 
+  private JPanel createButtonPanel(JButton buttonToRight, JButton buttonToLeft) {
+    String marginBetweenButtons = BORDER_MARGIN+"px";
+    String buttonWidth = "center:"+(int)(buttonSelectedPropertiesToRight.getPreferredSize().getWidth()+2*BORDER_MARGIN)+"dlu";
+    FormLayout buttonLayout = new FormLayout(buttonWidth, "pref, "+marginBetweenButtons+", pref");
+    DefaultFormBuilder buttonBuilder = new DefaultFormBuilder(buttonLayout);
+    buttonBuilder.append(buttonToRight);
+    buttonBuilder.setRow(3);
+    buttonBuilder.append(buttonToLeft);
+    return buttonBuilder.getPanel();
+  }
+  
 	private JButton getButtonToRight() {
 		JButton b = new JButton(">>");
 		b.addActionListener(new ActionListener() {
@@ -350,7 +352,7 @@ public class MetaViewView extends NodePropertiesView implements
 	 * @param root ExplorerNode to obtain leaves from. If it is a leaf itself then it is returned.
 	 * @param checkRoot if set to true then the root is added if it is a leave otherwise the leave is not considered
 	 * @param leaveType only leaves of this type are added. Set it to object if you want to obtain all leaves
-	 * @return List containing all leaves beeing an instance of MetaProperty.
+	 * @return List containing all leaves being an instance of MetaProperty.
 	 */
 	private List<ExplorerNode> getLeaves(ExplorerNode root, boolean checkRoot, Class leaveType) {
 		List<ExplorerNode> leaves = new ArrayList<ExplorerNode>();
@@ -371,7 +373,6 @@ public class MetaViewView extends NodePropertiesView implements
 	
 	private void initalizeViewProperties() {
 		nameText = new JTextField(TEXT_FIELD_SIZE);
-		// nameText.addFocusListener(new VerificationActions());
 		descriptionText = new JTextArea(3, TEXT_AREA_SIZE);
 		descriptionText.setLineWrap(true);
 		descriptionText.setWrapStyleWord(true);
@@ -384,42 +385,14 @@ public class MetaViewView extends NodePropertiesView implements
 
 	private void initialize() {
 		this.setPreferredSize(new Dimension(600, 600));
-		GridBagLayout gb = new GridBagLayout();
-		this.setLayout(gb);
-		initCenterPanel();
-		initWestPanel();
-		initEastPanel();
-
-		// build tree for the west part
-		westTree = new JPanel();
-		westTree.setLayout(new BorderLayout());
-		westTree.add(getWestPanel());
-		Insets myInsets = new Insets(2, 5, 2, 5);
-		GridBagConstraints cc = new GridBagConstraints();
-		cc.gridx = 0;
-		cc.gridy = 0;
-		cc.gridwidth = 1;
-		cc.gridheight = GridBagConstraints.REMAINDER; 
-		cc.weightx = 1.0;
-		cc.weighty = 1.0;
-		cc.anchor = GridBagConstraints.LINE_END;
-		cc.fill = GridBagConstraints.BOTH;
-		cc.insets = myInsets;
-		cc.ipadx = 0;
-		cc.ipady = 0;
-		add(westTree, cc);
-
-		// add middel buttons
-		cc.gridx = 1;
-		cc.gridy = 0;
-		cc.insets = new Insets(2, 41, 2, 5);
-		add(getCenterPanel(), cc);
 		
-		cc.insets = myInsets;
-		// add tree on the east
-		cc.gridx = 2;
-		cc.gridy = 0;
-		add(getEastPanel(), cc);
+    FormLayout layout = new FormLayout("pref:grow, pref:grow", "fill:default:grow");
+    CellConstraints cc = new CellConstraints();
+    DefaultFormBuilder builder = new DefaultFormBuilder(layout);
+
+    builder.add(createWestPanel(), cc.xy(1, 1));
+    builder.add(createEastPanel(), cc.xy(2, 1));
+    add(builder.getPanel());
 	}
 
 	/**
@@ -470,18 +443,15 @@ public class MetaViewView extends NodePropertiesView implements
 	public void populateView() {
 		validationCounter = 0;// @see validateView
 
-		westTree.remove(getWestPanel());
-		getEastPanel().remove(eastViewTree);
+		westTreePanel.removeAll();
 		ExplorerNode root = buildViewTreeRoot();
 		modelTree.setRoot(root, this);
-		westPanel = new JScrollPane(modelTree.getTree());
-		westTree.add(getWestPanel());
+		westTreePanel.add(new JScrollPane(modelTree.getTree()));
 		
 		UiNodeType nodeType = getNodeTypeFactory().getNodeTypeForBo(MetaView.class);
 		ExplorerNode node = null;
 		MetaView metaView = (MetaView)getDataObject();
 		originalMetaView = metaView.clone();
-		loadFieldValues(metaView);
 		node = new ExplorerNode(nodeType, metaView, metaView);
 		node.setNodeOwner(root.getNodeOwner());
 		
@@ -500,15 +470,15 @@ public class MetaViewView extends NodePropertiesView implements
 				nodeToTree(modelTree.getTree(), viewTree.getTree(), eNode);
 			}
 		}
+    loadFieldValues(metaView);
 
 		JTree tree = viewTree.getTree();
-		eastViewTree = new JScrollPane(tree);
-		getEastPanel().add(eastViewTree, BorderLayout.CENTER);
-
-		// now expand the entire view
-		for (int i = 0; i < tree.getRowCount(); i++) {
-			tree.expandRow(i);
-		}
+		viewTreePanel.removeAll();
+		viewTreePanel.add(new JScrollPane(tree));
+    // now expand the entire view
+    for (int i = 0; i < tree.getRowCount(); i++) {
+      tree.expandRow(i);
+    }
 	}
 
 	/**
@@ -517,8 +487,8 @@ public class MetaViewView extends NodePropertiesView implements
 	@Override
 	public void setViewEditable(boolean editable) {
 		if (!editable) {
-			this.buttonToLeft.setEnabled(false);
-			this.buttonToRight.setEnabled(false);
+			this.buttonSelectedPropertiesToLeft.setEnabled(false);
+			this.buttonSelectedPropertiesToRight.setEnabled(false);
 			this.nameText.setEditable(false);
 			this.descriptionText.setEditable(false);
 			this.descriptionText.setEnabled(false);
@@ -526,8 +496,8 @@ public class MetaViewView extends NodePropertiesView implements
 			this.visibility.setEditable(false);
 			this.visibility.setEnabled(false);
 		} else {
-			this.buttonToLeft.setEnabled(true);
-			this.buttonToRight.setEnabled(true);
+			this.buttonSelectedPropertiesToLeft.setEnabled(true);
+			this.buttonSelectedPropertiesToRight.setEnabled(true);
 			this.nameText.setEditable(true);
 			this.descriptionText.setEditable(true);
 			this.descriptionText.setEnabled(true);
@@ -595,7 +565,7 @@ public class MetaViewView extends NodePropertiesView implements
 		setFieldsToMetaView(newView, getViewTree().getRoot());
 
 		// In case of this view has been renamed, we have to remove the "old" view before adding the "new" one.
-		// Because the new view may have less properties than the existing one - the easiest way ist to remove the old view and add the new one from scratch (rather than building the difference)
+		// Because the new view may have less properties than the existing one - the easiest way is to remove the old view and add the new one from scratch (rather than building the difference)
 		removeViewWithFormerName(newView);
 		// add tagged values - values being part of this view before modification will be updated as well.
 		addNewOrChangedPropertiesAndViewsToView(newView);
@@ -654,6 +624,7 @@ public class MetaViewView extends NodePropertiesView implements
 	 * @param metaView to load MetaViewView ui elements from
 	 */
 	private void loadFieldValues(MetaView metaView) {
+	  if(metaView == null) return;
 		nameText.setText(metaView.getName());
 		descriptionText.setText(metaView.getDescription());
 		visibility.setSelectedCode(metaView.getVisibility());
