@@ -416,6 +416,11 @@ public class ExplorerNode implements MutableTreeNode, Cloneable, Comparable {
     ExplorerNode clone = null;
     try {
       clone = (ExplorerNode) super.clone();
+      clone.boObject = this.boObject;
+      clone.lwObject = this.lwObject;
+      clone.nodeType = this.nodeType;
+      clone.parent = null; // will be set if this node is a child - otherwise we don't now whether we should clone the topmost parent or not or whether it has already been cloned.
+      clone.owner = null; // we set the owner to null in order to disconnect it from the previous owner.
       clone.children = new ArrayList<ExplorerNode>(children.size());
       for (ExplorerNode node : children) {
       	clone.addChild(node.clone());
@@ -427,27 +432,27 @@ public class ExplorerNode implements MutableTreeNode, Cloneable, Comparable {
   }
  
   /**
-   * this method is used by the view creation dialog, somthing is wrong with the clone mehtod, these
-   * will collapse the Explorertree after showing the view dialog. 
+   * this method is used by the view creation dialog, something is wrong with the clone method, these
+   * will collapse the explorer tree after showing the view dialog. 
    */
-  private static Map<String, ExplorerNode> nodes;
+  private static Map<DataObject, ExplorerNode> nodes;
   public ExplorerNode clonebyCopy(ExplorerNodeOwner owner){
 	  if ( nodes == null){
-		  nodes  = new HashMap<String, ExplorerNode>();
+		  nodes  = new HashMap<DataObject, ExplorerNode>();
 	  } 
 	  ExplorerNode clone = null;
 	  clone = new ExplorerNode(this.nodeType, this.lwObject, this.boObject);
 	  if ( this.owner != null) {
-		  ExplorerNodeOwner copyOwner = new ExplorerNodeOwnerWrapper(this.owner.getNodeTypeFactory());
+		  ExplorerNodeOwner copyOwner = new ExplorerNodeOwnerImpl(this.owner.getNodeTypeFactory());
 	    clone.owner = copyOwner;
 	  } else {
 		  assert owner != null;
 		  clone.owner = owner;
 	  }
-	  nodes.put(clone.getName(), clone);
+	  nodes.put(this.getDataObject(), clone);
 	  
 	  if (this.parent != null){
-		  clone.parent = nodes.get(this.parent.getName());
+		  clone.parent = nodes.get(this.parent.getDataObject());
 	  }
       clone.children = new ArrayList<ExplorerNode>(children.size());
       for (ExplorerNode node : this.children) {
@@ -456,42 +461,6 @@ public class ExplorerNode implements MutableTreeNode, Cloneable, Comparable {
       return clone;
   }
   
-  private class ExplorerNodeOwnerWrapper implements ExplorerNodeOwner {
-	  
-		private UiNodeTypeFactory factory;
-		
-		public ExplorerNodeOwnerWrapper(UiNodeTypeFactory factory){
-			this.factory = factory;
-		}
-
-		public void nodeInserted(ExplorerNode node, int index) {
-			assert false : "not implemented yet";
-		}
-		
-		public void nodeRemoved(ExplorerNode parent, ExplorerNode node, int index) {
-			assert false : "not implemented yet";
-		}
-		
-		public void nodeChanged(ExplorerNode node) {
-			assert false : "not implemented yet";
-		}
-		
-		public UiNodeTypeFactory getNodeTypeFactory() {
-			return factory;	
-		}
-
-		public DataObjectMgr getManager() {
-			assert false : "not implemented yet";
-			return null;
-		}
-
-		public JTree getTree() {
-			assert false : "not implemented yet";
-			return null;
-		}
-	  }
-  
-
   /**
    * Implements the Comparable interface
    * @param o object to compare to
