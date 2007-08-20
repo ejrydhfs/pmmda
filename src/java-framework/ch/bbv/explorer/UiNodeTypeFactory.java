@@ -86,7 +86,12 @@ public class UiNodeTypeFactory implements Cloneable {
    */
   @Override
   public UiNodeTypeFactory clone() {
-    UiNodeTypeFactory clone = this.clone();
+    UiNodeTypeFactory clone = null;
+    try {
+      clone = (UiNodeTypeFactory)super.clone();
+    } catch (CloneNotSupportedException e) {
+      // not possible
+    }
     clone.iconFactory = this.iconFactory;
     clone.nodePropertiesViews = this.nodePropertiesViews;
     clone.nodeTypesForBo = this.nodeTypesForBo;
