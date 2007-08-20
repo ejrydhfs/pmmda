@@ -25,7 +25,7 @@ import ch.bbv.utilities.ReflectUtilities;
  * @author Marcel Baumann
  * @version $Revision$
  */
-public class UiNodeTypeFactory {
+public class UiNodeTypeFactory implements Cloneable {
   /**
    * The types of the create method signature to instantiate a new node view.
    */
@@ -78,6 +78,22 @@ public class UiNodeTypeFactory {
     nodeViews = new HashMap<UiNodeType, Map<UiNodeViewType, NodeView>>();
     iconFactory = new IconFactoryImpl();
     popupFactory = new PopupFactoryImpl();
+  }
+
+  /**
+   * @inheritDoc
+   * @see Object#clone()
+   */
+  @Override
+  public UiNodeTypeFactory clone() {
+    UiNodeTypeFactory clone = this.clone();
+    clone.iconFactory = this.iconFactory;
+    clone.nodePropertiesViews = this.nodePropertiesViews;
+    clone.nodeTypesForBo = this.nodeTypesForBo;
+    clone.nodeTypesForLw = this.nodeTypesForLw;
+    clone.nodeViews = this.nodeViews;
+    clone.popupFactory = this.popupFactory;
+    return clone;
   }
 
   /**
