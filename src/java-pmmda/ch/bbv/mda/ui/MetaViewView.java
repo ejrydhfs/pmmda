@@ -1,6 +1,7 @@
 package ch.bbv.mda.ui;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -11,9 +12,11 @@ import javax.swing.*;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 
+import ch.bbv.dog.DataObject;
 import ch.bbv.dog.DataObjectMgr;
 import ch.bbv.dog.ui.ReferenceCodeComboBox;
 import ch.bbv.explorer.*;
+import ch.bbv.explorer.views.NodeTableView;
 import ch.bbv.mda.*;
 import ch.bbv.mda.uml.MetaUseCase;
 import ch.bbv.mda.validation.IdentifierValidator;
@@ -28,7 +31,7 @@ public class MetaViewView extends NodePropertiesView implements
 		ExplorerNodeOwner, ViewConstants {
 
 	/**
-	 * serialUID, change this value on each check-in/changeing this class
+	 * serialUID, change this value on each check-in/changing this class
 	 */
 	private static final long serialVersionUID = 7526472295622776147L;
 
@@ -53,6 +56,8 @@ public class MetaViewView extends NodePropertiesView implements
 	private JPanel westTreePanel;
 	
 	private JPanel viewTreePanel;
+	
+	private JPanel rootObjectListPanel;
 
 	private JTextField nameText;
 
@@ -66,9 +71,9 @@ public class MetaViewView extends NodePropertiesView implements
 
   private JButton buttonSelectedPropertiesToLeft;
 
-  private JButton buttonRootObjectsToRight;
+  private JButton buttonRootObjectToRight;
 
-  private JButton buttonRootObjectsToLeft;
+  private JButton buttonRootObjectToLeft;
 
 	private ExplorerTree viewTree;
 
@@ -79,6 +84,12 @@ public class MetaViewView extends NodePropertiesView implements
 	 */
 	private MetaView originalMetaView;
 
+	/**
+	 * ExplorerNodeOwner related fields
+	 */
+	
+	private UiNodeTypeFactory factory;
+	
 	/**
 	 * default constructor
 	 */
@@ -116,11 +127,17 @@ public class MetaViewView extends NodePropertiesView implements
 		viewTree = new ExplorerTree();
 		return viewTree.getTree();
 	}
+	
+	private NodeTableView getRootObjectList() {
+	  return (NodeTableView)rootObjectListPanel.getComponent(0);
+	}
 
   private JPanel createEastPanel() {
-    FormLayout layout = new FormLayout("fill:min(200dlu;pref):grow", "fill:default:grow, min");
+    FormLayout layout = new FormLayout("fill:min(200dlu;pref):grow", "fill:default:grow, "+BORDER_MARGIN+"dlu, 100dlu:grow, min");
     DefaultFormBuilder builder = new DefaultFormBuilder(layout);
     builder.append(createSelectedPropertiesPanel());
+    builder.nextRow();
+    builder.append(createRootObjectListPanel());
     builder.append(createViewPropertiesForm());
     return builder.getPanel();
   }
@@ -147,8 +164,8 @@ public class MetaViewView extends NodePropertiesView implements
     FormLayout layout = new FormLayout(2*BORDER_MARGIN+40+"dlu:none, fill:default:grow", "fill:default:grow");
     DefaultFormBuilder builder = new DefaultFormBuilder(layout);
 
-    buttonSelectedPropertiesToRight = getButtonToRight();
-    buttonSelectedPropertiesToLeft = getButtonToLeft();
+    buttonSelectedPropertiesToRight = getButtonSelectedPropertiesToRight();
+    buttonSelectedPropertiesToLeft = getButtonSelectedPropertiesToLeft();
     CellConstraints cc = new CellConstraints();
     cc.xy(1, 1, "c, c");
     builder.add(createButtonPanel(buttonSelectedPropertiesToRight, buttonSelectedPropertiesToLeft), cc);
@@ -162,7 +179,7 @@ public class MetaViewView extends NodePropertiesView implements
 
   private JPanel createButtonPanel(JButton buttonToRight, JButton buttonToLeft) {
     String marginBetweenButtons = BORDER_MARGIN+"px";
-    String buttonWidth = "center:"+(int)(buttonSelectedPropertiesToRight.getPreferredSize().getWidth()+2*BORDER_MARGIN)+"dlu";
+    String buttonWidth = "center:"+(int)(buttonToRight.getPreferredSize().getWidth()+2*BORDER_MARGIN)+"dlu";
     FormLayout buttonLayout = new FormLayout(buttonWidth, "pref, "+marginBetweenButtons+", pref");
     DefaultFormBuilder buttonBuilder = new DefaultFormBuilder(buttonLayout);
     buttonBuilder.append(buttonToRight);
@@ -171,7 +188,7 @@ public class MetaViewView extends NodePropertiesView implements
     return buttonBuilder.getPanel();
   }
   
-	private JButton getButtonToRight() {
+	private JButton getButtonSelectedPropertiesToRight() {
 		JButton b = new JButton(">>");
 		b.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -188,7 +205,7 @@ public class MetaViewView extends NodePropertiesView implements
 		return b;
 	}
 
-	private JButton getButtonToLeft() {
+	private JButton getButtonSelectedPropertiesToLeft() {
 		JButton b = new JButton("<<");
 		b.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -204,6 +221,51 @@ public class MetaViewView extends NodePropertiesView implements
 		});
 		return b;
 	}
+
+  private JPanel createRootObjectListPanel() {
+    FormLayout layout = new FormLayout(2*BORDER_MARGIN+40+"dlu:none, fill:default:grow", "fill:default:grow");
+    DefaultFormBuilder builder = new DefaultFormBuilder(layout);
+
+    buttonRootObjectToRight = getButtonRootObjectToRight();
+    buttonRootObjectToLeft = getButtonRootObjectToLeft();
+    CellConstraints cc = new CellConstraints();
+    cc.xy(1, 1, "c, c");
+    builder.add(createButtonPanel(buttonRootObjectToRight, buttonRootObjectToLeft), cc);
+    builder.setColumn(2);
+    rootObjectListPanel = new JPanel();
+    rootObjectListPanel.setLayout(new BorderLayout());
+    builder.append(rootObjectListPanel);
+    return builder.getPanel();
+  }
+  
+  private JButton getButtonRootObjectToRight() {
+    JButton b = new JButton(">>");
+    b.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        
+        // First obtain and check node
+        ExplorerNode node = (ExplorerNode) getModelTree().getLastSelectedPathComponent();
+        if (node == null) { // no node is selected
+          return;
+        }
+        
+        // add to root object list
+        getRootObjectList().setModel(node);
+      }
+    });
+    return b;
+  }
+
+  private JButton getButtonRootObjectToLeft() {
+    JButton b = new JButton("<<");
+    b.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        
+        // TODO remove from root object list
+      }
+    });
+    return b;
+  }
 
 	/**
 	 * Moves a node (MetaModel, MetaPackage, MetaClass, MetaProperty, etc.) to the right and assigns it to the view
@@ -225,25 +287,24 @@ public class MetaViewView extends NodePropertiesView implements
 	}
 	
 	/**
-	 * Moves a property to the passed tree. The passed node must be a property
+	 * Moves a property or a MetaView to the passed tree. The passed node must be a property or a view
 	 * @param fromTree tree to remove node from
 	 * @param toTree to assign node to.
 	 * @param node property to be assigned to the view
 	 */
 	private void propertyToTree(JTree fromTree, JTree toTree, ExplorerNode node) {
-		assert node.getDataObject() instanceof MetaProperty;
+    assert node.getDataObject() instanceof MetaProperty || node.getDataObject() instanceof MetaView;
 		
-		ExplorerNode clonedNode = node.clonebyCopy(null); // save original node, before removing it. Used for adding it to the view.
-
 		// add selected property to viewTree
 		DefaultTreeModel model = (DefaultTreeModel) toTree.getModel();
+		ExplorerNode clonedNode = node.clonebyCopy(this);
 		addNodeToTree(model, clonedNode);
 
 		// remove node from modelTree
 		removeNodeFromTree((DefaultTreeModel) fromTree.getModel(), node);
 
 		// expand viewTree
-		toTree.expandRow(0);
+    toTree.expandRow(0);
 	}
 	
 	/**
@@ -277,6 +338,7 @@ public class MetaViewView extends NodePropertiesView implements
 	 * @param node ExplorerNode to be removed from model
 	 */
 	private void removeNodeFromTree(DefaultTreeModel model, ExplorerNode node) {
+	  if(model == null || node == null) return;
 		TreeNode parent = node.getParent();
 		model.removeNodeFromParent(node);
 		while(parent != null && parent.getChildCount() == 0 && parent.getParent() != null) {
@@ -384,7 +446,7 @@ public class MetaViewView extends NodePropertiesView implements
 	}
 
 	private void initialize() {
-		this.setPreferredSize(new Dimension(600, 600));
+		this.setPreferredSize(new Dimension(800, 600));
 		
     FormLayout layout = new FormLayout("pref:grow, pref:grow", "fill:default:grow");
     CellConstraints cc = new CellConstraints();
@@ -429,35 +491,39 @@ public class MetaViewView extends NodePropertiesView implements
 	}
 	
 	private ExplorerNode buildViewTreeRoot(){
-		ExplorerNode root = getModel().getRoot().clonebyCopy(null);
-		MetaModel model = (MetaModel)root.getDataObject();
-		TreeConstructor constructor = this.new ViewTreeConstructor(this.getNodeTypeFactory(), this);
+    // duplicate the model, set a new owner and factory, filter out data types, stereotypes, etc.
+    MetaModel model = (MetaModel)getModel().getRoot().getDataObject();
+		TreeConstructor constructor = this.new ViewTreeConstructor(factory, this);
 		model.accept(constructor);
 		return constructor.getRoot();
 	}
 	
-	/*
-	 * Overriden methods from the framework
-	 */
 	@Override
 	public void populateView() {
 		validationCounter = 0;// @see validateView
 
-		westTreePanel.removeAll();
-		ExplorerNode root = buildViewTreeRoot();
-		modelTree.setRoot(root, this);
-		westTreePanel.add(new JScrollPane(modelTree.getTree()));
+		if(factory == null) {
+      factory = new UiNodeTypeFactory();
+      MetaViewTypeFactory typeFactory = new MetaViewTypeFactory(factory, getModel().getRoot().getNodeOwner().getManager());
+      typeFactory.registerAllTypes();
+		}
+
+    westTreePanel.removeAll();
+    modelTree = new ExplorerTree();
+    ExplorerNode root = buildViewTreeRoot();
+    modelTree.setRoot(root, root.getNodeOwner());
+ 		westTreePanel.add(new JScrollPane(modelTree.getTree()));
 		
 		UiNodeType nodeType = getNodeTypeFactory().getNodeTypeForBo(MetaView.class);
-		ExplorerNode node = null;
 		MetaView metaView = (MetaView)getDataObject();
 		originalMetaView = metaView.clone();
-		node = new ExplorerNode(nodeType, metaView, metaView);
-		node.setNodeOwner(root.getNodeOwner());
+		ExplorerNode viewNode = new ExplorerNode(nodeType, metaView, metaView);
+		viewNode.setNodeOwner(this);
 		
 		// create view Tree
-		viewTree = new ExplorerTree();
-		viewTree.setRoot(node, this);
+		createViewTree();
+		viewTree.setRoot(viewNode, viewNode.getNodeOwner());
+		removeNodeFromTree(modelTree.getTreeModel(), findElementInTree(modelTree.getTree(), metaView));
 		for(MetaProperty field : metaView.getFields()) {
 			ExplorerNode eNode = findElementInTree(modelTree.getTree(), field);
 			if(eNode != null) {
@@ -479,6 +545,15 @@ public class MetaViewView extends NodePropertiesView implements
     for (int i = 0; i < tree.getRowCount(); i++) {
       tree.expandRow(i);
     }
+
+    rootObjectListPanel.removeAll();
+    List<UiField> params = new ArrayList<UiField>();
+    params.add(new UiField("name", String.class, false));
+    params.add(new UiField("description", String.class, false));
+    NodeTableView rootObjectList = new NodeTableView(params);
+    //rootObjectList.setModel(null); // TODO add root objects here (obtain them from metaView)
+    rootObjectListPanel.add(rootObjectList);
+    
 	}
 
 	/**
@@ -486,25 +561,16 @@ public class MetaViewView extends NodePropertiesView implements
 	 */
 	@Override
 	public void setViewEditable(boolean editable) {
-		if (!editable) {
-			this.buttonSelectedPropertiesToLeft.setEnabled(false);
-			this.buttonSelectedPropertiesToRight.setEnabled(false);
-			this.nameText.setEditable(false);
-			this.descriptionText.setEditable(false);
-			this.descriptionText.setEnabled(false);
-			this.descriptionPane.setEnabled(false);
-			this.visibility.setEditable(false);
-			this.visibility.setEnabled(false);
-		} else {
-			this.buttonSelectedPropertiesToLeft.setEnabled(true);
-			this.buttonSelectedPropertiesToRight.setEnabled(true);
-			this.nameText.setEditable(true);
-			this.descriptionText.setEditable(true);
-			this.descriptionText.setEnabled(true);
-			this.descriptionPane.setEnabled(true);
-			this.visibility.setEditable(true);
-			this.visibility.setEnabled(true);
-		}
+		this.buttonSelectedPropertiesToLeft.setEnabled(editable);
+		this.buttonSelectedPropertiesToRight.setEnabled(editable);
+		this.nameText.setEditable(editable);
+		this.descriptionText.setEditable(editable);
+		this.descriptionText.setEnabled(editable);
+		this.descriptionPane.setEnabled(editable);
+		this.visibility.setEditable(editable);
+		this.visibility.setEnabled(editable);
+    this.buttonRootObjectToLeft.setEnabled(editable);
+    this.buttonRootObjectToRight.setEnabled(editable);
 	}
 
 	/**
@@ -678,34 +744,46 @@ public class MetaViewView extends NodePropertiesView implements
 		@Override public void visit(TaggedValue taggedValue) {}
 		
 	}
-	
-	// ExploerNode interface, do not comment this methods, javadoc taken the
-	// comments from the interface
+
+	@Override
 	public DataObjectMgr getManager() {
-		// TODO Auto-generated method stub
-		return null;
+		return getModel().getNodeOwner().getManager();
 	}
 
+  @Override
 	public UiNodeTypeFactory getNodeTypeFactory() {
-		return getModel().getNodeOwner().getNodeTypeFactory();
+		return factory;
 	}
 
+  @Override
 	public JTree getTree() {
 		return getModel().getNodeOwner().getTree();
 	}
 
+  @Override
 	public void nodeChanged(ExplorerNode node) {
 		// TODO Auto-generated method stub
 
 	}
 
+  @Override
 	public void nodeInserted(ExplorerNode node, int index) {
     int[] childIndices = new int[1];
     childIndices[0] = index;
-    viewTree.getTreeModel().nodesWereInserted(node, childIndices);
-    modelTree.getTreeModel().nodesWereInserted(node, childIndices);
+    DataObject rootObject = node.getRoot().getDataObject();
+    if(rootObject == null || rootObject instanceof MetaView) {
+      if(viewTree != null && viewTree.getTree() != null) {
+        viewTree.getTreeModel().nodesWereInserted(node, childIndices);
+      }
+    }
+    if(rootObject == null || rootObject instanceof MetaModel) {
+      if(modelTree != null && modelTree.getTreeModel() != null) {
+        modelTree.getTreeModel().nodesWereInserted(node, childIndices);
+      }
+    }
 	}
 
+  @Override
 	public void nodeRemoved(ExplorerNode parent, ExplorerNode node, int index) {
 		// TODO Auto-generated method stub
 	}
