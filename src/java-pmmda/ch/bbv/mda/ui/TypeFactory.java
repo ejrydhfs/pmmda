@@ -70,6 +70,9 @@ public class TypeFactory extends AbstractTypeFactory {
     createNodeTypeForMetaView();
   }
   
+  /**
+   * Creates the node type for a MetaView. It will display name and description in node views.
+   */
   public void createNodeTypeForMetaView(){
 	  DataObjectType type = new DataObjectType(MetaView.class,
 				MetaView.class, MetaView.class, VisitorFunctor.class,
@@ -78,10 +81,10 @@ public class TypeFactory extends AbstractTypeFactory {
 
 		UiNodeTypeImpl nodeType = new UiNodeTypeImpl(type, "name",
 				MetaViewView.class);
+    nodeType.setComparator(comparator);
 		
 		List<UiField> params = new ArrayList<UiField>();
 		addField(params, "name", String.class, true);
-		addField(params, "system", Boolean.TYPE, false);
 		addField(params, "description", String.class, true);
 		nodeType.registerView(new UiNodeViewType("default", nodeType,
 				NodeTableView.class, params, true));
