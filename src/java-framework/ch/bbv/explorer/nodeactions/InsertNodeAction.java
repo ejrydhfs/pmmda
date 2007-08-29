@@ -33,7 +33,7 @@ public class InsertNodeAction extends AbstractNodeAction {
 
   @Override
   public void execute(ExplorerNode node) {
-    createNode((ExplorerNode) node.getParent(), node.getNodeType());
+    createNode((ExplorerNode) node.getParent(), node.getNodeType(), true);
   }
 
   @Override

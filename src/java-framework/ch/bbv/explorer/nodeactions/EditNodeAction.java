@@ -32,7 +32,7 @@ public class EditNodeAction extends AbstractNodeAction {
 
   @Override
   public void execute(ExplorerNode node) {
-    displayView(node, true, false);
+    displayView(node, true, false, true);
   }
 
   @Override

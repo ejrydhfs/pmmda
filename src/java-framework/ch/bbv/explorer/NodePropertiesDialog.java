@@ -44,9 +44,11 @@ public class NodePropertiesDialog extends SimpleDialog {
   /**
    * Constructor of the class.
    * @param owner owner of the dialog.
+   * @param modal true if this dialog shall be modal.
    */
-  public NodePropertiesDialog(JFrame owner) {
+  public NodePropertiesDialog(JFrame owner, boolean modal) {
     super(owner);
+    setModal(modal);
   }
 
   /**

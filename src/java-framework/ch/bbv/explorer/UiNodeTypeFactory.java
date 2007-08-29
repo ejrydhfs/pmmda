@@ -79,7 +79,7 @@ public class UiNodeTypeFactory implements Cloneable {
     iconFactory = new IconFactoryImpl();
     popupFactory = new PopupFactoryImpl();
   }
-
+  
   /**
    * @inheritDoc
    * @see Object#clone()
@@ -182,10 +182,11 @@ public class UiNodeTypeFactory implements Cloneable {
   /**
    * Returns a free properties dialog.
    * @param explorer explorer owning the dialog.
+   * @param modal true indicates that this dialog shall be modal, false otherwise.
    * @return the node properties dialog.
    */
-  public NodePropertiesDialog getPropertiesDialog(Explorer explorer) {
-    return new NodePropertiesDialog(explorer.getFrame());
+  public NodePropertiesDialog getPropertiesDialog(Explorer explorer, boolean modal) {
+    return new NodePropertiesDialog(explorer.getFrame(), modal);
   }
 
   /**

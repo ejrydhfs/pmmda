@@ -111,12 +111,13 @@ public abstract class AbstractNodeAction extends ExplorerNodeActionImpl {
   /**
    * Displays the node view for the data object of the node.
    * @param node explorer node which data object should be displayed
-   * @param editable indicates if the node is editable or not
+   * @param editable indicates if the node is modifiable or not
    * @param created indicates if the node was created in the action or not
+   * @param modal true if view shall be displayed within a modal dialog.
    * @pre node != null
    */
   protected void displayView(ExplorerNode node, boolean editable,
-      boolean created) {
+      boolean created, boolean modal) {
     assert node != null;
     DataObject boObject = node.getDataObject();
     ExplorerNode newNode = node;
@@ -126,7 +127,7 @@ public abstract class AbstractNodeAction extends ExplorerNodeActionImpl {
     }
     ExplorerNodeOwner owner = newNode.getNodeOwner();
     UiNodeTypeFactory factory = owner.getNodeTypeFactory();
-    NodePropertiesDialog dialog = factory.getPropertiesDialog((Explorer) owner);
+    NodePropertiesDialog dialog = factory.getPropertiesDialog((Explorer) owner, modal);
     dialog.setModel(newNode, editable, created, getViewLabel(node), this);
     dialog.setVisible(true);
   }
@@ -141,9 +142,10 @@ public abstract class AbstractNodeAction extends ExplorerNodeActionImpl {
    * is created.
    * @param node node which should have a new child
    * @param nodeType type of the node to be created
+   * @param modal true if view shall be displayed within a modal dialog.
    * @pre node != null
    */
-  protected void createNode(ExplorerNode node, UiNodeType nodeType) {
+  protected void createNode(ExplorerNode node, UiNodeType nodeType, boolean modal) {
     assert node != null;
     ExplorerNode newNode = node;
     DataObject boObject = node.getDataObject();
@@ -166,7 +168,7 @@ public abstract class AbstractNodeAction extends ExplorerNodeActionImpl {
     }
     ExplorerNode childNode = new ExplorerNode(nodeType, lwObject, boObject);
     childNode.setParent(newNode);
-    displayView(childNode, true, true);
+    displayView(childNode, true, true, modal);
     newNode.addChild(childNode);
   }
 

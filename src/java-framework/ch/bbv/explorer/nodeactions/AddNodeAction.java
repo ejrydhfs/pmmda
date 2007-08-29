@@ -35,7 +35,7 @@ public class AddNodeAction extends AbstractNodeAction {
 
   @Override
   public void execute(ExplorerNode node) {
-    createNode(node, getNodeType());
+    createNode(node, getNodeType(), true);
   }
 
   @Override

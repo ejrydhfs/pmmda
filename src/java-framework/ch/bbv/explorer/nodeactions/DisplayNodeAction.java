@@ -32,6 +32,6 @@ public class DisplayNodeAction extends AbstractNodeAction {
 
   @Override
   public void execute(ExplorerNode node) {
-    displayView(node, false, false);
+    displayView(node, false, false, true);
   }
 }
