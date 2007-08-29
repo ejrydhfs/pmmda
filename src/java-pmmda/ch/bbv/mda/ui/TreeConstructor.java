@@ -54,6 +54,7 @@ public class TreeConstructor implements Visitor {
   /**
    * Constructor of the class.
    * @param factory factory used to create the explorer nodes.
+   * @param explorerNodeOwner owner of the tree to be constructed
    */
   public TreeConstructor(UiNodeTypeFactory factory, ExplorerNodeOwner explorerNodeOwner) {
     nodes = new HashMap<MetaElement, ExplorerNode>();
@@ -72,6 +73,7 @@ public class TreeConstructor implements Visitor {
   public void visit(MetaModel metaModel) {
     UiNodeType nodeType = factory.getNodeTypeForBo(metaModel.getClass());
     root = new ExplorerNode(nodeType, metaModel, metaModel);
+    root.setNodeOwner(explorerNodeOwner);
     nodes.put(metaModel, root);
   }
 
@@ -120,6 +122,7 @@ public class TreeConstructor implements Visitor {
     UiNodeType nodeType = factory.getNodeTypeForBo(item.getClass());
     ExplorerNode node = new ExplorerNode(nodeType, item, item);
     nodes.put(item, node);
+    node.setNodeOwner(explorerNodeOwner);
     ExplorerNode context = nodes.get(item.getContext());
     if ((context == null) && log.isDebugEnabled()) {
       log.debug("No context node found for " + item + " context "
