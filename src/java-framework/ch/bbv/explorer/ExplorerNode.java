@@ -433,33 +433,42 @@ public class ExplorerNode implements MutableTreeNode, Cloneable, Comparable {
  
   /**
    * this method is used by the view creation dialog, something is wrong with the clone method, these
-   * will collapse the explorer tree after showing the view dialog. 
+   * will collapse the explorer tree after showing the view dialog.
+   *
+   * @param owner if null then an ExplorerNodeOwnerImpl with the same type factory as the original ExplorerNode will be assigned. Otherwise passed owner is assigned.
+   * @return cloned ExplorerNode
    */
-  private static Map<DataObject, ExplorerNode> nodes;
   public ExplorerNode clonebyCopy(ExplorerNodeOwner owner){
 	  if ( nodes == null){
 		  nodes  = new HashMap<DataObject, ExplorerNode>();
 	  } 
 	  ExplorerNode clone = null;
 	  clone = new ExplorerNode(this.nodeType, this.lwObject, this.boObject);
-	  if ( this.owner != null) {
+	  if (owner != null) {
+	    clone.owner = owner;
+	    clone.nodeType = owner.getNodeTypeFactory().getNodeTypeForBo(this.boObject.getClass());
+	    if(nodeType == null) {
+	      clone.nodeType = owner.getNodeTypeFactory().getNodeTypeForLw(this.lwObject.getClass());
+	    }
+	  } else if ( this.owner != null) {
 		  ExplorerNodeOwner copyOwner = new ExplorerNodeOwnerImpl(this.owner.getNodeTypeFactory());
 	    clone.owner = copyOwner;
-	  } else {
-		  assert owner != null;
-		  clone.owner = owner;
 	  }
 	  nodes.put(this.getDataObject(), clone);
 	  
 	  if (this.parent != null){
 		  clone.parent = nodes.get(this.parent.getDataObject());
 	  }
-      clone.children = new ArrayList<ExplorerNode>(children.size());
-      for (ExplorerNode node : this.children) {
-        clone.children.add(node.clonebyCopy(clone.owner));
-      }
-      return clone;
+	  if(clone.parent == null && parent != null) {
+	    clone.parent = parent.clonebyCopy(owner);
+	  }
+    clone.children = new ArrayList<ExplorerNode>(children.size());
+    for (ExplorerNode node : this.children) {
+      clone.children.add(node.clonebyCopy(clone.owner));
+    }
+    return clone;
   }
+  private static Map<DataObject, ExplorerNode> nodes;
   
   /**
    * Implements the Comparable interface
