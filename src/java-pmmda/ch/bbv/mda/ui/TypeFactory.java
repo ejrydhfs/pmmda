@@ -33,6 +33,7 @@ import ch.bbv.mda.MetaView;
 import ch.bbv.mda.Stereotype;
 import ch.bbv.mda.VisitorFunctor;
 import ch.bbv.mda.graphs.ClassGraphView;
+import ch.bbv.mda.ui.metaview.MetaViewView;
 
 /**
  * The type factory provides services to create the node types used in the MDA
