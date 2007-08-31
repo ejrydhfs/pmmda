@@ -17,7 +17,7 @@ import ch.bbv.mda.MetaProperty;
 import ch.bbv.mda.MetaView;
 import ch.bbv.mda.TaggedValue;
 import ch.bbv.mda.VisibilityCode;
-import ch.bbv.mda.ui.ViewConstants;
+import ch.bbv.mda.ui.metaview.ViewConstants;
 import ch.persi.xml.XmlNode;
 
 /**

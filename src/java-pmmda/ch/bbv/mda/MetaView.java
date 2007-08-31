@@ -19,7 +19,7 @@ import java.util.Map;
 
 import ch.bbv.dog.DataObject;
 import ch.bbv.mda.generators.CartridgeFactory;
-import ch.bbv.mda.ui.ViewConstants;
+import ch.bbv.mda.ui.metaview.ViewConstants;
 import ch.persi.xml.XmlNode;
 
 /**
