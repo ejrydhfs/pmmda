@@ -96,7 +96,7 @@ public class ExplorerNode implements MutableTreeNode, Cloneable, Comparable {
 		  equalParent = true;
 	  }
 	  
-	  return n.getName().equals(this.getName()) /*&& equalOwner && equalParent*/;
+	  return (n.getName() == null && this.getName() == null) || (n.getName() != null && n.getName().equals(this.getName())); /*&& equalOwner && equalParent*/
   }
   
   @Override public int hashCode(){
