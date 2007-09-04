@@ -39,7 +39,7 @@ import org.eclipse.emf.importer.rose.parser.Util;
 import ch.bbv.mda.*;
 import ch.bbv.mda.cartridges.BoConstants;
 import ch.bbv.mda.persistence.eclipse.RosePersistenceHandler;
-import ch.bbv.mda.ui.ViewConstants;
+import ch.bbv.mda.ui.metaview.ViewConstants;
 import ch.bbv.mda.uml.MetaUseCase;
 import ch.bbv.utilities.TextUtilities;
 import ch.persi.xml.XmlNode;

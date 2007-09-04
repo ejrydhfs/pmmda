@@ -17,7 +17,7 @@ import ch.bbv.mda.*;
 import ch.bbv.mda.generators.CartridgeFactory;
 import ch.bbv.mda.generators.ItemFactory;
 import ch.bbv.mda.persistence.eclipse.RosePersistenceHandler;
-import ch.bbv.mda.ui.ViewConstants;
+import ch.bbv.mda.ui.metaview.ViewConstants;
 import ch.bbv.mda.uml.MetaUseCase;
 import ch.bbv.utilities.TextUtilities;
 
