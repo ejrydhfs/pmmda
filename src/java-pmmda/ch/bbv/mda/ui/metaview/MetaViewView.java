@@ -226,25 +226,39 @@ public class MetaViewView extends NodePropertiesView implements ViewConstants {
 		return b;
 	}
 
-	/**
-	 * Moves a node (MetaModel, MetaPackage, MetaClass, MetaProperty, etc.) to the right and assigns it to the view
-	 * @param fromTree tree to remove node from
-	 * @param toTree to assign node to.
-	 * @param node to be assigned to the view.
-	 */
-	protected void nodeToTree(JTree fromTree, JTree toTree, ExplorerNode node) {
-		if(node.getDataObject() instanceof MetaProperty || node.getDataObject() instanceof MetaView) {
-			propertyToTree(fromTree, toTree, node);
-		} else if (node.getChildCount() == 0){
-			removeNodeFromTree((DefaultTreeModel) fromTree.getModel(), node);
-		} else {
-			while(node.getChildCount() > 0) {
-				ExplorerNode child = (ExplorerNode)node.getChildAt(0);
-				nodeToTree(fromTree, toTree, child);
-			}
-		}
-	}
-	
+  /**
+   * Moves a node (MetaModel, MetaPackage, MetaClass, MetaProperty, etc.) from the fromTree to the toTree.
+   * Children of the node are also moved.
+   * @param fromTree tree to remove node from
+   * @param toTree to assign node to.
+   * @param node to be assigned to the view.
+   */
+  protected void nodeToTree(JTree fromTree, JTree toTree, ExplorerNode node) {
+    if(node.getDataObject() instanceof MetaProperty || node.getDataObject() instanceof MetaView) {
+      propertyToTree(fromTree, toTree, node);
+    } else if (node.getChildCount() == 0){
+      removeNodeFromTree((DefaultTreeModel) fromTree.getModel(), node);
+    } else {
+      while(node.getChildCount() > 0) {
+        ExplorerNode child = (ExplorerNode)node.getChildAt(0);
+        nodeToTree(fromTree, toTree, child);
+      }
+    }
+  }
+  
+  /**
+   * Moves a node (MetaClass only) to the right and assigns it to the view as a root element.
+   * Children of the moved node are not moved.
+   * @param fromTree tree to remove node from
+   * @param toTree to assign node to.
+   * @param node to be assigned to the view.
+   */
+  protected void nodeToTreeAsRoot(JTree fromTree, JTree toTree, ExplorerNode node) {
+    if(node.getDataObject() instanceof MetaClass || node.getDataObject() instanceof MetaView) {
+      removeNodeFromTree((DefaultTreeModel) fromTree.getModel(), node);
+    }
+  }
+  
 	/**
 	 * Moves a property or a MetaView to the passed tree. The passed node must be a property or a view
 	 * @param fromTree tree to remove node from
@@ -467,13 +481,13 @@ public class MetaViewView extends NodePropertiesView implements ViewConstants {
 
 		if(modelFactory == null) {
       modelFactory = new UiNodeTypeFactory();
-      MetaModelTypeFactory modelTypeFactory = new MetaModelTypeFactory(modelFactory, getModel().getRoot().getNodeOwner().getManager());
+      MetaModelTypeFactory modelTypeFactory = new MetaModelTypeFactory(modelFactory, getModel().getRoot().getNodeOwner().getManager(), this);
       modelTypeFactory.registerAllTypes();
       modelOwner = new MetaViewNodeOwner(this, modelFactory, getModel().getNodeOwner().getManager(), getModelTree());
 		}
 		if(viewFactory == null) {
 		  viewFactory = new UiNodeTypeFactory();
-      MetaViewTypeFactory viewTypeFactory = new MetaViewTypeFactory(viewFactory, getModel().getRoot().getNodeOwner().getManager());
+      MetaViewTypeFactory viewTypeFactory = new MetaViewTypeFactory(viewFactory, getModel().getRoot().getNodeOwner().getManager(), this);
       viewTypeFactory.registerAllTypes();
       viewOwner = new MetaViewNodeOwner(this, viewFactory, getModel().getNodeOwner().getManager(), getViewTree());
 		}

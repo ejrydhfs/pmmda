@@ -29,12 +29,19 @@ public class MetaViewTypeFactory  extends AbstractTypeFactory {
   private static Comparator<ExplorerNode> comparator = new MetaElementComparator();
 
   /**
+   * Contains the metaViewView to be manipulated by the UI
+   */
+  private MetaViewView metaViewView;
+  
+  /**
    * Constructor of the class.
    * @param factory the user interface node type factory to use
    * @param manager the data object manager to use
+   * @param metaViewView is the view to be manipulated by the ui based on this type factory.
    */
-  public MetaViewTypeFactory(UiNodeTypeFactory factory, DataObjectMgr manager) {
+  public MetaViewTypeFactory(UiNodeTypeFactory factory, DataObjectMgr manager, MetaViewView metaViewView) {
     super(factory, manager);
+    this.metaViewView = metaViewView;
   }
 
   /**
@@ -58,7 +65,7 @@ public class MetaViewTypeFactory  extends AbstractTypeFactory {
     UiNodeTypeImpl nodeType = new UiNodeTypeImpl(type, "name",
         MetaViewView.class);
     nodeType.setComparator(comparator);
-    register(type, nodeType, new MetaViewPopupSelector(nodeType),
+    register(type, nodeType, new MetaViewPopupSelector(nodeType, metaViewView),
         new MetaClassIconSelector(getIconFactory(), "view"));
   }
 
@@ -74,7 +81,7 @@ public class MetaViewTypeFactory  extends AbstractTypeFactory {
     UiNodeTypeImpl nodeType = new UiNodeTypeImpl(type, "name",
         MetaModelView.class);
     nodeType.setComparator(comparator);
-    register(type, nodeType, new MetaViewPopupSelector(nodeType),
+    register(type, nodeType, new MetaViewPopupSelector(nodeType, metaViewView),
         new ChildrenIconSelector(getIconFactory(), "package"));
   }
 
@@ -90,7 +97,7 @@ public class MetaViewTypeFactory  extends AbstractTypeFactory {
     UiNodeTypeImpl nodeType = new UiNodeTypeImpl(type, "name",
         MetaPackageView.class);
     nodeType.setComparator(comparator);
-    register(type, nodeType, new MetaViewPopupSelector(nodeType),
+    register(type, nodeType, new MetaViewPopupSelector(nodeType, metaViewView),
         new ChildrenIconSelector(getIconFactory(), "package"));
   }
 
@@ -105,7 +112,7 @@ public class MetaViewTypeFactory  extends AbstractTypeFactory {
     UiNodeTypeImpl nodeType = new UiNodeTypeImpl(type, "name",
         MetaClassView.class);
     nodeType.setComparator(comparator);
-    register(type, nodeType, new MetaViewPopupSelector(nodeType),
+    register(type, nodeType, new MetaViewPopupSelector(nodeType, metaViewView),
         new MetaClassIconSelector(getIconFactory(), "class"));
   }
 
@@ -120,7 +127,7 @@ public class MetaViewTypeFactory  extends AbstractTypeFactory {
     UiNodeTypeImpl nodeType = new UiNodeTypeImpl(type, "name",
         MetaPropertyView.class);
     nodeType.setComparator(comparator);
-    register(type, nodeType, new MetaViewPopupSelector(nodeType),
+    register(type, nodeType, new MetaViewPopupSelector(nodeType, metaViewView),
         new FieldVisibilityIconSelector(getIconFactory(), "field"));
   }
 
@@ -135,7 +142,7 @@ public class MetaViewTypeFactory  extends AbstractTypeFactory {
     UiNodeTypeImpl nodeType = new UiNodeTypeImpl(type, "name",
         MetaPropertyView.class);
     nodeType.setComparator(comparator);
-    register(type, nodeType, new MetaViewPopupSelector(nodeType),
+    register(type, nodeType, new MetaViewPopupSelector(nodeType, metaViewView),
         new FieldVisibilityIconSelector(getIconFactory(), "indexed-field"));
   }
 

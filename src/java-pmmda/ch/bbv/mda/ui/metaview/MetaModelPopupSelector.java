@@ -33,21 +33,28 @@ public class MetaModelPopupSelector implements PopupSelector {
   private UiNodeType type;
 
   /**
+   * Contains the metaViewView for the pop-up menus to operate on
+   */
+  private MetaViewView metaViewView;
+  
+  /**
    * Constructor of the class. A default validation action and no node specific
    * actions are created.
    * @param type user interface node type the selector is associated to
+   * @param metaViewView view where pop-up operations have to be performed on.
    * @pre type != null
    */
-  public MetaModelPopupSelector(UiNodeType type) {
+  public MetaModelPopupSelector(UiNodeType type, MetaViewView metaViewView) {
     assert type != null;
     this.type = type;
+    this.metaViewView = metaViewView;
   }
 
   public JPopupMenu select(ExplorerNode node) {
     assert node.getNodeType() == type;
     menu = new JPopupMenu();
     if(node.getDataObject() instanceof MetaClass) {
-      menu.add(new AddNodeAction(node.getNodeType(), "Add to View"));
+      menu.add(new AddToViewNodeAction(node.getNodeType(), "Add to View", metaViewView));
     }
     return menu;
   }

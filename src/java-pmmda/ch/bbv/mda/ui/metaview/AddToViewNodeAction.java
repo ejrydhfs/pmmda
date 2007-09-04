@@ -15,14 +15,21 @@ public class AddToViewNodeAction extends AbstractNodeAction{
   /**
    * Unique serial version identifier for the instances of the class.
    */
-  private static final long serialVersionUID = 1349625017048612654L;
+  private static final long serialVersionUID = 20070830L;
 
-  public AddToViewNodeAction(UiNodeType type, String name) {
+  /**
+   * Contains the metaViewView to be manipulated by this node action
+   */
+  private MetaViewView metaViewView;
+
+  public AddToViewNodeAction(UiNodeType type, String name, MetaViewView metaViewView) {
     super(type, name, true);
+    this.metaViewView = metaViewView;
   }
 
   @Override
   public void execute(ExplorerNode node) {
+    metaViewView.nodeToTreeAsRoot(metaViewView.getModelTree().getTree(), metaViewView.getViewTree().getTree(), node);
   }
 
   @Override
