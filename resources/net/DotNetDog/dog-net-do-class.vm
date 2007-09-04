@@ -48,6 +48,8 @@ using PmMda.Net.Dog.Updates;
 using PmMda.Net.Dog.Paging;
 using PmMda.Net.Dog.Sorting;
 using PmMda.Net.NHibernate.LazyLoad;
+using PmMda.Net.Dog.Persistence;
+using PmMda.Net.Dog.Persistence.NHibernate;
 #foreach($usingStatement in ${netHelper.getUsingStatements(${class})})
 using $usingStatement;
 #end
@@ -275,7 +277,8 @@ ${spaces}    : base(info, context)
 #end
 ${spaces}  {
 #if (!${baseClassIsDataObject})
-${spaces}    m_id = info.GetValue("m_id",typeof(Int32));
+${spaces}    Type t = (Type)info.GetValue("m_idtype", typeof(System.Type));
+${spaces}    m_id = info.GetValue("m_id", t);
 ${spaces}    m_timestamp = info.GetDateTime("m_timestamp");
 ${spaces}    m_persistenceState = (PersistenceState)info.GetValue("m_persistenceState", typeof(PersistenceState));
 ${spaces}    m_update = new DataObjectUpdate(this);
@@ -362,7 +365,7 @@ ${spaces}  /// Never set the identifier from your code. The identifier is calcul
 ${spaces}  /// and set from the DOG framework.
 ${spaces}  /// </remarks>
 ${spaces}  [Browsable(false)]
-${spaces}  public object Id
+${spaces}  public virtual object Id
 ${spaces}  {
 ${spaces}    get
 ${spaces}    {
@@ -382,7 +385,7 @@ ${spaces}  /// This timestamp is set by the DOG framework using reflection.
 ${spaces}  /// The timestamp value of a new data object is not defined!
 ${spaces}  /// </remarks>
 ${spaces}  [Browsable(true)]
-${spaces}  public DateTime Timestamp
+${spaces}  public virtual DateTime Timestamp
 ${spaces}  {
 ${spaces}    get
 ${spaces}    {
@@ -397,7 +400,7 @@ ${spaces}  /// <value>
 ${spaces}  /// <c>true</c> if this object is a new one; otherwise, <c>false</c>.
 ${spaces}  /// </value>
 ${spaces}  [Browsable(true)]
-${spaces}  public bool IsNew 
+${spaces}  public virtual bool IsNew 
 ${spaces}  {
 ${spaces}    get
 ${spaces}    {
@@ -420,7 +423,7 @@ ${spaces}  /// <value>
 ${spaces}  /// <c>true</c> if this object is modified; otherwise, <c>false</c>.
 ${spaces}  /// </value>
 ${spaces}  [Browsable(true)]
-${spaces}  public bool Modified 
+${spaces}  public virtual bool Modified 
 ${spaces}  {
 ${spaces}    get
 ${spaces}    {
@@ -446,7 +449,7 @@ ${spaces}  /// be registered.
 ${spaces}  /// </para>
 ${spaces}  /// </remarks>
 ${spaces}  [Browsable(false)]
-${spaces}  public DataObjectUpdate Update 
+${spaces}  public virtual DataObjectUpdate Update 
 ${spaces}  {
 ${spaces}    get
 ${spaces}    {
@@ -456,7 +459,7 @@ ${spaces}  }
 ${spaces}  /// <summary>
 ${spaces}  /// Marks an unchaned object as modified. 
 ${spaces}  /// </summary>
-${spaces}  public void SetModified()
+${spaces}  public virtual void SetModified()
 ${spaces}  {
 ${spaces}    if (m_persistenceState == PersistenceState.Unchanged)
 ${spaces}    {
@@ -467,7 +470,7 @@ ${spaces}
 ${spaces}  /// <summary>
 ${spaces}  /// Marks an object as deleted. New and already deleted objects are marked as destroyed.
 ${spaces}  /// </summary>
-${spaces}  public void SetDeleted()
+${spaces}  public virtual void SetDeleted()
 ${spaces}  {
 ${spaces}    if (PersistenceState == PersistenceState.Destroyed)
 ${spaces}    {
@@ -511,7 +514,7 @@ ${spaces}  /// Creates and returns a deep copy of the data object and its descen
 ${spaces}  /// </summary>
 ${spaces}  /// <param name="copy">Copy to be filled with this item information.</param>
 ${spaces}  /// <param name="copies">Copies holds all referenced objects being copied so far. An already copied object shall not be copied again. This prevents infinite loops on cyclic references.</param>
-${spaces}  protected IDataObject Copy(${class.getAttribute(".net-data-object-class")} copy, Hashtable copies)
+${spaces}  protected virtual IDataObject Copy(${class.getAttribute(".net-data-object-class")} copy, Hashtable copies)
 ${spaces}  {
 #if (${baseClassIsDataObject})
 ${spaces}    copy = (${class.getAttribute(".net-data-object-class")}) base.Copy(copy, copies);
@@ -1436,7 +1439,7 @@ ${spaces}  /// method dispatches the visitor to all its relevant children. A rel
 ${spaces}  /// child is always another data object.
 ${spaces}  /// </summary>
 ${spaces}  /// <param name=${quotes}visitor${quotes}>Visitor to act on the data object.</param>
-${spaces}  public void Accept(IDataObjectVisitor visitor)
+${spaces}  public virtual void Accept(IDataObjectVisitor visitor)
 ${spaces}  {
 ${spaces}    if (!visitor.Visited(this))
 ${spaces}    {
@@ -1463,7 +1466,7 @@ ${spaces}  /// method dispatches the visitor to all its p children. A relevant
 ${spaces}  /// child is always another data object and persistent.
 ${spaces}  /// </summary>
 ${spaces}  /// <param name=${quotes}visitor${quotes}>Visitor to act on the persistent part of the data object.</param>
-${spaces}  public void AcceptPersistency(IDataObjectVisitor visitor)
+${spaces}  public virtual void AcceptPersistency(IDataObjectVisitor visitor)
 ${spaces}  {
 ${spaces}    if (!visitor.Visited(this))
 ${spaces}    {
@@ -1718,7 +1721,7 @@ ${spaces}  /// <summary>
 ${spaces}  /// Creates and returns a shallow copy of the data object and its descendants.
 ${spaces}  /// </summary>
 ${spaces}  /// <param name="clones">Clones holds all referenced objects being copied so far. An already cloned object shall not be cloned again. This prevents infinite loops on cyclic references.</param>
-${spaces}  public IDataObject Clone(Hashtable clones)
+${spaces}  ${modifier} IDataObject Clone(Hashtable clones)
 ${spaces}  {
 ${spaces}    if(clones.ContainsKey(this)) 
 ${spaces}    {
@@ -1732,7 +1735,7 @@ ${spaces}  /// Creates and returns a shallow copy of the data object and its des
 ${spaces}  /// </summary>
 ${spaces}  /// <param name="clone">Clone to be filled with content of this object.</param>
 ${spaces}  /// <param name="clones">Clones holds all referenced objects being copied so far. An already cloned object shall not be cloned again. This prevents infinite loops on cyclic references.</param>
-${spaces}  protected IDataObject Clone(${class.getAttribute(".net-data-object-class")} clone, Hashtable clones)
+${spaces}  protected virtual IDataObject Clone(${class.getAttribute(".net-data-object-class")} clone, Hashtable clones)
 ${spaces}  {
 #if (${baseClassIsDataObject})
 ${spaces}    clone = (${class.getAttribute(".net-data-object-class")}) base.Clone(clone, clones);
@@ -1787,6 +1790,7 @@ ${spaces}  {
 ${spaces}    base.GetObjectData(info, context);
 #else
 ${spaces}    info.AddValue("m_id", m_id);
+${spaces}    info.AddValue("m_idtype", m_id.GetType());
 ${spaces}    info.AddValue("m_timestamp", m_timestamp);
 ${spaces}    info.AddValue("m_persistenceState", m_persistenceState);
 #end
