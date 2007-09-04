@@ -19,7 +19,7 @@ import java.util.Map;
 
 import ch.bbv.dog.DataObject;
 import ch.bbv.mda.generators.CartridgeFactory;
-import ch.bbv.mda.ui.ViewConstants;
+import ch.bbv.mda.ui.metaview.ViewConstants;
 import ch.persi.xml.XmlNode;
 
 /**
@@ -46,17 +46,18 @@ public class MetaView extends MetaElement {
    * List of all inner views contained within this view.
    */
   private List<MetaView> views;
-  
+
   /**
    * List of root objects. Root objects are used to navigate to a property
    */
   private List<Class<? extends MetaClassifier>> rootObjects;
 
   /**
-   * Maps meta property to paths. a path is a "Point" separated string of properties
+   * Maps meta property to paths. a path is a "Point" separated string of
+   * properties
    */
   private Map<MetaProperty, RootDataObject> paths;
-  
+
   /**
    * creates a new view with default name <code>View</code><br>
    * if you want change the name call <code>setName(String s)</code> after the
@@ -76,20 +77,25 @@ public class MetaView extends MetaElement {
     setName(name);
     TaggedValue author = new TaggedValue("author", "pmMDA");
     this.addTaggedValue(author);
-    
+
     fields = new ArrayList<MetaProperty>();
     views = new ArrayList<MetaView>();
     paths = new HashMap<MetaProperty, RootDataObject>();
-    
+
     /**
-     * FIXME: uk: correct? What about multiple views? Move to static constructor?
+     * FIXME: uk: correct? What about multiple views? Move to static
+     * constructor?
      */
     List<TagDefinition> taggedValueTypes = new ArrayList<TagDefinition>();
-    taggedValueTypes.add(new TagDefinition(ViewConstants.VIEW_TAG, "", String.class));
-    
-    CartridgeFactory.getInstance().getItemFactory().registerTypes(MetaPackage.class, taggedValueTypes);
-    CartridgeFactory.getInstance().getItemFactory().registerTypes(MetaProperty.class, taggedValueTypes);
-    CartridgeFactory.getInstance().getItemFactory().registerTypes(MetaIndexedProperty.class, taggedValueTypes);
+    taggedValueTypes.add(new TagDefinition(ViewConstants.VIEW_TAG, "",
+        String.class));
+
+    CartridgeFactory.getInstance().getItemFactory().registerTypes(
+        MetaPackage.class, taggedValueTypes);
+    CartridgeFactory.getInstance().getItemFactory().registerTypes(
+        MetaProperty.class, taggedValueTypes);
+    CartridgeFactory.getInstance().getItemFactory().registerTypes(
+        MetaIndexedProperty.class, taggedValueTypes);
   }
 
   /**
@@ -109,7 +115,7 @@ public class MetaView extends MetaElement {
    * MetaView.
    */
   public void addToModel() {
-    addToPackage(getQualifiedName(), getModel(), (MetaPackage)getContext());
+    addToPackage(getQualifiedName(), getModel(), (MetaPackage) getContext());
     addToProperties(fields, getQualifiedName(), getModel());
   }
 
@@ -124,21 +130,24 @@ public class MetaView extends MetaElement {
    * @param rootModel
    *          MetaModel this View is belonging to. Necessary to process new
    *          views not having yet a model assigned.
-   * @param context MetaPackage this view is belonging to. One cannot obtain the view context, because in case of a new view that context is still null.
+   * @param context
+   *          MetaPackage this view is belonging to. One cannot obtain the view
+   *          context, because in case of a new view that context is still null.
    */
-  public void addToPackage(String qualifiedName, MetaModel rootModel, MetaPackage context) {
-    
-    if (context == null){
+  public void addToPackage(String qualifiedName, MetaModel rootModel,
+      MetaPackage context) {
+
+    if (context == null) {
       return;
     }
-    
+
     TaggedValue taggedValue = context.getTaggedValue(ViewConstants.VIEW_TAG);
     if (taggedValue == null) {
       taggedValue = new TaggedValue(ViewConstants.VIEW_TAG, new XmlNode(
           ViewConstants.VIEW_TAG).asXml());
       context.addTaggedValue(taggedValue);
     }
-    
+
     XmlNode xmlDef = new XmlNode();
     xmlDef.parse(taggedValue.getValue());
     List<XmlNode> nodes = xmlDef.getAllAsList(ViewConstants.VIEW_NODE);
@@ -148,7 +157,7 @@ public class MetaView extends MetaElement {
         break;
       }
     }
-    
+
     XmlNode viewNode = xmlDef.append(ViewConstants.VIEW_NODE);
     viewNode.setAttribute(ViewConstants.NAME, qualifiedName);
     viewNode.setAttribute(ViewConstants.DESCRIPTION, getDescription());
@@ -178,10 +187,12 @@ public class MetaView extends MetaElement {
   public void addToProperties(List<MetaProperty> propertiesToBeAdded,
       String qualifiedName, MetaModel rootModel) {
     for (MetaProperty property : propertiesToBeAdded) {
-      property = (MetaProperty) rootModel.findElement(property.getQualifiedName());
+      property = (MetaProperty) rootModel.findElement(property
+          .getQualifiedName());
       TaggedValue taggedValue = property.getTaggedValue(ViewConstants.VIEW_TAG);
       if (taggedValue == null || taggedValue.getValue().equals("")) {
-        taggedValue = new TaggedValue(ViewConstants.VIEW_TAG, new XmlNode(ViewConstants.VIEW_TAG).asXml());
+        taggedValue = new TaggedValue(ViewConstants.VIEW_TAG, new XmlNode(
+            ViewConstants.VIEW_TAG).asXml());
         property.addTaggedValue(taggedValue);
       }
       XmlNode xmlDef = new XmlNode();
@@ -243,8 +254,8 @@ public class MetaView extends MetaElement {
     MetaView clone = null;
     clone = (MetaView) super.clone();
 
-    List<MetaProperty> fieldDefs = new ArrayList<MetaProperty>(
-        this.fields.size() * 2);
+    List<MetaProperty> fieldDefs = new ArrayList<MetaProperty>(this.fields
+        .size() * 2);
     for (MetaProperty definition : fields) {
       fieldDefs.add(definition.copy());
     }
@@ -327,9 +338,12 @@ public class MetaView extends MetaElement {
   }
 
   /**
-   * Searches passed view within referenced views of this view. Equality operator is used to determin whether passed view is referenced.
+   * Searches passed view within referenced views of this view. Equality
+   * operator is used to determin whether passed view is referenced.
+   * 
    * @see #getViews()
-   * @param searchedView MetaView to be looked up.
+   * @param searchedView
+   *          MetaView to be looked up.
    * @return MetaView if found or null otherwise.
    */
   public MetaView findView(MetaView searchedView) {
@@ -377,7 +391,8 @@ public class MetaView extends MetaElement {
   @Override
   public int hashCode() {
     int hashCode = this.getName() == null ? 0 : this.getName().hashCode();
-    hashCode += this.getDescription() == null ? 0 : this.getDescription().hashCode();
+    hashCode += this.getDescription() == null ? 0 : this.getDescription()
+        .hashCode();
 
     if (fields != null) {
       for (MetaProperty def : fields) {
@@ -400,7 +415,8 @@ public class MetaView extends MetaElement {
    * will remain.
    */
   public void removeFromModel() {
-    removeFromPackage(getQualifiedName(), getModel(), (MetaPackage)getContext());
+    removeFromPackage(getQualifiedName(), getModel(),
+        (MetaPackage) getContext());
     removeFromProperties(fields, getQualifiedName(), getModel());
   }
 
@@ -413,10 +429,14 @@ public class MetaView extends MetaElement {
    * @param rootModel
    *          MetaModel this View is belonging to. Necessary to process new
    *          views not having yet a model assigned.
-   * @param context MetaPackage this view is contained in. Necessary because in case of new views the context might not be set yet.
+   * @param context
+   *          MetaPackage this view is contained in. Necessary because in case
+   *          of new views the context might not be set yet.
    */
-  public void removeFromPackage(String qualifiedName, MetaModel rootModel, MetaPackage context) {
-    if (context == null) return;
+  public void removeFromPackage(String qualifiedName, MetaModel rootModel,
+      MetaPackage context) {
+    if (context == null)
+      return;
     TaggedValue taggedValue = context.getTaggedValue(ViewConstants.VIEW_TAG);
     if (taggedValue != null) {
       XmlNode xmlDef = new XmlNode();
@@ -507,27 +527,26 @@ public class MetaView extends MetaElement {
     removeAllViews();
     this.views.addAll(views);
   }
-  
-  
-  public class RootDataObject{
+
+  public class RootDataObject {
     private Class<? extends DataObject> rootObjectType;
+
     private String alias;
-    
-    public Class<? extends DataObject> getRootObjectType(){
+
+    public Class<? extends DataObject> getRootObjectType() {
       return rootObjectType;
     }
-    
-    public void setRootObjectType(Class<? extends DataObject> rootObjectType){
+
+    public void setRootObjectType(Class<? extends DataObject> rootObjectType) {
       this.rootObjectType = rootObjectType;
     }
-    
-    public String getAlias(){
+
+    public String getAlias() {
       return alias;
     }
-    
-    public void setAlias(String alias){
+
+    public void setAlias(String alias) {
       this.alias = alias;
-    } 
+    }
   }
 }
-  
