@@ -31,7 +31,7 @@ import ch.bbv.mda.*;
 import ch.bbv.mda.operators.MdaUtilities;
 import ch.bbv.mda.persistence.ExternalTransformer;
 import ch.bbv.mda.persistence.FilterIterator;
-import ch.bbv.mda.ui.ViewConstants;
+import ch.bbv.mda.ui.metaview.ViewConstants;
 import ch.persi.xml.XmlNode;
 
 /**
