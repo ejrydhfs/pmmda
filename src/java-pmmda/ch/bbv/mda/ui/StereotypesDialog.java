@@ -25,6 +25,7 @@ public class StereotypesDialog extends SimpleDialog {
    */
   public StereotypesDialog(JFrame owner) {
     super(owner, true, false);
+    setModal(true);
     panel = new ListsTransferPanel();
   }
 
