@@ -920,7 +920,7 @@ public class NetCartridgeHelper {
    * 
    * @param clazz
    *          The meta class.
-   * @return True if the base class is a data object. Otherwiese false. If no
+   * @return True if the base class is a data object. Otherwise false. If no
    *         base class exists false is returned.
    */
   public boolean isBaseClassDataObject(MetaClass clazz) {
@@ -936,7 +936,7 @@ public class NetCartridgeHelper {
   }
 
   /**
-   * Returns wheter a specified meta class has a base class which is a data
+   * Returns whether a specified meta class has a base class which is a data
    * object and has a lightweight representation.<br/> Note that the base class
    * for the lightweight representation of the specified meta class is sometimes
    * not the same as for data objects. So if the base class don't have a
@@ -962,6 +962,29 @@ public class NetCartridgeHelper {
     return false;
   }
 
+  /**
+   * Returns whether a specified meta class has a recursive association or not.
+   * @param clazz
+   * 		  The meta class.
+   * @return True if the class has a recursive association. False otherwise.
+   */
+  public boolean isClassRecursive(MetaClass clazz) {
+	    assert (clazz != null);
+	    for (MetaProperty property : clazz.getProperties()) {
+        	MetaClassifier propertyClassifier = property.getClassifier();
+        	if(propertyClassifier.equals(clazz)) {
+        		return true;
+        	}
+        }
+	    for (MetaIndexedProperty indexedProperty : clazz.getIndexedProperties()) {
+	    	MetaClassifier indexedPropertyClassifier = indexedProperty.getClassifier();
+	    	if(indexedPropertyClassifier.equals(clazz)) {
+	    		return true;
+	    	}
+	    }
+	    return false;
+	  }
+  
   /**
    * Return the base class and interfaces as extend string for data objects.
    * 
@@ -1154,6 +1177,36 @@ public class NetCartridgeHelper {
   }
 
   /**
+   * Returns all data objects which hold a recursive association to itself.
+   * @return Returns all data objects which have a recursive association.
+   */
+  public List<MetaClass> getRecursiveDataObjects() {
+	  List<MetaClass> recursiveClasses = new Vector<MetaClass>();
+	    for (MetaClass currentClass : classes) {
+	      if (currentClass.hasStereotype(BoConstants.DATA_OBJECT_STEREOTYPE)) {
+	        boolean hasRecursion = false;
+	        for (MetaProperty property : currentClass.getProperties()) {
+	        	MetaClassifier propertyClassifier = property.getClassifier();
+	        	if(propertyClassifier.equals(currentClass)) {
+	        		hasRecursion = true;
+	        	}
+	        }
+	        for (MetaProperty indexedProperty : currentClass.getIndexedProperties()) {
+	        	MetaClassifier indexedPropertyClassifier = indexedProperty.getClassifier();
+	        	if(indexedPropertyClassifier.equals(currentClass)) {
+	        		hasRecursion = true;
+	        	}
+	        }
+	        
+	        if (hasRecursion) {
+	          recursiveClasses.add(currentClass);
+	        }
+	      }
+	    }
+	    return recursiveClasses;
+  }
+  
+  /**
    * Returns only the persistant data objects types which derive from the clazz.
    * 
    * @param clazz
@@ -1238,6 +1291,36 @@ public class NetCartridgeHelper {
     return properties;
   }
 
+  /**
+   * Returns all recursive properties which are not ignored or doesn't point to 
+   * an ignored class.
+   * 
+   * @param clazz
+   *          The meta class for which the properties are returned.
+   * @return A list of all recursive properties
+   */
+  public List<MetaProperty> getAllRecursiveProperties(MetaClass clazz) {
+	  List<MetaProperty> properties = new ArrayList<MetaProperty>();
+	    for (MetaProperty property : clazz.getProperties()) {
+	    	if (!property.booleanValueOfTag(DogNetCartridge.IGNORE_ELEMENT_TAG) &&
+	    	    	   property.getClassifier().equals(clazz)) {
+	    	        properties.add(property);
+	    	}
+	    }
+	    for (MetaProperty indexedProperty : clazz.getIndexedProperties()) {
+	    	if (!indexedProperty.booleanValueOfTag(DogNetCartridge.IGNORE_ELEMENT_TAG) &&
+	    			indexedProperty.getClassifier().equals(clazz)) {
+	    	        properties.add(indexedProperty);
+	    	}
+	    }	    
+	    for (MetaClass superClass : clazz.retrieveAncestors()) {
+	      if (!superClass.booleanValueOfTag(DogNetCartridge.IGNORE_ELEMENT_TAG)) {
+	        properties.addAll(getAllRecursiveProperties(superClass));
+	      }
+	    }
+	    return properties;
+  } 
+  
   /**
    * Returns a string representing the passed date in a short and us form.
    * Suitable for mysql and mmssql

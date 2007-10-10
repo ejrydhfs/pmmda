@@ -278,7 +278,83 @@ ${spaces}</class>
 	where=${quotes}discriminator = `${class.getQualifiedName()}`${quotes}
 #end
 #end
-## macro end
+##
+## Prints the named queries for an specified class which contains a recursive association
+##
+#macro(printNamedQueries $class $spaces)
+#set($quotes='"')
+#set($dataObjectStereoTyp="DataObject")
+#if(${dataObjectStereoTyp.equalsIgnoreCase(${class.getStereotype()})})
+#set($packageAttribute=".net-data-object-package")
+#set($classAttribute=".net-data-object-class")
+#set($inheritanceStrategy=${class.getAttribute(".net-nhibernate-inheritance-strategy")})
+#set($package=${class.retrievePackage()})
+#set($netAssembly=${package.valueOfTag(".net-nhibernate-assembly")})
+#set($className="${package.getAttribute(${packageAttribute})}.${class.getAttribute(${classAttribute})}")
+#set($className=${netHelper.getFullyQualifiedDotnetType(${className}, ${netAssembly})})
+#set($schemaName=${class.retrievePackage().valueOfTag("orm-schema")})
+#if(${schemaName} && !${schemaName.equals("")})#set($schemaName="${schemaName}.")#else#set($schemaName="")#end
+#set($table=${class.getAttribute(".net-nhibernate-table-name")})
+#set($tableName="${schemaName}${table}")
+#set($hasAncestor=${class.retrieveAncestors().size()}>0)
+## ********************************** print the named queries *************
+##set($namedQueryName="getAll ${class.getAttribute(${classAttribute} sById")
+#set($shortClassName="${class.getAttribute(${classAttribute})}")
+#set($namedQueryName="getAll${shortClassName}sById")
+$spaces
+<sql-query name=${quotes}${namedQueryName}${quotes}>
+$spaces<return alias="node" class=${quotes}${className}${quotes}>
+$spaces$spaces<return-property name="m_id" column="ID"/>
+$spaces$spaces<return-property name="m_timestamp" column="TS"/>
+## print all properties
+#foreach($property in ${class.getProperties()})
+#if(!${property.booleanValueOfTag(".net-ignore")})
+#if(${property.booleanValueOfTag("persistence")})
+#getType($model $property $propertyType)
+#isPersistentDataObject($propertyType $isPersistentDataObject)
+#if($isPersistentDataObject)
+## Property type is a data object which is persistant. --> Save it as NHibernate many-to-one
+#set($columnNameAttribute=".net-nhibernate-column-name")
+#set($columnName="${property.getAttribute(${columnNameAttribute})}_FK")
+#else
+#set($columnName=${property.getAttribute(".net-nhibernate-column-name")})
+#end
+$spaces$spaces<return-property name=${quotes}m_${property.nameFirstLower()}${quotes} column=${quotes}${columnName}${quotes}/>
+#end
+#end
+#end
+$spaces</return>
+$spaces$spaces exec [${namedQueryName}_SP] :id
+</sql-query>
+## end of first query
+#set($namedQueryName="getAll${shortClassName}sByIdWithMaxDepth")
+$spaces
+<sql-query name=${quotes}${namedQueryName}${quotes}>
+$spaces<return alias="node" class=${quotes}${className}${quotes}>
+$spaces$spaces<return-property name="m_id" column="ID"/>
+$spaces$spaces<return-property name="m_timestamp" column="TS"/>
+## print all properties
+#foreach($property in ${class.getProperties()})
+#if(!${property.booleanValueOfTag(".net-ignore")})
+#if(${property.booleanValueOfTag("persistence")})
+#getType($model $property $propertyType)
+#isPersistentDataObject($propertyType $isPersistentDataObject)
+#if($isPersistentDataObject)
+## Property type is a data object which is persistant. --> Save it as NHibernate many-to-one
+#set($columnNameAttribute=".net-nhibernate-column-name")
+#set($columnName="${property.getAttribute(${columnNameAttribute})}_FK")
+#else
+#set($columnName=${property.getAttribute(".net-nhibernate-column-name")})
+#end
+$spaces$spaces<return-property name=${quotes}m_${property.nameFirstLower()}${quotes} column=${quotes}${columnName}${quotes}/>
+#end
+#end
+#end
+$spaces</return>
+$spaces$spaces exec [${namedQueryName}_SP] :id, :depth
+</sql-query>
+#end
+#end
 ##
 ## ********************************** Start Main ****************************************
 ##
@@ -291,5 +367,8 @@ ${spaces}</class>
 #end
 #foreach($class in ${netHelper.getReferenceCodes()})
 #printReferenceCode($class "  ")
+#end
+#foreach($recursionClass in ${netHelper.getRecursiveDataObjects()})
+	#printNamedQueries($recursionClass "  ")
 #end
 </hibernate-mapping>

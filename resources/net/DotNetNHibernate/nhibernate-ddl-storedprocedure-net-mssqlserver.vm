@@ -1,0 +1,276 @@
+#######################################################
+## Velocity template
+## 
+## Generates the Microsoft SQL Server 2000 ddl scripts 
+## for the stored procedures for recursion
+##
+## Author: R. Ziegler
+##
+## Copyright 2005 http://www.bbv.ch
+## Licensed under the Apache License, Version 2.0 (the "License");
+##     http://www.apache.org/licenses/LICENSE-2.0
+##
+#######################################################
+##
+## printPropertyRows
+## Prints the table rows for a specified class
+## @param class The class for which the rows are created.
+#macro(printStoredProcPropertyRows $class $propertyPrefix $allPropertiesString)
+## **** propeties *****************************************
+#foreach($property in ${class.getProperties()})
+#if(${property.booleanValueOfTag("persistence")})
+#if(!${property.booleanValueOfTag("orm-can-be-null")} || ${property.isPrimaryKey()})#set($nullInfo=" NOT NULL")#else#set($nullInfo="")#end
+#set($columnName="")
+#set($columnName=${property.getAttribute(".net-nhibernate-column-name")})
+#getType($model $property $type)
+#isPersistentDataObject($type $isPersistentDataObject)
+## next line is output
+#if($isPersistentDataObject) 
+#set($allPropertiesString="${allPropertiesString}${propertyPrefix}[${columnName}_FK], ")
+#else
+#set($allPropertiesString="${allPropertiesString}${propertyPrefix}[${columnName}], ")
+#end
+#end
+#end
+## indexed properties with cardinality 1-1 and 1-0..1 are generated as foreign keys.
+## This situation should never arise because this is a simple property.
+#foreach($indexedProperty in ${class.getIndexedProperties()})
+#if(${indexedProperty.booleanValueOfTag("persistence")})
+#if(${indexedProperty.getMultiplicity().getUpperBound()}==1)
+#set($columnType=${indexedProperty.getAttribute(".net-nhibernate-column-db-type")})
+#set($columnName=${indexedProperty.getAttribute(".net-nhibernate-column-name")})
+#set($typeName=${indexedProperty.getTypeName()})
+#set($type=false)
+#set($type=${model.findClass(${typeName})})
+#isPersistentDataObject($type $isPersistentDataObject)
+## next line is output
+#if($isPersistentDataObject) 
+#set($allPropertiesString="${allPropertiesString}${propertyPrefix}[${columnName}_FK], ")
+#end
+#end
+#end
+#end
+## references to the class having indexed properties with cardinality 1-N to the
+## class are generated as reverse foreign keys in the class.
+#set($references=$model.getClassReferences($class))
+#foreach($reference in $references)
+#if(${reference.booleanValueOfTag("persistence")})
+#isPersistentDataObject($reference $isPersistentDataObject)
+#if($isPersistentDataObject)
+#set($relations=${reference.getIndexedProperties()})
+#foreach($relation in $relations)
+#if(${relation.booleanValueOfTag("persistence")})
+#getType($model $relation $type)
+## next line is output
+#if(${type} == ${class}) 
+#set($tableName=${reference.getAttribute(".net-nhibernate-table-name")})
+#set($columnName=${relation.getAttribute(".net-nhibernate-column-name")})
+#set($allPropertiesString="${allPropertiesString}${propertyPrefix}[${tableName}_${columnName}_FK],")
+#end
+#end
+#end
+#end
+#end
+#end
+#if(${class.getAttribute(".net-nhibernate-inheritance-strategy")}=="Table per class hierarchy")
+#foreach($derivedClass in ${netHelper.getDerivedClasses(${class})})
+#printStoredProcPropertyRows(${derivedClass} ${propertyPrefix} ${allPropertiesString})
+#end
+#end
+#if (${class.getAttribute(".net-nhibernate-inheritance-strategy")}=="Table per concrete class")
+#foreach($baseClass in ${class.retrieveAncestors()})
+#printStoredProcPropertyRows(${baseClass} ${propertyPrefix} ${allPropertiesString})
+#end
+#end
+#end
+##
+## printIndexesForIndexedProperties
+## Prints the index column for if this class is used as item for indexed property
+#macro(printStoredProcIndexesForIndexedProperties $class $propertyPrefix $allPropertiesString)
+#set($references=$model.getClassReferences($class))
+#foreach($reference in $references)
+#if(${reference.booleanValueOfTag("persistence")})
+#isPersistentDataObject($reference $isPersistentDataObject)
+#if($isPersistentDataObject)
+#foreach($indexedProperty in ${reference.getIndexedProperties()})
+#if(${indexedProperty.booleanValueOfTag("persistence")})
+#set($collectionType=${indexedProperty.valueOfTag(".net-collection-type")})
+#if($collectionType=="List")
+#getType($model $indexedProperty $type)
+## next line is output
+#if(${type} == ${class}) 
+#set($tableName=${reference.getAttribute(".net-nhibernate-table-name")})
+#set($columnName=${relation.getAttribute(".net-nhibernate-column-name")})
+#set($allPropertiesString="${allPropertiesString}${propertyPrefix}[${tableName}_${columnName}_INDEX],")
+#end
+#end
+#end
+#end
+#end
+#end
+#end
+#end
+##
+## printAllProperties
+## Prints all properties for the stored procedure
+#macro(printAllStoredProcProperties $class $tableAlias)
+## is the return value. in the end im doing substring to get rid
+## of the additional ',' at the end of the string!
+#set($allPropertiesString="")
+#set($hasAncestor=${class.retrieveAncestors().size()}>0)
+#set($inheritanceStrategy=${class.getAttribute(".net-nhibernate-inheritance-strategy")})
+#set($primaryKey="ID")
+#if($tableAlias!="")#set($propertyPrefix="${tableAlias}.")#else#set($propertyPrefix="")#end
+#if($inheritanceStrategy=="Table per subclass")
+#if(${hasAncestor})
+#set($baseClass=${class.retrieveAncestors().get(0)})
+## next line is output
+#set($baseClassName=${baseClass.getName()})
+#set($allPropertiesString="${allPropertiesString}${propertyPrefix}[${baseClassName}_ID_FK], ")
+#set($primaryKey="${baseClass.getName()}_ID_FK")
+#else
+## in all other cases ('table-per-subclass' with no ancestor, 'table-per-concrete-class'
+## and 'table-per-class-hierarchy'
+## next line is output
+#set($allPropertiesString="${allPropertiesString}${propertyPrefix}[ID], ${propertyPrefix}[TS], ")
+#end
+#end
+#if($inheritanceStrategy=="Table per class hierarchy") ${propertyPrefix}[TYPE],#end
+#printStoredProcPropertyRows(${class} ${propertyPrefix} ${allPropertiesString})
+#printStoredProcIndexesForIndexedProperties(${class} ${propertyPrefix} ${allPropertiesString})
+## now cut of the last ',' of the string and print it
+## create an integer instance to be used as a tool
+#set($Integer = 0 )
+#set($length = $Integer.parseInt("$allPropertiesString.length()") - 1)
+$allPropertiesString.substring(0, $length)#end
+##
+## printWhereClauseRestriction
+## Prints the WHERE-clause for the stored procedure. 
+#macro(printWhereClauseRestriction $class)
+#set($whereClauseString="")
+#set($table=${class.getAttribute(".net-nhibernate-table-name")})
+#foreach($recursiveProperty in ${netHelper.getAllRecursiveProperties(${class})})
+#set($columnName="")
+#set($columnName=${recursiveProperty.getAttribute(".net-nhibernate-column-name")})
+#set($whereClauseString="${whereClauseString}${storedProc}.[${columnName}_FK]=${table}.[ID] OR ")
+#end	
+#set($Integer = 0 )
+#set($length = $Integer.parseInt("$whereClauseString.length()") - 4)
+$whereClauseString.substring(0, $length)
+#end
+##
+## printStoredProcedure
+## Prints the SQL statement "CREATE PROCEDURE" for a specified class.
+## For every recursion there are two stored procedures created: one with
+## the parameter id and another with the id and the max depth as the
+## abort criterion as parameters.
+#macro(printStoredProcedure $class)
+#set($dataObjectStereoTyp="DataObject")
+#if(${dataObjectStereoTyp.equalsIgnoreCase(${class.getStereotype()})})
+#if(${class.booleanValueOfTag("persistence")})
+#set($schemaName=${class.retrievePackage().valueOfTag("orm-schema")})
+#if(!${schemaName})#set($schemaName="")#end
+#set($table=${class.getAttribute(".net-nhibernate-table-name")})
+#set($fullTableName="${schemaName}.${table}")
+#set($shouldGenerateFkIndex=${configuration.getProperty("net.nhibernate.generate-fk-index").equalsIgnoreCase("true")})
+#set($properties=${netHelper.getAllProperties(${class})})
+#set($indexedProperties=${netHelper.getAllIndexedProperties(${class})})
+#set($hasAncestor=${class.retrieveAncestors().size()}>0)
+#set($inheritanceStrategy=${class.getAttribute(".net-nhibernate-inheritance-strategy")})
+#set($primaryKey="ID")
+#isDataObject($class $isDataObject)
+
+#set($storedProcName="getAll${shortClassName}sById_SP")
+#set($storedProc="${table}_SP")
+
+/* Stored procedure ${storedProcName} */
+if exists (select * from dbo.sysobjects where id = object_id(N'[${storedProcName}]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+drop procedure [${storedProcName}]
+GO
+CREATE PROCEDURE [${storedProcName}] @id [int] AS
+BEGIN
+	SET NOCOUNT ON;
+	
+	WITH [${storedProc}](#printAllStoredProcProperties(${class} ""))
+	AS (
+		SELECT #printAllStoredProcProperties(${class} "")
+		
+		FROM ${table} 
+		WHERE [${primaryKey}]=@id
+		UNION ALL
+			SELECT #printAllStoredProcProperties(${class} ${table})
+			FROM ${table}, ${storedProc}
+			WHERE (#printWhereClauseRestriction($class))
+			##WHERE (${storedProc}.[LEFT_FK]=${table}.[ID] OR ${storedProc}.[RIGHT_FK]=${table}.[ID])
+	)
+-- Outer select from the CTE
+SELECT #printAllStoredProcProperties(${class} "") 
+FROM ${storedProc}
+END;
+GO
+#end
+#end
+#end
+##
+## printStoredProcedure
+## Prints the SQL statement "CREATE PROCEDURE" for a specified class.
+## For every recursion there are two stored procedures created: one with
+## the parameter id and another with the id and the max depth as the
+## abort criterion as parameters.
+#macro(printStoredProcedureWithMaxDepth $class)
+#set($dataObjectStereoTyp="DataObject")
+#if(${dataObjectStereoTyp.equalsIgnoreCase(${class.getStereotype()})})
+#if(${class.booleanValueOfTag("persistence")})
+#set($schemaName=${class.retrievePackage().valueOfTag("orm-schema")})
+#if(!${schemaName})#set($schemaName="")#end
+#set($table=${class.getAttribute(".net-nhibernate-table-name")})
+#set($fullTableName="${schemaName}.${table}")
+#set($shouldGenerateFkIndex=${configuration.getProperty("net.nhibernate.generate-fk-index").equalsIgnoreCase("true")})
+#set($properties=${netHelper.getAllProperties(${class})})
+#set($indexedProperties=${netHelper.getAllIndexedProperties(${class})})
+#set($hasAncestor=${class.retrieveAncestors().size()}>0)
+#set($inheritanceStrategy=${class.getAttribute(".net-nhibernate-inheritance-strategy")})
+#set($primaryKey="ID")
+#isDataObject($class $isDataObject)
+#set($classAttribute=".net-data-object-class")
+#set($shortClassName="${class.getAttribute(${classAttribute})}")
+
+#set($storedProcName="getAll${shortClassName}sByIdWithMaxDepth_SP")
+#set($storedProc="${table}_SP")
+
+/* Stored procedure ${storedProcName} */
+if exists (select * from dbo.sysobjects where id = object_id(N'[${storedProcName}]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+drop procedure [${storedProcName}]
+GO
+CREATE PROCEDURE [${storedProcName}] @id [int], @depth [int] AS
+BEGIN
+	SET NOCOUNT ON;
+	
+	WITH [${storedProc}](#printAllStoredProcProperties(${class} ""), depth)
+	AS (
+		SELECT #printAllStoredProcProperties(${class} ""), 1
+		
+		FROM ${table} 
+		WHERE [${primaryKey}]=@id
+		UNION ALL
+			SELECT #printAllStoredProcProperties(${class} ${table}), ${storedProc}.depth+1
+			FROM ${table}, ${storedProc}
+			WHERE (${storedProc}.depth <= @depth) AND (#printWhereClauseRestriction($class))
+	)
+-- Outer select from the CTE
+SELECT #printAllStoredProcProperties(${class} "") 
+FROM ${storedProc}
+END;
+GO
+#end
+#end
+#end
+##
+## **** Start Main ****************************************
+##
+#printFileHeaderForSqlServerScrips()
+
+#foreach($class in ${netHelper.getRecursiveDataObjects()})
+#printStoredProcedure($class)
+#printStoredProcedureWithMaxDepth($class)
+#end

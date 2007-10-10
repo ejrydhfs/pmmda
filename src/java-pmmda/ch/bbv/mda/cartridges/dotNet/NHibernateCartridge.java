@@ -73,6 +73,7 @@ public class NHibernateCartridge extends CartridgeImplNet implements Cartridge {
   private Template templateHibernateNETLwRepository;
   private Template templateDDL;
   private Template templateDDLIntegrity;
+  private Template templateDDLStoredProcedure;
   private String database = OrmConstants.DB_MYSQL;
 
   /**
@@ -146,6 +147,15 @@ public class NHibernateCartridge extends CartridgeImplNet implements Cartridge {
               "Error while loading the velocity template for the integrity script genneration for pmMDA.NET",
               e);
     }
+    
+    try {
+        templateDDLStoredProcedure = retrieveTemplate("nhibernate-ddl-storedprocedure-net", database);
+      } catch (Exception e) {
+        log
+            .fatal(
+                "Error while loading the velocity template for the stored procedure generation for pmMDA.NET",
+                e);
+      }
   }
 
   @Override
@@ -315,7 +325,7 @@ public class NHibernateCartridge extends CartridgeImplNet implements Cartridge {
 
   @Override
   public void postProcessModel(MetaModel metaModel, ValidationResult messages) {
-    super.preProcessModel(metaModel, messages);
+    super.postProcessModel(metaModel, messages);
     this.model = null;
   }
 
@@ -352,6 +362,8 @@ public class NHibernateCartridge extends CartridgeImplNet implements Cartridge {
           + ".sql", templateDDL, context, messages);
       processTemplate(rootDirectory, null, "pmMDA.NET.createIntegrity."
           + database + ".sql", templateDDLIntegrity, context, messages);
+      processTemplate(rootDirectory, null, "pmMDA.NET.createStoredProcedures." + database
+              + ".sql", templateDDLStoredProcedure, context, messages);
     } catch (IOException ex) {
       String msg = "Failed to process the velocity templates generating hibernate mapping files.";
       log.error(msg);
