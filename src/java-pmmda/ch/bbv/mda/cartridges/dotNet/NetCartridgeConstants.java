@@ -27,7 +27,7 @@ public class NetCartridgeConstants {
   /**
    * Views
    */
-  public static final String VIEW_ROOT_FOLDER_KEY = "view.net.cartridge.root-folder";
+  public static final String VIEW_ROOT_FOLDER_KEY = ROOT_FOLDER_KEY;
   
   /**
    * Hibernate

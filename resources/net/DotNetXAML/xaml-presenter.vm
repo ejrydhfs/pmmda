@@ -1,0 +1,15 @@
+## copyright 2000-2007 Adrian Bachofen
+## Licensed under the Apache License, Version 2.0 (the "Licence");
+## you may not use this file except in compliance with the License.
+## $Id$ 
+#emitFileHeader()
+
+Der Klassenname ist: ${class.getName()}
+
+und dann habe ich auch ein paar Attribute:
+
+
+
+#foreach($property in ${class.getProperties()})
+	${property.getName()}
+#end
