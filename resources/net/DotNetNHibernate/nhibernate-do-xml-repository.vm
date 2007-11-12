@@ -166,12 +166,12 @@ ${spaces}<joined-subclass name=${quotes}${className}${quotes} table=${quotes}`${
 #set($baseClass=${class.retrieveAncestors().get(0)})
 ${spaces}  <key column=${quotes}${baseClass.getName()}_ID_FK${quotes}/>
 #else
-${spaces}<class name=${quotes}${className}${quotes} table=${quotes}`${tableName}`${quotes} lazy=${quotes}true${quotes}>
+${spaces}<class name=${quotes}${className}${quotes} table=${quotes}`${tableName}`${quotes} lazy=${quotes}false${quotes}>
 #end
 #end
 #if($inheritanceStrategy=="Table per concrete class")
 ## For each class there is a table which contains all properties (includes derived proeprties).
-${spaces}<class name=${quotes}${className}${quotes} table=${quotes}`${tableName}`${quotes} lazy=${quotes}true${quotes}>
+${spaces}<class name=${quotes}${className}${quotes} table=${quotes}`${tableName}`${quotes} lazy=${quotes}false${quotes}>
 #end
 #if($inheritanceStrategy=="Table per class hierarchy")
 ## For each class hierarchy exists one table with all possible properties. Property names must
@@ -179,7 +179,7 @@ ${spaces}<class name=${quotes}${className}${quotes} table=${quotes}`${tableName}
 #if($hasAncestor)
 ${spaces}<subclass name=${quotes}${className}${quotes} discriminator-value=${quotes}${class.getQualifiedName()}${quotes} lazy=${quotes}true${quotes}>
 #else
-${spaces}<class name=${quotes}${className}${quotes} table=${quotes}`${tableName}`${quotes} discriminator-value=${quotes}${class.getQualifiedName()}${quotes} lazy=${quotes}true${quotes}>
+${spaces}<class name=${quotes}${className}${quotes} table=${quotes}`${tableName}`${quotes} discriminator-value=${quotes}${class.getQualifiedName()}${quotes} lazy=${quotes}false${quotes}>
 #end
 #end
 ## ********************************** Print id and timestamp ****************************
