@@ -162,7 +162,7 @@ ${spaces}</set>
 #if($inheritanceStrategy=="Table per subclass")
 ## For each class there is a table. The tables contain just the properties defined in this class.
 #if($hasAncestor)
-${spaces}<joined-subclass name=${quotes}${className}${quotes} table=${quotes}`${tableName}`${quotes} lazy=${quotes}true${quotes}>
+${spaces}<joined-subclass name=${quotes}${className}${quotes} table=${quotes}`${tableName}`${quotes} lazy=${quotes}false${quotes}>
 #set($baseClass=${class.retrieveAncestors().get(0)})
 ${spaces}  <key column=${quotes}${baseClass.getName()}_ID_FK${quotes}/>
 #else
@@ -177,7 +177,7 @@ ${spaces}<class name=${quotes}${className}${quotes} table=${quotes}`${tableName}
 ## For each class hierarchy exists one table with all possible properties. Property names must
 ## be unique and properties must have the orm-can-be-null tagged value set to true.
 #if($hasAncestor)
-${spaces}<subclass name=${quotes}${className}${quotes} discriminator-value=${quotes}${class.getQualifiedName()}${quotes} lazy=${quotes}true${quotes}>
+${spaces}<subclass name=${quotes}${className}${quotes} discriminator-value=${quotes}${class.getQualifiedName()}${quotes} lazy=${quotes}false${quotes}>
 #else
 ${spaces}<class name=${quotes}${className}${quotes} table=${quotes}`${tableName}`${quotes} discriminator-value=${quotes}${class.getQualifiedName()}${quotes} lazy=${quotes}false${quotes}>
 #end
