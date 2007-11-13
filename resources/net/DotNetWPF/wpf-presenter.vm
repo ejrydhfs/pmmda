@@ -58,7 +58,7 @@ ${spaces1}/// <summary>
 ${spaces1}/// ${class.getName()}Presenter handels the GUI-content mechanism. The class implements all events
 ${spaces1}/// of the content and updates the view and the model.
 ${spaces1}/// </summary>
-${spaces1}class ${class.getName()}Presenter : BasePresenter<${class.getName()}Presenter, ${class.getName()}>
+${spaces1}public class ${class.getName()}Presenter : BasePresenter<${class.getName()}Presenter, ${class.getName()}>
 ${spaces1}{
 ${spaces2}/// <summary>
 ${spaces2}/// The related  <see cref="I${class.getName()}WPF"/> view
