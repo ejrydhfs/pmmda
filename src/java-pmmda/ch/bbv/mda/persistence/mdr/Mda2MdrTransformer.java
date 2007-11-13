@@ -131,6 +131,8 @@ public class Mda2MdrTransformer {
     target.setName(source.getName());
     this.metaModel = source;
     extractDataTypes(source, target);
+    
+    // FIXME extractStereotypeAndVisibility(source, target);
 
     for (MetaPackage metaPackage : source.getPackages()) {
       extractPackage(metaPackage, target);
@@ -144,10 +146,13 @@ public class Mda2MdrTransformer {
     MdrUmlPackage defaultPackage = new MdrUmlPackage(MdrFactory.createPackage(
         target.getUmlPackage(), target.getName()), target);
     targetModel.addPackage(target.getName(), defaultPackage);
+    
     defaultPackage.getModelElement().setNamespace(mdrModel);
     for (MetaClass item : source.getClasses()) {
       extractClass(item, defaultPackage);
     }
+    
+    
 
     // process relations
     for (MetaPackage item : source.getPackages()) {
@@ -487,7 +492,8 @@ public class Mda2MdrTransformer {
         mElement = mElement.getContext();
       }
       MdrUmlPackage mPackage = (MdrUmlPackage) elements.get(mElement);
-      MdrUmlAssociation association = findAssociation(mPackage, context, source.getName());
+      MdrUmlAssociation association = findAssociation(mPackage, context, source
+          .getName());
       if (association != null) {
         updatePropertyFlags(source, association);
         extractTags(source, association);
@@ -1235,6 +1241,7 @@ public class Mda2MdrTransformer {
     // for all stereotypes in pmmda model
     for (Stereotype stereotype : source.getStereotypes()) {
       String stereotypeName = stereotype.getName();
+      System.out.println(stereotypeName);
       MdrUmlStereotype mStereotype = findStereotype(stereotypeName);
       if (mStereotype == null) {
         mStereotype = new MdrUmlStereotype(MdrFactory.createStereotype(

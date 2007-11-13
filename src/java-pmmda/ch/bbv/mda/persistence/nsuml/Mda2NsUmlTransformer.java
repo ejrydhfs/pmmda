@@ -84,6 +84,7 @@ public class Mda2NsUmlTransformer {
     this.metaModel = source;
     target.setName(source.getName());
     elements.put(source, target);
+    
     extractTags(source, target);
     extractStereotypeAndVisibility(source, target);
 

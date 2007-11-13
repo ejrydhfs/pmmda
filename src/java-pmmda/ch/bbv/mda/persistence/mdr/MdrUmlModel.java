@@ -30,7 +30,7 @@ import org.omg.uml.modelmanagement.Model;
  * @version $Revision$
  */
 
-public class MdrUmlModel {
+public class MdrUmlModel{
   /**
    * Logger
    */
@@ -323,4 +323,6 @@ public class MdrUmlModel {
   public UmlPackage getUmlPackage() {
     return this.umlPackage;
   }
+
+  
 }
