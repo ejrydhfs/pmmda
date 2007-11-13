@@ -8,24 +8,6 @@
 
 package ch.bbv.mda.cartridges.dotNet;
 
-import static ch.bbv.mda.cartridges.dotNet.NetCartridgeConstants.DATA_OBJECTS_CLASS_POSTFIX_KEY;
-import static ch.bbv.mda.cartridges.dotNet.NetCartridgeConstants.DATA_OBJECTS_CLASS_PREFIX_KEY;
-import static ch.bbv.mda.cartridges.dotNet.NetCartridgeConstants.DATA_OBJECTS_PACKAGE_POSTFIX_KEY;
-import static ch.bbv.mda.cartridges.dotNet.NetCartridgeConstants.DOG_NET_CODES_VM;
-import static ch.bbv.mda.cartridges.dotNet.NetCartridgeConstants.DOG_NET_DO_FACTORY_VM;
-import static ch.bbv.mda.cartridges.dotNet.NetCartridgeConstants.DOG_NET_DO_VM;
-import static ch.bbv.mda.cartridges.dotNet.NetCartridgeConstants.DOG_NET_LW_VISITOR_CLASS_VM;
-import static ch.bbv.mda.cartridges.dotNet.NetCartridgeConstants.DOG_NET_LW_VISITOR_INTERFACE_VM;
-import static ch.bbv.mda.cartridges.dotNet.NetCartridgeConstants.DOG_NET_LW_VM;
-import static ch.bbv.mda.cartridges.dotNet.NetCartridgeConstants.INTERFACE_CLASS_POSTFIX_KEY;
-import static ch.bbv.mda.cartridges.dotNet.NetCartridgeConstants.INTERFACE_CLASS_PREFIX_KEY;
-import static ch.bbv.mda.cartridges.dotNet.NetCartridgeConstants.INTERFACE_PACKAGE_POSTFIX_KEY;
-import static ch.bbv.mda.cartridges.dotNet.NetCartridgeConstants.LIGHTWEIGHT_OBJECTS_CLASS_POSTFIX_KEY;
-import static ch.bbv.mda.cartridges.dotNet.NetCartridgeConstants.LIGHTWEIGHT_OBJECTS_CLASS_PREFIX_KEY;
-import static ch.bbv.mda.cartridges.dotNet.NetCartridgeConstants.LIGHTWEIGHT_OBJECTS_PACKAGE_POSTFIX_KEY;
-import static ch.bbv.mda.cartridges.dotNet.NetCartridgeConstants.META_DATA_ROOT_FOLDER_KEY;
-import static ch.bbv.mda.cartridges.dotNet.NetCartridgeConstants.ROOT_FOLDER_KEY;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
@@ -79,7 +61,7 @@ import com.jgoodies.validation.ValidationResult;
  * 
  * @author Mikkala Pedersen
  */
-public class DogNetCartridge extends CartridgeImplNet implements Cartridge {
+public class DogNetCartridge extends CartridgeImplNet implements Cartridge, NetCartridgeConstants  {
 
   public static final String COLLECTION_TYPE_TAG = ".net-collection-type";
   public static final String IGNORE_ELEMENT_TAG = ".net-ignore";
@@ -100,7 +82,6 @@ public class DogNetCartridge extends CartridgeImplNet implements Cartridge {
    * Attribute key. The value specifies the package name used for data objects.
    */
   public static final String DATA_OBJECTS_PACKAGE_ATTRIBUTE = ".net-data-object-package";
-
   /**
    * Attribute key. The value specifies the package name used for lightweight
    * objects.
@@ -135,31 +116,8 @@ public class DogNetCartridge extends CartridgeImplNet implements Cartridge {
    */
   public static final String PREFIX = "DotNetDog";
 
-  public static String USING_BLOCK = "usings";
-  public static String USING_BLOCK_BEGIN = "/* %% USER DEFINED USING STATEMENTS START %% */";
-  public static String USING_BLOCK_END = "/* %% USER DEFINED USING STATEMENTS END   %% */";
-
-  public static String DECLARATIONS_BLOCK = "declarations";
-  public static String DECLARATIONS_BLOCK_BEGIN = "/* %% USER DEFINED DECLARATION START %% */";
-  public static String DECLARATIONS_BLOCK_END = "/* %% USER DEFINED DECLARATION END %% */";
-
-  public static String INITIALIZATIONS_BLOCK = "initializations";
-  public static String INITIALIZATIONS_BLOCK_BEGIN = "/* %% USER DEFINED INITIALIZATION START %% */";
-  public static String INITIALIZATIONS_BLOCK_END = "/* %% USER DEFINED INITIALIZATION END   %% */";
-
-  public static String SERIAL_INITIALIZATIONS_BLOCK = "serial_initializations";
-  public static String SERIAL_INITIALIZATIONS_BLOCK_BEGIN = "/* %% USER DEFINED SERIALIZATION INITIALIZATION START %% */";
-  public static String SERIAL_INITIALIZATIONS_BLOCK_END = "/* %% USER DEFINED SERIALIZATION INITIALIZATION END   %% */";
-
-  public static String CONSTRUCTORS_BLOCK = "constructors";
-  public static String CONSTRUCTORS_BLOCK_BEGIN = "/* %% USER DEFINED CONSTRUCTORS START %% */";
-  public static String CONSTRUCTORS_BLOCK_END = "/* %% USER DEFINED CONSTRUCTORS END %% */";
-
-  public static String DEFINITIONS_BLOCK = "definitions";
-  public static String DEFINITIONS_BLOCK_BEGIN = "/* %% USER DEFINED CODE START %% */";
-  public static String DEFINITIONS_BLOCK_END = "/* %% USER DEFINED CODE END %% */";
-
   public static final String CSHARP_EXTENSION = ".cs";
+
   private static Log log = LogFactory.getLog(DogNetCartridge.class);
   /**
    * Root directory of the generated source files.
@@ -359,7 +317,6 @@ public class DogNetCartridge extends CartridgeImplNet implements Cartridge {
    */
   @Override
   public void processModel(MetaModel model, ValidationResult messages) {
-    String s = getContext().getProperty(ROOT_FOLDER_KEY);
     sourceRootDirectory = new File(getContext().getProperty(ROOT_FOLDER_KEY));
     if (!sourceRootDirectory.exists()) {
       sourceRootDirectory.mkdirs();
