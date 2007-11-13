@@ -1,0 +1,114 @@
+#######################################################
+## Velocity template
+## 
+## Generates CSharp reference codes.
+##
+## Author: Hubert Willimann
+##
+## Copyright 2005 http://www.bbv.ch
+## Licensed under the Apache License, Version 2.0 (the "License");
+##     http://www.apache.org/licenses/LICENSE-2.0
+##
+#######################################################
+#set($sign="#")
+#set($spaces1="    ")
+#set($spaces2="        ")
+#set($spaces3="            ")
+#set($spaces4="                ")
+#set($spaces5="                    ")
+#set($spaces6="                        ")
+#set($spaces7="                            ")
+#set($properties=${class.getProperties()})
+#set($indexedProperties=${class.getIndexedProperties()})
+
+<UserControl x:Class="${class.getContext().getName()}.GUI.${class.getName()}WPF"
+${spaces1}xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+${spaces1}xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+${spaces1}xmlns:local="clr-namespace:pmMDA.NET.GUI.Wpf.Controls;assembly=pmMDA.NET.GUI.Wpf"
+
+${spaces1}>
+${spaces1}<UserControl.Resources>
+${spaces2}<ResourceDictionary>
+${spaces3}<ResourceDictionary.MergedDictionaries>
+${spaces4}<ResourceDictionary Source="Themes/skin-default.xaml"/>
+${spaces3}</ResourceDictionary.MergedDictionaries>
+${spaces2}</ResourceDictionary>
+${spaces1}</UserControl.Resources>
+
+${spaces1}<DockPanel>
+${spaces2}<GroupBox Header="Input" Style="{StaticResource GroupBoxInput}">
+${spaces3}<Grid>
+${spaces4}<Grid.ColumnDefinitions>
+${spaces5}<ColumnDefinition Style="{StaticResource ColumnLabel}" />
+${spaces5}<ColumnDefinition Style="{StaticResource ColumnControl}"/>
+${spaces5}<ColumnDefinition Style="{StaticResource ColumnChild}"/>
+${spaces4}</Grid.ColumnDefinitions>
+${spaces4}<Grid.RowDefinitions>
+#foreach($property in $properties)
+${spaces5}<RowDefinition/>		
+#end
+${spaces4}</Grid.RowDefinitions>
+
+#set($count=0)
+#foreach($property in $properties)
+#if(${property.booleanValueOfTag("wpf-generate")} && !${property.booleanValueOfTag(".net-ignore")})
+${spaces4}<Label Grid.Row="${count}" Grid.Column="0">${property.nameFirstUpper()}</Label>
+#set($wrapperType=${netHelper.getWrapperType(${property.getTypeName()}, ${class.getContext().getName()})})
+#if($wrapperType.equalsIgnoreCase("ITextBoxWrapper"))
+#if (!${netHelper.isNumeric(${property.getTypeName()})})
+${spaces4}<TextBox Grid.Row="${count}" Grid.Column="1" Name="textBox${property.nameFirstUpper()}" Style="{StaticResource TextBoxString}"/>
+#else
+##isNumeric
+${spaces4}<TextBox Grid.Row="${count}" Grid.Column="1" Name="textBox${property.nameFirstUpper()}"  Style="{StaticResource TextBoxNumber}"/>
+#end
+#elseif ($wrapperType.equalsIgnoreCase("IDatePickerWrapper"))
+${spaces4}<local:DatePicker Grid.Row="${count}" Grid.Column="1" Name="datePicker${property.nameFirstUpper()}" />
+#elseif ($wrapperType.equalsIgnoreCase("ICheckBoxWrapper"))
+${spaces4}<CheckBox Grid.Row="${count}" Grid.Column="1" Name="checkBox${property.nameFirstUpper()}" />
+#elseif ($wrapperType.equalsIgnoreCase("IObjectWrapper"))
+${spaces4}<TextBox Grid.Row="${count}" Grid.Column="1" Name="textBox${property.nameFirstUpper()}" Style="{StaticResource TextBoxString}"/>
+${spaces4}<Button Grid.Row="${count}" Grid.Column="2" Name="buttonChange${property.nameFirstUpper()}">...</Button>
+#end
+#set($count=$count + 1)
+#end
+#end
+${spaces3}</Grid>
+${spaces2}</GroupBox>
+
+#set($count=0)
+#foreach($indexedProperty in $indexedProperties)
+${spaces2}<GroupBox Header="${indexedProperty.namePlural()}" Style="{StaticResource GroupBoxChildList}">
+${spaces3}<Grid>
+${spaces4}<Grid.ColumnDefinitions>
+${spaces5}<ColumnDefinition Style="{StaticResource ColumnTable}"/>
+${spaces5}<ColumnDefinition Style="{StaticResource ColumnChildButton}" />
+${spaces4}</Grid.ColumnDefinitions>
+${spaces4}<Grid.RowDefinitions>
+${spaces5}<RowDefinition/>
+${spaces4}</Grid.RowDefinitions>
+
+${spaces4}<ListView Name="listView${indexedProperty.namePlural()}">
+${spaces5}<ListView.View>
+${spaces6}<GridView>
+#set($childProperties=${netHelper.getChildProperties(${indexedProperty.getClassifier()})})
+#foreach($childProperty in $childProperties)
+#if(${childProperty.booleanValueOfTag("wpf-generate")} && !${childProperty.booleanValueOfTag(".net-ignore")})
+${spaces7}<GridViewColumn Header="${childProperty.nameFirstUpper()}"  DisplayMemberBinding="{Binding Path=${childProperty.nameFirstUpper()}}" Width="auto" />		
+#end
+#end
+${spaces6}</GridView>
+${spaces5}</ListView.View>
+${spaces4}</ListView>
+${spaces4}<StackPanel Grid.Row="0" Grid.Column="1" Style="{StaticResource ChildButtonStack}">
+${spaces5}<Button Grid.Row="0" Grid.Column="1" Name="buttonAdd${indexedProperty.nameFirstUpper()}">+</Button>
+${spaces5}<Button Grid.Row="1" Grid.Column="1" Name="buttonRemove${indexedProperty.nameFirstUpper()}">-</Button>
+${spaces4}</StackPanel>
+${spaces3}</Grid>
+${spaces2}</GroupBox>
+#set($count=$count + 1)
+#end
+#if($count == 0)
+${spaces2}<StackPanel/>
+#end
+${spaces1}</DockPanel>
+</UserControl>

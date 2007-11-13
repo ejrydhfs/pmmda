@@ -1,0 +1,156 @@
+#######################################################
+## Velocity template
+## 
+## Generates CSharp reference codes.
+##
+## Author: Hubert Willimann
+##
+## Copyright 2005 http://www.bbv.ch
+## Licensed under the Apache License, Version 2.0 (the "License");
+##     http://www.apache.org/licenses/LICENSE-2.0
+##
+#######################################################
+#printFileHeaderCSharp()
+#set($sign="#")
+#set($spaces1="    ")
+#set($spaces2="        ")
+#set($spaces3="            ")
+#set($spaces4="                ")
+#set($properties=${class.getProperties()})
+#set($indexedProperties=${class.getIndexedProperties()})
+
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using pmMDA.NET.GUI.Wpf.Wrapper;
+using pmMDA.NET.GUI.Wpf;
+
+/* %% USER DEFINED USING STATEMENTS START %% */
+#set($lines=${blocks.get("usings")})
+#foreach($line in $lines)
+$line
+#end
+/* %% USER DEFINED USING STATEMENTS END   %% */
+
+##namespace
+namespace ${class.getContext().getName()}.GUI
+{
+##class
+${spaces1}/// <summary>
+${spaces1}/// ${class.getName()}WPF represents the view and manages the content-array.
+${spaces1}/// </summary>
+${spaces1}public partial class ${class.getName()}WPF : System.Windows.Controls.UserControl, I${class.getName()}WPF
+${spaces1}{
+
+${spaces2}/* %% USER DEFINED DECLARATION START %% */
+#set($lines=${blocks.get("declarations")})
+#foreach($line in $lines)
+$line
+#end
+${spaces2}/* %% USER DEFINED DECLARATION END %% */
+
+##constructor
+${spaces2}/// <summary>
+${spaces2}/// Instances a new instance of the <see cref="${class.getName()}WPF"/> class.
+${spaces2}/// </summary>
+${spaces2}public ${class.getName()}WPF()
+${spaces2}{
+${spaces3}InitializeComponent();
+${spaces2}}
+
+${spaces2}/* %% USER DEFINED CONSTRUCTORS START %% */
+#set($lines=${blocks.get("constructors")})
+#foreach($line in $lines)
+$line
+#end
+${spaces2}/* %% USER DEFINED CONSTRUCTORS END %% */
+
+${spaces2}/* %% USER DEFINED CODE START %% */
+#set($lines=${blocks.get("definitions")})
+#foreach($line in $lines)
+$line
+#end
+${spaces2}/* %% USER DEFINED CODE END %% */
+
+##properties
+${spaces2}#region I${class.getName()}WPF Members
+
+#foreach($property in $properties)
+#if(${property.booleanValueOfTag("wpf-generate")} && !${property.booleanValueOfTag(".net-ignore")})	
+#set($wrapperType=${netHelper.getWrapperType(${property.getTypeName()}, ${class.getContext().getName()})})
+${spaces2}/// <summary>
+${spaces2}/// Readonly property I${class.getName()}WPF.${property.nameFirstUpper()}.
+${spaces2}/// </summary>
+#if($wrapperType.equalsIgnoreCase("ITextBoxWrapper"))
+${spaces2}ITextBoxWrapper I${class.getName()}WPF.${property.nameFirstUpper()}
+${spaces2}{
+${spaces3}get { return WrapperManager.Instance.GetTextBoxWrapper(textBox${property.nameFirstUpper()}); }
+${spaces2}}
+#elseif ($wrapperType.equalsIgnoreCase("IDatePickerWrapper"))
+${spaces2}IDatePickerWrapper I${class.getName()}WPF.${property.nameFirstUpper()}
+${spaces2}{
+${spaces3}get { return WrapperManager.Instance.GetDatePickerWrapper(datePicker${property.nameFirstUpper()}); }
+${spaces2}}
+#elseif ($wrapperType.equalsIgnoreCase("ICheckBoxWrapper"))
+${spaces2}ICheckBoxWrapper I${class.getName()}WPF.${property.nameFirstUpper()}
+${spaces2}{
+${spaces3}get { return WrapperManager.Instance.GetCheckBoxWrapper(checkBox${property.nameFirstUpper()}); }
+${spaces2}}
+#elseif ($wrapperType.equalsIgnoreCase("IObjectWrapper"))
+##1:0..1 relations
+${spaces2}ITextBoxWrapper I${class.getName()}WPF.${property.nameFirstUpper()}
+${spaces2}{
+${spaces3}get { return WrapperManager.Instance.GetTextBoxWrapper(textBox${property.nameFirstUpper()}); }
+${spaces2}}
+
+${spaces2}/// <summary>
+${spaces2}/// Readonly property I${class.getName()}WPF.Change${property.nameFirstUpper()}.
+${spaces2}/// </summary>
+${spaces2}IButtonWrapper I${class.getName()}WPF.Change${property.nameFirstUpper()}
+${spaces2}{
+${spaces3}get { return WrapperManager.Instance.GetButtonWrapper(buttonChange${property.nameFirstUpper()}); }
+${spaces2}}
+#end
+
+#end
+#end
+#foreach($indexedProperty in $indexedProperties)
+#if(${indexedProperty.booleanValueOfTag("wpf-generate")} && !${indexedProperty.booleanValueOfTag(".net-ignore")})
+${spaces2}/// <summary>
+${spaces2}/// Readonly property I${class.getName()}WPF.${indexedProperty.namePlural()}.
+${spaces2}/// </summary>
+${spaces2}IListViewWrapper I${class.getName()}WPF.${indexedProperty.namePlural()}
+${spaces2}{
+${spaces3}get { return WrapperManager.Instance.GetListViewWrapper(listView${indexedProperty.namePlural()}); }
+${spaces2}}
+
+${spaces2}/// <summary>
+${spaces2}/// Readonly property I${class.getName()}WPF.Add${indexedProperty.nameFirstUpper()}.
+${spaces2}/// </summary>
+${spaces2}IButtonWrapper I${class.getName()}WPF.Add${indexedProperty.nameFirstUpper()}
+${spaces2}{
+${spaces3}get { return WrapperManager.Instance.GetButtonWrapper(buttonAdd${indexedProperty.nameFirstUpper()}); }
+${spaces2}}
+
+${spaces2}/// <summary>
+${spaces2}/// Readonly property I${class.getName()}WPF.Remove${indexedProperty.nameFirstUpper()}.
+${spaces2}/// </summary>
+${spaces2}IButtonWrapper I${class.getName()}WPF.Remove${indexedProperty.nameFirstUpper()}
+${spaces2}{
+${spaces3}get { return WrapperManager.Instance.GetButtonWrapper(buttonRemove${indexedProperty.nameFirstUpper()}); }
+${spaces2}}
+
+#end	
+#end
+${spaces2}#endregion
+${spaces1}}
+}

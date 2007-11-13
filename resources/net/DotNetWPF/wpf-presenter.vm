@@ -1,0 +1,400 @@
+#######################################################
+## Velocity template
+## 
+## Generates CSharp reference codes.
+##
+## Author: Hubert Willimann
+##
+## Copyright 2005 http://www.bbv.ch
+## Licensed under the Apache License, Version 2.0 (the "License");
+##     http://www.apache.org/licenses/LICENSE-2.0
+##
+#######################################################
+#printFileHeaderCSharp()
+#set($sign="#")
+#set($spaces1="    ")
+#set($spaces2="        ")
+#set($spaces3="            ")
+#set($spaces4="                ")
+#set($properties=${class.getProperties()})
+#set($indexedProperties=${class.getIndexedProperties()})
+
+##height
+#set($height=200)
+
+#foreach($property in $properties)
+#if(${property.booleanValueOfTag("wpf-generate")} && !${property.booleanValueOfTag(".net-ignore")})	
+#set($height=$height + 32)
+#end
+#end
+#set($minHeight=$height)
+#foreach($indexedProperty in $indexedProperties)
+#if(${indexedProperty.booleanValueOfTag("wpf-generate")} && !${indexedProperty.booleanValueOfTag(".net-ignore")})
+#set($height=$height + 120)	
+#set($minHeight=$minHeight + 80)
+#end	
+#end
+
+using System;
+using System.Collections.Generic;
+using System.Text;
+using PmMda.Net.Dog;
+using PmMda.Net.Application;
+using System.Windows.Input;
+using pmMDA.NET.GUI.Wpf;
+
+/* %% USER DEFINED USING STATEMENTS START %% */
+#set($lines=${blocks.get("usings")})
+#foreach($line in $lines)
+$line
+#end
+/* %% USER DEFINED USING STATEMENTS END   %% */
+
+##namespace
+namespace ${class.getContext().getName()}.GUI
+{
+##class
+${spaces1}/// <summary>
+${spaces1}/// ${class.getName()}Presenter handels the GUI-content mechanism. The class implements all events
+${spaces1}/// of the content and updates the view and the model.
+${spaces1}/// </summary>
+${spaces1}class ${class.getName()}Presenter : BasePresenter<${class.getName()}Presenter, ${class.getName()}>
+${spaces1}{
+${spaces2}/// <summary>
+${spaces2}/// The related  <see cref="I${class.getName()}WPF"/> view
+${spaces2}/// </summary>
+${spaces2}private I${class.getName()}WPF m_view;
+${spaces2}/// <summary>
+${spaces2}/// The related  <see cref="${class.getName()}"/> model
+${spaces2}/// </summary>
+${spaces2}private ${class.getName()} m_${class.getName()};
+
+${spaces2}/* %% USER DEFINED DECLARATION START %% */
+#set($lines=${blocks.get("declarations")})
+#foreach($line in $lines)
+$line
+#end
+${spaces2}/* %% USER DEFINED DECLARATION END %% */
+
+##constructor
+${spaces2}/// <summary>
+${spaces2}/// Instances a new instance of the <see cref="${class.getName()}Presenter"/> class.
+${spaces2}/// </summary>
+${spaces2}/// <param name="view">The <see cref="I${class.getName()}WPF"/>  view.</param>
+${spaces2}public ${class.getName()}Presenter(I${class.getName()}WPF view) : this(new BaseWPF(), view){}
+
+${spaces2}/// <summary>
+${spaces2}/// Instances a new instance of the <see cref="${class.getName()}Presenter"/> class.
+${spaces2}/// </summary>
+${spaces2}/// <param name="baseView">The <see cref="IBaseWPF"/>  view</param>
+${spaces2}/// <param name="view">The <see cref="I${class.getName()}WPF"/>  view.</param>
+${spaces2}public ${class.getName()}Presenter(IBaseWPF baseView, I${class.getName()}WPF view) : base(baseView, view, "${class.getName()}", ${height}, ${minHeight})
+${spaces2}{
+${spaces3}//set the view
+${spaces3}m_view = view;
+${spaces2}}
+
+${spaces2}/* %% USER DEFINED CONSTRUCTORS START %% */
+#set($lines=${blocks.get("constructors")})
+#foreach($line in $lines)
+$line
+#end
+${spaces2}/* %% USER DEFINED CONSTRUCTORS END %% */
+
+${spaces2}/* %% USER DEFINED CODE START %% */
+#set($lines=${blocks.get("definitions")})
+#foreach($line in $lines)
+$line
+#end
+${spaces2}/* %% USER DEFINED CODE END %% */
+
+##init
+${spaces2}/// <summary>
+${spaces2}/// Initialize the Presenter
+${spaces2}/// </summary>
+${spaces2}protected override void Init()
+${spaces2}{
+${spaces3}base.Init();
+
+${spaces3}//register events
+#foreach($property in $properties)
+#if(${property.booleanValueOfTag("wpf-generate")} && !${property.booleanValueOfTag(".net-ignore")})	
+#set($wrapperType=${netHelper.getWrapperType(${property.getTypeName()}, ${class.getContext().getName()})})
+#if($wrapperType.equalsIgnoreCase("IObjectWrapper"))
+${spaces3}m_view.Change${property.nameFirstUpper()}.Click += new System.Windows.RoutedEventHandler(Change${property.nameFirstUpper()}_Click);
+${spaces3}//disable 1:0..1 relations
+${spaces3}m_view.${property.nameFirstUpper()}.IsEnable = false;	
+#end
+#end
+#end
+
+#foreach($indexedProperty in $indexedProperties)
+#if(${indexedProperty.booleanValueOfTag("wpf-generate")} && !${indexedProperty.booleanValueOfTag(".net-ignore")})	
+${spaces3}m_view.Add${indexedProperty.nameFirstUpper()}.Click += new System.Windows.RoutedEventHandler(Add${indexedProperty.nameFirstUpper()}_Click);
+${spaces3}m_view.Remove${indexedProperty.nameFirstUpper()}.Click += new System.Windows.RoutedEventHandler(Remove${indexedProperty.nameFirstUpper()}_Click);
+${spaces3}m_view.${indexedProperty.namePlural()}.DoubleClick += new System.Windows.RoutedEventHandler(${indexedProperty.namePlural()}_DoubleClick);
+#end
+	
+#end
+${spaces2}}
+
+##UpdateView
+${spaces2}/// <summary>
+${spaces2}/// Updates the view with the model data.
+${spaces2}/// </summary>
+${spaces2}/// <param name="iDataObject">The <see cref="${class.getName()}"/>  model.</param>
+${spaces2}protected override void UpdateView(${class.getName()} iDataObject)
+${spaces2}{
+${spaces3}//hand over model
+${spaces3}m_${class.getName()} = iDataObject;
+
+##attributes
+${spaces3}//hand over attributes
+#foreach($property in $properties)
+#if(${property.booleanValueOfTag("wpf-generate")} && !${property.booleanValueOfTag(".net-ignore")})	
+#set($wrapperType=${netHelper.getWrapperType(${property.getTypeName()}, ${class.getContext().getName()})})
+#if($wrapperType.equalsIgnoreCase("ITextBoxWrapper"))
+#if (!${netHelper.isNumeric(${property.getTypeName()})})
+${spaces3}m_view.${property.nameFirstUpper()}.Text = m_${class.getName()}.${property.nameFirstUpper()};
+#else
+##isNumeric
+${spaces3}m_view.${property.nameFirstUpper()}.Text = ConvertManager.Instance.ConvertToString(m_${class.getName()}.${property.nameFirstUpper()});
+#end
+#elseif ($wrapperType.equalsIgnoreCase("IDatePickerWrapper"))
+${spaces3}m_view.${property.nameFirstUpper()}.Date = m_${class.getName()}.${property.nameFirstUpper()};
+#elseif ($wrapperType.equalsIgnoreCase("ICheckBoxWrapper"))
+${spaces3}m_view.${property.nameFirstUpper()}.IsChecked = m_${class.getName()}.${property.nameFirstUpper()};
+#elseif ($wrapperType.equalsIgnoreCase("IObjectWrapper"))
+##1:0..1 relations
+${spaces3}//hand over 1:0..1 relations
+${spaces3}m_view.${property.nameFirstUpper()}.Text = Get${property.nameFirstUpper()}Text(m_${class.getName()}.${property.nameFirstUpper()});
+
+${spaces3}m_view.Change${property.nameFirstUpper()}.IsEnable = true;
+#end
+#end
+#end
+##1:0..* relations
+${spaces3}//hand over 1:0..* relations
+#foreach($indexedProperty in $indexedProperties)
+#if(${indexedProperty.booleanValueOfTag("wpf-generate")} && !${indexedProperty.booleanValueOfTag(".net-ignore")})
+${spaces3}m_view.${indexedProperty.namePlural()}.SetValues<${indexedProperty.getClassifier().getName()}>(m_${class.getName()}.${indexedProperty.namePlural()});
+${spaces3}m_view.Add${indexedProperty.nameFirstUpper()}.IsEnable = true;
+${spaces3}m_view.Remove${indexedProperty.nameFirstUpper()}.IsEnable = m_${class.getName()}.${indexedProperty.namePlural()}Count > 0;
+#end	
+#end
+${spaces2}}
+
+##UpdateModel
+${spaces2}/// <summary>
+${spaces2}/// Updates the model with the view data.
+${spaces2}/// </summary>
+${spaces2}/// <param name="iDataObject">The <see cref="${class.getName()}"/>  model.</param>
+${spaces2}/// <returns>Returns the <see cref="${class.getName()}"/>  model.</returns>
+${spaces2}protected override ${class.getName()} UpdateModel(${class.getName()} iDataObject)
+${spaces2}{
+${spaces3}//hand over model
+${spaces3}m_${class.getName()} = iDataObject;
+
+${spaces3}//hand over attributes
+#foreach($property in $properties)
+#if(${property.booleanValueOfTag("wpf-generate")} && !${property.booleanValueOfTag(".net-ignore")})
+#set($wrapperType=${netHelper.getWrapperType(${property.getTypeName()}, ${class.getContext().getName()})})
+#if($wrapperType.equalsIgnoreCase("ITextBoxWrapper"))
+#if (!${netHelper.isNumeric(${property.getTypeName()})})
+${spaces3}m_${class.getName()}.${property.nameFirstUpper()} = m_view.${property.nameFirstUpper()}.Text;
+#else
+##isNumeric
+${spaces3}m_${class.getName()}.${property.nameFirstUpper()} = ConvertManager.Instance.ConvertTo${netHelper.firstUpper(${netHelper.convertJavaTypeToDotnet(${property.getTypeName()})})}(m_view.${property.nameFirstUpper()}.Text);
+#end
+#elseif ($wrapperType.equalsIgnoreCase("IDatePickerWrapper"))
+${spaces3}m_${class.getName()}.${property.nameFirstUpper()} = m_view.${property.nameFirstUpper()}.Date;
+#elseif ($wrapperType.equalsIgnoreCase("ICheckBoxWrapper"))
+${spaces3}m_${class.getName()}.${property.nameFirstUpper()} = m_view.${property.nameFirstUpper()}.IsChecked;
+#end
+#end
+#end
+
+${spaces3}//return model
+${spaces3}return m_${class.getName()};
+${spaces2}}
+
+##Reset
+${spaces2}/// <summary>
+${spaces2}/// Resets the controls of the content.
+${spaces2}/// </summary>
+${spaces2}protected override void Reset()
+${spaces2}{
+${spaces3}base.Reset();
+
+##attributes
+${spaces3}//reset controls
+${spaces3}//attributes
+#foreach($property in $properties)
+#if(${property.booleanValueOfTag("wpf-generate")} && !${property.booleanValueOfTag(".net-ignore")})	
+#set($wrapperType=${netHelper.getWrapperType(${property.getTypeName()}, ${class.getContext().getName()})})
+#if($wrapperType.equalsIgnoreCase("ITextBoxWrapper"))
+${spaces3}m_view.${property.nameFirstUpper()}.Text = string.Empty;
+#elseif ($wrapperType.equalsIgnoreCase("IDatePickerWrapper"))
+${spaces3}m_view.${property.nameFirstUpper()}.Date = DateTime.MinValue;
+#elseif ($wrapperType.equalsIgnoreCase("ICheckBoxWrapper"))
+${spaces3}m_view.${property.nameFirstUpper()}.IsChecked = false;
+#elseif ($wrapperType.equalsIgnoreCase("IObjectWrapper"))
+##1:0..1 relations
+${spaces3}//1:0..1 relations
+${spaces3}m_view.${property.nameFirstUpper()}.Text = string.Empty;
+${spaces3}m_view.Change${property.nameFirstUpper()}.IsEnable = false;
+#end
+#end
+#end
+##1:0..* relations
+${spaces3}//1:0..* relations
+#foreach($indexedProperty in $indexedProperties)
+#if(${indexedProperty.booleanValueOfTag("wpf-generate")} && !${indexedProperty.booleanValueOfTag(".net-ignore")})
+${spaces3}m_view.${indexedProperty.namePlural()}.Reset();
+${spaces3}m_view.Add${indexedProperty.nameFirstUpper()}.IsEnable = false;
+${spaces3}m_view.Remove${indexedProperty.nameFirstUpper()}.IsEnable = false;
+#end	
+#end
+
+${spaces2}}
+
+##Add
+${spaces2}/// <summary>
+${spaces2}/// Creates a new instance of <see cref="${class.getName()}"/> model.
+${spaces2}/// </summary>
+${spaces2}/// <returns>Returns the new instance.</returns>
+${spaces2}protected override ${class.getName()} Add()
+${spaces2}{
+${spaces3}//returns ${class.getName()}
+${spaces3}return new ${class.getName()}();
+${spaces2}}
+
+##1:0..1 relations
+#foreach($property in $properties)
+#if(${property.booleanValueOfTag("wpf-generate")} && !${property.booleanValueOfTag(".net-ignore")})
+#set($wrapperType=${netHelper.getWrapperType(${property.getTypeName()}, ${class.getContext().getName()})})
+#if($wrapperType.equalsIgnoreCase("IObjectWrapper"))
+${spaces2}${sign}region ${property.nameFirstUpper()}
+${spaces2}/// <summary>
+${spaces2}/// Occurs when the Change${property.nameFirstUpper()} Button has clicked.
+${spaces2}/// </summary>
+${spaces2}/// <param name="sender">The Change${property.nameFirstUpper()} Button.</param>
+${spaces2}/// <param name="e">RoutedEventArgs information.</param>
+${spaces2}void Change${property.nameFirstUpper()}_Click(object sender, System.Windows.RoutedEventArgs e)
+${spaces2}{
+${spaces3}//create a ${property.nameFirstUpper()}Presenter
+${spaces3}${property.getClassifier().getName()}Presenter ${property.nameFirstLower()}Presenter = new ${property.getClassifier().getName()}Presenter(new ${property.getClassifier().getName()}WPF());
+
+${spaces3}//set the current ${property.nameFirstUpper()}
+${spaces3}${property.nameFirstLower()}Presenter.IDataObject = m_${class.getName()}.${property.nameFirstUpper()};
+
+${spaces3}//show the view
+${spaces3}bool? show = ${property.nameFirstLower()}Presenter.Show();
+${spaces3}if (show == true)
+${spaces3}{
+${spaces4}//update model
+${spaces4}m_${class.getName()}.${property.nameFirstUpper()} = ${property.nameFirstLower()}Presenter.IDataObject;
+
+${spaces4}//update view
+${spaces4} m_view.${property.nameFirstUpper()}.Text = Get${property.nameFirstUpper()}Text(${property.nameFirstLower()}Presenter.IDataObject);
+${spaces3}}
+${spaces2}}
+
+${spaces2}/// <summary>
+${spaces2}/// Sets the location text together
+${spaces2}/// </summary>
+${spaces2}/// <param name="location"><see cref="Location"/> model.</param>
+${spaces2}/// <returns>Returns the location text.</returns>
+${spaces2}private string Get${property.nameFirstUpper()}Text(${property.getClassifier().getName()} ${property.nameFirstLower()})
+${spaces2}{
+${spaces3}return (${property.nameFirstLower()} != null) ? ConvertManager.Instance.ConvertToString(','
+#set($childProperties=${netHelper.getChildProperties(${property.getClassifier()})})
+#foreach($childProperty in $childProperties)
+#if(${childProperty.booleanValueOfTag("wpf-generate")} && !${childProperty.booleanValueOfTag(".net-ignore")})	
+                                                     , ${property.nameFirstLower()}.${childProperty.nameFirstUpper()}		
+#end
+#end
+                                                     ) :  string.Empty;
+${spaces2}}
+${spaces2}${sign}endregion	
+
+#end	
+#end
+#end
+
+##1:0..* relations
+#foreach($indexedProperty in $indexedProperties)
+#if(${indexedProperty.booleanValueOfTag("wpf-generate")} && !${indexedProperty.booleanValueOfTag(".net-ignore")})
+${spaces2}${sign}region ${indexedProperty.nameFirstUpper()}
+${spaces2}/// <summary>
+${spaces2}/// Occurs when the Add${indexedProperty.nameFirstUpper()} Button has clicked.
+${spaces2}/// </summary>
+${spaces2}/// <param name="sender">The Add${indexedProperty.nameFirstUpper()}Button.</param>
+${spaces2}/// <param name="e">RoutedEventArgs information.</param>
+${spaces2}void Add${indexedProperty.nameFirstUpper()}_Click(object sender, System.Windows.RoutedEventArgs e)
+${spaces2}{
+${spaces3}//create a ${indexedProperty.nameFirstUpper()}Presenter
+${spaces3}${indexedProperty.getClassifier().getName()}Presenter ${indexedProperty.nameFirstLower()}Presenter = new ${indexedProperty.getClassifier().getName()}Presenter(new ${indexedProperty.getClassifier().getName()}WPF());
+
+${spaces3}//show the view
+${spaces3}bool? show = ${indexedProperty.nameFirstLower()}Presenter.Show();
+${spaces3}if (show == true)
+${spaces3}{
+${spaces4}//add new ${indexedProperty.nameFirstUpper()}
+${spaces4}m_${class.getName()}.Add${indexedProperty.nameFirstUpper()}(${indexedProperty.nameFirstLower()}Presenter.IDataObject);
+
+${spaces4}//update view
+${spaces4}m_view.${indexedProperty.namePlural()}.SetValues<${indexedProperty.getClassifier().getName()}>(m_${class.getName()}.${indexedProperty.namePlural()});
+${spaces4}m_view.Remove${indexedProperty.nameFirstUpper()}.IsEnable = m_${class.getName()}.${indexedProperty.namePlural()}Count > 0;
+${spaces3}}
+${spaces2}}
+
+${spaces2}/// <summary>
+${spaces2}/// Occurs when the Remove${indexedProperty.nameFirstUpper()} Button has clicked.
+${spaces2}/// </summary>
+${spaces2}/// <param name="sender">The Remove${indexedProperty.nameFirstUpper()} Button.</param>
+${spaces2}/// <param name="e">RoutedEventArgs information.</param>
+${spaces2}void Remove${indexedProperty.nameFirstUpper()}_Click(object sender, System.Windows.RoutedEventArgs e)
+${spaces2}{
+${spaces3}//check if a ${indexedProperty.nameFirstUpper()} is selected
+${spaces3}if (m_view.${indexedProperty.namePlural()}.SelectedRowIndex > -1)
+${spaces3}{
+${spaces4}//remove the selected ${indexedProperty.nameFirstUpper()}
+${spaces4}m_${class.getName()}.Remove${indexedProperty.nameFirstUpper()}At(m_view.${indexedProperty.namePlural()}.SelectedRowIndex);
+
+${spaces4}//update view
+${spaces4}m_view.${indexedProperty.namePlural()}.SetValues<${indexedProperty.getClassifier().getName()}>(m_${class.getName()}.${indexedProperty.namePlural()});
+${spaces4}m_view.Remove${indexedProperty.nameFirstUpper()}.IsEnable = m_${class.getName()}.${indexedProperty.namePlural()}Count > 0;
+${spaces3}}
+${spaces2}}
+
+${spaces2}/// <summary>
+${spaces2}/// Occurs when a ${indexedProperty.nameFirstUpper()} row has doubleclicked.
+${spaces2}/// </summary>
+${spaces2}/// <param name="sender">The ${indexedProperty.namePlural()} LiestView.</param>
+${spaces2}/// <param name="e">RoutedEventArgs information.</param>
+${spaces2}void ${indexedProperty.namePlural()}_DoubleClick(object sender, System.Windows.RoutedEventArgs e)
+${spaces2}{
+${spaces3}//create a ${indexedProperty.nameFirstUpper()}Presenter
+${spaces3}${indexedProperty.getClassifier().getName()}Presenter ${indexedProperty.nameFirstLower()}Presenter = new ${indexedProperty.getClassifier().getName()}Presenter(new ${indexedProperty.getClassifier().getName()}WPF());
+
+${spaces3}//set the current ${indexedProperty.nameFirstUpper()}
+${spaces3}${indexedProperty.nameFirstLower()}Presenter.IDataObject = m_${class.getName()}.Get${indexedProperty.nameFirstUpper()}(m_view.${indexedProperty.namePlural()}.SelectedRowIndex);
+
+${spaces3}//show the view
+${spaces3}bool? show = ${indexedProperty.nameFirstLower()}Presenter.Show();
+${spaces3}if (show == true)
+${spaces3}{
+${spaces4}//update the ${indexedProperty.nameFirstUpper()}
+${spaces4}m_${class.getName()}.Set${indexedProperty.nameFirstUpper()}(m_view.${indexedProperty.namePlural()}.SelectedRowIndex, ${indexedProperty.nameFirstLower()}Presenter.IDataObject);
+
+${spaces4}//update view
+${spaces4}m_view.${indexedProperty.namePlural()}.SetValues<${indexedProperty.getClassifier().getName()}>(m_${class.getName()}.${indexedProperty.namePlural()});
+${spaces3}}
+${spaces2}}	
+${spaces2}${sign}endregion	
+
+#end
+#end
+${spaces1}}
+}

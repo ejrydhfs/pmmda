@@ -1,0 +1,80 @@
+#######################################################
+## Velocity template
+## 
+## Generates CSharp reference codes.
+##
+## Author: Hubert Willimann
+##
+## Copyright 2005 http://www.bbv.ch
+## Licensed under the Apache License, Version 2.0 (the "License");
+##     http://www.apache.org/licenses/LICENSE-2.0
+##
+#######################################################
+#printFileHeaderCSharp()
+#set($spaces1="    ")
+#set($spaces2="        ")
+#set($properties=${class.getProperties()})
+#set($indexedProperties=${class.getIndexedProperties()})
+
+using pmMDA.NET.GUI.Wpf;
+using pmMDA.NET.GUI.Wpf.Wrapper;
+
+/* %% USER DEFINED USING STATEMENTS START %% */
+#set($lines=${blocks.get("usings")})
+#foreach($line in $lines)
+$line
+#end
+/* %% USER DEFINED USING STATEMENTS END   %% */
+
+namespace ${class.getContext().getName()}.GUI
+{
+${spaces2}/// <summary>
+${spaces2}/// Declares all properties, methodes and events of ${class.getName()}WPF-view.
+${spaces2}/// </summary>
+${spaces1}public interface I${class.getName()}WPF : IContentWPF
+${spaces1}{
+## loop through all properties
+#foreach($property in $properties)
+#if(${property.booleanValueOfTag("wpf-generate")} && !${indexedProperty.booleanValueOfTag(".net-ignore")})
+${spaces2}/// <summary>
+${spaces2}/// Readonly property ${property.nameFirstUpper()}.
+${spaces2}/// </summary> 
+#set($wrapperType=${netHelper.getWrapperType(${property.getTypeName()}, ${class.getContext().getName()})})
+#if(!$wrapperType.equalsIgnoreCase("IObjectWrapper"))
+${spaces2}${wrapperType} ${property.nameFirstUpper()} {get;}
+#else
+${spaces2}ITextBoxWrapper ${property.nameFirstUpper()} {get;}
+${spaces2}/// <summary>
+${spaces2}/// Readonly property Change${property.nameFirstUpper()}.
+${spaces2}/// </summary> 
+${spaces2}IButtonWrapper Change${property.nameFirstUpper()} {get;}
+#end
+#end
+#end
+## loop through all indexedproperties
+#foreach($indexedProperty in $indexedProperties)
+#if(${indexedProperty.booleanValueOfTag("wpf-generate")} && !${indexedProperty.booleanValueOfTag(".net-ignore")})
+${spaces2}/// <summary>
+${spaces2}/// Readonly property ${indexedProperty.namePlural()}.
+${spaces2}/// </summary> 
+${spaces2}IListViewWrapper ${indexedProperty.namePlural()} {get;}
+${spaces2}/// <summary>
+${spaces2}/// Readonly property Add${indexedProperty.nameFirstUpper()}.
+${spaces2}/// </summary> 
+${spaces2}IButtonWrapper Add${indexedProperty.nameFirstUpper()} {get;}
+${spaces2}/// <summary>
+${spaces2}/// Readonly property Remove${indexedProperty.nameFirstUpper()}.
+${spaces2}/// </summary> 
+${spaces2}IButtonWrapper Remove${indexedProperty.nameFirstUpper()} {get;}
+#end
+#end
+
+${spaces2}/* %% USER DEFINED CODE START %% */
+#set($lines=${blocks.get("definitions")})
+#foreach($line in $lines)
+$line
+#end
+${spaces2}/* %% USER DEFINED CODE END %% */
+
+${spaces1}}
+}
