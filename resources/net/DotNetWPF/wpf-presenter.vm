@@ -58,16 +58,8 @@ ${spaces1}/// <summary>
 ${spaces1}/// ${class.getName()}Presenter handels the GUI-content mechanism. The class implements all events
 ${spaces1}/// of the content and updates the view and the model.
 ${spaces1}/// </summary>
-${spaces1}public class ${class.getName()}Presenter : BasePresenter<${class.getName()}Presenter, ${class.getName()}>
+${spaces1}public class ${class.getName()}Presenter : EntityPresenter<${class.getName()}Presenter, I${class.getName()}WPF, ${class.getName()}>
 ${spaces1}{
-${spaces2}/// <summary>
-${spaces2}/// The related  <see cref="I${class.getName()}WPF"/> view
-${spaces2}/// </summary>
-${spaces2}private I${class.getName()}WPF m_view;
-${spaces2}/// <summary>
-${spaces2}/// The related  <see cref="${class.getName()}"/> model
-${spaces2}/// </summary>
-${spaces2}private ${class.getName()} m_${class.getName()};
 
 ${spaces2}/* %% USER DEFINED DECLARATION START %% */
 #set($lines=${blocks.get("declarations")})
@@ -81,18 +73,14 @@ ${spaces2}/// <summary>
 ${spaces2}/// Instances a new instance of the <see cref="${class.getName()}Presenter"/> class.
 ${spaces2}/// </summary>
 ${spaces2}/// <param name="view">The <see cref="I${class.getName()}WPF"/>  view.</param>
-${spaces2}public ${class.getName()}Presenter(I${class.getName()}WPF view) : this(new BaseWPF(), view){}
+${spaces2}public ${class.getName()}Presenter(I${class.getName()}WPF view) : this(new EntityWPF(), view){}
 
 ${spaces2}/// <summary>
 ${spaces2}/// Instances a new instance of the <see cref="${class.getName()}Presenter"/> class.
 ${spaces2}/// </summary>
-${spaces2}/// <param name="baseView">The <see cref="IBaseWPF"/>  view</param>
+${spaces2}/// <param name="entityView">The <see cref="IEntityWPF"/>  view</param>
 ${spaces2}/// <param name="view">The <see cref="I${class.getName()}WPF"/>  view.</param>
-${spaces2}public ${class.getName()}Presenter(IBaseWPF baseView, I${class.getName()}WPF view) : base(baseView, view, "${class.getName()}", ${height}, ${minHeight})
-${spaces2}{
-${spaces3}//set the view
-${spaces3}m_view = view;
-${spaces2}}
+${spaces2}public ${class.getName()}Presenter(IEntityWPF entityView, I${class.getName()}WPF view) : base(entityView, view, "${class.getName()}", ${height}, ${minHeight}){ }
 
 ${spaces2}/* %% USER DEFINED CONSTRUCTORS START %% */
 #set($lines=${blocks.get("constructors")})
@@ -142,12 +130,8 @@ ${spaces2}}
 ${spaces2}/// <summary>
 ${spaces2}/// Updates the view with the model data.
 ${spaces2}/// </summary>
-${spaces2}/// <param name="iDataObject">The <see cref="${class.getName()}"/>  model.</param>
-${spaces2}protected override void UpdateView(${class.getName()} iDataObject)
+${spaces2}protected override void UpdateView()
 ${spaces2}{
-${spaces3}//hand over model
-${spaces3}m_${class.getName()} = iDataObject;
-
 ##attributes
 ${spaces3}//hand over attributes
 #foreach($property in $properties)
@@ -155,20 +139,19 @@ ${spaces3}//hand over attributes
 #set($wrapperType=${netHelper.getWrapperType(${property.getTypeName()}, ${class.getContext().getName()})})
 #if($wrapperType.equalsIgnoreCase("ITextBoxWrapper"))
 #if (!${netHelper.isNumeric(${property.getTypeName()})})
-${spaces3}m_view.${property.nameFirstUpper()}.Text = m_${class.getName()}.${property.nameFirstUpper()};
+${spaces3}m_view.${property.nameFirstUpper()}.Text = m_model.${property.nameFirstUpper()};
 #else
 ##isNumeric
-${spaces3}m_view.${property.nameFirstUpper()}.Text = ConvertManager.Instance.ConvertToString(m_${class.getName()}.${property.nameFirstUpper()});
+${spaces3}m_view.${property.nameFirstUpper()}.Text = ConvertManager.Instance.ConvertToString(m_model.${property.nameFirstUpper()});
 #end
 #elseif ($wrapperType.equalsIgnoreCase("IDatePickerWrapper"))
-${spaces3}m_view.${property.nameFirstUpper()}.Date = m_${class.getName()}.${property.nameFirstUpper()};
+${spaces3}m_view.${property.nameFirstUpper()}.Date = m_model.${property.nameFirstUpper()};
 #elseif ($wrapperType.equalsIgnoreCase("ICheckBoxWrapper"))
-${spaces3}m_view.${property.nameFirstUpper()}.IsChecked = m_${class.getName()}.${property.nameFirstUpper()};
+${spaces3}m_view.${property.nameFirstUpper()}.IsChecked = m_model.${property.nameFirstUpper()};
 #elseif ($wrapperType.equalsIgnoreCase("IObjectWrapper"))
 ##1:0..1 relations
 ${spaces3}//hand over 1:0..1 relations
-${spaces3}m_view.${property.nameFirstUpper()}.Text = Get${property.nameFirstUpper()}Text(m_${class.getName()}.${property.nameFirstUpper()});
-
+${spaces3}m_view.${property.nameFirstUpper()}.Text = Get${property.nameFirstUpper()}Text(m_model.${property.nameFirstUpper()});
 ${spaces3}m_view.Change${property.nameFirstUpper()}.IsEnable = true;
 #end
 #end
@@ -177,9 +160,9 @@ ${spaces3}m_view.Change${property.nameFirstUpper()}.IsEnable = true;
 ${spaces3}//hand over 1:0..* relations
 #foreach($indexedProperty in $indexedProperties)
 #if(${indexedProperty.booleanValueOfTag("wpf-generate")} && !${indexedProperty.booleanValueOfTag(".net-ignore")})
-${spaces3}m_view.${indexedProperty.namePlural()}.SetValues<${indexedProperty.getClassifier().getName()}>(m_${class.getName()}.${indexedProperty.namePlural()});
+${spaces3}m_view.${indexedProperty.namePlural()}.SetValues<${indexedProperty.getClassifier().getName()}>(m_model.${indexedProperty.namePlural()});
 ${spaces3}m_view.Add${indexedProperty.nameFirstUpper()}.IsEnable = true;
-${spaces3}m_view.Remove${indexedProperty.nameFirstUpper()}.IsEnable = m_${class.getName()}.${indexedProperty.namePlural()}Count > 0;
+${spaces3}m_view.Remove${indexedProperty.nameFirstUpper()}.IsEnable = m_model.${indexedProperty.namePlural()}Count > 0;
 #end	
 #end
 ${spaces2}}
@@ -188,34 +171,26 @@ ${spaces2}}
 ${spaces2}/// <summary>
 ${spaces2}/// Updates the model with the view data.
 ${spaces2}/// </summary>
-${spaces2}/// <param name="iDataObject">The <see cref="${class.getName()}"/>  model.</param>
-${spaces2}/// <returns>Returns the <see cref="${class.getName()}"/>  model.</returns>
-${spaces2}protected override ${class.getName()} UpdateModel(${class.getName()} iDataObject)
+${spaces2}protected override void UpdateModel()
 ${spaces2}{
-${spaces3}//hand over model
-${spaces3}m_${class.getName()} = iDataObject;
-
 ${spaces3}//hand over attributes
 #foreach($property in $properties)
 #if(${property.booleanValueOfTag("wpf-generate")} && !${property.booleanValueOfTag(".net-ignore")})
 #set($wrapperType=${netHelper.getWrapperType(${property.getTypeName()}, ${class.getContext().getName()})})
 #if($wrapperType.equalsIgnoreCase("ITextBoxWrapper"))
 #if (!${netHelper.isNumeric(${property.getTypeName()})})
-${spaces3}m_${class.getName()}.${property.nameFirstUpper()} = m_view.${property.nameFirstUpper()}.Text;
+${spaces3}m_model.${property.nameFirstUpper()} = m_view.${property.nameFirstUpper()}.Text;
 #else
 ##isNumeric
-${spaces3}m_${class.getName()}.${property.nameFirstUpper()} = ConvertManager.Instance.ConvertTo${netHelper.firstUpper(${netHelper.convertJavaTypeToDotnet(${property.getTypeName()})})}(m_view.${property.nameFirstUpper()}.Text);
+${spaces3}m_model.${property.nameFirstUpper()} = ConvertManager.Instance.ConvertTo${netHelper.firstUpper(${netHelper.convertJavaTypeToDotnet(${property.getTypeName()})})}(m_view.${property.nameFirstUpper()}.Text);
 #end
 #elseif ($wrapperType.equalsIgnoreCase("IDatePickerWrapper"))
-${spaces3}m_${class.getName()}.${property.nameFirstUpper()} = m_view.${property.nameFirstUpper()}.Date;
+${spaces3}m_model.${property.nameFirstUpper()} = m_view.${property.nameFirstUpper()}.Date;
 #elseif ($wrapperType.equalsIgnoreCase("ICheckBoxWrapper"))
-${spaces3}m_${class.getName()}.${property.nameFirstUpper()} = m_view.${property.nameFirstUpper()}.IsChecked;
+${spaces3}m_model.${property.nameFirstUpper()} = m_view.${property.nameFirstUpper()}.IsChecked;
 #end
 #end
 #end
-
-${spaces3}//return model
-${spaces3}return m_${class.getName()};
 ${spaces2}}
 
 ##Reset
@@ -286,17 +261,17 @@ ${spaces3}//create a ${property.nameFirstUpper()}Presenter
 ${spaces3}${property.getClassifier().getName()}Presenter ${property.nameFirstLower()}Presenter = new ${property.getClassifier().getName()}Presenter(new ${property.getClassifier().getName()}WPF());
 
 ${spaces3}//set the current ${property.nameFirstUpper()}
-${spaces3}${property.nameFirstLower()}Presenter.IDataObject = m_${class.getName()}.${property.nameFirstUpper()};
+${spaces3}${property.nameFirstLower()}Presenter.Model = m_model.${property.nameFirstUpper()};
 
 ${spaces3}//show the view
 ${spaces3}bool? show = ${property.nameFirstLower()}Presenter.Show();
 ${spaces3}if (show == true)
 ${spaces3}{
 ${spaces4}//update model
-${spaces4}m_${class.getName()}.${property.nameFirstUpper()} = ${property.nameFirstLower()}Presenter.IDataObject;
+${spaces4}m_model.${property.nameFirstUpper()} = ${property.nameFirstLower()}Presenter.Model;
 
 ${spaces4}//update view
-${spaces4} m_view.${property.nameFirstUpper()}.Text = Get${property.nameFirstUpper()}Text(${property.nameFirstLower()}Presenter.IDataObject);
+${spaces4} m_view.${property.nameFirstUpper()}.Text = Get${property.nameFirstUpper()}Text(${property.nameFirstLower()}Presenter.Model);
 ${spaces3}}
 ${spaces2}}
 
@@ -341,11 +316,11 @@ ${spaces3}bool? show = ${indexedProperty.nameFirstLower()}Presenter.Show();
 ${spaces3}if (show == true)
 ${spaces3}{
 ${spaces4}//add new ${indexedProperty.nameFirstUpper()}
-${spaces4}m_${class.getName()}.Add${indexedProperty.nameFirstUpper()}(${indexedProperty.nameFirstLower()}Presenter.IDataObject);
+${spaces4}m_model.Add${indexedProperty.nameFirstUpper()}(${indexedProperty.nameFirstLower()}Presenter.Model);
 
 ${spaces4}//update view
-${spaces4}m_view.${indexedProperty.namePlural()}.SetValues<${indexedProperty.getClassifier().getName()}>(m_${class.getName()}.${indexedProperty.namePlural()});
-${spaces4}m_view.Remove${indexedProperty.nameFirstUpper()}.IsEnable = m_${class.getName()}.${indexedProperty.namePlural()}Count > 0;
+${spaces4}m_view.${indexedProperty.namePlural()}.SetValues<${indexedProperty.getClassifier().getName()}>(m_model.${indexedProperty.namePlural()});
+${spaces4}m_view.Remove${indexedProperty.nameFirstUpper()}.IsEnable = m_model.${indexedProperty.namePlural()}Count > 0;
 ${spaces3}}
 ${spaces2}}
 
@@ -360,11 +335,11 @@ ${spaces3}//check if a ${indexedProperty.nameFirstUpper()} is selected
 ${spaces3}if (m_view.${indexedProperty.namePlural()}.SelectedRowIndex > -1)
 ${spaces3}{
 ${spaces4}//remove the selected ${indexedProperty.nameFirstUpper()}
-${spaces4}m_${class.getName()}.Remove${indexedProperty.nameFirstUpper()}At(m_view.${indexedProperty.namePlural()}.SelectedRowIndex);
+${spaces4}m_model.Remove${indexedProperty.nameFirstUpper()}At(m_view.${indexedProperty.namePlural()}.SelectedRowIndex);
 
 ${spaces4}//update view
-${spaces4}m_view.${indexedProperty.namePlural()}.SetValues<${indexedProperty.getClassifier().getName()}>(m_${class.getName()}.${indexedProperty.namePlural()});
-${spaces4}m_view.Remove${indexedProperty.nameFirstUpper()}.IsEnable = m_${class.getName()}.${indexedProperty.namePlural()}Count > 0;
+${spaces4}m_view.${indexedProperty.namePlural()}.SetValues<${indexedProperty.getClassifier().getName()}>(m_model.${indexedProperty.namePlural()});
+${spaces4}m_view.Remove${indexedProperty.nameFirstUpper()}.IsEnable = m_model.${indexedProperty.namePlural()}Count > 0;
 ${spaces3}}
 ${spaces2}}
 
@@ -379,17 +354,17 @@ ${spaces3}//create a ${indexedProperty.nameFirstUpper()}Presenter
 ${spaces3}${indexedProperty.getClassifier().getName()}Presenter ${indexedProperty.nameFirstLower()}Presenter = new ${indexedProperty.getClassifier().getName()}Presenter(new ${indexedProperty.getClassifier().getName()}WPF());
 
 ${spaces3}//set the current ${indexedProperty.nameFirstUpper()}
-${spaces3}${indexedProperty.nameFirstLower()}Presenter.IDataObject = m_${class.getName()}.Get${indexedProperty.nameFirstUpper()}(m_view.${indexedProperty.namePlural()}.SelectedRowIndex);
+${spaces3}${indexedProperty.nameFirstLower()}Presenter.Model = m_model.Get${indexedProperty.nameFirstUpper()}(m_view.${indexedProperty.namePlural()}.SelectedRowIndex);
 
 ${spaces3}//show the view
 ${spaces3}bool? show = ${indexedProperty.nameFirstLower()}Presenter.Show();
 ${spaces3}if (show == true)
 ${spaces3}{
 ${spaces4}//update the ${indexedProperty.nameFirstUpper()}
-${spaces4}m_${class.getName()}.Set${indexedProperty.nameFirstUpper()}(m_view.${indexedProperty.namePlural()}.SelectedRowIndex, ${indexedProperty.nameFirstLower()}Presenter.IDataObject);
+${spaces4}m_model.Set${indexedProperty.nameFirstUpper()}(m_view.${indexedProperty.namePlural()}.SelectedRowIndex, ${indexedProperty.nameFirstLower()}Presenter.Model);
 
 ${spaces4}//update view
-${spaces4}m_view.${indexedProperty.namePlural()}.SetValues<${indexedProperty.getClassifier().getName()}>(m_${class.getName()}.${indexedProperty.namePlural()});
+${spaces4}m_view.${indexedProperty.namePlural()}.SetValues<${indexedProperty.getClassifier().getName()}>(m_model.${indexedProperty.namePlural()});
 ${spaces3}}
 ${spaces2}}	
 ${spaces2}${sign}endregion	
