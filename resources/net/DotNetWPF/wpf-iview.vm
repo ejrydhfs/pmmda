@@ -28,9 +28,9 @@ $line
 
 namespace ${class.getContext().getName()}.GUI
 {
-${spaces2}/// <summary>
-${spaces2}/// Declares all properties, methodes and events of ${class.getName()}WPF-view.
-${spaces2}/// </summary>
+${spaces1}/// <summary>
+${spaces1}/// Declares all properties, methodes and events of ${class.getName()}WPF-view.
+${spaces1}/// </summary>
 ${spaces1}public interface I${class.getName()}WPF : IContentWPF
 ${spaces1}{
 ## loop through all properties
