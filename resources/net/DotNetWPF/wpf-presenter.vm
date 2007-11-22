@@ -152,7 +152,6 @@ ${spaces3}m_view.${property.nameFirstUpper()}.IsChecked = m_model.${property.nam
 ##1:0..1 relations
 ${spaces3}//hand over 1:0..1 relations
 ${spaces3}m_view.${property.nameFirstUpper()}.Text = Get${property.nameFirstUpper()}Text(m_model.${property.nameFirstUpper()});
-${spaces3}m_view.Change${property.nameFirstUpper()}.IsEnable = true;
 #end
 #end
 #end
@@ -161,7 +160,6 @@ ${spaces3}//hand over 1:0..* relations
 #foreach($indexedProperty in $indexedProperties)
 #if(${indexedProperty.booleanValueOfTag("wpf-generate")} && !${indexedProperty.booleanValueOfTag(".net-ignore")})
 ${spaces3}m_view.${indexedProperty.namePlural()}.SetValues<${indexedProperty.getClassifier().getName()}>(m_model.${indexedProperty.namePlural()});
-${spaces3}m_view.Add${indexedProperty.nameFirstUpper()}.IsEnable = true;
 ${spaces3}m_view.Remove${indexedProperty.nameFirstUpper()}.IsEnable = m_model.${indexedProperty.namePlural()}Count > 0;
 #end	
 #end
@@ -217,7 +215,6 @@ ${spaces3}m_view.${property.nameFirstUpper()}.IsChecked = false;
 ##1:0..1 relations
 ${spaces3}//1:0..1 relations
 ${spaces3}m_view.${property.nameFirstUpper()}.Text = string.Empty;
-${spaces3}m_view.Change${property.nameFirstUpper()}.IsEnable = false;
 #end
 #end
 #end
@@ -226,11 +223,73 @@ ${spaces3}//1:0..* relations
 #foreach($indexedProperty in $indexedProperties)
 #if(${indexedProperty.booleanValueOfTag("wpf-generate")} && !${indexedProperty.booleanValueOfTag(".net-ignore")})
 ${spaces3}m_view.${indexedProperty.namePlural()}.Reset();
+#end	
+#end
+${spaces2}}
+
+##Lock
+${spaces2}/// <summary>
+${spaces2}/// Locks the controls of the content.
+${spaces2}/// </summary>
+${spaces2}protected override void Lock()
+${spaces2}{
+${spaces3}base.Lock();
+
+##attributes
+${spaces3}//lock controls
+${spaces3}//attributes
+#foreach($property in $properties)
+#if(${property.booleanValueOfTag("wpf-generate")} && !${property.booleanValueOfTag(".net-ignore")})	
+#set($wrapperType=${netHelper.getWrapperType(${property.getTypeName()}, ${class.getContext().getName()})})
+#if($wrapperType.equalsIgnoreCase("IObjectWrapper"))
+##1:0..1 relations
+${spaces3}//1:0..1 relations
+${spaces3}m_view.Change${property.nameFirstUpper()}.IsEnable = false;
+#else
+${spaces3}m_view.${property.nameFirstUpper()}.IsEnable = false;
+#end
+#end
+#end
+##1:0..* relations
+${spaces3}//1:0..* relations
+#foreach($indexedProperty in $indexedProperties)
+#if(${indexedProperty.booleanValueOfTag("wpf-generate")} && !${indexedProperty.booleanValueOfTag(".net-ignore")})
 ${spaces3}m_view.Add${indexedProperty.nameFirstUpper()}.IsEnable = false;
 ${spaces3}m_view.Remove${indexedProperty.nameFirstUpper()}.IsEnable = false;
 #end	
 #end
+${spaces2}}
 
+##Unlock
+${spaces2}/// <summary>
+${spaces2}/// Unlocks the controls of the content.
+${spaces2}/// </summary>
+${spaces2}protected override void UnLock()
+${spaces2}{
+${spaces3}base.UnLock();
+
+##attributes
+${spaces3}//unlock controls
+${spaces3}//attributes
+#foreach($property in $properties)
+#if(${property.booleanValueOfTag("wpf-generate")} && !${property.booleanValueOfTag(".net-ignore")})	
+#set($wrapperType=${netHelper.getWrapperType(${property.getTypeName()}, ${class.getContext().getName()})})
+#if($wrapperType.equalsIgnoreCase("IObjectWrapper"))
+##1:0..1 relations
+${spaces3}//1:0..1 relations
+${spaces3}m_view.Change${property.nameFirstUpper()}.IsEnable = true;
+#else
+${spaces3}m_view.${property.nameFirstUpper()}.IsEnable = true;
+#end
+#end
+#end
+##1:0..* relations
+${spaces3}//1:0..* relations
+#foreach($indexedProperty in $indexedProperties)
+#if(${indexedProperty.booleanValueOfTag("wpf-generate")} && !${indexedProperty.booleanValueOfTag(".net-ignore")})
+${spaces3}m_view.Add${indexedProperty.nameFirstUpper()}.IsEnable = true;
+#end	
+#end
 ${spaces2}}
 
 ##Add
@@ -259,9 +318,13 @@ ${spaces2}void Change${property.nameFirstUpper()}_Click(object sender, System.Wi
 ${spaces2}{
 ${spaces3}//create a ${property.nameFirstUpper()}Presenter
 ${spaces3}${property.getClassifier().getName()}Presenter ${property.nameFirstLower()}Presenter = new ${property.getClassifier().getName()}Presenter(new ${property.getClassifier().getName()}WPF());
+${spaces3}${property.nameFirstLower()}Presenter.SecuritySupport = SecuritySupport;
 
-${spaces3}//set the current ${property.nameFirstUpper()}
+${spaces3}//set the current ${property.nameFirstUpper()} to child-presenter
 ${spaces3}${property.nameFirstLower()}Presenter.Model = m_model.${property.nameFirstUpper()};
+
+${spaces3}//set the current ${property.nameFirstUpper()} to null
+${spaces3}m_model.${property.nameFirstUpper()} = null;
 
 ${spaces3}//show the view
 ${spaces3}bool? show = ${property.nameFirstLower()}Presenter.Show();
@@ -269,10 +332,10 @@ ${spaces3}if (show == true)
 ${spaces3}{
 ${spaces4}//update model
 ${spaces4}m_model.${property.nameFirstUpper()} = ${property.nameFirstLower()}Presenter.Model;
-
-${spaces4}//update view
-${spaces4} m_view.${property.nameFirstUpper()}.Text = Get${property.nameFirstUpper()}Text(${property.nameFirstLower()}Presenter.Model);
 ${spaces3}}
+
+${spaces3}//update view
+${spaces3}m_view.${property.nameFirstUpper()}.Text = Get${property.nameFirstUpper()}Text(m_model.${property.nameFirstUpper()});
 ${spaces2}}
 
 ${spaces2}/// <summary>
@@ -310,6 +373,7 @@ ${spaces2}void Add${indexedProperty.nameFirstUpper()}_Click(object sender, Syste
 ${spaces2}{
 ${spaces3}//create a ${indexedProperty.nameFirstUpper()}Presenter
 ${spaces3}${indexedProperty.getClassifier().getName()}Presenter ${indexedProperty.nameFirstLower()}Presenter = new ${indexedProperty.getClassifier().getName()}Presenter(new ${indexedProperty.getClassifier().getName()}WPF());
+${spaces3}${indexedProperty.nameFirstLower()}Presenter.SecuritySupport = SecuritySupport;
 
 ${spaces3}//show the view
 ${spaces3}bool? show = ${indexedProperty.nameFirstLower()}Presenter.Show();
@@ -352,6 +416,7 @@ ${spaces2}void ${indexedProperty.namePlural()}_DoubleClick(object sender, System
 ${spaces2}{
 ${spaces3}//create a ${indexedProperty.nameFirstUpper()}Presenter
 ${spaces3}${indexedProperty.getClassifier().getName()}Presenter ${indexedProperty.nameFirstLower()}Presenter = new ${indexedProperty.getClassifier().getName()}Presenter(new ${indexedProperty.getClassifier().getName()}WPF());
+${spaces3}${indexedProperty.nameFirstLower()}Presenter.SecuritySupport = SecuritySupport;
 
 ${spaces3}//set the current ${indexedProperty.nameFirstUpper()}
 ${spaces3}${indexedProperty.nameFirstLower()}Presenter.Model = m_model.Get${indexedProperty.nameFirstUpper()}(m_view.${indexedProperty.namePlural()}.SelectedRowIndex);

@@ -1,0 +1,185 @@
+#######################################################
+## Velocity template
+## 
+## Generates CSharp reference codes.
+##
+## Author: Hubert Willimann
+##
+## Copyright 2005 http://www.bbv.ch
+## Licensed under the Apache License, Version 2.0 (the "License");
+##     http://www.apache.org/licenses/LICENSE-2.0
+##
+#######################################################
+#printFileHeaderCSharp()
+#set($sign="#")
+#set($spaces1="    ")
+#set($spaces2="        ")
+#set($spaces3="            ")
+#set($spaces4="                ")
+#set($properties=${class.getProperties()})
+#set($indexedProperties=${class.getIndexedProperties()})
+
+using System;
+using System.Collections.Generic;
+using System.Text;
+using pmMDA.NET.GUI.Wpf.UnitTests.GUI;
+using pmMDA.NET.GUI.Wpf.Wrapper;
+using pmMDA.NET.GUI.Wpf.UnitTests.Mock.Wrapper;
+
+/* %% USER DEFINED USING STATEMENTS START %% */
+#set($lines=${blocks.get("usings")})
+#foreach($line in $lines)
+$line
+#end
+/* %% USER DEFINED USING STATEMENTS END   %% */
+
+##namespace
+namespace ${class.getContext().getName()}.UnitTests.Mock
+{
+##class
+${spaces1}/// <summary>
+${spaces1}/// Mock${class.getName()}WPF represents the view and manages the content-array.
+${spaces1}/// </summary>
+${spaces1}public class Mock${class.getName()}WPF : I${class.getName()}WPF
+${spaces1}{
+
+##attributes
+#foreach($property in $properties)
+#if(${property.booleanValueOfTag("wpf-generate")} && !${property.booleanValueOfTag(".net-ignore")})	
+#set($wrapperType=${netHelper.getWrapperType(${property.getTypeName()}, ${class.getContext().getName()})})
+${spaces2}/// <summary>
+${spaces2}/// ${property.nameFirstUpper()}.
+${spaces2}/// </summary>
+#if($wrapperType.equalsIgnoreCase("ITextBoxWrapper"))
+${spaces2}private MockTextBoxWrapper m_${property.nameFirstLower()} = new MockTextBoxWrapper();
+#elseif ($wrapperType.equalsIgnoreCase("IDatePickerWrapper"))
+${spaces2}private MockDatePickerWrapper m_${property.nameFirstLower()} = new MockDatePickerWrapper();
+#elseif ($wrapperType.equalsIgnoreCase("ICheckBoxWrapper"))
+${spaces2}private MockCheckBoxWrapper m_${property.nameFirstLower()} = new MockCheckBoxWrapper();
+#elseif ($wrapperType.equalsIgnoreCase("IObjectWrapper"))
+##1:0..1 relations
+${spaces2}private MockTextBoxWrapper m_${property.nameFirstLower()} = new MockTextBoxWrapper();
+
+${spaces2}/// <summary>
+${spaces2}/// Change${property.nameFirstUpper()}.
+${spaces2}/// </summary>
+${spaces2}private MockButtonWrapper m_change${property.nameFirstUpper()} = new MockButtonWrapper();
+#end
+
+#end
+#end
+#foreach($indexedProperty in $indexedProperties)
+#if(${indexedProperty.booleanValueOfTag("wpf-generate")} && !${indexedProperty.booleanValueOfTag(".net-ignore")})
+${spaces2}/// <summary>
+${spaces2}/// ${indexedProperty.namePlural()}.
+${spaces2}/// </summary>
+${spaces2}private MockListViewWrapper m_${indexedProperty.nameFirstLowerPlural()} = new MockListViewWrapper();
+
+${spaces2}/// <summary>
+${spaces2}/// Add${indexedProperty.nameFirstUpper()}.
+${spaces2}/// </summary>
+${spaces2}private MockButtonWrapper m_add${indexedProperty.nameFirstUpper()} = new MockButtonWrapper();
+
+${spaces2}/// <summary>
+${spaces2}/// Remove${indexedProperty.nameFirstUpper()}.
+${spaces2}/// </summary>
+${spaces2}private MockButtonWrapper m_remove${indexedProperty.nameFirstUpper()} = new MockButtonWrapper();
+
+#end	
+#end
+        
+
+${spaces2}/* %% USER DEFINED DECLARATION START %% */
+#set($lines=${blocks.get("declarations")})
+#foreach($line in $lines)
+$line
+#end
+${spaces2}/* %% USER DEFINED DECLARATION END %% */
+
+${spaces2}/* %% USER DEFINED CONSTRUCTORS START %% */
+#set($lines=${blocks.get("constructors")})
+#foreach($line in $lines)
+$line
+#end
+${spaces2}/* %% USER DEFINED CONSTRUCTORS END %% */
+
+${spaces2}/* %% USER DEFINED CODE START %% */
+#set($lines=${blocks.get("definitions")})
+#foreach($line in $lines)
+$line
+#end
+${spaces2}/* %% USER DEFINED CODE END %% */
+
+##properties
+${spaces2}#region I${class.getName()}WPF Members
+
+#foreach($property in $properties)
+#if(${property.booleanValueOfTag("wpf-generate")} && !${property.booleanValueOfTag(".net-ignore")})	
+#set($wrapperType=${netHelper.getWrapperType(${property.getTypeName()}, ${class.getContext().getName()})})
+${spaces2}/// <summary>
+${spaces2}/// Readonly property I${class.getName()}WPF.${property.nameFirstUpper()}.
+${spaces2}/// </summary>
+#if($wrapperType.equalsIgnoreCase("ITextBoxWrapper"))
+${spaces2}ITextBoxWrapper I${class.getName()}WPF.${property.nameFirstUpper()}
+${spaces2}{
+${spaces3}get { return MockWrapperManager.Instance.GetTextBoxWrapper(m_${property.nameFirstLower()}); }
+${spaces2}}
+#elseif ($wrapperType.equalsIgnoreCase("IDatePickerWrapper"))
+${spaces2}IDatePickerWrapper I${class.getName()}WPF.${property.nameFirstUpper()}
+${spaces2}{
+${spaces3}get { return MockWrapperManager.Instance.GetDatePickerWrapper(m_${property.nameFirstLower()}); }
+${spaces2}}
+#elseif ($wrapperType.equalsIgnoreCase("ICheckBoxWrapper"))
+${spaces2}ICheckBoxWrapper I${class.getName()}WPF.${property.nameFirstUpper()}
+${spaces2}{
+${spaces3}get { return MockWrapperManager.Instance.GetCheckBoxWrapper(m_${property.nameFirstLower()}); }
+${spaces2}}
+#elseif ($wrapperType.equalsIgnoreCase("IObjectWrapper"))
+##1:0..1 relations
+${spaces2}ITextBoxWrapper I${class.getName()}WPF.${property.nameFirstUpper()}
+${spaces2}{
+${spaces3}get { return MockWrapperManager.Instance.GetTextBoxWrapper(m_${property.nameFirstLower()}); }
+${spaces2}}
+
+${spaces2}/// <summary>
+${spaces2}/// Readonly property I${class.getName()}WPF.Change${property.nameFirstUpper()}.
+${spaces2}/// </summary>
+${spaces2}IButtonWrapper I${class.getName()}WPF.Change${property.nameFirstUpper()}
+${spaces2}{
+${spaces3}get { return MockWrapperManager.Instance.GetButtonWrapper(m_change${property.nameFirstUpper()}); }
+${spaces2}}
+#end
+
+#end
+#end
+#foreach($indexedProperty in $indexedProperties)
+#if(${indexedProperty.booleanValueOfTag("wpf-generate")} && !${indexedProperty.booleanValueOfTag(".net-ignore")})
+${spaces2}/// <summary>
+${spaces2}/// Readonly property I${class.getName()}WPF.${indexedProperty.namePlural()}.
+${spaces2}/// </summary>
+${spaces2}IListViewWrapper I${class.getName()}WPF.${indexedProperty.namePlural()}
+${spaces2}{
+${spaces3}get { return MockWrapperManager.Instance.GetListViewWrapper(m_${indexedProperty.nameFirstLowerPlural()}); }
+${spaces2}}
+
+${spaces2}/// <summary>
+${spaces2}/// Readonly property I${class.getName()}WPF.Add${indexedProperty.nameFirstUpper()}.
+${spaces2}/// </summary>
+${spaces2}IButtonWrapper I${class.getName()}WPF.Add${indexedProperty.nameFirstUpper()}
+${spaces2}{
+${spaces3}get { return MockWrapperManager.Instance.GetButtonWrapper(m_add${indexedProperty.nameFirstUpper()}); }
+${spaces2}}
+
+${spaces2}/// <summary>
+${spaces2}/// Readonly property I${class.getName()}WPF.Remove${indexedProperty.nameFirstUpper()}.
+${spaces2}/// </summary>
+${spaces2}IButtonWrapper I${class.getName()}WPF.Remove${indexedProperty.nameFirstUpper()}
+${spaces2}{
+${spaces3}get { return MockWrapperManager.Instance.GetButtonWrapper(m_remove${indexedProperty.nameFirstUpper()}); }
+${spaces2}}
+
+#end	
+#end
+${spaces2}#endregion
+${spaces1}}
+}
