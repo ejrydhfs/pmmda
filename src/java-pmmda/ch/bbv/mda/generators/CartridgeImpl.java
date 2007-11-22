@@ -31,6 +31,7 @@ import org.apache.velocity.exception.ResourceNotFoundException;
 import ch.bbv.application.VersionId;
 import ch.bbv.dog.validation.Validator;
 import ch.bbv.mda.*;
+import ch.bbv.mda.cartridges.dotNet.NetCartridgeConstants;
 import ch.bbv.mda.generators.CartridgeInfo.Platform;
 import ch.bbv.mda.operators.FileOperators;
 import ch.bbv.mda.operators.ModelOperators;
@@ -57,7 +58,7 @@ import com.jgoodies.validation.message.SimpleValidationMessage;
  * @author Marcel Baumann
  * @version $Revision$
  */
-public abstract class CartridgeImpl implements Cartridge {
+public abstract class CartridgeImpl implements Cartridge, NetCartridgeConstants {
   /**
    * Extension for Java source file.
    */
@@ -247,7 +248,7 @@ public abstract class CartridgeImpl implements Cartridge {
         .getConfiguration(properties));
     try {
       StringBuilder buffer = new StringBuilder();
-      buffer.append(configuration.getProperty("file.resource.loader.path"))
+      buffer.append(configuration.getProperty(RESSOURCE_FOLDER))
           .append("/").append(Platform.getPath(getPlatform())).append("/")
           .append(getPrefix()).append("/").append("mappings.xml");
       configuration.addConfiguration(new XMLConfiguration(buffer.toString()));

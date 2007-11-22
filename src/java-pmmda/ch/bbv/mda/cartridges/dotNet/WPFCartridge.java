@@ -48,12 +48,23 @@ public class WPFCartridge extends CartridgeImplNet implements
 	private static final String CARTRIDGE_NAME = ".Net WPF";
 
 	/**
+	 * Mock directory
+	 */
+	private static final String MOCK_DIRECTORY = "/Mock";
+
+	/**
+	 * Theme directory
+	 */
+	private static final String THEME_DIRECTORY = "/Themes";
+
+	/**
 	 * Template file name
 	 */
 	private static String TEMPLATE_PRESENTER = "wpf-presenter";
 	private static String TEMPLATE_IVIEW = "wpf-iview";
 	private static String TEMPLATE_VIEW_XAML = "wpf-view-xaml";
 	private static String TEMPLATE_VIEW_CLASS = "wpf-view-class";
+	private static String TEMPLATE_MOCK_CLASS = "wpf-mock-class";
 
 	/**
 	 * Meta model which is currently processed.
@@ -64,6 +75,11 @@ public class WPFCartridge extends CartridgeImplNet implements
 	 * Root directory of the generated source files.
 	 */
 	private File rootDirectory;
+
+	/**
+	 * Root directory of the generated mock source files.
+	 */
+	private File mockRootDirectory;
 
 	/**
 	 * Meta package which is currently processed.
@@ -77,6 +93,7 @@ public class WPFCartridge extends CartridgeImplNet implements
 	private Template ivewTemplate;
 	private Template viewXamlTemplate;
 	private Template viewClassTemplate;
+	private Template mockClassTemplate;
 
 	/**
 	 * Instances a new instance of the WPFCartridge class.
@@ -104,7 +121,7 @@ public class WPFCartridge extends CartridgeImplNet implements
 		ivewTemplate = retrieveTemplate(TEMPLATE_IVIEW, null);
 		viewXamlTemplate = retrieveTemplate(TEMPLATE_VIEW_XAML, null);
 		viewClassTemplate = retrieveTemplate(TEMPLATE_VIEW_CLASS, null);
-
+		mockClassTemplate = retrieveTemplate(TEMPLATE_MOCK_CLASS, null);
 	}
 
 	@Override
@@ -132,8 +149,16 @@ public class WPFCartridge extends CartridgeImplNet implements
 			rootDirectory.mkdirs();
 		}
 
+		// mock
+		mockRootDirectory = new File(getContext().getProperty(
+				NetCartridgeConstants.WPF_ROOT_FOLDER_KEY)
+				+ MOCK_DIRECTORY);
+		if (!mockRootDirectory.exists()) {
+			mockRootDirectory.mkdirs();
+		}
+
 		// create Themes-Folder
-		File skinDirectory = new File(rootDirectory.getPath() + "/Themes");
+		File skinDirectory = new File(rootDirectory.getPath() + THEME_DIRECTORY);
 		if (!skinDirectory.exists()) {
 			skinDirectory.mkdirs();
 		}
@@ -179,7 +204,8 @@ public class WPFCartridge extends CartridgeImplNet implements
 
 	@Override
 	public void processClass(MetaClass clazz, ValidationResult messages) {
-		if (!clazz.booleanValueOfTag(ch.bbv.mda.cartridges.BoConstants.GENERATE)
+		if (!clazz
+				.booleanValueOfTag(ch.bbv.mda.cartridges.BoConstants.GENERATE)
 				|| clazz.booleanValueOfTag(DOTNET_IGNORE)
 				|| !clazz.booleanValueOfTag(WPF_GENERATE)) {
 			return;
@@ -251,6 +277,10 @@ public class WPFCartridge extends CartridgeImplNet implements
 					.getAttribute(WPF_ROOT_FOLDER_KEY), getFileName(clazz,
 					TEMPLATE_VIEW_CLASS), viewClassTemplate, createWPFContext(
 					clazz, TEMPLATE_VIEW_CLASS), messages);
+			processTemplate(mockRootDirectory, metaPackage
+					.getAttribute(WPF_ROOT_FOLDER_KEY), getFileName(clazz,
+					TEMPLATE_MOCK_CLASS), mockClassTemplate, createWPFContext(
+					clazz, TEMPLATE_MOCK_CLASS), messages);
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -276,6 +306,8 @@ public class WPFCartridge extends CartridgeImplNet implements
 			return clazz.getName() + "WPF.xaml";
 		} else if (template.equals(TEMPLATE_VIEW_CLASS)) {
 			return clazz.getName() + "WPF.xaml.cs";
+		} else if (template.equals(TEMPLATE_MOCK_CLASS)) {
+			return "Mock" + clazz.getName() + "WPF.cs";
 		} else {
 			return "";
 		}

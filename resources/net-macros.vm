@@ -22,7 +22,7 @@
 ###end
 ## Test whether a property can be written
 ## @param $element MetaElement of which the writable flag is emmited
-## @param $isReadable Contains the wrttable flag
+## @param $isReadable Contains the writtable flag
 ###macro(isWritable $metaElement $isWritable)
 ###set($isWritable="false")
 ###set($mode=${metaElement.getTaggedValue("bo-mode")})

@@ -529,6 +529,15 @@ public abstract class MetaElement extends DataObjectImpl implements DataObject,
   public String nameFirstUpperPlural() {
     return ModelOperators.identifierFirstUpper(namePlural());
   }
+  
+  /**
+   * Convenience method returning the name of the element in the plural form and
+   * the first letter lowercase.
+   * @return the name of the element formatted as requested
+   */
+  public String nameFirstLowerPlural() {
+	  return ModelOperators.identifierFirstLower(namePlural());
+  }
 
   /**
    * Returns the qualified name of the component by walking through the context
