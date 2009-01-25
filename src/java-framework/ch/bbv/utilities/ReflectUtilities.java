@@ -30,7 +30,7 @@ public final class ReflectUtilities {
    */
   public static final String CREATE_METHOD = "create";
 
-  public static final Map<String, Class> PRIMITIVES_TYPES;
+  public static final Map<String, Class<?>> PRIMITIVES_TYPES;
 
   /**
    * Logger of the application class.
@@ -38,7 +38,7 @@ public final class ReflectUtilities {
   private static Log log = LogFactory.getLog(ReflectUtilities.class);
 
   static {
-    PRIMITIVES_TYPES = new HashMap<String, Class>();
+    PRIMITIVES_TYPES = new HashMap<String, Class<?>>();
     PRIMITIVES_TYPES.put("boolean", Boolean.TYPE);
     PRIMITIVES_TYPES.put("byte", Byte.TYPE);
     PRIMITIVES_TYPES.put("short", Short.TYPE);
@@ -66,7 +66,7 @@ public final class ReflectUtilities {
    * @return the return result of the called method if sucessful otherwise null.
    * @pre (bean != null) && (name != null)
    */
-  public static Object execute(Object bean, String name, Class[] types,
+  public static Object execute(Object bean, String name, Class<?>[] types,
       Object[] params) {
     assert (bean != null) && (name != null);
     Object returns = null;
@@ -113,11 +113,11 @@ public final class ReflectUtilities {
    * @return the return result of the called method if sucessful otherwise null.
    * @pre (clazz != null) && (name != null)
    */
-  public static Object execute(String className, String name, Class[] types,
+  public static Object execute(String className, String name, Class<?>[] types,
       Object[] params) {
     assert (className != null) && (name != null);
     Object returns = null;
-    Class clazz = null;
+    Class<?> clazz = null;
     try {
       clazz = Class.forName(className);
     } catch (ClassNotFoundException e) {
@@ -152,7 +152,7 @@ public final class ReflectUtilities {
     assert classname != null;
     Object object = null;
     try {
-      Class clazz = Class.forName(classname);
+      Class<?> clazz = Class.forName(classname);
       object = clazz.newInstance();
     } catch (InstantiationException e) {
       log.fatal(e);
@@ -171,7 +171,7 @@ public final class ReflectUtilities {
    * @return the created instance if sucessful otherwise null.
    * @pre clazz != null
    */
-  public static Object newInstance(Class clazz) {
+  public static Object newInstance(Class<?> clazz) {
     assert clazz != null;
     Object object = null;
     try {
@@ -193,11 +193,11 @@ public final class ReflectUtilities {
    * @return the created instance if sucessfull otherwise null.
    * @pre clazz != null
    */
-  public static Object newInstance(Class clazz, Class[] types, Object[] objects) {
+  public static Object newInstance(Class<?> clazz, Class<?>[] types, Object[] objects) {
     assert clazz != null;
     Object instance = null;
     try {
-      Constructor constructor = clazz.getConstructor(types);
+      Constructor<?> constructor = clazz.getConstructor(types);
       instance = constructor.newInstance(objects);
     } catch (SecurityException e) {
       log.fatal(e);
@@ -231,7 +231,7 @@ public final class ReflectUtilities {
    * @return the created instance if sucessfull otherwise null.
    * @pre qualifiedName != null
    */
-  public static Object createInstance(Class clazz) {
+  public static Object createInstance(Class<?> clazz) {
     return createInstance(clazz, null, null);
   }
 
@@ -243,12 +243,12 @@ public final class ReflectUtilities {
    * @return the created instance if sucessfull otherwise null.
    * @pre qualifiedName != null
    */
-  public static Object createInstance(String qualifiedName, Class[] types,
+  public static Object createInstance(String qualifiedName, Class<?>[] types,
       Object[] objects) {
     assert qualifiedName != null;
     Object instance = null;
     try {
-      Class clazz = Class.forName(qualifiedName);
+      Class<?> clazz = Class.forName(qualifiedName);
       if (clazz != null) {
         instance = createInstance(clazz, types, objects);
       }
@@ -268,7 +268,7 @@ public final class ReflectUtilities {
    * @return the created instance if sucessfull otherwise null.
    * @pre qualifiedName != null
    */
-  public static Object createInstance(Class clazz, Class[] types,
+  public static Object createInstance(Class<?> clazz, Class<?>[] types,
       Object[] objects) {
     Object instance = null;
     try {
@@ -340,12 +340,12 @@ public final class ReflectUtilities {
    * @param clazz class which load location should be infered.
    * @return the load location path of the class.
    */
-  public String getLoadpath(Class clazz) {
+  public String getLoadpath(Class<?> clazz) {
     return clazz.getProtectionDomain().getCodeSource().getLocation().getPath();
   }
 
   private static Object executeInherited(Object bean, String name,
-      Class[] types, Object[] params) {
+      Class<?>[] types, Object[] params) {
     assert (bean != null) && (name != null);
     Object returns = null;
     try {
@@ -376,10 +376,10 @@ public final class ReflectUtilities {
    * @pre (clazz != null) && (name != null)
    */
   private static Object executeInherited(String className, String name,
-      Class[] types, Object[] params) {
+      Class<?>[] types, Object[] params) {
     assert (className != null) && (name != null);
     Object returns = null;
-    Class clazz = null;
+    Class<?> clazz = null;
     try {
       clazz = Class.forName(className);
     } catch (ClassNotFoundException e) {
